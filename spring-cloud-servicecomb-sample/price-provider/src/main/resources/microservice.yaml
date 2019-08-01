@@ -1,0 +1,21 @@
+APPLICATION_ID: default
+service_description:
+  name: orderService
+  version: 0.0.1
+servicecomb:
+  handler:
+    chain:
+      Provider: {}
+  highway:
+    address: 0.0.0.0:9091
+  rest:
+    address: 0.0.0.0:9081
+  service:
+    registry:
+      address: http://localhost:30100
+      autodiscovery: false
+  # other configurations omitted
+  references:
+    PriceServer:
+      version-rule: 0.0.1
+      transport: rest

@@ -1,0 +1,13 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: spring-cloud-servicecomb
+  cloud:
+    servicecomb:
+      discovery:
+        enabled: true
+        address: http://127.0.0.1:30300
+        serviceName: order
+        version: 0.0.1

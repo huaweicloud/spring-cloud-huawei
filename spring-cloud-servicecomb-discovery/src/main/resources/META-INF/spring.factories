@@ -1,0 +1,5 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  org.springframework.cloud.servicecomb.discovery.discovery.ServiceCombDiscoveryClientConfiguration,\
+org.springframework.cloud.servicecomb.discovery.ribbon.ServiceCombRibbonAutoConfiguration,\
+org.springframework.cloud.servicecomb.discovery.registry.ServiceCombRegistryAutoConfiguration
+
