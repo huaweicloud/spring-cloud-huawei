@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
-import org.springframework.cloud.servicecomb.discovery.client.util.NetUtil;
+import org.springframework.cloud.servicecomb.discovery.client.model.Microservice;
 import org.springframework.cloud.servicecomb.discovery.discovery.MicroserviceHandler;
 import org.springframework.cloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 
@@ -67,8 +67,10 @@ public class ServiceCombServerList extends AbstractServerList<ServiceCombServer>
   }
 
   private List<ServiceCombServer> getServiceInstances() {
+    Microservice microService = MicroserviceHandler
+        .createMicroservice(serviceCombDiscoveryProperties, serviceId);
     List<ServiceInstance> instanceList = MicroserviceHandler
-        .getInstances(serviceCombDiscoveryProperties, serviceId,
+        .getInstances(serviceCombDiscoveryProperties, microService,
             serviceCombClient);//spring cloud serviceId equals servicecomb serviceName
     return transform(instanceList);
   }
@@ -78,8 +80,7 @@ public class ServiceCombServerList extends AbstractServerList<ServiceCombServer>
     List<ServiceCombServer> serverList = new ArrayList<>();
     if (null != instanceList) {
       for (ServiceInstance instance : instanceList) {
-        serverList.add(new ServiceCombServer(NetUtil.getLocalIPAddress(), instance.getPort()));//TODO
-        //ServiceCombServer serviceCombServer =new ServiceCombServer("127.0.0.1",instance.getPort());
+        serverList.add(new ServiceCombServer(instance.getHost(), instance.getPort()));
       }
     }
     return serverList;

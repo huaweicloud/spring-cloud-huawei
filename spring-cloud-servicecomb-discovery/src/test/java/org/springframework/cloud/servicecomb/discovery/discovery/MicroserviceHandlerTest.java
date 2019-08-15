@@ -17,10 +17,18 @@
 
 package org.springframework.cloud.servicecomb.discovery.discovery;
 
-import static org.junit.Assert.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
+import org.springframework.cloud.client.DefaultServiceInstance;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
+import org.springframework.cloud.servicecomb.discovery.client.exception.ServiceCombException;
+import org.springframework.cloud.servicecomb.discovery.client.model.Microservice;
 
+import mockit.Expectations;
+import mockit.Injectable;
 import mockit.Tested;
 
 /**
@@ -33,6 +41,23 @@ public class MicroserviceHandlerTest {
   MicroserviceHandler microserviceHandler;
 
   @Test
-  public void getInstances() {
+  public void getInstances(@Injectable ServiceCombClient serviceCombClient)
+      throws ServiceCombException {
+    ServiceCombDiscoveryProperties serviceCombDiscoveryProperties = new ServiceCombDiscoveryProperties();
+    serviceCombDiscoveryProperties.setAppName("test");
+    serviceCombDiscoveryProperties.setServiceName("testservice");
+    serviceCombDiscoveryProperties.setVersion("latest");
+    List<ServiceInstance> serviceInstanceList = new ArrayList<>();
+    serviceInstanceList.add(
+        new DefaultServiceInstance("111", "1", "127.0.0.1", 1000, false));
+    Microservice microservice = new Microservice();
+    microservice.setServiceName("testservice");
+    new Expectations() {
+      {
+        serviceCombClient.getInstances(microservice);
+        result = serviceInstanceList;
+      }
+    };
+    MicroserviceHandler.getInstances(serviceCombDiscoveryProperties, microservice, serviceCombClient);
   }
 }

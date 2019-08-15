@@ -17,7 +17,6 @@
 
 package org.springframework.cloud.servicecomb.discovery.client.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +32,8 @@ public class MicroserviceInstance {
 
   private String serviceId;
 
+  private String version;
+
   private List<String> endpoints = new ArrayList<>();
 
   private String hostName;
@@ -41,6 +42,9 @@ public class MicroserviceInstance {
 
   private HealthCheck healthCheck;
 
+  private String timestamp;
+
+  private String modTimestamp;
 
   public String getInstanceId() {
     return instanceId;
@@ -88,5 +92,29 @@ public class MicroserviceInstance {
 
   public void setHealthCheck(HealthCheck healthCheck) {
     this.healthCheck = healthCheck;
+  }
+
+  public String getTimestamp() {
+    return timestamp;
+  }
+
+  public void setTimestamp(String timestamp) {
+    this.timestamp = timestamp;
+  }
+
+  public String getModTimestamp() {
+    return modTimestamp;
+  }
+
+  public void setModTimestamp(String modTimestamp) {
+    this.modTimestamp = modTimestamp;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
   }
 }

@@ -36,15 +36,10 @@ public class MicroserviceHandler {
 
 
   public static List<ServiceInstance> getInstances(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
-      String serviceName, ServiceCombClient client) {
+      Microservice microservice, ServiceCombClient serviceCombClient) {
     List<ServiceInstance> instanceList = null;
     try {
-      Microservice microservice = new Microservice();
-      microservice.setAppId(serviceCombDiscoveryProperties.getAppName());
-      microservice.setServiceName(serviceName);
-      //TODO get from config
-      microservice.setVersion(ServiceRegistryConfig.DEFAULT_CALL_VERSION);
-      instanceList = client.getInstances(microservice);
+      instanceList = serviceCombClient.getInstances(microservice);
       if (instanceList.isEmpty()) {
         LOGGER.warn("Can not find regular list...", microservice);
       }
@@ -52,5 +47,15 @@ public class MicroserviceHandler {
       LOGGER.warn("get instances failed.", e);
     }
     return instanceList;
+  }
+
+  public static Microservice createMicroservice(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
+      String serviceName) {
+    Microservice microservice = new Microservice();
+    microservice.setAppId(serviceCombDiscoveryProperties.getAppName());
+    microservice.setServiceName(serviceName);
+    //TODO get from config
+    microservice.setVersion(ServiceRegistryConfig.DEFAULT_CALL_VERSION);
+    return microservice;
   }
 }

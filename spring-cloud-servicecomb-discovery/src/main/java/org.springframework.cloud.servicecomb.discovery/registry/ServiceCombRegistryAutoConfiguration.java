@@ -20,6 +20,7 @@ package org.springframework.cloud.servicecomb.discovery.registry;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationAutoConfiguration;
@@ -43,9 +44,18 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureAfter({AutoServiceRegistrationConfiguration.class,
     AutoServiceRegistrationAutoConfiguration.class})
 public class ServiceCombRegistryAutoConfiguration {
+
   @Bean
-  public ServiceCombServiceRegistry serviceCombServiceRegistry(ServiceCombClient serviceCombClient) {
-    return new ServiceCombServiceRegistry(serviceCombClient);
+  @ConditionalOnMissingBean
+  public HeartbeatScheduler heartbeatScheduler(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
+      ServiceCombClient serviceCombClient) {
+    return new HeartbeatScheduler(serviceCombDiscoveryProperties, serviceCombClient);
+  }
+
+  @Bean
+  public ServiceCombServiceRegistry serviceCombServiceRegistry(ServiceCombClient serviceCombClient,
+      HeartbeatScheduler heartbeatScheduler, ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
+    return new ServiceCombServiceRegistry(serviceCombClient, heartbeatScheduler, serviceCombDiscoveryProperties);
   }
 
   @Bean

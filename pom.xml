@@ -33,8 +33,12 @@
   <name>Spring Cloud Huawei</name>
 
   <properties>
-    <spring-cloud-commons.version>2.1.2.RELEASE</spring-cloud-commons.version>
-    <spring-cloud-netflix.version>2.1.2.RELEASE</spring-cloud-netflix.version>
+    <spring-cloud.version>2.1.2.RELEASE</spring-cloud.version>
+    <httpclient.version>4.5.9</httpclient.version>
+    <jackson-databind.version>2.9.9</jackson-databind.version>
+    <jmockit.version>1.36</jmockit.version>
+    <junit.version>4.12</junit.version>
+    <servicecomb.version>1.2.0</servicecomb.version>
   </properties>
   <modules>
     <module>spring-cloud-servicecomb-discovery</module>
@@ -46,32 +50,58 @@
       <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-commons-dependencies</artifactId>
-        <version>${spring-cloud-commons.version}</version>
+        <version>${spring-cloud.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-netflix-dependencies</artifactId>
-        <version>${spring-cloud-netflix.version}</version>
+        <version>${spring-cloud.version}</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
       <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-openfeign-dependencies</artifactId>
-        <version>2.1.2.RELEASE</version>
+        <version>${spring-cloud.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>2.1.2.RELEASE</version>
+        <version>${spring-cloud.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>${httpclient.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${jackson-databind.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.servicecomb</groupId>
+        <artifactId>foundation-common</artifactId>
+        <version>${servicecomb.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jmockit</groupId>
+        <artifactId>jmockit</artifactId>
+        <version>${jmockit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 </project>

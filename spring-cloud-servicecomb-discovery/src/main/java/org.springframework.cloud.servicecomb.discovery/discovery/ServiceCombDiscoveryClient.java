@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
+import org.springframework.cloud.servicecomb.discovery.client.model.Microservice;
 
 public class ServiceCombDiscoveryClient implements DiscoveryClient {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombDiscoveryClient.class);
@@ -46,8 +47,10 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient {
 
   @Override
   public List<ServiceInstance> getInstances(String serviceId) {
+    Microservice microService = MicroserviceHandler
+        .createMicroservice(discoveryProperties, serviceId);
     return MicroserviceHandler
-        .getInstances(discoveryProperties, serviceId,
+        .getInstances(discoveryProperties, microService,
             serviceCombClient);//spring cloud serviceId equals servicecomb serviceName
   }
 

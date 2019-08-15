@@ -17,25 +17,14 @@
 
 package org.springframework.cloud.servicecomb.discovery.registry;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
 import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
 import org.springframework.cloud.servicecomb.discovery.client.exception.ServiceCombException;
-import org.springframework.cloud.servicecomb.discovery.client.model.HealthCheck;
-import org.springframework.cloud.servicecomb.discovery.client.model.HealthCheckMode;
-import org.springframework.cloud.servicecomb.discovery.client.model.HeartbeatRequest;
 import org.springframework.cloud.servicecomb.discovery.client.model.Microservice;
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstance;
-import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceStatus;
-import org.springframework.cloud.servicecomb.discovery.client.util.NetUtil;
 import org.springframework.cloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 
 /**
  * @Author wangqijun
@@ -45,87 +34,66 @@ import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRegistration> {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombServiceRegistry.class);
 
+  private ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
 
   private ServiceCombClient serviceCombClient;
 
-  public ServiceCombServiceRegistry(ServiceCombClient serviceCombClient) {
+  private HeartbeatScheduler heartbeatScheduler;
+
+  private String serviceID = null;
+
+  private String instanceID = null;
+
+  public ServiceCombServiceRegistry(ServiceCombClient serviceCombClient, HeartbeatScheduler heartbeatScheduler,
+      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
     this.serviceCombClient = serviceCombClient;
+    this.heartbeatScheduler = heartbeatScheduler;
+    this.serviceCombDiscoveryProperties = serviceCombDiscoveryProperties;
   }
 
   @Override
   public void register(ServiceCombRegistration registration) {
-    String serviceID = null;
-    String instanceID = null;
-    Microservice microservice = buildMicroservice(registration);
+    loopRegister(registration);
+    LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
+    heartbeatScheduler.add(instanceID, serviceID);
+  }
+
+  private void loopRegister(ServiceCombRegistration registration) {
+    Microservice microservice = RegistryHandler.buildMicroservice(registration);
     while (true) {
       try {
-        serviceID = serviceCombClient.getMicroserviceID(microservice);
-        MicroserviceInstance microserviceInstance = buildMicroServiceInstances(serviceID, microservice);
+        serviceID = serviceCombClient.getServiceId(microservice);
         if (null == serviceID) {
           serviceID = serviceCombClient.registerMicroservice(microservice);
           if (null != serviceID) {
             break;
           }
         } else {
+          MicroserviceInstance microserviceInstance = RegistryHandler
+              .buildMicroServiceInstances(serviceID, microservice, serviceCombDiscoveryProperties);
           instanceID = serviceCombClient.registerInstance(microserviceInstance);
-          if (!instanceID.isEmpty()) {
+          if (null != instanceID) {
             break;
           }
         }
       } catch (ServiceCombException e) {
         LOGGER.warn("register failed, will retry. please check config file. message=" + e.getMessage());
       }
-      try {
-        Thread.sleep(10 * 1000);//TODO exact to config
-      } catch (InterruptedException e) {
-        LOGGER.warn("thread interrupted.");
-      }
+      delay();
     }
-    LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
-    heartbeat(serviceID, instanceID);
   }
 
-  @Override
+  private void delay() {
+    try {
+      Thread.sleep(10 * 1000);//TODO exact to config
+    } catch (InterruptedException e) {
+      LOGGER.warn("thread interrupted.");
+    }
+  }
+
+  @Override//TODO
   public void deregister(ServiceCombRegistration registration) {
-
-  }
-
-  private MicroserviceInstance buildMicroServiceInstances(String serviceID, Microservice microservice) {
-    MicroserviceInstance microserviceInstance = buildInstance(serviceID);
-    List<MicroserviceInstance> instances = new ArrayList<>();
-    instances.add(microserviceInstance);
-    microservice.setInstances(instances);
-    microservice.setStatus(MicroserviceStatus.UP);
-    return microserviceInstance;
-  }
-
-  private void heartbeat(String serviceID, String instanceID) {
-    TaskScheduler scheduler = new ConcurrentTaskScheduler(Executors.newSingleThreadScheduledExecutor());
-    HeartbeatRequest heartbeatRequest = new HeartbeatRequest(serviceID, instanceID);
-    scheduler.scheduleWithFixedDelay(new HeartbeatTask(heartbeatRequest, serviceCombClient), 10000);
-  }
-
-  private MicroserviceInstance buildInstance(String serviceID) {
-    MicroserviceInstance microserviceInstance = new MicroserviceInstance();
-    microserviceInstance.setServiceId(serviceID);
-    microserviceInstance.setHostName(NetUtil.getLocalHost());//TODO
-    List<String> endPoints = new ArrayList<>();
-    endPoints.add("http://127.0.0.1:8080");//TODO
-    microserviceInstance.setEndpoints(endPoints);
-    HealthCheck healthCheck = new HealthCheck();
-    healthCheck.setMode(HealthCheckMode.PLATFORM);
-    healthCheck.setInterval(3000);
-    healthCheck.setTimes(3);
-    microserviceInstance.setHealthCheck(healthCheck);
-    return microserviceInstance;
-  }
-
-  private Microservice buildMicroservice(ServiceCombRegistration registration) {
-    Microservice microservice = new Microservice();
-    microservice.setAppId(registration.getAppName());
-    microservice.setServiceName(registration.getServiceId());
-    microservice.setVersion(registration.getVersion());
-    return microservice;
+    heartbeatScheduler.remove(registration.getInstanceId());
   }
 
 
@@ -134,12 +102,12 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     LOGGER.info("close");
   }
 
-  @Override
+  @Override//TODO
   public void setStatus(ServiceCombRegistration registration, String status) {
 
   }
 
-  @Override
+  @Override//TODO
   public <T> T getStatus(ServiceCombRegistration registration) {
     return null;
   }

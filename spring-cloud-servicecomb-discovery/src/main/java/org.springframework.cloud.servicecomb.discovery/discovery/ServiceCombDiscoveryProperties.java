@@ -17,6 +17,7 @@
 
 package org.springframework.cloud.servicecomb.discovery.discovery;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
 import org.springframework.stereotype.Component;
@@ -44,9 +45,14 @@ public class ServiceCombDiscoveryProperties {
 
   private boolean preferIpAddress;
 
-  private boolean healthCheck;
+  private boolean healthCheck = true;
 
-  private String healthCheckInterval;
+  private int healthCheckInterval;
+
+  private boolean autoDiscovery = false;
+
+  @Value("${server.port}")
+  private String port;
 
   public String getAppName() {
     if (null == appName) {
@@ -115,12 +121,31 @@ public class ServiceCombDiscoveryProperties {
     this.healthCheck = healthCheck;
   }
 
-  public String getHealthCheckInterval() {
+  public int getHealthCheckInterval() {
+    if (healthCheckInterval == 0) {
+      healthCheckInterval = ServiceRegistryConfig.DEFAULT_HEALTHCHECK_INTERVAL;
+    }
     return healthCheckInterval;
   }
 
-  public void setHealthCheckInterval(String healthCheckInterval) {
+  public void setHealthCheckInterval(int healthCheckInterval) {
     this.healthCheckInterval = healthCheckInterval;
+  }
+
+  public boolean isAutoDiscovery() {
+    return autoDiscovery;
+  }
+
+  public void setAutoDiscovery(boolean autoDiscovery) {
+    this.autoDiscovery = autoDiscovery;
+  }
+
+  public String getPort() {
+    return port;
+  }
+
+  public void setPort(String port) {
+    this.port = port;
   }
 
   @Override

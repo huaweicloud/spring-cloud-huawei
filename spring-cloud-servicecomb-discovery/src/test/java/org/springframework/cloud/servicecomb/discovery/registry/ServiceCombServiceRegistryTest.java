@@ -17,21 +17,14 @@
 
 package org.springframework.cloud.servicecomb.discovery.registry;
 
-import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
 import org.springframework.cloud.servicecomb.discovery.client.exception.ServiceCombException;
 import org.springframework.cloud.servicecomb.discovery.client.model.Microservice;
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstance;
-import org.springframework.cloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 
-import mockit.Expectations;
 import mockit.Injectable;
-import mockit.Mock;
-import mockit.Mocked;
 import mockit.Tested;
-import mockit.Verifications;
 
 /**
  * @Author wangqijun
@@ -44,20 +37,15 @@ public class ServiceCombServiceRegistryTest {
 
   @Test
   public void register(@Injectable ServiceCombClient serviceCombClient,
-      @Injectable MicroserviceInstance microserviceInstance)
+      @Injectable MicroserviceInstance microserviceInstance, @Injectable Microservice microservice,
+      @Injectable ServiceCombRegistration registration)
       throws ServiceCombException {
-//    Microservice microservice =new Microservice();
-//    microservice.setAppId("test");
-//    microservice.setServiceName("testservice");
-//    microservice.setVersion("0.1");
-//    ServiceCombDiscoveryProperties serviceCombDiscoveryProperties =new ServiceCombDiscoveryProperties();
-//    serviceCombDiscoveryProperties.setAppName("test");
-//    serviceCombDiscoveryProperties.setServiceName("testservice");
-//    serviceCombDiscoveryProperties.setVersion("0.1");
-//    ServiceCombRegistration registration =new ServiceCombRegistration(serviceCombDiscoveryProperties);
 //    new Expectations() {
 //      {
-//        serviceCombClient.getMicroserviceID(microservice);
+//        new ServiceCombServiceRegistry(serviceCombClient,h);
+//        result=serviceCombServiceRegistry;
+//
+//        serviceCombClient.getServiceId(microservice);
 //        result = "1";
 //
 //        serviceCombClient.registerInstance(microserviceInstance);
