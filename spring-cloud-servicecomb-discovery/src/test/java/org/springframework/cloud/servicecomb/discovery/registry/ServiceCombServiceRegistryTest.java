@@ -17,66 +17,72 @@
 
 package org.springframework.cloud.servicecomb.discovery.registry;
 
+import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
 import org.springframework.cloud.servicecomb.discovery.client.exception.ServiceCombException;
 import org.springframework.cloud.servicecomb.discovery.client.model.Microservice;
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstance;
+import org.springframework.cloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 
+import mockit.Deencapsulation;
+import mockit.Expectations;
 import mockit.Injectable;
+import mockit.Mocked;
 import mockit.Tested;
+import mockit.Verifications;
+import mockit.integration.junit4.JMockit;
 
 /**
  * @Author wangqijun
  * @Date 10:48 2019-07-19
  **/
+@RunWith(JMockit.class)
 public class ServiceCombServiceRegistryTest {
 
-  @Tested
-  private ServiceCombServiceRegistry serviceCombServiceRegistry;
+  @Injectable
+  ServiceCombClient serviceCombClient;
+
+  @Injectable
+  HeartbeatScheduler heartbeatScheduler;
+
+  @Injectable
+  ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
+
+  @Mocked
+  ServiceCombRegistration registration;
 
   @Test
-  public void register(@Injectable ServiceCombClient serviceCombClient,
-      @Injectable MicroserviceInstance microserviceInstance, @Injectable Microservice microservice,
-      @Injectable ServiceCombRegistration registration)
-      throws ServiceCombException {
-//    new Expectations() {
-//      {
-//        new ServiceCombServiceRegistry(serviceCombClient,h);
-//        result=serviceCombServiceRegistry;
-//
-//        serviceCombClient.getServiceId(microservice);
-//        result = "1";
-//
-//        serviceCombClient.registerInstance(microserviceInstance);
-//        result = "2";
-//
-//      }
-//    };
-//
-//    serviceCombServiceRegistry.register(registration);
-//    new Verifications() {
-//      {
-//        serviceCombServiceRegistry.register(registration);
-//
-//        times = 1;
-//      }
-//    };
+  public void hasRegisterMicroservice() throws ServiceCombException {
+    new Expectations() {
+      {
+        serviceCombClient.getServiceId((Microservice) any);
+        result = "1";
+
+        serviceCombClient.registerInstance((MicroserviceInstance) any);
+        result = "2";
+      }
+    };
+    ServiceCombServiceRegistry serviceCombServiceRegistry = new ServiceCombServiceRegistry(serviceCombClient,
+        heartbeatScheduler, serviceCombDiscoveryProperties);
+    serviceCombServiceRegistry.register(registration);
+    Assert.assertEquals(serviceCombServiceRegistry.getInstanceID(), "2");
+    Assert.assertEquals(serviceCombServiceRegistry.getServiceID(), "1");
   }
 
   @Test
-  public void deregister() {
-  }
-
-  @Test
-  public void close() {
-  }
-
-  @Test
-  public void setStatus() {
-  }
-
-  @Test
-  public void getStatus() {
+  public void neverRegisterMicroservice() throws ServiceCombException {
+    new Expectations() {
+      {
+        serviceCombClient.registerMicroservice((Microservice) any);
+        result = "4";
+      }
+    };
+    ServiceCombServiceRegistry serviceCombServiceRegistry = new ServiceCombServiceRegistry(serviceCombClient,
+        heartbeatScheduler, serviceCombDiscoveryProperties);
+    serviceCombServiceRegistry.register(registration);
+    Assert.assertEquals(serviceCombServiceRegistry.getInstanceID(), null);
+    Assert.assertEquals(serviceCombServiceRegistry.getServiceID(), "4");
   }
 }
