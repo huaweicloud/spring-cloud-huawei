@@ -1,3 +1,4 @@
+[![Coverage Status](https://coveralls.io/repos/github/huaweicloud/spring-cloud-huawei/badge.svg)](https://coveralls.io/github/huaweicloud/spring-cloud-huawei)
 # spring-cloud-huawei
 
 This is a library, in order to make the spring cloud and huawei framework very easy to be compatible.
