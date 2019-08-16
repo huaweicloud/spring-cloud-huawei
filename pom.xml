@@ -34,6 +34,7 @@
 
   <properties>
     <spring-cloud.version>2.1.2.RELEASE</spring-cloud.version>
+    <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
     <httpclient.version>4.5.9</httpclient.version>
     <jackson-databind.version>2.9.9</jackson-databind.version>
     <jmockit.version>1.36</jmockit.version>
@@ -71,7 +72,7 @@
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-cloud.version}</version>
+        <version>${spring-boot.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -104,4 +105,11 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <repositories>
+    <repository>
+      <id>spring-milestone-repo</id>
+      <url>http://repo.spring.io/milestone/</url>
+    </repository>
+  </repositories>
 </project>
