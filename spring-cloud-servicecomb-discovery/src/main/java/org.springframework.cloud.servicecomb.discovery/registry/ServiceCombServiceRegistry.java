@@ -24,6 +24,7 @@ import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
 import org.springframework.cloud.servicecomb.discovery.client.exception.ServiceCombException;
 import org.springframework.cloud.servicecomb.discovery.client.model.Microservice;
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstance;
+import org.springframework.cloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
 import org.springframework.cloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 
 /**
@@ -32,6 +33,7 @@ import org.springframework.cloud.servicecomb.discovery.discovery.ServiceCombDisc
  **/
 
 public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRegistration> {
+
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombServiceRegistry.class);
 
   private ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
@@ -85,7 +87,7 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   private void delay() {
     try {
-      Thread.sleep(10 * 1000);//TODO exact to config
+      Thread.sleep(ServiceRegistryConfig.DEFAULT_DELAY_TIME);
     } catch (InterruptedException e) {
       LOGGER.warn("thread interrupted.");
     }
@@ -110,5 +112,14 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
   @Override//TODO
   public <T> T getStatus(ServiceCombRegistration registration) {
     return null;
+  }
+
+
+  public String getServiceID() {
+    return serviceID;
+  }
+
+  public String getInstanceID() {
+    return instanceID;
   }
 }

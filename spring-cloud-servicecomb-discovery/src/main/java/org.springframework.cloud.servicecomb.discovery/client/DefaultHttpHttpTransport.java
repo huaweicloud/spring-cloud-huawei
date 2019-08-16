@@ -52,7 +52,7 @@ public class DefaultHttpHttpTransport implements HttpTransport {
   private DefaultHttpHttpTransport() {
     //TODO exact constant or config
     RequestConfig config = RequestConfig.custom().setConnectTimeout(5000).setConnectionRequestTimeout(5000)
-        .setSocketTimeout(300000).build();
+        .setSocketTimeout(5000).build();
     PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager();
     manager.setMaxTotal(100);
     manager.setDefaultMaxPerRoute(500);
