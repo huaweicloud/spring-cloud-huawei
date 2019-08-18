@@ -20,7 +20,7 @@ jobs:
         - mvn -B clean package findbugs:findbugs -Dmaven.test.skip=true  -Dmaven.javadoc.skip=true
     - stage: coveralls
       script:
-        - mvn -B clean package -Dmaven.test.skip=true  -Dmaven.javadoc.skip=true
+        - mvn test
     - stage: install
       script:
         - mvn -Prelease-huawei clean install -U  -Dmaven.javadoc.skip=true
