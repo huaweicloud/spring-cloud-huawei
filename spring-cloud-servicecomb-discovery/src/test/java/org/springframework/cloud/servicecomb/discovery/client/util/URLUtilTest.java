@@ -11,6 +11,8 @@ public class URLUtilTest {
 
   @Test
   public void transform() {
+    Assert.assertEquals(URLUtil.transform("rest://aa.com", "http"), "http://aa.com");
+    Assert.assertNull(URLUtil.transform(null, "http"));
   }
 
   @Test
@@ -24,5 +26,7 @@ public class URLUtilTest {
     String url5 = "http://127.0.0.1:3030";
     String url6 = "http://127.0.0.1:3030/";
     Assert.assertTrue(URLUtil.isEquals(url5, url6));
+    Assert.assertFalse(URLUtil.isEquals(null, url6));
+    Assert.assertFalse(URLUtil.isEquals(null, null));
   }
 }
