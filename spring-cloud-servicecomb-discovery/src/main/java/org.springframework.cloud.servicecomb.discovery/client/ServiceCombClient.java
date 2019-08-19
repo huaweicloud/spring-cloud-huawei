@@ -18,6 +18,7 @@
 package org.springframework.cloud.servicecomb.discovery.client;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,11 +32,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.servicecomb.discovery.client.exception.RemoteOperationException;
+import org.springframework.cloud.servicecomb.discovery.client.exception.RemoteServerUnavailableException;
 import org.springframework.cloud.servicecomb.discovery.client.exception.ServiceCombException;
 import org.springframework.cloud.servicecomb.discovery.client.model.HeartbeatRequest;
 import org.springframework.cloud.servicecomb.discovery.client.model.Microservice;
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstance;
+import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstanceResponse;
+import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstanceStatus;
 import org.springframework.cloud.servicecomb.discovery.client.model.Response;
+import org.springframework.cloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
+import org.springframework.cloud.servicecomb.discovery.client.util.URLUtil;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,17 +57,82 @@ public class ServiceCombClient {
 
   private String url;
 
+  private List<String> serviceCenterList = new ArrayList<>();
+
+  private int index = 1;
+
   private HttpTransport httpTransport;
 
-  public ServiceCombClient(String url) {
+  /**
+   * Get a single instance
+   * @param url
+   * @param autoDiscovery
+   */
+  public ServiceCombClient(String url, boolean autoDiscovery) {
     this.url = url;
+    serviceCenterList.add(url);
     httpTransport = DefaultHttpHttpTransport.getInstance();
+    if (autoDiscovery) {
+      try {
+        MicroserviceInstanceResponse microserviceInstanceResponse = getServiceCenterInstances();
+        for (MicroserviceInstance microserviceInstance : microserviceInstanceResponse.getInstances()) {
+          if (microserviceInstance.getEndpoints() == null) {
+            continue;
+          }
+          String endpoint = microserviceInstance.getEndpoints().get(0);
+          if (MicroserviceInstanceStatus.UP == microserviceInstance.getStatus() && !URLUtil.isEquals(url, endpoint)) {
+            serviceCenterList.add(URLUtil.transform(endpoint, "http"));
+          }
+        }
+      } catch (RemoteOperationException e) {
+        LOGGER.error(e.getMessage(), e);
+      }
+    }
   }
-//
-//  public static ServiceCombClient.Builder builder() {
-//    return new ServiceCombClient.Builder();
-//  }
 
+  private String chooseServiceCenterUrl() {
+    int count = serviceCenterList.size();
+    if (count > 0) {
+      String result = serviceCenterList.get(index % count);
+      index++;
+      result = result + "/" + ServiceRegistryConfig.DEFAULT_API_VERSION + "/" + ServiceRegistryConfig.DEFAULT_PROJECT;
+      LOGGER.info("choose service center, result=" + result);
+      return result;
+    }
+    return null;
+  }
+
+  public MicroserviceInstanceResponse getServiceCenterInstances()
+      throws RemoteOperationException {
+    Response response = null;
+    try {
+      response = httpTransport.sendGetRequest(buildURI("/registry/health"));
+      if (response.getStatusCode() == HttpStatus.SC_OK) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        LOGGER.info(response.getContent());
+        MicroserviceInstanceResponse result = objectMapper
+            .readValue(response.getContent(), MicroserviceInstanceResponse.class);
+        return result;
+      } else {
+        throw new RemoteOperationException(
+            "read response failed. status=" + response.getStatusCode() + ";mesage=" + response.getStatusMessage());
+      }
+    } catch (URISyntaxException e) {
+      throw new RemoteOperationException("build url failed.", e);
+    } catch (IOException e) {
+      handleRemoteOperationException(response, e);
+    } catch (RemoteServerUnavailableException e) {
+      handleRemoteOperationException(response, e);
+    }
+    return null;
+  }
+
+  /**
+   * register to service-center
+   * @param microservice
+   * @return
+   * @throws ServiceCombException
+   */
   public String registerMicroservice(Microservice microservice) throws ServiceCombException {
     Response response = null;
     String content = null;
@@ -89,8 +160,13 @@ public class ServiceCombClient {
     return null;
   }
 
-
-  public String getMicroserviceID(Microservice microservice) throws ServiceCombException {
+  /**
+   * query ServiceId
+   * @param microservice
+   * @return
+   * @throws ServiceCombException
+   */
+  public String getServiceId(Microservice microservice) throws ServiceCombException {
     Response response = null;
     try {
       response = httpTransport.sendGetRequest(buildURI("/registry/existence", "microservice", microservice));
@@ -99,6 +175,9 @@ public class ServiceCombClient {
         LOGGER.info(response.getContent());
         HashMap<String, String> result = objectMapper.readValue(response.getContent(), HashMap.class);
         return result.get("serviceId");
+      } else if (response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
+        LOGGER.info(response.getStatusMessage());
+        return null;
       } else {
         throw new RemoteOperationException(
             "read response failed. status=" + response.getStatusCode() + ";mesage=" + response.getStatusMessage());
@@ -111,7 +190,12 @@ public class ServiceCombClient {
     return null;
   }
 
-
+  /**
+   *
+   * @param microserviceInstance
+   * @return
+   * @throws ServiceCombException
+   */
   public String registerInstance(MicroserviceInstance microserviceInstance)
       throws ServiceCombException {
     Response response = null;
@@ -120,8 +204,9 @@ public class ServiceCombClient {
       objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
       String content = objectMapper.writeValueAsString(microserviceInstance);
       StringEntity stringEntity = new StringEntity(content, "utf-8");
+      String formatUrl = buildURI("/registry/microservices/" + microserviceInstance.getServiceId() + "/instances");
       response = httpTransport
-          .sendPostRequest(buildURI("/registry/microservices/" + microserviceInstance.getServiceId() + "/instances"),
+          .sendPostRequest(formatUrl,
               stringEntity);
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.info(response.getContent());
@@ -129,7 +214,8 @@ public class ServiceCombClient {
         return result.get("instanceId");
       } else {
         throw new RemoteOperationException(
-            "read response failed. status=" + response.getStatusCode() + ";mesage=" + response.getStatusMessage());
+            "read response failed. url=" + formatUrl + "status=" + response.getStatusCode() + ";mesage=" + response
+                .getStatusMessage());
       }
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
@@ -139,6 +225,12 @@ public class ServiceCombClient {
     return null;
   }
 
+  /**
+   * query instances of one service
+   * @param microservice
+   * @return
+   * @throws ServiceCombException
+   */
   public List<ServiceInstance> getInstances(Microservice microservice)
       throws ServiceCombException {
     List<ServiceInstance> instanceList = new ArrayList<>();
@@ -152,17 +244,18 @@ public class ServiceCombClient {
         Microservice result = objectMapper.readValue(response.getContent(), Microservice.class);
         for (MicroserviceInstance instance : result.getInstances()) {
           int port;
+          String host;
           if (!instance.getEndpoints().isEmpty()) {
             String endpoint = instance.getEndpoints().get(0);
-            URIBuilder endpointURIBuilder = new URIBuilder(endpoint);
-            port = endpointURIBuilder.build().getPort();
+            URI endpointURIBuilder = new URIBuilder(endpoint).build();
+            port = endpointURIBuilder.getPort();
+            host = endpointURIBuilder.getHost();
           } else {
             throw new RemoteOperationException(
                 "read response failed. status=" + response.getStatusCode() + ";mesage=" + response.getStatusMessage());
           }
-          //instance.getHostName() TODO
           instanceList.add(
-              new DefaultServiceInstance(instance.getInstanceId(), instance.getServiceId(), "127.0.0.1", port, false));
+              new DefaultServiceInstance(instance.getInstanceId(), instance.getServiceId(), host, port, false));
         }
       } else {
         throw new RemoteOperationException(
@@ -176,6 +269,11 @@ public class ServiceCombClient {
     return instanceList;
   }
 
+  /**
+   *
+   * @param heartbeatRequest
+   * @throws ServiceCombException
+   */
   public void heartbeat(HeartbeatRequest heartbeatRequest) throws ServiceCombException {
     Response response = null;
     try {
@@ -197,12 +295,12 @@ public class ServiceCombClient {
   }
 
   private String buildURI(String path) throws URISyntaxException {
-    URIBuilder uriBuilder = new URIBuilder(url + path);
+    URIBuilder uriBuilder = new URIBuilder(chooseServiceCenterUrl() + path);
     return uriBuilder.build().toString();
   }
 
   private String buildURI(String path, String type, Microservice microservice) throws URISyntaxException {
-    URIBuilder uriBuilder = new URIBuilder(url + path);
+    URIBuilder uriBuilder = new URIBuilder(chooseServiceCenterUrl() + path);
     if (null != type) {
       uriBuilder.setParameter("type", "microservice");
     }
@@ -212,31 +310,17 @@ public class ServiceCombClient {
     return uriBuilder.build().toString();
   }
 
-
-  private void handleRemoteOperationException(Response response, IOException e) throws RemoteOperationException {
+  /**
+   * Merge message
+   * @param response
+   * @param e
+   * @throws RemoteOperationException
+   */
+  private void handleRemoteOperationException(Response response, Exception e) throws RemoteOperationException {
     String message = "read response failed. ";
     if (null != response) {
       message = message + response;
     }
     throw new RemoteOperationException(message, e);
   }
-
-//
-//  public static final class Builder {
-//
-//    private String address;
-//
-//    private Builder() {
-//    }
-//    public ServiceCombClient build() {
-//      String url = address + "/" + ServiceRegistryConfig.DEFAULT_API_VERSION + "/"
-//          + ServiceRegistryConfig.DEFAULT_PROJECT;
-//      return new ServiceCombClientBuilder().setUrl(url).createServiceCombClient();
-//    }
-//
-//    public ServiceCombClient.Builder setAddress(String address) {
-//      this.address = address;
-//      return this;
-//    }
-//  }
 }

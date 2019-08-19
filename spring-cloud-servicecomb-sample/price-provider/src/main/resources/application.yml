@@ -11,3 +11,5 @@ spring:
         address: http://127.0.0.1:30300
         serviceName: price
         version: 0.0.1
+        healthCheckInterval: 30
+        autoDiscovery: true

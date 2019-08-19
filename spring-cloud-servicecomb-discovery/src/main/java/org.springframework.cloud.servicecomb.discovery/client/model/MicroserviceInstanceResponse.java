@@ -17,9 +17,21 @@
 
 package org.springframework.cloud.servicecomb.discovery.client.model;
 
+import java.util.List;
+
 /**
  * @Author wangqijun
  * @Date 10:50 2019-07-11
  **/
 public class MicroserviceInstanceResponse {
+  private List<MicroserviceInstance> instances;
+
+  public List<MicroserviceInstance> getInstances() {
+    return instances;
+  }
+
+  public void setInstances(
+      List<MicroserviceInstance> instances) {
+    this.instances = instances;
+  }
 }

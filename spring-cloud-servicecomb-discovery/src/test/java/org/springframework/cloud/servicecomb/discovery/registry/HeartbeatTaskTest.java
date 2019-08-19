@@ -18,28 +18,29 @@
 package org.springframework.cloud.servicecomb.discovery.registry;
 
 import org.junit.Test;
+import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
+import org.springframework.cloud.servicecomb.discovery.client.exception.ServiceCombException;
+import org.springframework.cloud.servicecomb.discovery.client.model.HeartbeatRequest;
 
 import mockit.Expectations;
-import mockit.Mocked;
+import mockit.Injectable;
+import mockit.Tested;
 
 /**
  * @Author wangqijun
  * @Date 16:26 2019-07-18
  **/
 public class HeartbeatTaskTest {
-  //  @Mocked
-//  HeartbeatRequest heartbeatRequest;
-//  @Mocked
-//  ServiceCombClient serviceCombClient;
-  @Mocked
+  @Tested
   HeartbeatTask heartbeatTask;
 
-
   @Test
-  void run() {
+  public void run(@Injectable HeartbeatRequest heartbeatRequest, @Injectable ServiceCombClient serviceCombClient)
+      throws ServiceCombException {
     new Expectations() {
       {
-        heartbeatTask.run();
+        new HeartbeatTask(heartbeatRequest, serviceCombClient);
+        result = heartbeatTask;
       }
     };
     heartbeatTask.run();

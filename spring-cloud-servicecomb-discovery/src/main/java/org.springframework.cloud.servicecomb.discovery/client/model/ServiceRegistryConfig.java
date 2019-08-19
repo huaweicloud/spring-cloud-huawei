@@ -35,4 +35,8 @@ public final class ServiceRegistryConfig {
   public static final String DEFAULT_APPID = "default";
 
   public static final String DEFAULT_CALL_VERSION = "latest";
+
+  public static final int DEFAULT_HEALTHCHECK_INTERVAL = 10;
+
+  public static final int DEFAULT_DELAY_TIME = 10 * 1000;
 }

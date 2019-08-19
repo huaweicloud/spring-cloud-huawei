@@ -17,8 +17,6 @@
 
 package org.springframework.cloud.servicecomb.discovery.discovery;
 
-import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,13 +36,11 @@ import mockit.Tested;
  * @Author wangqijun
  * @Date 09:57 2019-07-31
  **/
+
 public class ServiceCombDiscoveryClientTest {
 
   @Tested
   ServiceCombDiscoveryClient serviceCombDiscoveryClient;
-
-  @Mocked
-  ServiceCombClient serviceCombClient;
 
   @Mocked
   ServiceCombDiscoveryProperties discoveryProperties;
@@ -54,26 +50,26 @@ public class ServiceCombDiscoveryClientTest {
 
   @Test
   public void getInstances(@Injectable ServiceCombClient serviceCombClient,
-      @Injectable ServiceCombDiscoveryProperties discoveryProperties, @Injectable Microservice microservice)
+      @Injectable ServiceCombDiscoveryProperties discoveryProperties, @Injectable Microservice microservice,
+      @Mocked final MicroserviceHandler microserviceHandler)
       throws ServiceCombException {
+    ServiceCombDiscoveryProperties serviceCombDiscoveryProperties = new ServiceCombDiscoveryProperties();
+    serviceCombDiscoveryProperties.setAppName("test");
+    serviceCombDiscoveryProperties.setServiceName("testservice");
+    serviceCombDiscoveryProperties.setVersion("latest");
+    List<ServiceInstance> serviceInstanceList = new ArrayList<>();
+    serviceInstanceList.add(
+        new DefaultServiceInstance("111", "1", "127.0.0.1", 1000, false));
     new Expectations(MicroserviceHandler.class) {
       {
-        ServiceCombDiscoveryProperties serviceCombDiscoveryProperties = new ServiceCombDiscoveryProperties();
-        serviceCombDiscoveryProperties.setAppName("test");
-        serviceCombDiscoveryProperties.setServiceName("testservice");
-        serviceCombDiscoveryProperties.setVersion("0.1");
-
         new ServiceCombDiscoveryClient(serviceCombDiscoveryProperties);
         result = serviceCombDiscoveryClient;
-//        List<ServiceInstance> serviceInstanceList=new ArrayList<>();
-//        serviceInstanceList.add(
-//            new DefaultServiceInstance("111", "1", "127.0.0.1", 1000, false));
 //        serviceCombClient.getInstances(microservice);
 //        result = serviceInstanceList;
-//        MicroserviceHandler.getInstances(serviceCombDiscoveryProperties,"testservice",serviceCombClient);
+//        microserviceHandler.getInstances(serviceCombDiscoveryProperties,microservice,serviceCombClient);
 //        result = serviceInstanceList;
       }
     };
-    serviceCombDiscoveryClient.getInstances("1");
+    serviceCombDiscoveryClient.getInstances("testservice");
   }
 }

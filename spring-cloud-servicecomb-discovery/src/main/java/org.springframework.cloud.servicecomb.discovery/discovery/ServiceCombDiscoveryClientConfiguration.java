@@ -53,7 +53,7 @@ public class ServiceCombDiscoveryClientConfiguration {
   @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.enabled", matchIfMissing = true)
   public ServiceCombClient serviceCombClient(ServiceCombDiscoveryProperties serviceCombProperties) {
     ServiceCombClientBuilder builder = new ServiceCombClientBuilder();
-    builder.setUrl(serviceCombProperties.getAddress());
+    builder.setUrl(serviceCombProperties.getAddress()).setAutoDiscovery(serviceCombProperties.isAutoDiscovery());
     return builder.createServiceCombClient();
   }
 

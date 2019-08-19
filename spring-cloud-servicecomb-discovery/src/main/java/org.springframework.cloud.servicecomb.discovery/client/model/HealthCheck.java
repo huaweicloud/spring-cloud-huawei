@@ -18,8 +18,6 @@
 package org.springframework.cloud.servicecomb.discovery.client.model;
 
 
-import java.io.Serializable;
-
 /**
  * @Author wangqijun
  * @Date 10:19 2019-07-09

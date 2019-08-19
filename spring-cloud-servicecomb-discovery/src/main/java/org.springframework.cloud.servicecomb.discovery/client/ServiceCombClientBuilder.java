@@ -17,8 +17,6 @@
 
 package org.springframework.cloud.servicecomb.discovery.client;
 
-import org.springframework.cloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
-
 /**
  * @Author wangqijun
  * @Date 10:49 2019-07-08
@@ -27,13 +25,28 @@ import org.springframework.cloud.servicecomb.discovery.client.model.ServiceRegis
 public class ServiceCombClientBuilder {
   private String url;
 
+  private boolean autoDiscovery;
+
+  /**
+   * registry address, e.g. http://127.0.0.1:30100
+   * @param url registry address
+   * @return
+   */
   public ServiceCombClientBuilder setUrl(String url) {
     this.url = url;
     return this;
   }
 
+  public ServiceCombClientBuilder setAutoDiscovery(boolean autoDiscovery) {
+    this.autoDiscovery = autoDiscovery;
+    return this;
+  }
+
+  /**
+   * create ServiceComb-Service-Center client, ServiceCombClient is singleton.
+   * @return
+   */
   public ServiceCombClient createServiceCombClient() {
-    url = url + "/" + ServiceRegistryConfig.DEFAULT_API_VERSION + "/" + ServiceRegistryConfig.DEFAULT_PROJECT;
-    return new ServiceCombClient(url);
+    return new ServiceCombClient(url, autoDiscovery);
   }
 }

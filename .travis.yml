@@ -1,0 +1,19 @@
+language: java
+
+jdk:
+  - openjdk8
+
+before_install:
+  - echo 'MAVEN_OPTS="$MAVEN_OPTS -Xmx1024m -XX:MaxPermSize=512m -XX:+BytecodeVerificationLocal"' >> ~/.mavenrc
+  - cat ~/.mavenrc
+
+jobs:
+  include:
+    - stage: findbugs
+      script:
+        - mvn -B clean package findbugs:findbugs -Dmaven.test.skip=true  -Dmaven.javadoc.skip=true
+    - stage: install
+      script:
+        - mvn -Prelease-huawei install -U  -Dmaven.javadoc.skip=true
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
