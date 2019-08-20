@@ -18,6 +18,7 @@
 package org.springframework.cloud.servicecomb.discovery.client;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.springframework.cloud.servicecomb.discovery.client.exception.RemoteServerUnavailableException;
 import org.springframework.cloud.servicecomb.discovery.client.model.Response;
 
@@ -26,6 +27,8 @@ import org.springframework.cloud.servicecomb.discovery.client.model.Response;
  * @Date 11:22 2019-07-08
  **/
 public interface HttpTransport {
+  Response execute(HttpUriRequest httpRequest) throws RemoteServerUnavailableException;
+
   Response sendGetRequest(String url) throws RemoteServerUnavailableException;
 
   Response sendPutRequest(String url, HttpEntity httpEntity) throws RemoteServerUnavailableException;

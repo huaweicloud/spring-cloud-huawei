@@ -47,6 +47,7 @@ public class ServiceCombClientBuilder {
    * @return
    */
   public ServiceCombClient createServiceCombClient() {
-    return new ServiceCombClient(url, autoDiscovery);
+    DefaultHttpTransport httpTransport = DefaultHttpTransport.getInstance();
+    return new ServiceCombClient(url, httpTransport, autoDiscovery);
   }
 }
