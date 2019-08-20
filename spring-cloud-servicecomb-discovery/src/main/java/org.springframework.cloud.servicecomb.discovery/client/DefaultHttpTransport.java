@@ -41,35 +41,54 @@ import org.springframework.cloud.servicecomb.discovery.client.model.Response;
  * @Author wangqijun
  * @Date 11:21 2019-07-08
  **/
-public class DefaultHttpHttpTransport implements HttpTransport {
+public class DefaultHttpTransport implements HttpTransport {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(DefaultHttpHttpTransport.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(DefaultHttpTransport.class);
 
-  private static final DefaultHttpHttpTransport DEFAULT_HTTP_TRANSPORT = new DefaultHttpHttpTransport();
+  private static final DefaultHttpTransport DEFAULT_HTTP_TRANSPORT = new DefaultHttpTransport();
+
+  public static final int CONNECT_TIMEOUT = 5000;
+
+  public static final int CONNECTION_REQUEST_TIMEOUT = 5000;
+
+  public static final int SOCKET_TIMEOUT = 5000;
+
+  public static final int MAX_TOTAL = 1000;
+
+  public static final int DEFAULT_MAX_PER_ROUTE = 500;
+
+  public static final String X_DOMAIN_NAME = "x-domain-name";
+
+  public static final String DEFAULT_X_DOMAIN_NAME = "default";
+
+  public static final String CONTENT_TYPE = "Content-type";
+
+  public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
 
   private HttpClient httpClient;
 
-  private DefaultHttpHttpTransport() {
-    //TODO exact constant or config
-    RequestConfig config = RequestConfig.custom().setConnectTimeout(5000).setConnectionRequestTimeout(5000)
-        .setSocketTimeout(5000).build();
+  private DefaultHttpTransport() {
+    RequestConfig config = RequestConfig.custom().setConnectTimeout(CONNECT_TIMEOUT).setConnectionRequestTimeout(
+        CONNECTION_REQUEST_TIMEOUT)
+        .setSocketTimeout(SOCKET_TIMEOUT).build();
     PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager();
-    manager.setMaxTotal(100);
-    manager.setDefaultMaxPerRoute(500);
+    manager.setMaxTotal(MAX_TOTAL);
+    manager.setDefaultMaxPerRoute(DEFAULT_MAX_PER_ROUTE);
     HttpClientBuilder httpClientBuilder = HttpClientBuilder.create().setConnectionManager(manager)
         .setDefaultRequestConfig(config);
     this.httpClient = httpClientBuilder.build();
   }
 
-  public static DefaultHttpHttpTransport getInstance() {
+  public static DefaultHttpTransport getInstance() {
     return DEFAULT_HTTP_TRANSPORT;
   }
 
+  @Override
   public Response execute(HttpUriRequest httpRequest) throws RemoteServerUnavailableException {
     Response resp = new Response();
     try {
-      httpRequest.addHeader("x-domain-name", "default");
-      httpRequest.addHeader("Content-type", "application/json");
+      httpRequest.addHeader(X_DOMAIN_NAME, DEFAULT_X_DOMAIN_NAME);
+      httpRequest.addHeader(CONTENT_TYPE, CONTENT_TYPE_APPLICATION_JSON);
       HttpResponse httpResponse = httpClient.execute(httpRequest);
       resp.setStatusCode(httpResponse.getStatusLine().getStatusCode());
       resp.setStatusMessage(httpResponse.getStatusLine().getReasonPhrase());

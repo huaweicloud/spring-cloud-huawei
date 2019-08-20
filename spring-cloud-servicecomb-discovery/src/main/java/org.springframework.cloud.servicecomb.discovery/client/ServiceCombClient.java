@@ -68,10 +68,10 @@ public class ServiceCombClient {
    * @param url
    * @param autoDiscovery
    */
-  public ServiceCombClient(String url, boolean autoDiscovery) {
+  public ServiceCombClient(String url, HttpTransport httpTransport, boolean autoDiscovery) {
     this.url = url;
+    this.httpTransport = httpTransport;
     serviceCenterList.add(url);
-    httpTransport = DefaultHttpHttpTransport.getInstance();
     if (autoDiscovery) {
       try {
         MicroserviceInstanceResponse microserviceInstanceResponse = getServiceCenterInstances();
@@ -106,7 +106,8 @@ public class ServiceCombClient {
       throws RemoteOperationException {
     Response response = null;
     try {
-      response = httpTransport.sendGetRequest(buildURI("/registry/health"));
+      String formatUrl = buildURI("/registry/health");
+      response = httpTransport.sendGetRequest(formatUrl);
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         ObjectMapper objectMapper = new ObjectMapper();
         LOGGER.info(response.getContent());
