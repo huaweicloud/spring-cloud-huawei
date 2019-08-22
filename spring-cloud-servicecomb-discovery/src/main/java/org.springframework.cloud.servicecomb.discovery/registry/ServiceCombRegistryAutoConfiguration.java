@@ -19,6 +19,7 @@ package org.springframework.cloud.servicecomb.discovery.registry;
 
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -26,6 +27,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationAutoConfiguration;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationConfiguration;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationProperties;
+import org.springframework.cloud.client.serviceregistry.ServiceRegistryAutoConfiguration;
 import org.springframework.cloud.servicecomb.discovery.ConditionalOnServiceCombEnabled;
 import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
 import org.springframework.cloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
@@ -41,6 +43,7 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.enabled", matchIfMissing = true)
 @ConditionalOnServiceCombEnabled
 @EnableConfigurationProperties
+@AutoConfigureBefore(ServiceRegistryAutoConfiguration.class)//enable custom auto
 @AutoConfigureAfter({AutoServiceRegistrationConfiguration.class,
     AutoServiceRegistrationAutoConfiguration.class})
 public class ServiceCombRegistryAutoConfiguration {

@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/huaweicloud/spring-cloud-huawei.svg?branch=master)](https://travis-ci.org/huaweicloud/spring-cloud-huawei)
-[![Coverage Status](https://coveralls.io/repos/github/huaweicloud/spring-cloud-huawei/badge.svg)](https://coveralls.io/github/huaweicloud/spring-cloud-huawei)
+[![Coverage Status](https://coveralls.io/repos/github/huaweicloud/spring-cloud-huawei/badge.svg?branch=master)](https://coveralls.io/github/huaweicloud/spring-cloud-huawei?branch=master)
 # spring-cloud-huawei
 
 This is a library, in order to make the spring cloud and huawei framework very easy to be compatible.

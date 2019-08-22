@@ -1,12 +1,9 @@
 package org.springframework.cloud.servicecomb.discovery.registry;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
 import org.springframework.cloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 
-import mockit.Expectations;
 import mockit.Injectable;
 
 /**
@@ -23,14 +20,7 @@ public class HeartbeatSchedulerTest {
 
   @Test
   public void addAndRemove() {
-    new Expectations() {
-      {
-        serviceCombDiscoveryProperties.isHealthCheck();
-        result = true;
-        serviceCombDiscoveryProperties.getHealthCheckInterval();
-        result = 10;
-      }
-    };
+    serviceCombDiscoveryProperties.setHealthCheckInterval(10);
     HeartbeatScheduler heartbeatScheduler = new HeartbeatScheduler(serviceCombDiscoveryProperties, serviceCombClient);
     heartbeatScheduler.add("11", "22");
     heartbeatScheduler.remove("11");

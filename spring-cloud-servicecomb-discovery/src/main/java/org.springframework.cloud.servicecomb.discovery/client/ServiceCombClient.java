@@ -37,8 +37,9 @@ import org.springframework.cloud.servicecomb.discovery.client.exception.ServiceC
 import org.springframework.cloud.servicecomb.discovery.client.model.HeartbeatRequest;
 import org.springframework.cloud.servicecomb.discovery.client.model.Microservice;
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstance;
-import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstanceResponse;
+import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstanceSingleResponse;
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstanceStatus;
+import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstancesResponse;
 import org.springframework.cloud.servicecomb.discovery.client.model.Response;
 import org.springframework.cloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
 import org.springframework.cloud.servicecomb.discovery.client.util.URLUtil;
@@ -59,7 +60,7 @@ public class ServiceCombClient {
 
   private List<String> serviceCenterList = new ArrayList<>();
 
-  private int index = 1;
+  private long index = 0;
 
   private HttpTransport httpTransport;
 
@@ -74,8 +75,8 @@ public class ServiceCombClient {
     serviceCenterList.add(url);
     if (autoDiscovery) {
       try {
-        MicroserviceInstanceResponse microserviceInstanceResponse = getServiceCenterInstances();
-        for (MicroserviceInstance microserviceInstance : microserviceInstanceResponse.getInstances()) {
+        MicroserviceInstancesResponse microserviceInstancesResponse = getServiceCenterInstances();
+        for (MicroserviceInstance microserviceInstance : microserviceInstancesResponse.getInstances()) {
           if (microserviceInstance.getEndpoints() == null) {
             continue;
           }
@@ -93,7 +94,7 @@ public class ServiceCombClient {
   private String chooseServiceCenterUrl() {
     int count = serviceCenterList.size();
     if (count > 0) {
-      String result = serviceCenterList.get(index % count);
+      String result = serviceCenterList.get((int) (index % count));
       index++;
       result = result + "/" + ServiceRegistryConfig.DEFAULT_API_VERSION + "/" + ServiceRegistryConfig.DEFAULT_PROJECT;
       LOGGER.info("choose service center, result=" + result);
@@ -102,7 +103,7 @@ public class ServiceCombClient {
     return null;
   }
 
-  public MicroserviceInstanceResponse getServiceCenterInstances()
+  public MicroserviceInstancesResponse getServiceCenterInstances()
       throws RemoteOperationException {
     Response response = null;
     try {
@@ -110,9 +111,9 @@ public class ServiceCombClient {
       response = httpTransport.sendGetRequest(formatUrl);
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         ObjectMapper objectMapper = new ObjectMapper();
-        LOGGER.info(response.getContent());
-        MicroserviceInstanceResponse result = objectMapper
-            .readValue(response.getContent(), MicroserviceInstanceResponse.class);
+        MicroserviceInstancesResponse result = objectMapper
+            .readValue(response.getContent(), MicroserviceInstancesResponse.class);
+        LOGGER.info("getServiceCenterInstances result=" + result);
         return result;
       } else {
         throw new RemoteOperationException(
@@ -227,6 +228,32 @@ public class ServiceCombClient {
   }
 
   /**
+   *  deRegister Instance
+   * @param serviceId
+   * @param instanceId
+   * @throws ServiceCombException
+   */
+  public boolean deRegisterInstance(String serviceId, String instanceId)
+      throws ServiceCombException {
+    Response response = null;
+    try {
+      String formatUrl = buildURI("/registry/microservices/" + serviceId + "/instances/" + instanceId);
+      response = httpTransport
+          .sendDeleteRequest(formatUrl);
+      if (response.getStatusCode() == HttpStatus.SC_OK) {
+        LOGGER.info("deRegister success.");
+        return true;
+      } else {
+        throw new RemoteOperationException(
+            "deRegister failed. url=" + formatUrl + "status=" + response.getStatusCode() + ";mesage=" + response
+                .getStatusMessage());
+      }
+    } catch (URISyntaxException e) {
+      throw new RemoteOperationException("build url failed.", e);
+    }
+  }
+
+  /**
    * query instances of one service
    * @param microservice
    * @return
@@ -270,6 +297,29 @@ public class ServiceCombClient {
     return instanceList;
   }
 
+  public MicroserviceInstanceSingleResponse getInstance(String serviceId, String instanceId)
+      throws ServiceCombException {
+    MicroserviceInstanceSingleResponse result = null;
+    Response response = null;
+    try {
+      response = httpTransport
+          .sendGetRequest(buildURI("/registry/microservices/" + serviceId + "/instances/" + instanceId));
+      if (response.getStatusCode() == HttpStatus.SC_OK) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        LOGGER.info(response.getContent());
+        result = objectMapper.readValue(response.getContent(), MicroserviceInstanceSingleResponse.class);
+      } else {
+        throw new RemoteOperationException(
+            "read response failed. status=" + response.getStatusCode() + ";mesage=" + response.getStatusMessage());
+      }
+    } catch (URISyntaxException e) {
+      throw new RemoteOperationException("build url failed.", e);
+    } catch (IOException e) {
+      handleRemoteOperationException(response, e);
+    }
+    return result;
+  }
   /**
    *
    * @param heartbeatRequest
@@ -292,6 +342,26 @@ public class ServiceCombClient {
       throw new RemoteOperationException("build url failed.", e);
     } catch (IOException e) {
       handleRemoteOperationException(response, e);
+    }
+  }
+
+  public boolean updateInstanceStatus(String serviceId, String instanceId, String status) throws ServiceCombException {
+    Response response = null;
+    try {
+      StringEntity stringEntity = new StringEntity("", "utf-8");
+      response = httpTransport.sendPutRequest(
+          buildURI("/registry/microservices/" + serviceId + "/instances/" + instanceId + "/status?value=" + status),
+          stringEntity);
+      if (response.getStatusCode() == HttpStatus.SC_OK) {
+        LOGGER.info(" update instance status success.");
+        return true;
+      } else {
+        throw new RemoteOperationException(
+            "update instance status failed. status=" + response.getStatusCode() + ";mesage=" + response
+                .getStatusMessage());
+      }
+    } catch (URISyntaxException e) {
+      throw new RemoteOperationException("build url failed.", e);
     }
   }
 
