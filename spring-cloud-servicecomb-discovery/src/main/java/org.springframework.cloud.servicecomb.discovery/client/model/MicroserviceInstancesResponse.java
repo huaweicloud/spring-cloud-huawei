@@ -23,7 +23,7 @@ import java.util.List;
  * @Author wangqijun
  * @Date 10:50 2019-07-11
  **/
-public class MicroserviceInstanceResponse {
+public class MicroserviceInstancesResponse {
   private List<MicroserviceInstance> instances;
 
   public List<MicroserviceInstance> getInstances() {

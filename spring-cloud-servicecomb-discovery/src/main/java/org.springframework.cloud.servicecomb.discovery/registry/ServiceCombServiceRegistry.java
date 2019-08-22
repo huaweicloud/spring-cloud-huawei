@@ -24,6 +24,7 @@ import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
 import org.springframework.cloud.servicecomb.discovery.client.exception.ServiceCombException;
 import org.springframework.cloud.servicecomb.discovery.client.model.Microservice;
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstance;
+import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstanceSingleResponse;
 import org.springframework.cloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
 import org.springframework.cloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 
@@ -93,9 +94,14 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     }
   }
 
-  @Override//TODO
+  @Override
   public void deregister(ServiceCombRegistration registration) {
-    heartbeatScheduler.remove(registration.getInstanceId());
+    heartbeatScheduler.remove(instanceID);
+    try {
+      serviceCombClient.deRegisterInstance(serviceID, instanceID);
+    } catch (ServiceCombException e) {
+      LOGGER.error("deRegisterInstance failed", e);
+    }
   }
 
 
@@ -104,13 +110,26 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     LOGGER.info("close");
   }
 
-  @Override//TODO
+  @Override
   public void setStatus(ServiceCombRegistration registration, String status) {
+    try {
+      serviceCombClient.updateInstanceStatus(serviceID, instanceID, status);
+    } catch (ServiceCombException e) {
+      LOGGER.error("setStatus failed", e);
+    }
 
   }
 
-  @Override//TODO
-  public <T> T getStatus(ServiceCombRegistration registration) {
+  @Override
+  public String getStatus(ServiceCombRegistration registration) {
+    try {
+      MicroserviceInstanceSingleResponse instance = serviceCombClient.getInstance(serviceID, instanceID);
+      if (instance != null && instance.getInstance() != null) {
+        return instance.getInstance().getStatus().name();
+      }
+    } catch (ServiceCombException e) {
+      LOGGER.error("getStatus failed", e);
+    }
     return null;
   }
 
