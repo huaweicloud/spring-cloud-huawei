@@ -59,7 +59,7 @@ public class ServiceCombDiscoveryClientConfiguration {
 
   @Bean
   public DiscoveryClient serviceCombDiscoveryClient(
-      ServiceCombDiscoveryProperties discoveryProperties) {
-    return new ServiceCombDiscoveryClient(discoveryProperties);
+      ServiceCombDiscoveryProperties discoveryProperties, ServiceCombClient serviceCombClient) {
+    return new ServiceCombDiscoveryClient(discoveryProperties, serviceCombClient);
   }
 }

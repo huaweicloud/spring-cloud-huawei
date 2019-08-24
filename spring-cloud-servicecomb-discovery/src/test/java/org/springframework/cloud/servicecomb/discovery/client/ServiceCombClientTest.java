@@ -15,6 +15,7 @@ import org.springframework.cloud.servicecomb.discovery.client.model.Microservice
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstance;
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstanceSingleResponse;
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstancesResponse;
+import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceResponse;
 import org.springframework.cloud.servicecomb.discovery.client.model.Response;
 
 import mockit.Deencapsulation;
@@ -297,5 +298,70 @@ public class ServiceCombClientTest {
     ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport, autoDiscovery);
     MicroserviceInstanceSingleResponse actual = serviceCombClient.getInstance("1", "2");
     Assert.assertEquals("1", actual.getInstance().getServiceId());
+  }
+
+  @Test
+  public void getServices(@Injectable
+      Boolean autoDiscovery, @Injectable
+      String url, @Injectable
+      HttpTransport httpTransport) throws ServiceCombException, IOException {
+    final int expectedCode = 200;
+    Response response = new Response();
+    response.setStatusCode(expectedCode);
+    String responseString = "{\n"
+        + "  \"services\": [\n"
+        + "    {\n"
+        + "      \"serviceId\": \"string\",\n"
+        + "      \"environment\": \"string\",\n"
+        + "      \"appId\": \"string\",\n"
+        + "      \"serviceName\": \"string\",\n"
+        + "      \"version\": \"string\",\n"
+        + "      \"description\": \"string\",\n"
+        + "      \"level\": \"string\",\n"
+        + "      \"registerBy\": \"string\",\n"
+        + "      \"schemas\": [\n"
+        + "        \"string\"\n"
+        + "      ],\n"
+        + "      \"status\": \"UP\",\n"
+        + "      \"timestamp\": \"string\",\n"
+        + "      \"modTimestamp\": \"string\",\n"
+        + "      \"framework\": {\n"
+        + "        \"name\": \"string\",\n"
+        + "        \"version\": \"string\"\n"
+        + "      },\n"
+        + "      \"paths\": [\n"
+        + "        {\n"
+        + "          \"Path\": \"string\",\n"
+        + "          \"Property\": {\n"
+        + "            \"additionalProp1\": \"string\",\n"
+        + "            \"additionalProp2\": \"string\",\n"
+        + "            \"additionalProp3\": \"string\"\n"
+        + "          }\n"
+        + "        }\n"
+        + "      ],\n"
+        + "      \"properties\": {\n"
+        + "        \"additionalProp1\": \"string\",\n"
+        + "        \"additionalProp2\": \"string\",\n"
+        + "        \"additionalProp3\": \"string\"\n"
+        + "      }\n"
+        + "    }\n"
+        + "  ]\n"
+        + "}";
+
+    response.setContent(responseString);
+
+    autoDiscovery = false;
+
+    new Expectations() {
+      {
+        Deencapsulation.newUninitializedInstance(DefaultHttpTransport.class);
+        result = httpTransport;
+        httpTransport.sendGetRequest(anyString);
+        result = response;
+      }
+    };
+    ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport, autoDiscovery);
+    MicroserviceResponse actual = serviceCombClient.getServices();
+    Assert.assertEquals(1, actual.getServices().size());
   }
 }

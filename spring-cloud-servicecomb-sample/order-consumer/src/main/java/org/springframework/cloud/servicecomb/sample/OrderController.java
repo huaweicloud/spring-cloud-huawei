@@ -3,6 +3,7 @@ package org.springframework.cloud.servicecomb.sample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -16,8 +17,8 @@ public class OrderController {
   @Autowired
   private RestTemplate restTemplate;
 
-  @RequestMapping("/services")
-  public Object services() {
+  @RequestMapping("/instances")
+  public Object instances() {
     return discoveryClient.getInstances("price");
   }
 
@@ -25,5 +26,10 @@ public class OrderController {
   public String getOrder(@RequestParam("id") String id) {
     String callServiceResult = restTemplate.getForObject("http://price/price?id=" + id, String.class);
     return callServiceResult;
+  }
+
+  @RequestMapping(value = "/services", method = RequestMethod.GET)
+  public Object services() {
+    return discoveryClient.getServices();
   }
 }
