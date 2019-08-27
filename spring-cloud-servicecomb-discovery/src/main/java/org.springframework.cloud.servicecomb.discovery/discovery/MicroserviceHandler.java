@@ -40,9 +40,6 @@ public class MicroserviceHandler {
     List<ServiceInstance> instanceList = null;
     try {
       instanceList = serviceCombClient.getInstances(microservice);
-      if (instanceList.isEmpty()) {
-        LOGGER.warn("Can not find regular list...", microservice);
-      }
     } catch (ServiceCombException e) {
       LOGGER.warn("get instances failed.", e);
     }
@@ -54,7 +51,6 @@ public class MicroserviceHandler {
     Microservice microservice = new Microservice();
     microservice.setAppId(serviceCombDiscoveryProperties.getAppName());
     microservice.setServiceName(serviceName);
-    //TODO get from config
     microservice.setVersion(ServiceRegistryConfig.DEFAULT_CALL_VERSION);
     return microservice;
   }

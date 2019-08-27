@@ -29,7 +29,7 @@ import org.springframework.cloud.servicecomb.discovery.discovery.ServiceCombDisc
  * @Author wangqijun
  * @Date 10:49 2019-07-08
  **/
-//TODO
+
 public class ServiceCombRegistration implements Registration, ServiceInstance {
 
   private ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
@@ -64,7 +64,7 @@ public class ServiceCombRegistration implements Registration, ServiceInstance {
     return URI.create(serviceCombDiscoveryProperties.getAddress());
   }
 
-  @Override
+  @Override//TODO
   public Map<String, String> getMetadata() {
     return null;
   }

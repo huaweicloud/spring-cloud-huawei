@@ -27,11 +27,10 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
 import org.springframework.cloud.servicecomb.discovery.client.exception.ServiceCombException;
 import org.springframework.cloud.servicecomb.discovery.client.model.Microservice;
+import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceResponse;
 
-import mockit.Deencapsulation;
 import mockit.Expectations;
 import mockit.Injectable;
-import mockit.Mocked;
 import mockit.Tested;
 
 /**
@@ -41,10 +40,12 @@ import mockit.Tested;
 
 public class ServiceCombDiscoveryClientTest {
 
-  @Injectable
-  ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
+  @Tested
+  ServiceCombDiscoveryClient serviceCombDiscoveryClient;
+
   @Test
-  public void getInstances(@Injectable ServiceCombClient serviceCombClient)
+  public void getInstances(@Injectable ServiceCombClient serviceCombClient,
+      @Injectable ServiceCombDiscoveryProperties serviceCombDiscoveryProperties)
       throws ServiceCombException {
     serviceCombDiscoveryProperties = new ServiceCombDiscoveryProperties();
     serviceCombDiscoveryProperties.setAppName("test");
@@ -66,8 +67,29 @@ public class ServiceCombDiscoveryClientTest {
       }
     };
     ServiceCombDiscoveryClient serviceCombDiscoveryClient = new ServiceCombDiscoveryClient(
-        serviceCombDiscoveryProperties);
+        serviceCombDiscoveryProperties, serviceCombClient);
     List<ServiceInstance> actual = serviceCombDiscoveryClient.getInstances("testservice");
     Assert.assertEquals(1, actual.size());
+  }
+
+  @Test
+  public void getServices(@Injectable ServiceCombClient serviceCombClient,
+      @Injectable ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) throws ServiceCombException {
+    MicroserviceResponse microserviceResponse = new MicroserviceResponse();
+    Microservice microservice = new Microservice();
+    microservice.setServiceName("test");
+    List<Microservice> microserviceList = new ArrayList<>();
+    microserviceList.add(microservice);
+    microserviceResponse.setServices(microserviceList);
+    new Expectations() {
+      {
+        serviceCombClient.getServices();
+        result = microserviceResponse;
+      }
+    };
+    ServiceCombDiscoveryClient serviceCombDiscoveryClient = new ServiceCombDiscoveryClient(
+        serviceCombDiscoveryProperties, serviceCombClient);
+    List<String> actual = serviceCombDiscoveryClient.getServices();
+    Assert.assertEquals(actual.size(), 1);
   }
 }

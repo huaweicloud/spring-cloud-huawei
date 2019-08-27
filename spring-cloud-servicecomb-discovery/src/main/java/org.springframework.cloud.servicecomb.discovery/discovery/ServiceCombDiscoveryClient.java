@@ -17,27 +17,29 @@
 
 package org.springframework.cloud.servicecomb.discovery.discovery;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
+import org.springframework.cloud.servicecomb.discovery.client.exception.ServiceCombException;
 import org.springframework.cloud.servicecomb.discovery.client.model.Microservice;
+import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceResponse;
 
 public class ServiceCombDiscoveryClient implements DiscoveryClient {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombDiscoveryClient.class);
 
-  @Autowired
-  ServiceCombClient serviceCombClient;
+  private ServiceCombClient serviceCombClient;
 
   private ServiceCombDiscoveryProperties discoveryProperties;
 
-  public ServiceCombDiscoveryClient(ServiceCombDiscoveryProperties discoveryProperties) {
+  public ServiceCombDiscoveryClient(ServiceCombDiscoveryProperties discoveryProperties,
+      ServiceCombClient serviceCombClient) {
     this.discoveryProperties = discoveryProperties;
-    LOGGER.info("init ServiceCombDiscoveryClient " + this.discoveryProperties);
+    this.serviceCombClient = serviceCombClient;
   }
 
   @Override
@@ -56,7 +58,20 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient {
 
   @Override
   public List<String> getServices() {
-    //TODO
+    List<String> serviceList = new ArrayList<>();
+    try {
+      MicroserviceResponse microServiceResponse = serviceCombClient
+          .getServices();
+      if (microServiceResponse == null || microServiceResponse.getServices() == null) {
+        return serviceList;
+      }
+      for (Microservice microservice : microServiceResponse.getServices()) {
+        serviceList.add(microservice.getServiceName());
+      }
+      return serviceList;
+    } catch (ServiceCombException e) {
+      LOGGER.error("getServices failed", e);
+    }
     return null;
   }
 }

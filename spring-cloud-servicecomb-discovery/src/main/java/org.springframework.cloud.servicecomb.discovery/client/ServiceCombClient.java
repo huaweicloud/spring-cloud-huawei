@@ -40,6 +40,7 @@ import org.springframework.cloud.servicecomb.discovery.client.model.Microservice
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstanceSingleResponse;
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstanceStatus;
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstancesResponse;
+import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceResponse;
 import org.springframework.cloud.servicecomb.discovery.client.model.Response;
 import org.springframework.cloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
 import org.springframework.cloud.servicecomb.discovery.client.util.URLUtil;
@@ -270,6 +271,9 @@ public class ServiceCombClient {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         LOGGER.info(response.getContent());
         Microservice result = objectMapper.readValue(response.getContent(), Microservice.class);
+        if (result == null || result.getInstances() == null) {
+          return instanceList;
+        }
         for (MicroserviceInstance instance : result.getInstances()) {
           int port;
           String host;
@@ -363,6 +367,29 @@ public class ServiceCombClient {
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
     }
+  }
+
+  public MicroserviceResponse getServices() throws ServiceCombException {
+    MicroserviceResponse result = null;
+    Response response = null;
+    try {
+      response = httpTransport.sendGetRequest(
+          buildURI("/registry/microservices"));
+      if (response.getStatusCode() == HttpStatus.SC_OK) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        LOGGER.info(response.getContent());
+        result = objectMapper.readValue(response.getContent(), MicroserviceResponse.class);
+      } else {
+        throw new RemoteOperationException(
+            "read response failed. status=" + response.getStatusCode() + ";mesage=" + response.getStatusMessage());
+      }
+    } catch (URISyntaxException e) {
+      throw new RemoteOperationException("build url failed.", e);
+    } catch (IOException e) {
+      handleRemoteOperationException(response, e);
+    }
+    return result;
   }
 
   private String buildURI(String path) throws URISyntaxException {
