@@ -378,7 +378,6 @@ public class ServiceCombClient {
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        LOGGER.info(response.getContent());
         result = objectMapper.readValue(response.getContent(), MicroserviceResponse.class);
       } else {
         throw new RemoteOperationException(

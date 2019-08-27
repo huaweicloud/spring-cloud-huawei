@@ -1,5 +1,5 @@
 ## 运行demo
-通过项目中的示例开始实现服务注册发现。spring-cloud-servicecomb-sample下提供了三个工程，用来模拟spring cloud 
+通过项目中的示例开始实现服务注册发现。spring-cloud-huawei-sample/discovery-examples下提供了三个工程，用来模拟spring cloud 
 工程迁移到Apache ServiceComb 的注册中心的场景：
 
 * price-provider：价格服务，服务提供者，RESTful方式提供接口。
