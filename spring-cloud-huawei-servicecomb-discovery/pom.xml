@@ -21,15 +21,22 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>spring-cloud-huawei</artifactId>
-    <groupId>org.springframework.cloud.huawei</groupId>
+    <groupId>org.springframework.cloud</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-
-  <artifactId>spring-cloud-servicecomb-discovery</artifactId>
+  <groupId>org.springframework.cloud</groupId>
+  <artifactId>spring-cloud-huawei-servicecomb-discovery</artifactId>
+  <name>Spring Cloud Huawei servicecomb Discovery</name>
 
   <properties>
-
+    <spring-cloud.version>2.1.2.RELEASE</spring-cloud.version>
+    <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
+    <httpclient.version>4.5.9</httpclient.version>
+    <jackson-databind.version>2.9.9.2</jackson-databind.version>
+    <jmockit.version>1.36</jmockit.version>
+    <junit.version>4.12</junit.version>
+    <servicecomb.version>1.2.0</servicecomb.version>
   </properties>
 
   <dependencies>
@@ -54,25 +61,30 @@
       <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
+      <version>${httpclient.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson-databind.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.servicecomb</groupId>
       <artifactId>foundation-common</artifactId>
+      <version>${servicecomb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jmockit</groupId>
       <artifactId>jmockit</artifactId>
+      <version>${jmockit.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -81,20 +93,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <!--<build>-->
-  <!--<plugins>-->
-  <!--<plugin>-->
-  <!--<artifactId>maven-surefire-plugin</artifactId>-->
-  <!--<configuration>-->
-  <!--<argLine>-javaagent:"${settings.localRepository}/org/jmockit/jmockit/1.36/jmockit-1.36.jar=coverage"</argLine>-->
-  <!--<disableXmlReport>false</disableXmlReport>-->
-  <!--<systemPropertyVariables>-->
-  <!--<coverage-output>html</coverage-output>-->
-  <!--<coverage-outputDir>${project.build.directory}/codecoverage-output</coverage-outputDir>-->
-  <!--<coverage-metrics>all</coverage-metrics>-->
-  <!--</systemPropertyVariables>-->
-  <!--</configuration>-->
-  <!--</plugin>-->
-  <!--</plugins>-->
-  <!--</build>-->
 </project>

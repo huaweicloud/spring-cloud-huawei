@@ -28,15 +28,5 @@ hs_err_pid*
 *.iml
 *.ipr
 *.iws
-#spring-cloud-servicecomb-discovery/src/test/java/org/springframework/cloud/servicecomb/discovery/Call.java
-#spring-cloud-servicecomb-discovery/src/test/java/org/springframework/cloud/servicecomb/discovery/Jmockit.java
-#spring-cloud-servicecomb-discovery/src/test/java/org/springframework/cloud/servicecomb/discovery/JmockitTest.java
-spring-cloud-servicecomb-discovery/target/
-spring-cloud-servicecomb-discovery/spring-cloud-servicecomb-discovery.iml
-spring-cloud-servicecomb-sample/order-consumer/target/
-spring-cloud-servicecomb-sample/price-provider/target/
-spring-cloud-servicecomb-sample/product-consumer-feign/target/
-spring-cloud-servicecomb-sample/spring-cloud-servicecomb-sample.iml
-spring-cloud-starter-servicecomb-discovery/target/
-
+target/
 

@@ -15,6 +15,12 @@
 - [x] **注册中心高可用、负载均衡：**
 可以启动多个注册中心，客户端会选择其中一个健康的注册中心进行调用。
 
+## 组件
+
+ * [Apache-ServiceComb-Service-Center](https://github.com/apache/servicecomb-service-center)
+  是一个基于Restful的提供微服务发现和微服务治理的服务注册中心。
+  它基于Open API规范并提供服务发现、容错、动态路由、订阅和可扩展设计等功能。
+
 ## 构建代码
 
 依赖的版本：
@@ -26,6 +32,25 @@
 	git clone https://github.com/huaweicloud/spring-cloud-huawei.git
 	cd spring-cloud-huawei
 	mvn package
+
+## 如何使用
+因为spring-cloud-huawei还没有发布到公共仓库，如果要使用，需要先下载代码在本地构建。
+    
+    mvn clean install
+
+项目中可以使用dependencyManagement引入依赖。
+
+    <dependencyManagement>
+      <dependencies>
+        <dependency>
+          <groupId>org.springframework.cloud.huawei</groupId>
+          <artifactId>spring-cloud-huawei-dependencies</artifactId>
+          <version>${project.version}</version>
+          <type>pom</type>
+          <scope>import</scope>
+        </dependency>
+      </dependencies>
+    </dependencyManagement>
 
 ## 开发路径
 - [ ] 分布式事务DTM整合

@@ -26,7 +26,7 @@
     <version>2.1.6.RELEASE</version>
     <relativePath/>
   </parent>
-  <groupId>org.springframework.cloud.huawei</groupId>
+  <groupId>org.springframework.cloud</groupId>
   <artifactId>spring-cloud-huawei</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -42,12 +42,29 @@
     <servicecomb.version>1.2.0</servicecomb.version>
   </properties>
   <modules>
-    <module>spring-cloud-servicecomb-discovery</module>
-    <module>spring-cloud-servicecomb-sample</module>
-    <module>spring-cloud-starter-servicecomb-discovery</module>
+    <module>spring-cloud-huawei-dependencies</module>
+    <module>spring-cloud-huawei-servicecomb-discovery</module>
+    <module>spring-cloud-huawei-sample</module>
+    <module>spring-cloud-starter-huawei</module>
   </modules>
+
+
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-huawei-dependencies</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-commons-dependencies</artifactId>
@@ -69,40 +86,7 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-boot.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpclient</artifactId>
-        <version>${httpclient.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>${jackson-databind.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.servicecomb</groupId>
-        <artifactId>foundation-common</artifactId>
-        <version>${servicecomb.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jmockit</groupId>
-        <artifactId>jmockit</artifactId>
-        <version>${jmockit.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>${junit.version}</version>
-        <scope>test</scope>
-      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
