@@ -51,6 +51,7 @@
         </dependency>
       </dependencies>
     </dependencyManagement>
+[更多文档](https://github.com/huaweicloud/spring-cloud-huawei/blob/master/docs/index.md)
 
 ## 开发路径
 - [ ] 分布式事务DTM整合
