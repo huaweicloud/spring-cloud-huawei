@@ -58,6 +58,7 @@ dependencyManagement can be used in projects to manage dependencies.
         </dependency>
       </dependencies>
     </dependencyManagement>
+[more document](https://github.com/huaweicloud/spring-cloud-huawei/blob/master/docs/index.md)
 
 ## RoadMap
 - [ ] Integrated distributed transaction DTM
