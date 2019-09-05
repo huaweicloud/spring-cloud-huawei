@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.cloud.servicecomb.discovery.client.exception.RemoteServerUnavailableException;
 import org.springframework.cloud.servicecomb.discovery.client.model.Response;
+import org.springframework.cloud.servicecomb.discovery.client.model.SSLConfig;
 
 import mockit.Deencapsulation;
 import mockit.Expectations;
@@ -23,14 +24,17 @@ import mockit.Tested;
  **/
 public class DefaultHttpTransportTest {
 
-  @Tested
-  private DefaultHttpTransport httpHttpTransport;
-
   @Injectable
   HttpResponse httpResponse;
 
   @Injectable
   HttpClient httpClient;
+
+  @Injectable
+  SSLConfig sslConfig;
+
+  @Tested
+  private DefaultHttpTransport httpHttpTransport;
 
   @Before
   public void setUp() throws Exception {

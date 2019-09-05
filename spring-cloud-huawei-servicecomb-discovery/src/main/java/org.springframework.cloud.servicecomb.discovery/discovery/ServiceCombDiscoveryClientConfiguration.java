@@ -28,6 +28,7 @@ import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAu
 import org.springframework.cloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
 import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
 import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClientBuilder;
+import org.springframework.cloud.servicecomb.discovery.client.model.SSLConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -50,14 +51,29 @@ public class ServiceCombDiscoveryClientConfiguration {
   }
 
   @Bean
+  @ConditionalOnMissingBean
+  public ServiceCombSSLProperties serviceCombSSLProperties() {
+    return new ServiceCombSSLProperties();
+  }
+
+  @Bean
   @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.enabled", matchIfMissing = true)
-  public ServiceCombClient serviceCombClient(ServiceCombDiscoveryProperties serviceCombProperties) {
+  public ServiceCombClient serviceCombClient(ServiceCombDiscoveryProperties serviceCombProperties,
+      ServiceCombSSLProperties serviceCombSSLProperties) {
     ServiceCombClientBuilder builder = new ServiceCombClientBuilder();
-    builder.setUrl(serviceCombProperties.getAddress()).setAutoDiscovery(serviceCombProperties.isAutoDiscovery());
+    SSLConfig sslConfig = new SSLConfig();
+    sslConfig.setEnable(serviceCombSSLProperties.isEnable());
+    sslConfig.setAccessKey(serviceCombSSLProperties.getAccessKey());
+    sslConfig.setSecretKey(serviceCombSSLProperties.getSecretKey());
+    sslConfig.setAkskCustomCipher(serviceCombSSLProperties.getAkskCustomCipher());
+    sslConfig.setProject(serviceCombSSLProperties.getProject());
+    builder.setUrl(serviceCombProperties.getAddress()).setAutoDiscovery(serviceCombProperties.isAutoDiscovery())
+        .setSSLConfig(sslConfig);
     return builder.createServiceCombClient();
   }
 
   @Bean
+  @ConditionalOnMissingBean
   public DiscoveryClient serviceCombDiscoveryClient(
       ServiceCombDiscoveryProperties discoveryProperties, ServiceCombClient serviceCombClient) {
     return new ServiceCombDiscoveryClient(discoveryProperties, serviceCombClient);

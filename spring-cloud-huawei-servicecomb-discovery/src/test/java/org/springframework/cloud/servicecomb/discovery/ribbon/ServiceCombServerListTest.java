@@ -1,7 +1,5 @@
 package org.springframework.cloud.servicecomb.discovery.ribbon;
 
-import static org.junit.Assert.*;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;

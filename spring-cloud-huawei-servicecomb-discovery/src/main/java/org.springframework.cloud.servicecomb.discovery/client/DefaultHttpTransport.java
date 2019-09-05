@@ -18,6 +18,13 @@
 package org.springframework.cloud.servicecomb.discovery.client;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.SSLContext;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -28,13 +35,21 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.servicecomb.discovery.client.exception.RemoteServerUnavailableException;
 import org.springframework.cloud.servicecomb.discovery.client.model.Response;
+import org.springframework.cloud.servicecomb.discovery.client.model.SSLConfig;
 
 
 /**
@@ -47,34 +62,45 @@ public class DefaultHttpTransport implements HttpTransport {
 
   private static final DefaultHttpTransport DEFAULT_HTTP_TRANSPORT = new DefaultHttpTransport();
 
-  public static final int CONNECT_TIMEOUT = 5000;
-
-  public static final int CONNECTION_REQUEST_TIMEOUT = 5000;
-
-  public static final int SOCKET_TIMEOUT = 5000;
-
-  public static final int MAX_TOTAL = 1000;
-
-  public static final int DEFAULT_MAX_PER_ROUTE = 500;
-
-  public static final String X_DOMAIN_NAME = "x-domain-name";
-
-  public static final String DEFAULT_X_DOMAIN_NAME = "default";
-
-  public static final String CONTENT_TYPE = "Content-type";
-
-  public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
+  private SSLConfig sslConfig;
 
   private HttpClient httpClient;
 
   private DefaultHttpTransport() {
-    RequestConfig config = RequestConfig.custom().setConnectTimeout(CONNECT_TIMEOUT).setConnectionRequestTimeout(
-        CONNECTION_REQUEST_TIMEOUT)
-        .setSocketTimeout(SOCKET_TIMEOUT).build();
-    PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager();
-    manager.setMaxTotal(MAX_TOTAL);
-    manager.setDefaultMaxPerRoute(DEFAULT_MAX_PER_ROUTE);
+    SSLContext sslContext = null;
+    SSLConnectionSocketFactory sslsf = null;
+
+    try {
+      sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
+        //信任所有
+        public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+          return true;
+        }
+      }).build();
+      sslsf = new SSLConnectionSocketFactory(sslContext);
+    } catch (NoSuchAlgorithmException e) {
+      e.printStackTrace();
+    } catch (KeyManagementException e) {
+      e.printStackTrace();
+    } catch (KeyStoreException e) {
+      e.printStackTrace();
+    }
+
+    Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
+        .register("http", PlainConnectionSocketFactory.INSTANCE)
+        .register("https", new SSLConnectionSocketFactory(sslContext))
+        .build();
+
+    RequestConfig config = RequestConfig.custom().setConnectTimeout(DealHeaderUtil.CONNECT_TIMEOUT)
+        .setConnectionRequestTimeout(
+            DealHeaderUtil.CONNECTION_REQUEST_TIMEOUT)
+        .setSocketTimeout(DealHeaderUtil.SOCKET_TIMEOUT).build();
+    PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+    manager.setMaxTotal(DealHeaderUtil.MAX_TOTAL);
+    manager.setDefaultMaxPerRoute(DealHeaderUtil.DEFAULT_MAX_PER_ROUTE);
+
     HttpClientBuilder httpClientBuilder = HttpClientBuilder.create().setConnectionManager(manager)
+        .setSSLSocketFactory(sslsf)
         .setDefaultRequestConfig(config);
     this.httpClient = httpClientBuilder.build();
   }
@@ -87,8 +113,8 @@ public class DefaultHttpTransport implements HttpTransport {
   public Response execute(HttpUriRequest httpRequest) throws RemoteServerUnavailableException {
     Response resp = new Response();
     try {
-      httpRequest.addHeader(X_DOMAIN_NAME, DEFAULT_X_DOMAIN_NAME);
-      httpRequest.addHeader(CONTENT_TYPE, CONTENT_TYPE_APPLICATION_JSON);
+      DealHeaderUtil.addDefautHeader(httpRequest);
+      DealHeaderUtil.addAKSKHeader(httpRequest, sslConfig);
       HttpResponse httpResponse = httpClient.execute(httpRequest);
       resp.setStatusCode(httpResponse.getStatusLine().getStatusCode());
       resp.setStatusMessage(httpResponse.getStatusLine().getReasonPhrase());
@@ -99,6 +125,7 @@ public class DefaultHttpTransport implements HttpTransport {
     }
     return resp;
   }
+
 
   @Override
   public Response sendGetRequest(String url) throws RemoteServerUnavailableException {
@@ -124,5 +151,10 @@ public class DefaultHttpTransport implements HttpTransport {
   public Response sendDeleteRequest(String url) throws RemoteServerUnavailableException {
     HttpDelete httpDelete = new HttpDelete(url);
     return this.execute(httpDelete);
+  }
+
+  @Override
+  public void setSslConfig(SSLConfig sslConfig) {
+    this.sslConfig = sslConfig;
   }
 }
