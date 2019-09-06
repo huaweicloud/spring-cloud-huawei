@@ -37,7 +37,6 @@
     <jmockit.version>1.36</jmockit.version>
     <junit.version>4.12</junit.version>
     <servicecomb.version>1.2.1</servicecomb.version>
-    <foundation-auth.version>2.3.69</foundation-auth.version>
   </properties>
 
   <dependencies>
@@ -74,7 +73,12 @@
     <dependency>
       <groupId>com.huawei.paas.cse</groupId>
       <artifactId>foundation-auth</artifactId>
-      <version>${foundation-auth.version}</version>
+      <version>2.3.69</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.servicecomb</groupId>
+      <artifactId>foundation-common</artifactId>
+      <version>${servicecomb.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jmockit</groupId>
@@ -92,11 +96,6 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-test</artifactId>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.servicecomb</groupId>
-      <artifactId>transport-rest-client</artifactId>
-      <version>1.2.1</version>
     </dependency>
   </dependencies>
 </project>
