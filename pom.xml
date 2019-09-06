@@ -39,7 +39,6 @@
     <jackson-databind.version>2.9.9.2</jackson-databind.version>
     <jmockit.version>1.36</jmockit.version>
     <junit.version>4.12</junit.version>
-    <cse-dependency.version>2.3.69</cse-dependency.version>
   </properties>
   <modules>
     <module>spring-cloud-huawei-dependencies</module>
@@ -87,11 +86,7 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <dependency>
-        <groupId>com.huawei.paas.cse</groupId>
-        <artifactId>foundation-auth</artifactId>
-        <version>${cse-dependency.version}</version>
-      </dependency>
+
     </dependencies>
   </dependencyManagement>
 

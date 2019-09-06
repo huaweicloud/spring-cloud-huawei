@@ -15,7 +15,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>Spring Cloud Huawei Dependencies</name>
   <properties>
-
+    <cse-dependency.version>2.3.69</cse-dependency.version>
   </properties>
 
   <dependencyManagement>
@@ -40,6 +40,29 @@
         <artifactId>spring-cloud-starter-huawei-dtm</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.huawei.paas.cse</groupId>
+        <artifactId>foundation-auth</artifactId>
+        <version>${cse-dependency.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <profiles>
+    <profile>
+      <id>cse</id>
+      <repositories>
+        <repository>
+          <id>HuaweiCloudSDK</id>
+          <url>https://mirrors.huaweicloud.com/repository/maven/huaweicloudsdk/</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
 </project>
