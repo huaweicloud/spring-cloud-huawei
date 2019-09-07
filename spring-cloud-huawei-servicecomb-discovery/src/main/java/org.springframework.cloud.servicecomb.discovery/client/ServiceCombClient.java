@@ -65,6 +65,7 @@ public class ServiceCombClient {
 
   private HttpTransport httpTransport;
 
+
   /**
    * Get a single instance
    * @param url
@@ -324,6 +325,7 @@ public class ServiceCombClient {
     }
     return result;
   }
+
   /**
    *
    * @param heartbeatRequest

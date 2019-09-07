@@ -39,7 +39,6 @@
     <jackson-databind.version>2.9.9.2</jackson-databind.version>
     <jmockit.version>1.36</jmockit.version>
     <junit.version>4.12</junit.version>
-    <servicecomb.version>1.2.0</servicecomb.version>
   </properties>
   <modules>
     <module>spring-cloud-huawei-dependencies</module>
@@ -138,4 +137,21 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>cse</id>
+      <repositories>
+        <repository>
+          <id>HuaweiCloudSDK</id>
+          <url>https://mirrors.huaweicloud.com/repository/maven/huaweicloudsdk/</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
 </project>

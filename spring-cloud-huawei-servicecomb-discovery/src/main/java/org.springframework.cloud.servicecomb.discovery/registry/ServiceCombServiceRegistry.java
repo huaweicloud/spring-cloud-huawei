@@ -117,7 +117,6 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     } catch (ServiceCombException e) {
       LOGGER.error("setStatus failed", e);
     }
-
   }
 
   @Override

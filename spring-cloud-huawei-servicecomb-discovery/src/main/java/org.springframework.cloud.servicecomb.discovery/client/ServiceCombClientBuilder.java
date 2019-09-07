@@ -17,6 +17,8 @@
 
 package org.springframework.cloud.servicecomb.discovery.client;
 
+import org.springframework.cloud.servicecomb.discovery.client.model.SSLConfig;
+
 /**
  * @Author wangqijun
  * @Date 10:49 2019-07-08
@@ -26,6 +28,8 @@ public class ServiceCombClientBuilder {
   private String url;
 
   private boolean autoDiscovery;
+
+  private SSLConfig sslConfig;
 
   /**
    * registry address, e.g. http://127.0.0.1:30100
@@ -42,12 +46,18 @@ public class ServiceCombClientBuilder {
     return this;
   }
 
+  public ServiceCombClientBuilder setSSLConfig(SSLConfig sslConfig) {
+    this.sslConfig = sslConfig;
+    return this;
+  }
+
   /**
    * create ServiceComb-Service-Center client, ServiceCombClient is singleton.
    * @return
    */
   public ServiceCombClient createServiceCombClient() {
     DefaultHttpTransport httpTransport = DefaultHttpTransport.getInstance();
+    httpTransport.setSslConfig(sslConfig);
     return new ServiceCombClient(url, httpTransport, autoDiscovery);
   }
 }

@@ -21,12 +21,14 @@ import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.springframework.cloud.servicecomb.discovery.client.exception.RemoteServerUnavailableException;
 import org.springframework.cloud.servicecomb.discovery.client.model.Response;
+import org.springframework.cloud.servicecomb.discovery.client.model.SSLConfig;
 
 /**
  * @Author wangqijun
  * @Date 11:22 2019-07-08
  **/
 public interface HttpTransport {
+
   Response execute(HttpUriRequest httpRequest) throws RemoteServerUnavailableException;
 
   Response sendGetRequest(String url) throws RemoteServerUnavailableException;
@@ -36,4 +38,6 @@ public interface HttpTransport {
   Response sendPostRequest(String url, HttpEntity httpEntity) throws RemoteServerUnavailableException;
 
   Response sendDeleteRequest(String url) throws RemoteServerUnavailableException;
+
+  void setSslConfig(SSLConfig sslConfig);
 }
