@@ -10,7 +10,6 @@ jobs:
   include:
     - stage: findbugs
       script:
-        - cp .travis.settings.xml $HOME/.m2/settings.xml
         - mvn clean package findbugs:findbugs -Dmaven.test.skip=true  -Dmaven.javadoc.skip=true --settings .travis.settings.xml
     - stage: install
       script:
