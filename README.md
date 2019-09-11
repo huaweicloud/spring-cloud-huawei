@@ -62,4 +62,5 @@ dependencyManagement can be used in projects to manage dependencies.
 
 ## RoadMap
 - [ ] Integrated distributed transaction DTM
-- [ ] Integrated Dashboard of ServiceStage 
+- [ ] Integrated Config-Center
+- [ ] integrated Gray Release
