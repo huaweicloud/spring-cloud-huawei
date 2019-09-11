@@ -54,5 +54,7 @@
 [更多文档](https://github.com/huaweicloud/spring-cloud-huawei/blob/master/docs/index.md)
 
 ## 开发路径
-- [ ] 分布式事务DTM整合
-- [ ] 兼容ServiceStage的仪表盘
+- [ ] 集成分布式事务DTM
+- [ ] 集成配置中心
+- [ ] 集成灰度发布
+
