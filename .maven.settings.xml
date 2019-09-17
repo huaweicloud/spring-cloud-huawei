@@ -8,7 +8,7 @@
       <repositories>
         <repository>
           <id>HuaweiCloudSDK</id>
-          <url>https://mirrors.huaweicloud.com/repository/maven/huaweicloudsdk/</url>
+          <url>https://repo.huaweicloud.com/repository/maven/huaweicloudsdk/</url>
           <releases>
             <enabled>true</enabled>
           </releases>
