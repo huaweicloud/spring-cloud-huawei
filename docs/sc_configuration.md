@@ -20,7 +20,7 @@
     <tr>
        <td>Service name</td>
        <td>spring.cloud.servicecomb.discovery.serviceName</td>
-       <td></td>
+       <td>use spring.application.name if no spring.cloud.servicecomb.serviceName</td>
     </tr>
     <tr>
        <td>Appliaction name</td>
