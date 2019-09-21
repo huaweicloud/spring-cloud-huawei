@@ -11,5 +11,42 @@
 
   <artifactId>spring-cloud-huawei-dtm</artifactId>
 
+  <properties>
+    <spring-cloud.version>2.1.2.RELEASE</spring-cloud.version>
+    <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
+    <httpclient.version>4.5.9</httpclient.version>
+    <jackson-databind.version>2.9.9.2</jackson-databind.version>
+    <jmockit.version>1.36</jmockit.version>
+    <junit.version>4.12</junit.version>
+  </properties>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.huawei.paas.dtm</groupId>
+      <artifactId>dtm-client</artifactId>
+      <version>1.0.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.huawei.paas.dtm</groupId>
+      <artifactId>dtm-client-servicecomb</artifactId>
+      <version>1.0.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-huawei-servicecomb-discovery</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>5.1.8.RELEASE</version>
+    </dependency>
+  </dependencies>
 </project>
