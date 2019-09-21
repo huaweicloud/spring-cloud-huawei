@@ -20,7 +20,7 @@
     <tr>
        <td>服务名</td>
        <td>spring.cloud.servicecomb.discovery.serviceName</td>
-       <td></td>
+       <td>如果没有，使用spring.application.name</td>
     </tr>
     <tr>
        <td>应用名</td>

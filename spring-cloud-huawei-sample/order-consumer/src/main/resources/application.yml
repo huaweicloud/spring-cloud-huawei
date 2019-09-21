@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: spring-cloud-servicecomb
+    name: order
   cloud:
     servicecomb:
       discovery:

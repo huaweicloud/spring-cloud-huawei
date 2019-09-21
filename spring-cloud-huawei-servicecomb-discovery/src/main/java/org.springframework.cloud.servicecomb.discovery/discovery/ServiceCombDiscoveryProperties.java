@@ -37,6 +37,7 @@ public class ServiceCombDiscoveryProperties {
 
   private String appName;
 
+  @Value("${spring.application.name}")
   private String serviceName;
 
   private String version;
