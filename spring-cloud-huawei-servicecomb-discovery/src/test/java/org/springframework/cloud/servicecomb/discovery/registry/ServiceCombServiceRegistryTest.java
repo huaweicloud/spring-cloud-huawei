@@ -75,12 +75,14 @@ public class ServiceCombServiceRegistryTest {
       {
         serviceCombClient.registerMicroservice((Microservice) any);
         result = "4";
+        serviceCombClient.registerInstance((MicroserviceInstance) any);
+        result = "2";
       }
     };
     ServiceCombServiceRegistry serviceCombServiceRegistry = new ServiceCombServiceRegistry(serviceCombClient,
         heartbeatScheduler, serviceCombDiscoveryProperties);
     serviceCombServiceRegistry.register(registration);
-    Assert.assertEquals(serviceCombServiceRegistry.getInstanceID(), null);
+    Assert.assertEquals(serviceCombServiceRegistry.getInstanceID(), "2");
     Assert.assertEquals(serviceCombServiceRegistry.getServiceID(), "4");
   }
 

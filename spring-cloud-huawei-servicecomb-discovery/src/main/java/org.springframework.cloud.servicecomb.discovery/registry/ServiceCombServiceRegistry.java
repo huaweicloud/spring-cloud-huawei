@@ -68,13 +68,12 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
         serviceID = serviceCombClient.getServiceId(microservice);
         if (null == serviceID) {
           serviceID = serviceCombClient.registerMicroservice(microservice);
-        } else {
-          MicroserviceInstance microserviceInstance = RegistryHandler
-              .buildMicroServiceInstances(serviceID, microservice, serviceCombDiscoveryProperties);
-          instanceID = serviceCombClient.registerInstance(microserviceInstance);
-          if (null != instanceID) {
-            break;
-          }
+        }
+        MicroserviceInstance microserviceInstance = RegistryHandler
+            .buildMicroServiceInstances(serviceID, microservice, serviceCombDiscoveryProperties);
+        instanceID = serviceCombClient.registerInstance(microserviceInstance);
+        if (null != instanceID) {
+          break;
         }
       } catch (ServiceCombException e) {
         LOGGER.warn("register failed, will retry. please check config file. message=" + e.getMessage());
