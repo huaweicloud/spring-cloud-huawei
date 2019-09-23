@@ -68,9 +68,6 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
         serviceID = serviceCombClient.getServiceId(microservice);
         if (null == serviceID) {
           serviceID = serviceCombClient.registerMicroservice(microservice);
-          if (null != serviceID) {
-            break;
-          }
         } else {
           MicroserviceInstance microserviceInstance = RegistryHandler
               .buildMicroServiceInstances(serviceID, microservice, serviceCombDiscoveryProperties);
