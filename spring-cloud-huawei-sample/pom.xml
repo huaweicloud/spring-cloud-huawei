@@ -16,6 +16,7 @@
     <module>price-provider</module>
     <module>order-consumer</module>
     <module>product-consumer-feign</module>
+    <module>dtm-demo</module>
   </modules>
 
 </project>
