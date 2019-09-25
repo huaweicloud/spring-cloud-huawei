@@ -1,6 +1,7 @@
 package org.springframework.cloud.dtm;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,7 @@ import com.huawei.paas.dtm.client.config.ConfigItems;
  **/
 
 @Configuration
+@ConditionalOnProperty(value = "dtm", matchIfMissing = false)
 @AutoConfigureAfter(name = {
     "org.springframework.cloud.servicecomb.discovery.registry.ServiceCombRegistryAutoConfiguration"})
 @ComponentScan(basePackages = {"com.huawei.middleware.dtm.client",})
