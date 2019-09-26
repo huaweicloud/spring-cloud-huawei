@@ -1,8 +1,5 @@
 package org.springframework.cloud.dtm.consumer.feign;
 
-import java.util.Collection;
-import java.util.Map;
-
 import org.springframework.cloud.dtm.util.DtmConstants;
 
 import com.huawei.middleware.dtm.client.context.DTMContext;
@@ -21,8 +18,7 @@ public class DtmRequestInterceptor implements RequestInterceptor {
   public void apply(RequestTemplate template) {
     DTMContext dtmContext = DTMContext.getDTMContext();
     long gid = dtmContext.getGlobalTxId();
-    Map<String, Collection<String>> headers = template.headers();
-    if (headers.get(DtmConstants.DTM_CONTEXT) != null) {
+    if (gid != -1) {
       CseDtmContext cseDtmContext = CseDtmContext.fromDtmContext(dtmContext);
       template.header(DtmConstants.DTM_CONTEXT, Json.encode(cseDtmContext));
     }
