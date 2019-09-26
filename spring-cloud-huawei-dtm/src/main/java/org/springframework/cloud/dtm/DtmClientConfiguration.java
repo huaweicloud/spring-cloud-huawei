@@ -20,12 +20,6 @@ import com.huawei.paas.dtm.client.config.ConfigItems;
 @ComponentScan(basePackages = {"com.huawei.middleware.dtm.client",})
 public class DtmClientConfiguration {
 
-//  @Bean
-//  @ConditionalOnMissingBean
-//  public DtmProperties dtmProperties(){
-//    return  new DtmProperties();
-//  }
-
   @Bean
   public ConfigItems configItems() {
     return new ConfigItems();
