@@ -1,9 +1,9 @@
 package org.springframework.cloud.dtm.consumer.feign;
 
+import org.springframework.cloud.dtm.DtmContextDTO;
 import org.springframework.cloud.dtm.util.DtmConstants;
 
 import com.huawei.middleware.dtm.client.context.DTMContext;
-import com.huawei.paas.dtm.servicecomb.context.CseDtmContext;
 
 import io.vertx.core.json.Json;
 import feign.RequestInterceptor;
@@ -19,8 +19,8 @@ public class DtmRequestInterceptor implements RequestInterceptor {
     DTMContext dtmContext = DTMContext.getDTMContext();
     long gid = dtmContext.getGlobalTxId();
     if (gid != -1) {
-      CseDtmContext cseDtmContext = CseDtmContext.fromDtmContext(dtmContext);
-      template.header(DtmConstants.DTM_CONTEXT, Json.encode(cseDtmContext));
+      DtmContextDTO dtmContextDTO = DtmContextDTO.fromDtmContext(dtmContext);
+      template.header(DtmConstants.DTM_CONTEXT, Json.encode(dtmContextDTO));
     }
   }
 }

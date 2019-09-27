@@ -6,11 +6,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.dtm.DtmContextDTO;
 import org.springframework.cloud.dtm.util.DtmConstants;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.huawei.middleware.dtm.client.context.DTMContext;
-import com.huawei.paas.dtm.servicecomb.context.CseDtmContext;
 
 import io.vertx.core.json.Json;
 
@@ -28,23 +28,23 @@ public class DtmHandlerInterceptor implements HandlerInterceptor {
     DTMContext dtmContext = DTMContext.getDTMContext();
     String dtmHeader = request.getHeader(DtmConstants.DTM_CONTEXT);
     if (StringUtils.isNotEmpty(dtmHeader)) {
-      CseDtmContext cseDtmContext = Json.decodeValue(dtmHeader, CseDtmContext.class);
-      LOGGER.debug("dtm info, provider cseDtmContext:" + cseDtmContext);
-      transform(dtmContext, cseDtmContext);
+      DtmContextDTO dtmContextDTO = Json.decodeValue(dtmHeader, DtmContextDTO.class);
+      LOGGER.debug("dtm info, provider dtmContextDTO:" + dtmContextDTO);
+      transform(dtmContext, dtmContextDTO);
     }
     return true;
   }
 
   /**
-   * transform CseDtmContext to DTMContext
+   * transform DtmContextDTO to DTMContext
    * @param dtmContext
-   * @param cseDtmContext
+   * @param dtmContextDTO
    */
-  private void transform(DTMContext dtmContext, CseDtmContext cseDtmContext) {
-    dtmContext.setGlobalTxId(cseDtmContext.getGlobalTxId());
-    dtmContext.setBranchTxId(cseDtmContext.getBranchTxId());
-    dtmContext.setBranchOptionalData(cseDtmContext.getBranchOptionalData());
-    dtmContext.setGlobalOptionalData(cseDtmContext.getGlobalOptionalData());
-    dtmContext.setChannelKey(cseDtmContext.getChannelKey());
+  private void transform(DTMContext dtmContext, DtmContextDTO dtmContextDTO) {
+    dtmContext.setGlobalTxId(dtmContextDTO.getGlobalTxId());
+    dtmContext.setBranchTxId(dtmContextDTO.getBranchTxId());
+    dtmContext.setBranchOptionalData(dtmContextDTO.getBranchOptionalData());
+    dtmContext.setGlobalOptionalData(dtmContextDTO.getGlobalOptionalData());
+    dtmContext.setChannelKey(dtmContextDTO.getChannelKey());
   }
 }

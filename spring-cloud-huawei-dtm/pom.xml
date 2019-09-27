@@ -16,7 +16,6 @@
     <junit.version>4.12</junit.version>
     <dtm-client.version>1.0.2</dtm-client.version>
     <feign-core.version>10.2.3</feign-core.version>
-    <dtm-client-servicecomb.version>1.0.2</dtm-client-servicecomb.version>
   </properties>
 
   <dependencies>
@@ -34,11 +33,6 @@
       <version>${dtm-client.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.huawei.paas.dtm</groupId>
-      <artifactId>dtm-client-servicecomb</artifactId>
-      <version>${dtm-client-servicecomb.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-huawei-servicecomb-discovery</artifactId>
     </dependency>
@@ -50,6 +44,10 @@
       <groupId>io.github.openfeign</groupId>
       <artifactId>feign-core</artifactId>
       <version>${feign-core.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
     </dependency>
   </dependencies>
 </project>

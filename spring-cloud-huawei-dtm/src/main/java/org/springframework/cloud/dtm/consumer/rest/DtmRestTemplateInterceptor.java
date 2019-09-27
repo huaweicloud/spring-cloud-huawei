@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.dtm.DtmContextDTO;
 import org.springframework.cloud.dtm.util.DtmConstants;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
@@ -12,7 +13,6 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
 import com.huawei.middleware.dtm.client.context.DTMContext;
-import com.huawei.paas.dtm.servicecomb.context.CseDtmContext;
 
 import io.vertx.core.json.Json;
 
@@ -31,8 +31,8 @@ public class DtmRestTemplateInterceptor implements ClientHttpRequestInterceptor 
     long gid = dtmContext.getGlobalTxId();
     HttpHeaders headers = httpRequest.getHeaders();
     if (gid != -1) {
-      CseDtmContext cseDtmContext = CseDtmContext.fromDtmContext(dtmContext);
-      headers.add(DtmConstants.DTM_CONTEXT, Json.encode(cseDtmContext));
+      DtmContextDTO dtmContextDTO = DtmContextDTO.fromDtmContext(dtmContext);
+      headers.add(DtmConstants.DTM_CONTEXT, Json.encode(dtmContextDTO));
     }
     return clientHttpRequestExecution.execute(httpRequest, bytes);
   }
