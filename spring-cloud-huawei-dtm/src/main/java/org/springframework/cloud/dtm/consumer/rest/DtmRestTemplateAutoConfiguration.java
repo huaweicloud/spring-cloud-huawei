@@ -1,4 +1,4 @@
-package org.springframework.cloud.dtm.rest;
+package org.springframework.cloud.dtm.consumer.rest;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,28 +18,29 @@ import org.springframework.web.client.RestTemplate;
  * @Author wangqijun
  * @Date 12:45 2019-09-18
  **/
-public class RestTemplateForDtmAutoConfiguration {
-  private static final Logger LOGGER = LoggerFactory.getLogger(RestTemplateForDtmAutoConfiguration.class);
+@Configuration
+public class DtmRestTemplateAutoConfiguration {
+  private static final Logger LOGGER = LoggerFactory.getLogger(DtmRestTemplateAutoConfiguration.class);
 
   @Autowired(required = false)
   private Collection<RestTemplate> restTemplates;
 
   @Autowired
-  private RestTemplateForDtmInterceptor restTemplateForDtmInterceptor;
+  private DtmRestTemplateInterceptor dtmRestTemplateInterceptor;
 
   @Bean
-  public RestTemplateForDtmInterceptor restTemplateForDtmInterceptor() {
-    return new RestTemplateForDtmInterceptor();
+  public DtmRestTemplateInterceptor restTemplateForDtmInterceptor() {
+    return new DtmRestTemplateInterceptor();
   }
 
   @PostConstruct
   public void init() {
-    LOGGER.info("RestTemplateForDtmAutoConfiguration init..");
+    LOGGER.debug("init restTemplate for dtm..");
     if (this.restTemplates != null) {
       for (RestTemplate restTemplate : restTemplates) {
         List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>(
             restTemplate.getInterceptors());
-        interceptors.add(this.restTemplateForDtmInterceptor);
+        interceptors.add(dtmRestTemplateInterceptor);
         restTemplate.setInterceptors(interceptors);
       }
     }

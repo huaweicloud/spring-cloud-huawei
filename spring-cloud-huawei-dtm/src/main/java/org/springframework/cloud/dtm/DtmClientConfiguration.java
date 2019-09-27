@@ -14,17 +14,11 @@ import com.huawei.paas.dtm.client.config.ConfigItems;
  **/
 
 @Configuration
-@ConditionalOnProperty(value = "dtm", matchIfMissing = false)
+@ConditionalOnProperty(value = "dtm", matchIfMissing = true)
 @AutoConfigureAfter(name = {
     "org.springframework.cloud.servicecomb.discovery.registry.ServiceCombRegistryAutoConfiguration"})
 @ComponentScan(basePackages = {"com.huawei.middleware.dtm.client",})
 public class DtmClientConfiguration {
-
-//  @Bean
-//  @ConditionalOnMissingBean
-//  public DtmProperties dtmProperties(){
-//    return  new DtmProperties();
-//  }
 
   @Bean
   public ConfigItems configItems() {
