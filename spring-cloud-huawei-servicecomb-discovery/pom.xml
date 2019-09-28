@@ -33,9 +33,6 @@
     <spring-cloud.version>2.1.2.RELEASE</spring-cloud.version>
     <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
     <httpclient.version>4.5.9</httpclient.version>
-    <jackson-databind.version>2.9.9.2</jackson-databind.version>
-    <jmockit.version>1.36</jmockit.version>
-    <junit.version>4.12</junit.version>
     <servicecomb.version>1.2.1</servicecomb.version>
   </properties>
 
@@ -82,13 +79,11 @@
     <dependency>
       <groupId>org.jmockit</groupId>
       <artifactId>jmockit</artifactId>
-      <version>${jmockit.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -97,34 +92,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <profiles>
-    <profile>
-      <id>cse</id>
-      <repositories>
-        <repository>
-          <id>HuaweiCloudSDK</id>
-          <url>https://mirrors.huaweicloud.com/repository/maven/huaweicloudsdk/</url>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-        </repository>
-      </repositories>
-      <pluginRepositories>
-        <pluginRepository>
-          <id>HuaweiCloudSDK</id>
-          <url>https://mirrors.huaweicloud.com/repository/maven/huaweicloudsdk/</url>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-        </pluginRepository>
-      </pluginRepositories>
-    </profile>
-  </profiles>
 </project>
