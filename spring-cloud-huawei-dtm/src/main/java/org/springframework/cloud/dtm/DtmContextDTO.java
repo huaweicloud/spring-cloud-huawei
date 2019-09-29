@@ -48,6 +48,7 @@ public class DtmContextDTO {
     dtmContextDTO.setChannelKey(dtmContext.getChannelKey());
     dtmContextDTO.setGlobalOptionalData(dtmContext.getGlobalOptionalData());
     dtmContextDTO.setBranchOptionalData(dtmContext.getBranchOptionalData());
+    dtmContextDTO.setCustomizedData(dtmContext.getCustomizedData());
     return dtmContextDTO;
   }
 
