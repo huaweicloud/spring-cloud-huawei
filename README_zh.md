@@ -8,13 +8,18 @@
 包括开源的框架和商业的框架，开源的如[Apache ServiceComb](http://servicecomb.apache.org)
 ，商业的如华为云[ServiceStage](https://www.huaweicloud.com/product/servicestage.html)。
 ## 功能特性
-
+### 开源
 - [x] **Spring Cloud 使用 ServiceComb-Service-Center 实现注册和发现:**
-大部分情况无需修改代码，只需要修改配置文件(application.yml)即可实现对接。
-
-- [x] **注册中心高可用、负载均衡：**
+只需要修改配置文件(application.yml)即可实现对接。
 可以启动多个注册中心，客户端会选择其中一个健康的注册中心进行调用。
 
+### 华为云
+
+- [x] **Spring Cloud 使用ServiceStage注册中心实现注册发现：**
+只需要修改配置文件(application.yml)即可实现对接。
+
+- [x] **Spring Cloud 使用ServiceStage分布式事务DTM：**
+（Distributed Transaction Management，DTM）是一款用于解决分布式环境下事务一致性问题的产品。
 ## 组件
 
  * [Apache-ServiceComb-Service-Center](https://github.com/apache/servicecomb-service-center)
@@ -54,7 +59,6 @@
 [更多文档](https://github.com/huaweicloud/spring-cloud-huawei/blob/master/docs/index.md)
 
 ## 开发路径
-- [ ] 集成分布式事务DTM
 - [ ] 集成配置中心
 - [ ] 集成灰度发布
 

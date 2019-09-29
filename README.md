@@ -11,12 +11,17 @@ open source such as
 commercial such as Huawei Cloud 
 [ServiceStage](https://www.huaweicloud.com/product/servicestage.html).
 ## Features
-
+### open source
 - [x] **Spring Cloud use ServiceComb-Service-Center to implement registration and discovery:**
 No need to change the code, just modify the individual configuration files(application.yml) to complete the migration.
-
-- [x] **Service-Center is highly available, load balanced:**
 Multiple Service-Centers can be launched and the client will select one of the healthy Service-Centers to make the call.
+
+### Huawei Cloud
+- [x] **Spring Cloud use ServiceStage to implement registration and discovery:**
+No need to change the code, just modify the individual configuration files(application.yml) to complete the migration.
+
+- [x] **Spring Cloud use ServiceStage to implement Distributed Transaction:**
+(Distributed Transaction Management, DTM) is a product that addresses consistency issues in a distributed environment.
 
 ## Components
 
