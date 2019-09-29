@@ -1,4 +1,4 @@
-package org.springframework.cloud.servicecomb.sample;
+package org.springframework.cloud.servicecomb.sample.price;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;

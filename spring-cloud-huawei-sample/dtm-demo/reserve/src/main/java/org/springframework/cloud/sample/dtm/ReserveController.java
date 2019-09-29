@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.huawei.middleware.dtm.client.annotations.DTMTxBegin;
+
 /**
  * @Author wangqijun
  * @Date 17:09 2019-09-10
@@ -24,6 +26,7 @@ public class ReserveController {
   private RestTemplate restTemplate;
 
   @RequestMapping("/reserve")
+  @DTMTxBegin(appName = "reserve")
   public String getOrder(@RequestParam("id") String id) {
     String discountCouponResult = restTemplate.getForObject("http://coupon/discountCoupon?id=" + id, String.class);
     LOGGER.info("bookRoomResult:" + discountCouponResult);

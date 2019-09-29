@@ -1,6 +1,6 @@
 ## Run Demo
 Use the examples provided by the project to implement registration and discovery.
-We provide three projects under spring-cloud-huawei-sample/discovery-examples to simulate 
+We provide three projects under spring-cloud-huawei-sample/discovery-demo to simulate 
 the migration of the spring cloud project to the Apache ServiceComb registry:
 
 * price-provider: The price service is a provider service 
