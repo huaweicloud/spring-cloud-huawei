@@ -30,9 +30,6 @@
   <name>Spring Cloud Huawei servicecomb Discovery</name>
 
   <properties>
-    <spring-cloud.version>2.1.2.RELEASE</spring-cloud.version>
-    <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
-    <httpclient.version>4.5.9</httpclient.version>
     <servicecomb.version>1.2.1</servicecomb.version>
   </properties>
 
@@ -60,12 +57,6 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>${httpclient.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${jackson-databind.version}</version>
     </dependency>
     <dependency>
       <groupId>com.huawei.paas.cse</groupId>
