@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  org.springcloudframework.cloud.canary.CanaryClientAutoConfiguration,\
+  org.springcloudframework.cloud.canary.CanaryWebMvcConfigurer

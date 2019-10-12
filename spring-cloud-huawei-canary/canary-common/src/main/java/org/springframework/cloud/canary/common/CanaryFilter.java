@@ -1,0 +1,55 @@
+package org.springframework.cloud.canary.common;
+
+import com.netflix.loadbalancer.Server;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cloud.canary.common.cache.CanaryRuleCache;
+import org.springframework.cloud.canary.common.distribute.CanaryDistributer;
+import org.springframework.cloud.canary.common.match.CanaryRuleMatcher;
+import org.springframework.cloud.canary.common.model.PolicyRuleItem;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @Author GuoYl123
+ * @Date 2019/10/16
+ **/
+public class CanaryFilter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CanaryFilter.class);
+
+    public static <T extends Server, E> List<T> getFilteredListOfServers(List<T> list, String targetServiceName, String currentServiceName,
+                                                                         Map<String, String> headers, CanaryDistributer<T, E> distributer) {
+        LOGGER.info("start canary release start");
+        if (CollectionUtils.isEmpty(list)) {
+            LOGGER.warn("start canary release list is null");
+            return list;
+        }
+        /**
+         * 1.初始化--进行cache缓存
+         */
+        LOGGER.info("start canary release init");
+        // 初始化
+        if (!CanaryRuleCache.doInit(targetServiceName, currentServiceName)) {
+            LOGGER.info("canary release init failed");
+            return list;
+        }
+        LOGGER.info("canary release init success");
+        /**
+         * 2.match--拿到invoke相关信息 (header)
+         */
+        //这里匹配到唯一的rule
+        PolicyRuleItem invokeRule = CanaryRuleMatcher.getInstance().match(targetServiceName, headers);
+        LOGGER.info("canary release match rule success");
+
+        if (invokeRule == null) {
+            LOGGER.error("canary release match rule failed");
+            return list;
+        }
+        /**
+         * 3.distribute--拿到server list选择endpoint进行流量分配
+         */
+        return distributer.distribut(targetServiceName, list, invokeRule);
+    }
+}

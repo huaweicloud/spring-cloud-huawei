@@ -18,8 +18,11 @@
 package org.springframework.cloud.servicecomb.discovery.client.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
@@ -45,6 +48,27 @@ public class MicroserviceInstance {
   private String timestamp;
 
   private String modTimestamp;
+
+  private Map<String, String> properties = new HashMap<>();
+
+  @JsonIgnore
+  private String serviceName;
+
+  public Map<String, String> getProperties() {
+    return properties;
+  }
+
+  public void setProperties(Map<String, String> properties) {
+    this.properties = properties;
+  }
+
+  public String getServiceName() {
+    return serviceName;
+  }
+
+  public void setServiceName(String serviceName) {
+    this.serviceName = serviceName;
+  }
 
   public String getInstanceId() {
     return instanceId;
