@@ -6,7 +6,6 @@
     <artifactId>spring-cloud-dependencies-parent</artifactId>
     <groupId>org.springframework.cloud</groupId>
     <version>2.1.6.RELEASE</version>
-    <relativePath/>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
