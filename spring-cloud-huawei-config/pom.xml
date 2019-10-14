@@ -6,16 +6,10 @@
     <artifactId>spring-cloud-huawei</artifactId>
     <groupId>org.springframework.cloud</groupId>
     <version>0.0.1-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <packaging>pom</packaging>
-  <artifactId>spring-cloud-starter-huawei</artifactId>
-  <modules>
-    <module>spring-cloud-starter-huawei-servicecomb-discovery</module>
-    <module>spring-cloud-starter-huawei-dtm</module>
-    <module>spring-cloud-starter-huawei-canary</module>
-    <module>spring-cloud-starter-huawei-config</module>
-  </modules>
+
+  <artifactId>spring-cloud-huawei-config</artifactId>
+
 
 </project>

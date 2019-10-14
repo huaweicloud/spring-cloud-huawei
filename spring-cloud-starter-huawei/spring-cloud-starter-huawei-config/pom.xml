@@ -3,18 +3,19 @@
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>spring-cloud-huawei-sample</artifactId>
+    <artifactId>spring-cloud-starter-huawei</artifactId>
     <groupId>org.springframework.cloud</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>dtm-demo</artifactId>
-  <packaging>pom</packaging>
-  <modules>
-    <module>reserve</module>
-    <module>ticket</module>
-    <module>coupon</module>
-    <module>reserve-feign</module>
-  </modules>
+  <artifactId>spring-cloud-starter-huawei-config</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-huawei-config</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
 </project>
