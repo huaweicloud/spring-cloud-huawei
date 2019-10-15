@@ -34,7 +34,6 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-commons</artifactId>
-      <version>2.1.2.RELEASE</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
@@ -48,23 +47,6 @@
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.netflix.servo</groupId>
-      <artifactId>servo-core</artifactId>
-      <version>0.12.28</version>
-    </dependency>
-    <dependency>
-      <groupId>com.netflix.netflix-commons</groupId>
-      <artifactId>netflix-commons-util</artifactId>
-      <version>0.3.0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.netflix.netflix-commons</groupId>
-      <artifactId>netflix-statistics</artifactId>
-      <version>0.2.0</version>
-    </dependency>
-
-
   </dependencies>
   <build>
     <plugins>
@@ -87,7 +69,8 @@
           </descriptors>
           <archive>
             <manifest>
-              <mainClass>org.springframework.cloud.sample.dtm.ReserveAppMain</mainClass>
+              <mainClass>org.springframework.cloud.sample.org.springframework.cloud.sample.dtm.ReserveAppMain
+              </mainClass>
             </manifest>
           </archive>
           <appendAssemblyId>false</appendAssemblyId>
