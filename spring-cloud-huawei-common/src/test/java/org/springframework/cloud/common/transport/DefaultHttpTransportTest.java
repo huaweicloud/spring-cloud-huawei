@@ -1,4 +1,7 @@
-package org.springframework.cloud.servicecomb.discovery.client;
+package org.springframework.cloud.common.transport;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 
@@ -6,12 +9,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.cloud.servicecomb.discovery.client.exception.RemoteServerUnavailableException;
-import org.springframework.cloud.servicecomb.discovery.client.model.Response;
-import org.springframework.cloud.servicecomb.discovery.client.model.SSLConfig;
+import org.springframework.cloud.common.exception.RemoteServerUnavailableException;
 
 import mockit.Deencapsulation;
 import mockit.Expectations;
@@ -20,7 +20,7 @@ import mockit.Tested;
 
 /**
  * @Author wangqijun
- * @Date 10:59 2019-08-19
+ * @Date 14:19 2019-10-17
  **/
 public class DefaultHttpTransportTest {
 
@@ -45,9 +45,9 @@ public class DefaultHttpTransportTest {
   @Test
   public void getInstance() {
     DefaultHttpTransport instance = DefaultHttpTransport.getInstance();
-    Assert.assertNotNull(instance);
+    assertNotNull(instance);
     DefaultHttpTransport instance2 = DefaultHttpTransport.getInstance();
-    Assert.assertEquals(instance, instance2);
+    assertEquals(instance, instance2);
   }
 
   @Test
@@ -69,8 +69,8 @@ public class DefaultHttpTransportTest {
       }
     };
     Response resp = httpHttpTransport.execute(httpGet);
-    Assert.assertEquals(resp.getStatusCode(), expectedCode);
-    Assert.assertEquals(expectedMessage, resp.getStatusMessage());
-    Assert.assertEquals(expectedEntity, resp.getContent());
+    assertEquals(resp.getStatusCode(), expectedCode);
+    assertEquals(expectedMessage, resp.getStatusMessage());
+    assertEquals(expectedEntity, resp.getContent());
   }
 }

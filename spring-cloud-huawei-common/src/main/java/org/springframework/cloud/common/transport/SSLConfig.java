@@ -1,4 +1,4 @@
-package org.springframework.cloud.servicecomb.discovery.client.model;
+package org.springframework.cloud.common.transport;
 
 /**
  * @Author wangqijun

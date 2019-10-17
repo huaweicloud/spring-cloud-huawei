@@ -22,7 +22,7 @@ import java.util.Map;
 
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.serviceregistry.Registration;
-import org.springframework.cloud.servicecomb.discovery.client.util.NetUtil;
+import org.springframework.cloud.common.util.NetUtil;
 import org.springframework.cloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 
 /**

@@ -42,6 +42,7 @@
     <spring.version>5.1.8.RELEASE</spring.version>
   </properties>
   <modules>
+    <module>spring-cloud-huawei-common</module>
     <module>spring-cloud-huawei-dependencies</module>
     <module>spring-cloud-huawei-servicecomb-discovery</module>
     <module>spring-cloud-huawei-sample</module>

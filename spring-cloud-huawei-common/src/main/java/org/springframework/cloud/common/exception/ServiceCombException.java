@@ -15,34 +15,22 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.servicecomb.discovery.registry;
-
-import org.junit.Test;
-import org.springframework.cloud.common.exception.ServiceCombException;
-import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
-import org.springframework.cloud.servicecomb.discovery.client.model.HeartbeatRequest;
-
-import mockit.Expectations;
-import mockit.Injectable;
-import mockit.Tested;
+package org.springframework.cloud.common.exception;
 
 /**
  * @Author wangqijun
- * @Date 16:26 2019-07-18
+ * @Date 17:19 2019-07-15
  **/
-public class HeartbeatTaskTest {
-  @Tested
-  HeartbeatTask heartbeatTask;
+public class ServiceCombException extends Exception {
+  public ServiceCombException() {
+    super();
+  }
 
-  @Test
-  public void run(@Injectable HeartbeatRequest heartbeatRequest, @Injectable ServiceCombClient serviceCombClient)
-      throws ServiceCombException {
-    new Expectations() {
-      {
-        new HeartbeatTask(heartbeatRequest, serviceCombClient);
-        result = heartbeatTask;
-      }
-    };
-    heartbeatTask.run();
+  public ServiceCombException(String message) {
+    super(message);
+  }
+
+  public ServiceCombException(String message, Throwable cause) {
+    super(message, cause);
   }
 }
