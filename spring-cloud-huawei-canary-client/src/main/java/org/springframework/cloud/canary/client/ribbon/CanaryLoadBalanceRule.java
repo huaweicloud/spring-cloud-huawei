@@ -1,6 +1,7 @@
 package org.springframework.cloud.canary.client.ribbon;
 
 import com.google.common.base.Optional;
+import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.loadbalancer.CompositePredicate;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ZoneAvoidanceRule;
@@ -14,6 +15,9 @@ import java.util.List;
  * @Date 2019/10/11
  **/
 public class CanaryLoadBalanceRule extends ZoneAvoidanceRule {
+
+    private static final String SERVICE_NAME = "spring.application.name";
+
     protected CompositePredicate canaryCompositePredicate;
 
     public CanaryLoadBalanceRule() {
@@ -25,7 +29,8 @@ public class CanaryLoadBalanceRule extends ZoneAvoidanceRule {
     @Override
     public Server choose(Object key) {
         CanaryServerDistributer distributer = new CanaryServerDistributer();
-        String currentServiceName = null;
+        String currentServiceName =  DynamicPropertyFactory.getInstance()
+                .getStringProperty(SERVICE_NAME, null).get();
         List<Server> serverList = CanaryFilter
                 .getFilteredListOfServers(getLoadBalancer().getAllServers(),
                         CanaryTrackContext.getServiceName(),

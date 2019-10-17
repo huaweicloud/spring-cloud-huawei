@@ -9,12 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>spring-cloud-huawei-canary</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>canary-common</module>
-        <module>canary-client</module>
-    </modules>
+    <artifactId>spring-cloud-huawei-canary-client</artifactId>
 
 
     <dependencies>
@@ -60,6 +55,14 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>27.0.1-jre</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-huawei-servicecomb-discovery</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-huawei-canary-common</artifactId>
         </dependency>
     </dependencies>
 </project>

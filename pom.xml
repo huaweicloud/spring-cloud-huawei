@@ -46,10 +46,11 @@
   <modules>
     <module>spring-cloud-huawei-dependencies</module>
     <module>spring-cloud-huawei-servicecomb-discovery</module>
-    <module>spring-cloud-huawei-sample</module>
+<!--    <module>spring-cloud-huawei-sample</module>-->
     <module>spring-cloud-starter-huawei</module>
     <module>spring-cloud-huawei-dtm</module>
-    <module>spring-cloud-huawei-canary</module>
+    <module>spring-cloud-huawei-canary-common</module>
+    <module>spring-cloud-huawei-canary-client</module>
   </modules>
 
 

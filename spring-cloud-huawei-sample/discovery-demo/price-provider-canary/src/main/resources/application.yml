@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
 
 spring:
   application:
@@ -10,6 +10,6 @@ spring:
         enabled: true
         address: http://127.0.0.1:30100
         #serviceName: price
-        version: 0.0.1
+        version: 0.0.2
         healthCheckInterval: 30
         autoDiscovery: true
