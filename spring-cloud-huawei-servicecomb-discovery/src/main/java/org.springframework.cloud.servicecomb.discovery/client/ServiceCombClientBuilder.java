@@ -17,7 +17,8 @@
 
 package org.springframework.cloud.servicecomb.discovery.client;
 
-import org.springframework.cloud.servicecomb.discovery.client.model.SSLConfig;
+import org.springframework.cloud.common.transport.DefaultHttpTransport;
+import org.springframework.cloud.common.transport.SSLConfig;
 
 /**
  * @Author wangqijun

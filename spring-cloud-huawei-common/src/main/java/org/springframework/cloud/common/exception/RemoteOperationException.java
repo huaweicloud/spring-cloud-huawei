@@ -15,32 +15,20 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.servicecomb.discovery.client.util;
+package org.springframework.cloud.common.exception;
 
-import org.junit.Assert;
-import org.junit.Test;
 
 /**
  * @Author wangqijun
- * @Date 22:13 2019-07-30
+ * @Date 09:07 2019-07-17
  **/
-public class NetUtilTest {
+public class RemoteOperationException extends ServiceCombException {
 
-
-  @Test
-  public void getLocalHost() {
-    Assert.assertNotNull(NetUtil.getLocalHost());
+  public RemoteOperationException(String message) {
+    super(message);
   }
 
-  @Test
-  public void getPort() {
-    Integer port = NetUtil.getPort("http://127.0.0.1:30103/#!/sc/f1532d0479261777281fe3d94b15c463f8b6fcf7/instance");
-    Assert.assertEquals(port, new Integer(30103));
-  }
-
-  @Test
-  public void getHost() {
-    String host = NetUtil.getHost("http://127.0.0.1:30103/#!/sc/f1532d0479261777281fe3d94b15c463f8b6fcf7/instance");
-    Assert.assertEquals(host, "127.0.0.1");
+  public RemoteOperationException(String message, Throwable cause) {
+    super(message, cause);
   }
 }

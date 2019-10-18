@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.servicecomb.discovery.client.util;
+package org.springframework.cloud.common.util;
 
 import java.net.InetAddress;
 import java.net.URISyntaxException;

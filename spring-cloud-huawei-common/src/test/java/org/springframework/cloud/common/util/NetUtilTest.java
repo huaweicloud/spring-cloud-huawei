@@ -15,34 +15,32 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.servicecomb.discovery.registry;
+package org.springframework.cloud.common.util;
 
+import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.cloud.common.exception.ServiceCombException;
-import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
-import org.springframework.cloud.servicecomb.discovery.client.model.HeartbeatRequest;
-
-import mockit.Expectations;
-import mockit.Injectable;
-import mockit.Tested;
 
 /**
  * @Author wangqijun
- * @Date 16:26 2019-07-18
+ * @Date 22:13 2019-07-30
  **/
-public class HeartbeatTaskTest {
-  @Tested
-  HeartbeatTask heartbeatTask;
+public class NetUtilTest {
+
 
   @Test
-  public void run(@Injectable HeartbeatRequest heartbeatRequest, @Injectable ServiceCombClient serviceCombClient)
-      throws ServiceCombException {
-    new Expectations() {
-      {
-        new HeartbeatTask(heartbeatRequest, serviceCombClient);
-        result = heartbeatTask;
-      }
-    };
-    heartbeatTask.run();
+  public void getLocalHost() {
+    Assert.assertNotNull(NetUtil.getLocalHost());
+  }
+
+  @Test
+  public void getPort() {
+    Integer port = NetUtil.getPort("http://127.0.0.1:30103/#!/sc/f1532d0479261777281fe3d94b15c463f8b6fcf7/instance");
+    Assert.assertEquals(port, new Integer(30103));
+  }
+
+  @Test
+  public void getHost() {
+    String host = NetUtil.getHost("http://127.0.0.1:30103/#!/sc/f1532d0479261777281fe3d94b15c463f8b6fcf7/instance");
+    Assert.assertEquals(host, "127.0.0.1");
   }
 }

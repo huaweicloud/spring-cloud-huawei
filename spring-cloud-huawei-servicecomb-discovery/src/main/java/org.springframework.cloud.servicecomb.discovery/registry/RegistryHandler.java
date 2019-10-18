@@ -6,12 +6,12 @@ import java.util.List;
 import org.apache.servicecomb.foundation.common.net.NetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.common.util.NetUtil;
 import org.springframework.cloud.servicecomb.discovery.client.model.HealthCheck;
 import org.springframework.cloud.servicecomb.discovery.client.model.HealthCheckMode;
 import org.springframework.cloud.servicecomb.discovery.client.model.Microservice;
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstance;
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceStatus;
-import org.springframework.cloud.servicecomb.discovery.client.util.NetUtil;
 import org.springframework.cloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 
 /**

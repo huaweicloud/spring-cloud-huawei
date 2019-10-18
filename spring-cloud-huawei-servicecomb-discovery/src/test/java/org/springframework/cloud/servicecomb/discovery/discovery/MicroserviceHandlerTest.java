@@ -23,8 +23,8 @@ import java.util.List;
 import org.junit.Test;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.common.exception.ServiceCombException;
 import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
-import org.springframework.cloud.servicecomb.discovery.client.exception.ServiceCombException;
 import org.springframework.cloud.servicecomb.discovery.client.model.Microservice;
 
 import mockit.Expectations;

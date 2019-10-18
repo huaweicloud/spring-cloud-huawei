@@ -31,9 +31,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.servicecomb.discovery.client.exception.RemoteOperationException;
-import org.springframework.cloud.servicecomb.discovery.client.exception.RemoteServerUnavailableException;
-import org.springframework.cloud.servicecomb.discovery.client.exception.ServiceCombException;
+import org.springframework.cloud.common.exception.RemoteOperationException;
+import org.springframework.cloud.common.exception.RemoteServerUnavailableException;
+import org.springframework.cloud.common.exception.ServiceCombException;
+import org.springframework.cloud.common.transport.HttpTransport;
+import org.springframework.cloud.common.transport.Response;
+import org.springframework.cloud.common.util.URLUtil;
 import org.springframework.cloud.servicecomb.discovery.client.model.HeartbeatRequest;
 import org.springframework.cloud.servicecomb.discovery.client.model.Microservice;
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstance;
@@ -41,9 +44,7 @@ import org.springframework.cloud.servicecomb.discovery.client.model.Microservice
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstanceStatus;
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstancesResponse;
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceResponse;
-import org.springframework.cloud.servicecomb.discovery.client.model.Response;
 import org.springframework.cloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
-import org.springframework.cloud.servicecomb.discovery.client.util.URLUtil;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

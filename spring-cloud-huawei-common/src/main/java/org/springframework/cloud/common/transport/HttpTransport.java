@@ -15,13 +15,11 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.servicecomb.discovery.client;
+package org.springframework.cloud.common.transport;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.springframework.cloud.servicecomb.discovery.client.exception.RemoteServerUnavailableException;
-import org.springframework.cloud.servicecomb.discovery.client.model.Response;
-import org.springframework.cloud.servicecomb.discovery.client.model.SSLConfig;
+import org.springframework.cloud.common.exception.RemoteServerUnavailableException;
 
 /**
  * @Author wangqijun

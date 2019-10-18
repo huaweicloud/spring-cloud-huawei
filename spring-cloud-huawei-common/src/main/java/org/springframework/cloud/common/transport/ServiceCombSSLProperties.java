@@ -1,4 +1,4 @@
-package org.springframework.cloud.servicecomb.discovery.discovery;
+package org.springframework.cloud.common.transport;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

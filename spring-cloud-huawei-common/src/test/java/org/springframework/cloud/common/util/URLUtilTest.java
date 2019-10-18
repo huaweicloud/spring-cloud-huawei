@@ -1,4 +1,4 @@
-package org.springframework.cloud.servicecomb.discovery.client.util;
+package org.springframework.cloud.common.util;
 
 import org.junit.Assert;
 import org.junit.Test;

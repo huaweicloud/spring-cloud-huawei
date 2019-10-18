@@ -1,11 +1,10 @@
-package org.springframework.cloud.servicecomb.discovery.client;
+package org.springframework.cloud.common.transport;
 
 import java.util.Map;
 
 import org.apache.http.client.methods.HttpUriRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.servicecomb.discovery.client.model.SSLConfig;
 
 import com.huawei.paas.foundation.auth.AuthHeaderUtils;
 import com.huawei.paas.foundation.auth.signer.utils.SignerUtils;

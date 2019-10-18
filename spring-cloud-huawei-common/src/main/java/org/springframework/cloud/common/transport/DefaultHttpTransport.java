@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.servicecomb.discovery.client;
+package org.springframework.cloud.common.transport;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
@@ -47,9 +47,8 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.servicecomb.discovery.client.exception.RemoteServerUnavailableException;
-import org.springframework.cloud.servicecomb.discovery.client.model.Response;
-import org.springframework.cloud.servicecomb.discovery.client.model.SSLConfig;
+import org.springframework.cloud.common.exception.RemoteServerUnavailableException;
+
 
 
 /**
