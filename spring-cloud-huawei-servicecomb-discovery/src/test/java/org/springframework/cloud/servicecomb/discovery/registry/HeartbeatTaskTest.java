@@ -18,8 +18,8 @@
 package org.springframework.cloud.servicecomb.discovery.registry;
 
 import org.junit.Test;
+import org.springframework.cloud.common.exception.ServiceCombException;
 import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
-import org.springframework.cloud.servicecomb.discovery.client.exception.ServiceCombException;
 import org.springframework.cloud.servicecomb.discovery.client.model.HeartbeatRequest;
 
 import mockit.Expectations;

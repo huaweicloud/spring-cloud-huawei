@@ -24,7 +24,6 @@
     <groupId>org.springframework.cloud</groupId>
     <artifactId>spring-cloud-build</artifactId>
     <version>2.1.6.RELEASE</version>
-    <relativePath/>
   </parent>
   <groupId>org.springframework.cloud</groupId>
   <artifactId>spring-cloud-huawei</artifactId>
@@ -44,11 +43,13 @@
     <snakeyaml.version>1.24</snakeyaml.version>
   </properties>
   <modules>
+    <module>spring-cloud-huawei-common</module>
     <module>spring-cloud-huawei-dependencies</module>
     <module>spring-cloud-huawei-servicecomb-discovery</module>
-<!--    <module>spring-cloud-huawei-sample</module>-->
+    <module>spring-cloud-huawei-sample</module>
     <module>spring-cloud-starter-huawei</module>
     <module>spring-cloud-huawei-dtm</module>
+    <module>spring-cloud-huawei-config</module>
     <module>spring-cloud-huawei-canary-common</module>
     <module>spring-cloud-huawei-canary-client</module>
   </modules>

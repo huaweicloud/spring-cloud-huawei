@@ -29,12 +29,6 @@
   <artifactId>spring-cloud-huawei-servicecomb-discovery</artifactId>
   <name>Spring Cloud Huawei servicecomb Discovery</name>
 
-  <properties>
-    <spring-cloud.version>2.1.2.RELEASE</spring-cloud.version>
-    <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
-    <httpclient.version>4.5.9</httpclient.version>
-    <servicecomb.version>1.2.1</servicecomb.version>
-  </properties>
 
   <dependencies>
     <dependency>
@@ -58,25 +52,6 @@
       <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>${httpclient.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${jackson-databind.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.huawei.paas.cse</groupId>
-      <artifactId>foundation-auth</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.servicecomb</groupId>
-      <artifactId>foundation-common</artifactId>
-      <version>${servicecomb.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.jmockit</groupId>
       <artifactId>jmockit</artifactId>
       <scope>test</scope>
@@ -90,6 +65,10 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-test</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-huawei-common</artifactId>
     </dependency>
   </dependencies>
 </project>

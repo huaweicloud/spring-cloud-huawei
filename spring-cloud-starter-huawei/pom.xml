@@ -15,6 +15,7 @@
     <module>spring-cloud-starter-huawei-servicecomb-discovery</module>
     <module>spring-cloud-starter-huawei-dtm</module>
     <module>spring-cloud-starter-huawei-canary</module>
+    <module>spring-cloud-starter-huawei-config</module>
   </modules>
 
 </project>

@@ -6,7 +6,6 @@
     <artifactId>spring-cloud-dependencies-parent</artifactId>
     <groupId>org.springframework.cloud</groupId>
     <version>2.1.6.RELEASE</version>
-    <relativePath/>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -37,6 +36,21 @@
       <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-starter-huawei-dtm</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-huawei-config</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-huawei-config</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-huawei-common</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

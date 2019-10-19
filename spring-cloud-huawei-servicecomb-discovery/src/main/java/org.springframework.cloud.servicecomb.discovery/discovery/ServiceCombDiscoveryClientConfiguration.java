@@ -25,10 +25,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.CommonsClientAutoConfiguration;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration;
+import org.springframework.cloud.common.transport.SSLConfig;
+import org.springframework.cloud.common.transport.ServiceCombSSLProperties;
 import org.springframework.cloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
 import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
 import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClientBuilder;
-import org.springframework.cloud.servicecomb.discovery.client.model.SSLConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
