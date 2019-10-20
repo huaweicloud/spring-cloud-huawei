@@ -5,6 +5,7 @@ import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.loadbalancer.CompositePredicate;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ZoneAvoidanceRule;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.cloud.canary.client.track.CanaryTrackContext;
 import org.springframework.cloud.canary.common.CanaryFilter;
 
@@ -31,6 +32,9 @@ public class CanaryLoadBalanceRule extends ZoneAvoidanceRule {
         CanaryServerDistributer distributer = new CanaryServerDistributer();
         String currentServiceName =  DynamicPropertyFactory.getInstance()
                 .getStringProperty(SERVICE_NAME, null).get();
+        if(StringUtils.isEmpty(currentServiceName)){
+            throw new RuntimeException("error when read the service name");
+        }
         List<Server> serverList = CanaryFilter
                 .getFilteredListOfServers(getLoadBalancer().getAllServers(),
                         CanaryTrackContext.getServiceName(),

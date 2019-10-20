@@ -18,9 +18,7 @@ public class PolicyRuleItem implements Comparable<PolicyRuleItem> {
 
     private Matcher match;
 
-    // any match
-    // 只要version符合就算符合匹配规则
-    // 然后再看tags
+    // any match 只要version符合就算符合匹配规则
     private List<RouteItem> route;
 
     private Integer total;

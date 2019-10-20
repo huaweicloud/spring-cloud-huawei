@@ -12,15 +12,15 @@ import org.springframework.context.ApplicationContextAware;
  * @Date 2019/10/17
  **/
 public class CanaryInitializer  implements ApplicationContextAware, InitializingBean {
-    private ApplicationContext cxt;
+    private ApplicationContext applicationContext;
 
     @Override
     public void afterPropertiesSet() {
-        CanaryTrackContext.setCanaryTrackInfo(cxt.getBean(CanaryTrackInfo.class));
+        CanaryTrackContext.setCanaryTrackInfo(applicationContext.getBean(CanaryTrackInfo.class));
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        cxt = applicationContext;
+        this.applicationContext = applicationContext;
     }
 }

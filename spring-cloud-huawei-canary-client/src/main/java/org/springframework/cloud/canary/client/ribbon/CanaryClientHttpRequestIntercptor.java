@@ -14,10 +14,7 @@ import java.io.IOException;
  **/
 public class CanaryClientHttpRequestIntercptor implements ClientHttpRequestInterceptor {
     /**
-     * 这里作为resttemplete的intercept
-     * feign 之后搞
-     * 参照spring-cloud-gray枚举：
-     * cn.springcloud.gray.client.netflix.constants.GrayNetflixClientConstants
+     * todo: feign
      *
      * @param httpRequest
      * @param bytes

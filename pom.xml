@@ -40,7 +40,6 @@
     <junit.version>4.12</junit.version>
     <cse-dependency.version>2.3.69</cse-dependency.version>
     <spring.version>5.1.8.RELEASE</spring.version>
-    <snakeyaml.version>1.24</snakeyaml.version>
   </properties>
   <modules>
     <module>spring-cloud-huawei-common</module>
@@ -57,11 +56,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>org.yaml</groupId>
-        <artifactId>snakeyaml</artifactId>
-        <version>${snakeyaml.version}</version>
-      </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>

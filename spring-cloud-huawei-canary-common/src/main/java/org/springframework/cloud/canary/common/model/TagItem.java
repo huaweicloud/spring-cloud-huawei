@@ -1,5 +1,6 @@
 package org.springframework.cloud.canary.common.model;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -16,6 +17,23 @@ public class TagItem {
 
     public TagItem(String version, Map<String, String> param) {
         this.version = version;
+        this.param = param;
+    }
+
+    public TagItem(String version) {
+        this.version = version;
+        Map<String, String> param = new HashMap<>();
+        param.put("version",version);
+        this.param = param;
+    }
+
+    public TagItem(Map<String, String> param) {
+        if(param.containsKey("version")) {
+            this.version = param.get("version");
+        }
+        else {
+            throw new RuntimeException("canary server's version can not be null");
+        }
         this.param = param;
     }
 

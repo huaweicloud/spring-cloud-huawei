@@ -23,7 +23,7 @@ public class RouteItem implements Comparable<RouteItem> {
 
     public void initTagItem() {
         if (tags != null && tags.containsKey("version")) {
-            tagitem = new TagItem(tags.get("version"), tags);
+            tagitem = new TagItem(tags);
         } else {
             throw new RuntimeException("version must not be null");
         }

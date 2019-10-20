@@ -11,6 +11,10 @@
 
     <artifactId>spring-cloud-huawei-canary-common</artifactId>
 
+    <properties>
+        <guava.version>27.0.1-jre</guava.version>
+        <snakeyaml.version>1.24</snakeyaml.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -54,11 +58,12 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>27.0.1-jre</version>
+            <version>${guava.version}</version>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml.version}</version>
         </dependency>
     </dependencies>
 </project>

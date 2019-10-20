@@ -29,26 +29,26 @@ public class AbstractCanaryDistributer<T extends Server, E> implements CanaryDis
     @Override
     public List<T> distribut(String targetServiceName, List<T> list, PolicyRuleItem invokeRule) {
         //初始化LatestVersion
-        initVer(targetServiceName, list);
+        initLatestVersion(targetServiceName, list);
 
-        LOGGER.info("canary release initialized latest version");
+        LOGGER.debug("canary release initialized latest version");
 
         invokeRule.check(CanaryRuleCache.getServiceInfoCacheMap().get(targetServiceName).getLatestVersionTag());
 
-        LOGGER.info("canary release check weight success");
+        LOGGER.debug("canary release check weight success");
 
         // 建立tag list
         Map<TagItem, List<T>> versionServerMap = getDistributList(targetServiceName, list, invokeRule);
 
-        LOGGER.info("canary release getDistributList succeed");
+        LOGGER.debug("canary release getDistributList succeed");
 
         //如果没有匹配到合适的规则，直接返回最新版本的服务列表
         if (versionServerMap == null) {
-            LOGGER.info("canary release can not match any rule and route the latest version");
+            LOGGER.debug("canary release can not match any rule and route the latest version");
             return getLatestVersionList(list, targetServiceName);
         }
 
-        LOGGER.info("start canary release traffic distribution");
+        LOGGER.debug("start canary release traffic distribution");
         // 分配流量，返回结果
         return getFiltedServer(versionServerMap, invokeRule, targetServiceName);
     }
@@ -110,7 +110,7 @@ public class AbstractCanaryDistributer<T extends Server, E> implements CanaryDis
         return versionServerMap;
     }
 
-    public void initVer(String serviceName, List<T> list) {
+    public void initLatestVersion(String serviceName, List<T> list) {
         if (CanaryRuleCache.getServiceInfoCacheMap().get(serviceName).getLatestVersionTag() != null) {
             return;
         }
@@ -123,9 +123,7 @@ public class AbstractCanaryDistributer<T extends Server, E> implements CanaryDis
                 }
             }
         }
-        Map<String, String> temMap = new HashMap<>();
-        temMap.put("version", latestVersion);
-        TagItem tagitem = new TagItem(temMap.get("version"), temMap);
+        TagItem tagitem = new TagItem(latestVersion);
         CanaryRuleCache.getServiceInfoCacheMap().get(serviceName).setLatestVersionTag(tagitem);
     }
 

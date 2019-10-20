@@ -21,21 +21,21 @@ public class CanaryFilter {
 
     public static <T extends Server, E> List<T> getFilteredListOfServers(List<T> list, String targetServiceName, String currentServiceName,
                                                                          Map<String, String> headers, CanaryDistributer<T, E> distributer) {
-        LOGGER.info("start canary release start");
+        LOGGER.debug("start canary release");
         if (CollectionUtils.isEmpty(list)) {
-            LOGGER.warn("start canary release list is null");
+            LOGGER.debug("start canary release list is null");
             return list;
         }
         /**
          * 1.初始化--进行cache缓存
          */
-        LOGGER.info("start canary release init");
+        LOGGER.debug("start canary release init");
         // 初始化
         if (!CanaryRuleCache.doInit(targetServiceName, currentServiceName)) {
-            LOGGER.info("canary release init failed");
+            LOGGER.debug("canary release init failed");
             return list;
         }
-        LOGGER.info("canary release init success");
+        LOGGER.debug("canary release init success");
         /**
          * 2.match--拿到invoke相关信息 (header)
          */
