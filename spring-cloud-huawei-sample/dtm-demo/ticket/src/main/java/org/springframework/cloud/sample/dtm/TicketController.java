@@ -3,6 +3,7 @@ package org.springframework.cloud.sample.dtm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.huawei.middleware.dtm.client.context.DTMContext;
@@ -16,13 +17,26 @@ import com.huawei.middleware.dtm.client.tcc.annotations.DTMTccBranch;
 public class TicketController {
   private static final Logger LOGGER = LoggerFactory.getLogger(TicketController.class);
 
+  private String flag;
+
   @GetMapping(value = "/bookTicket")
   @DTMTccBranch(identifier = "ticket", confirmMethod = "confirm", cancelMethod = "cancel")
-  public void bookTicket() throws InterruptedException {
-    LOGGER.info("book ticket");
+  public String bookTicket(@RequestParam("id") String id) throws InterruptedException {
+    LOGGER.info("{} - {} try bookTicket");
+    flag = id;
+    return "bookTicket success";
   }
 
   public void confirm() {
+
+    if ("sleep".equalsIgnoreCase(flag)) {
+      try {
+        Thread.sleep(5 * 60 * 1000);
+      } catch (InterruptedException e) {
+        LOGGER.error(e.getMessage(), e);
+      }
+    }
+
     LOGGER.info("{} - {} confirm ticket",
         DTMContext.getDTMContext().getGlobalTxId(),
         DTMContext.getDTMContext().getBranchTxId());

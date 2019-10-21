@@ -43,12 +43,12 @@ do the following:
 
 	git clone https://github.com/huaweicloud/spring-cloud-huawei.git
 	cd spring-cloud-huawei
-	mvn package
+	mvn package  --settings .maven.settings.xml
 
 ## How to use
 Because spring-cloud-huawei has not been released to the public repository, if you want to use it, you need to download the code to build locally.
     
-    mvn clean install
+    mvn clean install  --settings .maven.settings.xml
 
 dependencyManagement can be used in projects to manage dependencies.
 

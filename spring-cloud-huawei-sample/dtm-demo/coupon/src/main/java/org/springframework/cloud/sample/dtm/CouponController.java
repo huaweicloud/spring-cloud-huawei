@@ -4,6 +4,7 @@ package org.springframework.cloud.sample.dtm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.huawei.middleware.dtm.client.context.DTMContext;
@@ -19,8 +20,9 @@ public class CouponController {
 
   @GetMapping(value = "/discountCoupon")
   @DTMTccBranch(identifier = "coupon", confirmMethod = "confirm", cancelMethod = "cancel")
-  public void discountCoupon() throws InterruptedException {
-    LOGGER.info("book coupon room");
+  public String discountCoupon(@RequestParam("id") String id) throws InterruptedException {
+    LOGGER.info("{} - {} try discountCoupon");
+    return "  discountCoupon success";
   }
 
   public void confirm() {

@@ -15,20 +15,26 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.servicecomb.discovery.client.exception;
+package org.springframework.cloud.huawei.config;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 /**
  * @Author wangqijun
- * @Date 09:07 2019-07-17
+ * @Date 11:05 2019-10-17
  **/
-public class RemoteOperationException extends ServiceCombException {
+@Component
+@ConfigurationProperties("spring.cloud.servicecomb.config")
+public class ServiceCombConfigProperties {
 
-  public RemoteOperationException(String message) {
-    super(message);
+  private String address;
+
+  public String getAddress() {
+    return address;
   }
 
-  public RemoteOperationException(String message, Throwable cause) {
-    super(message, cause);
+  public void setAddress(String address) {
+    this.address = address;
   }
 }

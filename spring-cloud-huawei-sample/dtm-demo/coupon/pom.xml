@@ -43,6 +43,19 @@
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-huawei-dtm</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.netflix.servo</groupId>
+      <artifactId>servo-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.netflix.netflix-commons</groupId>
+      <artifactId>netflix-commons-util</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.netflix.netflix-commons</groupId>
+      <artifactId>netflix-statistics</artifactId>
+      <version>0.2.0</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -65,7 +78,7 @@
           </descriptors>
           <archive>
             <manifest>
-              <mainClass>org.springframework.cloud.sample.dtm.HotelAppMain</mainClass>
+              <mainClass>org.springframework.cloud.sample.dtm.CouponAppMain</mainClass>
             </manifest>
           </archive>
           <appendAssemblyId>false</appendAssemblyId>

@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: price
+  cloud:
+    servicecomb:
+      config:
+        address: https://cse.cn-east-3.myhuaweicloud.com
+      credentials:
+        enable: true
+        accessKey: your ak
+        secretKey: your sk
+        akskCustomCipher: default
+        project: cn-east-3

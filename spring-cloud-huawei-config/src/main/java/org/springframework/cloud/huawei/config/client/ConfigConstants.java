@@ -15,22 +15,23 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.servicecomb.discovery.client.exception;
+package org.springframework.cloud.huawei.config.client;
 
 /**
  * @Author wangqijun
- * @Date 17:19 2019-07-15
+ * @Date 11:28 2019-10-21
  **/
-public class ServiceCombException extends Exception {
-  public ServiceCombException() {
-    super();
-  }
+public class ConfigConstants {
 
-  public ServiceCombException(String message) {
-    super(message);
-  }
+  public static final String DEFAULT_API_VERSION = "v3";
 
-  public ServiceCombException(String message, Throwable cause) {
-    super(message, cause);
-  }
+  public static final String DEFAULT_SEPARATOR = "@";
+
+  public static final String DEFAULT_PROJECT = "default";
+
+  public static final String APPLICATION_CONFIG = "application";
+
+  public static final String PROPERTYSOURCE_NAME = "servicecomb";
+
+  public static final String SERVICE_NAME = "spring.application.name";
 }

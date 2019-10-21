@@ -15,18 +15,34 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.servicecomb.discovery.client.exception;
+package org.springframework.cloud.huawei.config.client;
+
+import org.springframework.cloud.common.transport.DefaultHttpTransport;
+import org.springframework.cloud.common.transport.SSLConfig;
 
 /**
  * @Author wangqijun
- * @Date 15:25 2019-07-17
+ * @Date 20:20 2019-10-19
  **/
-public class RemoteServerUnavailableException extends ServiceCombException {
-  public RemoteServerUnavailableException(String message) {
-    super(message);
+public class ServiceCombConfigClientBuilder {
+
+  private String url;
+
+  private SSLConfig sslConfig;
+
+  public ServiceCombConfigClientBuilder setSSLConfig(SSLConfig sslConfig) {
+    this.sslConfig = sslConfig;
+    return this;
   }
 
-  public RemoteServerUnavailableException(String message, Throwable cause) {
-    super(message, cause);
+  public ServiceCombConfigClientBuilder setUrl(String url) {
+    this.url = url;
+    return this;
+  }
+
+  public ServiceCombConfigClient createServiceCombConfigClient() {
+    DefaultHttpTransport httpTransport = DefaultHttpTransport.getInstance();
+    httpTransport.setSslConfig(sslConfig);
+    return new ServiceCombConfigClient(url, httpTransport);
   }
 }

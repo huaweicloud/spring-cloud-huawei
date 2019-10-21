@@ -1,2 +1,4 @@
+org.springframework.cloud.bootstrap.BootstrapConfiguration=\
+org.springframework.cloud.huawei.config.ServiceCombConfigBootstrapConfiguration
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  org.springframework.cloud.canary.CanaryConfiguration
+org.springframework.cloud.huawei.config.ServiceCombConfigAutoConfiguration
