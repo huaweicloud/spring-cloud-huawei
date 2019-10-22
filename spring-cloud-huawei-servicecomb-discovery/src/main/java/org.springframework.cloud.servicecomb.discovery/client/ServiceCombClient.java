@@ -49,6 +49,7 @@ import org.springframework.cloud.servicecomb.discovery.client.model.ServiceRegis
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.springframework.cloud.servicecomb.discovery.discovery.MicroserviceCache;
 
 
 /**
@@ -276,6 +277,7 @@ public class ServiceCombClient {
         if (result == null || result.getInstances() == null) {
           return instanceList;
         }
+        MicroserviceCache.initInsList(result.getInstances(),microservice.getServiceName());
         for (MicroserviceInstance instance : result.getInstances()) {
           int port;
           String host;

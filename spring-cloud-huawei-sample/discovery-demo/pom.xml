@@ -9,6 +9,7 @@
   <packaging>pom</packaging>
   <modules>
     <module>price-provider</module>
+    <module>price-provider-canary</module>
     <module>order-consumer</module>
     <module>product-consumer-feign</module>
   </modules>
