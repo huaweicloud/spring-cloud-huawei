@@ -23,4 +23,4 @@ dtm:
   rpc:
     sslEnabled: true
   proxy:
-    endpoint: https://192.168.0.5:30125
+    endpoint: https://192.168.0.207:30125

@@ -36,12 +36,12 @@
 
 	git clone https://github.com/huaweicloud/spring-cloud-huawei.git
 	cd spring-cloud-huawei
-	mvn package
+	mvn package  --settings .maven.settings.xml
 
 ## 如何使用
 因为spring-cloud-huawei还没有发布到公共仓库，如果要使用，需要先下载代码在本地构建。
     
-    mvn clean install
+    mvn clean install --settings .maven.settings.xml
 
 项目中可以使用dependencyManagement引入依赖。
 

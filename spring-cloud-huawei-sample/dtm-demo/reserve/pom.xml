@@ -47,6 +47,19 @@
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.netflix.servo</groupId>
+      <artifactId>servo-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.netflix.netflix-commons</groupId>
+      <artifactId>netflix-commons-util</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.netflix.netflix-commons</groupId>
+      <artifactId>netflix-statistics</artifactId>
+      <version>0.2.0</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
