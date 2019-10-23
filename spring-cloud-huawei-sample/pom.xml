@@ -16,5 +16,6 @@
     <module>dtm-demo</module>
     <module>discovery-demo</module>
     <module>config-demo</module>
+    <module>canary-demo</module>
   </modules>
 </project>
