@@ -1,53 +1,13 @@
 
 ## 配置说明(application.yaml)
 
-<table class="table-bordered table-striped table-condensed">
-   <tr>
-      <th>配置</th>
-      <th>Key</th>
-      <th>默认值</th>
-   </tr>
-   <tr>
-      <td>启动ServiceComb服务发现</td>
-      <td>spring.cloud.servicecomb.discovery.enabled</td>
-      <td>true</td>
-   </tr>
-    <tr>
-       <td>注册中心地址</td>
-       <td>spring.cloud.servicecomb.discovery.address</td>
-       <td></td>
-    </tr>
-    <tr>
-       <td>服务名</td>
-       <td>spring.cloud.servicecomb.discovery.serviceName</td>
-       <td>如果没有，使用spring.application.name</td>
-    </tr>
-    <tr>
-       <td>应用名</td>
-       <td>spring.cloud.servicecomb.discovery.appName</td>
-       <td>default</td>
-    </tr>
-    <tr>
-       <td>版本号</td>
-       <td>spring.cloud.servicecomb.discovery.version</td>
-       <td></td>
-    </tr>
-    <tr>
-       <td>启动健康检查</td>
-       <td>spring.cloud.servicecomb.discovery.healthCheck</td>
-       <td>true</td>
-    </tr>
-    <tr>
-       <td>健康检查间隔时间</td>
-       <td>spring.cloud.servicecomb.discovery.healthCheckInterval</td>
-       <td>10s</td>
-    </tr>
-    <tr>
-       <td>自动发现注册中心集群地址，
-       如果只配置一个，
-       可以发现健康的注册中心</td>
-       <td>spring.cloud.servicecomb.discovery.autoDiscovery</td>
-       <td>false</td>
-    </tr>
-
-</table>
+| 配置                                                         | Key                                                    | 默认值                                   |
+| ------------------------------------------------------------ | ------------------------------------------------------ | ---------------------------------------- |
+| 启动ServiceComb服务发现                                      | spring.cloud.servicecomb.discovery.enabled             | true                                     |
+| 注册中心地址                                                 | spring.cloud.servicecomb.discovery.address             |                                          |
+| 服务名                                                       | spring.cloud.servicecomb.discovery.serviceName         | 如果没有，使用spring.application.name    |
+| 应用名                                                       | spring.cloud.servicecomb.discovery.appName             | default                                  |
+| 版本号                                                       | spring.cloud.servicecomb.discovery.version             | [0.0.0+](sc_configuration_version_zh.md) |
+| 启动健康检查                                                 | spring.cloud.servicecomb.discovery.healthCheck         | true                                     |
+| 健康检查间隔时间                                             | spring.cloud.servicecomb.discovery.healthCheckInterval | 10s                                      |
+| 自动发现注册中心集群地址， 如果只配置一个， 可以发现健康的注册中心 | spring.cloud.servicecomb.discovery.autoDiscovery       | false                                    |

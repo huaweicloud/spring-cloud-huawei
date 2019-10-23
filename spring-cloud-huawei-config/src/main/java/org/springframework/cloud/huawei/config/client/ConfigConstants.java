@@ -34,4 +34,6 @@ public class ConfigConstants {
   public static final String PROPERTYSOURCE_NAME = "servicecomb";
 
   public static final String SERVICE_NAME = "spring.application.name";
+
+  public static final String INSTANCE_TAGS = "instance_description.properties.tags";
 }

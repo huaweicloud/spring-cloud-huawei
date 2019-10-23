@@ -1,0 +1,64 @@
+server:
+  port: 8094
+
+spring:
+  application:
+    name: consumer
+  cloud:
+    servicecomb:
+      discovery:
+        enabled: true
+        address: http://127.0.0.1:30100
+        version: 0.0.2
+        healthCheckInterval: 30
+        autoDiscovery: true
+
+
+servicecomb:
+  routeRule:
+    canary-provider: |
+      - precedence: 2 #优先级
+        match:        #匹配策略
+          source: consumer #匹配某个服务名
+          headers:          #header匹配
+            xx:
+              regex: xx
+              caseInsensitive: false  #是否区分大小写，默认为false，区分大小写
+            x:
+              exact: x
+        route: #路由规则
+          - weight: 50
+            tags:
+              version: 0.0.1
+          - weight: 20
+            tags:
+              version: 0.0.2
+      - precedence: 1
+        match:
+          source: 1 #匹配某个服务名
+          headers:          #header匹配
+            xx:
+              regex: xx
+              caseInsensitive: false # 是否区分大小写，默认为false，区分大小写
+            xxx:
+              exact: xx
+        route:
+          - weight: 1
+            tags:
+              version: 1
+              app: a
+    moke2: |
+      - precedence: 1
+        match:
+          source: xx #匹配某个服务名
+          headers:          #header匹配
+            xx:
+              regex: xx
+              caseInsensitive: false # 是否区分大小写，默认为false，区分大小写
+            xxx:
+              exact: xx
+        route:
+          - weight: 1
+            tags:
+              version: 1
+              app: 1

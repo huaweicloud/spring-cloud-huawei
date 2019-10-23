@@ -2,7 +2,7 @@ package org.springframework.cloud.canary.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.cloud.canary.client.ribbon.CanaryClientHttpRequestIntercptor;
+import org.springframework.cloud.canary.client.rest.CanaryRestTemplateIntercptor;
 import org.springframework.cloud.canary.client.track.CanaryHandlerInterceptor;
 import org.springframework.cloud.canary.client.track.CanaryTrackInfo;
 import org.springframework.cloud.canary.client.track.CanaryTrackThreadLocalInfo;
@@ -35,15 +35,25 @@ public class CanaryWebMvcConfigurer implements WebMvcConfigurer {
     }
 
 
+//    @Bean
+//    public RequestInterceptor requestInterceptor() {
+//        return new CanaryFeignIntercptor();
+//    }
+
     @Bean
-    public CanaryClientHttpRequestIntercptor grayClientHttpRequestIntercptor(
+    public CanaryRestTemplateIntercptor grayClientHttpRequestIntercptor(
             @Autowired(required = false) @LoadBalanced List<RestTemplate> restTemplates) {
-        CanaryClientHttpRequestIntercptor intercptor = new CanaryClientHttpRequestIntercptor();
+        CanaryRestTemplateIntercptor intercptor = new CanaryRestTemplateIntercptor();
         if (restTemplates != null) {
             restTemplates.forEach(restTemplate -> restTemplate.getInterceptors().add(intercptor));
         }
         return intercptor;
     }
+
+//    @Bean
+//    public CanaryTrackFilter setFilter(){
+//        return new CanaryTrackFilter();
+//    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

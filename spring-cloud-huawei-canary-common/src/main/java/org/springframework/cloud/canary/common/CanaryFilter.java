@@ -44,7 +44,7 @@ public class CanaryFilter {
         LOGGER.info("canary release match rule success");
 
         if (invokeRule == null) {
-            LOGGER.error("canary release match rule failed");
+            LOGGER.debug("canary release match rule failed");
             return list;
         }
         /**
