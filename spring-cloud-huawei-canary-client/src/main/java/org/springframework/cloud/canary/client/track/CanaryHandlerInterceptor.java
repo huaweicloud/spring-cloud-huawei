@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Enumeration;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * @Author GuoYl123
@@ -16,15 +15,14 @@ import java.util.UUID;
  **/
 public class CanaryHandlerInterceptor implements HandlerInterceptor {
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        CanaryTrackContext.setRequestInfo( new CanaryTrackRequest(UUID.randomUUID().toString()));
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
         CanaryTrackContext.setRequestHeader(getHeaders(request));
         return true;
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
-        CanaryTrackContext.removeRequestInfo();
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex){
+        CanaryTrackContext.remove();
     }
 
     private static Map<String, String> getHeaders(HttpServletRequest servletRequest) {

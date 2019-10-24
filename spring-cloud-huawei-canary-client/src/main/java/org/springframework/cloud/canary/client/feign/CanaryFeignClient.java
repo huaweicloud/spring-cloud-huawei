@@ -22,8 +22,7 @@ public class CanaryFeignClient implements Client {
     @Override
     public Response execute(Request request, Request.Options options) throws IOException {
         URI uri = URI.create(request.url());
-        String host =uri.getHost();
-        CanaryTrackContext.setServiceName(host);
+        CanaryTrackContext.setServiceName(uri.getHost());
         return client.execute(request,options);
     }
 }
