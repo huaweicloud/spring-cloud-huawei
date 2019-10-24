@@ -36,6 +36,7 @@ public class ServiceCombConfigPropertySource extends EnumerablePropertySource<Se
 
   private ServiceCombConfigClient serviceCombConfigClient;
 
+
   public ServiceCombConfigPropertySource(String name,
       ServiceCombConfigClient source) {
     super(name, source);
@@ -43,10 +44,11 @@ public class ServiceCombConfigPropertySource extends EnumerablePropertySource<Se
   }
 
 
-  public void loadAllRemoteConfig(String serviceName) throws RemoteOperationException {
+  public Map<String, String> loadAllRemoteConfig(String serviceName) throws RemoteOperationException {
     Map<String, String> remoteConfig = serviceCombConfigClient.loadAll(serviceName + ConfigConstants.DEFAULT_SEPARATOR
         + ConfigConstants.DEFAULT_PROJECT);
     properties.putAll(remoteConfig);
+    return remoteConfig;
   }
 
   @Override

@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.common.transport.SSLConfig;
 import org.springframework.cloud.common.transport.ServiceCombSSLProperties;
+import org.springframework.cloud.huawei.config.client.ServiceCombConfigClient;
 import org.springframework.cloud.huawei.config.client.ServiceCombConfigClientBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,8 +49,7 @@ public class ServiceCombConfigBootstrapConfiguration {
   }
 
   @Bean
-  public ServiceCombPropertySourceLocator serviceCombPropertySourceLocator(
-      ServiceCombConfigProperties serviceCombConfigProperties,
+  public ServiceCombConfigClient serviceCombConfigClient(ServiceCombConfigProperties serviceCombConfigProperties,
       ServiceCombSSLProperties serviceCombSSLProperties) {
     ServiceCombConfigClientBuilder builder = new ServiceCombConfigClientBuilder();
     SSLConfig sslConfig = new SSLConfig();
@@ -58,7 +58,14 @@ public class ServiceCombConfigBootstrapConfiguration {
     sslConfig.setSecretKey(serviceCombSSLProperties.getSecretKey());
     sslConfig.setAkskCustomCipher(serviceCombSSLProperties.getAkskCustomCipher());
     sslConfig.setProject(serviceCombSSLProperties.getProject());
-    builder.setUrl(serviceCombConfigProperties.getAddress()).setSSLConfig(sslConfig);
-    return new ServiceCombPropertySourceLocator(serviceCombConfigProperties, builder.createServiceCombConfigClient());
+    builder.setUrl(serviceCombConfigProperties.getServerAddr()).setSSLConfig(sslConfig);
+    return builder.createServiceCombConfigClient();
+  }
+
+  @Bean
+  public ServiceCombPropertySourceLocator serviceCombPropertySourceLocator(
+      ServiceCombConfigProperties serviceCombConfigProperties,
+      ServiceCombConfigClient serviceCombConfigClient) {
+    return new ServiceCombPropertySourceLocator(serviceCombConfigProperties, serviceCombConfigClient);
   }
 }

@@ -4,7 +4,9 @@ spring:
   cloud:
     servicecomb:
       config:
-        address: https://cse.cn-east-3.myhuaweicloud.com
+        serverAddr: https://cse.cn-east-3.myhuaweicloud.com
+        watch:
+          delay: 10000
       credentials:
         enable: true
         accessKey: your ak

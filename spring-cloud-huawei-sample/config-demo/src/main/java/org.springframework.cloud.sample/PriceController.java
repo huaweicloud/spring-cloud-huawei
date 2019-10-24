@@ -1,12 +1,16 @@
 package org.springframework.cloud.sample;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.cloud.huawei.config.ConfigRefreshEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@RefreshScope
 @RestController
-public class PriceController {
+public class PriceController implements ApplicationListener<ConfigRefreshEvent> {
 
   @Value("${server.port}")
   private Integer port;
@@ -23,5 +27,10 @@ public class PriceController {
   public String sayHello(@RequestParam("id") String id) {
 
     return "price ---> " + id + " port -->" + dd;
+  }
+
+  @Override
+  public void onApplicationEvent(ConfigRefreshEvent event) {
+    System.out.println("change = [" + event.getChange() + "]");
   }
 }
