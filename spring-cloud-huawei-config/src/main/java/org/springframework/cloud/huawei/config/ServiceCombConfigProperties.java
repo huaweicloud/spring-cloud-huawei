@@ -28,13 +28,65 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("spring.cloud.servicecomb.config")
 public class ServiceCombConfigProperties {
 
-  private String address;
+  private boolean enable;
 
-  public String getAddress() {
-    return address;
+  private String serverAddr;
+
+  private Watch watch;
+
+  public boolean isEnable() {
+    return enable;
   }
 
-  public void setAddress(String address) {
-    this.address = address;
+  public void setEnable(boolean enable) {
+    this.enable = enable;
+  }
+
+  public String getServerAddr() {
+    return serverAddr;
+  }
+
+  public void setServerAddr(String serverAddr) {
+    this.serverAddr = serverAddr;
+  }
+
+  public Watch getWatch() {
+    return watch;
+  }
+
+  public void setWatch(Watch watch) {
+    this.watch = watch;
+  }
+
+  public static class Watch {
+    private boolean enable;
+
+    private int delay = 10 * 1000;
+
+    private int waitTime;
+
+    public boolean isEnable() {
+      return enable;
+    }
+
+    public void setEnable(boolean enable) {
+      this.enable = enable;
+    }
+
+    public int getDelay() {
+      return delay;
+    }
+
+    public void setDelay(int delay) {
+      this.delay = delay;
+    }
+
+    public int getWaitTime() {
+      return waitTime;
+    }
+
+    public void setWaitTime(int waitTime) {
+      this.waitTime = waitTime;
+    }
   }
 }
