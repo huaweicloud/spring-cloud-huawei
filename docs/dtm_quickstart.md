@@ -7,7 +7,7 @@ The account has been opened on [huaweicloud](https://www.huaweicloud.com), and t
 
 Because spring-cloud-huawei has not been released to the public repository, if you want to use it, you need to download the code to build locally.
     
-    mvn clean install
+    mvn clean install --settings .maven.settings.xml
     
 An example of maven for you .
 dependencyManagement can be used in projects to manage dependencies.
@@ -81,3 +81,5 @@ Define the branch transaction by DTMTccBranch and put it on the "try" method. Co
         //cancel,Rollback method, call this method to release resources when an exception occurs, such as inventory service, release reserved inventory
       }
 ### step 4 View transaction status on the huaweicloud distributed transaction control panel.
+
+  ![avatar](./imgs/dtm_history.png)
