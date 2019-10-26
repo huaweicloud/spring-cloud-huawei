@@ -24,7 +24,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -35,14 +37,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -67,8 +63,6 @@ public class DefaultHttpTransport implements HttpTransport {
 
   private DefaultHttpTransport() {
     SSLContext sslContext = null;
-    SSLConnectionSocketFactory sslsf = null;
-
     try {
       sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
         //信任所有
@@ -76,32 +70,27 @@ public class DefaultHttpTransport implements HttpTransport {
           return true;
         }
       }).build();
-      sslsf = new SSLConnectionSocketFactory(sslContext);
     } catch (NoSuchAlgorithmException e) {
-      e.printStackTrace();
+      LOGGER.info(e.getMessage(), e);
     } catch (KeyManagementException e) {
-      e.printStackTrace();
+      LOGGER.info(e.getMessage(), e);
     } catch (KeyStoreException e) {
-      e.printStackTrace();
+      LOGGER.info(e.getMessage(), e);
     }
-
-    Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
-        .register("http", PlainConnectionSocketFactory.INSTANCE)
-        .register("https", new SSLConnectionSocketFactory(sslContext))
-        .build();
 
     RequestConfig config = RequestConfig.custom().setConnectTimeout(DealHeaderUtil.CONNECT_TIMEOUT)
         .setConnectionRequestTimeout(
             DealHeaderUtil.CONNECTION_REQUEST_TIMEOUT)
         .setSocketTimeout(DealHeaderUtil.SOCKET_TIMEOUT).build();
-    PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
-    manager.setMaxTotal(DealHeaderUtil.MAX_TOTAL);
-    manager.setDefaultMaxPerRoute(DealHeaderUtil.DEFAULT_MAX_PER_ROUTE);
 
-    HttpClientBuilder httpClientBuilder = HttpClientBuilder.create().setConnectionManager(manager)
-        .setSSLSocketFactory(sslsf)
-        .setDefaultRequestConfig(config);
-    this.httpClient = httpClientBuilder.build();
+    HostnameVerifier hostnameVerifier = new HostnameVerifier() {
+      @Override
+      public boolean verify(String s, SSLSession sslSession) {
+        return true;
+      }
+    };
+    this.httpClient = HttpClients.custom().setSSLHostnameVerifier(hostnameVerifier).setSSLContext(sslContext)
+        .setDefaultRequestConfig(config).disableCookieManagement().build();
   }
 
   public static DefaultHttpTransport getInstance() {

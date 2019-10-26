@@ -79,9 +79,9 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
 
   private void watch() {
     if (ready.get()) {
-      LOGGER.info("watch ..........................");
       Set<String> changeData = contextRefresher.refresh();
       if (changeData != null && !changeData.isEmpty()) {
+        LOGGER.info("config data changed  = {}", changeData);
         applicationEventPublisher.publishEvent(new ConfigRefreshEvent(this, changeData));
       }
     }

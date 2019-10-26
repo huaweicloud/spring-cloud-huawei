@@ -8,7 +8,7 @@
 
 因为spring-cloud-huawei还没有发布到公共仓库，如果要使用，需要先下载代码在本地构建。
     
-    mvn clean install
+    mvn clean install --settings .maven.settings.xml 
 
 以下以maven为例。
 项目中可以使用dependencyManagement引入依赖。
@@ -82,3 +82,5 @@
         //cancel,回滚方法，当出现异常的时候调用此方法释放资源，如库存服务，释放预留库存
       }
 ### step 4 在huaweicloud分布式事务控制面板上查看事务执行情况。
+
+  ![avatar](./imgs/dtm_history.png)
