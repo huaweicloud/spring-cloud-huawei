@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.common.exception.RemoteOperationException;
 import org.springframework.cloud.common.exception.RemoteServerUnavailableException;
-import org.springframework.cloud.common.transport.DefaultHttpTransport;
 import org.springframework.cloud.common.transport.HttpTransport;
 import org.springframework.cloud.common.transport.Response;
 
@@ -44,7 +43,7 @@ public class ServiceCombConfigClient {
 
   private String url;
 
-  public ServiceCombConfigClient(String url, DefaultHttpTransport httpTransport) {
+  public ServiceCombConfigClient(String url, HttpTransport httpTransport) {
     this.httpTransport = httpTransport;
     this.url = url;
   }

@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("spring.cloud.servicecomb.config")
 public class ServiceCombConfigProperties {
 
-  private boolean enable;
+  private boolean enable = true;
 
   private String serverAddr;
 
