@@ -17,6 +17,7 @@
 
 package org.springframework.cloud.huawei.config;
 
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -30,8 +31,6 @@ import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.interceptor.RetryInterceptorBuilder;
 import org.springframework.retry.interceptor.RetryOperationsInterceptor;
 import org.springframework.retry.interceptor.Retryable;
-
-import com.sun.tools.internal.xjc.outline.Aspect;
 
 /**
  * @Author wangqijun
