@@ -15,7 +15,7 @@
         <module>canary-consumer</module>
         <module>canary-provider</module>
         <module>canary-provider-beta</module>
-        <module>canary-consumer-feign</module>
+        <module>canary-consumer-feign-hytrix</module>
     </modules>
     <properties>
         <spring-cloud.version>2.1.2.RELEASE</spring-cloud.version>

@@ -16,5 +16,4 @@ public class CanaryClientConfiguration {
         rule.initWithNiwsConfig(config);
         return rule;
     }
-
 }

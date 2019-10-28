@@ -1,7 +1,7 @@
 package org.springframework.cloud.canary.client.ribbon;
 
 import com.netflix.loadbalancer.Server;
-import org.springframework.cloud.canary.common.distribute.AbstractCanaryDistributer;
+import org.springframework.cloud.canary.core.distribute.AbstractCanaryDistributer;
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstance;
 import org.springframework.cloud.servicecomb.discovery.discovery.MicroserviceCache;
 

@@ -55,7 +55,7 @@
       </dependency>
       <dependency>
         <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-huawei-canary-common</artifactId>
+        <artifactId>spring-cloud-huawei-canary-core</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

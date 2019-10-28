@@ -14,7 +14,7 @@ import java.io.IOException;
  **/
 public class CanaryRestTemplateIntercptor implements ClientHttpRequestInterceptor {
     /**
-     * todo: 透传要在这里设置添加header
+     * todo: 透传
      *
      * @param httpRequest
      * @param bytes
