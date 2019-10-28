@@ -17,12 +17,21 @@
 
 package org.springframework.cloud.huawei.config;
 
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.huawei.config.client.ServiceCombConfigClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.retry.interceptor.RetryInterceptorBuilder;
+import org.springframework.retry.interceptor.RetryOperationsInterceptor;
+import org.springframework.retry.interceptor.Retryable;
+
+import com.sun.tools.internal.xjc.outline.Aspect;
 
 /**
  * @Author wangqijun
@@ -49,6 +58,26 @@ public class ServiceCombConfigAutoConfiguration {
         ServiceCombConfigClient serviceCombConfigClient,
         ContextRefresher contextRefresher) {
       return new ConfigWatch(serviceCombConfigProperties, serviceCombConfigClient, contextRefresher);
+    }
+
+    @ConditionalOnClass({Retryable.class, Aspect.class, AopAutoConfiguration.class})
+    @Configuration
+    @EnableRetry(proxyTargetClass = true)
+    @Import(AopAutoConfiguration.class)
+    @ConditionalOnProperty(name = "spring.cloud.servicecomb.config.retry.enabled",
+        matchIfMissing = true)
+    protected static class RetryConfiguration {
+
+      @Bean(name = "serviceCombConfigRetryInterceptor")
+      @ConditionalOnMissingBean(name = "serviceCombConfigRetryInterceptor")
+      public RetryOperationsInterceptor serviceCombConfigRetryInterceptor(
+          ServiceCombConfigProperties serviceCombConfigProperties) {
+        return RetryInterceptorBuilder.stateless()
+            .backOffOptions(serviceCombConfigProperties.getRetry().getInitialInterval(),
+                serviceCombConfigProperties.getRetry().getMultiplier(),
+                serviceCombConfigProperties.getRetry().getMaxInterval())
+            .maxAttempts(serviceCombConfigProperties.getRetry().getMaxAttempts()).build();
+      }
     }
   }
 }

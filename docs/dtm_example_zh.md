@@ -43,8 +43,14 @@
     docker push swr.cn-north-4.myhuaweicloud.com/wang/reserve:0.1
     
 ### step 4 创建应用
+以reserve为例，coupon和ticket部署方式相同。
+1. 进入应用列表创建应用，选择ServiceComb引擎，点击下一步
+2. 运行环境选择docker，点击下一步
+3. 镜像仓库选择 step 3 生成的镜像。点击外网访问按钮，端口填写8080，点击下一步
+4. 检查配置项，点击下一步创建应用
+5. 创建完成后，查看日志，验证应用启动情况
 
-  创建应用的步骤可以参考[华为云官方文档说明](https://support.huaweicloud.com/usermanual-servicestage/servicestage_user_0115.html)
+  更详细的说明可以参考[华为云官方文档说明](https://support.huaweicloud.com/usermanual-servicestage/servicestage_user_0115.html)
 
 ### step 5 验证事务
 
