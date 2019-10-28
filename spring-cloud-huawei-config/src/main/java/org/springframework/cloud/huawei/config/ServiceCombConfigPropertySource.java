@@ -25,6 +25,7 @@ import org.springframework.cloud.common.exception.RemoteOperationException;
 import org.springframework.cloud.huawei.config.client.ConfigConstants;
 import org.springframework.cloud.huawei.config.client.ServiceCombConfigClient;
 import org.springframework.core.env.EnumerablePropertySource;
+import org.springframework.retry.annotation.Retryable;
 
 /**
  * @Author wangqijun
@@ -43,7 +44,7 @@ public class ServiceCombConfigPropertySource extends EnumerablePropertySource<Se
     this.serviceCombConfigClient = source;
   }
 
-
+  @Retryable(interceptor = "serviceCombConfigRetryInterceptor")
   public Map<String, String> loadAllRemoteConfig(String serviceName) throws RemoteOperationException {
     Map<String, String> remoteConfig = serviceCombConfigClient.loadAll(serviceName + ConfigConstants.DEFAULT_SEPARATOR
         + ConfigConstants.DEFAULT_PROJECT);
