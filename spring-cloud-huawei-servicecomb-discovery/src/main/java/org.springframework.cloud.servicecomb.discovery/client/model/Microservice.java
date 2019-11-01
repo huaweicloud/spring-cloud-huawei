@@ -32,6 +32,8 @@ public class Microservice {
 
   private String registerBy;
 
+  private Framework framework;
+
   private String environment;
 
   private String appId;
@@ -134,6 +136,14 @@ public class Microservice {
     return instances;
   }
 
+  public Framework getFramework() {
+    return framework;
+  }
+
+  public void setFramework(Framework framework) {
+    this.framework = framework;
+  }
+
   public void setInstances(
       List<MicroserviceInstance> instances) {
     this.instances = instances;
@@ -144,6 +154,7 @@ public class Microservice {
     return "Microservice{" +
         "serviceId='" + serviceId + '\'' +
         ", registerBy='" + registerBy + '\'' +
+        ", framework=" + framework +
         ", environment='" + environment + '\'' +
         ", appId='" + appId + '\'' +
         ", serviceName='" + serviceName + '\'' +
