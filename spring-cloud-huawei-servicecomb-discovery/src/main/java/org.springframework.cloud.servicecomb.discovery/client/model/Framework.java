@@ -25,7 +25,7 @@ public class Framework {
 
   public static final String DEFAULT_NAME = "spring-cloud-huawei";
 
-  public static final String DEFAULT_VERSION = "0.0.1-SNAPSHOT";
+  public static final String DEFAULT_VERSION = "0.0.1";
 
   private String name = DEFAULT_NAME;
 
