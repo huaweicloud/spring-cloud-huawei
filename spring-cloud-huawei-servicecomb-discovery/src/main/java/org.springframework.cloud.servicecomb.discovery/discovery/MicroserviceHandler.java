@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.common.exception.ServiceCombException;
 import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
+import org.springframework.cloud.servicecomb.discovery.client.model.Framework;
 import org.springframework.cloud.servicecomb.discovery.client.model.Microservice;
 import org.springframework.cloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
 
@@ -52,6 +53,7 @@ public class MicroserviceHandler {
     microservice.setAppId(serviceCombDiscoveryProperties.getAppName());
     microservice.setServiceName(serviceName);
     microservice.setVersion(ServiceRegistryConfig.DEFAULT_CALL_VERSION);
+    microservice.setFramework(new Framework());
     return microservice;
   }
 }

@@ -1,9 +1,27 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.springframework.cloud.canary.core.cache;
 
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringProperty;
+import java.util.List;
+import java.util.function.Supplier;
 import org.springframework.cloud.canary.core.model.PolicyRuleItem;
 import org.springframework.cloud.canary.core.model.ServiceInfoCache;
 import org.yaml.snakeyaml.Yaml;
@@ -39,35 +57,38 @@ public class CanaryRuleCache {
       Yaml yaml = new Yaml();
       DynamicStringProperty ruleStr = DynamicPropertyFactory.getInstance().getStringProperty(
           String.format(ROUTE_RULE, targetServiceName), null, () -> {
-            serviceInfoCacheMap.get(targetServiceName)
-                .setAllrule(
-                    Arrays.asList(yaml.loadAs(DynamicPropertyFactory.getInstance()
-                        .getStringProperty(String.format(ROUTE_RULE, targetServiceName),
-                            null)
-                        .get(), PolicyRuleItem[].class))
-                );
-            serviceInfoCacheMap.get(targetServiceName).getAllrule().forEach(a ->
-                a.getRoute().forEach(b -> b.initTagItem())
-            );
-            serviceInfoCacheMap.get(targetServiceName).sortRule();
+            DynamicStringProperty tepRuleStr = DynamicPropertyFactory.getInstance()
+                .getStringProperty(String.format(ROUTE_RULE, targetServiceName), null);
+            if (tepRuleStr.get() == null) {
+              return;
+            }
+            List<PolicyRuleItem> temList = Arrays
+                .asList(yaml.loadAs(tepRuleStr.get(), PolicyRuleItem[].class));
+            CanaryRuleCache.addAllRule(targetServiceName, temList);
           });
       if (ruleStr.get() == null) {
         return false;
       }
-      serviceInfoCacheMap.put(targetServiceName, new ServiceInfoCache());
-      serviceInfoCacheMap.get(targetServiceName)
-          .setAllrule(Arrays.asList(yaml.loadAs(ruleStr.get(), PolicyRuleItem[].class)));
-      // 这里初始化tagitem
-      serviceInfoCacheMap.get(targetServiceName).getAllrule().forEach(a ->
-          a.getRoute().forEach(b -> b.initTagItem())
-      );
-      if (serviceInfoCacheMap.get(targetServiceName).getAllrule() == null) {
-        return false;
-      }
-      // 按照优先级排序
-      serviceInfoCacheMap.get(targetServiceName).sortRule();
+      addAllRule(targetServiceName,
+          Arrays.asList(yaml.loadAs(ruleStr.get(), PolicyRuleItem[].class)));
       return true;
     }
+  }
+
+  public static void addAllRule(String targetServiceName, List<PolicyRuleItem> policyRuleItemList) {
+    if (policyRuleItemList == null) {
+      return;
+    }
+    if (serviceInfoCacheMap.get(targetServiceName) == null) {
+      serviceInfoCacheMap.put(targetServiceName, new ServiceInfoCache());
+    }
+    serviceInfoCacheMap.get(targetServiceName).setAllrule(policyRuleItemList);
+    // 这里初始化tagitem
+    serviceInfoCacheMap.get(targetServiceName).getAllrule().forEach(a ->
+        a.getRoute().forEach(b -> b.initTagItem())
+    );
+    // 按照优先级排序
+    serviceInfoCacheMap.get(targetServiceName).sortRule();
   }
 
   public static ConcurrentHashMap<String, ServiceInfoCache> getServiceInfoCacheMap() {

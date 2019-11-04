@@ -14,23 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.cloud.canary.client.ribbon;
 
-import org.springframework.cloud.canary.core.distribute.AbstractCanaryDistributer;
-import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstance;
-import org.springframework.cloud.servicecomb.discovery.discovery.MicroserviceCache;
-
-import com.netflix.loadbalancer.Server;
+package org.springframework.cloud.servicecomb.discovery.client.model;
 
 /**
- * @Author GuoYl123
- * @Date 2019/10/17
+ * @Author wangqijun
+ * @Date 11:51 2019-10-31
  **/
-public class CanaryServerDistributer extends AbstractCanaryDistributer<Server, MicroserviceInstance> {
-    public CanaryServerDistributer() {
-        init(server -> MicroserviceCache.getMicroserviceIns(server.getMetaInfo().getInstanceId()),
-            MicroserviceInstance::getVersion,
-            MicroserviceInstance::getServiceName,
-            MicroserviceInstance::getProperties);
-    }
+public class Framework {
+
+  public static final String DEFAULT_NAME = "spring-cloud-huawei";
+
+  public static final String DEFAULT_VERSION = "0.0.1";
+
+  private String name = DEFAULT_NAME;
+
+  private String version = DEFAULT_VERSION;
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
+  }
 }
