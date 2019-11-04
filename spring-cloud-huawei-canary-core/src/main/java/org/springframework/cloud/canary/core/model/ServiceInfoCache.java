@@ -8,58 +8,56 @@ import java.util.stream.Collectors;
  * @Date 2019/10/17
  **/
 public class ServiceInfoCache {
-    private List<PolicyRuleItem> allrule;
-    //用于default的情况
-    private TagItem latestVersionTag;
 
-    public ServiceInfoCache() {
-    }
+  private List<PolicyRuleItem> allrule;
+  //用于default的情况
+  private TagItem latestVersionTag;
 
-    // 过滤和当前服务名相同的服务
-    public void filteRule(String currentServerName) {
-        allrule = allrule.stream().filter(rule ->
-                rule.getMatch().filte(currentServerName, null)
-        ).sorted().collect(Collectors.toList());
-    }
+  public ServiceInfoCache() {
+  }
 
-    public TagItem getNextInvokeVersion(PolicyRuleItem policyRuleItem) {
-        List<RouteItem> rule = policyRuleItem.getRoute();
-        if (policyRuleItem.getTotal() == null) {
-            policyRuleItem.setTotal(rule.stream().mapToInt(RouteItem::getWeight).sum());
-        }
-        rule.stream().forEach(RouteItem::addCurrentWeight);
-        int maxIndex = 0, maxWeight = -1;
-        for (int i = 0; i < rule.size(); i++) {
-            if (maxWeight < rule.get(i).getCurrentWeight()) {
-                maxIndex = i;
-                maxWeight = rule.get(i).getCurrentWeight();
-            }
-        }
-        rule.get(maxIndex).reduceCurrentWeight(policyRuleItem.getTotal());
-        return rule.get(maxIndex).getTagitem();
-    }
+  public void sortRule() {
+    allrule = allrule.stream().sorted().collect(Collectors.toList());
+  }
 
-    public List<PolicyRuleItem> getAllrule() {
-        return allrule;
+  public TagItem getNextInvokeVersion(PolicyRuleItem policyRuleItem) {
+    List<RouteItem> rule = policyRuleItem.getRoute();
+    if (policyRuleItem.getTotal() == null) {
+      policyRuleItem.setTotal(rule.stream().mapToInt(RouteItem::getWeight).sum());
     }
+    rule.stream().forEach(RouteItem::addCurrentWeight);
+    int maxIndex = 0, maxWeight = -1;
+    for (int i = 0; i < rule.size(); i++) {
+      if (maxWeight < rule.get(i).getCurrentWeight()) {
+        maxIndex = i;
+        maxWeight = rule.get(i).getCurrentWeight();
+      }
+    }
+    rule.get(maxIndex).reduceCurrentWeight(policyRuleItem.getTotal());
+    return rule.get(maxIndex).getTagitem();
+  }
 
-    public void setAllrule(List<PolicyRuleItem> allrule) {
-        this.allrule = allrule;
-    }
+  public List<PolicyRuleItem> getAllrule() {
+    return allrule;
+  }
 
-    public TagItem getLatestVersionTag() {
-        return latestVersionTag;
-    }
+  public void setAllrule(List<PolicyRuleItem> allrule) {
+    this.allrule = allrule;
+  }
 
-    public void setLatestVersionTag(TagItem latestVersionTag) {
-        this.latestVersionTag = latestVersionTag;
-    }
+  public TagItem getLatestVersionTag() {
+    return latestVersionTag;
+  }
 
-    @Override
-    public String toString() {
-        return "ServiceInfoCache{" +
-                "allrule=" + allrule +
-                ", latestVersionTag=" + latestVersionTag +
-                '}';
-    }
+  public void setLatestVersionTag(TagItem latestVersionTag) {
+    this.latestVersionTag = latestVersionTag;
+  }
+
+  @Override
+  public String toString() {
+    return "ServiceInfoCache{" +
+        "allrule=" + allrule +
+        ", latestVersionTag=" + latestVersionTag +
+        '}';
+  }
 }

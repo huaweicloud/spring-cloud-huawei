@@ -1,4 +1,4 @@
-package org.springframework.cloud.canary.core.util;
+package org.springframework.cloud.common.util;
 
 /**
  * @Author GuoYl123

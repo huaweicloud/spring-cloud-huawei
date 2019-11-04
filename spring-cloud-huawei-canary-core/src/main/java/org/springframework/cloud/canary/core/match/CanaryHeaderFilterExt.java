@@ -7,5 +7,6 @@ import java.util.Map;
  * @Date 2019/10/17
  **/
 public interface CanaryHeaderFilterExt {
-    Map<String, String> doFilter(Map<String, String> invokeHeader);
+
+  Map<String, String> doFilter(Map<String, String> invokeHeader);
 }
