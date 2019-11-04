@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.springframework.cloud.canary.core.model;
 
 import java.util.HashMap;
@@ -10,6 +26,7 @@ import java.util.Objects;
  **/
 public class TagItem {
     private String version;
+
     private Map<String, String> param;
 
     public TagItem() {
@@ -30,8 +47,7 @@ public class TagItem {
     public TagItem(Map<String, String> param) {
         if(param.containsKey("version")) {
             this.version = param.get("version");
-        }
-        else {
+        } else {
             throw new RuntimeException("canary server's version can not be null");
         }
         this.param = param;
@@ -106,7 +122,7 @@ public class TagItem {
         }
         for (Map.Entry<String, String> entry : param.entrySet()) {
             if (item.getParam().containsKey(entry.getKey()) &&
-                    !item.getParam().get(entry.getKey()).equals(entry.getValue())) {
+                !item.getParam().get(entry.getKey()).equals(entry.getValue())) {
                 return 0;
             }
             cnt++;
