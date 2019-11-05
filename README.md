@@ -23,6 +23,11 @@ No need to change the code, just modify the individual configuration files(appli
 - [x] **Spring Cloud use ServiceStage to implement Distributed Transaction:**
 (Distributed Transaction Management, DTM) is a product that addresses consistency issues in a distributed environment.
 
+- [x] **Spring Cloud uses ServiceStage distributed configuration service:**
+Support for getting configuration from the server, and dynamic updates, following the way of Spring Cloud.
+
+- [x] **Spring Cloud uses ServiceStage gray release service:**
+Support for gray release capabilities.
 ## Components
 
  * [Apache-ServiceComb-Service-Center](https://github.com/apache/servicecomb-service-center)
@@ -66,6 +71,5 @@ dependencyManagement can be used in projects to manage dependencies.
 [more document](https://github.com/huaweicloud/spring-cloud-huawei/blob/master/docs/index.md)
 
 ## RoadMap
-- [ ] Integrated distributed transaction DTM
-- [ ] Integrated Config-Center
-- [ ] integrated Gray Release
+- [ ] Integrated serivicecomb-kie
+- [ ] Integrated edge-service
