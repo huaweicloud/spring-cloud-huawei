@@ -20,6 +20,12 @@
 
 - [x] **Spring Cloud 使用ServiceStage分布式事务DTM：**
 （Distributed Transaction Management，DTM）是一款用于解决分布式环境下事务一致性问题的产品。
+
+- [x] **Spring Cloud 使用ServiceStage分布式配置服务：**
+支持从服务端获取配置，并且动态更新，遵循Spring Cloud的用法，可以无缝对接。
+
+- [x] **Spring Cloud 使用ServiceStage灰度发布服务：**
+支持灰度发布能力。
 ## 组件
 
  * [Apache-ServiceComb-Service-Center](https://github.com/apache/servicecomb-service-center)
@@ -59,6 +65,6 @@
 [更多文档](https://github.com/huaweicloud/spring-cloud-huawei/blob/master/docs/index.md)
 
 ## 开发路径
-- [ ] 集成配置中心
-- [ ] 集成灰度发布
+- [ ] 集成serivicecomb-kie
+- [ ] 集成servicecomb的APIGateway
 
