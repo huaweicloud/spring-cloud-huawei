@@ -38,8 +38,7 @@ public class CanaryFilter {
   private static final Logger LOGGER = LoggerFactory.getLogger(CanaryFilter.class);
 
   public static <T extends Server, E> List<T> getFilteredListOfServers(List<T> list,
-      String targetServiceName, String currentServiceName,
-      Map<String, String> headers, CanaryDistributer<T, E> distributer) {
+      String targetServiceName, Map<String, String> headers, CanaryDistributer<T, E> distributer) {
     LOGGER.debug("start canary release");
     if (CollectionUtils.isEmpty(list)) {
       LOGGER.debug("start canary release list is null");
@@ -53,16 +52,14 @@ public class CanaryFilter {
      * 1.初始化--进行cache缓存
      */
     LOGGER.debug("start canary release init");
-    // 初始化
     if (!CanaryRuleCache.doInit(targetServiceName)) {
       LOGGER.debug("canary release init failed");
       return list;
     }
     LOGGER.debug("canary release init success");
     /**
-     * 2.match--拿到invoke相关信息 (header)
+     * 2.match--拿到invoke相关信息 (header),匹配到唯一的rule
      */
-    //这里匹配到唯一的rule
     PolicyRuleItem invokeRule = CanaryRuleMatcher.getInstance().match(targetServiceName, headers);
     LOGGER.info("canary release match rule success");
 

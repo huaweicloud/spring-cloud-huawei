@@ -82,6 +82,7 @@ public class PolicyRuleItem implements Comparable<PolicyRuleItem> {
   public int compareTo(PolicyRuleItem param) {
     if (param.precedence.equals(this.precedence)) {
       LOGGER.warn("the same canary precedence is not recommended");
+      return 0;
     }
     return param.precedence > this.precedence ? 1 : -1;
   }

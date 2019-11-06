@@ -75,7 +75,7 @@ public class CanaryRuleCache {
     }
   }
 
-  public static void addAllRule(String targetServiceName, List<PolicyRuleItem> policyRuleItemList) {
+  private static void addAllRule(String targetServiceName, List<PolicyRuleItem> policyRuleItemList) {
     if (policyRuleItemList == null) {
       return;
     }

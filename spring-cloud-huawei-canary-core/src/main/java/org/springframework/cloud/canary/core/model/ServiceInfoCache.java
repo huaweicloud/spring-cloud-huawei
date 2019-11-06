@@ -16,6 +16,7 @@
  */
 package org.springframework.cloud.canary.core.model;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +34,7 @@ public class ServiceInfoCache {
   }
 
   public void sortRule() {
-    allrule = allrule.stream().sorted().collect(Collectors.toList());
+    allrule = allrule.stream().sorted(Comparator.reverseOrder()).collect(Collectors.toList());
   }
 
   public TagItem getNextInvokeVersion(PolicyRuleItem policyRuleItem) {
