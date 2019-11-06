@@ -25,5 +25,5 @@
   * [设计思想](dtm_design_zh.md)
   
 * 使用分布式配置服务
-  * [快速开始](dtm_quickstart_zh.md)
-  * [运行demo](dtm_example_zh.md)
+  * [快速开始](config_quickstart_zh.md)
+  * [运行demo](config_example_zh.md)
