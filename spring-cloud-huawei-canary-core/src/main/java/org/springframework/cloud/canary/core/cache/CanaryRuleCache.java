@@ -75,7 +75,8 @@ public class CanaryRuleCache {
     }
   }
 
-  private static void addAllRule(String targetServiceName, List<PolicyRuleItem> policyRuleItemList) {
+  private static void addAllRule(String targetServiceName,
+      List<PolicyRuleItem> policyRuleItemList) {
     if (policyRuleItemList == null) {
       return;
     }
@@ -93,5 +94,10 @@ public class CanaryRuleCache {
 
   public static ConcurrentHashMap<String, ServiceInfoCache> getServiceInfoCacheMap() {
     return serviceInfoCacheMap;
+  }
+
+  public static void refresh() {
+    serviceInfoCacheMap = new ConcurrentHashMap<>();
+    servicePool = Interners.newWeakInterner();
   }
 }
