@@ -17,13 +17,18 @@
 
 package org.springframework.cloud.huawei.config;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.common.exception.RemoteOperationException;
+import org.springframework.cloud.common.util.MD5Util;
 import org.springframework.cloud.context.refresh.ContextRefresher;
+import org.springframework.cloud.huawei.config.client.ConfigConstants;
+import org.springframework.cloud.huawei.config.client.RefreshRecord;
 import org.springframework.cloud.huawei.config.client.ServiceCombConfigClient;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -53,15 +58,17 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
 
   private ContextRefresher contextRefresher;
 
+  private RefreshRecord refreshRecord;
 
   public ConfigWatch(ServiceCombConfigProperties serviceCombConfigProperties,
-      ServiceCombConfigClient serviceCombConfigClient, ContextRefresher contextRefresher) {
+      ServiceCombConfigClient serviceCombConfigClient, ContextRefresher contextRefresher, RefreshRecord refreshRecord) {
     this.serviceCombConfigProperties = serviceCombConfigProperties;
     this.serviceCombConfigClient = serviceCombConfigClient;
     ThreadPoolTaskScheduler threadPool = new ThreadPoolTaskScheduler();
     threadPool.initialize();
     taskScheduler = threadPool;
     this.contextRefresher = contextRefresher;
+    this.refreshRecord = refreshRecord;
   }
 
   @Override
@@ -78,7 +85,28 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
   }
 
   private void watch() {
+    String md5Vaule = null;
+    Map<String, String> remoteConfig = null;
     if (ready.get()) {
+      try {
+        remoteConfig = serviceCombConfigClient.loadAll("price" + ConfigConstants.DEFAULT_SEPARATOR
+            + ConfigConstants.DEFAULT_PROJECT);
+      } catch (RemoteOperationException e) {
+        LOGGER.warn(e.getMessage());
+      }
+      if (remoteConfig == null) {
+        return;
+      }
+      md5Vaule = MD5Util.encrypt(remoteConfig.toString());
+      // first load
+      if (refreshRecord.getLastMD5() == null || refreshRecord.getLastMD5().isEmpty()) {
+        refreshRecord.setLastMD5(md5Vaule);
+        return;
+      }
+      if (md5Vaule.equals(refreshRecord.getLastMD5())) {
+        return;
+      }
+      refreshRecord.setLastMD5(md5Vaule);
       Set<String> changeData = contextRefresher.refresh();
       if (changeData != null && !changeData.isEmpty()) {
         LOGGER.info("config data changed  = {}", changeData);

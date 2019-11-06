@@ -66,7 +66,7 @@ public class ServiceCombConfigClient {
       }
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         ObjectMapper objectMapper = new ObjectMapper();
-        LOGGER.info(response.getContent());
+        LOGGER.debug(response.getContent());
         Map<String, Map<String, String>> allConfigMap = objectMapper.readValue(response.getContent(), HashMap.class);
         if (allConfigMap != null) {
           if (allConfigMap.get(ConfigConstants.APPLICATION_CONFIG) != null) {
