@@ -33,27 +33,19 @@ import com.netflix.loadbalancer.ZoneAvoidanceRule;
  **/
 public class CanaryLoadBalanceRule extends ZoneAvoidanceRule {
 
-    private static final String SERVICE_NAME = "spring.application.name";
-
-    @Override
-    public Server choose(Object key) {
-        CanaryServerDistributer distributer = new CanaryServerDistributer();
-        String currentServiceName = DynamicPropertyFactory.getInstance()
-            .getStringProperty(SERVICE_NAME, null).get();
-        if (StringUtils.isEmpty(currentServiceName)) {
-            throw new RuntimeException("error when read the service name");
-        }
-        List<Server> serverList = CanaryFilter
-            .getFilteredListOfServers(getLoadBalancer().getAllServers(),
-                CanaryTrackContext.getServiceName(),
-                currentServiceName,
-                CanaryTrackContext.getRequestHeader(),
-                distributer);
-        Optional<Server> server = super.getPredicate().chooseRoundRobinAfterFiltering(serverList, key);
-        if (server.isPresent()) {
-            return server.get();
-        } else {
-            return null;
-        }
+  @Override
+  public Server choose(Object key) {
+    CanaryServerDistributer distributer = new CanaryServerDistributer();
+    List<Server> serverList = CanaryFilter
+        .getFilteredListOfServers(getLoadBalancer().getAllServers(),
+            CanaryTrackContext.getServiceName(),
+            CanaryTrackContext.getRequestHeader(),
+            distributer);
+    Optional<Server> server = super.getPredicate().chooseRoundRobinAfterFiltering(serverList, key);
+    if (server.isPresent()) {
+      return server.get();
+    } else {
+      return null;
     }
+  }
 }
