@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.cloud.common.util.VersionCompareUtil;
+import org.springframework.util.CollectionUtils;
 
 /**
  * @Author GuoYl123
@@ -65,7 +66,7 @@ public class AbstractCanaryDistributer<T extends Server, E> implements CanaryDis
     LOGGER.debug("canary release getDistributList succeed");
 
     //如果没有匹配到合适的规则，直接返回最新版本的服务列表
-    if (versionServerMap == null) {
+    if (CollectionUtils.isEmpty(versionServerMap)) {
       LOGGER.debug("canary release can not match any rule and route the latest version");
       return getLatestVersionList(list, targetServiceName);
     }
@@ -132,6 +133,11 @@ public class AbstractCanaryDistributer<T extends Server, E> implements CanaryDis
         if (versionServerMap.containsKey(targetTag)) {
           versionServerMap.get(targetTag).add(server);
         }
+      }
+    }
+    for (Map.Entry<TagItem, List<T>> entry : versionServerMap.entrySet()) {
+      if (entry.getValue().isEmpty()){
+        versionServerMap.remove(entry.getKey());
       }
     }
     return versionServerMap;

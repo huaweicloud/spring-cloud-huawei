@@ -18,12 +18,15 @@
 package org.springframework.cloud.canary.core;
 
 import com.netflix.config.DynamicPropertyFactory;
+import com.netflix.config.DynamicStringProperty;
 import com.netflix.loadbalancer.Server;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.cloud.canary.core.cache.CanaryRuleCache;
 import org.springframework.cloud.canary.core.distribute.AbstractCanaryDistributer;
 import mockit.Expectations;
 
@@ -33,7 +36,7 @@ import mockit.Expectations;
  **/
 public class CanaryDistributerTest {
 
-  String ruleStr = ""
+  private static String ruleStr = ""
       + "      - precedence: 2 #优先级\n"
       + "        match:        #匹配策略\n"
       + "          source: xx #匹配某个服务名\n"
@@ -46,7 +49,7 @@ public class CanaryDistributerTest {
       + "        route: #路由规则\n"
       + "          - weight: 50\n"
       + "            tags:\n"
-      + "              version: 11\n"
+      + "              version: 1.1\n"
       + "      - precedence: 1\n"
       + "        match:\n"
       + "          source: 1 #匹配某个服务名\n"
@@ -55,54 +58,98 @@ public class CanaryDistributerTest {
       + "              regex: xx\n"
       + "              caseInsensitive: false # 是否区分大小写，默认为false，区分大小写\n"
       + "            xxx:\n"
-      + "              exact: xx\n"
+      + "              exact: xxx\n"
       + "        route:\n"
       + "          - weight: 1\n"
       + "            tags:\n"
       + "              version: 1\n"
       + "              app: a";
+  String targetServiceName = "test_server";
 
   @Test
-  public void testMainFilter() {
-    String targetServiceName = "test_server";
-    TestDistributer TestDistributer = new TestDistributer();
-    List<ServiceIns> serverlist = new ArrayList<>();
-    serverlist.add(new ServiceIns("0"));
-    new Expectations() {
-      {
-        DynamicPropertyFactory dpf = DynamicPropertyFactory.getInstance();
-        result = dpf;
-        //todo: can not mock runnable
-        dpf.getStringProperty(anyString, null, (Runnable) any);
-        result = ruleStr;
-      }
-    };
-    List<ServiceIns> serverList = CanaryFilter
-        .getFilteredListOfServers(serverlist, targetServiceName, new HashMap(),
-            TestDistributer);
-    return;
+  public void testVersionNotMatch() {
+    Map headermap = new HashMap();
+    headermap.put("xxx", "xx");
+    headermap.put("xx", "xx");
+    headermap.put("formate", "json");
+    List<ServiceIns> list = getMockList();
+    list.remove(1);
+    List<ServiceIns> serverList = mainFilter(list, headermap);
+    serverList.get(0).getHost().equals("01");
+    Assert.assertEquals(1, serverList.size());
+    Assert.assertEquals("01", serverList.get(0).getHost());
   }
 
-  public
+  @Test
+  public void testVersionMatch() {
+    Map headermap = new HashMap();
+    headermap.put("xxx", "xx");
+    headermap.put("xx", "xx");
+    headermap.put("formate", "json");
+    List<ServiceIns> serverList = mainFilter(getMockList(), headermap);
+    Assert.assertEquals(1, serverList.size());
+    Assert.assertEquals("02", serverList.get(0).getHost());
+  }
+
+  private List<ServiceIns> getMockList() {
+    List<ServiceIns> serverlist = new ArrayList<>();
+    ServiceIns ins1 = new ServiceIns("01");
+    ins1.setVersion("2.0");
+    ServiceIns ins2 = new ServiceIns("02");
+    ins2.addTags("app", "a");
+    serverlist.add(ins1);
+    serverlist.add(ins2);
+    return serverlist;
+  }
+
+  private List<ServiceIns> mainFilter(List<ServiceIns> serverlist, Map<String, String> headermap) {
+    TestDistributer TestDistributer = new TestDistributer();
+    DynamicPropertyFactory dpf = DynamicPropertyFactory.getInstance();
+    DynamicStringProperty strp = new DynamicStringProperty("", ruleStr);
+    new Expectations(dpf) {
+      {
+        dpf.getStringProperty(anyString, null, (Runnable) any);
+        result = strp;
+      }
+    };
+    CanaryRuleCache.refresh();
+    return CanaryFilter
+        .getFilteredListOfServers(serverlist, targetServiceName, headermap,
+            TestDistributer);
+  }
+
   class ServiceIns extends Server {
+
+    String version = "1.1";
+    String serverName = targetServiceName;
+    Map<String, String> tags = new HashMap();
 
     public ServiceIns(String id) {
       super(id);
     }
 
     public String getVersion() {
-      return "11";
+      return version;
     }
 
     public String getServerName() {
-      return "xx";
+      return serverName;
     }
 
     public Map<String, String> getTags() {
-      Map<String, String> map = new HashMap();
-      map.put("xxx", "xx");
-      map.put("xx", "xx");
-      return map;
+      return tags;
+    }
+
+    public void setVersion(String version) {
+      this.version = version;
+    }
+
+    public void setServerName(String serverName) {
+      this.serverName = serverName;
+    }
+
+    public void addTags(String key, String v) {
+      tags.put(key, v);
     }
   }
 
