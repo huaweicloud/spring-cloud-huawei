@@ -33,13 +33,13 @@ public class ServiceCombConfigPropertySourceTest extends MockUp<ServiceCombConfi
     map.put("d", "r");
     new Expectations() {
       {
-        source.loadAll(anyString);
+        source.loadAll(anyString, anyString);
         result = map;
       }
     };
     ServiceCombConfigPropertySource serviceCombConfigPropertySource = new ServiceCombConfigPropertySource(name, source);
     Deencapsulation.setField(serviceCombConfigPropertySource, properties);
-    Map<String, String> result = serviceCombConfigPropertySource.loadAllRemoteConfig("");
+    Map<String, String> result = serviceCombConfigPropertySource.loadAllRemoteConfig("", "", "");
     Assert.assertEquals(result.size(), 2);
   }
 

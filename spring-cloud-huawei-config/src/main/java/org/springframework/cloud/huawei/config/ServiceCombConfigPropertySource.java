@@ -45,9 +45,10 @@ public class ServiceCombConfigPropertySource extends EnumerablePropertySource<Se
   }
 
   @Retryable(interceptor = "serviceCombConfigRetryInterceptor")
-  public Map<String, String> loadAllRemoteConfig(String serviceName) throws RemoteOperationException {
-    Map<String, String> remoteConfig = serviceCombConfigClient.loadAll(serviceName + ConfigConstants.DEFAULT_SEPARATOR
-        + ConfigConstants.DEFAULT_PROJECT);
+  public Map<String, String> loadAllRemoteConfig(String serviceName, String appName, String project)
+      throws RemoteOperationException {
+    Map<String, String> remoteConfig = serviceCombConfigClient
+        .loadAll(serviceName + ConfigConstants.DEFAULT_SEPARATOR + appName, project);
     properties.putAll(remoteConfig);
     return remoteConfig;
   }

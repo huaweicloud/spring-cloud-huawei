@@ -60,15 +60,12 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
 
   private RefreshRecord refreshRecord;
 
-  public ConfigWatch(ServiceCombConfigProperties serviceCombConfigProperties,
-      ServiceCombConfigClient serviceCombConfigClient, ContextRefresher contextRefresher, RefreshRecord refreshRecord) {
-    this.serviceCombConfigProperties = serviceCombConfigProperties;
-    this.serviceCombConfigClient = serviceCombConfigClient;
+  private String project;
+
+  public ConfigWatch() {
     ThreadPoolTaskScheduler threadPool = new ThreadPoolTaskScheduler();
     threadPool.initialize();
     taskScheduler = threadPool;
-    this.contextRefresher = contextRefresher;
-    this.refreshRecord = refreshRecord;
   }
 
   @Override
@@ -89,8 +86,9 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
     Map<String, String> remoteConfig = null;
     if (ready.get()) {
       try {
-        remoteConfig = serviceCombConfigClient.loadAll("price" + ConfigConstants.DEFAULT_SEPARATOR
-            + ConfigConstants.DEFAULT_PROJECT);
+        remoteConfig = serviceCombConfigClient.loadAll(
+            serviceCombConfigProperties.getServiceName() + ConfigConstants.DEFAULT_SEPARATOR
+                + serviceCombConfigProperties.getAppName(), project);
       } catch (RemoteOperationException e) {
         LOGGER.warn(e.getMessage());
       }
@@ -142,5 +140,32 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
   @Override
   public int getPhase() {
     return 0;
+  }
+
+
+  public void setServiceCombConfigProperties(
+      ServiceCombConfigProperties serviceCombConfigProperties) {
+    this.serviceCombConfigProperties = serviceCombConfigProperties;
+  }
+
+  public void setServiceCombConfigClient(
+      ServiceCombConfigClient serviceCombConfigClient) {
+    this.serviceCombConfigClient = serviceCombConfigClient;
+  }
+
+  public void setWatchScheduledFuture(ScheduledFuture<?> watchScheduledFuture) {
+    this.watchScheduledFuture = watchScheduledFuture;
+  }
+
+  public void setContextRefresher(ContextRefresher contextRefresher) {
+    this.contextRefresher = contextRefresher;
+  }
+
+  public void setRefreshRecord(RefreshRecord refreshRecord) {
+    this.refreshRecord = refreshRecord;
+  }
+
+  public void setProject(String project) {
+    this.project = project;
   }
 }

@@ -37,15 +37,17 @@ public class ServiceCombPropertySourceLocator implements PropertySourceLocator {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombPropertySourceLocator.class);
 
+  private String project;
 
   private ServiceCombConfigProperties serviceCombConfigProperties;
 
   private ServiceCombConfigClient serviceCombConfigClient;
 
   public ServiceCombPropertySourceLocator(ServiceCombConfigProperties serviceCombConfigProperties,
-      ServiceCombConfigClient serviceCombConfigClient) {
+      ServiceCombConfigClient serviceCombConfigClient, String project) {
     this.serviceCombConfigClient = serviceCombConfigClient;
     this.serviceCombConfigProperties = serviceCombConfigProperties;
+    this.project = project;
   }
 
   @Override
@@ -53,9 +55,10 @@ public class ServiceCombPropertySourceLocator implements PropertySourceLocator {
     ServiceCombConfigPropertySource serviceCombConfigPropertySource = new ServiceCombConfigPropertySource(
         ConfigConstants.PROPERTYSOURCE_NAME,
         serviceCombConfigClient);
-    String serviceName = environment.getProperty(ConfigConstants.SERVICE_NAME);
     try {
-      serviceCombConfigPropertySource.loadAllRemoteConfig(serviceName);
+      serviceCombConfigPropertySource
+          .loadAllRemoteConfig(serviceCombConfigProperties.getServiceName(), serviceCombConfigProperties.getAppName(),
+              project);
     } catch (RemoteOperationException e) {
       LOGGER.error(e.getMessage(), e);
     }

@@ -17,6 +17,7 @@
 
 package org.springframework.cloud.huawei.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +30,12 @@ import org.springframework.stereotype.Component;
 public class ServiceCombConfigProperties {
 
   private boolean enable = true;
+
+  @Value("${spring.cloud.servicecomb.discovery.serviceName:${spring.application.name}}")
+  private String serviceName;
+
+  @Value("${spring.cloud.servicecomb.discovery.appName:default}")
+  private String appName;
 
   private String serverAddr;
 
@@ -66,6 +73,22 @@ public class ServiceCombConfigProperties {
 
   public void setWatch(Watch watch) {
     this.watch = watch;
+  }
+
+  public String getServiceName() {
+    return serviceName;
+  }
+
+  public void setServiceName(String serviceName) {
+    this.serviceName = serviceName;
+  }
+
+  public String getAppName() {
+    return appName;
+  }
+
+  public void setAppName(String appName) {
+    this.appName = appName;
   }
 
   public static class Watch {

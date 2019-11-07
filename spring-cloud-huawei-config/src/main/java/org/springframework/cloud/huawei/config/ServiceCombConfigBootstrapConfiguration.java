@@ -65,7 +65,8 @@ public class ServiceCombConfigBootstrapConfiguration {
   @Bean
   public ServiceCombPropertySourceLocator serviceCombPropertySourceLocator(
       ServiceCombConfigProperties serviceCombConfigProperties,
-      ServiceCombConfigClient serviceCombConfigClient) {
-    return new ServiceCombPropertySourceLocator(serviceCombConfigProperties, serviceCombConfigClient);
+      ServiceCombConfigClient serviceCombConfigClient, ServiceCombSSLProperties serviceCombSSLProperties) {
+    return new ServiceCombPropertySourceLocator(serviceCombConfigProperties, serviceCombConfigClient,
+        serviceCombSSLProperties.getProject());
   }
 }
