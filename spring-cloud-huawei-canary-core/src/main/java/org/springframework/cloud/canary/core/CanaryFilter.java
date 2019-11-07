@@ -61,7 +61,7 @@ public class CanaryFilter {
      * 2.match--拿到invoke相关信息 (header),匹配到唯一的rule
      */
     PolicyRuleItem invokeRule = CanaryRuleMatcher.getInstance().match(targetServiceName, headers);
-    LOGGER.info("canary release match rule success");
+    LOGGER.debug("canary release match rule success");
 
     if (invokeRule == null) {
       LOGGER.debug("canary release match rule failed");
