@@ -16,11 +16,16 @@
  */
 package org.springframework.cloud.canary.core.model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @Author GuoYl123
  * @Date 2019/10/17
  **/
 public class HeaderRule {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(HeaderRule.class);
 
   //正则
   private String regex;
@@ -41,7 +46,12 @@ public class HeaderRule {
     if (exact != null && !str.equals(exact)) {
       return false;
     }
-    if (regex != null && !str.matches(regex)) {
+    try {
+      if (regex != null && !str.matches(regex)) {
+        return false;
+      }
+    } catch (Exception e) {
+      LOGGER.error("canary release wrong regular expression format: {}", regex);
       return false;
     }
     return true;

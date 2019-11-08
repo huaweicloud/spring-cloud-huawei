@@ -21,7 +21,8 @@ import com.google.common.collect.Interners;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringProperty;
 import java.util.List;
-import java.util.function.Supplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.canary.core.model.PolicyRuleItem;
 import org.springframework.cloud.canary.core.model.ServiceInfoCache;
 import org.yaml.snakeyaml.Yaml;
@@ -34,6 +35,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Date 2019/10/17
  **/
 public class CanaryRuleCache {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(CanaryRuleCache.class);
 
   private static ConcurrentHashMap<String, ServiceInfoCache> serviceInfoCacheMap = new ConcurrentHashMap<>();
 
@@ -62,15 +65,25 @@ public class CanaryRuleCache {
             if (tepRuleStr.get() == null) {
               return;
             }
-            List<PolicyRuleItem> temList = Arrays
-                .asList(yaml.loadAs(tepRuleStr.get(), PolicyRuleItem[].class));
-            CanaryRuleCache.addAllRule(targetServiceName, temList);
+            try {
+              List<PolicyRuleItem> temList = Arrays
+                  .asList(yaml.loadAs(tepRuleStr.get(), PolicyRuleItem[].class));
+              CanaryRuleCache.addAllRule(targetServiceName, temList);
+            } catch (Exception e) {
+              LOGGER.error("canary release Serialization failed {}", e.getMessage());
+              return;
+            }
           });
       if (ruleStr.get() == null) {
         return false;
       }
-      addAllRule(targetServiceName,
-          Arrays.asList(yaml.loadAs(ruleStr.get(), PolicyRuleItem[].class)));
+      try {
+        addAllRule(targetServiceName,
+            Arrays.asList(yaml.loadAs(ruleStr.get(), PolicyRuleItem[].class)));
+      } catch (Exception e) {
+        LOGGER.error("canary release Serialization failed: {}", e.getMessage());
+        return false;
+      }
       return true;
     }
   }

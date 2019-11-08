@@ -48,6 +48,7 @@ public class CanaryFilter {
       LOGGER.warn("headers is null provide when canary release");
       headers = new HashMap<>();
     }
+    LOGGER.debug("canary release headers:{}",headers);
     /**
      * 1.初始化--进行cache缓存
      */
@@ -61,15 +62,19 @@ public class CanaryFilter {
      * 2.match--拿到invoke相关信息 (header),匹配到唯一的rule
      */
     PolicyRuleItem invokeRule = CanaryRuleMatcher.getInstance().match(targetServiceName, headers);
-    LOGGER.debug("canary release match rule success");
 
     if (invokeRule == null) {
       LOGGER.debug("canary release match rule failed");
       return list;
     }
+
+    LOGGER.debug("canary release match rule success: {}", invokeRule);
+
     /**
      * 3.distribute--拿到server list选择endpoint进行流量分配
      */
-    return distributer.distribut(targetServiceName, list, invokeRule);
+    List<T> resultList = distributer.distribut(targetServiceName, list, invokeRule);
+
+    return resultList;
   }
 }

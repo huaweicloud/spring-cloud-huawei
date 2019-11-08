@@ -17,7 +17,6 @@
 package org.springframework.cloud.canary.core.model;
 
 import java.util.Map;
-import org.springframework.cloud.common.exception.CanaryLllegalParamException;
 
 /**
  * @Author GuoYl123
@@ -41,8 +40,6 @@ public class RouteItem implements Comparable<RouteItem> {
   public void initTagItem() {
     if (tags != null && tags.containsKey("version")) {
       tagitem = new TagItem(tags);
-    } else {
-      throw new CanaryLllegalParamException("version must not be null");
     }
   }
 
