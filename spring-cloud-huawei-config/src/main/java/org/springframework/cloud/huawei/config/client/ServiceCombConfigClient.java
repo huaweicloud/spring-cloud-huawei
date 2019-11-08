@@ -54,13 +54,14 @@ public class ServiceCombConfigClient {
    * @return
    * @throws RemoteOperationException
    */
-  public Map<String, String> loadAll(String dimensionsInfo) throws RemoteOperationException {
+  public Map<String, String> loadAll(String dimensionsInfo, String project) throws RemoteOperationException {
     Response response = null;
     Map<String, String> result = new HashMap<>();
     try {
+      project = project != null && !project.isEmpty() ? project : ConfigConstants.DEFAULT_PROJECT;
       response = httpTransport.sendGetRequest(
-          url + "/" + ConfigConstants.DEFAULT_API_VERSION + "/" + ConfigConstants.DEFAULT_PROJECT
-              + "/configuration/items?dimensionsInfo=" + dimensionsInfo);
+          url + "/" + ConfigConstants.DEFAULT_API_VERSION + "/" + project + "/configuration/items?dimensionsInfo="
+              + dimensionsInfo);
       if (response == null) {
         return result;
       }

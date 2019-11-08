@@ -22,6 +22,7 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cloud.common.transport.ServiceCombSSLProperties;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.huawei.config.client.RefreshRecord;
 import org.springframework.cloud.huawei.config.client.ServiceCombConfigClient;
@@ -63,8 +64,15 @@ public class ServiceCombConfigAutoConfiguration {
         matchIfMissing = true)
     public ConfigWatch configWatch(ServiceCombConfigProperties serviceCombConfigProperties,
         ServiceCombConfigClient serviceCombConfigClient,
-        ContextRefresher contextRefresher, RefreshRecord refreshRecord) {
-      return new ConfigWatch(serviceCombConfigProperties, serviceCombConfigClient, contextRefresher, refreshRecord);
+        ContextRefresher contextRefresher, RefreshRecord refreshRecord,
+        ServiceCombSSLProperties serviceCombSSLProperties) {
+      ConfigWatch watch = new ConfigWatch();
+      watch.setProject(serviceCombSSLProperties.getProject());
+      watch.setContextRefresher(contextRefresher);
+      watch.setServiceCombConfigClient(serviceCombConfigClient);
+      watch.setServiceCombConfigProperties(serviceCombConfigProperties);
+      watch.setRefreshRecord(refreshRecord);
+      return watch;
     }
   }
 

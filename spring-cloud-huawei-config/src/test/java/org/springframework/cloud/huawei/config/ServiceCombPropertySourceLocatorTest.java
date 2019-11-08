@@ -35,7 +35,7 @@ public class ServiceCombPropertySourceLocatorTest {
     Assert.assertEquals(watch.getDelay(), 10);
     serviceCombConfigProperties.setWatch(watch);
     ServiceCombPropertySourceLocator serviceCombPropertySourceLocator = new ServiceCombPropertySourceLocator(
-        serviceCombConfigProperties, serviceCombConfigClient);
+        serviceCombConfigProperties, serviceCombConfigClient, "default");
     PropertySource<?> result = serviceCombPropertySourceLocator.locate(environment);
     Assert.assertEquals(result.getName(), ConfigConstants.PROPERTYSOURCE_NAME);
   }

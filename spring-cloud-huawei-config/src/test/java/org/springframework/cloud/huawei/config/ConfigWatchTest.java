@@ -13,13 +13,13 @@ public class ConfigWatchTest {
 
   @Test
   public void isRunning() {
-    ConfigWatch configWatch = new ConfigWatch(null, null, null, null);
+    ConfigWatch configWatch = new ConfigWatch();
     assertEquals(configWatch.isRunning(), false);
   }
 
   @Test
   public void isAutoStartup() {
-    ConfigWatch configWatch = new ConfigWatch(null, null, null, null);
+    ConfigWatch configWatch = new ConfigWatch();
     assertEquals(configWatch.isAutoStartup(), true);
   }
 }
