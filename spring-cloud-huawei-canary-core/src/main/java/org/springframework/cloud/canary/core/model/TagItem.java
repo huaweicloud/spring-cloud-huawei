@@ -117,8 +117,8 @@ public class TagItem {
    */
   public int matchNum(TagItem item) {
     int cnt = 0;
-    if (version.equals(item.getVersion())) {
-      cnt++;
+    if(version != null && !version.equals(item.version)){
+      return 0;
     }
     for (Map.Entry<String, String> entry : param.entrySet()) {
       if (item.getParam().containsKey(entry.getKey()) &&

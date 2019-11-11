@@ -45,7 +45,8 @@ public class CanaryRuleCache {
   private static Interner<String> servicePool = Interners.newWeakInterner();
 
   /**
-   * 每次序列化的过程耗费性能，这里额外缓存，配置更新时触发回调函数 返回false即初始化规则失败： 1. 规则解析错误 2. 规则为空
+   * 每次序列化额外缓存，配置更新时触发回调函数
+   * 返回false即初始化规则失败： 1. 规则解析错误 2. 规则为空
    *
    * @param targetServiceName
    * @return
@@ -60,6 +61,7 @@ public class CanaryRuleCache {
       Yaml yaml = new Yaml();
       DynamicStringProperty ruleStr = DynamicPropertyFactory.getInstance().getStringProperty(
           String.format(ROUTE_RULE, targetServiceName), null, () -> {
+            refresh(targetServiceName);
             DynamicStringProperty tepRuleStr = DynamicPropertyFactory.getInstance()
                 .getStringProperty(String.format(ROUTE_RULE, targetServiceName), null);
             if (tepRuleStr.get() == null) {
@@ -112,5 +114,9 @@ public class CanaryRuleCache {
   public static void refresh() {
     serviceInfoCacheMap = new ConcurrentHashMap<>();
     servicePool = Interners.newWeakInterner();
+  }
+
+  public static void refresh(String targetServiceName) {
+    serviceInfoCacheMap.remove(targetServiceName);
   }
 }

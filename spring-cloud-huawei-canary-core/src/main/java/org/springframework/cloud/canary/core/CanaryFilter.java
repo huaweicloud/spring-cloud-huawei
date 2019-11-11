@@ -17,6 +17,7 @@
 package org.springframework.cloud.canary.core;
 
 import com.netflix.loadbalancer.Server;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.canary.core.cache.CanaryRuleCache;
@@ -41,11 +42,15 @@ public class CanaryFilter {
       String targetServiceName, Map<String, String> headers, CanaryDistributer<T, E> distributer) {
     LOGGER.debug("start canary release");
     if (CollectionUtils.isEmpty(list)) {
-      LOGGER.debug("start canary release list is null");
+      LOGGER.warn("canary release list is null");
+      return list;
+    }
+    if (StringUtils.isEmpty(targetServiceName)) {
+      LOGGER.warn("canary release targetServiceName is null");
       return list;
     }
     if (headers == null) {
-      LOGGER.warn("headers is null provide when canary release");
+      LOGGER.warn("canary release headers is null");
       headers = new HashMap<>();
     }
     LOGGER.debug("canary release headers:{}",headers);
@@ -74,6 +79,8 @@ public class CanaryFilter {
      * 3.distribute--拿到server list选择endpoint进行流量分配
      */
     List<T> resultList = distributer.distribut(targetServiceName, list, invokeRule);
+
+    LOGGER.debug("canary release distribute rule success: {}", resultList);
 
     return resultList;
   }

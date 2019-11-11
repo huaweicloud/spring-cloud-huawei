@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: consumer
+  cloud:
+    servicecomb:
+      config:
+        serverAddr: https://cse.cn-north-4.myhuaweicloud.com
+        watch:
+          delay: 10000
+      credentials:
+        enable: true
+        accessKey: yourak
+        secretKey: yoursk
+        akskCustomCipher: default
+        project: cn-north-4
