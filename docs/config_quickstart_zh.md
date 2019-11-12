@@ -25,6 +25,50 @@
       </dependencies>
     </dependencyManagement>
 
+或者修改maven的配置文件setting.xml，添加华为云repository和pluginRepository
+
+	  <mirrors>
+		<mirror>
+			<id>huaweicloud</id>
+			<mirrorOf>*,!HuaweiCloudSDK</mirrorOf>
+			<url>https://repo.huaweicloud.com/repository/maven/</url>
+		</mirror>  
+	  </mirrors>
+	
+	  <profiles>
+		<profile>
+			<id>MyProfile</id>
+			<pluginRepositories>
+				<pluginRepository>
+				  <id>HuaweiCloudSDK</id>
+				  <url>https://repo.huaweicloud.com/repository/maven/huaweicloudsdk/</url>
+				  <releases>
+					<enabled>true</enabled>
+				  </releases>
+				  <snapshots>
+					<enabled>true</enabled>
+				  </snapshots>
+				</pluginRepository>
+			</pluginRepositories>
+			<repositories>
+				<repository>
+					<id>HuaweiCloudSDK</id>
+					<url>https://repo.huaweicloud.com/repository/maven/huaweicloudsdk/</url>
+					<releases>
+						<enabled>true</enabled>
+					</releases>
+					<snapshots>
+						<enabled>false</enabled>
+					</snapshots>
+				</repository>
+			</repositories>
+		</profile>
+	  </profiles>
+	  
+	  <activeProfiles>
+	    <activeProfile>MyProfile</activeProfile>
+	  </activeProfiles>
+
 引入spring-cloud-starter-huawei-servicecomb-discovery，用于注册发现服务
     
     <dependency>
