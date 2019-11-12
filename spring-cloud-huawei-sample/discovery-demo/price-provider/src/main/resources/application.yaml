@@ -18,9 +18,3 @@ spring:
         secretKey: your sk
         akskCustomCipher: default
         project: cn-east-2
-cse:
-  config:
-    client:
-      serverUri: https://cse.cn-east-2.myhuaweicloud.com
-      refreshMode: 1
-      refresh_interval: 5000
