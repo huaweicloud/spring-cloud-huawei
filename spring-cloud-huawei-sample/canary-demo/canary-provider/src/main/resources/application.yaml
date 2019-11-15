@@ -8,7 +8,12 @@ spring:
     servicecomb:
       discovery:
         enabled: true
-        address: http://127.0.0.1:30100
-        version: 0.0.1
+        address: https://cse.cn-north-4.myhuaweicloud.com:443
+        version: 0.1.1
         healthCheckInterval: 30
-        autoDiscovery: true
+      credentials:
+        enable: true
+        accessKey: yourak
+        secretKey: yoursk
+        project: cn-north-4
+        akskCustomCipher: default

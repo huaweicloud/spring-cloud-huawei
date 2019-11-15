@@ -21,7 +21,8 @@ import com.google.common.collect.Interners;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringProperty;
 import java.util.List;
-import java.util.function.Supplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.canary.core.model.PolicyRuleItem;
 import org.springframework.cloud.canary.core.model.ServiceInfoCache;
 import org.yaml.snakeyaml.Yaml;
@@ -35,6 +36,8 @@ import java.util.concurrent.ConcurrentHashMap;
  **/
 public class CanaryRuleCache {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(CanaryRuleCache.class);
+
   private static ConcurrentHashMap<String, ServiceInfoCache> serviceInfoCacheMap = new ConcurrentHashMap<>();
 
   private static final String ROUTE_RULE = "servicecomb.routeRule.%s";
@@ -42,7 +45,8 @@ public class CanaryRuleCache {
   private static Interner<String> servicePool = Interners.newWeakInterner();
 
   /**
-   * 每次序列化的过程耗费性能，这里额外缓存，配置更新时触发回调函数 返回false即初始化规则失败： 1. 规则解析错误 2. 规则为空
+   * 每次序列化额外缓存，配置更新时触发回调函数
+   * 返回false即初始化规则失败： 1. 规则解析错误 2. 规则为空
    *
    * @param targetServiceName
    * @return
@@ -57,20 +61,31 @@ public class CanaryRuleCache {
       Yaml yaml = new Yaml();
       DynamicStringProperty ruleStr = DynamicPropertyFactory.getInstance().getStringProperty(
           String.format(ROUTE_RULE, targetServiceName), null, () -> {
+            refresh(targetServiceName);
             DynamicStringProperty tepRuleStr = DynamicPropertyFactory.getInstance()
                 .getStringProperty(String.format(ROUTE_RULE, targetServiceName), null);
             if (tepRuleStr.get() == null) {
               return;
             }
-            List<PolicyRuleItem> temList = Arrays
-                .asList(yaml.loadAs(tepRuleStr.get(), PolicyRuleItem[].class));
-            CanaryRuleCache.addAllRule(targetServiceName, temList);
+            try {
+              List<PolicyRuleItem> temList = Arrays
+                  .asList(yaml.loadAs(tepRuleStr.get(), PolicyRuleItem[].class));
+              CanaryRuleCache.addAllRule(targetServiceName, temList);
+            } catch (Exception e) {
+              LOGGER.error("canary release Serialization failed {}", e.getMessage());
+              return;
+            }
           });
       if (ruleStr.get() == null) {
         return false;
       }
-      addAllRule(targetServiceName,
-          Arrays.asList(yaml.loadAs(ruleStr.get(), PolicyRuleItem[].class)));
+      try {
+        addAllRule(targetServiceName,
+            Arrays.asList(yaml.loadAs(ruleStr.get(), PolicyRuleItem[].class)));
+      } catch (Exception e) {
+        LOGGER.error("canary release Serialization failed: {}", e.getMessage());
+        return false;
+      }
       return true;
     }
   }
@@ -99,5 +114,9 @@ public class CanaryRuleCache {
   public static void refresh() {
     serviceInfoCacheMap = new ConcurrentHashMap<>();
     servicePool = Interners.newWeakInterner();
+  }
+
+  public static void refresh(String targetServiceName) {
+    serviceInfoCacheMap.remove(targetServiceName);
   }
 }

@@ -19,7 +19,6 @@ package org.springframework.cloud.canary.core.model;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import org.springframework.cloud.common.exception.CanaryLllegalParamException;
 
 /**
  * @Author GuoYl123
@@ -48,8 +47,6 @@ public class TagItem {
   public TagItem(Map<String, String> param) {
     if (param.containsKey("version")) {
       this.version = param.get("version");
-    } else {
-      throw new CanaryLllegalParamException("canary server's version can not be null");
     }
     this.param = param;
   }
@@ -105,7 +102,10 @@ public class TagItem {
     if (this.param == null || item.getParam() == null) {
       return false;
     }
-    return this.version.equals(item.getVersion()) && this.param.equals(item.getParam());
+    if(this.version!=null && item.getVersion()!=null){
+      return this.version.equals(item.getVersion()) && this.param.equals(item.getParam());
+    }
+    return this.param.equals(item.getParam());
   }
 
 
@@ -117,7 +117,7 @@ public class TagItem {
    */
   public int matchNum(TagItem item) {
     int cnt = 0;
-    if (!version.equals(item.getVersion())) {
+    if(version != null && !version.equals(item.version)){
       return 0;
     }
     for (Map.Entry<String, String> entry : param.entrySet()) {

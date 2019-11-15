@@ -33,9 +33,10 @@ import com.netflix.loadbalancer.ZoneAvoidanceRule;
  **/
 public class CanaryLoadBalanceRule extends ZoneAvoidanceRule {
 
+  CanaryServerDistributer distributer = new CanaryServerDistributer();
+
   @Override
   public Server choose(Object key) {
-    CanaryServerDistributer distributer = new CanaryServerDistributer();
     List<Server> serverList = CanaryFilter
         .getFilteredListOfServers(getLoadBalancer().getAllServers(),
             CanaryTrackContext.getServiceName(),

@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.canary.core.cache.CanaryRuleCache;
 import org.springframework.cloud.canary.core.model.PolicyRuleItem;
+import org.springframework.cloud.canary.core.model.RouteItem;
 import org.springframework.cloud.canary.core.model.TagItem;
 
 import java.util.ArrayList;
@@ -70,10 +71,16 @@ public class AbstractCanaryDistributer<T extends Server, E> implements CanaryDis
       LOGGER.debug("canary release can not match any rule and route the latest version");
       return getLatestVersionList(list, targetServiceName);
     }
-
-    LOGGER.debug("start canary release traffic distribution");
     // 分配流量，返回结果
-    return getFiltedServer(versionServerMap, invokeRule, targetServiceName);
+    TagItem targetTag = getFiltedServerTagItem(invokeRule, targetServiceName);
+
+    LOGGER.debug("canary release traffic distribution success");
+
+    if (versionServerMap.containsKey(targetTag)) {
+      return versionServerMap.get(targetTag);
+    } else {
+      return getLatestVersionList(list, targetServiceName);
+    }
   }
 
   @Override
@@ -87,15 +94,15 @@ public class AbstractCanaryDistributer<T extends Server, E> implements CanaryDis
     this.getProperties = getProperties;
   }
 
-  public List<T> getFiltedServer(Map<TagItem, List<T>> allServer,
-      PolicyRuleItem rule, String targetServiceName) {
-    return allServer
-        .get(CanaryRuleCache.getServiceInfoCacheMap().get(targetServiceName)
-            .getNextInvokeVersion(rule));
+  public TagItem getFiltedServerTagItem(PolicyRuleItem rule, String targetServiceName) {
+    return CanaryRuleCache.getServiceInfoCacheMap().get(targetServiceName)
+        .getNextInvokeVersion(rule);
   }
 
   /**
    * 1.过滤targetService 2.返回按照version和tags分配list
+   *  这里之所以需要建立Map，而不是直接遍历List来分配是因为需要考虑 “多重匹配”
+   *  因为getProperties中除了tag还有其他的无关字段
    *
    * @param serviceName
    * @param list
@@ -107,9 +114,6 @@ public class AbstractCanaryDistributer<T extends Server, E> implements CanaryDis
     String latestV = CanaryRuleCache.getServiceInfoCacheMap().get(serviceName).getLatestVersionTag()
         .getVersion();
     Map<TagItem, List<T>> versionServerMap = new HashMap<>();
-    invokeRule.getRoute().forEach(a ->
-        versionServerMap.put(a.getTagitem(), new ArrayList<>())
-    );
     for (T server : list) {
       //获得目标服务
       E ms = getIns.apply(server);
@@ -118,30 +122,34 @@ public class AbstractCanaryDistributer<T extends Server, E> implements CanaryDis
         TagItem tagitem = new TagItem(getVersion.apply(ms), getProperties.apply(ms));
         TagItem targetTag = null;
         int maxMatch = 0;
-        for (Map.Entry<TagItem, List<T>> entry : versionServerMap.entrySet()) {
-          int nowMatch = entry.getKey().matchNum(tagitem);
+        for (RouteItem entry : invokeRule.getRoute()) {
+          int nowMatch = entry.getTagitem().matchNum(tagitem);
           if (nowMatch > maxMatch) {
             maxMatch = nowMatch;
-            targetTag = entry.getKey();
+            targetTag = entry.getTagitem();
           }
         }
-        if (invokeRule.isWeightLess() && getVersion.apply(ms).equals(latestV)) {
-          versionServerMap
-              .get(invokeRule.getRoute().get(invokeRule.getRoute().size() - 1).getTagitem())
-              .add(server);
+        synchronized (invokeRule) {
+          if (invokeRule.isWeightLess() && getVersion.apply(ms).equals(latestV)) {
+            TagItem latestVTag = invokeRule.getRoute().get(invokeRule.getRoute().size() - 1)
+                .getTagitem();
+            if (!versionServerMap.containsKey(latestVTag)) {
+              versionServerMap.put(latestVTag, new ArrayList<>());
+            }
+            versionServerMap.get(latestVTag).add(server);
+          }
+          if (targetTag != null) {
+            if (!versionServerMap.containsKey(targetTag)) {
+              versionServerMap.put(targetTag, new ArrayList<>());
+            }
+            versionServerMap.get(targetTag).add(server);
+          }
         }
-        if (versionServerMap.containsKey(targetTag)) {
-          versionServerMap.get(targetTag).add(server);
-        }
-      }
-    }
-    for (Map.Entry<TagItem, List<T>> entry : versionServerMap.entrySet()) {
-      if (entry.getValue().isEmpty()){
-        versionServerMap.remove(entry.getKey());
       }
     }
     return versionServerMap;
   }
+
 
   public void initLatestVersion(String serviceName, List<T> list) {
     if (CanaryRuleCache.getServiceInfoCacheMap().get(serviceName).getLatestVersionTag() != null) {

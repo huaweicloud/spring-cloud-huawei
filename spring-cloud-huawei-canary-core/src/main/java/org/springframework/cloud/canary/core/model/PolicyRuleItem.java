@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.common.exception.CanaryLllegalParamException;
+import org.springframework.cloud.common.exception.CanaryIllegalParamException;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -53,7 +53,7 @@ public class PolicyRuleItem implements Comparable<PolicyRuleItem> {
    */
   public void check(TagItem latestVersionTag) {
     if (CollectionUtils.isEmpty(route)) {
-      throw new CanaryLllegalParamException("canary rule list can not be null");
+      throw new CanaryIllegalParamException("canary rule list can not be null");
     }
     if (route.size() == 1) {
       route.get(0).setWeight(100);
@@ -62,7 +62,7 @@ public class PolicyRuleItem implements Comparable<PolicyRuleItem> {
     int sum = 0;
     for (RouteItem item : route) {
       if (item.getWeight() == null) {
-        throw new CanaryLllegalParamException("canary rule weight can not be null");
+        throw new CanaryIllegalParamException("canary rule weight can not be null");
       }
       sum += item.getWeight();
     }
@@ -75,7 +75,7 @@ public class PolicyRuleItem implements Comparable<PolicyRuleItem> {
       weightLess = true;
       route.add(new RouteItem(100 - sum, latestVersionTag));
     }
-    Collections.sort(route);
+    //Collections.sort(route);
   }
 
   @Override
