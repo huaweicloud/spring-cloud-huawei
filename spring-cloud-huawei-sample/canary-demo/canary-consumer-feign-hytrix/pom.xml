@@ -45,7 +45,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-huawei-canary</artifactId>
+            <artifactId>spring-cloud-starter-huawei-router</artifactId>
         </dependency>
         <dependency>
             <groupId>com.netflix.hystrix</groupId>

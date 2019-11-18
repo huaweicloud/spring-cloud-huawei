@@ -49,8 +49,8 @@
     <module>spring-cloud-starter-huawei</module>
     <module>spring-cloud-huawei-dtm</module>
     <module>spring-cloud-huawei-config</module>
-    <module>spring-cloud-huawei-canary-core</module>
-    <module>spring-cloud-huawei-canary-client</module>
+    <module>spring-cloud-huawei-router-core</module>
+    <module>spring-cloud-huawei-router-client</module>
   </modules>
 
 
