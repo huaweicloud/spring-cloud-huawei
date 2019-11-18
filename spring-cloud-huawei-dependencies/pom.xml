@@ -55,17 +55,17 @@
       </dependency>
       <dependency>
         <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-huawei-canary-core</artifactId>
+        <artifactId>spring-cloud-huawei-router-core</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-huawei-canary-client</artifactId>
+        <artifactId>spring-cloud-huawei-router-client</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-huawei-canary</artifactId>
+        <artifactId>spring-cloud-starter-huawei-router</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>

@@ -10,8 +10,8 @@ import spring-cloud-starter-huawei-canary,for canary release
     </dependency>
 
   
-### step 2 config canary release rule
-Define canary release rule through configuration file (application.yml)
+### step 2 config route management rule
+Define route management rule through configuration file (application.yml)
 
 [rule info](https://docs.go-chassis.com/user-guides/router.html)
 

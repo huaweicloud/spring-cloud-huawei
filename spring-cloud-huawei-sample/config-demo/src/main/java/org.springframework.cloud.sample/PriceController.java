@@ -29,7 +29,6 @@ public class PriceController implements ApplicationListener<ConfigRefreshEvent> 
     return "price ---> " + id + " port -->" + dd;
   }
 
-  @Override
   public void onApplicationEvent(ConfigRefreshEvent event) {
     System.out.println("change = [" + event.getChange() + "]");
   }
