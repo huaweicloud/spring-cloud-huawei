@@ -45,11 +45,11 @@ import org.springframework.cloud.servicecomb.discovery.client.model.Microservice
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceInstancesResponse;
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceResponse;
 import org.springframework.cloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
+import org.springframework.cloud.servicecomb.discovery.discovery.MicroserviceCache;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.springframework.cloud.servicecomb.discovery.discovery.MicroserviceCache;
 
 
 /**
@@ -279,6 +279,9 @@ public class ServiceCombClient {
         }
         MicroserviceCache.initInsList(result.getInstances(),microservice.getServiceName());
         for (MicroserviceInstance instance : result.getInstances()) {
+          if (instance.getStatus() != MicroserviceInstanceStatus.UP) {
+            continue;
+          }
           int port;
           String host;
           if (!instance.getEndpoints().isEmpty()) {

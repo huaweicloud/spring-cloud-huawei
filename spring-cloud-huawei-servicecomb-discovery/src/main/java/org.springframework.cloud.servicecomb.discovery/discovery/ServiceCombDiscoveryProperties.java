@@ -37,7 +37,7 @@ public class ServiceCombDiscoveryProperties {
 
   private String appName;
 
-  @Value("${spring.application.name}")
+  @Value("${spring.cloud.servicecomb.discovery.serviceName:${spring.application.name}}")
   private String serviceName;
 
   private String version;
@@ -51,6 +51,8 @@ public class ServiceCombDiscoveryProperties {
   private int healthCheckInterval;
 
   private boolean autoDiscovery = false;
+
+  private boolean allowCrossApp = false;
 
   @Value("${server.port}")
   private String port;
@@ -147,6 +149,14 @@ public class ServiceCombDiscoveryProperties {
 
   public void setPort(String port) {
     this.port = port;
+  }
+
+  public boolean isAllowCrossApp() {
+    return allowCrossApp;
+  }
+
+  public void setAllowCrossApp(boolean allowCrossApp) {
+    this.allowCrossApp = allowCrossApp;
   }
 
   @Override

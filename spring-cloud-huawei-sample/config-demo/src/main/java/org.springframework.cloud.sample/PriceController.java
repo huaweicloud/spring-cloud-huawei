@@ -15,8 +15,8 @@ public class PriceController implements ApplicationListener<ConfigRefreshEvent> 
   @Value("${server.port}")
   private Integer port;
 
-  @Value("${dd=''}")
-  private String dd;
+  @Value("${dd:''}")
+  private String dd = null;
 
   /**
    * 服务接口

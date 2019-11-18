@@ -26,6 +26,7 @@ import org.springframework.cloud.common.exception.ServiceCombException;
 import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
 import org.springframework.cloud.servicecomb.discovery.client.model.Framework;
 import org.springframework.cloud.servicecomb.discovery.client.model.Microservice;
+import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceStatus;
 import org.springframework.cloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
 
 /**
@@ -35,10 +36,10 @@ import org.springframework.cloud.servicecomb.discovery.client.model.ServiceRegis
 public class MicroserviceHandler {
   private static final Logger LOGGER = LoggerFactory.getLogger(MicroserviceHandler.class);
 
+  private static List<ServiceInstance> instanceList = null;
 
   public static List<ServiceInstance> getInstances(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
       Microservice microservice, ServiceCombClient serviceCombClient) {
-    List<ServiceInstance> instanceList = null;
     try {
       instanceList = serviceCombClient.getInstances(microservice);
     } catch (ServiceCombException e) {
@@ -50,10 +51,13 @@ public class MicroserviceHandler {
   public static Microservice createMicroservice(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
       String serviceName) {
     Microservice microservice = new Microservice();
-    microservice.setAppId(serviceCombDiscoveryProperties.getAppName());
     microservice.setServiceName(serviceName);
     microservice.setVersion(ServiceRegistryConfig.DEFAULT_CALL_VERSION);
     microservice.setFramework(new Framework());
+    if (!serviceCombDiscoveryProperties.isAllowCrossApp()) {
+      microservice.setAppId(serviceCombDiscoveryProperties.getAppName());
+    }
+    microservice.setStatus(MicroserviceStatus.UP);
     return microservice;
   }
 }
