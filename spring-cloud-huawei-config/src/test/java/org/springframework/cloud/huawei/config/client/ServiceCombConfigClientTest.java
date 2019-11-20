@@ -47,7 +47,7 @@ public class ServiceCombConfigClientTest {
       }
     };
     ServiceCombConfigClient serviceCombClient = new ServiceCombConfigClient(url, httpTransport);
-    Map<String, String> actual = serviceCombClient.loadAll("price@default", "default");
+    Map<String, String> actual = serviceCombClient.loadAll("price@default#0.0.1", "default");
     Assert.assertEquals(2, actual.size());
     Assert.assertEquals("dd", actual.get("ffd"));
     Assert.assertEquals("ss", actual.get("dd"));

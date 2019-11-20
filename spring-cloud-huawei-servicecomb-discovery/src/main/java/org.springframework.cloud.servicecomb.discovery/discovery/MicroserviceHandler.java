@@ -17,6 +17,7 @@
 
 package org.springframework.cloud.servicecomb.discovery.discovery;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -24,6 +25,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.common.exception.ServiceCombException;
 import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
+import org.springframework.cloud.servicecomb.discovery.client.model.Dependencies;
+import org.springframework.cloud.servicecomb.discovery.client.model.DependenciesArrayRequest;
+import org.springframework.cloud.servicecomb.discovery.client.model.DependenciesModel;
 import org.springframework.cloud.servicecomb.discovery.client.model.Framework;
 import org.springframework.cloud.servicecomb.discovery.client.model.Microservice;
 import org.springframework.cloud.servicecomb.discovery.client.model.MicroserviceStatus;
@@ -42,6 +46,24 @@ public class MicroserviceHandler {
       Microservice microservice, ServiceCombClient serviceCombClient) {
     try {
       instanceList = serviceCombClient.getInstances(microservice);
+      Dependencies dependencies = new Dependencies();
+      DependenciesModel consumer = new DependenciesModel();
+      consumer.setAppId(serviceCombDiscoveryProperties.getAppName());
+      consumer.setServiceName(serviceCombDiscoveryProperties.getServiceName());
+      consumer.setVersion(serviceCombDiscoveryProperties.getVersion());
+      dependencies.setConsumer(consumer);
+      DependenciesModel provider = new DependenciesModel();
+      provider.setAppId(serviceCombDiscoveryProperties.getAppName());
+      provider.setServiceName(microservice.getServiceName());
+      provider.setVersion(ServiceRegistryConfig.DEFAULT_CALL_VERSION);
+      List<DependenciesModel> providers = new ArrayList<>();
+      providers.add(provider);
+      dependencies.setProviders(providers);
+      DependenciesArrayRequest dependenciesArrayRequest = new DependenciesArrayRequest();
+      List<Dependencies> dependenciesList = new ArrayList<>();
+      dependenciesList.add(dependencies);
+      dependenciesArrayRequest.setDependencies(dependenciesList);
+      serviceCombClient.addDependencies(dependenciesArrayRequest);
     } catch (ServiceCombException e) {
       LOGGER.warn("get instances failed.", e);
     }

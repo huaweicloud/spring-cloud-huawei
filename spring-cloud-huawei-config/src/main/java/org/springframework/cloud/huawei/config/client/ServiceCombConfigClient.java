@@ -18,6 +18,7 @@
 package org.springframework.cloud.huawei.config.client;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,7 +62,7 @@ public class ServiceCombConfigClient {
       project = project != null && !project.isEmpty() ? project : ConfigConstants.DEFAULT_PROJECT;
       response = httpTransport.sendGetRequest(
           url + "/" + ConfigConstants.DEFAULT_API_VERSION + "/" + project + "/configuration/items?dimensionsInfo="
-              + dimensionsInfo);
+              + URLEncoder.encode(dimensionsInfo, "UTF-8"));
       if (response == null) {
         return result;
       }
@@ -72,6 +73,12 @@ public class ServiceCombConfigClient {
         if (allConfigMap != null) {
           if (allConfigMap.get(ConfigConstants.APPLICATION_CONFIG) != null) {
             result.putAll(allConfigMap.get(ConfigConstants.APPLICATION_CONFIG));
+          }
+          if (allConfigMap
+              .get(dimensionsInfo.substring(0, dimensionsInfo.indexOf(ConfigConstants.DEFAULT_SERVICE_SEPARATOR)))
+              != null) {
+            result.putAll(allConfigMap
+                .get(dimensionsInfo.substring(0, dimensionsInfo.indexOf(ConfigConstants.DEFAULT_SERVICE_SEPARATOR))));
           }
           if (allConfigMap.get(dimensionsInfo) != null) {
             result.putAll(allConfigMap.get(dimensionsInfo));

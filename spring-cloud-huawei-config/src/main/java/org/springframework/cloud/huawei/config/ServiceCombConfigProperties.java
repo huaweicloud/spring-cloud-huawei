@@ -37,6 +37,9 @@ public class ServiceCombConfigProperties {
   @Value("${spring.cloud.servicecomb.discovery.appName:default}")
   private String appName;
 
+  @Value("${spring.cloud.servicecomb.discovery.version:}")
+  private String version;
+
   private String serverAddr;
 
   private Watch watch = new Watch();
@@ -89,6 +92,14 @@ public class ServiceCombConfigProperties {
 
   public void setAppName(String appName) {
     this.appName = appName;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
   }
 
   public static class Watch {

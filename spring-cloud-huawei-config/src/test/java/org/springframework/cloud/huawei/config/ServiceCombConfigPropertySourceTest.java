@@ -25,7 +25,8 @@ public class ServiceCombConfigPropertySourceTest extends MockUp<ServiceCombConfi
   private Map<String, Object> properties = new HashMap<>();
 
   @Test
-  public void loadAllRemoteConfig(@Injectable String name, @Injectable ServiceCombConfigClient source)
+  public void loadAllRemoteConfig(@Injectable String name, @Injectable ServiceCombConfigClient source,
+      @Injectable ServiceCombConfigProperties serviceCombConfigProperties)
       throws RemoteOperationException {
     name = "dd";
     Map<String, String> map = new HashMap<>();
@@ -39,7 +40,7 @@ public class ServiceCombConfigPropertySourceTest extends MockUp<ServiceCombConfi
     };
     ServiceCombConfigPropertySource serviceCombConfigPropertySource = new ServiceCombConfigPropertySource(name, source);
     Deencapsulation.setField(serviceCombConfigPropertySource, properties);
-    Map<String, String> result = serviceCombConfigPropertySource.loadAllRemoteConfig("", "", "");
+    Map<String, String> result = serviceCombConfigPropertySource.loadAllRemoteConfig(serviceCombConfigProperties, "");
     Assert.assertEquals(result.size(), 2);
   }
 
