@@ -2,13 +2,12 @@
 
 ### step 1 引用jar依赖
 
-引入spring-cloud-starter-huawei-canary，用于灰度发布
+引入spring-cloud-starter-huawei-router，用于灰度发布
 
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-dtm</artifactId>
-    </dependency>
-
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-huawei-router</artifactId>
+        </dependency>
   
 ### step 2 配置灰度发布规则
 通过配置文件(application.yml)定义

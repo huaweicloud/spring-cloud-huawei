@@ -2,12 +2,12 @@
 
 ### step 1 add jar 
 
-import spring-cloud-starter-huawei-canary,for canary release
+import spring-cloud-starter-huawei-router,for canary release
 
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-dtm</artifactId>
-    </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-huawei-router</artifactId>
+        </dependency>
 
   
 ### step 2 config route management rule
