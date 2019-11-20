@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.common.exception.RemoteOperationException;
 import org.springframework.cloud.common.util.MD5Util;
 import org.springframework.cloud.context.refresh.ContextRefresher;
-import org.springframework.cloud.huawei.config.client.ConfigConstants;
+import org.springframework.cloud.huawei.config.client.QueryParamUtil;
 import org.springframework.cloud.huawei.config.client.RefreshRecord;
 import org.springframework.cloud.huawei.config.client.ServiceCombConfigClient;
 import org.springframework.context.ApplicationEventPublisher;
@@ -87,8 +87,7 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
     if (ready.get()) {
       try {
         remoteConfig = serviceCombConfigClient.loadAll(
-            serviceCombConfigProperties.getServiceName() + ConfigConstants.DEFAULT_SEPARATOR
-                + serviceCombConfigProperties.getAppName(), project);
+            QueryParamUtil.spliceDimensionsInfo(serviceCombConfigProperties), project);
       } catch (RemoteOperationException e) {
         LOGGER.warn(e.getMessage());
       }

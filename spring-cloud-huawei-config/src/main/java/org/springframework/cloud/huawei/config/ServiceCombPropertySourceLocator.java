@@ -57,8 +57,7 @@ public class ServiceCombPropertySourceLocator implements PropertySourceLocator {
         serviceCombConfigClient);
     try {
       serviceCombConfigPropertySource
-          .loadAllRemoteConfig(serviceCombConfigProperties.getServiceName(), serviceCombConfigProperties.getAppName(),
-              project);
+          .loadAllRemoteConfig(serviceCombConfigProperties, project);
     } catch (RemoteOperationException e) {
       LOGGER.error(e.getMessage(), e);
     }

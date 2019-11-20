@@ -3,8 +3,10 @@ spring:
     name: price
   cloud:
     servicecomb:
+      discovery:
+        version: 0.0.1
       config:
-        serverAddr: https://cse.cn-east-3.myhuaweicloud.com
+        serverAddr: https://cse.cn-east-2.myhuaweicloud.com
         watch:
           delay: 10000
       credentials:
@@ -12,4 +14,4 @@ spring:
         accessKey: your ak
         secretKey: your sk
         akskCustomCipher: default
-        project: cn-east-3
+        project: cn-east-2

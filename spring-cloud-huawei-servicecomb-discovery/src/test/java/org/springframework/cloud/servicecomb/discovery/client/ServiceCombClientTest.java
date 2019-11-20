@@ -363,6 +363,7 @@ public class ServiceCombClientTest {
       }
     };
     ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport, autoDiscovery);
+    serviceCombClient.autoDiscovery(false);
     MicroserviceResponse actual = serviceCombClient.getServices();
     Assert.assertEquals(1, actual.getServices().size());
   }

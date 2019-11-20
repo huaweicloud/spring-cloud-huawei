@@ -15,27 +15,41 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.huawei.config.client;
+package org.springframework.cloud.servicecomb.discovery.client.model;
 
 /**
  * @Author wangqijun
- * @Date 11:28 2019-10-21
+ * @Date 12:39 2019-11-20
  **/
-public class ConfigConstants {
+public class DependenciesModel {
 
-  public static final String DEFAULT_API_VERSION = "v3";
+  private String appId;
 
-  public static final String DEFAULT_APP_SEPARATOR = "@";
+  private String serviceName;
 
-  public static final String DEFAULT_SERVICE_SEPARATOR = "#";
+  private String version;
 
-  public static final String DEFAULT_PROJECT = "default";
+  public String getAppId() {
+    return appId;
+  }
 
-  public static final String APPLICATION_CONFIG = "application";
+  public void setAppId(String appId) {
+    this.appId = appId;
+  }
 
-  public static final String PROPERTYSOURCE_NAME = "servicecomb";
+  public String getServiceName() {
+    return serviceName;
+  }
 
-  public static final String SERVICE_NAME = "spring.application.name";
+  public void setServiceName(String serviceName) {
+    this.serviceName = serviceName;
+  }
 
-  public static final String INSTANCE_TAGS = "instance_description.properties.tags";
+  public String getVersion() {
+    return version;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
+  }
 }
