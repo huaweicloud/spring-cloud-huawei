@@ -22,45 +22,11 @@ spring:
 servicecomb:
   routeRule:
     canary-provider: |
-      - precedence: 2 #优先级
-        match:        #匹配策略
-          source: consumer #匹配某个服务名
-          headers:          #header匹配
-            xx:
-              regex: xx
-              caseInsensitive: false  #是否区分大小写，默认为false，区分大小写
-            x:
-              exact: x
+      - precedence: 1 #优先级
         route: #路由规则
-          - weight: 100
+          - weight: 80
             tags:
               version: 0.0.1
-      - precedence: 1
-        match:
-          source: 1 #匹配某个服务名
-          headers:          #header匹配
-            xx:
-              regex: xx
-              caseInsensitive: false # 是否区分大小写，默认为false，区分大小写
-            xxx:
-              exact: xx
-        route:
-          - weight: 1
+          - weight: 20
             tags:
-              version: 1
-              app: a
-    moke2: |
-      - precedence: 1
-        match:
-          source: xx #匹配某个服务名
-          headers:          #header匹配
-            xx:
-              regex: xx
-              caseInsensitive: false # 是否区分大小写，默认为false，区分大小写
-            xxx:
-              exact: xx
-        route:
-          - weight: 1
-            tags:
-              version: 1
-              app: 1
+              version: 0.0.2
