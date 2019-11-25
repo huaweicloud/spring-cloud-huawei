@@ -20,6 +20,7 @@ package org.springframework.cloud.servicecomb.discovery.registry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
+import org.springframework.cloud.common.cache.RegisterCache;
 import org.springframework.cloud.common.exception.ServiceCombException;
 import org.springframework.cloud.servicecomb.discovery.client.ServiceCombClient;
 import org.springframework.cloud.servicecomb.discovery.client.model.Microservice;
@@ -57,6 +58,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
   @Override
   public void register(ServiceCombRegistration registration) {
     loopRegister(registration);
+    RegisterCache.setInstanceID(instanceID);
+    RegisterCache.setServiceID(serviceID);
     LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
     heartbeatScheduler.add(instanceID, serviceID);
   }

@@ -24,6 +24,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+import java.util.Map;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
@@ -44,7 +45,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.common.exception.RemoteServerUnavailableException;
-
+import org.springframework.util.StringUtils;
 
 
 /**
@@ -66,7 +67,8 @@ public class DefaultHttpTransport implements HttpTransport {
     try {
       sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
         //信任所有
-        public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+        public boolean isTrusted(X509Certificate[] chain, String authType)
+            throws CertificateException {
           return true;
         }
       }).build();
@@ -89,7 +91,8 @@ public class DefaultHttpTransport implements HttpTransport {
         return true;
       }
     };
-    this.httpClient = HttpClients.custom().setSSLHostnameVerifier(hostnameVerifier).setSSLContext(sslContext)
+    this.httpClient = HttpClients.custom().setSSLHostnameVerifier(hostnameVerifier)
+        .setSSLContext(sslContext)
         .setDefaultRequestConfig(config).disableCookieManagement().build();
   }
 
@@ -121,15 +124,29 @@ public class DefaultHttpTransport implements HttpTransport {
     return this.execute(httpGet);
   }
 
+  public Response sendGetRequest(String url, Map<String, String> headers)
+      throws RemoteServerUnavailableException {
+    HttpGet httpGet = new HttpGet(url);
+    headers.forEach((k, v) -> {
+          if (!StringUtils.isEmpty(k)) {
+            httpGet.addHeader(k, v);
+          }
+        }
+    );
+    return this.execute(httpGet);
+  }
+
   @Override
-  public Response sendPutRequest(String url, HttpEntity httpEntity) throws RemoteServerUnavailableException {
+  public Response sendPutRequest(String url, HttpEntity httpEntity)
+      throws RemoteServerUnavailableException {
     HttpPut httpPut = new HttpPut(url);
     httpPut.setEntity(httpEntity);
     return this.execute(httpPut);
   }
 
   @Override
-  public Response sendPostRequest(String url, HttpEntity httpEntity) throws RemoteServerUnavailableException {
+  public Response sendPostRequest(String url, HttpEntity httpEntity)
+      throws RemoteServerUnavailableException {
     HttpPost httpPost = new HttpPost(url);
     httpPost.setEntity(httpEntity);
     return this.execute(httpPost);

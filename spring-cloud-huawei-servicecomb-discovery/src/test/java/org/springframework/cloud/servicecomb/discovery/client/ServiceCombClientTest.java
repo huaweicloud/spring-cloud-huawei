@@ -3,6 +3,7 @@ package org.springframework.cloud.servicecomb.discovery.client;
 import java.io.IOException;
 import java.util.List;
 
+import java.util.Map;
 import org.apache.http.HttpEntity;
 import org.junit.Assert;
 import org.junit.Test;
@@ -34,7 +35,8 @@ public class ServiceCombClientTest {
   public void getServiceCenterInstances(@Injectable
       Boolean autoDiscovery, @Injectable
       String url, @Injectable
-      HttpTransport httpTransport) throws RemoteOperationException, RemoteServerUnavailableException, IOException {
+      HttpTransport httpTransport)
+      throws RemoteOperationException, RemoteServerUnavailableException {
     final int expectedCode = 200;
     Response response = new Response();
     response.setStatusCode(expectedCode);
@@ -200,7 +202,7 @@ public class ServiceCombClientTest {
       {
         Deencapsulation.newUninitializedInstance(DefaultHttpTransport.class);
         result = httpTransport;
-        httpTransport.sendGetRequest(anyString);
+        httpTransport.sendGetRequest(anyString, (Map<String, String>) any);
         result = response;
       }
     };
