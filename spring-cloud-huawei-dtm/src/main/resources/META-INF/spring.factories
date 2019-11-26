@@ -1,5 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  org.springframework.cloud.dtm.DtmClientConfiguration,\
-  org.springframework.cloud.dtm.consumer.rest.DtmRestTemplateAutoConfiguration,\
-  org.springframework.cloud.dtm.provider.DtmWebMvcConfigurer,\
-  org.springframework.cloud.dtm.consumer.feign.DtmFeignConfiguration
+  com.huaweicloud.dtm.DtmClientConfiguration,\
+  com.huaweicloud.dtm.consumer.rest.DtmRestTemplateAutoConfiguration,\
+  com.huaweicloud.dtm.provider.DtmWebMvcConfigurer,\
+  com.huaweicloud.dtm.consumer.feign.DtmFeignConfiguration

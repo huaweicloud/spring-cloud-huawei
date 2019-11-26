@@ -1,3 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  org.springframework.cloud.router.client.RouterClientAutoConfiguration,\
-  org.springframework.cloud.router.client.RouterWebMvcConfigurer
+  com.huaweicloud.router.client.RouterClientAutoConfiguration,\
+  com.huaweicloud.router.client.RouterWebMvcConfigurer

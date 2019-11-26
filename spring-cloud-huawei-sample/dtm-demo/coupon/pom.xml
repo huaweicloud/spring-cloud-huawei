@@ -78,7 +78,7 @@
           </descriptors>
           <archive>
             <manifest>
-              <mainClass>org.springframework.cloud.sample.dtm.CouponAppMain</mainClass>
+              <mainClass>com.huaweicloud.sample.CouponAppMain</mainClass>
             </manifest>
           </archive>
           <appendAssemblyId>false</appendAssemblyId>

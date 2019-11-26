@@ -82,7 +82,7 @@
           </descriptors>
           <archive>
             <manifest>
-              <mainClass>org.springframework.cloud.sample.dtm.TicketAppMain</mainClass>
+              <mainClass>com.huaweicloud.sample.TicketAppMain</mainClass>
             </manifest>
           </archive>
           <appendAssemblyId>false</appendAssemblyId>

@@ -55,7 +55,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>./lib/</classpathPrefix>
-              <mainClass>org.springframework.cloud.servicecomb.sample.Application</mainClass>
+              <mainClass>com.huaweicloud.sample.Application</mainClass>
             </manifest>
             <manifestEntries>
               <Class-Path>.</Class-Path>

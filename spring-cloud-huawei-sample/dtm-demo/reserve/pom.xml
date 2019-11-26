@@ -82,7 +82,7 @@
           </descriptors>
           <archive>
             <manifest>
-              <mainClass>org.springframework.cloud.sample.org.springframework.cloud.sample.dtm.ReserveAppMain
+              <mainClass>org.springframework.cloud.sample.com.huaweicloud.sample.ReserveAppMain
               </mainClass>
             </manifest>
           </archive>
