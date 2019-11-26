@@ -3,7 +3,7 @@
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.springframework.cloud</groupId>
+  <groupId>com.huaweicloud</groupId>
   <artifactId>dtm-demo</artifactId>
   <version>0.0.1</version>
   <packaging>pom</packaging>
@@ -27,7 +27,7 @@
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>org.springframework.cloud</groupId>
+        <groupId>com.huaweicloud</groupId>
         <artifactId>spring-cloud-huawei-dependencies</artifactId>
         <version>${project.version}</version>
         <type>pom</type>

@@ -3,8 +3,8 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
+    <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-huawei</artifactId>
-    <groupId>org.springframework.cloud</groupId>
     <version>0.0.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -12,22 +12,22 @@
   <artifactId>export-maven</artifactId>
   <dependencies>
     <dependency>
-      <groupId>org.springframework.cloud</groupId>
+      <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-router</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.springframework.cloud</groupId>
+      <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-config</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.springframework.cloud</groupId>
+      <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-dtm</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.springframework.cloud</groupId>
+      <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-servicecomb-discovery</artifactId>
       <version>${project.version}</version>
     </dependency>
