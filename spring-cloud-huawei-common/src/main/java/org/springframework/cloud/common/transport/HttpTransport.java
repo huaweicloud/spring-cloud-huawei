@@ -17,6 +17,7 @@
 
 package org.springframework.cloud.common.transport;
 
+import java.util.Map;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.springframework.cloud.common.exception.RemoteServerUnavailableException;
@@ -30,6 +31,8 @@ public interface HttpTransport {
   Response execute(HttpUriRequest httpRequest) throws RemoteServerUnavailableException;
 
   Response sendGetRequest(String url) throws RemoteServerUnavailableException;
+
+  Response sendGetRequest(String url, Map<String, String> headers) throws RemoteServerUnavailableException;
 
   Response sendPutRequest(String url, HttpEntity httpEntity) throws RemoteServerUnavailableException;
 

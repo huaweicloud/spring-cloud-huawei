@@ -15,23 +15,31 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.servicecomb.discovery.client.model;
-
-import java.util.List;
+package org.springframework.cloud.common.cache;
 
 /**
- * @Author wangqijun
- * @Date 14:22 2019-11-20
+ * @Author GuoYl123
+ * @Date 2019/11/25
  **/
-public class DependenciesArrayRequest {
-  private List<Dependencies> dependencies;
+public class RegisterCache {
 
-  public List<Dependencies> getDependencies() {
-    return dependencies;
+  private static String serviceID = null;
+
+  private static String instanceID = null;
+
+  public static String getServiceID() {
+    return serviceID;
   }
 
-  public void setDependencies(
-      List<Dependencies> dependencies) {
-    this.dependencies = dependencies;
+  public static void setServiceID(String serviceID) {
+    RegisterCache.serviceID = serviceID;
+  }
+
+  public static String getInstanceID() {
+    return instanceID;
+  }
+
+  public static void setInstanceID(String instanceID) {
+    RegisterCache.instanceID = instanceID;
   }
 }
