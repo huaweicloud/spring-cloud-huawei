@@ -30,38 +30,41 @@ import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
  **/
 public class RouterHystrixConcurrencyStrategy extends HystrixConcurrencyStrategy {
 
-    public RouterHystrixConcurrencyStrategy() {
-        HystrixPlugins.getInstance().registerConcurrencyStrategy(this);
+  public RouterHystrixConcurrencyStrategy() {
+    HystrixPlugins.getInstance().registerConcurrencyStrategy(this);
+  }
+
+  @Override
+  public <T> Callable<T> wrapCallable(Callable<T> callable) {
+    return new RouterAttributeAwareCallable<>(callable, RouterTrackContext.getServiceName(),
+        RouterTrackContext
+            .getRequestHeader());
+  }
+
+  static class RouterAttributeAwareCallable<T> implements Callable<T> {
+
+    private final Callable<T> delegate;
+
+    private final String serviceName;
+
+    private final Map<String, String> requestHeader;
+
+    public RouterAttributeAwareCallable(Callable<T> delegate, String serviceName,
+        Map<String, String> requestHeader) {
+      this.delegate = delegate;
+      this.serviceName = serviceName;
+      this.requestHeader = requestHeader;
     }
 
     @Override
-    public <T> Callable<T> wrapCallable(Callable<T> callable) {
-        return new RouterAttributeAwareCallable<>(callable, RouterTrackContext.getServiceName(), RouterTrackContext
-            .getRequestHeader());
+    public T call() throws Exception {
+      try {
+        RouterTrackContext.setRequestHeader(requestHeader);
+        RouterTrackContext.setServiceName(serviceName);
+        return delegate.call();
+      } finally {
+        RouterTrackContext.remove();
+      }
     }
-
-    static class RouterAttributeAwareCallable<T> implements Callable<T> {
-        private final Callable<T> delegate;
-
-        private final String serviceName;
-
-        private final Map<String, String> requestHeader;
-
-        public RouterAttributeAwareCallable(Callable<T> delegate, String serviceName, Map<String, String> requestHeader) {
-            this.delegate = delegate;
-            this.serviceName = serviceName;
-            this.requestHeader = requestHeader;
-        }
-
-        @Override
-        public T call() throws Exception {
-            try {
-                RouterTrackContext.setRequestHeader(requestHeader);
-                RouterTrackContext.setServiceName(serviceName);
-                return delegate.call();
-            } finally {
-                RouterTrackContext.remove();
-            }
-        }
-    }
+  }
 }

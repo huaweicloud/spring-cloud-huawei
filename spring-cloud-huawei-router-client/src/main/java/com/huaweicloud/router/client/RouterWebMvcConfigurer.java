@@ -36,23 +36,23 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class RouterWebMvcConfigurer implements WebMvcConfigurer {
 
-    @Bean
-    public RouterRestTemplateIntercptor routerClientHttpRequestIntercptor(
-        @Autowired(required = false) @LoadBalanced List<RestTemplate> restTemplates) {
-        RouterRestTemplateIntercptor intercptor = new RouterRestTemplateIntercptor();
-        if (restTemplates != null) {
-            restTemplates.forEach(restTemplate -> restTemplate.getInterceptors().add(intercptor));
-        }
-        return intercptor;
+  @Bean
+  public RouterRestTemplateIntercptor routerClientHttpRequestIntercptor(
+      @Autowired(required = false) @LoadBalanced List<RestTemplate> restTemplates) {
+    RouterRestTemplateIntercptor intercptor = new RouterRestTemplateIntercptor();
+    if (restTemplates != null) {
+      restTemplates.forEach(restTemplate -> restTemplate.getInterceptors().add(intercptor));
     }
+    return intercptor;
+  }
 
-    @Bean
-    public RouterHystrixConcurrencyStrategy routerHystrixConcurrencyStrategy() {
-        return new RouterHystrixConcurrencyStrategy();
-    }
+  @Bean
+  public RouterHystrixConcurrencyStrategy routerHystrixConcurrencyStrategy() {
+    return new RouterHystrixConcurrencyStrategy();
+  }
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new RouterHandlerInterceptor()).addPathPatterns("/**");
-    }
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(new RouterHandlerInterceptor()).addPathPatterns("/**");
+  }
 }

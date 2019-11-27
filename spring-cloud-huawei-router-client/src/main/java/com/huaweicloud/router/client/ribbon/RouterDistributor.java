@@ -27,10 +27,11 @@ import com.netflix.loadbalancer.Server;
  * @Date 2019/10/17
  **/
 public class RouterDistributor extends AbstractRouterDistributor<Server, MicroserviceInstance> {
-    public RouterDistributor() {
-        init(server -> MicroserviceCache.getMicroserviceIns(server.getMetaInfo().getInstanceId()),
-            MicroserviceInstance::getVersion,
-            MicroserviceInstance::getServiceName,
-            MicroserviceInstance::getProperties);
-    }
+
+  public RouterDistributor() {
+    init(server -> MicroserviceCache.getMicroserviceIns(server.getMetaInfo().getInstanceId()),
+        MicroserviceInstance::getVersion,
+        MicroserviceInstance::getServiceName,
+        MicroserviceInstance::getProperties);
+  }
 }

@@ -26,11 +26,12 @@ import com.netflix.loadbalancer.ZoneAvoidanceRule;
 
 @Configuration
 public class RouterClientConfiguration {
-    @Bean
-    public IRule ribbonRule(
-        @Autowired(required = false) IClientConfig config) {
-        ZoneAvoidanceRule rule = new RouterLoadBalanceRule();
-        rule.initWithNiwsConfig(config);
-        return rule;
-    }
+
+  @Bean
+  public IRule ribbonRule(
+      @Autowired(required = false) IClientConfig config) {
+    ZoneAvoidanceRule rule = new RouterLoadBalanceRule();
+    rule.initWithNiwsConfig(config);
+    return rule;
+  }
 }

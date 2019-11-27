@@ -29,18 +29,20 @@ import org.springframework.http.client.ClientHttpResponse;
  * @Date 2019/10/11
  **/
 public class RouterRestTemplateIntercptor implements ClientHttpRequestInterceptor {
-    /**
-     * todo: 透传
-     *
-     * @param httpRequest
-     * @param bytes
-     * @param clientHttpRequestExecution
-     * @return
-     * @throws IOException
-     */
-    @Override
-    public ClientHttpResponse intercept(HttpRequest httpRequest, byte[] bytes, ClientHttpRequestExecution clientHttpRequestExecution) throws IOException {
-        RouterTrackContext.setServiceName(httpRequest.getURI().getHost());
-        return clientHttpRequestExecution.execute(httpRequest, bytes);
-    }
+
+  /**
+   * todo: 透传
+   *
+   * @param httpRequest
+   * @param bytes
+   * @param clientHttpRequestExecution
+   * @return
+   * @throws IOException
+   */
+  @Override
+  public ClientHttpResponse intercept(HttpRequest httpRequest, byte[] bytes,
+      ClientHttpRequestExecution clientHttpRequestExecution) throws IOException {
+    RouterTrackContext.setServiceName(httpRequest.getURI().getHost());
+    return clientHttpRequestExecution.execute(httpRequest, bytes);
+  }
 }

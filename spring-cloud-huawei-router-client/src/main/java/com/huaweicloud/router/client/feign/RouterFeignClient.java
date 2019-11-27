@@ -30,6 +30,7 @@ import feign.Response;
  * @Date 2019/10/22
  **/
 public class RouterFeignClient implements Client {
+
   private Client client;
 
   public RouterFeignClient(Client client) {

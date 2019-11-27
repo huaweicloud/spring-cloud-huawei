@@ -39,4 +39,5 @@ import org.springframework.context.annotation.Configuration;
 @RibbonClients(defaultConfiguration = RouterClientConfiguration.class)
 @EnableFeignClients(defaultConfiguration = {RouterFeignConfiguration.class})
 public class RouterClientAutoConfiguration {
+
 }

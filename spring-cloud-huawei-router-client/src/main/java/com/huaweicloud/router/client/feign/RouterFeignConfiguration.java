@@ -27,8 +27,9 @@ import feign.Client;
  **/
 @Configuration
 public class RouterFeignConfiguration {
-    @Bean
-    public Client getFeignClient(Client feignClient){
-        return new RouterFeignClient(feignClient);
-    }
+
+  @Bean
+  public Client getFeignClient(Client feignClient) {
+    return new RouterFeignClient(feignClient);
+  }
 }
