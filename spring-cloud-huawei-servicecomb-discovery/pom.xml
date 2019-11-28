@@ -20,12 +20,11 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
+    <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-huawei</artifactId>
-    <groupId>org.springframework.cloud</groupId>
     <version>0.0.1</version>
   </parent>
 
-  <groupId>org.springframework.cloud</groupId>
   <artifactId>spring-cloud-huawei-servicecomb-discovery</artifactId>
   <name>Spring Cloud Huawei servicecomb Discovery</name>
 
@@ -67,7 +66,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.springframework.cloud</groupId>
+      <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-huawei-common</artifactId>
     </dependency>
   </dependencies>

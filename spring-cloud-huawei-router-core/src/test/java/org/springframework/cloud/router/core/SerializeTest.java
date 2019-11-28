@@ -3,9 +3,9 @@ package org.springframework.cloud.router.core;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Test;
-import org.springframework.cloud.router.core.model.Matcher;
-import org.springframework.cloud.router.core.model.PolicyRuleItem;
-import org.springframework.cloud.router.core.model.RouteItem;
+import com.huaweicloud.router.core.model.Matcher;
+import com.huaweicloud.router.core.model.PolicyRuleItem;
+import com.huaweicloud.router.core.model.RouteItem;
 import org.yaml.snakeyaml.Yaml;
 
 /**

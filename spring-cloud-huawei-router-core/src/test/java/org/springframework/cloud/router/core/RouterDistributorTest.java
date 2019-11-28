@@ -17,6 +17,7 @@
 
 package org.springframework.cloud.router.core;
 
+import com.huaweicloud.router.core.RouterFilter;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringProperty;
 import com.netflix.loadbalancer.Server;
@@ -26,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.cloud.router.core.cache.RouterRuleCache;
-import org.springframework.cloud.router.core.distribute.AbstractRouterDistributor;
+import com.huaweicloud.router.core.cache.RouterRuleCache;
+import com.huaweicloud.router.core.distribute.AbstractRouterDistributor;
 import mockit.Expectations;
 
 /**

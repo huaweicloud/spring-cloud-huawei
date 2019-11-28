@@ -21,4 +21,4 @@ LIB_DIR=$DEPLOY_DIR/lib
 LIB_JARS=`ls $LIB_DIR|grep .jar|awk '{print "'$LIB_DIR'/"$0}'|tr "\n" ":"`
 
 echo -e "Starting success ...\c"
-java -classpath $CONF_DIR:$LIB_JARS org.springframework.cloud.sample.dtm.ReserveFeignAppMain
+java -classpath $CONF_DIR:$LIB_JARS com.huaweicloud.sample.ReserveFeignAppMain
