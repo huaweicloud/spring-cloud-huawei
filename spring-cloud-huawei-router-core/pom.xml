@@ -28,11 +28,6 @@
 
   <artifactId>spring-cloud-huawei-router-core</artifactId>
 
-  <properties>
-    <guava.version>27.0.1-jre</guava.version>
-    <snakeyaml.version>1.24</snakeyaml.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -75,12 +70,10 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>${guava.version}</version>
     </dependency>
     <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
-      <version>${snakeyaml.version}</version>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>

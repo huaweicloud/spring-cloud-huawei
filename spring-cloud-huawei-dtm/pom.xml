@@ -28,13 +28,6 @@
 
   <artifactId>spring-cloud-huawei-dtm</artifactId>
 
-  <properties>
-    <jmockit.version>1.36</jmockit.version>
-    <junit.version>4.12</junit.version>
-    <dtm-client.version>1.0.2</dtm-client.version>
-    <feign-core.version>10.2.3</feign-core.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -47,13 +40,6 @@
     <dependency>
       <groupId>com.huawei.paas.dtm</groupId>
       <artifactId>dtm-client</artifactId>
-      <version>${dtm-client.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>spring-boot-starter</artifactId>
-          <groupId>org.springframework.boot</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -62,7 +48,6 @@
     <dependency>
       <groupId>io.github.openfeign</groupId>
       <artifactId>feign-core</artifactId>
-      <version>${feign-core.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
