@@ -21,8 +21,9 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.huaweicloud</groupId>
-    <artifactId>spring-cloud-huawei</artifactId>
+    <artifactId>spring-cloud-huawei-parents</artifactId>
     <version>0.0.1</version>
+    <relativePath>../spring-cloud-huawei-parents</relativePath>
   </parent>
 
   <artifactId>spring-cloud-huawei-servicecomb-discovery</artifactId>

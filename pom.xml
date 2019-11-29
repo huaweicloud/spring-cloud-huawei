@@ -25,6 +25,7 @@
     <artifactId>spring-cloud-build</artifactId>
     <version>2.1.6.RELEASE</version>
   </parent>
+
   <groupId>com.huaweicloud</groupId>
   <artifactId>spring-cloud-huawei</artifactId>
   <version>0.0.1</version>
@@ -32,18 +33,12 @@
   <name>Spring Cloud Huawei</name>
 
   <properties>
-    <spring-cloud.version>2.1.2.RELEASE</spring-cloud.version>
-    <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
-    <httpclient.version>4.5.9</httpclient.version>
-    <jackson-databind.version>2.9.10</jackson-databind.version>
-    <jmockit.version>1.36</jmockit.version>
-    <junit.version>4.12</junit.version>
-    <cse-dependency.version>2.3.69</cse-dependency.version>
-    <spring.version>5.1.8.RELEASE</spring.version>
   </properties>
+
   <modules>
-    <module>spring-cloud-huawei-common</module>
     <module>spring-cloud-huawei-dependencies</module>
+    <module>spring-cloud-huawei-parents</module>
+    <module>spring-cloud-huawei-common</module>
     <module>spring-cloud-huawei-servicecomb-discovery</module>
     <module>spring-cloud-huawei-sample</module>
     <module>spring-cloud-starter-huawei</module>
@@ -53,67 +48,6 @@
     <module>spring-cloud-huawei-router-client</module>
     <module>export-maven</module>
   </modules>
-
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-boot.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-huawei-dependencies</artifactId>
-        <version>${project.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-commons-dependencies</artifactId>
-        <version>${spring-cloud.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-netflix-dependencies</artifactId>
-        <version>${spring-cloud.version}</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-openfeign-dependencies</artifactId>
-        <version>${spring-cloud.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.huawei.paas.cse</groupId>
-        <artifactId>foundation-auth</artifactId>
-        <version>${cse-dependency.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-web</artifactId>
-        <version>${spring.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-webmvc</artifactId>
-        <version>${spring.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jmockit</groupId>
-        <artifactId>jmockit</artifactId>
-        <version>${jmockit.version}</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <build>
     <plugins>
