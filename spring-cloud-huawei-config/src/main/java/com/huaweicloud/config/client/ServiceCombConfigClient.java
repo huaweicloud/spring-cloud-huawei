@@ -51,17 +51,20 @@ public class ServiceCombConfigClient {
 
   /**
    * load all remote config from config center
+   *
    * @param dimensionsInfo service name + @ + application name
    * @return
    * @throws RemoteOperationException
    */
-  public Map<String, String> loadAll(String dimensionsInfo, String project) throws RemoteOperationException {
+  public Map<String, String> loadAll(String dimensionsInfo, String project)
+      throws RemoteOperationException {
     Response response = null;
     Map<String, String> result = new HashMap<>();
     try {
       project = project != null && !project.isEmpty() ? project : ConfigConstants.DEFAULT_PROJECT;
       response = httpTransport.sendGetRequest(
-          url + "/" + ConfigConstants.DEFAULT_API_VERSION + "/" + project + "/configuration/items?dimensionsInfo="
+          url + "/" + ConfigConstants.DEFAULT_API_VERSION + "/" + project
+              + "/configuration/items?dimensionsInfo="
               + URLEncoder.encode(dimensionsInfo, "UTF-8"));
       if (response == null) {
         return result;
@@ -69,16 +72,19 @@ public class ServiceCombConfigClient {
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         ObjectMapper objectMapper = new ObjectMapper();
         LOGGER.debug(response.getContent());
-        Map<String, Map<String, String>> allConfigMap = objectMapper.readValue(response.getContent(), HashMap.class);
+        Map<String, Map<String, String>> allConfigMap = objectMapper
+            .readValue(response.getContent(), HashMap.class);
         if (allConfigMap != null) {
           if (allConfigMap.get(ConfigConstants.APPLICATION_CONFIG) != null) {
             result.putAll(allConfigMap.get(ConfigConstants.APPLICATION_CONFIG));
           }
-          if (allConfigMap
-              .get(dimensionsInfo.substring(0, dimensionsInfo.indexOf(ConfigConstants.DEFAULT_SERVICE_SEPARATOR)))
+          if (dimensionsInfo.contains(ConfigConstants.DEFAULT_SERVICE_SEPARATOR)
+              && allConfigMap.get(dimensionsInfo
+              .substring(0, dimensionsInfo.indexOf(ConfigConstants.DEFAULT_SERVICE_SEPARATOR)))
               != null) {
             result.putAll(allConfigMap
-                .get(dimensionsInfo.substring(0, dimensionsInfo.indexOf(ConfigConstants.DEFAULT_SERVICE_SEPARATOR))));
+                .get(dimensionsInfo.substring(0,
+                    dimensionsInfo.indexOf(ConfigConstants.DEFAULT_SERVICE_SEPARATOR))));
           }
           if (allConfigMap.get(dimensionsInfo) != null) {
             result.putAll(allConfigMap.get(dimensionsInfo));
@@ -90,7 +96,8 @@ public class ServiceCombConfigClient {
         return null;
       } else {
         throw new RemoteOperationException(
-            "read response failed. status=" + response.getStatusCode() + ";mesage=" + response.getStatusMessage());
+            "read response failed. status=" + response.getStatusCode() + ";mesage=" + response
+                .getStatusMessage());
       }
     } catch (RemoteServerUnavailableException e) {
       throw new RemoteOperationException("build url failed.", e);

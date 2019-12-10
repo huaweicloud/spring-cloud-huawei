@@ -4,12 +4,12 @@ spring:
   cloud:
     servicecomb:
       config:
-        serverAddr: https://cse.cn-north-4.myhuaweicloud.com
+        serverAddr: ${engineAdd:https://cse.cn-north-4.myhuaweicloud.com}
         watch:
           delay: 10000
       credentials:
-        enable: true
-        accessKey: yourak
-        secretKey: yoursk
+        enable: ${sslEnabled:true}
+        accessKey: ${ak:yourak}
+        secretKey: ${sk:yoursk}
+        project: ${region:cn-north-4}
         akskCustomCipher: default
-        project: cn-north-4
