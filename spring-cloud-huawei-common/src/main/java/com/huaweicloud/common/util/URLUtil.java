@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.configuration.EnvironmentConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 /**
@@ -29,7 +31,11 @@ import org.springframework.util.StringUtils;
  **/
 public class URLUtil {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(URLUtil.class);
+
   private static final String SCHEMA_SEPRATOR = "://";
+
+  private static final String SYSTEM_KEY_BOTH = "PAAS_CSE_ENDPOINT";
 
   private static final String SYSTEM_KEY_SERVICE_CENTER = "PAAS_CSE_SC_ENDPOINT";
 
@@ -95,7 +101,11 @@ public class URLUtil {
     EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
     String sysURL = sysConfig.getString(SYSTEM_KEY_CONFIG_CENTER);
     String envURL = envConfig.getString(SYSTEM_KEY_CONFIG_CENTER);
-    return StringUtils.isEmpty(sysURL) ? dealMutiUrl(sysURL) : dealMutiUrl(envURL);
+    if (StringUtils.isEmpty(sysURL) && StringUtils.isEmpty(envURL)) {
+      sysURL = sysConfig.getString(SYSTEM_KEY_BOTH);
+      envURL = envConfig.getString(SYSTEM_KEY_BOTH);
+    }
+    return StringUtils.isEmpty(sysURL) ? dealMutiUrl(envURL) : dealMutiUrl(sysURL);
   }
 
   public static List<String> getEnvServerURL() {
@@ -103,7 +113,11 @@ public class URLUtil {
     EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
     String sysURL = sysConfig.getString(SYSTEM_KEY_SERVICE_CENTER);
     String envURL = envConfig.getString(SYSTEM_KEY_SERVICE_CENTER);
-    return StringUtils.isEmpty(sysURL) ? dealMutiUrl(sysURL) : dealMutiUrl(envURL);
+    if (StringUtils.isEmpty(sysURL) && StringUtils.isEmpty(envURL)) {
+      sysURL = sysConfig.getString(SYSTEM_KEY_BOTH);
+      envURL = envConfig.getString(SYSTEM_KEY_BOTH);
+    }
+    return StringUtils.isEmpty(sysURL) ? dealMutiUrl(envURL) : dealMutiUrl(sysURL);
   }
 
 }

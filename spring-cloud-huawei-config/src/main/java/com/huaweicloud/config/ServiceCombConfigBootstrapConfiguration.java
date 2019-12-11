@@ -17,6 +17,7 @@
 
 package com.huaweicloud.config;
 
+import com.huaweicloud.common.util.SecretUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import com.huaweicloud.common.transport.SSLConfig;
@@ -49,24 +50,21 @@ public class ServiceCombConfigBootstrapConfiguration {
   }
 
   @Bean
-  public ServiceCombConfigClient serviceCombConfigClient(ServiceCombConfigProperties serviceCombConfigProperties,
+  public ServiceCombConfigClient serviceCombConfigClient(
+      ServiceCombConfigProperties serviceCombConfigProperties,
       ServiceCombSSLProperties serviceCombSSLProperties) {
     ServiceCombConfigClientBuilder builder = new ServiceCombConfigClientBuilder();
-    SSLConfig sslConfig = new SSLConfig();
-    sslConfig.setEnable(serviceCombSSLProperties.isEnable());
-    sslConfig.setAccessKey(serviceCombSSLProperties.getAccessKey());
-    sslConfig.setSecretKey(serviceCombSSLProperties.getSecretKey());
-    sslConfig.setAkskCustomCipher(serviceCombSSLProperties.getAkskCustomCipher());
-    sslConfig.setProject(serviceCombSSLProperties.getProject());
+    SSLConfig sslConfig = SecretUtil.generateSSLConfig(serviceCombSSLProperties);
     builder.setUrl(serviceCombConfigProperties.getServerAddr()).setSSLConfig(sslConfig);
     return builder.createServiceCombConfigClient();
   }
-
   @Bean
   public ServiceCombPropertySourceLocator serviceCombPropertySourceLocator(
       ServiceCombConfigProperties serviceCombConfigProperties,
-      ServiceCombConfigClient serviceCombConfigClient, ServiceCombSSLProperties serviceCombSSLProperties) {
-    return new ServiceCombPropertySourceLocator(serviceCombConfigProperties, serviceCombConfigClient,
+      ServiceCombConfigClient serviceCombConfigClient,
+      ServiceCombSSLProperties serviceCombSSLProperties) {
+    return new ServiceCombPropertySourceLocator(serviceCombConfigProperties,
+        serviceCombConfigClient,
         serviceCombSSLProperties.getProject());
   }
 }

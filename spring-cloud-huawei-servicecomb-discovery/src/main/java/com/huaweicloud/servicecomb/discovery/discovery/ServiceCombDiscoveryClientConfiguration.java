@@ -17,6 +17,7 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
+import com.huaweicloud.common.util.SecretUtil;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -59,12 +60,7 @@ public class ServiceCombDiscoveryClientConfiguration {
   public ServiceCombClient serviceCombClient(ServiceCombDiscoveryProperties serviceCombProperties,
       ServiceCombSSLProperties serviceCombSSLProperties) {
     ServiceCombClientBuilder builder = new ServiceCombClientBuilder();
-    SSLConfig sslConfig = new SSLConfig();
-    sslConfig.setEnable(serviceCombSSLProperties.isEnable());
-    sslConfig.setAccessKey(serviceCombSSLProperties.getAccessKey());
-    sslConfig.setSecretKey(serviceCombSSLProperties.getSecretKey());
-    sslConfig.setAkskCustomCipher(serviceCombSSLProperties.getAkskCustomCipher());
-    sslConfig.setProject(serviceCombSSLProperties.getProject());
+    SSLConfig sslConfig = SecretUtil.generateSSLConfig(serviceCombSSLProperties);
     builder.setUrl(serviceCombProperties.getAddress()).setSSLConfig(sslConfig);
     return builder.createServiceCombClient();
   }
