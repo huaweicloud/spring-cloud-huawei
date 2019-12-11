@@ -28,8 +28,6 @@ import com.huaweicloud.common.transport.SSLConfig;
 public class ServiceCombClientBuilder {
   private String url;
 
-  private boolean autoDiscovery;
-
   private SSLConfig sslConfig;
 
   /**
@@ -39,11 +37,6 @@ public class ServiceCombClientBuilder {
    */
   public ServiceCombClientBuilder setUrl(String url) {
     this.url = url;
-    return this;
-  }
-
-  public ServiceCombClientBuilder setAutoDiscovery(boolean autoDiscovery) {
-    this.autoDiscovery = autoDiscovery;
     return this;
   }
 
@@ -59,6 +52,6 @@ public class ServiceCombClientBuilder {
   public ServiceCombClient createServiceCombClient() {
     DefaultHttpTransport httpTransport = DefaultHttpTransport.getInstance();
     httpTransport.setSslConfig(sslConfig);
-    return new ServiceCombClient(url, httpTransport, autoDiscovery);
+    return new ServiceCombClient(url, httpTransport);
   }
 }

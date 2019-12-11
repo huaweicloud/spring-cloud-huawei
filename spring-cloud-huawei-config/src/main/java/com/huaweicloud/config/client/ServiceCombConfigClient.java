@@ -17,9 +17,12 @@
 
 package com.huaweicloud.config.client;
 
+import com.huaweicloud.common.util.URLUtil;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.http.HttpStatus;
@@ -31,6 +34,7 @@ import com.huaweicloud.common.transport.HttpTransport;
 import com.huaweicloud.common.transport.Response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.util.CollectionUtils;
 
 /**
  * @Author wangqijun
@@ -42,11 +46,16 @@ public class ServiceCombConfigClient {
 
   private HttpTransport httpTransport;
 
-  private String url;
+  private List<String> configCenterRegistryList = new ArrayList<>();
 
-  public ServiceCombConfigClient(String url, HttpTransport httpTransport) {
+  private int registryUrlIndex = 0;
+
+  public ServiceCombConfigClient(String urls, HttpTransport httpTransport) {
     this.httpTransport = httpTransport;
-    this.url = url;
+    configCenterRegistryList.addAll(URLUtil.getEnvConfigUrl());
+    if (CollectionUtils.isEmpty(configCenterRegistryList)) {
+      configCenterRegistryList.addAll(URLUtil.dealMutiUrl(urls));
+    }
   }
 
   /**
@@ -63,8 +72,8 @@ public class ServiceCombConfigClient {
     try {
       project = project != null && !project.isEmpty() ? project : ConfigConstants.DEFAULT_PROJECT;
       response = httpTransport.sendGetRequest(
-          url + "/" + ConfigConstants.DEFAULT_API_VERSION + "/" + project
-              + "/configuration/items?dimensionsInfo="
+          configCenterRegistryList.get(registryUrlIndex) + "/" + ConfigConstants.DEFAULT_API_VERSION
+              + "/" + project + "/configuration/items?dimensionsInfo="
               + URLEncoder.encode(dimensionsInfo, "UTF-8"));
       if (response == null) {
         return result;
@@ -100,9 +109,15 @@ public class ServiceCombConfigClient {
                 .getStatusMessage());
       }
     } catch (RemoteServerUnavailableException e) {
+      toggle();
       throw new RemoteOperationException("build url failed.", e);
     } catch (IOException e) {
+      toggle();
       throw new RemoteOperationException("read response failed. " + response, e);
     }
+  }
+
+  public synchronized void toggle() {
+    registryUrlIndex = (registryUrlIndex + 1) % configCenterRegistryList.size();
   }
 }

@@ -17,8 +17,6 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -43,7 +41,6 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureBefore({SimpleDiscoveryClientAutoConfiguration.class,
     CommonsClientAutoConfiguration.class})
 public class ServiceCombDiscoveryClientConfiguration {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombDiscoveryClientConfiguration.class);
 
   @Bean
   @ConditionalOnMissingBean
@@ -68,8 +65,7 @@ public class ServiceCombDiscoveryClientConfiguration {
     sslConfig.setSecretKey(serviceCombSSLProperties.getSecretKey());
     sslConfig.setAkskCustomCipher(serviceCombSSLProperties.getAkskCustomCipher());
     sslConfig.setProject(serviceCombSSLProperties.getProject());
-    builder.setUrl(serviceCombProperties.getAddress()).setAutoDiscovery(serviceCombProperties.isAutoDiscovery())
-        .setSSLConfig(sslConfig);
+    builder.setUrl(serviceCombProperties.getAddress()).setSSLConfig(sslConfig);
     return builder.createServiceCombClient();
   }
 
