@@ -40,7 +40,7 @@ public class HeaderPassUtil {
       try {
         return JsonUtils.OBJ_MAPPER.writeValueAsString(getHeaderMap(headers));
       } catch (JsonProcessingException e) {
-        e.printStackTrace();
+        LOGGER.error("canary context serialization failed : {}", e.getMessage());
       }
     }
     return null;

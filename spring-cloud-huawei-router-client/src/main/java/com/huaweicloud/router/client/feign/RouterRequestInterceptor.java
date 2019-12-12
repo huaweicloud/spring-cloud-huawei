@@ -5,6 +5,7 @@ import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.util.CollectionUtils;
 
 /**
  * @Author GuoYl123
@@ -23,7 +24,9 @@ public class RouterRequestInterceptor implements RequestInterceptor {
   public void apply(RequestTemplate requestTemplate) {
     Map<String, String> allHeaders = new HashMap<>();
     requestTemplate.headers().forEach((k, v) -> {
-      allHeaders.put(k, v.toArray()[0].toString());
+      if (CollectionUtils.isEmpty(v)) {
+        allHeaders.put(k, v.toArray()[0].toString());
+      }
     });
     requestTemplate.header(ROUTER_HEADER, HeaderPassUtil.getPassHeaderString(allHeaders));
   }
