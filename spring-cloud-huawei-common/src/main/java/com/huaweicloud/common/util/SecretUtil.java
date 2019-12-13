@@ -33,23 +33,17 @@ public class SecretUtil {
   public static SSLConfig generateSSLConfig(ServiceCombSSLProperties serviceCombSSLProperties) {
     SSLConfig sslConfig = new SSLConfig();
     Map<String, String> envHeaders = getAkSkFromSecret();
-    sslConfig.setEnable(serviceCombSSLProperties.isEnable());
-    if (envHeaders.containsKey(DealHeaderUtil.X_SERVICE_AK)) {
-      sslConfig.setAccessKey(envHeaders.get(DealHeaderUtil.X_SERVICE_AK));
-    } else {
-      sslConfig.setAccessKey(serviceCombSSLProperties.getAccessKey());
-    }
-    if (envHeaders.containsKey(DealHeaderUtil.X_SERVICE_SHA_AKSK)) {
-      sslConfig.setSecretKey(envHeaders.get(DealHeaderUtil.X_SERVICE_SHA_AKSK));
-    } else {
-      sslConfig.setSecretKey(serviceCombSSLProperties.getSecretKey());
-    }
-    sslConfig.setAkskCustomCipher(serviceCombSSLProperties.getAkskCustomCipher());
-    if (envHeaders.containsKey(DealHeaderUtil.X_SERVICE_PROJECT)) {
-      sslConfig.setProject(envHeaders.get(DealHeaderUtil.X_SERVICE_PROJECT));
-    } else {
-      sslConfig.setProject(serviceCombSSLProperties.getProject());
-    }
+    String ak = envHeaders.containsKey(DealHeaderUtil.X_SERVICE_AK) ? envHeaders
+        .get(DealHeaderUtil.X_SERVICE_AK) : serviceCombSSLProperties.getAccessKey();
+    String sk = envHeaders.containsKey(DealHeaderUtil.X_SERVICE_SHA_AKSK) ? envHeaders
+        .get(DealHeaderUtil.X_SERVICE_SHA_AKSK) : serviceCombSSLProperties.getSecretKey();
+    String project = envHeaders.containsKey(DealHeaderUtil.X_SERVICE_PROJECT) ? envHeaders
+        .get(DealHeaderUtil.X_SERVICE_PROJECT) : serviceCombSSLProperties.getProject();
+    sslConfig.setEnable(serviceCombSSLProperties.isEnable())
+        .setAccessKey(ak)
+        .setSecretKey(sk)
+        .setAkskCustomCipher(serviceCombSSLProperties.getAkskCustomCipher())
+        .setProject(project);
     return sslConfig;
   }
 

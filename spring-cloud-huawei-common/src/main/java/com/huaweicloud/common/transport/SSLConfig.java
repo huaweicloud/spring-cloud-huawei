@@ -36,39 +36,44 @@ public class SSLConfig {
     return enable;
   }
 
-  public void setEnable(boolean enable) {
+  public SSLConfig setEnable(boolean enable) {
     this.enable = enable;
+    return this;
   }
 
   public String getAccessKey() {
     return accessKey;
   }
 
-  public void setAccessKey(String accessKey) {
+  public SSLConfig setAccessKey(String accessKey) {
     this.accessKey = accessKey;
+    return this;
   }
 
   public String getSecretKey() {
     return secretKey;
   }
 
-  public void setSecretKey(String secretKey) {
+  public SSLConfig setSecretKey(String secretKey) {
     this.secretKey = secretKey;
+    return this;
   }
 
   public String getAkskCustomCipher() {
     return akskCustomCipher;
   }
 
-  public void setAkskCustomCipher(String akskCustomCipher) {
+  public SSLConfig setAkskCustomCipher(String akskCustomCipher) {
     this.akskCustomCipher = akskCustomCipher;
+    return this;
   }
 
   public String getProject() {
     return project;
   }
 
-  public void setProject(String project) {
+  public SSLConfig setProject(String project) {
     this.project = project;
+    return this;
   }
 }
