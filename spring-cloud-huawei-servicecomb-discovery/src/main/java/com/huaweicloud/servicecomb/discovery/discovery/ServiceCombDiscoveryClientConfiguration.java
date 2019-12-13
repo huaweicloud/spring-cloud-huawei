@@ -17,6 +17,7 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
+import com.huaweicloud.servicecomb.discovery.registry.TagsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -49,6 +50,12 @@ public class ServiceCombDiscoveryClientConfiguration {
   @ConditionalOnMissingBean
   public ServiceCombDiscoveryProperties serviceCombProperties() {
     return new ServiceCombDiscoveryProperties();
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  public TagsProperties tagsProperties() {
+    return new TagsProperties();
   }
 
   @Bean

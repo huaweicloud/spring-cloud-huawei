@@ -49,6 +49,9 @@ public class ServiceCombServiceRegistryTest {
   ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
 
   @Mocked
+  TagsProperties tagsProperties;
+
+  @Mocked
   ServiceCombRegistration registration;
 
   @Test
@@ -62,8 +65,9 @@ public class ServiceCombServiceRegistryTest {
         result = "2";
       }
     };
-    ServiceCombServiceRegistry serviceCombServiceRegistry = new ServiceCombServiceRegistry(serviceCombClient,
-        heartbeatScheduler, serviceCombDiscoveryProperties);
+    ServiceCombServiceRegistry serviceCombServiceRegistry = new ServiceCombServiceRegistry(
+        serviceCombClient,
+        heartbeatScheduler, serviceCombDiscoveryProperties, tagsProperties);
     serviceCombServiceRegistry.register(registration);
     Assert.assertEquals(serviceCombServiceRegistry.getInstanceID(), "2");
     Assert.assertEquals(serviceCombServiceRegistry.getServiceID(), "1");
@@ -79,8 +83,9 @@ public class ServiceCombServiceRegistryTest {
         result = "2";
       }
     };
-    ServiceCombServiceRegistry serviceCombServiceRegistry = new ServiceCombServiceRegistry(serviceCombClient,
-        heartbeatScheduler, serviceCombDiscoveryProperties);
+    ServiceCombServiceRegistry serviceCombServiceRegistry = new ServiceCombServiceRegistry(
+        serviceCombClient,
+        heartbeatScheduler, serviceCombDiscoveryProperties, tagsProperties);
     serviceCombServiceRegistry.register(registration);
     Assert.assertEquals(serviceCombServiceRegistry.getInstanceID(), "2");
     Assert.assertEquals(serviceCombServiceRegistry.getServiceID(), "4");
@@ -94,8 +99,9 @@ public class ServiceCombServiceRegistryTest {
         result = true;
       }
     };
-    ServiceCombServiceRegistry serviceCombServiceRegistry = new ServiceCombServiceRegistry(serviceCombClient,
-        heartbeatScheduler, serviceCombDiscoveryProperties);
+    ServiceCombServiceRegistry serviceCombServiceRegistry = new ServiceCombServiceRegistry(
+        serviceCombClient,
+        heartbeatScheduler, serviceCombDiscoveryProperties, tagsProperties);
     serviceCombServiceRegistry.deregister(registration);
   }
 
@@ -107,8 +113,9 @@ public class ServiceCombServiceRegistryTest {
         result = true;
       }
     };
-    ServiceCombServiceRegistry serviceCombServiceRegistry = new ServiceCombServiceRegistry(serviceCombClient,
-        heartbeatScheduler, serviceCombDiscoveryProperties);
+    ServiceCombServiceRegistry serviceCombServiceRegistry = new ServiceCombServiceRegistry(
+        serviceCombClient,
+        heartbeatScheduler, serviceCombDiscoveryProperties, tagsProperties);
     serviceCombServiceRegistry.setStatus(registration, "UP");
   }
 
@@ -124,8 +131,9 @@ public class ServiceCombServiceRegistryTest {
         result = microserviceInstanceSingleResponse;
       }
     };
-    ServiceCombServiceRegistry serviceCombServiceRegistry = new ServiceCombServiceRegistry(serviceCombClient,
-        heartbeatScheduler, serviceCombDiscoveryProperties);
+    ServiceCombServiceRegistry serviceCombServiceRegistry = new ServiceCombServiceRegistry(
+        serviceCombClient,
+        heartbeatScheduler, serviceCombDiscoveryProperties, tagsProperties);
     String actual = serviceCombServiceRegistry.getStatus(registration);
     Assert.assertEquals(actual, MicroserviceInstanceStatus.UP.name());
   }

@@ -44,12 +44,17 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   private HeartbeatScheduler heartbeatScheduler;
 
+  private TagsProperties tagsProperties;
+
   private String serviceID = null;
 
   private String instanceID = null;
 
-  public ServiceCombServiceRegistry(ServiceCombClient serviceCombClient, HeartbeatScheduler heartbeatScheduler,
-      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
+  public ServiceCombServiceRegistry(ServiceCombClient serviceCombClient,
+      HeartbeatScheduler heartbeatScheduler,
+      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
+      TagsProperties tagsProperties) {
+    this.tagsProperties = tagsProperties;
     this.serviceCombClient = serviceCombClient;
     this.heartbeatScheduler = heartbeatScheduler;
     this.serviceCombDiscoveryProperties = serviceCombDiscoveryProperties;
@@ -73,7 +78,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
           serviceID = serviceCombClient.registerMicroservice(microservice);
         }
         MicroserviceInstance microserviceInstance = RegistryHandler
-            .buildMicroServiceInstances(serviceID, microservice, serviceCombDiscoveryProperties);
+            .buildMicroServiceInstances(serviceID, microservice, serviceCombDiscoveryProperties,
+                tagsProperties);
         instanceID = serviceCombClient.registerInstance(microserviceInstance);
         if (null != instanceID) {
           serviceCombClient.autoDiscovery(serviceCombDiscoveryProperties.isAutoDiscovery());
@@ -81,7 +87,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
         }
       } catch (ServiceCombException e) {
         serviceCombClient.toggle();
-        LOGGER.warn("register failed, will retry. please check config file. message=" + e.getMessage());
+        LOGGER.warn(
+            "register failed, will retry. please check config file. message=" + e.getMessage());
       }
       delay();
     }
@@ -123,7 +130,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
   @Override
   public String getStatus(ServiceCombRegistration registration) {
     try {
-      MicroserviceInstanceSingleResponse instance = serviceCombClient.getInstance(serviceID, instanceID);
+      MicroserviceInstanceSingleResponse instance = serviceCombClient
+          .getInstance(serviceID, instanceID);
       if (instance != null && instance.getInstance() != null) {
         return instance.getInstance().getStatus().name();
       }
