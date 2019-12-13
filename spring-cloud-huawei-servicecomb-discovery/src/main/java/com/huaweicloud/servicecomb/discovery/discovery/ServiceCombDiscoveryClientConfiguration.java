@@ -17,9 +17,8 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
+import com.huaweicloud.common.util.SecretUtil;
 import com.huaweicloud.servicecomb.discovery.registry.TagsProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -44,7 +43,6 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureBefore({SimpleDiscoveryClientAutoConfiguration.class,
     CommonsClientAutoConfiguration.class})
 public class ServiceCombDiscoveryClientConfiguration {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombDiscoveryClientConfiguration.class);
 
   @Bean
   @ConditionalOnMissingBean
@@ -69,14 +67,8 @@ public class ServiceCombDiscoveryClientConfiguration {
   public ServiceCombClient serviceCombClient(ServiceCombDiscoveryProperties serviceCombProperties,
       ServiceCombSSLProperties serviceCombSSLProperties) {
     ServiceCombClientBuilder builder = new ServiceCombClientBuilder();
-    SSLConfig sslConfig = new SSLConfig();
-    sslConfig.setEnable(serviceCombSSLProperties.isEnable());
-    sslConfig.setAccessKey(serviceCombSSLProperties.getAccessKey());
-    sslConfig.setSecretKey(serviceCombSSLProperties.getSecretKey());
-    sslConfig.setAkskCustomCipher(serviceCombSSLProperties.getAkskCustomCipher());
-    sslConfig.setProject(serviceCombSSLProperties.getProject());
-    builder.setUrl(serviceCombProperties.getAddress()).setAutoDiscovery(serviceCombProperties.isAutoDiscovery())
-        .setSSLConfig(sslConfig);
+    SSLConfig sslConfig = SecretUtil.generateSSLConfig(serviceCombSSLProperties);
+    builder.setUrl(serviceCombProperties.getAddress()).setSSLConfig(sslConfig);
     return builder.createServiceCombClient();
   }
 

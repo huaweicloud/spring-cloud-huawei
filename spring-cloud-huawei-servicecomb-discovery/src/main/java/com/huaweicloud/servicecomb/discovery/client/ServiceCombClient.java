@@ -53,6 +53,7 @@ import com.huaweicloud.servicecomb.discovery.discovery.MicroserviceCache;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.springframework.util.CollectionUtils;
 
 
 /**
@@ -63,11 +64,12 @@ public class ServiceCombClient {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombClient.class);
 
+  // is it necessary? may be can delete
+  //when auto discovery it's the real endpoint List after dns resolution
   private List<String> serviceCenterUrlList = new ArrayList<>();
 
+  //the urls from config
   private List<String> serviceCenterRegistryList = new ArrayList<>();
-
-  private String urls;
 
   private long index = 0;
 
@@ -79,12 +81,13 @@ public class ServiceCombClient {
    * Get a single instance
    *
    * @param urls
-   * @param autoDiscovery
    */
-  public ServiceCombClient(String urls, HttpTransport httpTransport, boolean autoDiscovery) {
+  public ServiceCombClient(String urls, HttpTransport httpTransport) {
     this.httpTransport = httpTransport;
-    this.urls = urls;
-    dealMutiUrl(urls);
+    serviceCenterRegistryList.addAll(URLUtil.getEnvServerURL());
+    if (CollectionUtils.isEmpty(serviceCenterRegistryList)) {
+      serviceCenterRegistryList.addAll(URLUtil.dealMutiUrl(urls));
+    }
   }
 
   public void autoDiscovery(boolean autoDiscovery) {
@@ -101,24 +104,12 @@ public class ServiceCombClient {
         }
         String endpoint = microserviceInstance.getEndpoints().get(0);
         if (MicroserviceInstanceStatus.UP == microserviceInstance.getStatus() && !URLUtil
-            .isEquals(urls, endpoint)) {
+            .isEquals(serviceCenterRegistryList.get(registryUrlIndex), endpoint)) {
           serviceCenterUrlList.add(URLUtil.transform(endpoint, "http"));
         }
       }
     } catch (RemoteOperationException e) {
       LOGGER.error(e.getMessage(), e);
-    }
-  }
-
-  private void dealMutiUrl(String urls) {
-    if (urls != null && urls.indexOf(",") > 0) {
-      for (String url : urls.split(",")) {
-        if (url != null && !url.isEmpty()) {
-          serviceCenterRegistryList.add(url);
-        }
-      }
-    } else {
-      serviceCenterRegistryList.add(urls);
     }
   }
 

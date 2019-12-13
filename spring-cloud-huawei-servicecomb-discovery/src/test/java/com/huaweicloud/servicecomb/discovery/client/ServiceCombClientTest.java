@@ -32,8 +32,7 @@ import mockit.Injectable;
 public class ServiceCombClientTest {
 
   @Test
-  public void getServiceCenterInstances(@Injectable
-      Boolean autoDiscovery, @Injectable
+  public void getServiceCenterInstances( @Injectable
       String url, @Injectable
       HttpTransport httpTransport)
       throws RemoteOperationException, RemoteServerUnavailableException {
@@ -59,7 +58,6 @@ public class ServiceCombClientTest {
 
     response.setContent(responseString);
 
-    autoDiscovery = false;
     new Expectations() {
       {
         Deencapsulation.newUninitializedInstance(DefaultHttpTransport.class);
@@ -68,7 +66,7 @@ public class ServiceCombClientTest {
         result = response;
       }
     };
-    ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport, autoDiscovery);
+    ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport);
     MicroserviceInstancesResponse actual = serviceCombClient
         .getServiceCenterInstances();
     Assert.assertNotNull(actual);
@@ -79,8 +77,7 @@ public class ServiceCombClientTest {
 
 
   @Test
-  public void registerMicroservice(@Injectable
-      Boolean autoDiscovery, @Injectable
+  public void registerMicroservice( @Injectable
       String url, @Injectable
       HttpTransport httpTransport) throws ServiceCombException, IOException {
     final int expectedCode = 200;
@@ -89,8 +86,6 @@ public class ServiceCombClientTest {
     String responseString = "{\"serviceId\": \"22222\"}";
 
     response.setContent(responseString);
-
-    autoDiscovery = false;
 
     Microservice microservice = new Microservice();
     new Expectations() {
@@ -101,7 +96,7 @@ public class ServiceCombClientTest {
         result = response;
       }
     };
-    ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport, autoDiscovery);
+    ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport);
     String actual = serviceCombClient.registerMicroservice(microservice);
     Assert.assertEquals("22222", actual);
   }
@@ -129,14 +124,13 @@ public class ServiceCombClientTest {
         result = response;
       }
     };
-    ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport, autoDiscovery);
+    ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport);
     String actual = serviceCombClient.getServiceId(microservice);
     Assert.assertEquals("22222", actual);
   }
 
   @Test
-  public void registerInstance(@Injectable
-      Boolean autoDiscovery, @Injectable
+  public void registerInstance( @Injectable
       String url, @Injectable
       HttpTransport httpTransport) throws ServiceCombException, IOException {
     final int expectedCode = 200;
@@ -146,7 +140,6 @@ public class ServiceCombClientTest {
 
     response.setContent(responseString);
 
-    autoDiscovery = false;
 
     MicroserviceInstance microserviceInstance = new MicroserviceInstance();
     microserviceInstance.setServiceId("111111");
@@ -158,14 +151,13 @@ public class ServiceCombClientTest {
         result = response;
       }
     };
-    ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport, autoDiscovery);
+    ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport);
     String actual = serviceCombClient.registerInstance(microserviceInstance);
     Assert.assertEquals("22222", actual);
   }
 
   @Test
-  public void getInstances(@Injectable
-      Boolean autoDiscovery, @Injectable
+  public void getInstances( @Injectable
       String url, @Injectable
       HttpTransport httpTransport) throws ServiceCombException, IOException {
     final int expectedCode = 200;
@@ -195,8 +187,6 @@ public class ServiceCombClientTest {
 
     response.setContent(responseString);
 
-    autoDiscovery = false;
-
     Microservice microservice = new Microservice();
     new Expectations() {
       {
@@ -206,14 +196,13 @@ public class ServiceCombClientTest {
         result = response;
       }
     };
-    ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport, autoDiscovery);
+    ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport);
     List<ServiceInstance> actual = serviceCombClient.getInstances(microservice);
     Assert.assertEquals(1, actual.size());
   }
 
   @Test
-  public void heartbeat(@Injectable
-      Boolean autoDiscovery, @Injectable
+  public void heartbeat( @Injectable
       String url, @Injectable
       HttpTransport httpTransport) throws ServiceCombException, IOException {
     final int expectedCode = 200;
@@ -222,8 +211,6 @@ public class ServiceCombClientTest {
     String responseString = "{\"serviceId\": \"22222\"}";
 
     response.setContent(responseString);
-
-    autoDiscovery = false;
 
     HeartbeatRequest heartbeatRequest = new HeartbeatRequest("1", "2");
     new Expectations() {
@@ -234,13 +221,12 @@ public class ServiceCombClientTest {
         result = response;
       }
     };
-    ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport, autoDiscovery);
+    ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport);
     serviceCombClient.heartbeat(heartbeatRequest);
   }
 
   @Test
-  public void updateInstanceStatus(@Injectable
-      Boolean autoDiscovery, @Injectable
+  public void updateInstanceStatus( @Injectable
       String url, @Injectable
       HttpTransport httpTransport) throws ServiceCombException, IOException {
     final int expectedCode = 200;
@@ -250,8 +236,6 @@ public class ServiceCombClientTest {
 
     response.setContent(responseString);
 
-    autoDiscovery = false;
-
     new Expectations() {
       {
         Deencapsulation.newUninitializedInstance(DefaultHttpTransport.class);
@@ -260,7 +244,7 @@ public class ServiceCombClientTest {
         result = response;
       }
     };
-    ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport, autoDiscovery);
+    ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport);
     serviceCombClient.updateInstanceStatus("1", "2", "UP");
   }
 
@@ -289,8 +273,6 @@ public class ServiceCombClientTest {
 
     response.setContent(responseString);
 
-    autoDiscovery = false;
-
     new Expectations() {
       {
         Deencapsulation.newUninitializedInstance(DefaultHttpTransport.class);
@@ -299,14 +281,13 @@ public class ServiceCombClientTest {
         result = response;
       }
     };
-    ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport, autoDiscovery);
+    ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport);
     MicroserviceInstanceSingleResponse actual = serviceCombClient.getInstance("1", "2");
     Assert.assertEquals("1", actual.getInstance().getServiceId());
   }
 
   @Test
-  public void getServices(@Injectable
-      Boolean autoDiscovery, @Injectable
+  public void getServices( @Injectable
       String url, @Injectable
       HttpTransport httpTransport) throws ServiceCombException, IOException {
     final int expectedCode = 200;
@@ -354,8 +335,6 @@ public class ServiceCombClientTest {
 
     response.setContent(responseString);
 
-    autoDiscovery = false;
-
     new Expectations() {
       {
         Deencapsulation.newUninitializedInstance(DefaultHttpTransport.class);
@@ -364,7 +343,7 @@ public class ServiceCombClientTest {
         result = response;
       }
     };
-    ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport, autoDiscovery);
+    ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport);
     serviceCombClient.autoDiscovery(false);
     MicroserviceResponse actual = serviceCombClient.getServices();
     Assert.assertEquals(1, actual.getServices().size());
