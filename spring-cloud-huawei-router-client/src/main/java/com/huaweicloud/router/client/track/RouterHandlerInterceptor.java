@@ -17,13 +17,16 @@
 package com.huaweicloud.router.client.track;
 
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.Nullable;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
@@ -31,27 +34,41 @@ import org.springframework.web.servlet.HandlerInterceptor;
  * @Date 2019/10/17
  **/
 public class RouterHandlerInterceptor implements HandlerInterceptor {
-    @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler){
-        RouterTrackContext.setRequestHeader(getHeaders(request));
-        return true;
-    }
 
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex){
-        RouterTrackContext.remove();
-    }
+  @Autowired
+  private List<RouterHeaderFilterExt> filters;
 
-    private static Map<String, String> getHeaders(HttpServletRequest servletRequest) {
-        Enumeration<String> headerNames = servletRequest.getHeaderNames();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        while (headerNames.hasMoreElements()){
-            String headerName = headerNames.nextElement();
-            Enumeration<String> headerValues = servletRequest.getHeaders(headerName);
-            while (headerValues.hasMoreElements()){
-                httpHeaders.add(headerName, headerValues.nextElement());
-            }
+  @Override
+  public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
+      Object handler) {
+    Map<String, String> headers = getHeaders(request);
+    if (!CollectionUtils.isEmpty(filters)) {
+      for (RouterHeaderFilterExt filterExt : filters) {
+        if (filterExt.enabled()) {
+          headers = filterExt.doFilter(headers);
         }
-        return httpHeaders.toSingleValueMap();
+      }
     }
+    RouterTrackContext.setRequestHeader(headers);
+    return true;
+  }
+
+  @Override
+  public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
+      Object handler, @Nullable Exception ex) {
+    RouterTrackContext.remove();
+  }
+
+  private static Map<String, String> getHeaders(HttpServletRequest servletRequest) {
+    Enumeration<String> headerNames = servletRequest.getHeaderNames();
+    HttpHeaders httpHeaders = new HttpHeaders();
+    while (headerNames.hasMoreElements()) {
+      String headerName = headerNames.nextElement();
+      Enumeration<String> headerValues = servletRequest.getHeaders(headerName);
+      while (headerValues.hasMoreElements()) {
+        httpHeaders.add(headerName, headerValues.nextElement());
+      }
+    }
+    return httpHeaders.toSingleValueMap();
+  }
 }

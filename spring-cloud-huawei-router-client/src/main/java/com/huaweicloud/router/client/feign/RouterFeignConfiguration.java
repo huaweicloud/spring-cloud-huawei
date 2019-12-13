@@ -16,6 +16,7 @@
  */
 package com.huaweicloud.router.client.feign;
 
+import feign.RequestInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,5 +32,10 @@ public class RouterFeignConfiguration {
   @Bean
   public Client getFeignClient(Client feignClient) {
     return new RouterFeignClient(feignClient);
+  }
+
+  @Bean
+  public RequestInterceptor requestInterceptor() {
+    return new RouterRequestInterceptor();
   }
 }

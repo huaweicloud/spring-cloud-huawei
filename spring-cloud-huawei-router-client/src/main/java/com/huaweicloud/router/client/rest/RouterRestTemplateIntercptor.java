@@ -16,9 +16,11 @@
  */
 package com.huaweicloud.router.client.rest;
 
+import com.huaweicloud.router.client.header.HeaderPassUtil;
 import java.io.IOException;
 
 import com.huaweicloud.router.client.track.RouterTrackContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -30,8 +32,10 @@ import org.springframework.http.client.ClientHttpResponse;
  **/
 public class RouterRestTemplateIntercptor implements ClientHttpRequestInterceptor {
 
+  private static final String ROUTER_HEADER = "X-RouterContext";
+
   /**
-   * todo: 透传
+   * header pass
    *
    * @param httpRequest
    * @param bytes
@@ -43,6 +47,8 @@ public class RouterRestTemplateIntercptor implements ClientHttpRequestIntercepto
   public ClientHttpResponse intercept(HttpRequest httpRequest, byte[] bytes,
       ClientHttpRequestExecution clientHttpRequestExecution) throws IOException {
     RouterTrackContext.setServiceName(httpRequest.getURI().getHost());
+    HttpHeaders headers = httpRequest.getHeaders();
+    headers.add(ROUTER_HEADER, HeaderPassUtil.getPassHeaderString(headers.toSingleValueMap()));
     return clientHttpRequestExecution.execute(httpRequest, bytes);
   }
 }

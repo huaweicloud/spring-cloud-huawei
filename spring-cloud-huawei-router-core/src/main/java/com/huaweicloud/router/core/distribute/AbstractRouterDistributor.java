@@ -120,21 +120,19 @@ public abstract class AbstractRouterDistributor<T extends Server, E> implements
             targetTag = entry.getTagitem();
           }
         }
-        synchronized (invokeRule) {
-          if (invokeRule.isWeightLess() && getVersion.apply(ms).equals(latestV)) {
-            TagItem latestVTag = invokeRule.getRoute().get(invokeRule.getRoute().size() - 1)
-                .getTagitem();
-            if (!versionServerMap.containsKey(latestVTag)) {
-              versionServerMap.put(latestVTag, new ArrayList<>());
-            }
-            versionServerMap.get(latestVTag).add(server);
+        if (invokeRule.isWeightLess() && getVersion.apply(ms).equals(latestV)) {
+          TagItem latestVTag = invokeRule.getRoute().get(invokeRule.getRoute().size() - 1)
+              .getTagitem();
+          if (!versionServerMap.containsKey(latestVTag)) {
+            versionServerMap.put(latestVTag, new ArrayList<>());
           }
-          if (targetTag != null) {
-            if (!versionServerMap.containsKey(targetTag)) {
-              versionServerMap.put(targetTag, new ArrayList<>());
-            }
-            versionServerMap.get(targetTag).add(server);
+          versionServerMap.get(latestVTag).add(server);
+        }
+        if (targetTag != null) {
+          if (!versionServerMap.containsKey(targetTag)) {
+            versionServerMap.put(targetTag, new ArrayList<>());
           }
+          versionServerMap.get(targetTag).add(server);
         }
       }
     }
