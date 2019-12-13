@@ -1,0 +1,24 @@
+APPLICATION_ID: swagger
+service_description:
+  name: swagger-consumer
+  version: 0.0.3
+  environment: production
+cse:
+  service:
+    registry:
+      address: http://127.0.0.1:30100
+      instance:
+        watch: false
+  config:
+    client:
+      serverUri: http://127.0.0.1:30113
+      refreshMode: 1
+      refresh_interval: 5000
+  rest:
+    address: 0.0.0.0:8082
+
+#  credentials:
+#    accessKey: your ak
+#    secretKey: your sk
+#    project: cn-north-1
+#    akskCustomCipher: default

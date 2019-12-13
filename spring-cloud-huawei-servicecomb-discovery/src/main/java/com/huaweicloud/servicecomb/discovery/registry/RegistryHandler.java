@@ -20,7 +20,6 @@ package com.huaweicloud.servicecomb.discovery.registry;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.Map;
 import org.apache.servicecomb.foundation.common.net.NetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +31,6 @@ import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstance;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceStatus;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * @Author wangqijun
@@ -65,7 +62,7 @@ public class RegistryHandler {
     microserviceInstance.setHostName(NetUtil.getLocalHost());
     List<String> endPoints = new ArrayList<>();
     String address = NetUtils.getHostAddress();
-    endPoints.add("http://" + address + ":" + serviceCombDiscoveryProperties.getPort());
+    endPoints.add("rest://" + address + ":" + serviceCombDiscoveryProperties.getPort());
     microserviceInstance.setEndpoints(endPoints);
     HealthCheck healthCheck = new HealthCheck();
     healthCheck.setMode(HealthCheckMode.PLATFORM);
@@ -86,6 +83,7 @@ public class RegistryHandler {
     microservice.setServiceName(registration.getServiceId());
     microservice.setVersion(registration.getVersion());
     microservice.setFramework(new Framework());
+    microservice.setEnvironment(registration.getEnvironment());
     return microservice;
   }
 }

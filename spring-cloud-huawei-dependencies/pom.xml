@@ -84,6 +84,16 @@
         <artifactId>spring-cloud-starter-huawei-router</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.huaweicloud</groupId>
+        <artifactId>spring-cloud-starter-huawei-swagger2</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.huaweicloud</groupId>
+        <artifactId>spring-cloud-huawei-swagger</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
       <!-- huawei parts -->
       <dependency>

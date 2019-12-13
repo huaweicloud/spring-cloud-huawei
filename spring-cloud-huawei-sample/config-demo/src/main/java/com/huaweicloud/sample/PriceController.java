@@ -1,8 +1,8 @@
 package com.huaweicloud.sample;
 
+import com.huaweicloud.config.ConfigRefreshEvent;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import com.huaweicloud.config.ConfigRefreshEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,8 +15,8 @@ public class PriceController implements ApplicationListener<ConfigRefreshEvent> 
   @Value("${server.port}")
   private Integer port;
 
-  @Value("${dd:''}")
-  private String dd = null;
+  @Value("${dd:}")
+  private String dd;
 
   /**
    * 服务接口
