@@ -50,15 +50,19 @@ public class ServiceCombRegistryAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public HeartbeatScheduler heartbeatScheduler(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
+  public HeartbeatScheduler heartbeatScheduler(
+      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
       ServiceCombClient serviceCombClient) {
     return new HeartbeatScheduler(serviceCombDiscoveryProperties, serviceCombClient);
   }
 
   @Bean
   public ServiceCombServiceRegistry serviceCombServiceRegistry(ServiceCombClient serviceCombClient,
-      HeartbeatScheduler heartbeatScheduler, ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
-    return new ServiceCombServiceRegistry(serviceCombClient, heartbeatScheduler, serviceCombDiscoveryProperties);
+      HeartbeatScheduler heartbeatScheduler,
+      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
+      TagsProperties tagsProperties) {
+    return new ServiceCombServiceRegistry(serviceCombClient, heartbeatScheduler,
+        serviceCombDiscoveryProperties, tagsProperties);
   }
 
   @Bean

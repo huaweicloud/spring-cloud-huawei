@@ -20,6 +20,7 @@ package com.huaweicloud.servicecomb.discovery.registry;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Map;
 import org.apache.servicecomb.foundation.common.net.NetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,8 @@ import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstance;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceStatus;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * @Author wangqijun
@@ -41,9 +44,12 @@ public class RegistryHandler {
   private static final Logger LOGGER = LoggerFactory.getLogger(RegistryHandler.class);
 
 
-  public static MicroserviceInstance buildMicroServiceInstances(String serviceID, Microservice microservice,
-      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
-    MicroserviceInstance microserviceInstance = buildInstance(serviceID, serviceCombDiscoveryProperties);
+  public static MicroserviceInstance buildMicroServiceInstances(String serviceID,
+      Microservice microservice,
+      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
+      TagsProperties tagsProperties) {
+    MicroserviceInstance microserviceInstance = buildInstance(serviceID,
+        serviceCombDiscoveryProperties, tagsProperties);
     List<MicroserviceInstance> instances = new ArrayList<>();
     instances.add(microserviceInstance);
     microservice.setInstances(instances);
@@ -51,9 +57,9 @@ public class RegistryHandler {
     return microserviceInstance;
   }
 
-
   private static MicroserviceInstance buildInstance(String serviceID,
-      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
+      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
+      TagsProperties tagsProperties) {
     MicroserviceInstance microserviceInstance = new MicroserviceInstance();
     microserviceInstance.setServiceId(serviceID);
     microserviceInstance.setHostName(NetUtil.getLocalHost());
@@ -70,6 +76,7 @@ public class RegistryHandler {
     microserviceInstance.setTimestamp(currTime);
     microserviceInstance.setModTimestamp(currTime);
     microserviceInstance.setVersion(serviceCombDiscoveryProperties.getVersion());
+    microserviceInstance.setProperties(tagsProperties.getTag());
     return microserviceInstance;
   }
 

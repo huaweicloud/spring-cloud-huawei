@@ -18,6 +18,7 @@
 package com.huaweicloud.servicecomb.discovery.discovery;
 
 import com.huaweicloud.common.util.SecretUtil;
+import com.huaweicloud.servicecomb.discovery.registry.TagsProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -47,6 +48,12 @@ public class ServiceCombDiscoveryClientConfiguration {
   @ConditionalOnMissingBean
   public ServiceCombDiscoveryProperties serviceCombProperties() {
     return new ServiceCombDiscoveryProperties();
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  public TagsProperties tagsProperties() {
+    return new TagsProperties();
   }
 
   @Bean

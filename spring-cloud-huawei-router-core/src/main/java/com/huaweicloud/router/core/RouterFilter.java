@@ -49,7 +49,6 @@ public class RouterFilter {
     if (headers == null) {
       headers = new HashMap<>();
     }
-    LOGGER.debug("route management headers:{}",headers);
     /**
      * 1.初始化--进行cache缓存
      */

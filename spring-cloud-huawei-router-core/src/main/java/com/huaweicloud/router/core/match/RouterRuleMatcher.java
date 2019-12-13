@@ -28,9 +28,6 @@ import com.huaweicloud.router.core.model.PolicyRuleItem;
  **/
 public class RouterRuleMatcher {
 
-  @Autowired(required = false)
-  private RouterHeaderFilterExt routerHeaderFilterExt;
-
   private static RouterRuleMatcher instance = new RouterRuleMatcher();
 
   private RouterRuleMatcher() {
@@ -43,9 +40,6 @@ public class RouterRuleMatcher {
    * @return
    */
   public PolicyRuleItem match(String serviceName, Map<String, String> invokeHeader) {
-    if (routerHeaderFilterExt != null) {
-      invokeHeader = routerHeaderFilterExt.doFilter(invokeHeader);
-    }
     for (PolicyRuleItem rule : RouterRuleCache.getServiceInfoCacheMap().get(serviceName)
         .getAllrule()) {
       if (rule.getMatch() == null || rule.getMatch().match(invokeHeader)) {

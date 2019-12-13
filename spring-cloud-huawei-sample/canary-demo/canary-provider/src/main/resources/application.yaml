@@ -9,7 +9,7 @@ spring:
       discovery:
         enabled: true
         address: ${engineAdd:https://cse.cn-north-4.myhuaweicloud.com}
-        version: 0.1.1
+        version: 0.0.1
         healthCheckInterval: 30
       credentials:
         enable: ${sslEnabled:true}
