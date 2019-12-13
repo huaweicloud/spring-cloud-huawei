@@ -1,0 +1,24 @@
+<configuration>
+    <Properties>
+        <Property name="log_path">./target/log/</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%d][%p][%t][%F][%marker]%m %l%n"/>
+        </Console>
+        <RollingRandomAccessFile name="RollingRandomAccessFile" fileName="${log_path}/output.log"
+                                 filePattern="${log_path}/consumer-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout pattern="[%d][%p][%t][%F][%marker]%m %l%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="200 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="99"/>
+        </RollingRandomAccessFile>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingRandomAccessFile"/>
+        </Root>
+    </Loggers>
+</configuration>

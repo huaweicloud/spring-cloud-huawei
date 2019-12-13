@@ -36,7 +36,7 @@ public class MicroserviceCache {
                 item.getInstances().forEach(ins -> {
                     ins.setServiceName(item.getServiceName());
                     ins.getEndpoints().forEach(ep -> {
-                        microserviceList.put(ep.replaceAll("http(?s)://", ""), ins);
+                        microserviceList.put(ep.replaceAll("rest://", ""), ins);
                     });
                 })
         );
@@ -46,7 +46,7 @@ public class MicroserviceCache {
         list.forEach(ins -> {
             ins.setServiceName(serviceName);
             ins.getEndpoints().forEach(ep -> {
-                microserviceList.put(ep.replaceAll("http(?s)://", ""), ins);
+                microserviceList.put(ep.replaceAll("rest://", ""), ins);
             });
         });
     }

@@ -22,6 +22,7 @@ package com.huaweicloud.servicecomb.discovery.client.model;
  * @Date 21:45 2019-07-08
  **/
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -50,7 +51,17 @@ public class Microservice {
 
   private MicroserviceStatus status;
 
+  private List<String> schemas = new ArrayList<String>();
+
   private List<MicroserviceInstance> instances;
+
+  public List<String> getSchemas() {
+    return schemas;
+  }
+
+  public void setSchemas(List<String> schemas) {
+    this.schemas = schemas;
+  }
 
   public String getServiceId() {
     return serviceId;

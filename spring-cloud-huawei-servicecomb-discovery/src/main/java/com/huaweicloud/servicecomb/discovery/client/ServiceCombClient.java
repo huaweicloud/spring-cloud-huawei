@@ -17,7 +17,11 @@
 
 package com.huaweicloud.servicecomb.discovery.client;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
+import com.google.common.hash.Hashing;
+import com.huaweicloud.servicecomb.discovery.client.model.SchemaRequest;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -28,7 +32,9 @@ import java.util.List;
 import java.util.Map;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.DefaultServiceInstance;
@@ -457,6 +463,39 @@ public class ServiceCombClient {
       handleRemoteOperationException(response, e);
     }
     return result;
+  }
+
+  public boolean registerSchema(String microserviceId, String schemaId, String schemaContent)
+      throws RemoteOperationException {
+    Response response = null;
+    SchemaRequest request = new SchemaRequest();
+    request.setSchema(schemaContent);
+    request.setSummary(calcSchemaSummary(schemaContent));
+    try {
+      String formatUrl = buildDistributeURI(
+          "/registry/microservices/" + microserviceId + "/schemas/" + schemaId);
+      byte[] body = JsonUtils.writeValueAsBytes(request);
+      ByteArrayEntity byteArrayEntity = new ByteArrayEntity(body);
+      response = httpTransport.sendPutRequest(formatUrl, byteArrayEntity);
+      if (response.getStatusCode() == HttpStatus.SC_OK) {
+        LOGGER.info("register schema {}/{} success.", microserviceId, schemaId);
+        return true;
+      } else {
+        LOGGER.error("Register schema {}/{} failed.", microserviceId, schemaId);
+        return false;
+      }
+    } catch (JsonProcessingException e) {
+      LOGGER.error("registerSchema serialization failed : {}", e.getMessage());
+    } catch (URISyntaxException e) {
+      throw new RemoteOperationException("build url failed.", e);
+    } catch (RemoteServerUnavailableException e) {
+      handleRemoteOperationException(response, e);
+    }
+    return false;
+  }
+
+  public static String calcSchemaSummary(String schemaContent) {
+    return Hashing.sha256().newHasher().putString(schemaContent, Charsets.UTF_8).hash().toString();
   }
 
   private String buildURI(String path) throws URISyntaxException {

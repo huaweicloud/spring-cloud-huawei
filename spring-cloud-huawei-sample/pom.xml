@@ -10,12 +10,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.huaweicloud</groupId>
   <artifactId>spring-cloud-huawei-sample</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.4</version>
   <packaging>pom</packaging>
   <modules>
     <module>dtm-demo</module>
     <module>discovery-demo</module>
     <module>config-demo</module>
     <module>canary-demo</module>
+    <module>swagger-demo</module>
   </modules>
 </project>

@@ -2,7 +2,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/huaweicloud/spring-cloud-huawei/badge.svg?branch=master)](https://coveralls.io/github/huaweicloud/spring-cloud-huawei?branch=master)
 # spring-cloud-huawei
 
-[查看中文文档](https://github.com/huaweicloud/spring-cloud-huawei/blob/master/README_zh.md)
+[查看中文文档](./README_zh.md)
 
 spring-cloud-huawei is a framework that makes it easier to integrate spring cloud and Huawei frameworks.
 Including open source framework and commercial framework, 
@@ -71,5 +71,7 @@ dependencyManagement can be used in projects to manage dependencies.
 [more document](https://github.com/huaweicloud/spring-cloud-huawei/blob/master/docs/index.md)
 
 ## RoadMap
+- [ ] Integrated openapi-swagger2.0
+- [ ] Support WebFlux
 - [ ] Integrated serivicecomb-kie
 - [ ] Integrated edge-service

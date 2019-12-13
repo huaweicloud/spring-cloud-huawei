@@ -80,4 +80,8 @@ public class ServiceCombRegistration implements Registration, ServiceInstance {
   public String getVersion() {
     return serviceCombDiscoveryProperties.getVersion();
   }
+
+  public String getEnvironment() {
+    return serviceCombDiscoveryProperties.getEnvironment();
+  }
 }

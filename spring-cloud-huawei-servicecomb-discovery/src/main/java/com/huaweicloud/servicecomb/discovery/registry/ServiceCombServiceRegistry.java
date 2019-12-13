@@ -17,8 +17,10 @@
 
 package com.huaweicloud.servicecomb.discovery.registry;
 
+import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
 import com.huaweicloud.common.cache.RegisterCache;
 import com.huaweicloud.common.exception.ServiceCombException;
@@ -35,6 +37,9 @@ import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryPrope
  **/
 
 public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRegistration> {
+
+  @Autowired(required = false)
+  private ServiceCombSwaggerHandler serviceCombSwaggerHandler;
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombServiceRegistry.class);
 
@@ -71,11 +76,18 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   private void loopRegister(ServiceCombRegistration registration) {
     Microservice microservice = RegistryHandler.buildMicroservice(registration);
+    if (serviceCombSwaggerHandler != null) {
+      serviceCombSwaggerHandler.init();
+      microservice.setSchemas(serviceCombSwaggerHandler.getSchemas());
+    }
     while (true) {
       try {
         serviceID = serviceCombClient.getServiceId(microservice);
         if (null == serviceID) {
           serviceID = serviceCombClient.registerMicroservice(microservice);
+        }
+        if (serviceCombSwaggerHandler != null) {
+          serviceCombSwaggerHandler.registerSwagger(serviceID, microservice.getSchemas());
         }
         MicroserviceInstance microserviceInstance = RegistryHandler
             .buildMicroServiceInstances(serviceID, microservice, serviceCombDiscoveryProperties,
