@@ -31,9 +31,10 @@ import mockit.Injectable;
  **/
 public class ServiceCombClientTest {
 
+  private static final String url = "http://127.0.0.1:30100";
+
   @Test
-  public void getServiceCenterInstances( @Injectable
-      String url, @Injectable
+  public void getServiceCenterInstances(@Injectable
       HttpTransport httpTransport)
       throws RemoteOperationException, RemoteServerUnavailableException {
     final int expectedCode = 200;
@@ -77,8 +78,7 @@ public class ServiceCombClientTest {
 
 
   @Test
-  public void registerMicroservice( @Injectable
-      String url, @Injectable
+  public void registerMicroservice(@Injectable
       HttpTransport httpTransport) throws ServiceCombException, IOException {
     final int expectedCode = 200;
     Response response = new Response();
@@ -104,7 +104,6 @@ public class ServiceCombClientTest {
   @Test
   public void getServiceId(@Injectable
       Boolean autoDiscovery, @Injectable
-      String url, @Injectable
       HttpTransport httpTransport) throws ServiceCombException, IOException {
     final int expectedCode = 200;
     Response response = new Response();
@@ -130,8 +129,7 @@ public class ServiceCombClientTest {
   }
 
   @Test
-  public void registerInstance( @Injectable
-      String url, @Injectable
+  public void registerInstance(@Injectable
       HttpTransport httpTransport) throws ServiceCombException, IOException {
     final int expectedCode = 200;
     Response response = new Response();
@@ -139,7 +137,6 @@ public class ServiceCombClientTest {
     String responseString = "{\"instanceId\": \"22222\"}";
 
     response.setContent(responseString);
-
 
     MicroserviceInstance microserviceInstance = new MicroserviceInstance();
     microserviceInstance.setServiceId("111111");
@@ -157,8 +154,7 @@ public class ServiceCombClientTest {
   }
 
   @Test
-  public void getInstances( @Injectable
-      String url, @Injectable
+  public void getInstances(@Injectable
       HttpTransport httpTransport) throws ServiceCombException, IOException {
     final int expectedCode = 200;
     Response response = new Response();
@@ -202,8 +198,7 @@ public class ServiceCombClientTest {
   }
 
   @Test
-  public void heartbeat( @Injectable
-      String url, @Injectable
+  public void heartbeat(@Injectable
       HttpTransport httpTransport) throws ServiceCombException, IOException {
     final int expectedCode = 200;
     Response response = new Response();
@@ -226,8 +221,7 @@ public class ServiceCombClientTest {
   }
 
   @Test
-  public void updateInstanceStatus( @Injectable
-      String url, @Injectable
+  public void updateInstanceStatus(@Injectable
       HttpTransport httpTransport) throws ServiceCombException, IOException {
     final int expectedCode = 200;
     Response response = new Response();
@@ -251,7 +245,6 @@ public class ServiceCombClientTest {
   @Test
   public void getInstance(@Injectable
       Boolean autoDiscovery, @Injectable
-      String url, @Injectable
       HttpTransport httpTransport) throws ServiceCombException, IOException {
     final int expectedCode = 200;
     Response response = new Response();
@@ -287,8 +280,7 @@ public class ServiceCombClientTest {
   }
 
   @Test
-  public void getServices( @Injectable
-      String url, @Injectable
+  public void getServices(@Injectable
       HttpTransport httpTransport) throws ServiceCombException, IOException {
     final int expectedCode = 200;
     Response response = new Response();

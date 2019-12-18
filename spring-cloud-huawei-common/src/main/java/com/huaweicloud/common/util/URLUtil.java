@@ -84,6 +84,9 @@ public class URLUtil {
 
   public static List<String> dealMutiUrl(String urls) {
     List<String> urlList = new ArrayList<>();
+    if (StringUtils.isEmpty(urls)) {
+      return urlList;
+    }
     if (urls != null && urls.indexOf(",") > 0) {
       for (String url : urls.split(",")) {
         if (url != null && !url.isEmpty()) {
