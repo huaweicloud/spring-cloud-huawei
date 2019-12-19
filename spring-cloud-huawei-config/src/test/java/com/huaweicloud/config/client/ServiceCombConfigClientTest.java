@@ -22,11 +22,12 @@ public class ServiceCombConfigClientTest {
 
   @Test
   public void loadAll(@Injectable
-      String url, @Injectable
-      HttpTransport httpTransport) throws RemoteServerUnavailableException, RemoteOperationException {
+      HttpTransport httpTransport)
+      throws RemoteServerUnavailableException, RemoteOperationException {
     final int expectedCode = 200;
     Response response = new Response();
     response.setStatusCode(expectedCode);
+    String url = "http://127.0.0.1:30113";
     String responseString = "{\n"
         + "    \"application\": {\n"
         + "        \"ffd\": \"dd\"\n"
