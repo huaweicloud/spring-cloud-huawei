@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-starter-huawei</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -15,7 +15,7 @@
     <dependency>
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-huawei-config</artifactId>
-      <version>0.0.2</version>
+      <version>0.0.3</version>
     </dependency>
   </dependencies>
 </project>
