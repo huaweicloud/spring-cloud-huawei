@@ -1,0 +1,26 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: backend-service             # 将 /provider1/开头的请求，转发到provider1
+          uri: lb://backend-service
+          predicates:
+            - Path=/**
+          filters:
+            - StripPrefix=1
+      discovery:
+        locator:
+          enabled: true
+          lowerCaseServiceId: true
+
+    servicecomb:
+      discovery:
+        enabled: true
+        address: http://127.0.0.1:30100
+        version: 0.0.1
+        healthCheckInterval: 30

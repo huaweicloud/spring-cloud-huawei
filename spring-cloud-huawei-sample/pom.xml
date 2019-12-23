@@ -17,5 +17,6 @@
     <module>discovery-demo</module>
     <module>config-demo</module>
     <module>canary-demo</module>
+    <module>gateway-demo</module>
   </modules>
 </project>
