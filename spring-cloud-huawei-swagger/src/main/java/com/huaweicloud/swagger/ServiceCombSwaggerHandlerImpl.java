@@ -6,6 +6,8 @@ import com.google.common.collect.Multimap;
 import com.huaweicloud.common.exception.RemoteOperationException;
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
+import io.swagger.models.AbstractModel;
+import io.swagger.models.Info;
 import io.swagger.models.Swagger;
 import io.swagger.util.Yaml;
 import java.lang.reflect.Field;
@@ -46,10 +48,18 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   @Value("${withJavaChassis:false}")
   private boolean isSync;
 
+  private String TITLE_PREFIX = "swagger definition for ";
+
+  private String X_JAVA_INTERFACE_PREFIX = "cse.gen.";
+
+  private String X_JAVA_INTERFACE = "x-java-interface";
+
+  private String INTF_SUFFIX = "Intf";
+
   /**
-   * 拆分注册
+   * Split registration
    */
-  public void init() {
+  public void init(String appName, String serviceName) {
     Documentation documentation = documentationCache
         .documentationByGroup(Docket.DEFAULT_GROUP_NAME);
     if (documentation == null) {
@@ -62,11 +72,25 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
       Multimap<String, ApiListing> tempList = HashMultimap.create();
       tempList.put(entry.getKey(), entry.getValue());
       try {
+        String className = genClassName(entry.getKey());
+        String xInterfaceName = genXInterfaceName(appName, serviceName, entry.getKey());
         Field field = Documentation.class.getDeclaredField("apiListings");
         field.setAccessible(true);
         field.set(documentation, tempList);
         Swagger temSwagger = mapper.mapDocumentation(documentation);
+        Info info = temSwagger.getInfo();
+        info.setTitle(TITLE_PREFIX + className);
+        info.setVendorExtension(X_JAVA_INTERFACE, xInterfaceName);
+        temSwagger.setInfo(info);
+        //todo : add itself tag
         temSwagger.setTags(null);
+        temSwagger.getDefinitions().forEach((k, v) -> {
+          if (v instanceof AbstractModel) {
+            ((AbstractModel) v).setVendorExtension(X_JAVA_INTERFACE, genXDefinitionName(k));
+          }
+        });
+//        temSwagger.setVendorExtension("consumes","application/json");
+//        temSwagger.setVendorExtension("produces","application/json");
         swaggerMap.put(entry.getKey(), temSwagger);
       } catch (NoSuchFieldException | IllegalAccessException e) {
         e.printStackTrace();
@@ -76,8 +100,7 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   }
 
   /**
-   * 流程可以和java-chassis不同: spring-cloud不依赖schema schema注册调用接口可以改为异步 tips:在和java-chassis组网场景下需要同步加载
-   * todo: schema生成理论上也可改为异步，但基于spring-fox，要看下能否实现
+   * schema注册调用接口可以改为异步,在和java-chassis组网场景下需要同步加载 todo: schema生成理论上也可改为异步，但基于spring-fox，要看下能否实现
    *
    * @param microserviceId
    * @param schemaIds
@@ -95,8 +118,6 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   }
 
   /**
-   * todo: 异常处理待完善
-   *
    * @param microserviceId
    * @param schemaIds
    */
@@ -104,11 +125,12 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
     schemaIds.forEach(schemaId -> {
       try {
         String str = Yaml.mapper().writeValueAsString(swaggerMap.get(schemaId));
+        LOGGER.info(str);
         serviceCombClient.registerSchema(microserviceId, schemaId, str);
       } catch (RemoteOperationException e) {
-        LOGGER.error("registerSwagger server failed : {}", e.getMessage());
+        LOGGER.error("register swagger to server-center failed : {}", e.getMessage());
       } catch (JsonProcessingException e) {
-        e.printStackTrace();
+        LOGGER.error("swagger parse failed : {}", e.getMessage());
       }
     });
   }
@@ -117,5 +139,46 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
     Executors.newSingleThreadExecutor().execute(() -> {
       registerSwaggerSync(microserviceId, schemaIds);
     });
+  }
+
+  /**
+   * @param appName
+   * @param serviceName
+   * @param schemaId
+   * @return
+   */
+  private String genXInterfaceName(String appName, String serviceName, String schemaId) {
+    char[] intfName = schemaId.toCharArray();
+    for (int i = 0; i < intfName.length; i++) {
+      if (intfName[i] == '-' && intfName[i + 1] >= 'a' && intfName[i + 1] <= 'z') {
+        intfName[i + 1] -= 32;
+      }
+    }
+    return X_JAVA_INTERFACE_PREFIX + appName + "." + serviceName + "." + schemaId + "."
+        + new String(intfName).replace("-", "") + INTF_SUFFIX;
+  }
+
+
+  /**
+   * todo :real full class name , use aop modify source code, cache the class-name
+   * springfox.documentation.swagger2.mappers.ModelMapper#modelsFromApiListings(com.google.common.collect.Multimap)
+   * springfox.documentation.spring.web.scanners.ApiModelReader#read(springfox.documentation.spi.service.contexts.RequestMappingContext)
+   * only can get method
+   * @param defName
+   * @return
+   */
+  private String genXDefinitionName(String defName) {
+    return "";
+  }
+
+  /**
+   * todo: use aop modify source code, cache the documentation-name -> class&interface
+   * springfox.documentation.spring.web.scanners.ApiListingScanner.scan
+   *
+   * @param schemaId
+   * @return
+   */
+  private String genClassName(String schemaId) {
+    return "";
   }
 }

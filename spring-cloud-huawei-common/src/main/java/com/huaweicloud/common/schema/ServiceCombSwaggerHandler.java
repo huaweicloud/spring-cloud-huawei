@@ -8,7 +8,7 @@ import java.util.List;
  **/
 public interface ServiceCombSwaggerHandler {
 
-  void init();
+  void init(String appName, String serviceName);
 
   void registerSwagger(String microserviceId, List<String> schemas);
 

@@ -27,7 +27,7 @@ public class ConsumerController {
 
   @RequestMapping(path = "/helloFoo", method = RequestMethod.GET)
   public Foo fooHello(@RequestParam("id") int id) {
-    ProviderService helloService = Invoker.createProxy("swagger-provider", "spring-cloud", ProviderService.class);
+    ProviderService helloService = Invoker.createProxy("swagger-provider", "provider-controller", ProviderService.class);
     return helloService.foo(id);
   }
 
