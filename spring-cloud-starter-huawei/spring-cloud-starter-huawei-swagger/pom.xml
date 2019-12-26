@@ -9,7 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>spring-cloud-starter-huawei-swagger2</artifactId>
+  <artifactId>spring-cloud-starter-huawei-swagger</artifactId>
 
   <dependencies>
     <dependency>

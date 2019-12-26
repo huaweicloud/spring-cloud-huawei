@@ -77,7 +77,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
   private void loopRegister(ServiceCombRegistration registration) {
     Microservice microservice = RegistryHandler.buildMicroservice(registration);
     if (serviceCombSwaggerHandler != null) {
-      serviceCombSwaggerHandler.init(serviceCombDiscoveryProperties.getAppName(),serviceCombDiscoveryProperties.getServiceName());
+      serviceCombSwaggerHandler.init(serviceCombDiscoveryProperties.getAppName(),
+          serviceCombDiscoveryProperties.getServiceName());
       microservice.setSchemas(serviceCombSwaggerHandler.getSchemas());
     }
     while (true) {

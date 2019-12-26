@@ -16,7 +16,7 @@
     <module>spring-cloud-starter-huawei-dtm</module>
     <module>spring-cloud-starter-huawei-router</module>
     <module>spring-cloud-starter-huawei-config</module>
-    <module>spring-cloud-starter-huawei-swagger2</module>
+    <module>spring-cloud-starter-huawei-swagger</module>
   </modules>
 
 </project>
