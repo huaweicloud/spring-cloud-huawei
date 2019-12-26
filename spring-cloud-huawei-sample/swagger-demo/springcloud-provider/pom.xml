@@ -35,7 +35,7 @@
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-swagger2</artifactId>
+      <artifactId>spring-cloud-starter-huawei-swagger</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
