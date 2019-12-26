@@ -2,10 +2,14 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>spring-cloud-huawei-sample</artifactId>
+    <groupId>com.huaweicloud</groupId>
+    <version>0.0.3</version>
+  </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.huaweicloud</groupId>
   <artifactId>config-demo</artifactId>
-  <version>0.0.1</version>
   <properties>
     <java.version>1.8</java.version>
     <spring-cloud.version>2.1.2.RELEASE</spring-cloud.version>
@@ -41,6 +45,11 @@
     <dependency>
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-config</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.huaweicloud</groupId>
+      <artifactId>spring-cloud-huawei-config</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

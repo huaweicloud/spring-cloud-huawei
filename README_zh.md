@@ -65,6 +65,8 @@
 [更多文档](https://github.com/huaweicloud/spring-cloud-huawei/blob/master/docs/index.md)
 
 ## 开发路径
+- [ ] 集成openapi-swagger2.0
+- [ ] 支持WebFlux
 - [ ] 集成serivicecomb-kie
 - [ ] 集成servicecomb的APIGateway
 

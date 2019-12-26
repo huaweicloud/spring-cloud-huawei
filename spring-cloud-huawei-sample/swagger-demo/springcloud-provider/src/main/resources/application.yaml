@@ -1,0 +1,18 @@
+server:
+  port: 8081
+  env: production
+
+spring:
+  application:
+    name: swagger-provider
+  cloud:
+    servicecomb:
+      discovery:
+        enabled: true
+        address: http://127.0.0.1:30100
+        serviceName: swagger-provider
+        appName: swagger
+        version: 0.0.1
+        healthCheckInterval: 30
+
+

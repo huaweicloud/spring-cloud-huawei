@@ -40,6 +40,9 @@ public class ServiceCombDiscoveryProperties {
   @Value("${spring.cloud.servicecomb.discovery.serviceName:${spring.application.name}}")
   private String serviceName;
 
+  @Value("${server.env:}")
+  private String environment;
+
   private String version;
 
   private String hostname;
@@ -62,6 +65,14 @@ public class ServiceCombDiscoveryProperties {
       return ServiceRegistryConfig.DEFAULT_APPID;
     }
     return appName;
+  }
+
+  public String getEnvironment() {
+    return environment;
+  }
+
+  public void setEnvironment(String environment) {
+    this.environment = environment;
   }
 
   public void setAppName(String appName) {
