@@ -15,4 +15,5 @@ spring:
         version: 0.0.1
         healthCheckInterval: 30
 
+withJavaChassis: true
 

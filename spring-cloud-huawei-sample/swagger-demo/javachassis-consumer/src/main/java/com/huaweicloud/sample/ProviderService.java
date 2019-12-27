@@ -1,4 +1,4 @@
-package com.huawei.sample;
+package com.huaweicloud.sample;
 
 /**
  * @Author GuoYl123

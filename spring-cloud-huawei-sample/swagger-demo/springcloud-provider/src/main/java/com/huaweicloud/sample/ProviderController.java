@@ -1,6 +1,6 @@
 package com.huaweicloud.sample;
 
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ProviderController {
 
-  @RequestMapping("/foo")
+  @GetMapping("/foo")
   public Foo foo(@RequestParam("id") int id) {
     return new Foo("foo", id, null);
   }
 
-  @RequestMapping("/hello")
+  @GetMapping("/hello")
   public String sayHello() {
     return "\"spring cloud hello world\"";
   }

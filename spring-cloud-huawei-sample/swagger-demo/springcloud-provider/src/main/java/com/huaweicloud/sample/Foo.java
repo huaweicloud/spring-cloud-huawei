@@ -9,6 +9,9 @@ public class Foo {
   int field2;
   Foo foo;
 
+  public Foo() {
+  }
+
   public Foo(String field1, int field2, Foo foo) {
     this.field1 = field1;
     this.field2 = field2;

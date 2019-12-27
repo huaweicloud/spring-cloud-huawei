@@ -1,4 +1,4 @@
-package com.huawei.sample;
+package com.huaweicloud.sample;
 
 import org.apache.servicecomb.provider.pojo.Invoker;
 import org.apache.servicecomb.provider.rest.common.RestSchema;

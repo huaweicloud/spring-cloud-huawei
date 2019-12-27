@@ -1,4 +1,4 @@
-package com.huawei.sample;
+package com.huaweicloud.sample;
 
 /**
  * @Author GuoYl123
@@ -8,6 +8,9 @@ public class Foo {
   String field1;
   int field2;
   Foo foo;
+
+  public Foo() {
+  }
 
   public Foo(String field1, int field2, Foo foo) {
     this.field1 = field1;

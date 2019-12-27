@@ -23,4 +23,9 @@ public class SwaggerConfiguration {
   public ServiceCombSwaggerHandler swaggerHandler() {
     return new ServiceCombSwaggerHandlerImpl();
   }
+
+  @Bean
+  public ApiModelReaderAop apiModelReaderAop() {
+    return new ApiModelReaderAop();
+  }
 }

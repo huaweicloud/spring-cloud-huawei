@@ -1,4 +1,4 @@
-package com.huawei.sample;
+package com.huaweicloud.sample;
 
 import org.apache.servicecomb.foundation.common.utils.BeanUtils;
 import org.apache.servicecomb.foundation.common.utils.Log4jUtils;
