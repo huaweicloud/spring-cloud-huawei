@@ -17,7 +17,7 @@
 
 package com.huaweicloud.config.client;
 
-import com.huaweicloud.common.transport.UrlConfig;
+import com.huaweicloud.common.transport.URLConfig;
 import com.huaweicloud.common.util.URLUtil;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -43,7 +43,7 @@ public class ServiceCombConfigClient {
 
   private HttpTransport httpTransport;
 
-  UrlConfig configCenterConfig = new UrlConfig();
+  URLConfig configCenterConfig = new URLConfig();
 
   public ServiceCombConfigClient(String urls, HttpTransport httpTransport) {
     this.httpTransport = httpTransport;

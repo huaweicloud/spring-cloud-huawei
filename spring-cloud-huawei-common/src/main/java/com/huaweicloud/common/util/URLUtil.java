@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.configuration.EnvironmentConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 /**
@@ -49,8 +47,11 @@ public class URLUtil {
     if (url == null) {
       return null;
     }
-    String[] res = url.substring(url.indexOf(SCHEMA_SEPRATOR) + SCHEMA_SEPRATOR.length())
-        .split(IPPORT_SEPRATOR);
+    String[] res = new String[2];
+    res[0] = url
+        .substring(url.indexOf(SCHEMA_SEPRATOR) + SCHEMA_SEPRATOR.length(),
+            url.lastIndexOf(IPPORT_SEPRATOR));
+    res[1] = url.substring(url.lastIndexOf(IPPORT_SEPRATOR) + 1);
     if (res[1].contains("/")) {
       res[1] = res[1].substring(0, res[1].indexOf("/"));
     } else if (res[1].contains("?")) {

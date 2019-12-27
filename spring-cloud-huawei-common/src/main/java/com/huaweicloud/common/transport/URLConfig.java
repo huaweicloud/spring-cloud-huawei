@@ -15,9 +15,9 @@ import org.springframework.util.StringUtils;
  * @Author GuoYl123
  * @Date 2019/12/19
  **/
-public class UrlConfig {
+public class URLConfig {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(UrlConfig.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(URLConfig.class);
 
   private List<String> urlList = new ArrayList<>();
 

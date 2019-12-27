@@ -21,7 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
-import com.huaweicloud.common.transport.UrlConfig;
+import com.huaweicloud.common.transport.URLConfig;
 import com.huaweicloud.servicecomb.discovery.client.model.SchemaRequest;
 import java.io.IOException;
 import java.net.URI;
@@ -69,7 +69,7 @@ public class ServiceCombClient {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombClient.class);
 
-  UrlConfig registryConfig = new UrlConfig();
+  URLConfig registryConfig = new URLConfig();
 
   private HttpTransport httpTransport;
 
