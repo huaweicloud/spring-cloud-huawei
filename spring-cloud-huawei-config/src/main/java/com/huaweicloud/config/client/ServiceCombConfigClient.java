@@ -17,24 +17,21 @@
 
 package com.huaweicloud.config.client;
 
+import com.huaweicloud.common.transport.UrlConfig;
 import com.huaweicloud.common.util.URLUtil;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.http.HttpStatus;
+import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.huaweicloud.common.exception.RemoteOperationException;
 import com.huaweicloud.common.exception.RemoteServerUnavailableException;
 import com.huaweicloud.common.transport.HttpTransport;
 import com.huaweicloud.common.transport.Response;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.util.CollectionUtils;
 
 /**
  * @Author wangqijun
@@ -46,15 +43,13 @@ public class ServiceCombConfigClient {
 
   private HttpTransport httpTransport;
 
-  private List<String> configCenterRegistryList = new ArrayList<>();
-
-  private int registryUrlIndex = 0;
+  UrlConfig configCenterConfig = new UrlConfig();
 
   public ServiceCombConfigClient(String urls, HttpTransport httpTransport) {
     this.httpTransport = httpTransport;
-    configCenterRegistryList.addAll(URLUtil.getEnvConfigUrl());
-    if (CollectionUtils.isEmpty(configCenterRegistryList)) {
-      configCenterRegistryList.addAll(URLUtil.dealMutiUrl(urls));
+    configCenterConfig.setUrl(URLUtil.getEnvConfigUrl());
+    if (configCenterConfig.isEmpty()) {
+      configCenterConfig.setUrl(URLUtil.dealMutiUrl(urls));
     }
   }
 
@@ -72,16 +67,15 @@ public class ServiceCombConfigClient {
     try {
       project = project != null && !project.isEmpty() ? project : ConfigConstants.DEFAULT_PROJECT;
       response = httpTransport.sendGetRequest(
-          configCenterRegistryList.get(registryUrlIndex) + "/" + ConfigConstants.DEFAULT_API_VERSION
+          configCenterConfig.getUrl() + "/" + ConfigConstants.DEFAULT_API_VERSION
               + "/" + project + "/configuration/items?dimensionsInfo="
               + URLEncoder.encode(dimensionsInfo, "UTF-8"));
       if (response == null) {
         return result;
       }
       if (response.getStatusCode() == HttpStatus.SC_OK) {
-        ObjectMapper objectMapper = new ObjectMapper();
         LOGGER.debug(response.getContent());
-        Map<String, Map<String, String>> allConfigMap = objectMapper
+        Map<String, Map<String, String>> allConfigMap = JsonUtils.OBJ_MAPPER
             .readValue(response.getContent(), HashMap.class);
         if (allConfigMap != null) {
           if (allConfigMap.get(ConfigConstants.APPLICATION_CONFIG) != null) {
@@ -91,9 +85,8 @@ public class ServiceCombConfigClient {
               && allConfigMap.get(dimensionsInfo
               .substring(0, dimensionsInfo.indexOf(ConfigConstants.DEFAULT_SERVICE_SEPARATOR)))
               != null) {
-            result.putAll(allConfigMap
-                .get(dimensionsInfo.substring(0,
-                    dimensionsInfo.indexOf(ConfigConstants.DEFAULT_SERVICE_SEPARATOR))));
+            result.putAll(allConfigMap.get(dimensionsInfo
+                .substring(0, dimensionsInfo.indexOf(ConfigConstants.DEFAULT_SERVICE_SEPARATOR))));
           }
           if (allConfigMap.get(dimensionsInfo) != null) {
             result.putAll(allConfigMap.get(dimensionsInfo));
@@ -109,15 +102,11 @@ public class ServiceCombConfigClient {
                 .getStatusMessage());
       }
     } catch (RemoteServerUnavailableException e) {
-      toggle();
+      configCenterConfig.toggle();
       throw new RemoteOperationException("build url failed.", e);
     } catch (IOException e) {
-      toggle();
+      configCenterConfig.toggle();
       throw new RemoteOperationException("read response failed. " + response, e);
     }
-  }
-
-  public synchronized void toggle() {
-    registryUrlIndex = (registryUrlIndex + 1) % configCenterRegistryList.size();
   }
 }

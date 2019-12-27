@@ -8,7 +8,7 @@ spring:
     servicecomb:
       discovery:
         enabled: true
-        address: ${engineAdd:https://cse.cn-north-4.myhuaweicloud.com}
+        address: https://cse.cn-north-4.myhuaweicloud.com
         version: 0.0.2
         healthCheckInterval: 30
         autoDiscovery: true

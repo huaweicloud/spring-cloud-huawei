@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
+import com.huaweicloud.common.transport.UrlConfig;
 import com.huaweicloud.servicecomb.discovery.client.model.SchemaRequest;
 import java.io.IOException;
 import java.net.URI;
@@ -56,10 +57,8 @@ import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceResponse;
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
 import com.huaweicloud.servicecomb.discovery.discovery.MicroserviceCache;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.springframework.util.CollectionUtils;
 
 
 /**
@@ -70,16 +69,7 @@ public class ServiceCombClient {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombClient.class);
 
-  // is it necessary? may be can delete
-  //when auto discovery it's the real endpoint List after dns resolution
-  private List<String> serviceCenterUrlList = new ArrayList<>();
-
-  //the urls from config
-  private List<String> serviceCenterRegistryList = new ArrayList<>();
-
-  private long index = 0;
-
-  private int registryUrlIndex = 0;
+  UrlConfig registryConfig = new UrlConfig();
 
   private HttpTransport httpTransport;
 
@@ -90,14 +80,13 @@ public class ServiceCombClient {
    */
   public ServiceCombClient(String urls, HttpTransport httpTransport) {
     this.httpTransport = httpTransport;
-    serviceCenterRegistryList.addAll(URLUtil.getEnvServerURL());
-    if (CollectionUtils.isEmpty(serviceCenterRegistryList)) {
-      serviceCenterRegistryList.addAll(URLUtil.dealMutiUrl(urls));
+    registryConfig.setUrl(URLUtil.getEnvServerURL());
+    if (registryConfig.isEmpty()) {
+      registryConfig.setUrl(URLUtil.dealMutiUrl(urls));
     }
   }
 
   public void autoDiscovery(boolean autoDiscovery) {
-    serviceCenterUrlList.add(serviceCenterRegistryList.get(registryUrlIndex));
     if (!autoDiscovery) {
       return;
     }
@@ -108,28 +97,15 @@ public class ServiceCombClient {
         if (microserviceInstance.getEndpoints() == null) {
           continue;
         }
-        String endpoint = microserviceInstance.getEndpoints().get(0);
-        if (MicroserviceInstanceStatus.UP == microserviceInstance.getStatus() && !URLUtil
-            .isEquals(serviceCenterRegistryList.get(registryUrlIndex), endpoint)) {
-          serviceCenterUrlList.add(URLUtil.transform(endpoint, "http"));
-        }
+        microserviceInstance.getEndpoints().forEach(endpoint -> {
+          if (MicroserviceInstanceStatus.UP == microserviceInstance.getStatus()) {
+            registryConfig.addUrlAfterDnsResolve(URLUtil.transform(endpoint));
+          }
+        });
       }
     } catch (RemoteOperationException e) {
       LOGGER.error(e.getMessage(), e);
     }
-  }
-
-  private String chooseServiceCenterUrl() {
-    int count = serviceCenterUrlList.size();
-    if (count > 0) {
-      String result = serviceCenterUrlList.get((int) (index % count));
-      index++;
-      result = result + "/" + ServiceRegistryConfig.DEFAULT_API_VERSION + "/"
-          + ServiceRegistryConfig.DEFAULT_PROJECT;
-      LOGGER.info("choose service center, result=" + result);
-      return result;
-    }
-    return null;
   }
 
 
@@ -137,12 +113,10 @@ public class ServiceCombClient {
       throws RemoteOperationException {
     Response response = null;
     try {
-
-      String formatUrl = buildDistributeURI("/registry/health");
+      String formatUrl = buildURI("/registry/health");
       response = httpTransport.sendGetRequest(formatUrl);
       if (response.getStatusCode() == HttpStatus.SC_OK) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        MicroserviceInstancesResponse result = objectMapper
+        MicroserviceInstancesResponse result = JsonUtils.OBJ_MAPPER
             .readValue(response.getContent(), MicroserviceInstancesResponse.class);
         LOGGER.info("getServiceCenterInstances result=" + result);
         return result;
@@ -177,7 +151,7 @@ public class ServiceCombClient {
       content = objectMapper.writeValueAsString(microservice);
       StringEntity stringEntity = new StringEntity(content, "utf-8");
       response = httpTransport
-          .sendPostRequest(buildDistributeURI("/registry/microservices"), stringEntity);
+          .sendPostRequest(buildURI("/registry/microservices"), stringEntity);
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.info(response.getContent());
         HashMap<String, String> result = objectMapper
@@ -208,15 +182,11 @@ public class ServiceCombClient {
   public String getServiceId(Microservice microservice) throws ServiceCombException {
     Response response = null;
     try {
-      String path =
-          serviceCenterRegistryList.get(registryUrlIndex) + "/"
-              + ServiceRegistryConfig.DEFAULT_API_VERSION + "/"
-              + ServiceRegistryConfig.DEFAULT_PROJECT + "/registry/existence";
-      response = httpTransport.sendGetRequest(buildURI(path, "microservice", microservice));
+      String path = buildURI("/registry/existence");
+      response = httpTransport.sendGetRequest(addParam2URI(path, "microservice", microservice));
       if (response.getStatusCode() == HttpStatus.SC_OK) {
-        ObjectMapper objectMapper = new ObjectMapper();
         LOGGER.info(response.getContent());
-        HashMap<String, String> result = objectMapper
+        HashMap<String, String> result = JsonUtils.OBJ_MAPPER
             .readValue(response.getContent(), HashMap.class);
         return result.get("serviceId");
       } else if (response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
@@ -248,7 +218,7 @@ public class ServiceCombClient {
       objectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
       String content = objectMapper.writeValueAsString(microserviceInstance);
       StringEntity stringEntity = new StringEntity(content, "utf-8");
-      String formatUrl = buildDistributeURI(
+      String formatUrl = buildURI(
           "/registry/microservices/" + microserviceInstance.getServiceId() + "/instances");
       response = httpTransport
           .sendPostRequest(formatUrl,
@@ -317,13 +287,12 @@ public class ServiceCombClient {
       heades.put("X-ConsumerId", RegisterCache.getServiceID());
       response = httpTransport
           .sendGetRequest(
-              buildURI(chooseServiceCenterUrl() + "/registry/instances", null, microservice),
+              addParam2URI(buildURI("/registry/instances"), null, microservice),
               heades);
       if (response.getStatusCode() == HttpStatus.SC_OK) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         LOGGER.info(response.getContent());
-        Microservice result = objectMapper.readValue(response.getContent(), Microservice.class);
+        Microservice result = JsonUtils.OBJ_MAPPER
+            .readValue(response.getContent(), Microservice.class);
         if (result == null || result.getInstances() == null) {
           return instanceList;
         }
@@ -370,10 +339,8 @@ public class ServiceCombClient {
           .sendGetRequest(
               buildURI("/registry/microservices/" + serviceId + "/instances/" + instanceId));
       if (response.getStatusCode() == HttpStatus.SC_OK) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         LOGGER.info(response.getContent());
-        result = objectMapper
+        result = JsonUtils.OBJ_MAPPER
             .readValue(response.getContent(), MicroserviceInstanceSingleResponse.class);
       } else {
         throw new RemoteOperationException(
@@ -395,11 +362,10 @@ public class ServiceCombClient {
   public void heartbeat(HeartbeatRequest heartbeatRequest) throws ServiceCombException {
     Response response = null;
     try {
-      ObjectMapper objectMapper = new ObjectMapper();
-      String content = objectMapper.writeValueAsString(heartbeatRequest);
+      String content = JsonUtils.writeValueAsString(heartbeatRequest);
       StringEntity stringEntity = new StringEntity(content, "utf-8");
       response = httpTransport
-          .sendPutRequest(buildDistributeURI("/registry/heartbeats"), stringEntity);
+          .sendPutRequest(buildURI("/registry/heartbeats"), stringEntity);
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.info(" heartbeat success.");
       } else {
@@ -442,16 +408,11 @@ public class ServiceCombClient {
     MicroserviceResponse result = null;
     Response response = null;
     try {
-      if (serviceCenterUrlList == null || serviceCenterUrlList.isEmpty()) {
-        LOGGER.warn("wait autodiscovery.");
-        return result;
-      }
+      //previous code will return null
       response = httpTransport.sendGetRequest(
           buildURI("/registry/microservices"));
       if (response.getStatusCode() == HttpStatus.SC_OK) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        result = objectMapper.readValue(response.getContent(), MicroserviceResponse.class);
+        result = JsonUtils.OBJ_MAPPER.readValue(response.getContent(), MicroserviceResponse.class);
       } else {
         throw new RemoteOperationException(
             "read response failed. status=" + response.getStatusCode() + ";mesage=" + response
@@ -472,7 +433,7 @@ public class ServiceCombClient {
     request.setSchema(schemaContent);
     request.setSummary(calcSchemaSummary(schemaContent));
     try {
-      String formatUrl = buildDistributeURI(
+      String formatUrl = buildURI(
           "/registry/microservices/" + microserviceId + "/schemas/" + schemaId);
       byte[] body = JsonUtils.writeValueAsBytes(request);
       ByteArrayEntity byteArrayEntity = new ByteArrayEntity(body);
@@ -499,23 +460,19 @@ public class ServiceCombClient {
   }
 
   private String buildURI(String path) throws URISyntaxException {
-    URIBuilder uriBuilder = new URIBuilder(chooseServiceCenterUrl() + path);
-    return uriBuilder.build().toString();
-  }
-
-  private String buildDistributeURI(String path) throws URISyntaxException {
-    path = serviceCenterRegistryList.get(registryUrlIndex) + "/"
+    path = registryConfig.getUrl() + "/"
         + ServiceRegistryConfig.DEFAULT_API_VERSION + "/"
         + ServiceRegistryConfig.DEFAULT_PROJECT + path;
     URIBuilder uriBuilder = new URIBuilder(path);
     return uriBuilder.build().toString();
   }
 
-  private String buildURI(String path, String type, Microservice microservice)
+  //just add param
+  private String addParam2URI(String path, String type, Microservice microservice)
       throws URISyntaxException {
     URIBuilder uriBuilder = new URIBuilder(path);
     if (null != type) {
-      uriBuilder.setParameter("type", "microservice");
+      uriBuilder.setParameter("type", type);
     }
     uriBuilder.setParameter("appId", microservice.getAppId());
     uriBuilder.setParameter("serviceName", microservice.getServiceName());
@@ -539,7 +496,7 @@ public class ServiceCombClient {
     throw new RemoteOperationException(message, e);
   }
 
-  public synchronized void toggle() {
-    registryUrlIndex = (registryUrlIndex + 1) % serviceCenterRegistryList.size();
+  public void toggle() {
+    registryConfig.toggle();
   }
 }

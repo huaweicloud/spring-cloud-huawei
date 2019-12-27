@@ -8,7 +8,7 @@ spring:
     servicecomb:
       discovery:
         enabled: true
-        address: https://cse.cn-east-2.myhuaweicloud.com
+        address: http://127.0.0.1:30100
         serviceName: order
         #        appName: ddd
         #        allowCrossApp: true
