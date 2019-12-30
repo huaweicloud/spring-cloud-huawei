@@ -80,9 +80,9 @@ public class ServiceCombClient {
    */
   public ServiceCombClient(String urls, HttpTransport httpTransport) {
     this.httpTransport = httpTransport;
-    registryConfig.setUrl(URLUtil.getEnvServerURL());
+    registryConfig.addUrl(URLUtil.getEnvServerURL());
     if (registryConfig.isEmpty()) {
-      registryConfig.setUrl(URLUtil.dealMutiUrl(urls));
+      registryConfig.addUrl(URLUtil.dealMutiUrl(urls));
     }
   }
 
@@ -98,9 +98,7 @@ public class ServiceCombClient {
           continue;
         }
         microserviceInstance.getEndpoints().forEach(endpoint -> {
-          if (MicroserviceInstanceStatus.UP == microserviceInstance.getStatus()) {
             registryConfig.addUrlAfterDnsResolve(URLUtil.transform(endpoint));
-          }
         });
       }
     } catch (RemoteOperationException e) {

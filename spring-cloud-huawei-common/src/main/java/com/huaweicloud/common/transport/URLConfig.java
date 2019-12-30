@@ -30,14 +30,12 @@ public class URLConfig {
   public String getUrl() {
     if (resolveUrlSize > 0) {
       String url = urlList.get(afterDnsResolveIndex);
-      //todo: need stick if success?
-      toggleDnsResolve();
       return url;
     }
     return urlList.get(index);
   }
 
-  public void setUrl(List<String> urls) {
+  public void addUrl(List<String> urls) {
     if (CollectionUtils.isEmpty(urls)) {
       return;
     }
@@ -67,11 +65,11 @@ public class URLConfig {
   }
 
   public synchronized void toggle() {
-    index = (index + 1) % urlList.size();
-  }
-
-  public void toggleDnsResolve() {
-    afterDnsResolveIndex = afterDnsResolveIndex + 1 < urlList.size() ? afterDnsResolveIndex + 1
-        : urlList.size() - resolveUrlSize;
+    if (resolveUrlSize > 0) {
+      afterDnsResolveIndex = afterDnsResolveIndex + 1 < urlList.size() ? afterDnsResolveIndex + 1
+          : urlList.size() - resolveUrlSize;
+    } else {
+      index = (index + 1) % urlList.size();
+    }
   }
 }

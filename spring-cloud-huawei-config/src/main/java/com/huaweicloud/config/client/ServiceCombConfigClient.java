@@ -47,9 +47,9 @@ public class ServiceCombConfigClient {
 
   public ServiceCombConfigClient(String urls, HttpTransport httpTransport) {
     this.httpTransport = httpTransport;
-    configCenterConfig.setUrl(URLUtil.getEnvConfigUrl());
+    configCenterConfig.addUrl(URLUtil.getEnvConfigUrl());
     if (configCenterConfig.isEmpty()) {
-      configCenterConfig.setUrl(URLUtil.dealMutiUrl(urls));
+      configCenterConfig.addUrl(URLUtil.dealMutiUrl(urls));
     }
   }
 
