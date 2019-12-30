@@ -64,7 +64,7 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
 
   private Map<String, Swagger> swaggerMap = new HashMap<>();
 
-  @Value("${withJavaChassis:false}")
+  @Value("${spring.cloud.servicecomb.swagger.enableJavaChassisAdapter:true}")
   private boolean withJavaChassis;
 
   private String TITLE_PREFIX = "swagger definition for ";
