@@ -1,6 +1,6 @@
 server:
   port: 8081
-  env: production
+  env: development
 
 spring:
   application:

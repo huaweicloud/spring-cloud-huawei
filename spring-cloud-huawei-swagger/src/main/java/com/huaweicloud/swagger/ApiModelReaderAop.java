@@ -44,7 +44,7 @@ public class ApiModelReaderAop {
   @Before(value = "execution(* springfox.documentation.spring.web.scanners.ApiListingScanner.scan(..)) && args(args)", argNames = "args")
   public void beforeParseSchema(ApiListingScanningContext args) {
     args.getRequestMappingsByResourceGroup().forEach((k, v) -> {
-      DefinitionCache.setSchemaClass(k.getGroupName(), k.getControllerClass().get().getName());
+      DefinitionCache.setSchemaClassName(k.getGroupName(), k.getControllerClass().get().getName());
     });
   }
 }

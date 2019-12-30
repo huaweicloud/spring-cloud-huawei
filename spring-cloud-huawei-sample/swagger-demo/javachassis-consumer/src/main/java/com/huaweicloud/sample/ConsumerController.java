@@ -19,6 +19,7 @@ package com.huaweicloud.sample;
 import org.apache.servicecomb.provider.pojo.Invoker;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.apache.servicecomb.provider.springmvc.reference.RestTemplateBuilder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,23 +35,31 @@ public class ConsumerController {
 
   private RestTemplate restTemplate = RestTemplateBuilder.create();
 
-  @RequestMapping(path = "/helloFooRT", method = RequestMethod.GET)
+  ProviderService helloService = Invoker
+      .createProxy("swagger-provider", "provider-controller", ProviderService.class);
+
+  @GetMapping("/helloFooRT")
   public Foo fooHelloRT(@RequestParam("id") int id) {
     Foo res = restTemplate
         .getForObject("cse://swagger-provider/foo?id=" + id, Foo.class);
     return res;
   }
 
-  @RequestMapping(path = "/helloFoo", method = RequestMethod.GET)
+
+  @GetMapping("/helloFoo")
   public Foo fooHello(@RequestParam("id") int id) {
-    ProviderService helloService = Invoker.createProxy("swagger-provider", "provider-controller", ProviderService.class);
     return helloService.foo(id);
   }
 
-  @RequestMapping(path = "/hello", method = RequestMethod.GET)
-  public String hello() {
+  @GetMapping("/hello")
+  public String hello(@RequestParam("name") String name) {
     String res = restTemplate
-        .getForObject("cse://swagger-provider/hello", String.class);
+        .getForObject("cse://swagger-provider/hello?name=" + name, String.class);
     return res;
+  }
+
+  @GetMapping("/int")
+  public int intTest() {
+    return helloService.intTest();
   }
 }

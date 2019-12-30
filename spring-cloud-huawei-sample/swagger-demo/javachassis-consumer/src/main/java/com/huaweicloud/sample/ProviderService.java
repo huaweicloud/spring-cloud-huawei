@@ -25,4 +25,6 @@ public interface ProviderService {
   Foo foo(int id);
 
   String sayHello();
+
+  int intTest();
 }

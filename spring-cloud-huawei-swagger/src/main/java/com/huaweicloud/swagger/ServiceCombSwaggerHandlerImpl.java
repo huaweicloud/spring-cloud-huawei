@@ -28,6 +28,7 @@ import io.swagger.models.Swagger;
 import io.swagger.util.Yaml;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -93,30 +94,40 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
       Multimap<String, ApiListing> tempList = HashMultimap.create();
       tempList.put(entry.getKey(), entry.getValue());
       try {
-        String className = genClassName(entry.getKey());
-        String xInterfaceName = genXInterfaceName(appName, serviceName, entry.getKey());
+        String fullClassName = DefinitionCache.getFullClassNameBySchema(entry.getKey());
+        String className = DefinitionCache.getClassNameBySchema(entry.getKey());
+        String xInterfaceName = genXInterfaceName(appName, serviceName, className);
         Field field = Documentation.class.getDeclaredField("apiListings");
         field.setAccessible(true);
         field.set(documentation, tempList);
         Swagger temSwagger = mapper.mapDocumentation(documentation);
         Info info = temSwagger.getInfo();
-        info.setTitle(TITLE_PREFIX + className);
+        info.setTitle(TITLE_PREFIX + fullClassName);
         info.setVendorExtension(X_JAVA_INTERFACE, xInterfaceName);
         temSwagger.setInfo(info);
-        //todo : add itself tag
         temSwagger.setTags(null);
         temSwagger.getDefinitions().forEach((k, v) -> {
           if (v instanceof AbstractModel) {
-            ((AbstractModel) v).setVendorExtension(X_JAVA_CLASS, genXDefinitionName(k));
+            ((AbstractModel) v)
+                .setVendorExtension(X_JAVA_CLASS, DefinitionCache.getClassByDefName(k));
           }
         });
         if (withJavaChassis) {
-          filteSwagger(temSwagger, entry.getKey(), className);
+          filteSwagger(temSwagger, fullClassName);
+          if (CollectionUtils.isEmpty(temSwagger.getPaths())) {
+            continue;
+          }
+          //add text/plain for string
+          List contentTypeList = Arrays.asList("text/plain", "application/json");
+          temSwagger.getPaths().forEach((path, operation) -> {
+            operation.getOperations().forEach(api -> {
+              api.setConsumes(contentTypeList);
+              api.setProduces(contentTypeList);
+              api.setTags(Arrays.asList(className));
+            });
+          });
         }
-        if (CollectionUtils.isEmpty(temSwagger.getPaths())) {
-          continue;
-        }
-        swaggerMap.put(entry.getKey(), temSwagger);
+        swaggerMap.put(className, temSwagger);
       } catch (NoSuchFieldException | IllegalAccessException e) {
         e.printStackTrace();
       }
@@ -126,6 +137,7 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
 
   /**
    * todo: schema generate also can be async , use aop around method
+   * schema注册调用接口可以改为异步,在和java-chassis组网场景下需要同步加载
    *
    * @param microserviceId
    * @param schemaIds
@@ -147,10 +159,9 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
    * a method with different httpMethod need be abandoned
    *
    * @param temSwagger
-   * @param schemaId
    * @param className
    */
-  private void filteSwagger(Swagger temSwagger, String schemaId, String className) {
+  private void filteSwagger(Swagger temSwagger, String className) {
     Set<String> abandonedList = new HashSet<>();
     Set<String> methodFilter = new HashSet<>();
     temSwagger.getPaths().forEach((k, v) -> {
@@ -168,8 +179,8 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
     //todo:exist some springCloud's default API,how to deal them?
     abandonedList.forEach(path -> {
       LOGGER.warn(
-          "class: {} ,schemaId:{} ,path: {} will not be register swagger,cause it provider multiple http method",
-          className, schemaId, path);
+          "class: {}, path: {} will not be register swagger,cause it provider multiple http method",
+          className, path);
       temSwagger.getPaths().remove(path);
     });
   }
@@ -205,34 +216,7 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
    * @return
    */
   private String genXInterfaceName(String appName, String serviceName, String schemaId) {
-    char[] intfName = schemaId.toCharArray();
-    for (int i = 0; i < intfName.length; i++) {
-      if (intfName[i] == '-' && intfName[i + 1] >= 'a' && intfName[i + 1] <= 'z') {
-        intfName[i + 1] -= 32;
-      }
-    }
     return X_JAVA_INTERFACE_PREFIX + appName + "." + serviceName + "." + schemaId + "."
-        + new String(intfName).replace("-", "") + INTF_SUFFIX;
-  }
-
-
-  /**
-   * real full class name : use aop modify source code, cache the class-name
-   *
-   * @param defName
-   * @return
-   */
-  private String genXDefinitionName(String defName) {
-    return DefinitionCache.getClassByDefName(defName);
-  }
-
-  /**
-   *  use aop modify source code, cache the schema-name -> class&interface
-   *
-   * @param schemaId
-   * @return
-   */
-  private String genClassName(String schemaId) {
-    return DefinitionCache.getClassBySchemaName(schemaId);
+        + schemaId + INTF_SUFFIX;
   }
 }

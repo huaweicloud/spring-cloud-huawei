@@ -37,11 +37,16 @@ public class DefinitionCache {
     definitionMap.put(name, javaDef);
   }
 
-  public static String getClassBySchemaName(String name) {
+  public static String getFullClassNameBySchema(String name) {
     return schemaClassNameMap.get(name);
   }
 
-  public static void setSchemaClass(String name, String javaDef) {
+  public static String getClassNameBySchema(String name) {
+    String fullName = schemaClassNameMap.get(name);
+    return fullName.substring(fullName.lastIndexOf(".") + 1);
+  }
+
+  public static void setSchemaClassName(String name, String javaDef) {
     schemaClassNameMap.put(name, javaDef);
   }
 }

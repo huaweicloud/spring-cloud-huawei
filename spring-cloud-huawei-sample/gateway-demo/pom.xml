@@ -12,8 +12,9 @@
   <artifactId>gateway-demo</artifactId>
   <modules>
     <module>backend-service</module>
-    <module>gateway-service</module>
-    <module>zuul-service</module>
+    <module>gateway</module>
+    <module>zuul</module>
+    <module>edge-service</module>
   </modules>
 
   <properties>

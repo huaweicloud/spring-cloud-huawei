@@ -33,7 +33,12 @@ public class ProviderController {
   }
 
   @GetMapping("/hello")
-  public String sayHello() {
-    return "\"spring cloud hello world\"";
+  public String sayHello(@RequestParam("name") String name) {
+    return "spring cloud hello world " + name;
+  }
+
+  @GetMapping("/int")
+  public int intTest() {
+    return 123;
   }
 }
