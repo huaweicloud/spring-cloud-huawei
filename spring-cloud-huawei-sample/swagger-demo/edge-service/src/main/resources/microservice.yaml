@@ -1,7 +1,8 @@
-APPLICATION_ID: gateway-test
+APPLICATION_ID: swagger
 service_description:
   name: edge
   version: 0.0.1
+  environment: development
 servicecomb:
   service:
     registry:

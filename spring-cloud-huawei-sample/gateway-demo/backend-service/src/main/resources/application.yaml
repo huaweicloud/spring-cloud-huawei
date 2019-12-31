@@ -6,12 +6,8 @@ spring:
     name: backend-service
   cloud:
     servicecomb:
-      swagger:
-        enableJavaChassisAdapter: true
       discovery:
         enabled: true
         address: http://127.0.0.1:30100
         version: 0.0.1
         healthCheckInterval: 30
-        serviceName: backend-service
-        appName: gateway-test

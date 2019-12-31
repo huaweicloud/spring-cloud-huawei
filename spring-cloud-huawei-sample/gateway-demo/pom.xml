@@ -14,7 +14,6 @@
     <module>backend-service</module>
     <module>gateway</module>
     <module>zuul</module>
-    <module>edge-service</module>
   </modules>
 
   <properties>
