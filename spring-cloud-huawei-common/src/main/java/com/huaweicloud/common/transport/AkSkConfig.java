@@ -17,6 +17,8 @@
 
 package com.huaweicloud.common.transport;
 
+import org.springframework.util.StringUtils;
+
 /**
  * @Author wangqijun
  * @Date 19:07 2019-09-05
@@ -31,6 +33,14 @@ public class AkSkConfig {
   private String akskCustomCipher = "default";
 
   private String project;
+
+  public boolean isAkSkEmpty() {
+    return StringUtils.isEmpty(this.getAccessKey()) || StringUtils.isEmpty(this.getSecretKey());
+  }
+
+  public boolean isProjectEmpty() {
+    return StringUtils.isEmpty(this.getProject());
+  }
 
   public boolean isEnable() {
     return enable;

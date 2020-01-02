@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import com.huawei.paas.foundation.auth.AuthHeaderUtils;
 import com.huawei.paas.foundation.auth.signer.utils.SignerUtils;
+import org.springframework.util.CollectionUtils;
 
 /**
  * @Author wangqijun
@@ -62,27 +63,21 @@ public class DealHeaderUtil {
       AkSkConfig akSkConfig) {
     AuthHeaderUtils authHeaderUtils = AuthHeaderUtils.getInstance();
     Map<String, String> headerMap = authHeaderUtils.genAuthHeaders();
-    for (Map.Entry<String, String> entry : headerMap.entrySet()) {
-      httpRequest.addHeader(entry.getKey(), entry.getValue());
-    }
-    if (isHeaderMapEmpty(headerMap) && isSSLConfigNotEmpty(akSkConfig)) {
+    if (akSkConfig.isAkSkEmpty() && !CollectionUtils.isEmpty(headerMap)) {
+      httpRequest.addHeader(X_SERVICE_AK, headerMap.get(X_SERVICE_AK));
+      httpRequest.addHeader(X_SERVICE_SHA_AKSK, headerMap.get(X_SERVICE_SHA_AKSK));
+    } else {
       httpRequest.addHeader(X_SERVICE_AK, akSkConfig.getAccessKey());
-      httpRequest.addHeader(X_SERVICE_SHA_AKSK,
-          encode(akSkConfig));
+      httpRequest.addHeader(X_SERVICE_SHA_AKSK, encode(akSkConfig));
+    }
+    if (akSkConfig.isProjectEmpty() && !CollectionUtils.isEmpty(headerMap)) {
+      httpRequest.addHeader(X_SERVICE_PROJECT, headerMap.get(X_SERVICE_PROJECT));
+    } else {
       httpRequest.addHeader(X_SERVICE_PROJECT, akSkConfig.getProject());
     }
   }
 
-  public static boolean isHeaderMapEmpty(Map<String, String> headerMap) {
-    return headerMap == null || headerMap.size() == 0;
-  }
-
-  public static boolean isSSLConfigNotEmpty(AkSkConfig akSkConfig) {
-    return akSkConfig.getAccessKey() != null && akSkConfig.getSecretKey() != null && akSkConfig.getProject() != null;
-  }
-
   private static String encode(AkSkConfig akSkConfig) {
-
     if ("ShaAKSKCipher".equalsIgnoreCase(akSkConfig.getAkskCustomCipher())) {
       return akSkConfig.getSecretKey();
     }
