@@ -6,7 +6,7 @@ spring:
       discovery:
         version: 0.0.1
       config:
-        serverAddr: https://cse.cn-east-2.myhuaweicloud.com
+        serverAddr:  http://127.0.0.1:30113
         watch:
           delay: 10000
       credentials:
