@@ -1,7 +1,7 @@
 package com.huaweicloud.common.util;
 
 import com.huaweicloud.common.transport.AkSkConfig;
-import com.huaweicloud.common.transport.ServiceCombSSLProperties;
+import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
 import com.huaweicloud.common.transport.TLSConfig;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -70,13 +70,13 @@ public class SecretUtil {
     return null;
   }
 
-  public static AkSkConfig generateSSLConfig(ServiceCombSSLProperties serviceCombSSLProperties) {
+  public static AkSkConfig generateSSLConfig(ServiceCombAkSkProperties serviceCombAkSkProperties) {
     AkSkConfig akSkConfig = new AkSkConfig();
-    akSkConfig.setEnable(serviceCombSSLProperties.isEnable())
-        .setAccessKey(serviceCombSSLProperties.getAccessKey())
-        .setSecretKey(serviceCombSSLProperties.getSecretKey())
-        .setAkskCustomCipher(serviceCombSSLProperties.getAkskCustomCipher())
-        .setProject(serviceCombSSLProperties.getProject());
+    akSkConfig.setEnable(serviceCombAkSkProperties.isEnable())
+        .setAccessKey(serviceCombAkSkProperties.getAccessKey())
+        .setSecretKey(serviceCombAkSkProperties.getSecretKey())
+        .setAkskCustomCipher(serviceCombAkSkProperties.getAkskCustomCipher())
+        .setProject(serviceCombAkSkProperties.getProject());
     return akSkConfig;
   }
 }

@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
  **/
 @Component
 @ConfigurationProperties("spring.cloud.servicecomb.credentials")
-public class ServiceCombSSLProperties {
+public class ServiceCombAkSkProperties {
   private boolean enable = false;
 
   private String accessKey;

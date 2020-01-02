@@ -22,7 +22,7 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import com.huaweicloud.common.transport.ServiceCombSSLProperties;
+import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import com.huaweicloud.config.client.RefreshRecord;
 import com.huaweicloud.config.client.ServiceCombConfigClient;
@@ -65,9 +65,9 @@ public class ServiceCombConfigAutoConfiguration {
     public ConfigWatch configWatch(ServiceCombConfigProperties serviceCombConfigProperties,
         ServiceCombConfigClient serviceCombConfigClient,
         ContextRefresher contextRefresher, RefreshRecord refreshRecord,
-        ServiceCombSSLProperties serviceCombSSLProperties) {
+        ServiceCombAkSkProperties serviceCombAkSkProperties) {
       ConfigWatch watch = new ConfigWatch();
-      watch.setProject(serviceCombSSLProperties.getProject());
+      watch.setProject(serviceCombAkSkProperties.getProject());
       watch.setContextRefresher(contextRefresher);
       watch.setServiceCombConfigClient(serviceCombConfigClient);
       watch.setServiceCombConfigProperties(serviceCombConfigProperties);
