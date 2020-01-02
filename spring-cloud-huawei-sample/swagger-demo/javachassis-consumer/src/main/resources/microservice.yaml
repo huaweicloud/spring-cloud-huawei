@@ -1,8 +1,8 @@
 APPLICATION_ID: swagger
 service_description:
   name: swagger-consumer
-  version: 0.0.3
-  environment: production
+  version: 0.0.1
+  environment: development
 cse:
   service:
     registry:

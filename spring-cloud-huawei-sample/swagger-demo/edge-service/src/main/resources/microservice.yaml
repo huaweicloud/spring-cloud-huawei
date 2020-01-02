@@ -1,0 +1,19 @@
+APPLICATION_ID: swagger
+service_description:
+  name: edge
+  version: 0.0.1
+  environment: development
+servicecomb:
+  service:
+    registry:
+      address: http://127.0.0.1:30100
+  rest:
+    address: 127.0.0.1:18080
+  http:
+    dispatcher:
+      edge:
+        default:
+          enabled: true
+          prefix: rest
+          withVersion: false
+          prefixSegmentCount: 2

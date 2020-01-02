@@ -16,28 +16,37 @@
  */
 package com.huaweicloud.swagger;
 
-import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Author GuoYl123
- * @Date 2019/12/17
+ * @Date 2019/12/28
  **/
-@Configuration
-@EnableSwagger2
-public class SwaggerConfiguration {
+public class DefinitionCache {
 
-  @Bean
-  @Lazy
-  public ServiceCombSwaggerHandler swaggerHandler() {
-    return new ServiceCombSwaggerHandlerImpl();
+  private static Map<String, String> definitionMap = new HashMap<>();
+
+  private static Map<String, String> schemaClassNameMap = new HashMap<>();
+
+  public static String getClassByDefName(String name) {
+    return definitionMap.get(name);
   }
 
-  @Bean
-  public ApiModelReaderAop apiModelReaderAop() {
-    return new ApiModelReaderAop();
+  public static void setDefinition(String name, String javaDef) {
+    definitionMap.put(name, javaDef);
+  }
+
+  public static String getFullClassNameBySchema(String name) {
+    return schemaClassNameMap.get(name);
+  }
+
+  public static String getClassNameBySchema(String name) {
+    String fullName = schemaClassNameMap.get(name);
+    return fullName.substring(fullName.lastIndexOf(".") + 1);
+  }
+
+  public static void setSchemaClassName(String name, String javaDef) {
+    schemaClassNameMap.put(name, javaDef);
   }
 }

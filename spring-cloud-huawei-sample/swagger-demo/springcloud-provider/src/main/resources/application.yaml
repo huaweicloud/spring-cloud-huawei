@@ -1,12 +1,14 @@
 server:
   port: 8081
-  env: production
+  env: development
 
 spring:
   application:
     name: swagger-provider
   cloud:
     servicecomb:
+      swagger:
+        enableJavaChassisAdapter: true
       discovery:
         enabled: true
         address: http://127.0.0.1:30100
@@ -14,5 +16,3 @@ spring:
         appName: swagger
         version: 0.0.1
         healthCheckInterval: 30
-
-

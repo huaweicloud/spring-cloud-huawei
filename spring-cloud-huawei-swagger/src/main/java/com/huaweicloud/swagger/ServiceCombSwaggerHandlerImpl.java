@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.huaweicloud.swagger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,15 +28,19 @@ import io.swagger.models.Swagger;
 import io.swagger.util.Yaml;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.CollectionUtils;
 import springfox.documentation.service.ApiListing;
 import springfox.documentation.service.Documentation;
 import springfox.documentation.spring.web.DocumentationCache;
@@ -45,14 +65,16 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
 
   private Map<String, Swagger> swaggerMap = new HashMap<>();
 
-  @Value("${withJavaChassis:false}")
-  private boolean isSync;
+  @Value("${spring.cloud.servicecomb.swagger.enableJavaChassisAdapter:true}")
+  private boolean withJavaChassis;
 
   private String TITLE_PREFIX = "swagger definition for ";
 
   private String X_JAVA_INTERFACE_PREFIX = "cse.gen.";
 
   private String X_JAVA_INTERFACE = "x-java-interface";
+
+  private String X_JAVA_CLASS = "x-java-class";
 
   private String INTF_SUFFIX = "Intf";
 
@@ -72,26 +94,40 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
       Multimap<String, ApiListing> tempList = HashMultimap.create();
       tempList.put(entry.getKey(), entry.getValue());
       try {
-        String className = genClassName(entry.getKey());
-        String xInterfaceName = genXInterfaceName(appName, serviceName, entry.getKey());
+        String fullClassName = DefinitionCache.getFullClassNameBySchema(entry.getKey());
+        String className = DefinitionCache.getClassNameBySchema(entry.getKey());
+        String xInterfaceName = genXInterfaceName(appName, serviceName, className);
         Field field = Documentation.class.getDeclaredField("apiListings");
         field.setAccessible(true);
         field.set(documentation, tempList);
         Swagger temSwagger = mapper.mapDocumentation(documentation);
         Info info = temSwagger.getInfo();
-        info.setTitle(TITLE_PREFIX + className);
+        info.setTitle(TITLE_PREFIX + fullClassName);
         info.setVendorExtension(X_JAVA_INTERFACE, xInterfaceName);
         temSwagger.setInfo(info);
-        //todo : add itself tag
         temSwagger.setTags(null);
         temSwagger.getDefinitions().forEach((k, v) -> {
           if (v instanceof AbstractModel) {
-            ((AbstractModel) v).setVendorExtension(X_JAVA_INTERFACE, genXDefinitionName(k));
+            ((AbstractModel) v)
+                .setVendorExtension(X_JAVA_CLASS, DefinitionCache.getClassByDefName(k));
           }
         });
-//        temSwagger.setVendorExtension("consumes","application/json");
-//        temSwagger.setVendorExtension("produces","application/json");
-        swaggerMap.put(entry.getKey(), temSwagger);
+        if (withJavaChassis) {
+          filteSwagger(temSwagger, fullClassName);
+          if (CollectionUtils.isEmpty(temSwagger.getPaths())) {
+            continue;
+          }
+          //add text/plain for string
+          List contentTypeList = Arrays.asList("text/plain", "application/json");
+          temSwagger.getPaths().forEach((path, operation) -> {
+            operation.getOperations().forEach(api -> {
+              api.setConsumes(contentTypeList);
+              api.setProduces(contentTypeList);
+              api.setTags(Arrays.asList(className));
+            });
+          });
+        }
+        swaggerMap.put(className, temSwagger);
       } catch (NoSuchFieldException | IllegalAccessException e) {
         e.printStackTrace();
       }
@@ -100,13 +136,14 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   }
 
   /**
-   * schema注册调用接口可以改为异步,在和java-chassis组网场景下需要同步加载 todo: schema生成理论上也可改为异步，但基于spring-fox，要看下能否实现
+   * todo: schema generate also can be async , use aop around method
+   * schema注册调用接口可以改为异步,在和java-chassis组网场景下需要同步加载
    *
    * @param microserviceId
    * @param schemaIds
    */
   public void registerSwagger(String microserviceId, List<String> schemaIds) {
-    if (isSync) {
+    if (withJavaChassis) {
       registerSwaggerSync(microserviceId, schemaIds);
     } else {
       registerSwaggerAsync(microserviceId, schemaIds);
@@ -115,6 +152,37 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
 
   public List<String> getSchemas() {
     return new ArrayList<>(swaggerMap.keySet());
+  }
+
+  /**
+   * for every method delete UsingGET/UsingXXXX at the end of operationId
+   * a method with different httpMethod need be abandoned
+   *
+   * @param temSwagger
+   * @param className
+   */
+  private void filteSwagger(Swagger temSwagger, String className) {
+    Set<String> abandonedList = new HashSet<>();
+    Set<String> methodFilter = new HashSet<>();
+    temSwagger.getPaths().forEach((k, v) -> {
+      v.getOperations().forEach(method -> {
+        String processOptId = method.getOperationId();
+        processOptId = processOptId.substring(0, processOptId.indexOf("Using"));
+        if (methodFilter.contains(processOptId)) {
+          abandonedList.add(k);
+          return;
+        }
+        methodFilter.add(processOptId);
+        method.setOperationId(processOptId);
+      });
+    });
+    //todo:exist some springCloud's default API,how to deal them?
+    abandonedList.forEach(path -> {
+      LOGGER.warn(
+          "class: {}, path: {} will not be register swagger,cause it provider multiple http method",
+          className, path);
+      temSwagger.getPaths().remove(path);
+    });
   }
 
   /**
@@ -148,37 +216,7 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
    * @return
    */
   private String genXInterfaceName(String appName, String serviceName, String schemaId) {
-    char[] intfName = schemaId.toCharArray();
-    for (int i = 0; i < intfName.length; i++) {
-      if (intfName[i] == '-' && intfName[i + 1] >= 'a' && intfName[i + 1] <= 'z') {
-        intfName[i + 1] -= 32;
-      }
-    }
     return X_JAVA_INTERFACE_PREFIX + appName + "." + serviceName + "." + schemaId + "."
-        + new String(intfName).replace("-", "") + INTF_SUFFIX;
-  }
-
-
-  /**
-   * todo :real full class name , use aop modify source code, cache the class-name
-   * springfox.documentation.swagger2.mappers.ModelMapper#modelsFromApiListings(com.google.common.collect.Multimap)
-   * springfox.documentation.spring.web.scanners.ApiModelReader#read(springfox.documentation.spi.service.contexts.RequestMappingContext)
-   * only can get method
-   * @param defName
-   * @return
-   */
-  private String genXDefinitionName(String defName) {
-    return "";
-  }
-
-  /**
-   * todo: use aop modify source code, cache the documentation-name -> class&interface
-   * springfox.documentation.spring.web.scanners.ApiListingScanner.scan
-   *
-   * @param schemaId
-   * @return
-   */
-  private String genClassName(String schemaId) {
-    return "";
+        + schemaId + INTF_SUFFIX;
   }
 }
