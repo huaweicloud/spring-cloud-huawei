@@ -8,7 +8,8 @@ spring:
     servicecomb:
       discovery:
         enabled: true
-        address: http://127.0.0.1:30100,https://cse.cn-east-2.myhuaweicloud.com
+#        multiple registries
+        address: http://127.0.0.2:30100,http://127.0.0.1:30100
         serviceName: price
         version: 0.0.1
         healthCheckInterval: 30

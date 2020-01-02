@@ -8,7 +8,7 @@ spring:
     servicecomb:
       discovery:
         enabled: true
-        address: https://cse.cn-north-4.myhuaweicloud.com
+        address: http://127.0.0.1:30100
         version: 0.0.1
         healthCheckInterval: 30
       credentials:
