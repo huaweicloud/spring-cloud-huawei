@@ -20,7 +20,7 @@ package com.huaweicloud.config;
 import com.huaweicloud.common.util.SecretUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import com.huaweicloud.common.transport.SSLConfig;
+import com.huaweicloud.common.transport.AkSkConfig;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.config.client.ServiceCombConfigClient;
 import com.huaweicloud.config.client.ServiceCombConfigClientBuilder;
@@ -54,8 +54,8 @@ public class ServiceCombConfigBootstrapConfiguration {
       ServiceCombConfigProperties serviceCombConfigProperties,
       ServiceCombSSLProperties serviceCombSSLProperties) {
     ServiceCombConfigClientBuilder builder = new ServiceCombConfigClientBuilder();
-    SSLConfig sslConfig = SecretUtil.generateSSLConfig(serviceCombSSLProperties);
-    builder.setUrl(serviceCombConfigProperties.getServerAddr()).setSSLConfig(sslConfig);
+    AkSkConfig akSkConfig = SecretUtil.generateSSLConfig(serviceCombSSLProperties);
+    builder.setUrl(serviceCombConfigProperties.getServerAddr()).setSSLConfig(akSkConfig);
     return builder.createServiceCombConfigClient();
   }
   @Bean

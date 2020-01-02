@@ -2,7 +2,7 @@ package com.huaweicloud.common.util;
 
 import com.huawei.paas.foundation.auth.AuthHeaderProviderImpl;
 import com.huaweicloud.common.transport.DealHeaderUtil;
-import com.huaweicloud.common.transport.SSLConfig;
+import com.huaweicloud.common.transport.AkSkConfig;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.common.transport.TLSConfig;
 import java.io.FileInputStream;
@@ -91,8 +91,8 @@ public class SecretUtil {
     return null;
   }
 
-  public static SSLConfig generateSSLConfig(ServiceCombSSLProperties serviceCombSSLProperties) {
-    SSLConfig sslConfig = new SSLConfig();
+  public static AkSkConfig generateSSLConfig(ServiceCombSSLProperties serviceCombSSLProperties) {
+    AkSkConfig akSkConfig = new AkSkConfig();
     Map<String, String> envHeaders = getAkSkFromSecret();
     String ak = envHeaders.containsKey(DealHeaderUtil.X_SERVICE_AK) ? envHeaders
         .get(DealHeaderUtil.X_SERVICE_AK) : serviceCombSSLProperties.getAccessKey();
@@ -100,12 +100,12 @@ public class SecretUtil {
         .get(DealHeaderUtil.X_SERVICE_SHA_AKSK) : serviceCombSSLProperties.getSecretKey();
     String project = envHeaders.containsKey(DealHeaderUtil.X_SERVICE_PROJECT) ? envHeaders
         .get(DealHeaderUtil.X_SERVICE_PROJECT) : serviceCombSSLProperties.getProject();
-    sslConfig.setEnable(serviceCombSSLProperties.isEnable())
+    akSkConfig.setEnable(serviceCombSSLProperties.isEnable())
         .setAccessKey(ak)
         .setSecretKey(sk)
         .setAkskCustomCipher(serviceCombSSLProperties.getAkskCustomCipher())
         .setProject(project);
-    return sslConfig;
+    return akSkConfig;
   }
 
   private static Map<String, String> getAkSkFromSecret() {

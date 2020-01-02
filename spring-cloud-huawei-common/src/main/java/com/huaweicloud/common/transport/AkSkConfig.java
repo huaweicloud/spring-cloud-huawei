@@ -21,7 +21,7 @@ package com.huaweicloud.common.transport;
  * @Author wangqijun
  * @Date 19:07 2019-09-05
  **/
-public class SSLConfig {
+public class AkSkConfig {
   private boolean enable = false;
 
   private String accessKey;
@@ -36,7 +36,7 @@ public class SSLConfig {
     return enable;
   }
 
-  public SSLConfig setEnable(boolean enable) {
+  public AkSkConfig setEnable(boolean enable) {
     this.enable = enable;
     return this;
   }
@@ -45,7 +45,7 @@ public class SSLConfig {
     return accessKey;
   }
 
-  public SSLConfig setAccessKey(String accessKey) {
+  public AkSkConfig setAccessKey(String accessKey) {
     this.accessKey = accessKey;
     return this;
   }
@@ -54,7 +54,7 @@ public class SSLConfig {
     return secretKey;
   }
 
-  public SSLConfig setSecretKey(String secretKey) {
+  public AkSkConfig setSecretKey(String secretKey) {
     this.secretKey = secretKey;
     return this;
   }
@@ -63,7 +63,7 @@ public class SSLConfig {
     return akskCustomCipher;
   }
 
-  public SSLConfig setAkskCustomCipher(String akskCustomCipher) {
+  public AkSkConfig setAkskCustomCipher(String akskCustomCipher) {
     this.akskCustomCipher = akskCustomCipher;
     return this;
   }
@@ -72,7 +72,7 @@ public class SSLConfig {
     return project;
   }
 
-  public SSLConfig setProject(String project) {
+  public AkSkConfig setProject(String project) {
     this.project = project;
     return this;
   }

@@ -59,17 +59,17 @@ public class DealHeaderUtil {
   private static final Logger LOGGER = LoggerFactory.getLogger(DealHeaderUtil.class);
 
   public static void addAKSKHeader(HttpUriRequest httpRequest,
-      SSLConfig sslConfig) {
+      AkSkConfig akSkConfig) {
     AuthHeaderUtils authHeaderUtils = AuthHeaderUtils.getInstance();
     Map<String, String> headerMap = authHeaderUtils.genAuthHeaders();
     for (Map.Entry<String, String> entry : headerMap.entrySet()) {
       httpRequest.addHeader(entry.getKey(), entry.getValue());
     }
-    if (isHeaderMapEmpty(headerMap) && isSSLConfigNotEmpty(sslConfig)) {
-      httpRequest.addHeader(X_SERVICE_AK, sslConfig.getAccessKey());
+    if (isHeaderMapEmpty(headerMap) && isSSLConfigNotEmpty(akSkConfig)) {
+      httpRequest.addHeader(X_SERVICE_AK, akSkConfig.getAccessKey());
       httpRequest.addHeader(X_SERVICE_SHA_AKSK,
-          encode(sslConfig));
-      httpRequest.addHeader(X_SERVICE_PROJECT, sslConfig.getProject());
+          encode(akSkConfig));
+      httpRequest.addHeader(X_SERVICE_PROJECT, akSkConfig.getProject());
     }
   }
 
@@ -77,17 +77,17 @@ public class DealHeaderUtil {
     return headerMap == null || headerMap.size() == 0;
   }
 
-  public static boolean isSSLConfigNotEmpty(SSLConfig sslConfig) {
-    return sslConfig.getAccessKey() != null && sslConfig.getSecretKey() != null && sslConfig.getProject() != null;
+  public static boolean isSSLConfigNotEmpty(AkSkConfig akSkConfig) {
+    return akSkConfig.getAccessKey() != null && akSkConfig.getSecretKey() != null && akSkConfig.getProject() != null;
   }
 
-  private static String encode(SSLConfig sslConfig) {
+  private static String encode(AkSkConfig akSkConfig) {
 
-    if ("ShaAKSKCipher".equalsIgnoreCase(sslConfig.getAkskCustomCipher())) {
-      return sslConfig.getSecretKey();
+    if ("ShaAKSKCipher".equalsIgnoreCase(akSkConfig.getAkskCustomCipher())) {
+      return akSkConfig.getSecretKey();
     }
     try {
-      return SignerUtils.sha256Encode(sslConfig.getSecretKey(), sslConfig.getAccessKey());
+      return SignerUtils.sha256Encode(akSkConfig.getSecretKey(), akSkConfig.getAccessKey());
     } catch (Exception e) {
       LOGGER.error(e.getMessage(), e);
       return null;

@@ -18,7 +18,7 @@
 package com.huaweicloud.servicecomb.discovery.client;
 
 import com.huaweicloud.common.transport.DefaultHttpTransport;
-import com.huaweicloud.common.transport.SSLConfig;
+import com.huaweicloud.common.transport.AkSkConfig;
 
 /**
  * @Author wangqijun
@@ -28,7 +28,7 @@ import com.huaweicloud.common.transport.SSLConfig;
 public class ServiceCombClientBuilder {
   private String url;
 
-  private SSLConfig sslConfig;
+  private AkSkConfig akSkConfig;
 
   /**
    * registry address, e.g. http://127.0.0.1:30100
@@ -40,8 +40,8 @@ public class ServiceCombClientBuilder {
     return this;
   }
 
-  public ServiceCombClientBuilder setSSLConfig(SSLConfig sslConfig) {
-    this.sslConfig = sslConfig;
+  public ServiceCombClientBuilder setSSLConfig(AkSkConfig akSkConfig) {
+    this.akSkConfig = akSkConfig;
     return this;
   }
 
@@ -51,7 +51,7 @@ public class ServiceCombClientBuilder {
    */
   public ServiceCombClient createServiceCombClient() {
     DefaultHttpTransport httpTransport = DefaultHttpTransport.getInstance();
-    httpTransport.setSslConfig(sslConfig);
+    httpTransport.setAkSkConfig(akSkConfig);
     return new ServiceCombClient(url, httpTransport);
   }
 }

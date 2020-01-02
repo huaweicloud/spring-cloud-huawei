@@ -66,7 +66,7 @@ public class DefaultHttpTransport implements HttpTransport {
 
   private static final DefaultHttpTransport DEFAULT_HTTP_TRANSPORT = new DefaultHttpTransport();
 
-  private SSLConfig sslConfig;
+  private AkSkConfig akSkConfig;
 
   private HttpClient httpClient;
 
@@ -144,7 +144,7 @@ public class DefaultHttpTransport implements HttpTransport {
     Response resp = new Response();
     try {
       DealHeaderUtil.addDefautHeader(httpRequest);
-      DealHeaderUtil.addAKSKHeader(httpRequest, sslConfig);
+      DealHeaderUtil.addAKSKHeader(httpRequest, akSkConfig);
       HttpResponse httpResponse = httpClient.execute(httpRequest);
       resp.setStatusCode(httpResponse.getStatusLine().getStatusCode());
       resp.setStatusMessage(httpResponse.getStatusLine().getReasonPhrase());
@@ -198,7 +198,7 @@ public class DefaultHttpTransport implements HttpTransport {
   }
 
   @Override
-  public void setSslConfig(SSLConfig sslConfig) {
-    this.sslConfig = sslConfig;
+  public void setAkSkConfig(AkSkConfig akSkConfig) {
+    this.akSkConfig = akSkConfig;
   }
 }
