@@ -39,7 +39,7 @@ public class SecretUtil {
         .get(DealHeaderUtil.X_SERVICE_SHA_AKSK) : serviceCombSSLProperties.getSecretKey();
     String project = envHeaders.containsKey(DealHeaderUtil.X_SERVICE_PROJECT) ? envHeaders
         .get(DealHeaderUtil.X_SERVICE_PROJECT) : serviceCombSSLProperties.getProject();
-    sslConfig.setEnable(serviceCombSSLProperties.isEnable())
+    sslConfig.setEnabled(serviceCombSSLProperties.isEnabled())
         .setAccessKey(ak)
         .setSecretKey(sk)
         .setAkskCustomCipher(serviceCombSSLProperties.getAkskCustomCipher())
