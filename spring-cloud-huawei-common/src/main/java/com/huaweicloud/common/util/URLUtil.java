@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.configuration.EnvironmentConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 /**
@@ -31,9 +29,9 @@ import org.springframework.util.StringUtils;
  **/
 public class URLUtil {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(URLUtil.class);
-
   private static final String SCHEMA_SEPRATOR = "://";
+
+  private static final String IPPORT_SEPRATOR = ":";
 
   private static final String SYSTEM_KEY_BOTH = "PAAS_CSE_ENDPOINT";
 
@@ -42,18 +40,63 @@ public class URLUtil {
   private static final String SYSTEM_KEY_CONFIG_CENTER = "PAAS_CSE_CC_ENDPOINT";
 
   /**
+   * @param url
+   * @return
+   */
+  public static String[] splitIpPort(String url) {
+    if (url == null) {
+      return null;
+    }
+    String[] res = new String[2];
+    res[0] = url
+        .substring(url.indexOf(SCHEMA_SEPRATOR) + SCHEMA_SEPRATOR.length(),
+            url.lastIndexOf(IPPORT_SEPRATOR));
+    res[1] = url.substring(url.lastIndexOf(IPPORT_SEPRATOR) + 1);
+    if (res[1].contains("/")) {
+      res[1] = res[1].substring(0, res[1].indexOf("/"));
+    } else if (res[1].contains("?")) {
+      res[1] = res[1].substring(0, res[1].indexOf("?"));
+    }
+    return res;
+  }
+
+  /**
    * Convert url to http or https
    *
    * @param restUrl
-   * @param scheme
    * @return
    */
-  public static String transform(String restUrl, String scheme) {
+  public static String transform(String restUrl) {
+    String scheme = "http";
     if (restUrl == null) {
       return null;
     }
+    if (isSSLEnable(restUrl)) {
+      scheme = "https";
+    }
+    if (restUrl.contains("?")) {
+      return scheme + SCHEMA_SEPRATOR
+          + restUrl.substring(restUrl.indexOf(SCHEMA_SEPRATOR) + SCHEMA_SEPRATOR.length(),
+          restUrl.indexOf("?"));
+    }
     return scheme + SCHEMA_SEPRATOR
         + restUrl.substring(restUrl.indexOf(SCHEMA_SEPRATOR) + SCHEMA_SEPRATOR.length());
+  }
+
+  private static boolean isSSLEnable(String url) {
+    int index = url.indexOf("?");
+    if (index == -1) {
+      return false;
+    }
+    String param = url.substring(index + 1);
+    String[] params = param.split("&");
+    for (String item : params) {
+      String[] kv = item.split("=");
+      if ("sslEnabled".equals(kv[0]) && "true".equals(kv[1])) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

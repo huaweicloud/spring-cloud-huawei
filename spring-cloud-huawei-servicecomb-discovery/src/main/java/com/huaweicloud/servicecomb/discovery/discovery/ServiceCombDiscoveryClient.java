@@ -30,6 +30,7 @@ import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceResponse;
 
 public class ServiceCombDiscoveryClient implements DiscoveryClient {
+
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombDiscoveryClient.class);
 
   private ServiceCombClient serviceCombClient;

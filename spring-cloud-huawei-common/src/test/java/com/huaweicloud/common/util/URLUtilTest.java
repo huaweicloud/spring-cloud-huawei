@@ -11,8 +11,17 @@ public class URLUtilTest {
 
   @Test
   public void transform() {
-    Assert.assertEquals(URLUtil.transform("rest://aa.com", "http"), "http://aa.com");
-    Assert.assertNull(URLUtil.transform(null, "http"));
+    Assert.assertEquals(URLUtil.transform("rest://aa.com"), "http://aa.com");
+    Assert.assertEquals(URLUtil.transform("rest://aa.com/?sslEnabled=true"), "https://aa.com/");
+    Assert.assertNull(URLUtil.transform(null));
+  }
+
+  @Test
+  public void splitIpPort() {
+    String[] res = URLUtil.splitIpPort("http://0.0.0.0:3000/?end=udu");
+    Assert.assertEquals(res[0], "0.0.0.0");
+    Assert.assertEquals(res[1], "3000");
+    Assert.assertNull(URLUtil.splitIpPort(null));
   }
 
   @Test

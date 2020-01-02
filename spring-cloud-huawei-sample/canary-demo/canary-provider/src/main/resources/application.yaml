@@ -8,12 +8,12 @@ spring:
     servicecomb:
       discovery:
         enabled: true
-        address: ${engineAdd:https://cse.cn-north-4.myhuaweicloud.com}
+        address: https://cse.cn-north-4.myhuaweicloud.com
         version: 0.0.1
         healthCheckInterval: 30
       credentials:
-        enable: ${sslEnabled:true}
-        accessKey: ${ak:yourak}
-        secretKey: ${sk:yoursk}
-        project: ${region:cn-north-4}
+        enable: true
+        accessKey: ak
+        secretKey: sk
+        project: cn-north-4
         akskCustomCipher: default
