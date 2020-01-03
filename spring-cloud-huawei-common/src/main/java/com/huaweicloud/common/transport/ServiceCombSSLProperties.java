@@ -10,7 +10,7 @@ import org.springframework.util.StringUtils;
  **/
 @Component
 @ConfigurationProperties("spring.cloud.servicecomb.ssl")
-public class TLSConfig {
+public class ServiceCombSSLProperties {
 
   private KeyStoreInstanceType keyStoreType;
 

@@ -56,8 +56,8 @@ public class DefaultHttpTransport implements HttpTransport {
 
   private HttpClient httpClient;
 
-  private DefaultHttpTransport(TLSConfig tLSConfig) {
-    SSLContext sslContext = SecretUtil.getSSLContext(tLSConfig);
+  private DefaultHttpTransport(ServiceCombSSLProperties serviceCombSSLProperties) {
+    SSLContext sslContext = SecretUtil.getSSLContext(serviceCombSSLProperties);
 
     RequestConfig config = RequestConfig.custom()
         .setConnectTimeout(DealHeaderUtil.CONNECT_TIMEOUT)
@@ -88,11 +88,12 @@ public class DefaultHttpTransport implements HttpTransport {
     this.httpClient = httpClientBuilder.build();
   }
 
-  public static DefaultHttpTransport getInstance(TLSConfig tlsConfig) {
+  public static DefaultHttpTransport getInstance(
+      ServiceCombSSLProperties serviceCombSSLProperties) {
     if (null == DEFAULT_HTTP_TRANSPORT) {
       synchronized (DefaultHttpTransport.class) {
         if (null == DEFAULT_HTTP_TRANSPORT) {
-          DEFAULT_HTTP_TRANSPORT = new DefaultHttpTransport(tlsConfig);
+          DEFAULT_HTTP_TRANSPORT = new DefaultHttpTransport(serviceCombSSLProperties);
         }
       }
     }

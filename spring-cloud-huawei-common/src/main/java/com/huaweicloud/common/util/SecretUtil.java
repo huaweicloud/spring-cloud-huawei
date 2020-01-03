@@ -3,7 +3,7 @@ package com.huaweicloud.common.util;
 import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 import com.huaweicloud.common.transport.AkSkConfig;
 import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
-import com.huaweicloud.common.transport.TLSConfig;
+import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,8 +35,8 @@ public class SecretUtil {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SecretUtil.class);
 
-  public static SSLContext getSSLContext(TLSConfig tlsConfig) {
-    if (tlsConfig == null || tlsConfig.isEmpty()) {
+  public static SSLContext getSSLContext(ServiceCombSSLProperties serviceCombSSLProperties) {
+    if (serviceCombSSLProperties == null || serviceCombSSLProperties.isEmpty()) {
       SSLContext sslContext = null;
       try {
         sslContext = new SSLContextBuilder()
@@ -47,12 +47,13 @@ public class SecretUtil {
       return sslContext;
     }
     // create keyStore and trustStore
-    KeyStore keyStore = getKeyStore(tlsConfig.getKeyStore(), tlsConfig.getKeyStoreType().name(),
-        tlsConfig.getKeyStoreValue());
-    KeyStore trustStore = getKeyStore(tlsConfig.getTrustStore(),
-        TLSConfig.KeyStoreInstanceType.JKS.name(),
-        tlsConfig.getTrustStoreValue());
-    String keyStoreValue = tlsConfig.getKeyStoreValue();
+    KeyStore keyStore = getKeyStore(
+        serviceCombSSLProperties.getKeyStore(), serviceCombSSLProperties.getKeyStoreType().name(),
+        serviceCombSSLProperties.getKeyStoreValue());
+    KeyStore trustStore = getKeyStore(serviceCombSSLProperties.getTrustStore(),
+        ServiceCombSSLProperties.KeyStoreInstanceType.JKS.name(),
+        serviceCombSSLProperties.getTrustStoreValue());
+    String keyStoreValue = serviceCombSSLProperties.getKeyStoreValue();
     // initialize SSLContext
     try {
       KeyManagerFactory keyManagerFactory = KeyManagerFactory
@@ -88,7 +89,7 @@ public class SecretUtil {
     return null;
   }
 
-  public static AkSkConfig generateSSLConfig(ServiceCombAkSkProperties serviceCombAkSkProperties) {
+  public static AkSkConfig generateAkSkConfig(ServiceCombAkSkProperties serviceCombAkSkProperties) {
     if (!StringUtils.isEmpty(serviceCombAkSkProperties.getEnable())) {
       throw new ServiceCombRuntimeException(
           "config credentials.enable has change to credentials.enabled ,old names are no longer supported, please change it.");
