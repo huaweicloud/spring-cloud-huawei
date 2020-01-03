@@ -40,5 +40,5 @@ public interface HttpTransport {
 
   Response sendDeleteRequest(String url) throws RemoteServerUnavailableException;
 
-  void setSslConfig(SSLConfig sslConfig);
+  void setAkSkConfig(AkSkConfig akSkConfig);
 }

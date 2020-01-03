@@ -20,8 +20,8 @@ package com.huaweicloud.config;
 import com.huaweicloud.common.util.SecretUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import com.huaweicloud.common.transport.SSLConfig;
-import com.huaweicloud.common.transport.ServiceCombSSLProperties;
+import com.huaweicloud.common.transport.AkSkConfig;
+import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
 import com.huaweicloud.config.client.ServiceCombConfigClient;
 import com.huaweicloud.config.client.ServiceCombConfigClientBuilder;
 import org.springframework.context.annotation.Bean;
@@ -45,26 +45,26 @@ public class ServiceCombConfigBootstrapConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public ServiceCombSSLProperties serviceCombSSLProperties() {
-    return new ServiceCombSSLProperties();
+  public ServiceCombAkSkProperties serviceCombSSLProperties() {
+    return new ServiceCombAkSkProperties();
   }
 
   @Bean
   public ServiceCombConfigClient serviceCombConfigClient(
       ServiceCombConfigProperties serviceCombConfigProperties,
-      ServiceCombSSLProperties serviceCombSSLProperties) {
+      ServiceCombAkSkProperties serviceCombAkSkProperties) {
     ServiceCombConfigClientBuilder builder = new ServiceCombConfigClientBuilder();
-    SSLConfig sslConfig = SecretUtil.generateSSLConfig(serviceCombSSLProperties);
-    builder.setUrl(serviceCombConfigProperties.getServerAddr()).setSSLConfig(sslConfig);
+    AkSkConfig akSkConfig = SecretUtil.generateSSLConfig(serviceCombAkSkProperties);
+    builder.setUrl(serviceCombConfigProperties.getServerAddr()).setSSLConfig(akSkConfig);
     return builder.createServiceCombConfigClient();
   }
   @Bean
   public ServiceCombPropertySourceLocator serviceCombPropertySourceLocator(
       ServiceCombConfigProperties serviceCombConfigProperties,
       ServiceCombConfigClient serviceCombConfigClient,
-      ServiceCombSSLProperties serviceCombSSLProperties) {
+      ServiceCombAkSkProperties serviceCombAkSkProperties) {
     return new ServiceCombPropertySourceLocator(serviceCombConfigProperties,
         serviceCombConfigClient,
-        serviceCombSSLProperties.getProject());
+        serviceCombAkSkProperties.getProject());
   }
 }

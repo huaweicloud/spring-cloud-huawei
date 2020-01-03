@@ -31,7 +31,7 @@ public class DefaultHttpTransportTest {
   HttpClient httpClient;
 
   @Injectable
-  SSLConfig sslConfig;
+  AkSkConfig akSkConfig;
 
   @Tested
   private DefaultHttpTransport httpHttpTransport;

@@ -17,63 +17,74 @@
 
 package com.huaweicloud.common.transport;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
 /**
  * @Author wangqijun
- * @Date 19:07 2019-09-05
+ * @Date 20:09 2019-09-03
  **/
-public class SSLConfig {
+@Component
+@ConfigurationProperties("spring.cloud.servicecomb.credentials")
+public class ServiceCombAkSkProperties {
+  //dummy value for throw exception and notice
+  private String enable;
+
   private boolean enabled = false;
 
   private String accessKey;
 
   private String secretKey;
 
-  private String akskCustomCipher = "default";
+  private String akskCustomCipher;
 
   private String project;
 
-  public boolean isEnabled() {
-    return enabled;
+  public String getEnable() {
+    return enable;
   }
 
-  public SSLConfig setEnabled(boolean enabled) {
-    this.enabled = enabled;
-    return this;
+  public void setEnable(String enable) {
+    this.enable = enable;
   }
 
   public String getAccessKey() {
     return accessKey;
   }
 
-  public SSLConfig setAccessKey(String accessKey) {
+  public void setAccessKey(String accessKey) {
     this.accessKey = accessKey;
-    return this;
   }
 
   public String getSecretKey() {
     return secretKey;
   }
 
-  public SSLConfig setSecretKey(String secretKey) {
+  public void setSecretKey(String secretKey) {
     this.secretKey = secretKey;
-    return this;
   }
 
   public String getAkskCustomCipher() {
     return akskCustomCipher;
   }
 
-  public SSLConfig setAkskCustomCipher(String akskCustomCipher) {
+  public void setAkskCustomCipher(String akskCustomCipher) {
     this.akskCustomCipher = akskCustomCipher;
-    return this;
   }
 
   public String getProject() {
     return project;
   }
 
-  public SSLConfig setProject(String project) {
+  public void setProject(String project) {
     this.project = project;
-    return this;
+  }
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
   }
 }

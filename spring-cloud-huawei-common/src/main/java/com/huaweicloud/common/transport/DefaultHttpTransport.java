@@ -17,6 +17,7 @@
 
 package com.huaweicloud.common.transport;
 
+import com.huaweicloud.common.util.SecretUtil;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -38,8 +39,15 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -58,9 +66,40 @@ public class DefaultHttpTransport implements HttpTransport {
 
   private static final DefaultHttpTransport DEFAULT_HTTP_TRANSPORT = new DefaultHttpTransport();
 
-  private SSLConfig sslConfig;
+  private AkSkConfig akSkConfig;
 
   private HttpClient httpClient;
+
+  private DefaultHttpTransport(TLSConfig tLSConfig) {
+    SSLContext sslContext = SecretUtil.getSSLContext(tLSConfig);
+
+    RequestConfig config = RequestConfig.custom()
+        .setConnectTimeout(DealHeaderUtil.CONNECT_TIMEOUT)
+        .setConnectionRequestTimeout(
+            DealHeaderUtil.CONNECTION_REQUEST_TIMEOUT)
+        .setSocketTimeout(DealHeaderUtil.SOCKET_TIMEOUT).build();
+
+    //register http/https socket factory
+    Registry<ConnectionSocketFactory> connectionSocketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
+        .register("http", PlainConnectionSocketFactory.INSTANCE)
+        .register("https", new SSLConnectionSocketFactory(sslContext))
+        .build();
+
+    //connection pool management
+    PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(
+        connectionSocketFactoryRegistry);
+    connectionManager.setMaxTotal(DealHeaderUtil.MAX_TOTAL);
+    connectionManager.setDefaultMaxPerRoute(DealHeaderUtil.DEFAULT_MAX_PER_ROUTE);
+
+    // construct httpClient
+    HttpClientBuilder httpClientBuilder = HttpClientBuilder.create().
+        setSSLSocketFactory(new SSLConnectionSocketFactory(sslContext)).
+        setDefaultRequestConfig(config).
+        setConnectionManager(connectionManager).
+        disableCookieManagement();
+
+    this.httpClient = httpClientBuilder.build();
+  }
 
   private DefaultHttpTransport() {
     SSLContext sslContext = null;
@@ -105,7 +144,7 @@ public class DefaultHttpTransport implements HttpTransport {
     Response resp = new Response();
     try {
       DealHeaderUtil.addDefautHeader(httpRequest);
-      DealHeaderUtil.addAKSKHeader(httpRequest, sslConfig);
+      DealHeaderUtil.addAKSKHeader(httpRequest, akSkConfig);
       HttpResponse httpResponse = httpClient.execute(httpRequest);
       resp.setStatusCode(httpResponse.getStatusLine().getStatusCode());
       resp.setStatusMessage(httpResponse.getStatusLine().getReasonPhrase());
@@ -159,7 +198,7 @@ public class DefaultHttpTransport implements HttpTransport {
   }
 
   @Override
-  public void setSslConfig(SSLConfig sslConfig) {
-    this.sslConfig = sslConfig;
+  public void setAkSkConfig(AkSkConfig akSkConfig) {
+    this.akSkConfig = akSkConfig;
   }
 }

@@ -17,18 +17,18 @@
 
 package com.huaweicloud.common.transport;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import com.huawei.paas.foundation.auth.signer.utils.SignerUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 /**
  * @Author wangqijun
- * @Date 20:09 2019-09-03
+ * @Date 19:07 2019-09-05
  **/
-@Component
-@ConfigurationProperties("spring.cloud.servicecomb.credentials")
-public class ServiceCombSSLProperties {
-  //dummy value for throw exception and notice
-  private String enable;
+public class AkSkConfig {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(AkSkConfig.class);
 
   private boolean enabled = false;
 
@@ -36,55 +36,64 @@ public class ServiceCombSSLProperties {
 
   private String secretKey;
 
-  private String akskCustomCipher;
+  private String akskCustomCipher = "default";
 
   private String project;
 
-  public String getEnable() {
-    return enable;
-  }
-
-  public void setEnable(String enable) {
-    this.enable = enable;
-  }
-
-  public String getAccessKey() {
-    return accessKey;
-  }
-
-  public void setAccessKey(String accessKey) {
-    this.accessKey = accessKey;
-  }
-
-  public String getSecretKey() {
-    return secretKey;
-  }
-
-  public void setSecretKey(String secretKey) {
-    this.secretKey = secretKey;
-  }
-
-  public String getAkskCustomCipher() {
-    return akskCustomCipher;
-  }
-
-  public void setAkskCustomCipher(String akskCustomCipher) {
-    this.akskCustomCipher = akskCustomCipher;
-  }
-
-  public String getProject() {
-    return project;
-  }
-
-  public void setProject(String project) {
-    this.project = project;
+  public boolean isAkSkEmpty() {
+    return StringUtils.isEmpty(accessKey) || StringUtils.isEmpty(secretKey);
   }
 
   public boolean isEnabled() {
     return enabled;
   }
 
-  public void setEnabled(boolean enabled) {
+  public AkSkConfig setEnabled(boolean enabled) {
     this.enabled = enabled;
+    return this;
+  }
+
+  public String getAccessKey() {
+    return accessKey;
+  }
+
+  public AkSkConfig setAccessKey(String accessKey) {
+    this.accessKey = accessKey;
+    return this;
+  }
+
+  public String getSecretKey() {
+    if ("ShaAKSKCipher".equalsIgnoreCase(this.akskCustomCipher)) {
+      return this.secretKey;
+    }
+    try {
+      return SignerUtils.sha256Encode(this.secretKey, this.accessKey);
+    } catch (Exception e) {
+      LOGGER.error(e.getMessage(), e);
+      return null;
+    }
+  }
+
+  public AkSkConfig setSecretKey(String secretKey) {
+    this.secretKey = secretKey;
+    return this;
+  }
+
+  public String getAkskCustomCipher() {
+    return akskCustomCipher;
+  }
+
+  public AkSkConfig setAkskCustomCipher(String akskCustomCipher) {
+    this.akskCustomCipher = akskCustomCipher;
+    return this;
+  }
+
+  public String getProject() {
+    return project;
+  }
+
+  public AkSkConfig setProject(String project) {
+    this.project = project;
+    return this;
   }
 }

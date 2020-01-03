@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.huawei.paas.foundation.auth.AuthHeaderUtils;
-import com.huawei.paas.foundation.auth.signer.utils.SignerUtils;
+import org.springframework.util.CollectionUtils;
 
 /**
  * @Author wangqijun
@@ -56,41 +56,21 @@ public class DealHeaderUtil {
 
   public static final String X_SERVICE_PROJECT = "X-Service-Project";
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(DealHeaderUtil.class);
-
   public static void addAKSKHeader(HttpUriRequest httpRequest,
-      SSLConfig sslConfig) {
+      AkSkConfig akSkConfig) {
     AuthHeaderUtils authHeaderUtils = AuthHeaderUtils.getInstance();
     Map<String, String> headerMap = authHeaderUtils.genAuthHeaders();
-    for (Map.Entry<String, String> entry : headerMap.entrySet()) {
-      httpRequest.addHeader(entry.getKey(), entry.getValue());
+    if (akSkConfig.isAkSkEmpty() && !CollectionUtils.isEmpty(headerMap)) {
+      httpRequest.addHeader(X_SERVICE_AK, headerMap.get(X_SERVICE_AK));
+      httpRequest.addHeader(X_SERVICE_SHA_AKSK, headerMap.get(X_SERVICE_SHA_AKSK));
+    } else {
+      httpRequest.addHeader(X_SERVICE_AK, akSkConfig.getAccessKey());
+      httpRequest.addHeader(X_SERVICE_SHA_AKSK, akSkConfig.getSecretKey());
     }
-    if (isHeaderMapEmpty(headerMap) && isSSLConfigNotEmpty(sslConfig)) {
-      httpRequest.addHeader(X_SERVICE_AK, sslConfig.getAccessKey());
-      httpRequest.addHeader(X_SERVICE_SHA_AKSK,
-          encode(sslConfig));
-      httpRequest.addHeader(X_SERVICE_PROJECT, sslConfig.getProject());
-    }
-  }
-
-  public static boolean isHeaderMapEmpty(Map<String, String> headerMap) {
-    return headerMap == null || headerMap.size() == 0;
-  }
-
-  public static boolean isSSLConfigNotEmpty(SSLConfig sslConfig) {
-    return sslConfig.getAccessKey() != null && sslConfig.getSecretKey() != null && sslConfig.getProject() != null;
-  }
-
-  private static String encode(SSLConfig sslConfig) {
-
-    if ("ShaAKSKCipher".equalsIgnoreCase(sslConfig.getAkskCustomCipher())) {
-      return sslConfig.getSecretKey();
-    }
-    try {
-      return SignerUtils.sha256Encode(sslConfig.getSecretKey(), sslConfig.getAccessKey());
-    } catch (Exception e) {
-      LOGGER.error(e.getMessage(), e);
-      return null;
+    if (!CollectionUtils.isEmpty(headerMap)) {
+      httpRequest.addHeader(X_SERVICE_PROJECT, headerMap.get(X_SERVICE_PROJECT));
+    } else {
+      httpRequest.addHeader(X_SERVICE_PROJECT, akSkConfig.getProject());
     }
   }
 
