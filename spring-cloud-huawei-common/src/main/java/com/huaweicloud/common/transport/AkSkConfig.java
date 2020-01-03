@@ -30,7 +30,7 @@ public class AkSkConfig {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(AkSkConfig.class);
 
-  private boolean enable = false;
+  private boolean enabled = false;
 
   private String accessKey;
 
@@ -41,15 +41,15 @@ public class AkSkConfig {
   private String project;
 
   public boolean isAkSkEmpty() {
-    return StringUtils.isEmpty(this.getAccessKey()) || StringUtils.isEmpty(this.getSecretKey());
+    return StringUtils.isEmpty(accessKey) || StringUtils.isEmpty(secretKey);
   }
 
-  public boolean isEnable() {
-    return enable;
+  public boolean isEnabled() {
+    return enabled;
   }
 
-  public AkSkConfig setEnable(boolean enable) {
-    this.enable = enable;
+  public AkSkConfig setEnabled(boolean enabled) {
+    this.enabled = enabled;
     return this;
   }
 

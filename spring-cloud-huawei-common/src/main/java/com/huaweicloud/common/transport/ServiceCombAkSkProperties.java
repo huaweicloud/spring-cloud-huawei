@@ -27,7 +27,10 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties("spring.cloud.servicecomb.credentials")
 public class ServiceCombAkSkProperties {
-  private boolean enable = false;
+  //dummy value for throw exception and notice
+  private String enable;
+
+  private boolean enabled = false;
 
   private String accessKey;
 
@@ -36,6 +39,14 @@ public class ServiceCombAkSkProperties {
   private String akskCustomCipher;
 
   private String project;
+
+  public String getEnable() {
+    return enable;
+  }
+
+  public void setEnable(String enable) {
+    this.enable = enable;
+  }
 
   public String getAccessKey() {
     return accessKey;
@@ -69,11 +80,11 @@ public class ServiceCombAkSkProperties {
     this.project = project;
   }
 
-  public boolean isEnable() {
-    return enable;
+  public boolean isEnabled() {
+    return enabled;
   }
 
-  public void setEnable(boolean enable) {
-    this.enable = enable;
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
   }
 }

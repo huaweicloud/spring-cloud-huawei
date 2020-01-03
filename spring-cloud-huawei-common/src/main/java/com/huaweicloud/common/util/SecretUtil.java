@@ -1,5 +1,6 @@
 package com.huaweicloud.common.util;
 
+import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 import com.huaweicloud.common.transport.AkSkConfig;
 import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
 import com.huaweicloud.common.transport.TLSConfig;
@@ -20,6 +21,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.ssl.SSLContexts;
+import org.springframework.util.StringUtils;
 
 /**
  * @Author GuoYl123
@@ -71,8 +73,12 @@ public class SecretUtil {
   }
 
   public static AkSkConfig generateSSLConfig(ServiceCombAkSkProperties serviceCombAkSkProperties) {
+    if (!StringUtils.isEmpty(serviceCombAkSkProperties.getEnable())) {
+      throw new ServiceCombRuntimeException(
+          "config credentials.enable has change to credentials.enabled ,old names are no longer supported, please change it.");
+    }
     AkSkConfig akSkConfig = new AkSkConfig();
-    akSkConfig.setEnable(serviceCombAkSkProperties.isEnable())
+    akSkConfig.setEnabled(serviceCombAkSkProperties.isEnabled())
         .setAccessKey(serviceCombAkSkProperties.getAccessKey())
         .setSecretKey(serviceCombAkSkProperties.getSecretKey())
         .setAkskCustomCipher(serviceCombAkSkProperties.getAkskCustomCipher())

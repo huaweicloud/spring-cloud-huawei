@@ -10,7 +10,7 @@ spring:
         watch:
           delay: 10000
       credentials:
-        enable: true
+        enabled: true
         accessKey: your ak
         secretKey: your sk
         akskCustomCipher: default
