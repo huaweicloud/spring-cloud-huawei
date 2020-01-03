@@ -1,6 +1,8 @@
 package com.huaweicloud.common.util;
 
 import com.huawei.paas.foundation.auth.AuthHeaderProviderImpl;
+import com.huaweicloud.common.exception.ServiceCombException;
+import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 import com.huaweicloud.common.transport.DealHeaderUtil;
 import com.huaweicloud.common.transport.SSLConfig;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
@@ -31,6 +33,10 @@ public class SecretUtil {
   public static final String ENGINE_DATA_URL = "/cseengine/v1/engine-metadata?name=%s";
 
   public static SSLConfig generateSSLConfig(ServiceCombSSLProperties serviceCombSSLProperties) {
+    if (!StringUtils.isEmpty(serviceCombSSLProperties.getEnable())) {
+      throw new ServiceCombRuntimeException(
+          "config credentials.enable has change to credentials.enabled ,old names are no longer supported, please change it.");
+    }
     SSLConfig sslConfig = new SSLConfig();
     Map<String, String> envHeaders = getAkSkFromSecret();
     String ak = envHeaders.containsKey(DealHeaderUtil.X_SERVICE_AK) ? envHeaders
@@ -39,7 +45,7 @@ public class SecretUtil {
         .get(DealHeaderUtil.X_SERVICE_SHA_AKSK) : serviceCombSSLProperties.getSecretKey();
     String project = envHeaders.containsKey(DealHeaderUtil.X_SERVICE_PROJECT) ? envHeaders
         .get(DealHeaderUtil.X_SERVICE_PROJECT) : serviceCombSSLProperties.getProject();
-    sslConfig.setEnable(serviceCombSSLProperties.isEnable())
+    sslConfig.setEnabled(serviceCombSSLProperties.isEnabled())
         .setAccessKey(ak)
         .setSecretKey(sk)
         .setAkskCustomCipher(serviceCombSSLProperties.getAkskCustomCipher())

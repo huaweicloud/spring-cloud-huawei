@@ -22,7 +22,7 @@ package com.huaweicloud.common.transport;
  * @Date 19:07 2019-09-05
  **/
 public class SSLConfig {
-  private boolean enable = false;
+  private boolean enabled = false;
 
   private String accessKey;
 
@@ -32,12 +32,12 @@ public class SSLConfig {
 
   private String project;
 
-  public boolean isEnable() {
-    return enable;
+  public boolean isEnabled() {
+    return enabled;
   }
 
-  public SSLConfig setEnable(boolean enable) {
-    this.enable = enable;
+  public SSLConfig setEnabled(boolean enabled) {
+    this.enabled = enabled;
     return this;
   }
 

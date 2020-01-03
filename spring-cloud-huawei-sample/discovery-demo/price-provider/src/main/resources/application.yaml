@@ -14,7 +14,7 @@ spring:
         version: 0.0.1
         healthCheckInterval: 30
       credentials:
-        enable: true
+        enabled: true
         accessKey: your ak
         secretKey: your sk
         akskCustomCipher: default
