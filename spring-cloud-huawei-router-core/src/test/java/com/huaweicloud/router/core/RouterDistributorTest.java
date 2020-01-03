@@ -15,9 +15,8 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.router.core;
+package com.huaweicloud.router.core;
 
-import com.huaweicloud.router.core.RouterFilter;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringProperty;
 import com.netflix.loadbalancer.Server;

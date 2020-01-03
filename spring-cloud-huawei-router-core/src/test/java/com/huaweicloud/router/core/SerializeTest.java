@@ -1,4 +1,4 @@
-package org.springframework.cloud.router.core;
+package com.huaweicloud.router.core;
 
 import java.util.Arrays;
 import java.util.List;
