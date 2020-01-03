@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.huawei.paas.foundation.auth.AuthHeaderUtils;
-import com.huawei.paas.foundation.auth.signer.utils.SignerUtils;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -57,8 +56,6 @@ public class DealHeaderUtil {
 
   public static final String X_SERVICE_PROJECT = "X-Service-Project";
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(DealHeaderUtil.class);
-
   public static void addAKSKHeader(HttpUriRequest httpRequest,
       AkSkConfig akSkConfig) {
     AuthHeaderUtils authHeaderUtils = AuthHeaderUtils.getInstance();
@@ -68,24 +65,12 @@ public class DealHeaderUtil {
       httpRequest.addHeader(X_SERVICE_SHA_AKSK, headerMap.get(X_SERVICE_SHA_AKSK));
     } else {
       httpRequest.addHeader(X_SERVICE_AK, akSkConfig.getAccessKey());
-      httpRequest.addHeader(X_SERVICE_SHA_AKSK, encode(akSkConfig));
+      httpRequest.addHeader(X_SERVICE_SHA_AKSK, akSkConfig.getSecretKey());
     }
     if (!CollectionUtils.isEmpty(headerMap)) {
       httpRequest.addHeader(X_SERVICE_PROJECT, headerMap.get(X_SERVICE_PROJECT));
     } else {
       httpRequest.addHeader(X_SERVICE_PROJECT, akSkConfig.getProject());
-    }
-  }
-
-  private static String encode(AkSkConfig akSkConfig) {
-    if ("ShaAKSKCipher".equalsIgnoreCase(akSkConfig.getAkskCustomCipher())) {
-      return akSkConfig.getSecretKey();
-    }
-    try {
-      return SignerUtils.sha256Encode(akSkConfig.getSecretKey(), akSkConfig.getAccessKey());
-    } catch (Exception e) {
-      LOGGER.error(e.getMessage(), e);
-      return null;
     }
   }
 

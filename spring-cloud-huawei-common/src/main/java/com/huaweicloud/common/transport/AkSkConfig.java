@@ -17,6 +17,9 @@
 
 package com.huaweicloud.common.transport;
 
+import com.huawei.paas.foundation.auth.signer.utils.SignerUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 /**
@@ -24,6 +27,9 @@ import org.springframework.util.StringUtils;
  * @Date 19:07 2019-09-05
  **/
 public class AkSkConfig {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(AkSkConfig.class);
+
   private boolean enable = false;
 
   private String accessKey;
@@ -36,10 +42,6 @@ public class AkSkConfig {
 
   public boolean isAkSkEmpty() {
     return StringUtils.isEmpty(this.getAccessKey()) || StringUtils.isEmpty(this.getSecretKey());
-  }
-
-  public boolean isProjectEmpty() {
-    return StringUtils.isEmpty(this.getProject());
   }
 
   public boolean isEnable() {
@@ -61,7 +63,15 @@ public class AkSkConfig {
   }
 
   public String getSecretKey() {
-    return secretKey;
+    if ("ShaAKSKCipher".equalsIgnoreCase(this.akskCustomCipher)) {
+      return this.secretKey;
+    }
+    try {
+      return SignerUtils.sha256Encode(this.secretKey, this.accessKey);
+    } catch (Exception e) {
+      LOGGER.error(e.getMessage(), e);
+      return null;
+    }
   }
 
   public AkSkConfig setSecretKey(String secretKey) {
