@@ -88,8 +88,8 @@ public class DefaultHttpTransport implements HttpTransport {
     //connection pool management
     PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(
         connectionSocketFactoryRegistry);
-    connectionManager.setMaxTotal(1000);
-    connectionManager.setDefaultMaxPerRoute(500);
+    connectionManager.setMaxTotal(DealHeaderUtil.MAX_TOTAL);
+    connectionManager.setDefaultMaxPerRoute(DealHeaderUtil.DEFAULT_MAX_PER_ROUTE);
 
     // construct httpClient
     HttpClientBuilder httpClientBuilder = HttpClientBuilder.create().

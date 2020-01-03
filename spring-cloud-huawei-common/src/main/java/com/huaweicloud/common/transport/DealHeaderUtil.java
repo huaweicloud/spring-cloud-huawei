@@ -70,7 +70,7 @@ public class DealHeaderUtil {
       httpRequest.addHeader(X_SERVICE_AK, akSkConfig.getAccessKey());
       httpRequest.addHeader(X_SERVICE_SHA_AKSK, encode(akSkConfig));
     }
-    if (akSkConfig.isProjectEmpty() && !CollectionUtils.isEmpty(headerMap)) {
+    if (!CollectionUtils.isEmpty(headerMap)) {
       httpRequest.addHeader(X_SERVICE_PROJECT, headerMap.get(X_SERVICE_PROJECT));
     } else {
       httpRequest.addHeader(X_SERVICE_PROJECT, akSkConfig.getProject());
