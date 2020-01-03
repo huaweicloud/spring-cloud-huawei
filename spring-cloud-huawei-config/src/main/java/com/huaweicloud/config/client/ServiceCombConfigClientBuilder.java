@@ -19,6 +19,7 @@ package com.huaweicloud.config.client;
 
 import com.huaweicloud.common.transport.DefaultHttpTransport;
 import com.huaweicloud.common.transport.AkSkConfig;
+import com.huaweicloud.common.transport.TLSConfig;
 
 /**
  * @Author wangqijun
@@ -30,8 +31,15 @@ public class ServiceCombConfigClientBuilder {
 
   private AkSkConfig akSkConfig;
 
-  public ServiceCombConfigClientBuilder setSSLConfig(AkSkConfig akSkConfig) {
+  private TLSConfig tlsConfig;
+
+  public ServiceCombConfigClientBuilder setAkSkConfig(AkSkConfig akSkConfig) {
     this.akSkConfig = akSkConfig;
+    return this;
+  }
+
+  public ServiceCombConfigClientBuilder setTlsConfig(TLSConfig tlsConfig) {
+    this.tlsConfig = tlsConfig;
     return this;
   }
 
@@ -41,7 +49,7 @@ public class ServiceCombConfigClientBuilder {
   }
 
   public ServiceCombConfigClient createServiceCombConfigClient() {
-    DefaultHttpTransport httpTransport = DefaultHttpTransport.getInstance();
+    DefaultHttpTransport httpTransport = DefaultHttpTransport.getInstance(tlsConfig);
     httpTransport.setAkSkConfig(akSkConfig);
     return new ServiceCombConfigClient(url, httpTransport);
   }

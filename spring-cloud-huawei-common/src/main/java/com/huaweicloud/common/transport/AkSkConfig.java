@@ -44,6 +44,10 @@ public class AkSkConfig {
     return StringUtils.isEmpty(accessKey) || StringUtils.isEmpty(secretKey);
   }
 
+  public boolean isProjectEmpty() {
+    return StringUtils.isEmpty(project);
+  }
+
   public boolean isEnabled() {
     return enabled;
   }

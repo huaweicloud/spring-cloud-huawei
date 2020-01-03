@@ -19,16 +19,9 @@ package com.huaweicloud.common.transport;
 
 import com.huaweicloud.common.util.SecretUtil;
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 
 import java.util.Map;
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -44,14 +37,9 @@ import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.huaweicloud.common.exception.RemoteServerUnavailableException;
 import org.springframework.util.StringUtils;
 
@@ -62,9 +50,7 @@ import org.springframework.util.StringUtils;
  **/
 public class DefaultHttpTransport implements HttpTransport {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(DefaultHttpTransport.class);
-
-  private static final DefaultHttpTransport DEFAULT_HTTP_TRANSPORT = new DefaultHttpTransport();
+  private volatile static DefaultHttpTransport DEFAULT_HTTP_TRANSPORT;
 
   private AkSkConfig akSkConfig;
 
@@ -92,6 +78,7 @@ public class DefaultHttpTransport implements HttpTransport {
     connectionManager.setDefaultMaxPerRoute(DealHeaderUtil.DEFAULT_MAX_PER_ROUTE);
 
     // construct httpClient
+    // delete before code : setSSLHostnameVerifier(hostnameVerifier)
     HttpClientBuilder httpClientBuilder = HttpClientBuilder.create().
         setSSLSocketFactory(new SSLConnectionSocketFactory(sslContext)).
         setDefaultRequestConfig(config).
@@ -101,41 +88,14 @@ public class DefaultHttpTransport implements HttpTransport {
     this.httpClient = httpClientBuilder.build();
   }
 
-  private DefaultHttpTransport() {
-    SSLContext sslContext = null;
-    try {
-      sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
-        //信任所有
-        public boolean isTrusted(X509Certificate[] chain, String authType)
-            throws CertificateException {
-          return true;
+  public static DefaultHttpTransport getInstance(TLSConfig tlsConfig) {
+    if (null == DEFAULT_HTTP_TRANSPORT) {
+      synchronized (DefaultHttpTransport.class) {
+        if (null == DEFAULT_HTTP_TRANSPORT) {
+          DEFAULT_HTTP_TRANSPORT = new DefaultHttpTransport(tlsConfig);
         }
-      }).build();
-    } catch (NoSuchAlgorithmException e) {
-      LOGGER.info(e.getMessage(), e);
-    } catch (KeyManagementException e) {
-      LOGGER.info(e.getMessage(), e);
-    } catch (KeyStoreException e) {
-      LOGGER.info(e.getMessage(), e);
-    }
-
-    RequestConfig config = RequestConfig.custom().setConnectTimeout(DealHeaderUtil.CONNECT_TIMEOUT)
-        .setConnectionRequestTimeout(
-            DealHeaderUtil.CONNECTION_REQUEST_TIMEOUT)
-        .setSocketTimeout(DealHeaderUtil.SOCKET_TIMEOUT).build();
-
-    HostnameVerifier hostnameVerifier = new HostnameVerifier() {
-      @Override
-      public boolean verify(String s, SSLSession sslSession) {
-        return true;
       }
-    };
-    this.httpClient = HttpClients.custom().setSSLHostnameVerifier(hostnameVerifier)
-        .setSSLContext(sslContext)
-        .setDefaultRequestConfig(config).disableCookieManagement().build();
-  }
-
-  public static DefaultHttpTransport getInstance() {
+    }
     return DEFAULT_HTTP_TRANSPORT;
   }
 

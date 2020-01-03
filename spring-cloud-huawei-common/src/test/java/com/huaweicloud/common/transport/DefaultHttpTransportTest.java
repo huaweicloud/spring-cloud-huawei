@@ -44,9 +44,9 @@ public class DefaultHttpTransportTest {
 
   @Test
   public void getInstance() {
-    DefaultHttpTransport instance = DefaultHttpTransport.getInstance();
+    DefaultHttpTransport instance = DefaultHttpTransport.getInstance(null);
     assertNotNull(instance);
-    DefaultHttpTransport instance2 = DefaultHttpTransport.getInstance();
+    DefaultHttpTransport instance2 = DefaultHttpTransport.getInstance(null);
     assertEquals(instance, instance2);
   }
 

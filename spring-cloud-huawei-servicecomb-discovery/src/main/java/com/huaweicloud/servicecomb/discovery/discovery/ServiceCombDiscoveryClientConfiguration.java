@@ -17,6 +17,7 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
+import com.huaweicloud.common.transport.TLSConfig;
 import com.huaweicloud.common.util.SecretUtil;
 import com.huaweicloud.servicecomb.discovery.registry.TagsProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -58,17 +59,26 @@ public class ServiceCombDiscoveryClientConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public ServiceCombAkSkProperties serviceCombSSLProperties() {
+  public ServiceCombAkSkProperties serviceCombAkSkProperties() {
     return new ServiceCombAkSkProperties();
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  public TLSConfig serviceCombSSLProperties() {
+    return new TLSConfig();
   }
 
   @Bean
   @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.enabled", matchIfMissing = true)
   public ServiceCombClient serviceCombClient(ServiceCombDiscoveryProperties serviceCombProperties,
-      ServiceCombAkSkProperties serviceCombAkSkProperties) {
+      ServiceCombAkSkProperties serviceCombAkSkProperties, TLSConfig tlsConfig) {
     ServiceCombClientBuilder builder = new ServiceCombClientBuilder();
     AkSkConfig akSkConfig = SecretUtil.generateSSLConfig(serviceCombAkSkProperties);
-    builder.setUrl(serviceCombProperties.getAddress()).setSSLConfig(akSkConfig);
+    builder
+        .setUrl(serviceCombProperties.getAddress())
+        .setSSLConfig(akSkConfig)
+        .setTlsConfig(tlsConfig);
     return builder.createServiceCombClient();
   }
 

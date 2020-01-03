@@ -20,9 +20,6 @@ package com.huaweicloud.common.transport;
 import java.util.Map;
 
 import org.apache.http.client.methods.HttpUriRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.huawei.paas.foundation.auth.AuthHeaderUtils;
 import org.springframework.util.CollectionUtils;
 
@@ -63,13 +60,13 @@ public class DealHeaderUtil {
     if (akSkConfig.isAkSkEmpty() && !CollectionUtils.isEmpty(headerMap)) {
       httpRequest.addHeader(X_SERVICE_AK, headerMap.get(X_SERVICE_AK));
       httpRequest.addHeader(X_SERVICE_SHA_AKSK, headerMap.get(X_SERVICE_SHA_AKSK));
-    } else {
+    } else if(!akSkConfig.isAkSkEmpty()){
       httpRequest.addHeader(X_SERVICE_AK, akSkConfig.getAccessKey());
       httpRequest.addHeader(X_SERVICE_SHA_AKSK, akSkConfig.getSecretKey());
     }
     if (!CollectionUtils.isEmpty(headerMap)) {
       httpRequest.addHeader(X_SERVICE_PROJECT, headerMap.get(X_SERVICE_PROJECT));
-    } else {
+    } else if(!akSkConfig.isProjectEmpty()){
       httpRequest.addHeader(X_SERVICE_PROJECT, akSkConfig.getProject());
     }
   }

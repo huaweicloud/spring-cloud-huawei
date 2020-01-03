@@ -20,7 +20,11 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 /**
@@ -29,7 +33,19 @@ import org.springframework.util.StringUtils;
  **/
 public class SecretUtil {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(SecretUtil.class);
+
   public static SSLContext getSSLContext(TLSConfig tlsConfig) {
+    if (tlsConfig == null || tlsConfig.isEmpty()) {
+      SSLContext sslContext = null;
+      try {
+        sslContext = new SSLContextBuilder()
+            .loadTrustMaterial(null, (TrustStrategy) (chain, authType) -> true).build();
+      } catch (Exception e) {
+        LOGGER.info(e.getMessage(), e);
+      }
+      return sslContext;
+    }
     // create keyStore and trustStore
     KeyStore keyStore = getKeyStore(tlsConfig.getKeyStore(), tlsConfig.getKeyStoreType().name(),
         tlsConfig.getKeyStoreValue());

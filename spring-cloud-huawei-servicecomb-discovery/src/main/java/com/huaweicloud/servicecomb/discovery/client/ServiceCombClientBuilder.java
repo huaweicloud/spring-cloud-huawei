@@ -19,6 +19,7 @@ package com.huaweicloud.servicecomb.discovery.client;
 
 import com.huaweicloud.common.transport.DefaultHttpTransport;
 import com.huaweicloud.common.transport.AkSkConfig;
+import com.huaweicloud.common.transport.TLSConfig;
 
 /**
  * @Author wangqijun
@@ -29,6 +30,8 @@ public class ServiceCombClientBuilder {
   private String url;
 
   private AkSkConfig akSkConfig;
+
+  private TLSConfig tlsConfig;
 
   /**
    * registry address, e.g. http://127.0.0.1:30100
@@ -45,12 +48,17 @@ public class ServiceCombClientBuilder {
     return this;
   }
 
+  public ServiceCombClientBuilder setTlsConfig(TLSConfig tlsConfig) {
+    this.tlsConfig = tlsConfig;
+    return this;
+  }
+
   /**
    * create ServiceComb-Service-Center client, ServiceCombClient is singleton.
    * @return
    */
   public ServiceCombClient createServiceCombClient() {
-    DefaultHttpTransport httpTransport = DefaultHttpTransport.getInstance();
+    DefaultHttpTransport httpTransport = DefaultHttpTransport.getInstance(tlsConfig);
     httpTransport.setAkSkConfig(akSkConfig);
     return new ServiceCombClient(url, httpTransport);
   }
