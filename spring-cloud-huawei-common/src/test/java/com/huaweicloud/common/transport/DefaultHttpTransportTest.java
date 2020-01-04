@@ -30,9 +30,6 @@ public class DefaultHttpTransportTest {
   @Injectable
   HttpClient httpClient;
 
-  @Injectable
-  AkSkConfig akSkConfig;
-
   @Tested
   private DefaultHttpTransport httpHttpTransport;
 
@@ -44,9 +41,9 @@ public class DefaultHttpTransportTest {
 
   @Test
   public void getInstance() {
-    DefaultHttpTransport instance = DefaultHttpTransport.getInstance(null);
+    DefaultHttpTransport instance = DefaultHttpTransport.getInstance();
     assertNotNull(instance);
-    DefaultHttpTransport instance2 = DefaultHttpTransport.getInstance(null);
+    DefaultHttpTransport instance2 = DefaultHttpTransport.getInstance();
     assertEquals(instance, instance2);
   }
 

@@ -52,11 +52,13 @@ public class DefaultHttpTransport implements HttpTransport {
 
   private volatile static DefaultHttpTransport DEFAULT_HTTP_TRANSPORT;
 
-  private AkSkConfig akSkConfig;
+  private ServiceCombAkSkProperties serviceCombAkSkProperties;
+
+  private ServiceCombSSLProperties serviceCombSSLProperties;
 
   private HttpClient httpClient;
 
-  private DefaultHttpTransport(ServiceCombSSLProperties serviceCombSSLProperties) {
+  private DefaultHttpTransport() {
     SSLContext sslContext = SecretUtil.getSSLContext(serviceCombSSLProperties);
 
     RequestConfig config = RequestConfig.custom()
@@ -88,12 +90,11 @@ public class DefaultHttpTransport implements HttpTransport {
     this.httpClient = httpClientBuilder.build();
   }
 
-  public static DefaultHttpTransport getInstance(
-      ServiceCombSSLProperties serviceCombSSLProperties) {
+  public static DefaultHttpTransport getInstance() {
     if (null == DEFAULT_HTTP_TRANSPORT) {
       synchronized (DefaultHttpTransport.class) {
         if (null == DEFAULT_HTTP_TRANSPORT) {
-          DEFAULT_HTTP_TRANSPORT = new DefaultHttpTransport(serviceCombSSLProperties);
+          DEFAULT_HTTP_TRANSPORT = new DefaultHttpTransport();
         }
       }
     }
@@ -105,7 +106,7 @@ public class DefaultHttpTransport implements HttpTransport {
     Response resp = new Response();
     try {
       DealHeaderUtil.addDefautHeader(httpRequest);
-      DealHeaderUtil.addAKSKHeader(httpRequest, akSkConfig);
+      DealHeaderUtil.addAKSKHeader(httpRequest, serviceCombAkSkProperties);
       HttpResponse httpResponse = httpClient.execute(httpRequest);
       resp.setStatusCode(httpResponse.getStatusLine().getStatusCode());
       resp.setStatusMessage(httpResponse.getStatusLine().getReasonPhrase());
@@ -159,7 +160,12 @@ public class DefaultHttpTransport implements HttpTransport {
   }
 
   @Override
-  public void setAkSkConfig(AkSkConfig akSkConfig) {
-    this.akSkConfig = akSkConfig;
+  public void setServiceCombAkSkProperties(ServiceCombAkSkProperties serviceCombAkSkProperties) {
+    this.serviceCombAkSkProperties = serviceCombAkSkProperties;
+  }
+
+  @Override
+  public void setServiceCombSSLProperties(ServiceCombSSLProperties serviceCombSSLProperties) {
+    this.serviceCombSSLProperties = serviceCombSSLProperties;
   }
 }

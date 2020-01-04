@@ -54,20 +54,21 @@ public class DealHeaderUtil {
   public static final String X_SERVICE_PROJECT = "X-Service-Project";
 
   public static void addAKSKHeader(HttpUriRequest httpRequest,
-      AkSkConfig akSkConfig) {
+      ServiceCombAkSkProperties serviceCombAkSkProperties) {
     AuthHeaderUtils authHeaderUtils = AuthHeaderUtils.getInstance();
     Map<String, String> headerMap = authHeaderUtils.genAuthHeaders();
-    if (akSkConfig.isAkSkEmpty() && !CollectionUtils.isEmpty(headerMap)) {
+    if ((serviceCombAkSkProperties == null || serviceCombAkSkProperties.isAkSkEmpty())
+        && !CollectionUtils.isEmpty(headerMap)) {
       httpRequest.addHeader(X_SERVICE_AK, headerMap.get(X_SERVICE_AK));
       httpRequest.addHeader(X_SERVICE_SHA_AKSK, headerMap.get(X_SERVICE_SHA_AKSK));
-    } else if(!akSkConfig.isAkSkEmpty()){
-      httpRequest.addHeader(X_SERVICE_AK, akSkConfig.getAccessKey());
-      httpRequest.addHeader(X_SERVICE_SHA_AKSK, akSkConfig.getSecretKey());
+    } else if (serviceCombAkSkProperties != null && !serviceCombAkSkProperties.isAkSkEmpty()) {
+      httpRequest.addHeader(X_SERVICE_AK, serviceCombAkSkProperties.getAccessKey());
+      httpRequest.addHeader(X_SERVICE_SHA_AKSK, serviceCombAkSkProperties.getSecretKey());
     }
     if (!CollectionUtils.isEmpty(headerMap)) {
       httpRequest.addHeader(X_SERVICE_PROJECT, headerMap.get(X_SERVICE_PROJECT));
-    } else if(!akSkConfig.isProjectEmpty()){
-      httpRequest.addHeader(X_SERVICE_PROJECT, akSkConfig.getProject());
+    } else if (serviceCombAkSkProperties != null && !serviceCombAkSkProperties.isProjectEmpty()) {
+      httpRequest.addHeader(X_SERVICE_PROJECT, serviceCombAkSkProperties.getProject());
     }
   }
 

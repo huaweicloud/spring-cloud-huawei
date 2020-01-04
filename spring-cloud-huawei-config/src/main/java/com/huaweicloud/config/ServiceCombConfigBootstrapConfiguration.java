@@ -17,16 +17,16 @@
 
 package com.huaweicloud.config;
 
+import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
-import com.huaweicloud.common.util.SecretUtil;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import com.huaweicloud.common.transport.AkSkConfig;
 import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
 import com.huaweicloud.config.client.ServiceCombConfigClient;
 import com.huaweicloud.config.client.ServiceCombConfigClientBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 /**
  * @Author wangqijun
@@ -61,9 +61,13 @@ public class ServiceCombConfigBootstrapConfiguration {
       ServiceCombConfigProperties serviceCombConfigProperties,
       ServiceCombAkSkProperties serviceCombAkSkProperties, ServiceCombSSLProperties serviceCombSSLProperties) {
     ServiceCombConfigClientBuilder builder = new ServiceCombConfigClientBuilder();
-    AkSkConfig akSkConfig = SecretUtil.generateAkSkConfig(serviceCombAkSkProperties);
-    builder.setUrl(serviceCombConfigProperties.getServerAddr()).setAkSkConfig(akSkConfig)
-        .setServiceCombSSLProperties(serviceCombSSLProperties);
+    if (!StringUtils.isEmpty(serviceCombAkSkProperties.getEnable())) {
+      throw new ServiceCombRuntimeException(
+          "config credentials.enable has change to credentials.enabled ,old names are no longer supported, please change it.");
+    }
+    builder.setUrl(serviceCombConfigProperties.getServerAddr())
+        .setServiceCombSSLProperties(serviceCombSSLProperties)
+        .setServiceCombAkSkProperties(serviceCombAkSkProperties);
     return builder.createServiceCombConfigClient();
   }
   @Bean
