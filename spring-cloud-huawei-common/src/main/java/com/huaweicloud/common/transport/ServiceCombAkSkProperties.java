@@ -19,6 +19,7 @@ package com.huaweicloud.common.transport;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 /**
  * @Author wangqijun
@@ -87,4 +88,13 @@ public class ServiceCombAkSkProperties {
   public void setEnabled(boolean enabled) {
     this.enabled = enabled;
   }
+
+  public boolean isAkSkEmpty() {
+    return StringUtils.isEmpty(accessKey) || StringUtils.isEmpty(secretKey);
+  }
+
+  public boolean isProjectEmpty() {
+    return StringUtils.isEmpty(project);
+  }
+
 }

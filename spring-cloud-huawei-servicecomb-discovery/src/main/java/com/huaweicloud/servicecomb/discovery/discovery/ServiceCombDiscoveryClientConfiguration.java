@@ -17,7 +17,8 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
-import com.huaweicloud.common.util.SecretUtil;
+import com.huaweicloud.common.exception.ServiceCombRuntimeException;
+import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.servicecomb.discovery.registry.TagsProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -25,13 +26,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.CommonsClientAutoConfiguration;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration;
-import com.huaweicloud.common.transport.AkSkConfig;
 import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
 import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
 import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
 import com.huaweicloud.servicecomb.discovery.client.ServiceCombClientBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 /**
  * @Author wangqijun
@@ -58,17 +59,29 @@ public class ServiceCombDiscoveryClientConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public ServiceCombAkSkProperties serviceCombSSLProperties() {
+  public ServiceCombAkSkProperties serviceCombAkSkProperties() {
     return new ServiceCombAkSkProperties();
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  public ServiceCombSSLProperties serviceCombSSLProperties() {
+    return new ServiceCombSSLProperties();
   }
 
   @Bean
   @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.enabled", matchIfMissing = true)
   public ServiceCombClient serviceCombClient(ServiceCombDiscoveryProperties serviceCombProperties,
-      ServiceCombAkSkProperties serviceCombAkSkProperties) {
+      ServiceCombAkSkProperties serviceCombAkSkProperties, ServiceCombSSLProperties serviceCombSSLProperties) {
     ServiceCombClientBuilder builder = new ServiceCombClientBuilder();
-    AkSkConfig akSkConfig = SecretUtil.generateSSLConfig(serviceCombAkSkProperties);
-    builder.setUrl(serviceCombProperties.getAddress()).setSSLConfig(akSkConfig);
+    if (!StringUtils.isEmpty(serviceCombAkSkProperties.getEnable())) {
+      throw new ServiceCombRuntimeException(
+          "config credentials.enable has change to credentials.enabled ,old names are no longer supported, please change it.");
+    }
+    builder
+        .setUrl(serviceCombProperties.getAddress())
+        .setServiceCombAkSkProperties(serviceCombAkSkProperties)
+        .setServiceCombSSLProperties(serviceCombSSLProperties);
     return builder.createServiceCombClient();
   }
 

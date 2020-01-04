@@ -1,9 +1,6 @@
 package com.huaweicloud.common.util;
 
-import com.huaweicloud.common.exception.ServiceCombRuntimeException;
-import com.huaweicloud.common.transport.AkSkConfig;
-import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
-import com.huaweicloud.common.transport.TLSConfig;
+import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,8 +17,11 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
-import org.springframework.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @Author GuoYl123
@@ -29,14 +29,27 @@ import org.springframework.util.StringUtils;
  **/
 public class SecretUtil {
 
-  public static SSLContext getSSLContext(TLSConfig tlsConfig) {
+  private static final Logger LOGGER = LoggerFactory.getLogger(SecretUtil.class);
+
+  public static SSLContext getSSLContext(ServiceCombSSLProperties serviceCombSSLProperties) {
+    if (serviceCombSSLProperties == null || serviceCombSSLProperties.isEmpty()) {
+      SSLContext sslContext = null;
+      try {
+        sslContext = new SSLContextBuilder()
+            .loadTrustMaterial(null, (TrustStrategy) (chain, authType) -> true).build();
+      } catch (Exception e) {
+        LOGGER.info(e.getMessage(), e);
+      }
+      return sslContext;
+    }
     // create keyStore and trustStore
-    KeyStore keyStore = getKeyStore(tlsConfig.getKeyStore(), tlsConfig.getKeyStoreType().name(),
-        tlsConfig.getKeyStoreValue());
-    KeyStore trustStore = getKeyStore(tlsConfig.getTrustStore(),
-        TLSConfig.KeyStoreInstanceType.JKS.name(),
-        tlsConfig.getTrustStoreValue());
-    String keyStoreValue = tlsConfig.getKeyStoreValue();
+    KeyStore keyStore = getKeyStore(
+        serviceCombSSLProperties.getKeyStore(), serviceCombSSLProperties.getKeyStoreType().name(),
+        serviceCombSSLProperties.getKeyStoreValue());
+    KeyStore trustStore = getKeyStore(serviceCombSSLProperties.getTrustStore(),
+        ServiceCombSSLProperties.KeyStoreInstanceType.JKS.name(),
+        serviceCombSSLProperties.getTrustStoreValue());
+    String keyStoreValue = serviceCombSSLProperties.getKeyStoreValue();
     // initialize SSLContext
     try {
       KeyManagerFactory keyManagerFactory = KeyManagerFactory
@@ -70,19 +83,5 @@ public class SecretUtil {
       e.printStackTrace();
     }
     return null;
-  }
-
-  public static AkSkConfig generateSSLConfig(ServiceCombAkSkProperties serviceCombAkSkProperties) {
-    if (!StringUtils.isEmpty(serviceCombAkSkProperties.getEnable())) {
-      throw new ServiceCombRuntimeException(
-          "config credentials.enable has change to credentials.enabled ,old names are no longer supported, please change it.");
-    }
-    AkSkConfig akSkConfig = new AkSkConfig();
-    akSkConfig.setEnabled(serviceCombAkSkProperties.isEnabled())
-        .setAccessKey(serviceCombAkSkProperties.getAccessKey())
-        .setSecretKey(serviceCombAkSkProperties.getSecretKey())
-        .setAkskCustomCipher(serviceCombAkSkProperties.getAkskCustomCipher())
-        .setProject(serviceCombAkSkProperties.getProject());
-    return akSkConfig;
   }
 }

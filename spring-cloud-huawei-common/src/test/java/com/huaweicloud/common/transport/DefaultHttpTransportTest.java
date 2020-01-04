@@ -30,9 +30,6 @@ public class DefaultHttpTransportTest {
   @Injectable
   HttpClient httpClient;
 
-  @Injectable
-  AkSkConfig akSkConfig;
-
   @Tested
   private DefaultHttpTransport httpHttpTransport;
 

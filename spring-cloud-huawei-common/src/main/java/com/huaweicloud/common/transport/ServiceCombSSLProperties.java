@@ -1,10 +1,16 @@
 package com.huaweicloud.common.transport;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
 /**
  * @Author GuoYl123
  * @Date 2019/12/28
  **/
-public class TLSConfig {
+@Component
+@ConfigurationProperties("spring.cloud.servicecomb.ssl")
+public class ServiceCombSSLProperties {
 
   private KeyStoreInstanceType keyStoreType;
 
@@ -58,6 +64,11 @@ public class TLSConfig {
 
   public void setKeyStoreValue(String keyStoreValue) {
     this.keyStoreValue = keyStoreValue;
+  }
+
+  public boolean isEmpty() {
+    return StringUtils.isEmpty(trustStoreValue) || StringUtils.isEmpty(keyStoreValue) || StringUtils
+        .isEmpty(trustStore) || StringUtils.isEmpty(keyStore);
   }
 
   //keyStore type

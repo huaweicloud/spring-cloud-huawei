@@ -18,7 +18,8 @@
 package com.huaweicloud.config.client;
 
 import com.huaweicloud.common.transport.DefaultHttpTransport;
-import com.huaweicloud.common.transport.AkSkConfig;
+import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
+import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 
 /**
  * @Author wangqijun
@@ -28,10 +29,19 @@ public class ServiceCombConfigClientBuilder {
 
   private String url;
 
-  private AkSkConfig akSkConfig;
+  private ServiceCombAkSkProperties serviceCombAkSkProperties;
 
-  public ServiceCombConfigClientBuilder setSSLConfig(AkSkConfig akSkConfig) {
-    this.akSkConfig = akSkConfig;
+  private ServiceCombSSLProperties serviceCombSSLProperties;
+
+  public ServiceCombConfigClientBuilder setServiceCombAkSkProperties(
+      ServiceCombAkSkProperties serviceCombAkSkProperties) {
+    this.serviceCombAkSkProperties = serviceCombAkSkProperties;
+    return this;
+  }
+
+  public ServiceCombConfigClientBuilder setServiceCombSSLProperties(
+      ServiceCombSSLProperties serviceCombSSLProperties) {
+    this.serviceCombSSLProperties = serviceCombSSLProperties;
     return this;
   }
 
@@ -42,7 +52,8 @@ public class ServiceCombConfigClientBuilder {
 
   public ServiceCombConfigClient createServiceCombConfigClient() {
     DefaultHttpTransport httpTransport = DefaultHttpTransport.getInstance();
-    httpTransport.setAkSkConfig(akSkConfig);
+    httpTransport.setServiceCombAkSkProperties(serviceCombAkSkProperties);
+    httpTransport.setServiceCombSSLProperties(serviceCombSSLProperties);
     return new ServiceCombConfigClient(url, httpTransport);
   }
 }
