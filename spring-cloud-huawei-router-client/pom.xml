@@ -21,7 +21,7 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-huawei-parents</artifactId>
-    <version>0.0.3</version>
+    <version>0.1.0RC2</version>
     <relativePath>../spring-cloud-huawei-parents</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>

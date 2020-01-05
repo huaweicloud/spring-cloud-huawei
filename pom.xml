@@ -28,7 +28,7 @@
 
   <groupId>com.huaweicloud</groupId>
   <artifactId>spring-cloud-huawei</artifactId>
-  <version>0.0.3</version>
+  <version>0.1.0RC2</version>
   <packaging>pom</packaging>
   <name>Spring Cloud Huawei</name>
 

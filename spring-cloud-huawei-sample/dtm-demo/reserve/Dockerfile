@@ -4,7 +4,7 @@ ENV LOG_ROOT=/var/log/reserve/
 RUN mkdir -p $APP_ROOT
 RUN mkdir -p $LOG_ROOT
 
-COPY target/reserve-0.0.3/reserve-0.0.3 $APP_ROOT
+COPY target/reserve-0.1.0RC2/reserve-0.1.0RC2 $APP_ROOT
 
 
 RUN cd $APP_ROOT && chmod -R 770 .
