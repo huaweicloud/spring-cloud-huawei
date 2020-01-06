@@ -36,6 +36,7 @@ import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -70,7 +71,8 @@ public class DefaultHttpTransport implements HttpTransport {
     //register http/https socket factory
     Registry<ConnectionSocketFactory> connectionSocketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
         .register("http", PlainConnectionSocketFactory.INSTANCE)
-        .register("https", new SSLConnectionSocketFactory(sslContext))
+        .register("https",
+            new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE))
         .build();
 
     //connection pool management
@@ -82,7 +84,6 @@ public class DefaultHttpTransport implements HttpTransport {
     // construct httpClient
     // delete before code : setSSLHostnameVerifier(hostnameVerifier)
     HttpClientBuilder httpClientBuilder = HttpClientBuilder.create().
-        setSSLSocketFactory(new SSLConnectionSocketFactory(sslContext)).
         setDefaultRequestConfig(config).
         setConnectionManager(connectionManager).
         disableCookieManagement();
@@ -113,7 +114,7 @@ public class DefaultHttpTransport implements HttpTransport {
       resp.setContent(EntityUtils.toString(httpResponse.getEntity()));
     } catch (IOException e) {
       throw new RemoteServerUnavailableException(
-          "service center unavailable. message=" + e.getMessage(), e);
+          "endpoint unavailable. message=" + e.getMessage(), e);
     }
     return resp;
   }
