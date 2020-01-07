@@ -18,6 +18,7 @@
 package com.huaweicloud.common.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.configuration.EnvironmentConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
@@ -45,7 +46,7 @@ public class URLUtil {
    */
   public static String[] splitIpPort(String url) {
     if (url == null) {
-      return null;
+      return new String[0];
     }
     String[] res = new String[2];
     res[0] = url
@@ -107,7 +108,7 @@ public class URLUtil {
    * @return
    */
   public static boolean isEquals(String url1, String url2) {
-    if (url1 == null || url2 == null) {
+    if (StringUtils.isEmpty(url1) || StringUtils.isEmpty(url2)) {
       return false;
     }
     String url1ComparePart = url1
@@ -125,17 +126,15 @@ public class URLUtil {
     return url;
   }
 
-  public static List<String> dealMutiUrl(String urls) {
+  public static List<String> dealMultiUrl(String urls) {
     List<String> urlList = new ArrayList<>();
     if (StringUtils.isEmpty(urls)) {
       return urlList;
     }
     if (urls != null && urls.indexOf(",") > 0) {
-      for (String url : urls.split(",")) {
-        if (url != null && !url.isEmpty()) {
-          urlList.add(url);
-        }
-      }
+      Arrays.stream(urls.split(","))
+          .filter(url -> !StringUtils.isEmpty(url))
+          .forEach(urlList::add);
     } else {
       urlList.add(urls);
     }
@@ -143,27 +142,22 @@ public class URLUtil {
   }
 
   public static List<String> getEnvConfigUrl() {
-    SystemConfiguration sysConfig = new SystemConfiguration();
-    EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
-    String sysURL = sysConfig.getString(SYSTEM_KEY_CONFIG_CENTER);
-    String envURL = envConfig.getString(SYSTEM_KEY_CONFIG_CENTER);
-    if (StringUtils.isEmpty(sysURL) && StringUtils.isEmpty(envURL)) {
-      sysURL = sysConfig.getString(SYSTEM_KEY_BOTH);
-      envURL = envConfig.getString(SYSTEM_KEY_BOTH);
-    }
-    return StringUtils.isEmpty(sysURL) ? dealMutiUrl(envURL) : dealMutiUrl(sysURL);
+    return getStrings(SYSTEM_KEY_CONFIG_CENTER);
   }
 
   public static List<String> getEnvServerURL() {
+    return getStrings(SYSTEM_KEY_SERVICE_CENTER);
+  }
+
+  private static List<String> getStrings(String systemServer) {
     SystemConfiguration sysConfig = new SystemConfiguration();
     EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
-    String sysURL = sysConfig.getString(SYSTEM_KEY_SERVICE_CENTER);
-    String envURL = envConfig.getString(SYSTEM_KEY_SERVICE_CENTER);
+    String sysURL = sysConfig.getString(systemServer);
+    String envURL = envConfig.getString(systemServer);
     if (StringUtils.isEmpty(sysURL) && StringUtils.isEmpty(envURL)) {
       sysURL = sysConfig.getString(SYSTEM_KEY_BOTH);
       envURL = envConfig.getString(SYSTEM_KEY_BOTH);
     }
-    return StringUtils.isEmpty(sysURL) ? dealMutiUrl(envURL) : dealMutiUrl(sysURL);
+    return StringUtils.isEmpty(sysURL) ? dealMultiUrl(envURL) : dealMultiUrl(sysURL);
   }
-
 }

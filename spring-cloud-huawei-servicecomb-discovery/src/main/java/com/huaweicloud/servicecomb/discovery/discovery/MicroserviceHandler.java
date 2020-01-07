@@ -17,6 +17,8 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -36,7 +38,7 @@ import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
 public class MicroserviceHandler {
   private static final Logger LOGGER = LoggerFactory.getLogger(MicroserviceHandler.class);
 
-  private static List<ServiceInstance> instanceList = null;
+  private static List<ServiceInstance> instanceList = Collections.emptyList();
 
   public static List<ServiceInstance> getInstances(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
       Microservice microservice, ServiceCombClient serviceCombClient) {

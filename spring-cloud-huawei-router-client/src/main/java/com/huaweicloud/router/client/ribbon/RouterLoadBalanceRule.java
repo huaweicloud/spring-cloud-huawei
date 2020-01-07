@@ -21,7 +21,6 @@ import java.util.List;
 import com.huaweicloud.router.client.track.RouterTrackContext;
 import com.huaweicloud.router.core.RouterFilter;
 
-import com.google.common.base.Optional;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ZoneAvoidanceRule;
 
@@ -31,7 +30,7 @@ import com.netflix.loadbalancer.ZoneAvoidanceRule;
  **/
 public class RouterLoadBalanceRule extends ZoneAvoidanceRule {
 
-  RouterDistributor distributer = new RouterDistributor();
+  RouterDistributor distributor = new RouterDistributor();
 
   @Override
   public Server choose(Object key) {
@@ -39,12 +38,7 @@ public class RouterLoadBalanceRule extends ZoneAvoidanceRule {
         .getFilteredListOfServers(getLoadBalancer().getAllServers(),
             RouterTrackContext.getServiceName(),
             RouterTrackContext.getRequestHeader(),
-            distributer);
-    Optional<Server> server = super.getPredicate().chooseRoundRobinAfterFiltering(serverList, key);
-    if (server.isPresent()) {
-      return server.get();
-    } else {
-      return null;
-    }
+            distributor);
+    return super.getPredicate().chooseRoundRobinAfterFiltering(serverList, key).orNull();
   }
 }

@@ -50,7 +50,7 @@ import org.springframework.util.StringUtils;
  **/
 public class DefaultHttpTransport implements HttpTransport {
 
-  private volatile static DefaultHttpTransport DEFAULT_HTTP_TRANSPORT;
+  private static DefaultHttpTransport DEFAULT_HTTP_TRANSPORT = new DefaultHttpTransport();
 
   private ServiceCombAkSkProperties serviceCombAkSkProperties;
 
@@ -91,13 +91,6 @@ public class DefaultHttpTransport implements HttpTransport {
   }
 
   public static DefaultHttpTransport getInstance() {
-    if (null == DEFAULT_HTTP_TRANSPORT) {
-      synchronized (DefaultHttpTransport.class) {
-        if (null == DEFAULT_HTTP_TRANSPORT) {
-          DEFAULT_HTTP_TRANSPORT = new DefaultHttpTransport();
-        }
-      }
-    }
     return DEFAULT_HTTP_TRANSPORT;
   }
 

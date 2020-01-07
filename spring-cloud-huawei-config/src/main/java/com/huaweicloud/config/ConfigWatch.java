@@ -82,7 +82,7 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
   }
 
   private void watch() {
-    String md5Vaule = null;
+    String md5Value;
     Map<String, String> remoteConfig = null;
     if (ready.get()) {
       try {
@@ -94,16 +94,16 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
       if (remoteConfig == null) {
         return;
       }
-      md5Vaule = MD5Util.encrypt(remoteConfig.toString());
+      md5Value = MD5Util.encrypt(remoteConfig.toString());
       // first load
       if (refreshRecord.getLastMD5() == null || refreshRecord.getLastMD5().isEmpty()) {
-        refreshRecord.setLastMD5(md5Vaule);
+        refreshRecord.setLastMD5(md5Value);
         return;
       }
-      if (md5Vaule.equals(refreshRecord.getLastMD5())) {
+      if (md5Value.equals(refreshRecord.getLastMD5())) {
         return;
       }
-      refreshRecord.setLastMD5(md5Vaule);
+      refreshRecord.setLastMD5(md5Value);
       Set<String> changeData = contextRefresher.refresh();
       if (changeData != null && !changeData.isEmpty()) {
         LOGGER.info("config data changed  = {}", changeData);

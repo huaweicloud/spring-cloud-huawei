@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,19 +114,18 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
           }
         });
         if (withJavaChassis) {
-          filteSwagger(temSwagger, fullClassName);
+          filterSwagger(temSwagger, fullClassName);
           if (CollectionUtils.isEmpty(temSwagger.getPaths())) {
             continue;
           }
           //add text/plain for string
           List contentTypeList = Arrays.asList("text/plain", "application/json");
-          temSwagger.getPaths().forEach((path, operation) -> {
-            operation.getOperations().forEach(api -> {
-              api.setConsumes(contentTypeList);
-              api.setProduces(contentTypeList);
-              api.setTags(Arrays.asList(className));
-            });
-          });
+          temSwagger.getPaths().forEach((path, operation) ->
+              operation.getOperations().forEach(api -> {
+                api.setConsumes(contentTypeList);
+                api.setProduces(contentTypeList);
+                api.setTags(Arrays.asList(className));
+              }));
         }
         swaggerMap.put(className, temSwagger);
       } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -161,21 +161,19 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
    * @param temSwagger
    * @param className
    */
-  private void filteSwagger(Swagger temSwagger, String className) {
+  private void filterSwagger(Swagger temSwagger, String className) {
     Set<String> abandonedList = new HashSet<>();
     Set<String> methodFilter = new HashSet<>();
-    temSwagger.getPaths().forEach((k, v) -> {
-      v.getOperations().forEach(method -> {
-        String processOptId = method.getOperationId();
-        processOptId = processOptId.substring(0, processOptId.indexOf("Using"));
-        if (methodFilter.contains(processOptId)) {
-          abandonedList.add(k);
-          return;
-        }
-        methodFilter.add(processOptId);
-        method.setOperationId(processOptId);
-      });
-    });
+    temSwagger.getPaths().forEach((k, v) -> v.getOperations().forEach(method -> {
+      String processOptId = method.getOperationId();
+      processOptId = processOptId.substring(0, processOptId.indexOf("Using"));
+      if (methodFilter.contains(processOptId)) {
+        abandonedList.add(k);
+        return;
+      }
+      methodFilter.add(processOptId);
+      method.setOperationId(processOptId);
+    }));
     //todo:exist some springCloud's default API,how to deal them?
     abandonedList.forEach(path -> {
       LOGGER.warn(
@@ -204,9 +202,7 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   }
 
   private void registerSwaggerAsync(String microserviceId, List<String> schemaIds) {
-    Executors.newSingleThreadExecutor().execute(() -> {
-      registerSwaggerSync(microserviceId, schemaIds);
-    });
+    Executors.newSingleThreadExecutor().execute(() -> registerSwaggerSync(microserviceId, schemaIds));
   }
 
   /**
@@ -216,7 +212,10 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
    * @return
    */
   private String genXInterfaceName(String appName, String serviceName, String schemaId) {
-    return X_JAVA_INTERFACE_PREFIX + appName + "." + serviceName + "." + schemaId + "."
-        + schemaId + INTF_SUFFIX;
+    return new StringJoiner(".", X_JAVA_INTERFACE_PREFIX, INTF_SUFFIX)
+        .add(appName)
+        .add(serviceName)
+        .add(schemaId)
+        .toString();
   }
 }
