@@ -17,13 +17,19 @@
 
 package com.huaweicloud.config.client;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.huaweicloud.common.transport.URLConfig;
 import com.huaweicloud.common.util.URLUtil;
+import com.huaweicloud.config.ServiceCombConfigProperties;
+import com.huaweicloud.config.kie.KVResponse;
+import com.huaweicloud.config.kie.KieUtil;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import java.util.Map.Entry;
 import org.apache.http.HttpStatus;
 import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.slf4j.Logger;
@@ -32,6 +38,8 @@ import com.huaweicloud.common.exception.RemoteOperationException;
 import com.huaweicloud.common.exception.RemoteServerUnavailableException;
 import com.huaweicloud.common.transport.HttpTransport;
 import com.huaweicloud.common.transport.Response;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * @Author wangqijun
@@ -56,16 +64,31 @@ public class ServiceCombConfigClient {
   /**
    * load all remote config from config center
    *
-   * @param dimensionsInfo service name + @ + application name
    * @return
    * @throws RemoteOperationException
    */
-  public Map<String, String> loadAll(String dimensionsInfo, String project)
+  public Map<String, String> loadAll(ServiceCombConfigProperties serviceCombConfigProperties,
+      String project) throws RemoteOperationException {
+    project = project != null && !project.isEmpty() ? project : ConfigConstants.DEFAULT_PROJECT;
+    if (!StringUtils.isEmpty(serviceCombConfigProperties.getServerType())
+        && serviceCombConfigProperties.getServerType().equals("kie")) {
+      return loadFromKie(serviceCombConfigProperties, project);
+    }
+    return loadFromConfigCenter(QueryParamUtil.spliceDimensionsInfo(serviceCombConfigProperties),
+        project);
+  }
+
+  /**
+   * @param dimensionsInfo service name + @ + application name
+   * @param project
+   * @return
+   * @throws RemoteOperationException
+   */
+  public Map<String, String> loadFromConfigCenter(String dimensionsInfo, String project)
       throws RemoteOperationException {
     Response response = null;
     Map<String, String> result = new HashMap<>();
     try {
-      project = project != null && !project.isEmpty() ? project : ConfigConstants.DEFAULT_PROJECT;
       response = httpTransport.sendGetRequest(
           configCenterConfig.getUrl() + "/" + ConfigConstants.DEFAULT_API_VERSION
               + "/" + project + "/configuration/items?dimensionsInfo="
@@ -76,7 +99,9 @@ public class ServiceCombConfigClient {
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.debug(response.getContent());
         Map<String, Map<String, String>> allConfigMap = JsonUtils.OBJ_MAPPER
-            .readValue(response.getContent(), HashMap.class);
+            .readValue(response.getContent(),
+                new TypeReference<Map<String, Map<String, String>>>() {
+                });
         if (allConfigMap != null) {
           if (allConfigMap.get(ConfigConstants.APPLICATION_CONFIG) != null) {
             result.putAll(allConfigMap.get(ConfigConstants.APPLICATION_CONFIG));
@@ -109,4 +134,49 @@ public class ServiceCombConfigClient {
       throw new RemoteOperationException("read response failed. " + response, e);
     }
   }
+
+  /**
+   * @param serviceCombConfigProperties
+   * @param project
+   * @return
+   * @throws RemoteOperationException
+   */
+  public Map<String, String> loadFromKie(ServiceCombConfigProperties serviceCombConfigProperties,
+      String project)
+      throws RemoteOperationException {
+    Response response = null;
+    Map<String, String> result = new HashMap<>();
+    try {
+      StringBuilder stringBuilder = new StringBuilder(configCenterConfig.getUrl());
+      stringBuilder.append("/");
+      stringBuilder.append(ConfigConstants.DEFAULT_KIE_API_VERSION);
+      stringBuilder.append("/");
+      stringBuilder.append(project);
+      stringBuilder.append("/kie/kv?label=app:");
+      stringBuilder.append(serviceCombConfigProperties.getAppName());
+      response = httpTransport.sendGetRequest(stringBuilder.toString());
+      if (response == null) {
+        return result;
+      }
+      if (response.getStatusCode() == HttpStatus.SC_OK) {
+        LOGGER.debug(response.getContent());
+        KVResponse allConfigList = JsonUtils.OBJ_MAPPER
+            .readValue(response.getContent(), KVResponse.class);
+        return KieUtil.getConfigByLabel(serviceCombConfigProperties, allConfigList);
+      } else if (response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
+        LOGGER.info(response.getStatusMessage());
+        return result;
+      } else if (response.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
+        return result;
+      } else {
+        throw new RemoteOperationException(
+            "read response failed. status=" + response.getStatusCode() + ";mesage=" + response
+                .getStatusMessage());
+      }
+    } catch (Exception e) {
+      configCenterConfig.toggle();
+      throw new RemoteOperationException("read response failed. " + response, e);
+    }
+  }
+
 }

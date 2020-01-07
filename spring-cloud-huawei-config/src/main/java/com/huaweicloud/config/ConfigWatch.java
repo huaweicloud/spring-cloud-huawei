@@ -86,8 +86,7 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
     Map<String, String> remoteConfig = null;
     if (ready.get()) {
       try {
-        remoteConfig = serviceCombConfigClient.loadAll(
-            QueryParamUtil.spliceDimensionsInfo(serviceCombConfigProperties), project);
+        remoteConfig = serviceCombConfigClient.loadAll(serviceCombConfigProperties, project);
       } catch (RemoteOperationException e) {
         LOGGER.warn(e.getMessage());
       }
