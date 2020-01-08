@@ -51,7 +51,7 @@ public class KieUtil {
         }
       }
     }
-    //todo : kv is priority
+    //kv is priority
     for (KVDoc kvDoc : appList) {
       resultMap.putAll(processValueType(kvDoc));
       resultMap.put(kvDoc.getKey(), kvDoc.getValue());

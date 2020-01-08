@@ -21,16 +21,17 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.huaweicloud.common.transport.URLConfig;
 import com.huaweicloud.common.util.URLUtil;
 import com.huaweicloud.config.ServiceCombConfigProperties;
+import com.huaweicloud.config.kie.KVBody;
 import com.huaweicloud.config.kie.KVResponse;
 import com.huaweicloud.config.kie.KieUtil;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.http.HttpStatus;
+import org.apache.http.entity.StringEntity;
 import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,6 @@ import com.huaweicloud.common.exception.RemoteOperationException;
 import com.huaweicloud.common.exception.RemoteServerUnavailableException;
 import com.huaweicloud.common.transport.HttpTransport;
 import com.huaweicloud.common.transport.Response;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -51,7 +51,10 @@ public class ServiceCombConfigClient {
 
   private HttpTransport httpTransport;
 
-  URLConfig configCenterConfig = new URLConfig();
+  private URLConfig configCenterConfig = new URLConfig();
+
+  //todo: set false to active
+  private AtomicBoolean isupdatedConfig = new AtomicBoolean(true);
 
   public ServiceCombConfigClient(String urls, HttpTransport httpTransport) {
     this.httpTransport = httpTransport;
@@ -72,6 +75,9 @@ public class ServiceCombConfigClient {
     project = project != null && !project.isEmpty() ? project : ConfigConstants.DEFAULT_PROJECT;
     if (!StringUtils.isEmpty(serviceCombConfigProperties.getServerType())
         && serviceCombConfigProperties.getServerType().equals("kie")) {
+      if (!isupdatedConfig.get() && updateToKie(serviceCombConfigProperties)) {
+        isupdatedConfig.compareAndSet(false, true);
+      }
       return loadFromKie(serviceCombConfigProperties, project);
     }
     return loadFromConfigCenter(QueryParamUtil.spliceDimensionsInfo(serviceCombConfigProperties),
@@ -179,4 +185,35 @@ public class ServiceCombConfigClient {
     }
   }
 
+  /**
+   * todo : update the all file
+   *
+   * @param serviceCombConfigProperties
+   * @return
+   */
+  public boolean updateToKie(ServiceCombConfigProperties serviceCombConfigProperties) {
+    String key = "application.yaml";
+    KVBody kvBody = new KVBody();
+    kvBody.initLabels(serviceCombConfigProperties);
+    kvBody.setValue("");
+    Response response = null;
+    try {
+      String content = JsonUtils.OBJ_MAPPER.writeValueAsString(kvBody);
+      StringEntity stringEntity = new StringEntity(content, "utf-8");
+      response = httpTransport.sendPutRequest("/kie/kv/" + key, stringEntity);
+      if (response.getStatusCode() == HttpStatus.SC_OK) {
+        return true;
+      } else {
+        LOGGER.error(
+            "create keyValue fails, responseStatusCode={}, responseMessage={}, responseContent{}",
+            response.getStatusCode(), response.getStatusMessage(), response.getContent());
+        return false;
+      }
+    } catch (IOException e) {
+      LOGGER.error("create keyValue fails", e);
+    } catch (RemoteServerUnavailableException e) {
+      LOGGER.error("putKeyValue to kie server failed, response= {}", response);
+    }
+    return false;
+  }
 }
