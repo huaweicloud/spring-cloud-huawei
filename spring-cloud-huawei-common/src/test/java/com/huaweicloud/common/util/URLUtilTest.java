@@ -22,7 +22,6 @@ public class URLUtilTest {
     String[] res = URLUtil.splitIpPort("http://0.0.0.0:3000/?end=udu");
     Assert.assertEquals(res[0], "0.0.0.0");
     Assert.assertEquals(res[1], "3000");
-    Assert.assertTrue(ArrayUtils.isEmpty(URLUtil.splitIpPort(null)));
   }
 
   @Test

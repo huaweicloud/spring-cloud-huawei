@@ -74,6 +74,6 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient {
     } catch (ServiceCombException e) {
       LOGGER.error("getServices failed", e);
     }
-    return Collections.emptyList();
+    return serviceList;
   }
 }

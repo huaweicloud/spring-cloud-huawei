@@ -45,9 +45,6 @@ public class URLUtil {
    * @return
    */
   public static String[] splitIpPort(String url) {
-    if (url == null) {
-      return new String[0];
-    }
     String[] res = new String[2];
     res[0] = url
         .substring(url.indexOf(SCHEMA_SEPRATOR) + SCHEMA_SEPRATOR.length(),
@@ -142,14 +139,14 @@ public class URLUtil {
   }
 
   public static List<String> getEnvConfigUrl() {
-    return getStrings(SYSTEM_KEY_CONFIG_CENTER);
+    return getEnvURL(SYSTEM_KEY_CONFIG_CENTER);
   }
 
   public static List<String> getEnvServerURL() {
-    return getStrings(SYSTEM_KEY_SERVICE_CENTER);
+    return getEnvURL(SYSTEM_KEY_SERVICE_CENTER);
   }
 
-  private static List<String> getStrings(String systemServer) {
+  private static List<String> getEnvURL(String systemServer) {
     SystemConfiguration sysConfig = new SystemConfiguration();
     EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
     String sysURL = sysConfig.getString(systemServer);
