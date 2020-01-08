@@ -147,14 +147,14 @@ public class ServiceCombConfigClient {
     Response response = null;
     Map<String, String> result = new HashMap<>();
     try {
-      StringBuilder stringBuilder = new StringBuilder(configCenterConfig.getUrl());
-      stringBuilder.append("/");
-      stringBuilder.append(ConfigConstants.DEFAULT_KIE_API_VERSION);
-      stringBuilder.append("/");
-      stringBuilder.append(project);
-      stringBuilder.append("/kie/kv?label=app:");
-      stringBuilder.append(serviceCombConfigProperties.getAppName());
-      response = httpTransport.sendGetRequest(stringBuilder.toString());
+      String stringBuilder = configCenterConfig.getUrl()
+          + "/"
+          + ConfigConstants.DEFAULT_KIE_API_VERSION
+          + "/"
+          + project
+          + "/kie/kv?label=app:"
+          + serviceCombConfigProperties.getAppName();
+      response = httpTransport.sendGetRequest(stringBuilder);
       if (response == null) {
         return result;
       }
