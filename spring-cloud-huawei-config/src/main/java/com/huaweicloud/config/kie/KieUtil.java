@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.util.StringUtils;
 
 /**
  * @Author GuoYl123
@@ -54,25 +55,18 @@ public class KieUtil {
     //kv is priority
     for (KVDoc kvDoc : appList) {
       resultMap.putAll(processValueType(kvDoc));
-      resultMap.put(kvDoc.getKey(), kvDoc.getValue());
     }
     for (KVDoc kvDoc : serviceList) {
       resultMap.putAll(processValueType(kvDoc));
-      resultMap.put(kvDoc.getKey(), kvDoc.getValue());
     }
     for (KVDoc kvDoc : versionList) {
       resultMap.putAll(processValueType(kvDoc));
-      resultMap.put(kvDoc.getKey(), kvDoc.getValue());
     }
     return resultMap;
   }
 
 
-  // todo : first time update to kie server
   public static Map<String, String> processValueType(KVDoc kvDoc) {
-    if (!isValidName(kvDoc.getKey())) {
-      return Collections.emptyMap();
-    }
     ValueType vtype;
     try {
       vtype = ValueType.valueOf(kvDoc.getValueType());
@@ -80,6 +74,7 @@ public class KieUtil {
       throw new ServiceCombRuntimeException("value type not support");
     }
     Properties properties = new Properties();
+    Map<String, String> kvMap = new HashMap<>();
     try {
       if (vtype == (ValueType.yaml) || vtype == (ValueType.yml)) {
         YamlPropertiesFactoryBean yamlFactory = new YamlPropertiesFactoryBean();
@@ -87,25 +82,30 @@ public class KieUtil {
         properties = yamlFactory.getObject();
       } else if (vtype == (ValueType.properties)) {
         properties.load(new StringReader(kvDoc.getValue()));
+      } else if (vtype == (ValueType.text) || vtype == (ValueType.string)) {
+        kvMap.put(kvDoc.getKey(), kvDoc.getValue());
+        return kvMap;
+      } else {
+        kvMap.put(kvDoc.getKey(), kvDoc.getValue());
+        return kvMap;
       }
-      return toMap(properties);
+      kvMap = toMap(kvDoc.getKey(), properties);
+      return kvMap;
     } catch (Exception e) {
       LOGGER.error("read config failed");
     }
     return Collections.emptyMap();
   }
 
-  private static boolean isValidName(String name) {
-    return name.equals("application.yaml") || name.equals("application.yml") ||
-        name.equals("bootstrap.yaml") || name.equals("bootstrap.yml") ||
-        name.equals("application.properties") || name.equals("bootstrap.properties");
-  }
 
-  private static Map<String, String> toMap(Properties properties) {
+  private static Map<String, String> toMap(String prefix, Properties properties) {
     Map<String, String> result = new HashMap<>();
     Enumeration<String> keys = (Enumeration<String>) properties.propertyNames();
     while (keys.hasMoreElements()) {
       String key = keys.nextElement();
+      if (!StringUtils.isEmpty(prefix)) {
+        key = prefix + "." + key;
+      }
       Object value = properties.getProperty(key);
       if (value != null) {
         result.put(key, ((String) value).trim());
