@@ -40,6 +40,12 @@ public class ServiceCombConfigProperties {
   @Value("${spring.cloud.servicecomb.discovery.version:}")
   private String version;
 
+  @Value("${server.env:}")
+  private String env;
+
+  @Value("${spring.cloud.servicecomb.config.serverType:}")
+  private String serverType;
+
   private String serverAddr;
 
   private Watch watch = new Watch();
@@ -100,6 +106,22 @@ public class ServiceCombConfigProperties {
 
   public void setVersion(String version) {
     this.version = version;
+  }
+
+  public String getEnv() {
+    return env;
+  }
+
+  public void setEnv(String env) {
+    this.env = env;
+  }
+
+  public String getServerType() {
+    return serverType;
+  }
+
+  public void setServerType(String serverType) {
+    this.serverType = serverType;
   }
 
   public static class Watch {

@@ -23,6 +23,8 @@ package com.huaweicloud.config.client;
  **/
 public class ConfigConstants {
 
+  public static final String DEFAULT_KIE_API_VERSION = "v1";
+
   public static final String DEFAULT_API_VERSION = "v3";
 
   public static final String DEFAULT_APP_SEPARATOR = "@";

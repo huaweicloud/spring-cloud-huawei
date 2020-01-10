@@ -1,5 +1,6 @@
 package com.huaweicloud.config.client;
 
+import com.huaweicloud.config.ServiceCombConfigProperties;
 import java.util.Map;
 
 import org.junit.Assert;
@@ -48,7 +49,11 @@ public class ServiceCombConfigClientTest {
       }
     };
     ServiceCombConfigClient serviceCombClient = new ServiceCombConfigClient(url, httpTransport);
-    Map<String, String> actual = serviceCombClient.loadAll("price@default#0.0.1", "default");
+    ServiceCombConfigProperties serviceCombConfigProperties = new ServiceCombConfigProperties();
+    serviceCombConfigProperties.setServiceName("price");
+    serviceCombConfigProperties.setAppName("default");
+    serviceCombConfigProperties.setVersion("0.0.1");
+    Map<String, String> actual = serviceCombClient.loadAll(serviceCombConfigProperties, "default");
     Assert.assertEquals(2, actual.size());
     Assert.assertEquals("dd", actual.get("ffd"));
     Assert.assertEquals("ss", actual.get("dd"));

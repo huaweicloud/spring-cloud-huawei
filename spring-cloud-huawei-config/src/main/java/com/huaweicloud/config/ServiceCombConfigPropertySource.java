@@ -49,7 +49,7 @@ public class ServiceCombConfigPropertySource extends EnumerablePropertySource<Se
       String project)
       throws RemoteOperationException {
     Map<String, String> remoteConfig = serviceCombConfigClient
-        .loadAll(QueryParamUtil.spliceDimensionsInfo(serviceCombConfigProperties), project);
+        .loadAll(serviceCombConfigProperties, project);
     properties.putAll(remoteConfig);
     return remoteConfig;
   }
