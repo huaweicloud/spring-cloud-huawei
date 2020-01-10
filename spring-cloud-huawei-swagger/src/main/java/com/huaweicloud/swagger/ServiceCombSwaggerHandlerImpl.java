@@ -125,7 +125,8 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
                 api.setConsumes(contentTypeList);
                 api.setProduces(contentTypeList);
                 api.setTags(Arrays.asList(className));
-              }));
+              })
+          );
         }
         swaggerMap.put(className, temSwagger);
       } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -164,16 +165,18 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   private void filterSwagger(Swagger temSwagger, String className) {
     Set<String> abandonedList = new HashSet<>();
     Set<String> methodFilter = new HashSet<>();
-    temSwagger.getPaths().forEach((k, v) -> v.getOperations().forEach(method -> {
-      String processOptId = method.getOperationId();
-      processOptId = processOptId.substring(0, processOptId.indexOf("Using"));
-      if (methodFilter.contains(processOptId)) {
-        abandonedList.add(k);
-        return;
-      }
-      methodFilter.add(processOptId);
-      method.setOperationId(processOptId);
-    }));
+    temSwagger.getPaths().forEach((k, v) ->
+        v.getOperations().forEach(method -> {
+          String processOptId = method.getOperationId();
+          processOptId = processOptId.substring(0, processOptId.indexOf("Using"));
+          if (methodFilter.contains(processOptId)) {
+            abandonedList.add(k);
+            return;
+          }
+          methodFilter.add(processOptId);
+          method.setOperationId(processOptId);
+        })
+    );
     //todo:exist some springCloud's default API,how to deal them?
     abandonedList.forEach(path -> {
       LOGGER.warn(
@@ -202,7 +205,9 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   }
 
   private void registerSwaggerAsync(String microserviceId, List<String> schemaIds) {
-    Executors.newSingleThreadExecutor().execute(() -> registerSwaggerSync(microserviceId, schemaIds));
+    Executors.newSingleThreadExecutor().execute(() ->
+        registerSwaggerSync(microserviceId, schemaIds)
+    );
   }
 
   /**
