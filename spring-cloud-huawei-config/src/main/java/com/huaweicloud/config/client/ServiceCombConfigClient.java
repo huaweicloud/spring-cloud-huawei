@@ -19,6 +19,7 @@ package com.huaweicloud.config.client;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.huaweicloud.common.transport.URLConfig;
+import com.huaweicloud.common.util.JsonUtils;
 import com.huaweicloud.common.util.URLUtil;
 import com.huaweicloud.config.ServiceCombConfigProperties;
 import com.huaweicloud.config.kie.KVBody;
@@ -33,7 +34,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
-import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.huaweicloud.common.exception.RemoteOperationException;

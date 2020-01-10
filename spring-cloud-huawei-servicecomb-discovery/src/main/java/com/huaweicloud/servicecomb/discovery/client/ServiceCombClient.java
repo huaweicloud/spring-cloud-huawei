@@ -22,6 +22,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 import com.huaweicloud.common.transport.URLConfig;
+import com.huaweicloud.common.util.JsonUtils;
 import com.huaweicloud.servicecomb.discovery.client.model.SchemaRequest;
 import java.io.IOException;
 import java.net.URI;
@@ -35,7 +36,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
-import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.DefaultServiceInstance;
@@ -359,7 +359,7 @@ public class ServiceCombClient {
   public void heartbeat(HeartbeatRequest heartbeatRequest) throws ServiceCombException {
     Response response = null;
     try {
-      String content = JsonUtils.writeValueAsString(heartbeatRequest);
+      String content = JsonUtils.OBJ_MAPPER.writeValueAsString(heartbeatRequest);
       StringEntity stringEntity = new StringEntity(content, "utf-8");
       response = httpTransport
           .sendPutRequest(buildURI("/registry/heartbeats"), stringEntity);
@@ -431,7 +431,7 @@ public class ServiceCombClient {
     try {
       String formatUrl = buildURI(
           "/registry/microservices/" + microserviceId + "/schemas/" + schemaId);
-      byte[] body = JsonUtils.writeValueAsBytes(request);
+      byte[] body = JsonUtils.OBJ_MAPPER.writeValueAsBytes(request);
       ByteArrayEntity byteArrayEntity = new ByteArrayEntity(body);
       response = httpTransport.sendPutRequest(formatUrl, byteArrayEntity);
       if (response.getStatusCode() == HttpStatus.SC_OK) {

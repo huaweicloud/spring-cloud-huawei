@@ -1,6 +1,7 @@
 package com.huaweicloud.router.client.header;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.huaweicloud.common.util.JsonUtils;
 import com.huaweicloud.router.client.track.RouterTrackContext;
 import com.huaweicloud.router.core.cache.RouterRuleCache;
 import com.netflix.config.DynamicPropertyFactory;
@@ -9,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
