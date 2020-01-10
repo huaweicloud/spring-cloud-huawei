@@ -78,11 +78,7 @@ public class ServiceCombServerList extends AbstractServerList<ServiceCombServer>
 
   private List<ServiceCombServer> transform(List<ServiceInstance> instanceList) {
     List<ServiceCombServer> serverList = new ArrayList<>();
-    if (null != instanceList) {
-      for (ServiceInstance instance : instanceList) {
-        serverList.add(new ServiceCombServer(instance.getHost(), instance.getPort()));
-      }
-    }
+    instanceList.forEach(instance -> serverList.add(new ServiceCombServer(instance.getHost(), instance.getPort())));
     return serverList;
   }
 }

@@ -18,6 +18,7 @@
 package com.huaweicloud.servicecomb.discovery.registry;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.cloud.client.ServiceInstance;
@@ -66,7 +67,7 @@ public class ServiceCombRegistration implements Registration, ServiceInstance {
 
   @Override//TODO
   public Map<String, String> getMetadata() {
-    return null;
+    return Collections.emptyMap();
   }
 
   public ServiceCombDiscoveryProperties getServiceCombDiscoveryProperties() {

@@ -18,6 +18,7 @@
 package com.huaweicloud.servicecomb.discovery.discovery;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -73,6 +74,6 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient {
     } catch (ServiceCombException e) {
       LOGGER.error("getServices failed", e);
     }
-    return null;
+    return serviceList;
   }
 }

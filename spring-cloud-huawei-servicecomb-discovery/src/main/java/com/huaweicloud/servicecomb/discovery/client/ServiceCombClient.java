@@ -82,7 +82,7 @@ public class ServiceCombClient {
     this.httpTransport = httpTransport;
     registryConfig.addUrl(URLUtil.getEnvServerURL());
     if (registryConfig.isEmpty()) {
-      registryConfig.addUrl(URLUtil.dealMutiUrl(urls));
+      registryConfig.addUrl(URLUtil.dealMultiUrl(urls));
     }
   }
 
@@ -118,11 +118,10 @@ public class ServiceCombClient {
             .readValue(response.getContent(), MicroserviceInstancesResponse.class);
         LOGGER.info("getServiceCenterInstances result=" + result);
         return result;
-      } else {
-        throw new RemoteOperationException(
-            "read response failed. status=" + response.getStatusCode() + ";mesage=" + response
-                .getStatusMessage());
       }
+      throw new RemoteOperationException(
+          "read response failed. status=" + response.getStatusCode() + ";message=" + response
+              .getStatusMessage());
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
     } catch (IOException e) {
@@ -159,7 +158,7 @@ public class ServiceCombClient {
         }
       } else {
         throw new RemoteOperationException(
-            "read response failed. status=" + response.getStatusCode() + ";mesage=" + response
+            "read response failed. status=" + response.getStatusCode() + ";message=" + response
                 .getStatusMessage());
       }
     } catch (URISyntaxException e) {
@@ -192,7 +191,7 @@ public class ServiceCombClient {
         return null;
       } else {
         throw new RemoteOperationException(
-            "read response failed. status=" + response.getStatusCode() + ";mesage=" + response
+            "read response failed. status=" + response.getStatusCode() + ";message=" + response
                 .getStatusMessage());
       }
     } catch (URISyntaxException e) {
@@ -229,7 +228,7 @@ public class ServiceCombClient {
       } else {
         throw new RemoteOperationException(
             "read response failed. url=" + formatUrl + "status=" + response.getStatusCode()
-                + ";mesage=" + response
+                + ";message=" + response
                 .getStatusMessage());
       }
     } catch (URISyntaxException e) {
@@ -261,7 +260,7 @@ public class ServiceCombClient {
       } else {
         throw new RemoteOperationException(
             "deRegister failed. url=" + formatUrl + "status=" + response.getStatusCode()
-                + ";mesage=" + response
+                + ";message=" + response
                 .getStatusMessage());
       }
     } catch (URISyntaxException e) {
@@ -308,7 +307,7 @@ public class ServiceCombClient {
             host = endpointURIBuilder.getHost();
           } else {
             throw new RemoteOperationException(
-                "read response failed. status=" + response.getStatusCode() + ";mesage=" + response
+                "read response failed. status=" + response.getStatusCode() + ";message=" + response
                     .getStatusMessage());
           }
           instanceList.add(
@@ -317,7 +316,7 @@ public class ServiceCombClient {
         }
       } else {
         throw new RemoteOperationException(
-            "read response failed. status=" + response.getStatusCode() + ";mesage=" + response
+            "read response failed. status=" + response.getStatusCode() + ";message=" + response
                 .getStatusMessage());
       }
     } catch (URISyntaxException e) {
@@ -342,7 +341,7 @@ public class ServiceCombClient {
             .readValue(response.getContent(), MicroserviceInstanceSingleResponse.class);
       } else {
         throw new RemoteOperationException(
-            "read response failed. status=" + response.getStatusCode() + ";mesage=" + response
+            "read response failed. status=" + response.getStatusCode() + ";message=" + response
                 .getStatusMessage());
       }
     } catch (URISyntaxException e) {
@@ -368,13 +367,13 @@ public class ServiceCombClient {
         LOGGER.info(" heartbeat success.");
       } else {
         throw new RemoteOperationException(
-            "read response failed. status=" + response.getStatusCode() + ";mesage=" + response
+            "read response failed. status=" + response.getStatusCode() + ";message=" + response
                 .getStatusMessage());
       }
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
     } catch (IOException e) {
-      handleRemoteOperationException(response, e);
+      throw new RemoteOperationException("read response failed. ", e);
     }
   }
 
@@ -391,12 +390,11 @@ public class ServiceCombClient {
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.info(" update instance status success.");
         return true;
-      } else {
-        throw new RemoteOperationException(
-            "update instance status failed. status=" + response.getStatusCode() + ";mesage="
-                + response
-                .getStatusMessage());
       }
+      throw new RemoteOperationException(
+          "update instance status failed. status=" + response.getStatusCode() + ";message="
+              + response
+              .getStatusMessage());
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
     }
@@ -413,7 +411,7 @@ public class ServiceCombClient {
         result = JsonUtils.OBJ_MAPPER.readValue(response.getContent(), MicroserviceResponse.class);
       } else {
         throw new RemoteOperationException(
-            "read response failed. status=" + response.getStatusCode() + ";mesage=" + response
+            "read response failed. status=" + response.getStatusCode() + ";message=" + response
                 .getStatusMessage());
       }
     } catch (URISyntaxException e) {
@@ -439,10 +437,9 @@ public class ServiceCombClient {
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.info("register schema {}/{} success.", microserviceId, schemaId);
         return true;
-      } else {
-        LOGGER.error("Register schema {}/{} failed.", microserviceId, schemaId);
-        return false;
       }
+      LOGGER.error("Register schema {}/{} failed.", microserviceId, schemaId);
+      return false;
     } catch (JsonProcessingException e) {
       LOGGER.error("registerSchema serialization failed : {}", e.getMessage());
     } catch (URISyntaxException e) {

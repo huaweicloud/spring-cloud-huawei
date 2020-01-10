@@ -21,6 +21,7 @@ import com.huaweicloud.common.transport.URLConfig;
 import com.huaweicloud.common.util.URLUtil;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,7 +50,7 @@ public class ServiceCombConfigClient {
     this.httpTransport = httpTransport;
     configCenterConfig.addUrl(URLUtil.getEnvConfigUrl());
     if (configCenterConfig.isEmpty()) {
-      configCenterConfig.addUrl(URLUtil.dealMutiUrl(urls));
+      configCenterConfig.addUrl(URLUtil.dealMultiUrl(urls));
     }
   }
 
@@ -93,14 +94,15 @@ public class ServiceCombConfigClient {
           }
         }
         return result;
-      } else if (response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
-        LOGGER.info(response.getStatusMessage());
-        return null;
-      } else {
-        throw new RemoteOperationException(
-            "read response failed. status=" + response.getStatusCode() + ";mesage=" + response
-                .getStatusMessage());
       }
+      if (response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
+        LOGGER.info(response.getStatusMessage());
+        return Collections.emptyMap();
+      }
+      throw new RemoteOperationException(
+          "read response failed. status=" + response.getStatusCode() + ";message=" + response
+              .getStatusMessage());
+
     } catch (RemoteServerUnavailableException e) {
       configCenterConfig.toggle();
       throw new RemoteOperationException("build url failed.", e);
