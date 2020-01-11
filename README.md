@@ -24,10 +24,17 @@ No need to change the code, just modify the individual configuration files(appli
 (Distributed Transaction Management, DTM) is a product that addresses consistency issues in a distributed environment.
 
 - [x] **Spring Cloud uses ServiceStage distributed configuration service:**
-Support for getting configuration from the server, and dynamic updates, following the way of Spring Cloud.
+Support for getting configuration from the CSE microservice engine /  ServiceComb kie, and dynamic updates, following the way of Spring Cloud.
 
 - [x] **Spring Cloud uses ServiceStage gray release service:**
 Support for gray release capabilities.
+
+- [x] **Spring Cloud registry swagger to server center :**
+Support automatic generated swagger documentation without configuration, and registry swagger to ServiceComb server center.
+
+- [x] **Spring Cloud registry networking with ServiceComb Java-Chassis / Edge-Service :**
+Support for use reactive framework ServiceComb Java-Chassis and gateway ServiceComb Edge-Service which have the better performance. 
+
 ## Components
 
  * [Apache-ServiceComb-Service-Center](https://github.com/apache/servicecomb-service-center)
@@ -35,7 +42,14 @@ Support for gray release capabilities.
  micro-services discovery and micro-service management. It is based on Open API format 
  and provides features like service-discovery, fault-tolerance, dynamic routing, 
  notify subscription and scalable by design. 
-
+ * [Apache-ServiceComb-Java-Chassis](https://github.com/apache/servicecomb-java-chassis)
+  It is a microservice framework based on vert. X and swagger management. 
+It adopts the thread model of reactive.
+It provides edge service for gateway, which is better than spring cloud 
+gateway and Netflix zuul in performance test.
+ * [Apache-ServiceComb-Kie](https://github.com/apache/servicecomb-kie)
+  It is a key value based registry, which supports user-defined tags 
+and provides version control and regression functions.
 
 ## Checking out and building
 
@@ -51,16 +65,46 @@ do the following:
 	mvn package  --settings .maven.settings.xml
 
 ## How to use
-Because spring-cloud-huawei has not been released to the public repository, if you want to use it, you need to download the code to build locally.
-    
-    mvn clean install  --settings .maven.settings.xml
+spring-cloud-huawei is released in Huawei cloud open source warehouse.You need to configure the local Maven configuration settings.xml file to set the private server
 
+1.add config in profiles。
+
+    <profile>
+        <id>MyProfile</id> 
+        <repositories>
+            <repository>
+                <id>HuaweiCloudSDK</id>
+                <url>https://mirrors.huaweicloud.com/repository/maven/huaweicloudsdk/</url>
+                <releases>
+                    <enabled>true</enabled>
+                </releases>
+                <snapshots>
+                    <enabled>false</enabled>
+                </snapshots>
+            </repository>
+        </repositories>
+    </profile>
+    
+2.add config in mirrors：
+
+    <mirror>
+        <id>huaweicloud</id>
+        <mirrorOf>*,!HuaweiCloudSDK</mirrorOf>
+        <url>https://mirrors.huaweicloud.com/repository/maven/</url>
+    </mirror>
+    
+3.add activeProfiles：
+
+    <activeProfiles>
+        <activeProfile>MyProfile</activeProfile>    //跟步骤1中的MyProfile保持一致
+    </activeProfiles> 
+    
 dependencyManagement can be used in projects to manage dependencies.
 
     <dependencyManagement>
       <dependencies>
         <dependency>
-          <groupId>org.springframework.cloud.huawei</groupId>
+          <groupId>com.huaweicloud</groupId>
           <artifactId>spring-cloud-huawei-dependencies</artifactId>
           <version>${project.version}</version>
           <type>pom</type>
@@ -68,10 +112,8 @@ dependencyManagement can be used in projects to manage dependencies.
         </dependency>
       </dependencies>
     </dependencyManagement>
-[more document](https://github.com/huaweicloud/spring-cloud-huawei/blob/master/docs/index.md)
+[more document](https://support.huaweicloud.com/devg-servicestage/cse_java_0054.html)
 
 ## RoadMap
-- [ ] Integrated openapi-swagger2.0
 - [ ] Support WebFlux
-- [ ] Integrated serivicecomb-kie
 - [ ] Integrated edge-service

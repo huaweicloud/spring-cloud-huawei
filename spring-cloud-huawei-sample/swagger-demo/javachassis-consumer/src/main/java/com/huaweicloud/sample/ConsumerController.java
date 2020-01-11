@@ -36,7 +36,7 @@ public class ConsumerController {
   private RestTemplate restTemplate = RestTemplateBuilder.create();
 
   ProviderService helloService = Invoker
-      .createProxy("swagger-provider", "provider-controller", ProviderService.class);
+      .createProxy("swagger-provider", "ProviderController", ProviderService.class);
 
   @GetMapping("/helloFooRT")
   public Foo fooHelloRT(@RequestParam("id") int id) {
