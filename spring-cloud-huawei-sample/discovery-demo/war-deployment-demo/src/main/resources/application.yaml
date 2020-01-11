@@ -1,0 +1,15 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: way
+  cloud:
+    servicecomb:
+      discovery:
+        enabled: true
+        #        multiple registries
+        address: http://127.0.0.1:30100
+        serviceName: way
+        version: 0.0.1
+        healthCheckInterval: 10
