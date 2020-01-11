@@ -23,11 +23,11 @@
     <jmockit.version>1.36</jmockit.version>
     <junit.version>4.12</junit.version>
     <cse-dependency.version>2.5.0</cse-dependency.version>
-    <servicecomb.version>1.2.1</servicecomb.version>
     <spring.version>5.1.8.RELEASE</spring.version>
     <dtm-client.version>1.0.2</dtm-client.version>
     <guava.version>27.0.1-jre</guava.version>
     <snakeyaml.version>1.24</snakeyaml.version>
+    <commons-configuration.version>1.10</commons-configuration.version>
   </properties>
 
   <dependencyManagement>
@@ -96,16 +96,6 @@
       </dependency>
 
       <!-- huawei parts -->
-      <dependency>
-        <groupId>org.apache.servicecomb</groupId>
-        <artifactId>foundation-common</artifactId>
-        <version>${servicecomb.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.huawei.paas.cse</groupId>
-        <artifactId>foundation-auth</artifactId>
-        <version>${cse-dependency.version}</version>
-      </dependency>
       <dependency>
         <groupId>com.huawei.paas.dtm</groupId>
         <artifactId>dtm-client</artifactId>
@@ -176,6 +166,16 @@
         <groupId>org.jmockit</groupId>
         <artifactId>jmockit</artifactId>
         <version>${jmockit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${jackson-databind.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-configuration</groupId>
+        <artifactId>commons-configuration</artifactId>
+        <version>${commons-configuration.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

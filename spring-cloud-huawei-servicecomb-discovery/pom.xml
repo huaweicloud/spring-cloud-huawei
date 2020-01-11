@@ -70,5 +70,9 @@
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-huawei-common</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
   </dependencies>
 </project>

@@ -20,7 +20,6 @@ package com.huaweicloud.servicecomb.discovery.registry;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.servicecomb.foundation.common.net.NetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.huaweicloud.common.util.NetUtil;
@@ -61,8 +60,8 @@ public class RegistryHandler {
     microserviceInstance.setServiceId(serviceID);
     microserviceInstance.setHostName(NetUtil.getLocalHost());
     List<String> endPoints = new ArrayList<>();
-    String address = NetUtils.getHostAddress();
-    endPoints.add("rest://" + address + ":" + serviceCombDiscoveryProperties.getPort());
+    endPoints.add("rest://" + serviceCombDiscoveryProperties.getAddress() + ":"
+        + serviceCombDiscoveryProperties.getPort());
     microserviceInstance.setEndpoints(endPoints);
     HealthCheck healthCheck = new HealthCheck();
     healthCheck.setMode(HealthCheckMode.PLATFORM);

@@ -17,10 +17,10 @@
 
 package com.huaweicloud.common.transport;
 
+import com.huaweicloud.common.auth.AuthHeaderUtils;
 import java.util.Map;
 
 import org.apache.http.client.methods.HttpUriRequest;
-import com.huawei.paas.foundation.auth.AuthHeaderUtils;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -55,8 +55,7 @@ public class DealHeaderUtil {
 
   public static void addAKSKHeader(HttpUriRequest httpRequest,
       ServiceCombAkSkProperties serviceCombAkSkProperties) {
-    AuthHeaderUtils authHeaderUtils = AuthHeaderUtils.getInstance();
-    Map<String, String> headerMap = authHeaderUtils.genAuthHeaders();
+    Map<String, String> headerMap = AuthHeaderUtils.genAuthHeaders();
     if ((serviceCombAkSkProperties == null || serviceCombAkSkProperties.isAkSkEmpty())
         && !CollectionUtils.isEmpty(headerMap)) {
       httpRequest.addHeader(X_SERVICE_AK, headerMap.get(X_SERVICE_AK));

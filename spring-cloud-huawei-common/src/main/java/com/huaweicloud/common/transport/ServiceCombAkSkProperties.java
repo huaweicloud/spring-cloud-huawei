@@ -17,6 +17,9 @@
 
 package com.huaweicloud.common.transport;
 
+import com.huaweicloud.common.util.SecretUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -28,6 +31,9 @@ import org.springframework.util.StringUtils;
 @Component
 @ConfigurationProperties("spring.cloud.servicecomb.credentials")
 public class ServiceCombAkSkProperties {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombAkSkProperties.class);
+
   //dummy value for throw exception and notice
   private String enable;
 
@@ -37,7 +43,7 @@ public class ServiceCombAkSkProperties {
 
   private String secretKey;
 
-  private String akskCustomCipher;
+  private String akskCustomCipher = "default";
 
   private String project;
 
@@ -58,7 +64,15 @@ public class ServiceCombAkSkProperties {
   }
 
   public String getSecretKey() {
-    return secretKey;
+    if ("ShaAKSKCipher".equalsIgnoreCase(this.akskCustomCipher)) {
+      return this.secretKey;
+    }
+    try {
+      return SecretUtil.sha256Encode(this.secretKey, this.accessKey);
+    } catch (Exception e) {
+      LOGGER.error(e.getMessage(), e);
+      return null;
+    }
   }
 
   public void setSecretKey(String secretKey) {
