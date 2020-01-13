@@ -45,7 +45,7 @@ Support for use reactive framework ServiceComb Java-Chassis and gateway ServiceC
  * [Apache-ServiceComb-Java-Chassis](https://github.com/apache/servicecomb-java-chassis)
   It is a microservice framework based on vert. X and swagger management. 
 It adopts the thread model of reactive.
-It provides edge service for gateway, which is better than spring cloud 
+It provides [edge-service](https://support.huaweicloud.com/bestpractice-servicestage/servicestage_bestpractice_0111.html) for gateway, which is better than spring cloud 
 gateway and Netflix zuul in performance test.
  * [Apache-ServiceComb-Kie](https://github.com/apache/servicecomb-kie)
   It is a key value based registry, which supports user-defined tags 

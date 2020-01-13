@@ -40,7 +40,7 @@
   它基于Open API规范并提供服务发现、容错、动态路由、订阅和可扩展设计等功能。
  * [Apache-ServiceComb-Java-Chassis](https://github.com/apache/servicecomb-java-chassis)
   是一个基于Vert.x和swagger管理的微服务框架，采用Reactive的线程模型。
-  提供网关Edge-Service，在性能测试中性能优于spring cloud gateway和netflix zuul。
+  提供网关[Edge-Service](https://support.huaweicloud.com/bestpractice-servicestage/servicestage_bestpractice_0111.html)，在性能测试中性能优于spring cloud gateway和netflix zuul。
  * [Apache-ServiceComb-Kie](https://github.com/apache/servicecomb-kie)
   是一个基于key value的注册中心，支持自定义标签，提供版本控制、回归功能。
 
