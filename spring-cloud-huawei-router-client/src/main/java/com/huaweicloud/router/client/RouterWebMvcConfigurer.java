@@ -36,6 +36,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class RouterWebMvcConfigurer implements WebMvcConfigurer {
 
+  @Autowired
+  RouterHandlerInterceptor routerHandlerInterceptor;
+
   @Bean
   public RouterRestTemplateIntercptor routerClientHttpRequestIntercptor(
       @Autowired(required = false) @LoadBalanced List<RestTemplate> restTemplates) {
@@ -50,9 +53,9 @@ public class RouterWebMvcConfigurer implements WebMvcConfigurer {
   public RouterHystrixConcurrencyStrategy routerHystrixConcurrencyStrategy() {
     return new RouterHystrixConcurrencyStrategy();
   }
-
+  
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(new RouterHandlerInterceptor()).addPathPatterns("/**");
+    registry.addInterceptor(routerHandlerInterceptor).addPathPatterns("/**");
   }
 }

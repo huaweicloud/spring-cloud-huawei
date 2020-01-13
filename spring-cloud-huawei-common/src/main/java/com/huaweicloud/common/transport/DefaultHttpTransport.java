@@ -84,7 +84,6 @@ public class DefaultHttpTransport implements HttpTransport {
     // construct httpClient
     // delete before code : setSSLHostnameVerifier(hostnameVerifier)
     HttpClientBuilder httpClientBuilder = HttpClientBuilder.create().
-        setSSLSocketFactory(new SSLConnectionSocketFactory(sslContext)).
         setDefaultRequestConfig(config).
         setConnectionManager(connectionManager).
         disableCookieManagement();
