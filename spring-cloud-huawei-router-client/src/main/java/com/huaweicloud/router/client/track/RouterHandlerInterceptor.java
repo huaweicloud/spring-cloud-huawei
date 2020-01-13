@@ -35,7 +35,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
  **/
 public class RouterHandlerInterceptor implements HandlerInterceptor {
 
-  @Autowired
+  @Autowired(required = false)
   private List<RouterHeaderFilterExt> filters;
 
   @Override
