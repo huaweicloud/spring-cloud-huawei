@@ -14,31 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.huaweicloud.dtm.consumer.feign;
-
-import static org.junit.Assert.assertNotNull;
+package com.huaweicloud.swagger;
 
 import org.junit.Test;
-import com.huaweicloud.dtm.util.DtmConstants;
-
-import com.huawei.middleware.dtm.client.context.DTMContext;
-
-import feign.RequestTemplate;
 
 /**
- * @Author wangqijun
- * @Date 10:52 2019-09-29
+ * @Author GuoYl123
+ * @Date 2019/12/30
  **/
-public class DtmRequestInterceptorTest {
-
+public class SwaggerTest {
   @Test
-  public void apply() {
-    DtmRequestInterceptor dtmRequestInterceptor = new DtmRequestInterceptor();
-    RequestTemplate template = new RequestTemplate();
-    DTMContext dtmContext = DTMContext.getDTMContext();
-    dtmContext.setGlobalTxId(100);
-    dtmRequestInterceptor.apply(template);
-    assertNotNull(template.header(DtmConstants.DTM_CONTEXT));
+  public void mainProcess() {
+    // 手动加入bean到spring mvc容器
+
   }
 }
