@@ -16,6 +16,18 @@ commercial such as Huawei Cloud
 No need to change the code, just modify the individual configuration files(application.yml) to complete the migration.
 Multiple Service-Centers can be launched and the client will select one of the healthy Service-Centers to make the call.
 
+- [x] **Spring Cloud use ServiceStage gray release service:**
+Support for gray release capabilities.
+
+- [x] **Spring Cloud registry swagger to server center :**
+Support automatic generated swagger documentation without configuration, and registry swagger to ServiceComb server center.
+
+- [x] **Spring Cloud registry networking with ServiceComb Java-Chassis / Edge-Service :**
+Support for use reactive framework ServiceComb Java-Chassis and gateway ServiceComb Edge-Service which have the better performance. 
+
+- [x] **Spring Cloud use ServiceComb-Kie。 :**
+Support for getting configuration from ServiceComb-Kie, and dynamic updates, following the way of Spring Cloud.
+
 ### Huawei Cloud
 - [x] **Spring Cloud use ServiceStage to implement registration and discovery:**
 No need to change the code, just modify the individual configuration files(application.yml) to complete the migration.
@@ -24,16 +36,7 @@ No need to change the code, just modify the individual configuration files(appli
 (Distributed Transaction Management, DTM) is a product that addresses consistency issues in a distributed environment.
 
 - [x] **Spring Cloud uses ServiceStage distributed configuration service:**
-Support for getting configuration from the CSE microservice engine /  ServiceComb kie, and dynamic updates, following the way of Spring Cloud.
-
-- [x] **Spring Cloud uses ServiceStage gray release service:**
-Support for gray release capabilities.
-
-- [x] **Spring Cloud registry swagger to server center :**
-Support automatic generated swagger documentation without configuration, and registry swagger to ServiceComb server center.
-
-- [x] **Spring Cloud registry networking with ServiceComb Java-Chassis / Edge-Service :**
-Support for use reactive framework ServiceComb Java-Chassis and gateway ServiceComb Edge-Service which have the better performance. 
+Support for getting configuration from the CSE microservice engine, and dynamic updates, following the way of Spring Cloud.
 
 ## Components
 
@@ -62,7 +65,7 @@ do the following:
 
 	git clone https://github.com/huaweicloud/spring-cloud-huawei.git
 	cd spring-cloud-huawei
-	mvn package  --settings .maven.settings.xml
+	mvn install  --settings .maven.settings.xml
 
 ## How to use
 spring-cloud-huawei is released in Huawei cloud open source warehouse.You need to configure the local Maven configuration settings.xml file to set the private server

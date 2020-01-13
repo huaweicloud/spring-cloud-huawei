@@ -13,6 +13,18 @@
 只需要修改配置文件(application.yml)即可实现对接。
 可以启动多个注册中心，客户端会选择其中一个健康的注册中心进行调用。
 
+- [x] **Spring Cloud 使用ServiceStage灰度发布服务：**
+支持灰度发布能力。
+
+- [x] **Spring Cloud 支持生成swagger契约接口信息 :**
+无需配置即可生成swagger契约并注册到 ServiceComb server center注册中心。
+
+- [x] **Spring Cloud 与 ServiceComb Java-Chassis / Edge-Service 应用组网:**
+支持与微服务框架ServiceComb Java-Chassis组网，使用ServiceComb Edge-Service网关，体验reactive带来的性能提升。
+
+- [x] **Spring Cloud 使用 ServiceComb-Kie。 :**
+支持从ServiceComb-Kie获取配置，动态更新。
+
 ### 华为云
 
 - [x] **Spring Cloud 使用ServiceStage注册中心实现注册发现：**
@@ -23,16 +35,7 @@
 
 - [x] **Spring Cloud 使用ServiceStage分布式配置服务：**
 支持从华为云微服务引擎服务端获取配置，动态更新。
-支持对接ServiceComb Kie。 
 
-- [x] **Spring Cloud 使用ServiceStage灰度发布服务：**
-支持灰度发布能力。
-
-- [x] **Spring Cloud 支持生成swagger契约接口信息 :**
-无需配置即可生成swagger契约并注册到 ServiceComb server center注册中心。
-
-- [x] **Spring Cloud 与 ServiceComb Java-Chassis / Edge-Service 应用组网:**
-支持与微服务框架ServiceComb Java-Chassis组网，使用ServiceComb Edge-Service网关，体验reactive带来的性能提升。
 ## 组件
 
  * [Apache-ServiceComb-Service-Center](https://github.com/apache/servicecomb-service-center)
@@ -54,7 +57,7 @@
 
 	git clone https://github.com/huaweicloud/spring-cloud-huawei.git
 	cd spring-cloud-huawei
-	mvn package  --settings .maven.settings.xml
+	mvn install  --settings .maven.settings.xml
 
 ## 如何使用
 spring-cloud-huawei发布在华为云开源仓库，需要配置本地maven配置settings.xml文件设置私服。
