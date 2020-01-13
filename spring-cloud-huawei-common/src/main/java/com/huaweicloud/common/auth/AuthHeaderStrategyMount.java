@@ -1,7 +1,6 @@
 package com.huaweicloud.common.auth;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.huaweicloud.common.util.JsonUtils;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,6 +10,7 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

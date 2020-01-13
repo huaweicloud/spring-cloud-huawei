@@ -47,17 +47,6 @@ public class NetUtil {
     return null;
   }
 
-  public static String getLocalIPAddress() {
-    InetAddress address;
-    try {
-      address = InetAddress.getLocalHost();
-      return address.getHostAddress();
-    } catch (UnknownHostException e) {
-      LOGGER.error(e.getMessage(), e);
-    }
-    return null;
-  }
-
   public static Integer getPort(String url) {
     URIBuilder endpointURIBuilder = null;
     Integer port;
