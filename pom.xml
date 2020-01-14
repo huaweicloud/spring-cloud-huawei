@@ -28,7 +28,7 @@
 
   <groupId>com.huaweicloud</groupId>
   <artifactId>spring-cloud-huawei</artifactId>
-  <version>0.0.3</version>
+  <version>1.0.0</version>
   <packaging>pom</packaging>
   <name>Spring Cloud Huawei</name>
 
@@ -40,31 +40,64 @@
     <module>spring-cloud-huawei-parents</module>
     <module>spring-cloud-huawei-common</module>
     <module>spring-cloud-huawei-servicecomb-discovery</module>
-    <module>spring-cloud-huawei-sample</module>
+<!--    <module>spring-cloud-huawei-sample</module>-->
     <module>spring-cloud-starter-huawei</module>
     <module>spring-cloud-huawei-dtm</module>
     <module>spring-cloud-huawei-config</module>
     <module>spring-cloud-huawei-router-core</module>
     <module>spring-cloud-huawei-router-client</module>
     <module>spring-cloud-huawei-swagger</module>
-    <module>export-maven</module>
   </modules>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://github.com/huaweicloud/spring-cloud-huawei</url>
+    <connection>scm:git:git://github.com/huaweicloud/spring-cloud-huawei.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/huaweicloud/spring-cloud-huawei.git
+    </developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
+
 
   <profiles>
     <profile>
-      <id>cse</id>
-      <repositories>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.5</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+      <distributionManagement>
+        <snapshotRepository>
+          <id>oss</id>
+          <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
         <repository>
-          <id>HuaweiCloudSDK</id>
-          <url>https://mirrors.huaweicloud.com/repository/maven/huaweicloudsdk/</url>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
+          <id>oss</id>
+          <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
-      </repositories>
+      </distributionManagement>
     </profile>
   </profiles>
 </project>

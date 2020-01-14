@@ -10,7 +10,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.huaweicloud</groupId>
   <artifactId>spring-cloud-huawei-sample</artifactId>
-  <version>0.0.3</version>
+  <version>1.0.0</version>
   <packaging>pom</packaging>
   <modules>
     <module>dtm-demo</module>
