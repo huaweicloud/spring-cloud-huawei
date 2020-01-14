@@ -9,45 +9,29 @@
 此框架的目的是为了让spring cloud 和华为的框架更好的融合在一起。
 包括开源的框架和商业的框架，开源的如[Apache ServiceComb](http://servicecomb.apache.org)
 ，商业的如华为云[ServiceStage](https://www.huaweicloud.com/product/servicestage.html)。
-## 功能特性
-### 开源
-- [x] **Spring Cloud 使用 ServiceComb-Service-Center 实现注册和发现:**
-只需要修改配置文件(application.yml)即可实现对接。
-可以启动多个注册中心，客户端会选择其中一个健康的注册中心进行调用。
+## 功能模块
 
-- [x] **Spring Cloud 使用ServiceStage灰度发布服务：**
-支持灰度发布能力。
+ * **spring-cloud-starter-huawei-servicecomb-discovery:**
+     * 对接华为云微服务引擎/[ServiceComb-Service-Center](https://github.com/apache/servicecomb-service-center)
+ :一个基于Restful的提供微服务发现和微服务治理的服务注册中心，它基于Open API规范并提供服务发现、容错、动态路由、订阅和可扩展设计等功能。
+ 支持多环境、多维度管理，多注册中心配置。
 
-- [x] **Spring Cloud 支持生成swagger契约接口信息 :**
-无需配置即可生成swagger契约并注册到 ServiceComb server center注册中心。
+ * **spring-cloud-starter-huawei-config:**
+     * 对接华为云微服务引擎，进行配置管理，支持多环境、动态配置、全局配置、优先级多维度配置下发。
+     * 对接[ServiceComb-Kie](https://github.com/apache/servicecomb-kie)，Kie是一个基于key-value的配置中心，支持历史版本、标签管理。
 
-- [x] **Spring Cloud 与 ServiceComb Java-Chassis / Edge-Service 应用组网:**
-支持与微服务框架ServiceComb Java-Chassis组网，使用ServiceComb Edge-Service网关，体验reactive带来的性能提升。
+ * **spring-cloud-starter-huawei-dtm:**
+     * 对接华为云分布式事务引擎DTM，解决分布式环境下事务一致性问题。
 
-- [x] **Spring Cloud 使用 ServiceComb-Kie。 :**
-支持从ServiceComb-Kie获取配置，动态更新。
+ * **spring-cloud-starter-huawei-router:**
+     * 路由管理模块，通过配置实现灰度发布、金丝雀发布、流量分配管理，支持匹配http header、比例分配流量。
 
-### 华为云
-
-- [x] **Spring Cloud 使用ServiceStage注册中心实现注册发现：**
-只需要修改配置文件(application.yml)即可实现对接。
-
-- [x] **Spring Cloud 使用ServiceStage分布式事务DTM：**
-（Distributed Transaction Management，DTM）是一款用于解决分布式环境下事务一致性问题的产品。
-
-- [x] **Spring Cloud 使用ServiceStage分布式配置服务：**
-支持从华为云微服务引擎服务端获取配置，动态更新。
-
-## 组件
-
- * [Apache-ServiceComb-Service-Center](https://github.com/apache/servicecomb-service-center)
-  是一个基于Restful的提供微服务发现和微服务治理的服务注册中心。
-  它基于Open API规范并提供服务发现、容错、动态路由、订阅和可扩展设计等功能。
- * [Apache-ServiceComb-Java-Chassis](https://github.com/apache/servicecomb-java-chassis)
-  是一个基于Vert.x和swagger管理的微服务框架，采用Reactive的线程模型。
-  提供网关[Edge-Service](https://support.huaweicloud.com/bestpractice-servicestage/servicestage_bestpractice_0111.html)，在性能测试中性能优于spring cloud gateway和netflix zuul。
- * [Apache-ServiceComb-Kie](https://github.com/apache/servicecomb-kie)
-  是一个基于key value的注册中心，支持自定义标签，提供版本控制、回归功能。
+ * **spring-cloud-starter-huawei-swagger:**
+     * 基于代码零配置自动生成swagger接口契约，自动注册到Service-Center注册中心进行接口文档化管理。
+     * 基于契约与微服务框架[ServiceComb-Java-Chassis](https://github.com/apache/servicecomb-java-chassis)组网。
+     * 使用[Edge-Service](https://support.huaweicloud.com/bestpractice-servicestage/servicestage_bestpractice_0111.html)网关，
+ [表现](https://github.com/AngLi2/api-gateway-benchmark/blob/master/Spring%20Cloud%20Gateway%2C%20Zuul%2C%20Edge%20Service%20%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94.md)
+ 优于spring cloud gateway和netflix zuul，体验reactive带来的性能提升。
 
 ## 构建代码
 
@@ -109,6 +93,7 @@ spring-cloud-huawei发布在华为云开源仓库，需要配置本地maven配�
         </dependency>
       </dependencies>
     </dependencyManagement>
+    
 [更多文档](https://support.huaweicloud.com/devg-servicestage/cse_java_0054.html)
 
 ## 开发路径

@@ -12,49 +12,36 @@ open source such as
 [Apache ServiceComb](http://servicecomb.apache.org), 
 commercial such as Huawei Cloud 
 [ServiceStage](https://www.huaweicloud.com/product/servicestage.html).
-## Features
-### open source
-- [x] **Spring Cloud use ServiceComb-Service-Center to implement registration and discovery:**
-No need to change the code, just modify the individual configuration files(application.yml) to complete the migration.
-Multiple Service-Centers can be launched and the client will select one of the healthy Service-Centers to make the call.
+## Modules
 
-- [x] **Spring Cloud use ServiceStage gray release service:**
-Support for gray release capabilities.
+ * **spring-cloud-starter-huawei-servicecomb-discovery:**
+     * Support for use HuaweiCloud CSE/[ServiceComb-Service-Center](https://github.com/apache/servicecomb-service-center)
+   :is a Restful based service-registry that provides 
+   micro-services discovery and micro-service management. It is based on Open API format 
+   and provides features like service-discovery, fault-tolerance, dynamic routing, 
+   notify subscription and scalable by design.
+   Support multi-environment, multi-dimensional management and multi-registry configuration
 
-- [x] **Spring Cloud registry swagger to server center :**
-Support automatic generated swagger documentation without configuration, and registry swagger to ServiceComb server center.
+ * **spring-cloud-starter-huawei-config:**
+     * Connect with HuaweiCloud CSE for configuration management. 
+     Support multi environment, dynamic configuration, global configuration and
+      priority multi-dimensional configuration distribution.
+     * Support [ServiceComb-Kie](https://github.com/apache/servicecomb-kie),
+      KIE is a key value based configuration center that supports historical version and label management.
+ 
+ * **spring-cloud-starter-huawei-dtm:**
+     * Support for use HuaweiCloud DTM(Distributed Transaction Management),it resolve consistency issues in a distributed environment.
 
-- [x] **Spring Cloud registry networking with ServiceComb Java-Chassis / Edge-Service :**
-Support for use reactive framework ServiceComb Java-Chassis and gateway ServiceComb Edge-Service which have the better performance. 
-
-- [x] **Spring Cloud use ServiceComb-Kie。 :**
-Support for getting configuration from ServiceComb-Kie, and dynamic updates, following the way of Spring Cloud.
-
-### Huawei Cloud
-- [x] **Spring Cloud use ServiceStage to implement registration and discovery:**
-No need to change the code, just modify the individual configuration files(application.yml) to complete the migration.
-
-- [x] **Spring Cloud use ServiceStage to implement Distributed Transaction:**
-(Distributed Transaction Management, DTM) is a product that addresses consistency issues in a distributed environment.
-
-- [x] **Spring Cloud uses ServiceStage distributed configuration service:**
-Support for getting configuration from the CSE microservice engine, and dynamic updates, following the way of Spring Cloud.
-
-## Components
-
- * [Apache-ServiceComb-Service-Center](https://github.com/apache/servicecomb-service-center)
-  is a Restful based service-registry that provides 
- micro-services discovery and micro-service management. It is based on Open API format 
- and provides features like service-discovery, fault-tolerance, dynamic routing, 
- notify subscription and scalable by design. 
- * [Apache-ServiceComb-Java-Chassis](https://github.com/apache/servicecomb-java-chassis)
-  It is a microservice framework based on vert. X and swagger management. 
-It adopts the thread model of reactive.
-It provides [edge-service](https://support.huaweicloud.com/bestpractice-servicestage/servicestage_bestpractice_0111.html) for gateway, which is better than spring cloud 
-gateway and Netflix zuul in performance test.
- * [Apache-ServiceComb-Kie](https://github.com/apache/servicecomb-kie)
-  It is a key value based registry, which supports user-defined tags 
-and provides version control and regression functions.
+ * **spring-cloud-starter-huawei-router:**
+     * The routing management module , for gray release,canary release by config, 
+ it supports matching HTTP header and proportional traffic distribution.
+ 
+ * **spring-cloud-starter-huawei-swagger:**
+     * Automatically generate swagger document with zero-code,
+      and register to the server-center for interface documentation management.
+     * Networking with [ServiceComb-Java-Chassis](https://github.com/apache/servicecomb-java-chassis) based swagger.
+     * Using [Edge-Service](https://support.huaweicloud.com/bestpractice-servicestage/servicestage_bestpractice_0111.html) gateway，
+ Better performance than spring cloud gateway and netflix zuul.
 
 ## Checking out and building
 
@@ -117,6 +104,7 @@ dependencyManagement can be used in projects to manage dependencies.
         </dependency>
       </dependencies>
     </dependencyManagement>
+    
 [more document](https://support.huaweicloud.com/devg-servicestage/cse_java_0054.html)
 
 ## RoadMap
