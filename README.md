@@ -51,55 +51,15 @@ commercial such as Huawei Cloud
      * Using [Edge-Service](https://support.huaweicloud.com/bestpractice-servicestage/servicestage_bestpractice_0111.html) gateway，
  Better performance than spring cloud gateway and netflix zuul.
 
-## Checking out and building
+## How to use
+spring-cloud-huawei has been released in Maven's central repository.
 
-
-Requirements：
+Dependent component version：
 * Spring Cloud ：2.1.2.RELEASE
+* Spring Boot ：2.1.6.RELEASE
 * JDK ：1.8 +
 
-do the following:
-
-	git clone https://github.com/huaweicloud/spring-cloud-huawei.git
-	cd spring-cloud-huawei
-	mvn install  --settings .maven.settings.xml
-
-## How to use
-spring-cloud-huawei is released in Huawei cloud open source warehouse.You need to configure the local Maven configuration settings.xml file to set the private server
-
-1.add config in profiles。
-
-    <profile>
-        <id>MyProfile</id> 
-        <repositories>
-            <repository>
-                <id>HuaweiCloudSDK</id>
-                <url>https://mirrors.huaweicloud.com/repository/maven/huaweicloudsdk/</url>
-                <releases>
-                    <enabled>true</enabled>
-                </releases>
-                <snapshots>
-                    <enabled>false</enabled>
-                </snapshots>
-            </repository>
-        </repositories>
-    </profile>
-    
-2.add config in mirrors：
-
-    <mirror>
-        <id>huaweicloud</id>
-        <mirrorOf>*,!HuaweiCloudSDK</mirrorOf>
-        <url>https://mirrors.huaweicloud.com/repository/maven/</url>
-    </mirror>
-    
-3.add activeProfiles：
-
-    <activeProfiles>
-        <activeProfile>MyProfile</activeProfile>    //跟步骤1中的MyProfile保持一致
-    </activeProfiles> 
-    
-dependencyManagement can be used in projects to manage dependencies.
+Use dependencyManagement to manage dependencies.
 
     <dependencyManagement>
       <dependencies>
@@ -113,8 +73,15 @@ dependencyManagement can be used in projects to manage dependencies.
       </dependencies>
     </dependencyManagement>
     
+        
+introduce starter.
+
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-huawei-servicecomb-discovery</artifactId>
+    </dependency>
+    
 [more document](https://support.huaweicloud.com/devg-servicestage/cse_java_0054.html)
 
 ## RoadMap
 - [ ] Support WebFlux
-- [ ] Integrated edge-service

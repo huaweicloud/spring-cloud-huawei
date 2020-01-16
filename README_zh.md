@@ -41,54 +41,15 @@
  [表现](https://github.com/AngLi2/api-gateway-benchmark/blob/master/Spring%20Cloud%20Gateway%2C%20Zuul%2C%20Edge%20Service%20%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94.md)
  优于spring cloud gateway和netflix zuul，体验reactive带来的性能提升。
 
-## 构建代码
+## 如何使用
+spring-cloud-huawei已发布在maven中央仓库。
 
 依赖的版本：
 * Spring Cloud ：2.1.2.RELEASE
+* Spring Boot ：2.1.6.RELEASE
 * JDK ：1.8 +
 
-运行如下命令:
-
-	git clone https://github.com/huaweicloud/spring-cloud-huawei.git
-	cd spring-cloud-huawei
-	mvn install  --settings .maven.settings.xml
-
-## 如何使用
-spring-cloud-huawei发布在华为云开源仓库，需要配置本地maven配置settings.xml文件设置私服。
-    
-1.profiles中增加如下配置。
-
-    <profile>
-        <id>MyProfile</id> 
-        <repositories>
-            <repository>
-                <id>HuaweiCloudSDK</id>
-                <url>https://mirrors.huaweicloud.com/repository/maven/huaweicloudsdk/</url>
-                <releases>
-                    <enabled>true</enabled>
-                </releases>
-                <snapshots>
-                    <enabled>false</enabled>
-                </snapshots>
-            </repository>
-        </repositories>
-    </profile>
-    
-2.在mirrors节点中增加：
-
-    <mirror>
-        <id>huaweicloud</id>
-        <mirrorOf>*,!HuaweiCloudSDK</mirrorOf>
-        <url>https://mirrors.huaweicloud.com/repository/maven/</url>
-    </mirror>
-    
-3.新增activeProfiles配置：
-
-    <activeProfiles>
-        <activeProfile>MyProfile</activeProfile>    //跟步骤1中的MyProfile保持一致
-    </activeProfiles> 
-    
-项目中可以使用dependencyManagement引入依赖。
+使用dependencyManagement引入依赖。
 
     <dependencyManagement>
       <dependencies>
@@ -102,9 +63,15 @@ spring-cloud-huawei发布在华为云开源仓库，需要配置本地maven配�
       </dependencies>
     </dependencyManagement>
     
+引入相应starter。
+
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-huawei-servicecomb-discovery</artifactId>
+    </dependency>
+    
 [更多文档](https://support.huaweicloud.com/devg-servicestage/cse_java_0054.html)
 
 ## 开发路径
 - [ ] 支持WebFlux
-- [ ] 集成servicecomb的APIGateway
 
