@@ -1,6 +1,6 @@
 #!/bin/bash
 
-JAR=canary-provider-beta-0.0.3.jar
+JAR=canary-provider-beta-1.0.0.jar
 if [ ! -e $JAR ]; then
     JAR=target/$JAR
     if [ -e application.yaml ]; then
