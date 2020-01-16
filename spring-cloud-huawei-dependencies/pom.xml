@@ -5,14 +5,14 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-huawei</artifactId>
-    <version>0.0.3</version>
+    <version>1.0.0</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>spring-cloud-huawei-dependencies</artifactId>
   <packaging>pom</packaging>
-  <version>0.0.3</version>
+  <version>1.0.0</version>
   <name>Spring Cloud Huawei Dependencies</name>
   <properties>
     <spring-cloud.version>2.1.2.RELEASE</spring-cloud.version>
