@@ -15,10 +15,10 @@ commercial such as Huawei Cloud
 [ServiceStage](https://www.huaweicloud.com/product/servicestage.html).
 
 ### Why use
- 1. Use routing management module to Blue-green Deployments and Canary Releases。
- 2. Use [ServiceComb-Mesher](https://github.com/apache/servicecomb-mesher), it's an implementation of Service mesh，multi language  governance and little performance loss。 
- 3. Automatically generate the swagger document of swagger that meet open API specification, agile development。
- 4. Use Edge service, a reactive high-performance gateway, outperforms than spring cloud gateway and Netflix zuul。
+ 1. Apply Blue-green Deployments and Canary Releases to your spring cloud application。
+ 2. Apply multilingual paradigm to your microservice system by using [mesher](https://github.com/apache/servicecomb-mesher), an implementation of service mesh
+ 3. Automatically generate a document, which follow open API specification, and register it to service registry, so that members of team can view and download API doc in unified service.
+ 4. Developer is able to use Edge service, a high-performance gateway which benifits from reactive, outperforms than spring cloud gateway and Netflix zuul。
 
 ## Modules
 
