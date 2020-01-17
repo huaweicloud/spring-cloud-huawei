@@ -13,9 +13,12 @@
 
 ### 为什么使用
  1. 提供路由管理功能，对应用进行蓝绿部署、灰度发布。
- 2. Service mesh的实现[ServiceComb-Mesher](https://github.com/apache/servicecomb-mesher)服务网格组网，提供多语言治理价值、性能损失小。
- 3. 自动生成open-api规范的swagger契约文档，敏捷开发。
- 4. 使用reactive线程模型的高性能网关edge-service，表现优于spring cloud gateway和netflix zuul。
+ 2. 自动生成open-api规范的swagger契约文档，并注册到注册中心，以便统一查看、下载API文档。
+ 3. 与Apache ServiceComb的生态体系结合：
+     - 使用reactive线程模型的高性能网关edge-service，表现优于spring cloud gateway和netflix zuul。
+     - 利用[ServiceComb-Mesher](https://github.com/apache/servicecomb-mesher)实现多语言构建的微服务系统，mesher是service mesh的一种实现。
+     - go语言微服务框架 [go-chassis](https://github.com/go-chassis/go-chassis)。
+
 
 ## 功能模块
 
