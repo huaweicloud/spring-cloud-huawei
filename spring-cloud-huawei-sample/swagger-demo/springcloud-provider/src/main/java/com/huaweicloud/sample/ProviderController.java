@@ -16,9 +16,11 @@
  */
 package com.huaweicloud.sample;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * @Author GuoYl123
@@ -26,6 +28,9 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @RestController
 public class ProviderController {
+
+  @Autowired
+  RestTemplate restTemplate;
 
   @GetMapping("/foo")
   public Foo foo(@RequestParam("id") int id) {
@@ -40,5 +45,11 @@ public class ProviderController {
   @GetMapping("/int")
   public int intTest() {
     return 123;
+  }
+
+  @GetMapping("/invoke")
+  public String invoke() {
+    return restTemplate
+        .getForObject("http://swagger-consumer/consumer/invoke",String.class);
   }
 }

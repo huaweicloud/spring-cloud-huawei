@@ -62,4 +62,9 @@ public class ConsumerController {
   public int intTest() {
     return helloService.intTest();
   }
+
+  @GetMapping("/invoke")
+  public String invoke() {
+    return "hello";
+  }
 }
