@@ -11,7 +11,7 @@ cse:
         watch: false
   config:
     client:
-      serverUri: http://127.0.0.1:30113
+      serverUri: http://127.0.0.1:30103
       refreshMode: 1
       refresh_interval: 5000
   rest:
