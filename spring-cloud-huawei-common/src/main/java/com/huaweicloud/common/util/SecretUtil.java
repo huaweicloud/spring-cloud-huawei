@@ -97,7 +97,8 @@ public class SecretUtil {
       String keyStoreValue) {
     try {
       KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-      InputStream inputStream = new FileInputStream(keyStorePath);
+      String path = SecretUtil.class.getResource("/" + keyStorePath).getFile();
+      InputStream inputStream = new FileInputStream(path);
       keyStore.load(inputStream, keyStoreValue.toCharArray());
       return keyStore;
     } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {

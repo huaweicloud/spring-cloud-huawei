@@ -1,0 +1,20 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: ssl-demo
+  cloud:
+    servicecomb:
+      discovery:
+        enabled: true
+        address: https://127.0.0.1:30100
+        serviceName: price
+        version: 0.0.1
+        healthCheckInterval: 30
+      ssl:
+        keyStoreType: JKS
+        trustStore: trust.jks
+        trustStoreValue: 654321
+        keyStore: server.p12
+        keyStoreValue: 123456
