@@ -14,6 +14,7 @@
     <module>price-provider</module>
     <module>order-consumer</module>
     <module>product-consumer-feign</module>
+    <module>ssl-demo</module>
   </modules>
   <properties>
     <spring-cloud.version>2.1.2.RELEASE</spring-cloud.version>
