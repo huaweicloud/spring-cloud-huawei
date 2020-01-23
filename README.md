@@ -30,7 +30,7 @@ commercial such as Huawei Cloud
    micro-services discovery and micro-service management. It is based on Open API format 
    and provides features like service-discovery, fault-tolerance, dynamic routing, 
    notify subscription and scalable by design.
-   Support multi-environment, multi-dimensional management and multi-registry configuration
+   Support multi-environment, multi-dimensional management and multi-registry configuration.
 
  * **spring-cloud-starter-huawei-config:**
      * Connect with HuaweiCloud CSE for configuration management. 
