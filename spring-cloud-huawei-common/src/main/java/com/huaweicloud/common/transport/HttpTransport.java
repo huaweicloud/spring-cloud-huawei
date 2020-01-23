@@ -41,6 +41,4 @@ public interface HttpTransport {
   Response sendDeleteRequest(String url) throws RemoteServerUnavailableException;
 
   void setServiceCombAkSkProperties(ServiceCombAkSkProperties serviceCombAkSkProperties);
-
-  void setServiceCombSSLProperties(ServiceCombSSLProperties serviceCombSSLProperties);
 }

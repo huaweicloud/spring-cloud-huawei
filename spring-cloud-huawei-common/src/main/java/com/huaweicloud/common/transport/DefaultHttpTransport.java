@@ -51,15 +51,13 @@ import org.springframework.util.StringUtils;
  **/
 public class DefaultHttpTransport implements HttpTransport {
 
-  private static DefaultHttpTransport DEFAULT_HTTP_TRANSPORT = new DefaultHttpTransport();
+  private volatile static DefaultHttpTransport DEFAULT_HTTP_TRANSPORT;
 
   private ServiceCombAkSkProperties serviceCombAkSkProperties;
 
-  private ServiceCombSSLProperties serviceCombSSLProperties;
-
   private HttpClient httpClient;
 
-  private DefaultHttpTransport() {
+  private DefaultHttpTransport(ServiceCombSSLProperties serviceCombSSLProperties) {
     SSLContext sslContext = SecretUtil.getSSLContext(serviceCombSSLProperties);
 
     RequestConfig config = RequestConfig.custom()
@@ -91,7 +89,15 @@ public class DefaultHttpTransport implements HttpTransport {
     this.httpClient = httpClientBuilder.build();
   }
 
-  public static DefaultHttpTransport getInstance() {
+  public static DefaultHttpTransport getInstance(
+      ServiceCombSSLProperties serviceCombSSLProperties) {
+    if (null == DEFAULT_HTTP_TRANSPORT) {
+      synchronized (DefaultHttpTransport.class) {
+        if (null == DEFAULT_HTTP_TRANSPORT) {
+          DEFAULT_HTTP_TRANSPORT = new DefaultHttpTransport(serviceCombSSLProperties);
+        }
+      }
+    }
     return DEFAULT_HTTP_TRANSPORT;
   }
 
@@ -158,8 +164,4 @@ public class DefaultHttpTransport implements HttpTransport {
     this.serviceCombAkSkProperties = serviceCombAkSkProperties;
   }
 
-  @Override
-  public void setServiceCombSSLProperties(ServiceCombSSLProperties serviceCombSSLProperties) {
-    this.serviceCombSSLProperties = serviceCombSSLProperties;
-  }
 }

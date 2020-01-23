@@ -51,9 +51,8 @@ public class ServiceCombConfigClientBuilder {
   }
 
   public ServiceCombConfigClient createServiceCombConfigClient() {
-    DefaultHttpTransport httpTransport = DefaultHttpTransport.getInstance();
+    DefaultHttpTransport httpTransport = DefaultHttpTransport.getInstance(serviceCombSSLProperties);
     httpTransport.setServiceCombAkSkProperties(serviceCombAkSkProperties);
-    httpTransport.setServiceCombSSLProperties(serviceCombSSLProperties);
     return new ServiceCombConfigClient(url, httpTransport);
   }
 }
