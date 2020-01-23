@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ByteArrayEntity;
@@ -70,6 +71,8 @@ public class ServiceCombClient {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombClient.class);
 
   URLConfig registryConfig = new URLConfig();
+
+  private AtomicBoolean initSuccess = new AtomicBoolean(true);
 
   private HttpTransport httpTransport;
 
@@ -364,7 +367,11 @@ public class ServiceCombClient {
       response = httpTransport
           .sendPutRequest(buildURI("/registry/heartbeats"), stringEntity);
       if (response.getStatusCode() == HttpStatus.SC_OK) {
-        LOGGER.info(" heartbeat success.");
+        if (initSuccess.get()) {
+          initSuccess.compareAndSet(true, false);
+          LOGGER.info("Connected to service center, heartbeat success.");
+        }
+        LOGGER.debug("heartbeat success.");
       } else {
         throw new RemoteOperationException(
             "read response failed. status=" + response.getStatusCode() + ";message=" + response
