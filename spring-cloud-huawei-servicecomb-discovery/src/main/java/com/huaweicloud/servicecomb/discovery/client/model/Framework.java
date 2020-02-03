@@ -23,9 +23,9 @@ package com.huaweicloud.servicecomb.discovery.client.model;
  **/
 public class Framework {
 
-  public static final String DEFAULT_NAME = "spring-cloud-huawei";
+  public static final String DEFAULT_NAME = "springCloud";
 
-  public static final String DEFAULT_VERSION = "0.0.1";
+  public static final String DEFAULT_VERSION = "1.1.0";
 
   private String name = DEFAULT_NAME;
 
