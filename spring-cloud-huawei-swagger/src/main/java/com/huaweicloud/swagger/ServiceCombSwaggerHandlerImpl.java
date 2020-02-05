@@ -56,18 +56,18 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombSwaggerHandlerImpl.class);
   @Autowired
-  private DocumentationCache documentationCache;
+  protected DocumentationCache documentationCache;
 
   @Autowired
-  private ServiceModelToSwagger2Mapper mapper;
+  protected ServiceModelToSwagger2Mapper mapper;
 
   @Autowired
-  private ServiceCombClient serviceCombClient;
+  protected ServiceCombClient serviceCombClient;
 
   private Map<String, Swagger> swaggerMap = new HashMap<>();
 
   @Value("${spring.cloud.servicecomb.swagger.enableJavaChassisAdapter:true}")
-  private boolean withJavaChassis;
+  protected boolean withJavaChassis;
 
   private String TITLE_PREFIX = "swagger definition for ";
 
