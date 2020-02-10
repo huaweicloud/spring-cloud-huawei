@@ -130,6 +130,7 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
         }
         swaggerMap.put(className, temSwagger);
       } catch (NoSuchFieldException | IllegalAccessException e) {
+        LOGGER.error("parse swagger failed:{}", e.getMessage());
         e.printStackTrace();
       }
     }
