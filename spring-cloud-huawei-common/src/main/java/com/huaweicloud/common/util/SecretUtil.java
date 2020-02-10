@@ -88,7 +88,7 @@ public class SecretUtil {
       sslContext.init(keyManagers, trustManagers, new SecureRandom());
       return sslContext;
     } catch (UnrecoverableKeyException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException e) {
-      e.printStackTrace();
+      LOGGER.error("generate ssl context failed:{}", e.getMessage());
     }
     return null;
   }
@@ -102,7 +102,7 @@ public class SecretUtil {
       keyStore.load(inputStream, keyStoreValue.toCharArray());
       return keyStore;
     } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
-      e.printStackTrace();
+      LOGGER.error("parse keyStore file failed:{}", e.getMessage());
     }
     return null;
   }
