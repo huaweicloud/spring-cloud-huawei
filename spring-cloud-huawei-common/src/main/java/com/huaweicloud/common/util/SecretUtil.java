@@ -21,6 +21,7 @@ import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -97,7 +98,8 @@ public class SecretUtil {
       String keyStoreValue) {
     try {
       KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-      String path = SecretUtil.class.getResource("/" + keyStorePath).getFile();
+      String path = URLDecoder
+          .decode(SecretUtil.class.getResource("/" + keyStorePath).getFile(), "utf-8");
       InputStream inputStream = new FileInputStream(path);
       keyStore.load(inputStream, keyStoreValue.toCharArray());
       return keyStore;
