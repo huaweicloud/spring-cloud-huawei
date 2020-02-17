@@ -7,16 +7,16 @@ cache:
   directories:
     - "$HOME/.m2"
 
-before_install:
-  - cp .maven.settings.xml $HOME/.m2/settings.xml
+#before_install:
+#  - cp .maven.settings.xml $HOME/.m2/settings.xml
 
 jobs:
   include:
     - stage: findbugs
       script:
-        - mvn clean package findbugs:findbugs -Dmaven.test.skip=true  -Dmaven.javadoc.skip=true --settings .maven.settings.xml
+        - mvn clean package findbugs:findbugs -Dmaven.test.skip=true  -Dmaven.javadoc.skip=true
     - stage: install
       script:
-        - mvn install -Dmaven.javadoc.skip=true --settings .maven.settings.xml
+        - mvn install -Dmaven.javadoc.skip=true -Dcheckstyle.skip=false -Drat.skip=false
 after_success:
   - bash <(curl -s https://codecov.io/bash)
