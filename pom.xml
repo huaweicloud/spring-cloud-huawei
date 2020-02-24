@@ -40,7 +40,7 @@
     <module>spring-cloud-huawei-parents</module>
     <module>spring-cloud-huawei-common</module>
     <module>spring-cloud-huawei-servicecomb-discovery</module>
-<!--    <module>spring-cloud-huawei-sample</module>-->
+    <module>spring-cloud-huawei-sample</module>
     <module>spring-cloud-starter-huawei</module>
     <module>spring-cloud-huawei-dtm</module>
     <module>spring-cloud-huawei-config</module>
