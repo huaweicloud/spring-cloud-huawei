@@ -131,8 +131,8 @@ public class ServiceCombConfigClient {
         return Collections.emptyMap();
       }
       throw new RemoteOperationException(
-          "read response failed. status=" + response.getStatusCode() + ";message=" + response
-              .getStatusMessage());
+          "read response failed. status:" + response.getStatusCode() + "; message:" + response
+              .getStatusMessage() + "; content:" + response.getContent());
 
     } catch (RemoteServerUnavailableException e) {
       configCenterConfig.toggle();
@@ -178,8 +178,8 @@ public class ServiceCombConfigClient {
         return result;
       } else {
         throw new RemoteOperationException(
-            "read response failed. status=" + response.getStatusCode() + ";mesage=" + response
-                .getStatusMessage());
+            "read response failed. status:" + response.getStatusCode() + "; message:" + response
+                .getStatusMessage() + "; content:" + response.getContent());
       }
     } catch (Exception e) {
       configCenterConfig.toggle();
@@ -207,7 +207,7 @@ public class ServiceCombConfigClient {
         return true;
       } else {
         LOGGER.error(
-            "create keyValue fails, responseStatusCode={}, responseMessage={}, responseContent{}",
+            "create keyValue fails, responseStatusCode:{}, responseMessage:{}, responseContent:{}",
             response.getStatusCode(), response.getStatusMessage(), response.getContent());
         return false;
       }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  * @Date 2020/1/11
  **/
 @Component
-public class DiscoveryBoostrap {
+public class DiscoveryBootstrap {
 
   @Autowired(required = false)
   private ServiceCombAutoServiceRegistration registration;
