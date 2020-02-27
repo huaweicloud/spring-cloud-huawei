@@ -61,8 +61,7 @@ public class ServiceCombDiscoveryClientTest {
       {
         MicroserviceHandler.createMicroservice((ServiceCombDiscoveryProperties) any, anyString);
         result = microservice;
-        MicroserviceHandler.getInstances((ServiceCombDiscoveryProperties) any, (Microservice) any,
-            (ServiceCombClient) any);
+        MicroserviceHandler.getInstances((Microservice) any, (ServiceCombClient) any);
         result = serviceInstanceList;
       }
     };
