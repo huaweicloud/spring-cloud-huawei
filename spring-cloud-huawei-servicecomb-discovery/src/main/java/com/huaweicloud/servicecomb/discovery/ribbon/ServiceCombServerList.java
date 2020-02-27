@@ -69,9 +69,9 @@ public class ServiceCombServerList extends AbstractServerList<ServiceCombServer>
   private List<ServiceCombServer> getServiceInstances() {
     Microservice microService = MicroserviceHandler
         .createMicroservice(serviceCombDiscoveryProperties, serviceId);
+    //spring cloud serviceId equals servicecomb serviceName
     List<ServiceInstance> instanceList = MicroserviceHandler
-        .getInstances(serviceCombDiscoveryProperties, microService,
-            serviceCombClient);//spring cloud serviceId equals servicecomb serviceName
+        .getInstances(microService, serviceCombClient);
     return transform(instanceList);
   }
 
