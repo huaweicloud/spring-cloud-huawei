@@ -17,7 +17,6 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -40,8 +39,7 @@ public class MicroserviceHandler {
 
   private static List<ServiceInstance> instanceList = Collections.emptyList();
 
-  public static List<ServiceInstance> getInstances(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
-      Microservice microservice, ServiceCombClient serviceCombClient) {
+  public static List<ServiceInstance> getInstances(Microservice microservice, ServiceCombClient serviceCombClient) {
     try {
       instanceList = serviceCombClient.getInstances(microservice);
     } catch (ServiceCombException e) {

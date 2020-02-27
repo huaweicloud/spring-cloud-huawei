@@ -18,7 +18,6 @@
 package com.huaweicloud.servicecomb.discovery.discovery;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -53,9 +52,8 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient {
   public List<ServiceInstance> getInstances(String serviceId) {
     Microservice microService = MicroserviceHandler
         .createMicroservice(discoveryProperties, serviceId);
-    return MicroserviceHandler
-        .getInstances(discoveryProperties, microService,
-            serviceCombClient);//spring cloud serviceId equals servicecomb serviceName
+    //spring cloud serviceId equals servicecomb serviceName
+    return MicroserviceHandler.getInstances(microService, serviceCombClient);
   }
 
   @Override
