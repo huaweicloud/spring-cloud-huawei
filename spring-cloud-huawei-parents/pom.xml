@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-huawei-dependencies</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <relativePath>../spring-cloud-huawei-dependencies</relativePath>
   </parent>
 
@@ -13,7 +13,7 @@
 
   <artifactId>spring-cloud-huawei-parents</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
   <name>Spring Cloud Huawei Dependencies</name>
 
   <build>
