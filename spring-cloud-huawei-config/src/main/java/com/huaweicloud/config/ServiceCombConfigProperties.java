@@ -131,6 +131,17 @@ public class ServiceCombConfigProperties {
 
     private int waitTime = 10 * 1000;
 
+    //unit s
+    private int longPollingWait = 50;
+
+    public int getLongPollingWait() {
+      return longPollingWait;
+    }
+
+    public void setLongPollingWait(int longPollingWait) {
+      this.longPollingWait = longPollingWait;
+    }
+
     public boolean isEnable() {
       return enable;
     }
@@ -149,6 +160,10 @@ public class ServiceCombConfigProperties {
 
     public int getWaitTime() {
       return waitTime;
+    }
+
+    public int getLongPollingWaitTime() {
+      return waitTime + longPollingWait * 1000;
     }
 
     public void setWaitTime(int waitTime) {

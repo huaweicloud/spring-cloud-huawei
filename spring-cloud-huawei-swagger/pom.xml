@@ -22,11 +22,11 @@
       <artifactId>springfox-swagger2</artifactId>
       <version>${spring-fox.version}</version>
     </dependency>
-    <dependency>
-      <groupId>io.springfox</groupId>
-      <artifactId>springfox-swagger-ui</artifactId>
-      <version>${spring-fox.version}</version>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>io.springfox</groupId>-->
+<!--      <artifactId>springfox-swagger-ui</artifactId>-->
+<!--      <version>${spring-fox.version}</version>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>io.swagger</groupId>
       <artifactId>swagger-core</artifactId>

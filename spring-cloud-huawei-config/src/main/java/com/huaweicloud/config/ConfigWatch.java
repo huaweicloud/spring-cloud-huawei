@@ -76,6 +76,11 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
   @Override
   public void start() {
     if (ready.compareAndSet(false, true)) {
+      if (serviceCombConfigProperties.getServerType().equals("kie")) {
+        watchScheduledFuture = taskScheduler.scheduleWithFixedDelay(
+            this::watch, serviceCombConfigProperties.getWatch().getLongPollingWaitTime());
+        return;
+      }
       watchScheduledFuture = taskScheduler.scheduleWithFixedDelay(
           this::watch, serviceCombConfigProperties.getWatch().getDelay());
     }
@@ -86,7 +91,7 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
     Map<String, String> remoteConfig = null;
     if (ready.get()) {
       try {
-        remoteConfig = serviceCombConfigClient.loadAll(serviceCombConfigProperties, project);
+        remoteConfig = serviceCombConfigClient.loadAll(serviceCombConfigProperties, project, true);
       } catch (RemoteOperationException e) {
         LOGGER.warn(e.getMessage());
       }

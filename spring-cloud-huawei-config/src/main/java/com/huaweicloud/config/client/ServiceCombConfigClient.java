@@ -72,14 +72,15 @@ public class ServiceCombConfigClient {
    * @throws RemoteOperationException
    */
   public Map<String, String> loadAll(ServiceCombConfigProperties serviceCombConfigProperties,
-      String project) throws RemoteOperationException {
+      String project, boolean isWatch) throws RemoteOperationException {
     project = project != null && !project.isEmpty() ? project : ConfigConstants.DEFAULT_PROJECT;
     if (!StringUtils.isEmpty(serviceCombConfigProperties.getServerType())
         && serviceCombConfigProperties.getServerType().equals("kie")) {
+      //上传本地配置
       if (!isupdatedConfig.get() && updateToKie(serviceCombConfigProperties)) {
         isupdatedConfig.compareAndSet(false, true);
       }
-      return loadFromKie(serviceCombConfigProperties, project);
+      return loadFromKie(serviceCombConfigProperties, project, isWatch);
     }
     return loadFromConfigCenter(QueryParamUtil.spliceDimensionsInfo(serviceCombConfigProperties),
         project);
@@ -150,7 +151,7 @@ public class ServiceCombConfigClient {
    * @throws RemoteOperationException
    */
   public Map<String, String> loadFromKie(ServiceCombConfigProperties serviceCombConfigProperties,
-      String project)
+      String project, boolean isWatch)
       throws RemoteOperationException {
     Response response = null;
     Map<String, String> result = new HashMap<>();
@@ -162,6 +163,9 @@ public class ServiceCombConfigClient {
           + project
           + "/kie/kv?label=app:"
           + serviceCombConfigProperties.getAppName();
+      if (isWatch) {
+        stringBuilder += "&wait=" + serviceCombConfigProperties.getWatch().getWaitTime() + "s";
+      }
       response = httpTransport.sendGetRequest(stringBuilder);
       if (response == null) {
         return result;
