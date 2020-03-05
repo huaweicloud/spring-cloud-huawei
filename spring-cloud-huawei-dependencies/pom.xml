@@ -17,16 +17,15 @@
   <properties>
     <spring-cloud.version>2.1.2.RELEASE</spring-cloud.version>
     <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
-    <feign-core.version>10.2.3</feign-core.version>
-    <httpclient.version>4.5.9</httpclient.version>
-    <jackson-databind.version>2.9.10</jackson-databind.version>
+    <feign-core.version>10.8</feign-core.version>
+    <httpclient.version>4.5.11</httpclient.version>
+    <jackson-databind.version>2.10.3</jackson-databind.version>
     <jmockit.version>1.36</jmockit.version>
     <junit.version>4.12</junit.version>
-    <cse-dependency.version>2.5.0</cse-dependency.version>
     <spring.version>5.2.3.RELEASE</spring.version>
     <dtm-client.version>1.0.2</dtm-client.version>
     <guava.version>27.0.1-jre</guava.version>
-    <snakeyaml.version>1.24</snakeyaml.version>
+    <snakeyaml.version>1.26</snakeyaml.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <servicecomb.version>2.0.0</servicecomb.version>
   </properties>
