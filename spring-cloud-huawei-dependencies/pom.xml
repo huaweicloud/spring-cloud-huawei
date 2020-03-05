@@ -19,7 +19,7 @@
     <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
     <feign-core.version>10.2.3</feign-core.version>
     <httpclient.version>4.5.9</httpclient.version>
-    <jackson-databind.version>2.9.10</jackson-databind.version>
+    <jackson-databind.version>2.9.10.3</jackson-databind.version>
     <jmockit.version>1.36</jmockit.version>
     <junit.version>4.12</junit.version>
     <cse-dependency.version>2.5.0</cse-dependency.version>
