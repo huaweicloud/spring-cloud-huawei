@@ -53,7 +53,7 @@ public class ServiceCombConfigPropertySourceTest extends MockUp<ServiceCombConfi
     map.put("d", "r");
     new Expectations() {
       {
-        source.loadAll((ServiceCombConfigProperties) any, anyString);
+        source.loadAll((ServiceCombConfigProperties) any, anyString, false);
         result = map;
       }
     };

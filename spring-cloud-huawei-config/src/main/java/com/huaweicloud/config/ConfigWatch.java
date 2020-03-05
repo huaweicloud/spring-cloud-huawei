@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import com.huaweicloud.common.exception.RemoteOperationException;
 import com.huaweicloud.common.util.MD5Util;
 import org.springframework.cloud.context.refresh.ContextRefresher;
-import com.huaweicloud.config.client.QueryParamUtil;
 import com.huaweicloud.config.client.RefreshRecord;
 import com.huaweicloud.config.client.ServiceCombConfigClient;
 import org.springframework.context.ApplicationEventPublisher;
@@ -35,6 +34,7 @@ import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.util.CollectionUtils;
 
 /**
  * @Author wangqijun
@@ -95,7 +95,7 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
       } catch (RemoteOperationException e) {
         LOGGER.warn(e.getMessage());
       }
-      if (remoteConfig == null) {
+      if (CollectionUtils.isEmpty(remoteConfig)) {
         return;
       }
       md5Value = MD5Util.encrypt(remoteConfig.toString());

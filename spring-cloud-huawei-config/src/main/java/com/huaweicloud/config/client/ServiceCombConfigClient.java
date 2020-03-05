@@ -164,7 +164,8 @@ public class ServiceCombConfigClient {
           + "/kie/kv?label=app:"
           + serviceCombConfigProperties.getAppName();
       if (isWatch) {
-        stringBuilder += "&wait=" + serviceCombConfigProperties.getWatch().getWaitTime() + "s";
+        stringBuilder +=
+            "&wait=" + serviceCombConfigProperties.getWatch().getPollingWaitTimeInSeconds() + "s";
       }
       response = httpTransport.sendGetRequest(stringBuilder);
       if (response == null) {
@@ -180,6 +181,8 @@ public class ServiceCombConfigClient {
         return result;
       } else if (response.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
         return result;
+      } else if (response.getStatusCode() == HttpStatus.SC_NOT_MODIFIED) {
+        return Collections.emptyMap();
       } else {
         throw new RemoteOperationException(
             "read response failed. status:" + response.getStatusCode() + "; message:" + response
