@@ -13,7 +13,7 @@ spring:
         healthCheckInterval: 30
       credentials:
         enabled: true
-        accessKey: ak
-        secretKey: sk
-        project: cn-north-4
-        akskCustomCipher: default
+#        accessKey: ak
+#        secretKey: sk
+#        project: cn-north-4
+#        akskCustomCipher: default
