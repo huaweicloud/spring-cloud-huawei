@@ -18,6 +18,7 @@
 package com.huaweicloud.config.client;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.huaweicloud.common.discovery.KieAddrSeeker;
 import com.huaweicloud.common.transport.URLConfig;
 import com.huaweicloud.common.util.URLUtil;
 import com.huaweicloud.config.ServiceCombConfigProperties;
@@ -155,6 +156,10 @@ public class ServiceCombConfigClient {
       throws RemoteOperationException {
     Response response = null;
     Map<String, String> result = new HashMap<>();
+    //todo : wait for kie support discovery
+//    if (configCenterConfig.isEmpty()) {
+//      autoDisvoceryKie();
+//    }
     try {
       String stringBuilder = configCenterConfig.getUrl()
           + "/"
@@ -224,5 +229,18 @@ public class ServiceCombConfigClient {
       LOGGER.error("putKeyValue to kie server failed, response= {}", response);
     }
     return false;
+  }
+
+  private void autoDisvoceryKie() {
+    try {
+      Class kieAddrSeekerClass = Class
+          .forName("com.huaweicloud.servicecomb.discovery.discovery.KieAddrSeekerImpl");
+      KieAddrSeeker kieAddrSeeker = (KieAddrSeeker) kieAddrSeekerClass.newInstance();
+      configCenterConfig.addUrl(URLUtil.dealMultiUrl(kieAddrSeeker.getKieAddr()));
+    } catch (ClassNotFoundException e) {
+      LOGGER.error(e.getMessage());
+    } catch (IllegalAccessException | InstantiationException e) {
+      LOGGER.error("Exception");
+    }
   }
 }

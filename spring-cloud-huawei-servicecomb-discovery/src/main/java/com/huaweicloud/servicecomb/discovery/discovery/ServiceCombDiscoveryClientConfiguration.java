@@ -17,7 +17,6 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
-import com.huaweicloud.common.discovery.KieAddrSeeker;
 import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.servicecomb.discovery.registry.TagsProperties;
@@ -33,7 +32,6 @@ import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
 import com.huaweicloud.servicecomb.discovery.client.ServiceCombClientBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.util.StringUtils;
 
 /**
@@ -51,13 +49,6 @@ public class ServiceCombDiscoveryClientConfiguration {
   @ConditionalOnMissingBean
   public ServiceCombDiscoveryProperties serviceCombProperties() {
     return new ServiceCombDiscoveryProperties();
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
-  @Lazy
-  public KieAddrSeeker kieAddrSeekerImpl() {
-    return new KieAddrSeekerImpl();
   }
 
   @Bean

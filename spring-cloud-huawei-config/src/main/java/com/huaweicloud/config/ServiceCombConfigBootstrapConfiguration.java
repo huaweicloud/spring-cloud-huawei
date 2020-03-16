@@ -17,10 +17,8 @@
 
 package com.huaweicloud.config;
 
-import com.huaweicloud.common.discovery.KieAddrSeeker;
 import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
@@ -37,9 +35,6 @@ import org.springframework.util.StringUtils;
 @Configuration
 @ConditionalOnProperty(name = "spring.cloud.servicecomb.config.enabled", matchIfMissing = true)
 public class ServiceCombConfigBootstrapConfiguration {
-
-  @Autowired(required = false)
-  private KieAddrSeeker kieAddrSeeker;
 
   @Bean
   @ConditionalOnMissingBean
@@ -68,12 +63,6 @@ public class ServiceCombConfigBootstrapConfiguration {
     if (!StringUtils.isEmpty(serviceCombAkSkProperties.getEnable())) {
       throw new ServiceCombRuntimeException(
           "config credentials.enable has change to credentials.enabled ,old names are no longer supported, please change it.");
-    }
-    if (kieAddrSeeker != null) {
-      String sicoveryKieAddr = kieAddrSeeker.getKieAddr();
-      if (!StringUtils.isEmpty(sicoveryKieAddr)) {
-        builder.setUrl(sicoveryKieAddr);
-      }
     }
     builder.setUrl(serviceCombConfigProperties.getServerAddr())
         .setServiceCombSSLProperties(serviceCombSSLProperties)

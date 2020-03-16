@@ -95,7 +95,7 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
       } catch (RemoteOperationException e) {
         LOGGER.warn(e.getMessage());
       }
-      if (CollectionUtils.isEmpty(remoteConfig)) {
+      if (remoteConfig == null) {
         return;
       }
       md5Value = MD5Util.encrypt(remoteConfig.toString());

@@ -24,7 +24,8 @@ public class KieAddrSeekerImpl implements KieAddrSeeker {
 
   @Override
   public String getKieAddr() {
-    Microservice microservice = null;
+    Microservice microservice = new Microservice();
+    microservice.setServiceName("servicecomb-kie");
     List<ServiceInstance> instanceList;
     try {
       instanceList = serviceCombClient.getInstances(microservice);

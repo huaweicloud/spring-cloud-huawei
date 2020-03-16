@@ -17,6 +17,7 @@
 
 package com.huaweicloud.common.transport;
 
+import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 import com.huaweicloud.common.util.URLUtil;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -45,6 +46,9 @@ public class URLConfig {
   private int afterDnsResolveIndex = 0;
 
   public String getUrl() {
+    if (isEmpty()) {
+      throw new ServiceCombRuntimeException("no available address");
+    }
     if (resolveUrlSize > 0) {
       String url = urlList.get(afterDnsResolveIndex);
       return url;
@@ -82,6 +86,9 @@ public class URLConfig {
   }
 
   public synchronized void toggle() {
+    if (isEmpty()) {
+      throw new ServiceCombRuntimeException("no available address");
+    }
     if (resolveUrlSize > 0) {
       afterDnsResolveIndex = afterDnsResolveIndex + 1 < urlList.size() ? afterDnsResolveIndex + 1
           : urlList.size() - resolveUrlSize;
