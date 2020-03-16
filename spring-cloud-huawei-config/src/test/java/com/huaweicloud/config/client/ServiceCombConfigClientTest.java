@@ -71,7 +71,7 @@ public class ServiceCombConfigClientTest {
     serviceCombConfigProperties.setAppName("default");
     serviceCombConfigProperties.setVersion("0.0.1");
     Map<String, String> actual = serviceCombClient
-        .loadAll(serviceCombConfigProperties, "default", false);
+        .loadAll(serviceCombConfigProperties, "default");
     Assert.assertEquals(2, actual.size());
     Assert.assertEquals("dd", actual.get("ffd"));
     Assert.assertEquals("ss", actual.get("dd"));

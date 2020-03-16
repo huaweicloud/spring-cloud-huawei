@@ -110,7 +110,9 @@ public class DefaultHttpTransport implements HttpTransport {
       HttpResponse httpResponse = httpClient.execute(httpRequest);
       resp.setStatusCode(httpResponse.getStatusLine().getStatusCode());
       resp.setStatusMessage(httpResponse.getStatusLine().getReasonPhrase());
-      resp.setContent(EntityUtils.toString(httpResponse.getEntity()));
+      if (httpResponse.getEntity() != null) {
+        resp.setContent(EntityUtils.toString(httpResponse.getEntity()));
+      }
     } catch (IOException e) {
       throw new RemoteServerUnavailableException(
           "service center unavailable. message=" + e.getMessage(), e);

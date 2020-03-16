@@ -58,6 +58,8 @@ public class ServiceCombConfigClient {
   //todo: set false to active
   private AtomicBoolean isupdatedConfig = new AtomicBoolean(true);
 
+  private AtomicBoolean isFirst = new AtomicBoolean(true);
+
   public ServiceCombConfigClient(String urls, HttpTransport httpTransport) {
     this.httpTransport = httpTransport;
     configCenterConfig.addUrl(URLUtil.getEnvConfigUrl());
@@ -73,7 +75,7 @@ public class ServiceCombConfigClient {
    * @throws RemoteOperationException
    */
   public Map<String, String> loadAll(ServiceCombConfigProperties serviceCombConfigProperties,
-      String project, boolean isWatch) throws RemoteOperationException {
+      String project) throws RemoteOperationException {
     project = project != null && !project.isEmpty() ? project : ConfigConstants.DEFAULT_PROJECT;
     if (!StringUtils.isEmpty(serviceCombConfigProperties.getServerType())
         && serviceCombConfigProperties.getServerType().equals("kie")) {
@@ -81,7 +83,11 @@ public class ServiceCombConfigClient {
       if (!isupdatedConfig.get() && updateToKie(serviceCombConfigProperties)) {
         isupdatedConfig.compareAndSet(false, true);
       }
-      return loadFromKie(serviceCombConfigProperties, project, isWatch);
+      if (serviceCombConfigProperties.getPollingType().equals("longPolling")) {
+        return loadFromKie(serviceCombConfigProperties, project, true);
+      } else {
+        return loadFromKie(serviceCombConfigProperties, project, false);
+      }
     }
     return loadFromConfigCenter(QueryParamUtil.spliceDimensionsInfo(serviceCombConfigProperties),
         project);
@@ -130,7 +136,7 @@ public class ServiceCombConfigClient {
       }
       if (response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
         LOGGER.info(response.getStatusMessage());
-        return Collections.emptyMap();
+        return null;
       }
       throw new RemoteOperationException(
           "read response failed. status:" + response.getStatusCode() + "; message:" + response
@@ -168,13 +174,14 @@ public class ServiceCombConfigClient {
           + project
           + "/kie/kv?label=app:"
           + serviceCombConfigProperties.getAppName();
-      if (isWatch) {
+      if (isWatch && !isFirst.get()) {
         stringBuilder +=
             "&wait=" + serviceCombConfigProperties.getWatch().getPollingWaitTimeInSeconds() + "s";
       }
+      isFirst.compareAndSet(true, false);
       response = httpTransport.sendGetRequest(stringBuilder);
       if (response == null) {
-        return result;
+        return null;
       }
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.debug(response.getContent());
@@ -183,11 +190,11 @@ public class ServiceCombConfigClient {
         return KieUtil.getConfigByLabel(serviceCombConfigProperties, allConfigList);
       } else if (response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
         LOGGER.info(response.getStatusMessage());
-        return result;
+        return null;
       } else if (response.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
         return result;
       } else if (response.getStatusCode() == HttpStatus.SC_NOT_MODIFIED) {
-        return Collections.emptyMap();
+        return null;
       } else {
         throw new RemoteOperationException(
             "read response failed. status:" + response.getStatusCode() + "; message:" + response

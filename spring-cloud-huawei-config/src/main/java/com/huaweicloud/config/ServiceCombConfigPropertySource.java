@@ -17,6 +17,7 @@
 
 package com.huaweicloud.config;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -49,7 +50,10 @@ public class ServiceCombConfigPropertySource extends EnumerablePropertySource<Se
       String project)
       throws RemoteOperationException {
     Map<String, String> remoteConfig = serviceCombConfigClient
-        .loadAll(serviceCombConfigProperties, project, false);
+        .loadAll(serviceCombConfigProperties, project);
+    if (remoteConfig == null) {
+      return Collections.emptyMap();
+    }
     properties.putAll(remoteConfig);
     return remoteConfig;
   }
