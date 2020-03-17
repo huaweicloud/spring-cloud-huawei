@@ -128,7 +128,7 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
 
   private boolean isLongPolling() {
     return serviceCombConfigProperties.getServerType().equals("kie") && serviceCombConfigProperties
-        .getPollingType().equals("longPolling");
+        .getEnableLongPolling();
   }
 
   @Override

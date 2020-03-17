@@ -27,7 +27,6 @@ import com.huaweicloud.config.kie.KVResponse;
 import com.huaweicloud.config.kie.KieUtil;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,7 +82,7 @@ public class ServiceCombConfigClient {
       if (!isupdatedConfig.get() && updateToKie(serviceCombConfigProperties)) {
         isupdatedConfig.compareAndSet(false, true);
       }
-      if (serviceCombConfigProperties.getPollingType().equals("longPolling")) {
+      if (serviceCombConfigProperties.getEnableLongPolling()) {
         return loadFromKie(serviceCombConfigProperties, project, true);
       } else {
         return loadFromKie(serviceCombConfigProperties, project, false);

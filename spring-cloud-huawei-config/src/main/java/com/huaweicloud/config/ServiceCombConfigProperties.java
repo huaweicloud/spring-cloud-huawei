@@ -48,19 +48,19 @@ public class ServiceCombConfigProperties {
 
   private String serverAddr;
 
-  @Value("${spring.cloud.servicecomb.config.pollingType:longPolling}")
-  private String pollingType;
+  @Value("${spring.cloud.servicecomb.config.enableLongPolling:true}")
+  private boolean enableLongPolling;
 
   private Watch watch = new Watch();
 
   private Retry retry = new Retry();
 
-  public String getPollingType() {
-    return pollingType;
+  public boolean getEnableLongPolling() {
+    return enableLongPolling;
   }
 
-  public void setPollingType(String pollingType) {
-    this.pollingType = pollingType;
+  public void setEnableLongPolling(boolean enableLongPolling) {
+    this.enableLongPolling = enableLongPolling;
   }
 
   public Retry getRetry() {
