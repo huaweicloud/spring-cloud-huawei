@@ -41,6 +41,14 @@ public class KieUtil {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(KieUtil.class);
 
+  private static final String LABEL_ENV = "environment";
+
+  private static final String LABEL_APP = "app";
+
+  private static final String LABEL_SERVICE = "service";
+
+  private static final String LABEL_VERSION = "version";
+
   public static Map<String, String> getConfigByLabel(
       ServiceCombConfigProperties serviceCombConfigProperties, KVResponse resp) {
     Map<String, String> resultMap = new HashMap<>();
@@ -49,20 +57,19 @@ public class KieUtil {
     List<KVDoc> versionList = new ArrayList<>();
     for (KVDoc kvDoc : resp.getData()) {
       Map<String, String> labelsMap = kvDoc.getLabels();
-      //todo:how to deal env
-      if (labelsMap.containsKey("app") && labelsMap.get("app")
+      if (labelsMap.containsKey(LABEL_APP) && labelsMap.get(LABEL_APP)
           .equals(serviceCombConfigProperties.getAppName())
-          && labelsMap.containsKey("env") && labelsMap.get("env")
+          && labelsMap.containsKey(LABEL_ENV) && labelsMap.get(LABEL_ENV)
           .equals(serviceCombConfigProperties.getEnv())) {
-        if (!labelsMap.containsKey("service")) {
+        if (!labelsMap.containsKey(LABEL_SERVICE)) {
           appList.add(kvDoc);
         }
-        if (labelsMap.containsKey("service") && labelsMap.get("service")
+        if (labelsMap.containsKey(LABEL_SERVICE) && labelsMap.get(LABEL_SERVICE)
             .equals(serviceCombConfigProperties.getServiceName())) {
-          if (!kvDoc.getLabels().containsKey("version")) {
+          if (!kvDoc.getLabels().containsKey(LABEL_VERSION)) {
             serviceList.add(kvDoc);
           }
-          if (labelsMap.containsKey("version") && labelsMap.get("version")
+          if (labelsMap.containsKey(LABEL_VERSION) && labelsMap.get(LABEL_VERSION)
               .equals(serviceCombConfigProperties.getServiceName())) {
             versionList.add(kvDoc);
           }
