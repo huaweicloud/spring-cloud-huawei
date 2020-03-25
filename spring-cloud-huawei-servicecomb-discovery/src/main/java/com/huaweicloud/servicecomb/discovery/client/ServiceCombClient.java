@@ -22,6 +22,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 import com.huaweicloud.common.transport.URLConfig;
+import com.huaweicloud.servicecomb.discovery.client.model.HeardBeatStatus;
 import com.huaweicloud.servicecomb.discovery.client.model.SchemaRequest;
 import java.io.IOException;
 import java.net.URI;
@@ -31,7 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ByteArrayEntity;
@@ -71,8 +71,6 @@ public class ServiceCombClient {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombClient.class);
 
   private URLConfig registryConfig = new URLConfig();
-
-  private AtomicBoolean initSuccess = new AtomicBoolean(true);
 
   private HttpTransport httpTransport;
 
@@ -357,7 +355,7 @@ public class ServiceCombClient {
    * @param heartbeatRequest
    * @throws ServiceCombException
    */
-  public void heartbeat(HeartbeatRequest heartbeatRequest) throws ServiceCombException {
+  public HeardBeatStatus heartbeat(HeartbeatRequest heartbeatRequest) throws ServiceCombException {
     Response response = null;
     try {
       String content = JsonUtils.OBJ_MAPPER.writeValueAsString(heartbeatRequest);
@@ -365,15 +363,13 @@ public class ServiceCombClient {
       response = httpTransport
           .sendPutRequest(buildURI("/registry/heartbeats"), stringEntity);
       if (response.getStatusCode() == HttpStatus.SC_OK) {
-        if (initSuccess.get()) {
-          initSuccess.compareAndSet(true, false);
-          LOGGER.info("Connected to service center, heartbeat success.");
-        }
         LOGGER.debug("heartbeat success.");
+        return HeardBeatStatus.SUCCESS;
       } else {
-        throw new RemoteOperationException(
-            "read response failed. status:" + response.getStatusCode() + "; message:" + response
-                .getStatusMessage()+  "; content:" + response.getContent());
+        LOGGER.error(
+            "heartbeat to service center failed. status:" + response.getStatusCode() + "; message:"
+                + response.getStatusMessage() + "; content:" + response.getContent());
+        return HeardBeatStatus.FAILED;
       }
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);

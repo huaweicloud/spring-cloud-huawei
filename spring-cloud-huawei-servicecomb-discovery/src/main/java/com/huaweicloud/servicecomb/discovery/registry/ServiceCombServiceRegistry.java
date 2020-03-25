@@ -71,7 +71,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     RegisterCache.setInstanceID(instanceID);
     RegisterCache.setServiceID(serviceID);
     LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
-    heartbeatScheduler.add(instanceID, serviceID);
+    heartbeatScheduler
+        .add(instanceID, serviceID, registration, serviceCombSwaggerHandler);
   }
 
   private void loopRegister(ServiceCombRegistration registration) {

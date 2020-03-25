@@ -17,6 +17,7 @@
 
 package com.huaweicloud.servicecomb.discovery.registry;
 
+import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -42,19 +43,28 @@ public class HeartbeatScheduler {
 
   private ServiceCombClient serviceCombClient;
 
+  private TagsProperties tagsProperties;
+
   public HeartbeatScheduler(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
-      ServiceCombClient serviceCombClient) {
+      ServiceCombClient serviceCombClient, TagsProperties tagsProperties) {
     this.serviceCombDiscoveryProperties = serviceCombDiscoveryProperties;
     this.serviceCombClient = serviceCombClient;
+    this.tagsProperties = tagsProperties;
   }
 
-  public void add(String instanceId, String serviceId) {
+  public void add(String instanceId, String serviceId, ServiceCombRegistration registration,
+      ServiceCombSwaggerHandler serviceCombSwaggerHandler) {
     if (!serviceCombDiscoveryProperties.isHealthCheck()) {
       return;
     }
     HeartbeatRequest heartbeatRequest = new HeartbeatRequest(serviceId, instanceId);
+    HeartbeatTask task = new HeartbeatTask(heartbeatRequest, serviceCombClient);
+    task.setRegistration(registration);
+    task.setServiceCombDiscoveryProperties(serviceCombDiscoveryProperties);
+    task.setServiceCombSwaggerHandler(serviceCombSwaggerHandler);
+    task.setTagsProperties(tagsProperties);
     ScheduledFuture currentTask = this.scheduler
-        .scheduleWithFixedDelay(new HeartbeatTask(heartbeatRequest, serviceCombClient),
+        .scheduleWithFixedDelay(task,
             serviceCombDiscoveryProperties.getHealthCheckInterval() * 1000);
     ScheduledFuture preScheduled = heartbeatRequestMap.put(instanceId, currentTask);
     if (null != preScheduled) {

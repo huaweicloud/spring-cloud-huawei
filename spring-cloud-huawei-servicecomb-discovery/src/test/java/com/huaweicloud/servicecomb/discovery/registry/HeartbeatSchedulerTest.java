@@ -35,11 +35,15 @@ public class HeartbeatSchedulerTest {
   @Injectable
   ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
 
+  @Injectable
+  TagsProperties tagsProperties;
+
   @Test
   public void addAndRemove() {
     serviceCombDiscoveryProperties.setHealthCheckInterval(10);
-    HeartbeatScheduler heartbeatScheduler = new HeartbeatScheduler(serviceCombDiscoveryProperties, serviceCombClient);
-    heartbeatScheduler.add("11", "22");
+    HeartbeatScheduler heartbeatScheduler = new HeartbeatScheduler(serviceCombDiscoveryProperties,
+        serviceCombClient, tagsProperties);
+    heartbeatScheduler.add("11", "22", null, null);
     heartbeatScheduler.remove("11");
   }
 }
