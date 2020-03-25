@@ -18,6 +18,7 @@
 package com.huaweicloud.config.client;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.huaweicloud.common.discovery.KieAddrSeeker;
 import com.huaweicloud.common.transport.URLConfig;
 import com.huaweicloud.common.util.URLUtil;
 import com.huaweicloud.config.ServiceCombConfigProperties;
@@ -26,7 +27,6 @@ import com.huaweicloud.config.kie.KVResponse;
 import com.huaweicloud.config.kie.KieUtil;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,6 +57,8 @@ public class ServiceCombConfigClient {
   //todo: set false to active
   private AtomicBoolean isupdatedConfig = new AtomicBoolean(true);
 
+  private AtomicBoolean isFirst = new AtomicBoolean(true);
+
   public ServiceCombConfigClient(String urls, HttpTransport httpTransport) {
     this.httpTransport = httpTransport;
     configCenterConfig.addUrl(URLUtil.getEnvConfigUrl());
@@ -76,10 +78,15 @@ public class ServiceCombConfigClient {
     project = project != null && !project.isEmpty() ? project : ConfigConstants.DEFAULT_PROJECT;
     if (!StringUtils.isEmpty(serviceCombConfigProperties.getServerType())
         && serviceCombConfigProperties.getServerType().equals("kie")) {
+      //上传本地配置
       if (!isupdatedConfig.get() && updateToKie(serviceCombConfigProperties)) {
         isupdatedConfig.compareAndSet(false, true);
       }
-      return loadFromKie(serviceCombConfigProperties, project);
+      if (serviceCombConfigProperties.getEnableLongPolling()) {
+        return loadFromKie(serviceCombConfigProperties, project, true);
+      } else {
+        return loadFromKie(serviceCombConfigProperties, project, false);
+      }
     }
     return loadFromConfigCenter(QueryParamUtil.spliceDimensionsInfo(serviceCombConfigProperties),
         project);
@@ -128,7 +135,7 @@ public class ServiceCombConfigClient {
       }
       if (response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
         LOGGER.info(response.getStatusMessage());
-        return Collections.emptyMap();
+        return null;
       }
       throw new RemoteOperationException(
           "read response failed. status:" + response.getStatusCode() + "; message:" + response
@@ -150,7 +157,7 @@ public class ServiceCombConfigClient {
    * @throws RemoteOperationException
    */
   public Map<String, String> loadFromKie(ServiceCombConfigProperties serviceCombConfigProperties,
-      String project)
+      String project, boolean isWatch)
       throws RemoteOperationException {
     Response response = null;
     Map<String, String> result = new HashMap<>();
@@ -162,9 +169,14 @@ public class ServiceCombConfigClient {
           + project
           + "/kie/kv?label=app:"
           + serviceCombConfigProperties.getAppName();
+      if (isWatch && !isFirst.get()) {
+        stringBuilder +=
+            "&wait=" + serviceCombConfigProperties.getWatch().getPollingWaitTimeInSeconds() + "s";
+      }
+      isFirst.compareAndSet(true, false);
       response = httpTransport.sendGetRequest(stringBuilder);
       if (response == null) {
-        return result;
+        return null;
       }
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.debug(response.getContent());
@@ -173,9 +185,11 @@ public class ServiceCombConfigClient {
         return KieUtil.getConfigByLabel(serviceCombConfigProperties, allConfigList);
       } else if (response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
         LOGGER.info(response.getStatusMessage());
-        return result;
+        return null;
       } else if (response.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
         return result;
+      } else if (response.getStatusCode() == HttpStatus.SC_NOT_MODIFIED) {
+        return null;
       } else {
         throw new RemoteOperationException(
             "read response failed. status:" + response.getStatusCode() + "; message:" + response

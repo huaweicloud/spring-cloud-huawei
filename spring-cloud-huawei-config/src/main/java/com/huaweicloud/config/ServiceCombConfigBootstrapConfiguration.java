@@ -36,7 +36,6 @@ import org.springframework.util.StringUtils;
 @ConditionalOnProperty(name = "spring.cloud.servicecomb.config.enabled", matchIfMissing = true)
 public class ServiceCombConfigBootstrapConfiguration {
 
-
   @Bean
   @ConditionalOnMissingBean
   public ServiceCombConfigProperties serviceCombConfigProperties() {

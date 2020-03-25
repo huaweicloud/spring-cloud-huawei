@@ -19,6 +19,8 @@ package com.huaweicloud.config;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -27,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import com.huaweicloud.common.exception.RemoteOperationException;
 import com.huaweicloud.common.util.MD5Util;
 import org.springframework.cloud.context.refresh.ContextRefresher;
-import com.huaweicloud.config.client.QueryParamUtil;
 import com.huaweicloud.config.client.RefreshRecord;
 import com.huaweicloud.config.client.ServiceCombConfigClient;
 import org.springframework.context.ApplicationEventPublisher;
@@ -54,6 +55,13 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
 
   private ScheduledFuture<?> watchScheduledFuture;
 
+  private ScheduledExecutorService EXECUTOR = Executors.newScheduledThreadPool(1, (r) -> {
+    Thread thread = new Thread(r);
+    thread.setName("com.huaweicloud.config.kie.longPolling");
+    thread.setDaemon(true);
+    return thread;
+  });
+
   private ApplicationEventPublisher applicationEventPublisher;
 
   private ContextRefresher contextRefresher;
@@ -76,8 +84,12 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
   @Override
   public void start() {
     if (ready.compareAndSet(false, true)) {
-      watchScheduledFuture = taskScheduler.scheduleWithFixedDelay(
-          this::watch, serviceCombConfigProperties.getWatch().getDelay());
+      if (isLongPolling()) {
+        EXECUTOR.execute(this::watch);
+      } else {
+        watchScheduledFuture = taskScheduler.scheduleWithFixedDelay(
+            this::watch, serviceCombConfigProperties.getWatch().getDelay());
+      }
     }
   }
 
@@ -89,6 +101,9 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
         remoteConfig = serviceCombConfigClient.loadAll(serviceCombConfigProperties, project);
       } catch (RemoteOperationException e) {
         LOGGER.warn(e.getMessage());
+      }
+      if (isLongPolling()) {
+        EXECUTOR.execute(this::watch);
       }
       if (remoteConfig == null) {
         return;
@@ -111,10 +126,16 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
     }
   }
 
+  private boolean isLongPolling() {
+    return serviceCombConfigProperties.getServerType().equals("kie") && serviceCombConfigProperties
+        .getEnableLongPolling();
+  }
+
   @Override
   public void stop() {
     if (this.ready.compareAndSet(true, false) && this.watchScheduledFuture != null) {
       this.watchScheduledFuture.cancel(true);
+      EXECUTOR.shutdown();
     }
   }
 

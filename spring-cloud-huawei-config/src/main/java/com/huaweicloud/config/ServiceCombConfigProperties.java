@@ -48,9 +48,20 @@ public class ServiceCombConfigProperties {
 
   private String serverAddr;
 
+  @Value("${spring.cloud.servicecomb.config.enableLongPolling:true}")
+  private boolean enableLongPolling;
+
   private Watch watch = new Watch();
 
   private Retry retry = new Retry();
+
+  public boolean getEnableLongPolling() {
+    return enableLongPolling;
+  }
+
+  public void setEnableLongPolling(boolean enableLongPolling) {
+    this.enableLongPolling = enableLongPolling;
+  }
 
   public Retry getRetry() {
     return retry;
@@ -130,6 +141,17 @@ public class ServiceCombConfigProperties {
     private int delay = 10 * 1000;
 
     private int waitTime = 10 * 1000;
+
+    @Value("${spring.cloud.servicecomb.config.pollingWaitSec:30}")
+    private int pollingWaitTimeInSeconds = 30;
+
+    public int getPollingWaitTimeInSeconds() {
+      return pollingWaitTimeInSeconds;
+    }
+
+    public void setPollingWaitTimeInSeconds(int pollingWaitTimeInSeconds) {
+      this.pollingWaitTimeInSeconds = pollingWaitTimeInSeconds;
+    }
 
     public boolean isEnable() {
       return enable;
