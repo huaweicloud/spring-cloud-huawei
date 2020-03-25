@@ -76,7 +76,7 @@ public class HeartbeatTask implements Runnable {
   public void run() {
     try {
       HeardBeatStatus result = serviceCombClient.heartbeat(heartbeatRequest);
-      if (result.equals(HeardBeatStatus.FAILED)) {
+      if (result == HeardBeatStatus.FAILED) {
         retryRegister(registration);
       }
     } catch (ServiceCombException e) {
@@ -106,11 +106,10 @@ public class HeartbeatTask implements Runnable {
       String instanceID = serviceCombClient.registerInstance(microserviceInstance);
       if (null != instanceID) {
         serviceCombClient.autoDiscovery(serviceCombDiscoveryProperties.isAutoDiscovery());
-        return;
+        RegisterCache.setInstanceID(instanceID);
+        RegisterCache.setServiceID(serviceID);
+        LOGGER.info("register success,instanceID:{};serviceID:{}", instanceID, serviceID);
       }
-      RegisterCache.setInstanceID(instanceID);
-      RegisterCache.setServiceID(serviceID);
-      LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
     } catch (ServiceCombException e) {
       serviceCombClient.toggle();
       LOGGER.warn(
