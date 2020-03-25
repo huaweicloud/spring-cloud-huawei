@@ -42,8 +42,6 @@ public class HeartbeatTask implements Runnable {
 
   private ServiceCombClient serviceCombClient;
 
-  private AtomicBoolean isInitialize = new AtomicBoolean(true);
-
   private ServiceCombSwaggerHandler serviceCombSwaggerHandler;
 
   private ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
@@ -57,8 +55,7 @@ public class HeartbeatTask implements Runnable {
     this.serviceCombClient = serviceCombClient;
   }
 
-  public void setServiceCombSwaggerHandler(
-      ServiceCombSwaggerHandler serviceCombSwaggerHandler) {
+  public void setServiceCombSwaggerHandler(ServiceCombSwaggerHandler serviceCombSwaggerHandler) {
     this.serviceCombSwaggerHandler = serviceCombSwaggerHandler;
   }
 
@@ -67,13 +64,11 @@ public class HeartbeatTask implements Runnable {
     this.serviceCombDiscoveryProperties = serviceCombDiscoveryProperties;
   }
 
-  public void setTagsProperties(
-      TagsProperties tagsProperties) {
+  public void setTagsProperties(TagsProperties tagsProperties) {
     this.tagsProperties = tagsProperties;
   }
 
-  public void setRegistration(
-      ServiceCombRegistration registration) {
+  public void setRegistration(ServiceCombRegistration registration) {
     this.registration = registration;
   }
 
@@ -116,7 +111,6 @@ public class HeartbeatTask implements Runnable {
       RegisterCache.setInstanceID(instanceID);
       RegisterCache.setServiceID(serviceID);
       LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
-      isInitialize.compareAndSet(true, false);
     } catch (ServiceCombException e) {
       serviceCombClient.toggle();
       LOGGER.warn(
