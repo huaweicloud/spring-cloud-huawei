@@ -23,7 +23,6 @@ import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 import com.huaweicloud.servicecomb.discovery.client.model.HeardBeatStatus;
 import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstance;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -36,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
-import org.springframework.util.StringUtils;
 
 /**
  * @Author wangqijun
@@ -58,8 +56,6 @@ public class HeartbeatScheduler {
 
   private ServiceCombSwaggerHandler serviceCombSwaggerHandler;
 
-  private ServiceCombRegistration registration;
-
   public HeartbeatScheduler(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
       ServiceCombClient serviceCombClient, TagsProperties tagsProperties) {
     this.serviceCombDiscoveryProperties = serviceCombDiscoveryProperties;
@@ -72,7 +68,6 @@ public class HeartbeatScheduler {
     if (!serviceCombDiscoveryProperties.isHealthCheck()) {
       return;
     }
-    this.registration = registration;
     this.serviceCombSwaggerHandler = serviceCombSwaggerHandler;
     ScheduledFuture currentTask = this.scheduler
         .scheduleWithFixedDelay(() -> {
