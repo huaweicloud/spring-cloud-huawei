@@ -25,7 +25,7 @@ public class Framework {
 
   public static final String DEFAULT_NAME = "springCloud";
 
-  public static final String DEFAULT_VERSION = "1.1.0";
+  public static final String DEFAULT_VERSION = "1.2.0";
 
   private String name = DEFAULT_NAME;
 
