@@ -41,12 +41,13 @@ public class AuthHeaderStrategyMount extends AuthHeaderStrategy {
 
   private ExecutorService executor = Executors.newFixedThreadPool(1);
 
-  private WatchService watchService;
-
   public AuthHeaderStrategyMount() {
     try {
-      watchService = FileSystems.getDefault().newWatchService();
+      WatchService watchService = FileSystems.getDefault().newWatchService();
       Path p = Paths.get(DEFAULT_SECRET_AUTH_PATH);
+      if (!p.toFile().exists()) {
+        return;
+      }
       p.register(watchService,
           StandardWatchEventKinds.ENTRY_MODIFY,
           StandardWatchEventKinds.ENTRY_CREATE);
