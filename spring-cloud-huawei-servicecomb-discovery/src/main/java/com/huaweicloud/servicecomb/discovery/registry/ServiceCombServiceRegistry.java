@@ -71,8 +71,7 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     RegisterCache.setInstanceID(instanceID);
     RegisterCache.setServiceID(serviceID);
     LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
-    heartbeatScheduler
-        .add(instanceID, serviceID, registration, serviceCombSwaggerHandler);
+    heartbeatScheduler.add(registration, serviceCombSwaggerHandler);
   }
 
   private void loopRegister(ServiceCombRegistration registration) {
@@ -118,9 +117,10 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   @Override
   public void deregister(ServiceCombRegistration registration) {
-    heartbeatScheduler.remove(instanceID);
+    heartbeatScheduler.remove();
     try {
-      serviceCombClient.deRegisterInstance(serviceID, instanceID);
+      serviceCombClient
+          .deRegisterInstance(RegisterCache.getServiceID(), RegisterCache.getInstanceID());
     } catch (ServiceCombException e) {
       LOGGER.error("deRegisterInstance failed", e);
     }

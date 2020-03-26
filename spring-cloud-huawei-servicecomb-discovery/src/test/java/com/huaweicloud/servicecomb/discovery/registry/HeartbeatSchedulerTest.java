@@ -17,6 +17,7 @@
 
 package com.huaweicloud.servicecomb.discovery.registry;
 
+import com.huaweicloud.common.cache.RegisterCache;
 import org.junit.Test;
 import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
@@ -43,7 +44,8 @@ public class HeartbeatSchedulerTest {
     serviceCombDiscoveryProperties.setHealthCheckInterval(10);
     HeartbeatScheduler heartbeatScheduler = new HeartbeatScheduler(serviceCombDiscoveryProperties,
         serviceCombClient, tagsProperties);
-    heartbeatScheduler.add("11", "22", null, null);
-    heartbeatScheduler.remove("11");
+    RegisterCache.setInstanceID("11");
+    heartbeatScheduler.add(null, null);
+    heartbeatScheduler.remove();
   }
 }
