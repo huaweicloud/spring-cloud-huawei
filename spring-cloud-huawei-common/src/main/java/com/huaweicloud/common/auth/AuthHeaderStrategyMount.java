@@ -20,7 +20,6 @@ package com.huaweicloud.common.auth;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
@@ -42,18 +41,17 @@ public class AuthHeaderStrategyMount extends AuthHeaderStrategy {
 
   private ExecutorService executor = Executors.newFixedThreadPool(1);
 
-  private WatchService watchService;
-
   public AuthHeaderStrategyMount() {
     try {
-      watchService = FileSystems.getDefault().newWatchService();
+      WatchService watchService = FileSystems.getDefault().newWatchService();
       Path p = Paths.get(DEFAULT_SECRET_AUTH_PATH);
+      if (!p.toFile().exists()) {
+        return;
+      }
       p.register(watchService,
           StandardWatchEventKinds.ENTRY_MODIFY,
           StandardWatchEventKinds.ENTRY_CREATE);
       executor.execute(new FileUpdateCheckThread(watchService));
-    } catch (NoSuchFileException e) {
-      //ignore
     } catch (Exception e) {
       LOGGER.warn("get watch service failed.", e);
     }

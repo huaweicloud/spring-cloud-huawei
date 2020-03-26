@@ -87,11 +87,10 @@ public class HeartbeatScheduler {
   }
 
   public void remove() {
-    ScheduledFuture scheduled = heartbeatRequestMap.get(RegisterCache.getInstanceID());
+    ScheduledFuture scheduled = heartbeatRequestMap.remove(RegisterCache.getInstanceID());
     if (null != scheduled) {
       scheduled.cancel(true);
     }
-    heartbeatRequestMap.remove(RegisterCache.getInstanceID());
   }
 
   private void refreshLocalMap(String instanceId, ScheduledFuture currentTask) {
