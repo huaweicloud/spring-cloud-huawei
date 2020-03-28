@@ -27,7 +27,6 @@ import java.util.Map;
  **/
 public class KVDoc {
 
-  @JsonAlias("_id")
   private String id;
 
   private String check;
@@ -41,12 +40,20 @@ public class KVDoc {
 
   private Map<String, String> labels = new HashMap<String, String>();
 
-  private Integer revision;
-
   private String value;
 
   @JsonAlias("value_type")
   private String valueType;
+
+  private String status;
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
 
   public String getId() {
     return id;
@@ -80,10 +87,6 @@ public class KVDoc {
     return labels;
   }
 
-  public Integer getRevision() {
-    return revision;
-  }
-
   public String getValue() {
     return value;
   }
@@ -102,10 +105,6 @@ public class KVDoc {
 
   public void setLabels(Map<String, String> labels) {
     this.labels = labels;
-  }
-
-  public void setRevision(Integer revision) {
-    this.revision = revision;
   }
 
   public void setValueType(String valueType) {
