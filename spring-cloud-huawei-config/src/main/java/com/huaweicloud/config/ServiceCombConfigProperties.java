@@ -17,9 +17,11 @@
 
 package com.huaweicloud.config;
 
+import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 /**
  * @Author wangqijun
@@ -31,7 +33,7 @@ public class ServiceCombConfigProperties {
 
   private boolean enable = true;
 
-  @Value("${spring.cloud.servicecomb.discovery.serviceName:${spring.application.name}}")
+  @Value("${spring.cloud.servicecomb.discovery.serviceName:${spring.application.name:}}")
   private String serviceName;
 
   @Value("${spring.cloud.servicecomb.discovery.appName:default}")
@@ -96,6 +98,9 @@ public class ServiceCombConfigProperties {
   }
 
   public String getServiceName() {
+    if (StringUtils.isEmpty(serviceName)) {
+      throw new ServiceCombRuntimeException("please use bootstrap.yml for config properties.");
+    }
     return serviceName;
   }
 
