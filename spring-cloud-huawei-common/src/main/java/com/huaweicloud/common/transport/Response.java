@@ -17,6 +17,10 @@
 
 package com.huaweicloud.common.transport;
 
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.http.Header;
+
 /**
  * @Author wangqijun
  * @Date 11:24 2019-07-08
@@ -27,6 +31,21 @@ public class Response {
   private String statusMessage;
 
   private String content;
+
+  private Map<String, String> headers = new HashMap<>();
+
+  public String getHeader(String key) {
+    if (!headers.containsKey(key)) {
+      return null;
+    }
+    return headers.get(key);
+  }
+
+  public void setHeaders(Header[] headers) {
+    for (Header header : headers) {
+      this.headers.put(header.getName(), header.getValue());
+    }
+  }
 
   public int getStatusCode() {
     return statusCode;
@@ -58,6 +77,7 @@ public class Response {
         "statusCode=" + statusCode +
         ", statusMessage='" + statusMessage + '\'' +
         ", content='" + content + '\'' +
+        ", headers=" + headers +
         '}';
   }
 }

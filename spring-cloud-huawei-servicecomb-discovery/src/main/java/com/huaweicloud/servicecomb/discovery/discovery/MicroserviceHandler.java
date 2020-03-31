@@ -20,6 +20,8 @@ package com.huaweicloud.servicecomb.discovery.discovery;
 import java.util.Collections;
 import java.util.List;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
@@ -39,9 +41,15 @@ public class MicroserviceHandler {
 
   private static List<ServiceInstance> instanceList = Collections.emptyList();
 
+  public static Map<String, String> serviceRevision = new ConcurrentHashMap<>();
+
   public static List<ServiceInstance> getInstances(Microservice microservice, ServiceCombClient serviceCombClient) {
     try {
-      instanceList = serviceCombClient.getInstances(microservice);
+      String revision = "0";
+      if (serviceRevision.containsKey(microservice.getServiceName())) {
+        revision = serviceRevision.get(microservice.getServiceName());
+      }
+      instanceList = serviceCombClient.getInstances(microservice, revision);
     } catch (ServiceCombException e) {
       LOGGER.warn("get instances failed.", e);
     }

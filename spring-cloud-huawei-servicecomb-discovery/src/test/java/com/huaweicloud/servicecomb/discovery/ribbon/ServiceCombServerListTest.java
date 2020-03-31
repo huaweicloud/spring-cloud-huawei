@@ -17,8 +17,13 @@
 
 package com.huaweicloud.servicecomb.discovery.ribbon;
 
+import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstanceStatus;
+import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
+import com.netflix.loadbalancer.BaseLoadBalancer;
+import com.netflix.loadbalancer.Server;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +33,6 @@ import org.springframework.cloud.client.ServiceInstance;
 import com.huaweicloud.common.exception.ServiceCombException;
 import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
 import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
-import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 
 import com.netflix.client.config.IClientConfig;
 
@@ -50,6 +54,9 @@ public class ServiceCombServerListTest {
 
   @Injectable
   ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
+
+  @Injectable
+  BaseLoadBalancer baseLoadBalancer;
 
   @Injectable
   IClientConfig iClientConfig;
@@ -85,7 +92,9 @@ public class ServiceCombServerListTest {
 
       @Override
       public Map<String, String> getMetadata() {
-        return null;
+        Map<String, String> map = new HashMap<>();
+        map.put("status", MicroserviceInstanceStatus.UP.name());
+        return map;
       }
     };
     instanceList.add(serviceInstance);
@@ -93,13 +102,13 @@ public class ServiceCombServerListTest {
       {
         iClientConfig.getClientName();
         result = "serviceid11";
-        serviceCombClient.getInstances((Microservice) any);
+        serviceCombClient.getInstances((Microservice) any,null);
         result = instanceList;
       }
     };
 
     serviceCombServerList.initWithNiwsConfig(iClientConfig);
-    List<ServiceCombServer> serverlist = serviceCombServerList.getInitialListOfServers();
-    Assert.assertEquals(serverlist.size(), 1);
+    List<Server> serverList = serviceCombServerList.getUpdatedListOfServers();
+    Assert.assertEquals(serverList.size(), 1);
   }
 }
