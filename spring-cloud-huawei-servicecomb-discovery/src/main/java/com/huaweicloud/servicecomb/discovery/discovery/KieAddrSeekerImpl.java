@@ -28,7 +28,7 @@ public class KieAddrSeekerImpl implements KieAddrSeeker {
     microservice.setServiceName("servicecomb-kie");
     List<ServiceInstance> instanceList;
     try {
-      instanceList = serviceCombClient.getInstances(microservice);
+      instanceList = serviceCombClient.getInstances(microservice,null);
     } catch (ServiceCombException e) {
       LOGGER.warn("get kie instances failed.", e);
       return null;

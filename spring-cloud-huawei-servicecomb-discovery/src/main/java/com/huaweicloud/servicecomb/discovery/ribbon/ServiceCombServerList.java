@@ -17,11 +17,13 @@
 
 package com.huaweicloud.servicecomb.discovery.ribbon;
 
+import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstanceStatus;
+import com.netflix.loadbalancer.ILoadBalancer;
+import com.netflix.loadbalancer.Server;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
@@ -36,11 +38,13 @@ import com.netflix.loadbalancer.AbstractServerList;
  * @Author wangqijun
  * @Date 09:31 2019-07-12
  **/
-public class ServiceCombServerList extends AbstractServerList<ServiceCombServer> {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombServerList.class);
+public class ServiceCombServerList extends AbstractServerList<Server> {
 
   @Autowired
-  ServiceCombClient serviceCombClient;
+  private ServiceCombClient serviceCombClient;
+
+  @Autowired
+  private ILoadBalancer loadBalancer;
 
   private ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
 
@@ -57,28 +61,32 @@ public class ServiceCombServerList extends AbstractServerList<ServiceCombServer>
   }
 
   @Override
-  public List<ServiceCombServer> getInitialListOfServers() {
-    return getServiceInstances();
+  public List<Server> getInitialListOfServers() {
+    return Collections.emptyList();
   }
 
   @Override
-  public List<ServiceCombServer> getUpdatedListOfServers() {
-    return getServiceInstances();
-  }
-
-  private List<ServiceCombServer> getServiceInstances() {
+  public List<Server> getUpdatedListOfServers() {
     Microservice microService = MicroserviceHandler
         .createMicroservice(serviceCombDiscoveryProperties, serviceId);
     //spring cloud serviceId equals servicecomb serviceName
     List<ServiceInstance> instanceList = MicroserviceHandler
         .getInstances(microService, serviceCombClient);
+    if (instanceList.isEmpty()) {
+      return loadBalancer.getAllServers();
+    }
     return transform(instanceList);
   }
 
-
-  private List<ServiceCombServer> transform(List<ServiceInstance> instanceList) {
-    List<ServiceCombServer> serverList = new ArrayList<>();
-    instanceList.forEach(instance -> serverList.add(new ServiceCombServer(instance.getHost(), instance.getPort())));
+  private List<Server> transform(List<ServiceInstance> instanceList) {
+    List<Server> serverList = new ArrayList<>();
+    instanceList.forEach(
+        instance -> {
+          if (instance.getMetadata().get(ServiceCombClient.INSTANCE_STATUS)
+              .equals(MicroserviceInstanceStatus.UP.name())) {
+            serverList.add(new Server(instance.getHost(), instance.getPort()));
+          }
+        });
     return serverList;
   }
 }
