@@ -102,7 +102,7 @@ public class ServiceCombServerListTest {
       {
         iClientConfig.getClientName();
         result = "serviceid11";
-        serviceCombClient.getInstances((Microservice) any,null);
+        serviceCombClient.getInstances((Microservice) any, null);
         result = instanceList;
       }
     };
