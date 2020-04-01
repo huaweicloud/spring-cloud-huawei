@@ -75,9 +75,7 @@ public class ServiceCombClient {
 
   public static String INSTANCE_STATUS = "status";
 
-  private static String CONSUMER_HEADER = "X-ConsumerId";
-
-  private static String REVISION_HEADER = "X-Resource-Revision";
+  public static String ZONE = "zone";
 
   private HttpTransport httpTransport;
 
@@ -288,6 +286,7 @@ public class ServiceCombClient {
     Response response = null;
     try {
       Map<String, String> heades = Maps.newHashMap();
+      String CONSUMER_HEADER = "X-ConsumerId";
       heades.put(CONSUMER_HEADER, RegisterCache.getServiceID());
       // rev是一个query字段，单位是app service version,需要缓存
       response = httpTransport
@@ -302,6 +301,7 @@ public class ServiceCombClient {
         if (result == null || result.getInstances() == null) {
           return instanceList;
         }
+        String REVISION_HEADER = "X-Resource-Revision";
         if (!StringUtils.isEmpty(response.getHeader(REVISION_HEADER))) {
           MicroserviceHandler.serviceRevision.put(
               microservice.getServiceName(), response.getHeader(REVISION_HEADER));
@@ -322,6 +322,9 @@ public class ServiceCombClient {
           }
           Map<String, String> map = new HashMap<>();
           map.put(INSTANCE_STATUS, instance.getStatus().name());
+          if (instance.getDataCenterInfo() != null) {
+            map.put(ZONE, instance.getDataCenterInfo().getZone());
+          }
           instanceList.add(
               new DefaultServiceInstance(instance.getInstanceId(), instance.getServiceId(), host,
                   port, false, map));

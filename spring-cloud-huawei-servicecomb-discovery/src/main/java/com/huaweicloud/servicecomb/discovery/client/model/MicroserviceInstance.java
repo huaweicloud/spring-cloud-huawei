@@ -51,8 +51,19 @@ public class MicroserviceInstance {
 
   private Map<String, String> properties = new HashMap<>();
 
+  private DataCenter dataCenterInfo;
+
   @JsonIgnore
   private String serviceName;
+
+  public DataCenter getDataCenterInfo() {
+    return dataCenterInfo;
+  }
+
+  public void setDataCenterInfo(
+      DataCenter dataCenterInfo) {
+    this.dataCenterInfo = dataCenterInfo;
+  }
 
   public Map<String, String> getProperties() {
     return properties;
