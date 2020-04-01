@@ -60,6 +60,9 @@ public class RegistryHandler {
     MicroserviceInstance microserviceInstance = new MicroserviceInstance();
     microserviceInstance.setServiceId(serviceID);
     microserviceInstance.setHostName(NetUtil.getLocalHost());
+    if (null != serviceCombDiscoveryProperties.getDatacenter()) {
+      microserviceInstance.setDataCenterInfo(serviceCombDiscoveryProperties.getDatacenter());
+    }
     List<String> endPoints = new ArrayList<>();
     String address = NetUtils.getHostAddress();
     endPoints.add("rest://" + address + ":" + serviceCombDiscoveryProperties.getPort());

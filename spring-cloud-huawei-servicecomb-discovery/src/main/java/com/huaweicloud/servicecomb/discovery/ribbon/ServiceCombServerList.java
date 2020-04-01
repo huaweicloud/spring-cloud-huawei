@@ -82,9 +82,15 @@ public class ServiceCombServerList extends AbstractServerList<Server> {
     List<Server> serverList = new ArrayList<>();
     instanceList.forEach(
         instance -> {
-          if (instance.getMetadata().get(ServiceCombClient.INSTANCE_STATUS)
+          if (instance
+              .getMetadata()
+              .get(ServiceCombClient.INSTANCE_STATUS)
               .equals(MicroserviceInstanceStatus.UP.name())) {
-            serverList.add(new Server(instance.getHost(), instance.getPort()));
+            Server server = new Server(instance.getHost(), instance.getPort());
+            if (instance.getMetadata().containsKey(ServiceCombClient.ZONE)) {
+              server.setZone(instance.getMetadata().get(ServiceCombClient.ZONE));
+            }
+            serverList.add(server);
           }
         });
     return serverList;
