@@ -54,7 +54,7 @@ public class MicroserviceHandlerTest {
     microservice.setServiceName("testservice");
     new Expectations() {
       {
-        serviceCombClient.getInstances(microservice,"0");
+        serviceCombClient.getInstances(microservice, "0");
         result = serviceInstanceList;
       }
     };

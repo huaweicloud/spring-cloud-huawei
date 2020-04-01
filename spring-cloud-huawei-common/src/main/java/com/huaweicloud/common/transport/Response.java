@@ -35,9 +35,6 @@ public class Response {
   private Map<String, String> headers = new HashMap<>();
 
   public String getHeader(String key) {
-    if (!headers.containsKey(key)) {
-      return null;
-    }
     return headers.get(key);
   }
 

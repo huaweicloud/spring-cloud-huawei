@@ -41,7 +41,7 @@ public class MicroserviceHandler {
 
   private static List<ServiceInstance> instanceList = Collections.emptyList();
 
-  public static Map<String, String> serviceRevision = new ConcurrentHashMap<>();
+  public static final Map<String, String> serviceRevision = new ConcurrentHashMap<>();
 
   public static List<ServiceInstance> getInstances(Microservice microservice, ServiceCombClient serviceCombClient) {
     try {
