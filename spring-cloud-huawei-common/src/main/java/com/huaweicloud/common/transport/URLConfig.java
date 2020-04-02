@@ -45,6 +45,8 @@ public class URLConfig {
 
   private int afterDnsResolveIndex = 0;
 
+  private int retryDelayTime = 1000;
+
   public String getUrl() {
     if (isEmpty()) {
       throw new ServiceCombRuntimeException("no available address");
@@ -92,8 +94,23 @@ public class URLConfig {
     if (resolveUrlSize > 0) {
       afterDnsResolveIndex = afterDnsResolveIndex + 1 < urlList.size() ? afterDnsResolveIndex + 1
           : urlList.size() - resolveUrlSize;
+      if (afterDnsResolveIndex == 0) {
+        backOff();
+      }
     } else {
       index = (index + 1) % urlList.size();
+      if (index == 0) {
+        backOff();
+      }
     }
+    try {
+      Thread.sleep(retryDelayTime);
+    } catch (InterruptedException e) {
+      LOGGER.warn("thread interrupted.");
+    }
+  }
+
+  public void backOff() {
+    retryDelayTime *= 2;
   }
 }
