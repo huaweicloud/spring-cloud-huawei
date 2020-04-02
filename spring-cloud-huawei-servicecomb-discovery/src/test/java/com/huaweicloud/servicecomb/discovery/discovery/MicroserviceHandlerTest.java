@@ -49,7 +49,7 @@ public class MicroserviceHandlerTest {
     serviceCombDiscoveryProperties.setVersion("latest");
     List<ServiceInstance> serviceInstanceList = new ArrayList<>();
     serviceInstanceList.add(
-        new DefaultServiceInstance("111", "1", "127.0.0.1", 1000, false));
+        new DefaultServiceInstance("1", "127.0.0.1", 1000, false));
     Microservice microservice = new Microservice();
     microservice.setServiceName("testservice");
     new Expectations() {

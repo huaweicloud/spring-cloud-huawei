@@ -310,8 +310,7 @@ public class ServiceCombClient {
                     .getStatusMessage() + "; content:" + response.getContent());
           }
           instanceList.add(
-              new DefaultServiceInstance(instance.getInstanceId(), instance.getServiceId(), host,
-                  port, false));
+              new DefaultServiceInstance(instance.getServiceId(), host, port, false));
         }
       } else {
         throw new RemoteOperationException(

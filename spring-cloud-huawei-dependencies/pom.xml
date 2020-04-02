@@ -15,9 +15,9 @@
   <version>1.2.0</version>
   <name>Spring Cloud Huawei Dependencies</name>
   <properties>
-    <spring-cloud.version>2.1.2.RELEASE</spring-cloud.version>
-    <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
-    <feign-core.version>10.2.3</feign-core.version>
+    <spring-cloud.version>2.0.4.RELEASE</spring-cloud.version>
+    <spring-boot.version>2.0.9.RELEASE</spring-boot.version>
+    <feign-core.version>9.5.1</feign-core.version>
     <httpclient.version>4.5.9</httpclient.version>
     <jackson-databind.version>2.9.10.3</jackson-databind.version>
     <jmockit.version>1.36</jmockit.version>
