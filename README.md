@@ -79,7 +79,7 @@ Use dependencyManagement to manage dependencies.
 introduce starter.
 
     <dependency>
-        <groupId>org.springframework.cloud</groupId>
+        <groupId>com.huaweicloud</groupId>
         <artifactId>spring-cloud-starter-huawei-servicecomb-discovery</artifactId>
     </dependency>
     
