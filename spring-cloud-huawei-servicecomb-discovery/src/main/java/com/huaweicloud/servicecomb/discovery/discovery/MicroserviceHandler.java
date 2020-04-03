@@ -31,6 +31,7 @@ import com.huaweicloud.servicecomb.discovery.client.model.Framework;
 import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceStatus;
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
+import org.springframework.util.StringUtils;
 
 /**
  * @Author wangqijun
@@ -60,7 +61,10 @@ public class MicroserviceHandler {
       String serviceName) {
     Microservice microservice = new Microservice();
     microservice.setServiceName(serviceName);
-    microservice.setVersion(ServiceRegistryConfig.DEFAULT_CALL_VERSION);
+    microservice.setVersion(
+        StringUtils.isEmpty(serviceCombDiscoveryProperties.getDiscoveryVersion())
+            ? ServiceRegistryConfig.DEFAULT_CALL_VERSION
+            : serviceCombDiscoveryProperties.getDiscoveryVersion());
     microservice.setFramework(new Framework());
     if (!serviceCombDiscoveryProperties.isAllowCrossApp()) {
       microservice.setAppId(serviceCombDiscoveryProperties.getAppName());

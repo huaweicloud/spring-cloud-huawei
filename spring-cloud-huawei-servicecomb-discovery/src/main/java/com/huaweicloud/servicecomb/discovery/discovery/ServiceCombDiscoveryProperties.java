@@ -63,6 +63,16 @@ public class ServiceCombDiscoveryProperties {
 
   private DataCenter datacenter;
 
+  private String discoveryVersion;
+
+  public String getDiscoveryVersion() {
+    return discoveryVersion;
+  }
+
+  public void setDiscoveryVersion(String discoveryVersion) {
+    this.discoveryVersion = discoveryVersion;
+  }
+
   public DataCenter getDatacenter() {
     return datacenter;
   }
