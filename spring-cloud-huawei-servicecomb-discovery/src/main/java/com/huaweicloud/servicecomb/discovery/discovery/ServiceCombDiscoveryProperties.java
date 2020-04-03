@@ -46,8 +46,6 @@ public class ServiceCombDiscoveryProperties {
 
   private String version;
 
-  private String hostname;
-
   private boolean preferIpAddress;
 
   private boolean healthCheck = true;
@@ -122,14 +120,6 @@ public class ServiceCombDiscoveryProperties {
     this.enabled = enabled;
   }
 
-  public String getHostname() {
-    return hostname;
-  }
-
-  public void setHostname(String hostname) {
-    this.hostname = hostname;
-  }
-
   public boolean isPreferIpAddress() {
     return preferIpAddress;
   }
@@ -189,7 +179,6 @@ public class ServiceCombDiscoveryProperties {
         ", appName='" + appName + '\'' +
         ", serviceName='" + serviceName + '\'' +
         ", version='" + version + '\'' +
-        ", hostname='" + hostname + '\'' +
         ", preferIpAddress=" + preferIpAddress +
         ", healthCheck=" + healthCheck +
         ", healthCheckInterval='" + healthCheckInterval + '\'' +
