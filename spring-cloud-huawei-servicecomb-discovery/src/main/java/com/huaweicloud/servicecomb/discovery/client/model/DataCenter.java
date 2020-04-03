@@ -6,11 +6,11 @@ package com.huaweicloud.servicecomb.discovery.client.model;
  **/
 public class DataCenter {
 
-  private String name;
+  private String name = "";
 
-  private String region;
+  private String region = "";
 
-  private String availableZone;
+  private String availableZone = "";
 
   public String getZone() {
     return name + region + availableZone;
