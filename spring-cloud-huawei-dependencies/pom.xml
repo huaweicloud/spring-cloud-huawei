@@ -22,8 +22,7 @@
     <jackson-databind.version>2.9.10.3</jackson-databind.version>
     <jmockit.version>1.36</jmockit.version>
     <junit.version>4.12</junit.version>
-    <cse-dependency.version>2.5.0</cse-dependency.version>
-    <spring.version>5.2.3.RELEASE</spring.version>
+    <spring-mvc.version>5.1.8.RELEASE</spring-mvc.version>
     <dtm-client.version>1.0.2</dtm-client.version>
     <guava.version>27.0.1-jre</guava.version>
     <snakeyaml.version>1.24</snakeyaml.version>
@@ -145,13 +144,8 @@
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
-        <artifactId>spring-web</artifactId>
-        <version>${spring.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
         <artifactId>spring-webmvc</artifactId>
-        <version>${spring.version}</version>
+        <version>${spring-mvc.version}</version>
       </dependency>
       <dependency>
         <groupId>io.github.openfeign</groupId>
