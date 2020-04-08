@@ -54,8 +54,7 @@ public class URLConfig {
       throw new ServiceCombRuntimeException("no available address");
     }
     if (resolveUrlSize > 0) {
-      String url = urlList.get(afterDnsResolveIndex);
-      return url;
+      return urlList.get(afterDnsResolveIndex);
     }
     return urlList.get(index);
   }
@@ -112,7 +111,7 @@ public class URLConfig {
     }
   }
 
-  public void backOff() {
+  private void backOff() {
     if (MAX_DELAY_TIME == retryDelayTime) {
       return;
     }

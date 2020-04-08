@@ -20,8 +20,9 @@ import org.apache.servicecomb.provider.pojo.Invoker;
 import org.apache.servicecomb.provider.rest.common.RestSchema;
 import org.apache.servicecomb.provider.springmvc.reference.RestTemplateBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
@@ -66,5 +67,20 @@ public class ConsumerController {
   @GetMapping("/invoke")
   public String invoke() {
     return "hello";
+  }
+
+  //todo:
+  @PostMapping("/longCall")
+  public String longCall(@RequestBody Info info) {
+    String str1 = "java chassis call go chassis.\n" + restTemplate
+        .postForObject("http://GoChassis-Demo/callBack", info, String.class);
+    String str2 = "java chassis call spring cloud.\n" + restTemplate
+        .postForObject("http://swagger-provider/callBack", info, String.class);
+    return str1 + "\n" + str2 + "\n";
+  }
+
+  @PostMapping("/callBack")
+  public String callBack(@RequestBody Info info) {
+    return "java chassis : " + info.getVar3().getInfo();
   }
 }

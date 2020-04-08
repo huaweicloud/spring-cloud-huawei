@@ -18,6 +18,8 @@ package com.huaweicloud.sample;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -51,5 +53,20 @@ public class ProviderController {
   public String invoke() {
     return restTemplate
         .getForObject("http://swagger-consumer/consumer/invoke",String.class);
+  }
+
+  @GetMapping("/longCall")
+  public String longCall() {
+    Info request = new Info();
+    String str1 = "spring cloud call java chassis.\n" + restTemplate
+        .postForObject("http://swagger-consumer/consumer/longCall", request, String.class);
+    String str2 = "spring cloud call go chassis.\n" + restTemplate
+        .postForObject("http://GoChassis-Demo/longCall", request, String.class);
+    return str1 + "\n" + str2 + "\n";
+  }
+
+  @PostMapping("/callBack")
+  public String callBack(@RequestBody Info info) {
+    return "spring cloud : " + info.getVar3().getInfo();
   }
 }
