@@ -392,6 +392,7 @@ public class ServiceCombClient {
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
     } catch (IOException e) {
+      toggle();
       throw new RemoteOperationException("read response failed. ", e);
     }
   }
