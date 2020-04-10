@@ -45,9 +45,7 @@ public class URLConfig {
 
   private int afterDnsResolveIndex = 0;
 
-  private static final int MAX_DELAY_TIME = 60 * 1000;
-
-  private int retryDelayTime = 1000;
+  private BackOff backOff = new BackOff();
 
   public String getUrl() {
     if (isEmpty()) {
@@ -97,28 +95,15 @@ public class URLConfig {
       afterDnsResolveIndex = afterDnsResolveIndex + 1 < urlList.size() ? afterDnsResolveIndex + 1
           : urlList.size() - resolveUrlSize;
       if (afterDnsResolveIndex == 0) {
-        backOff();
+        backOff.backOff();
       }
     } else {
       index = (index + 1) % urlList.size();
       if (index == 0) {
-        backOff();
+        backOff.backOff();
       }
     }
-    try {
-      Thread.sleep(retryDelayTime);
-    } catch (InterruptedException e) {
-      LOGGER.warn("thread interrupted.");
-    }
+    backOff.waiting();
   }
 
-  public void backOff() {
-    if (MAX_DELAY_TIME == retryDelayTime) {
-      return;
-    }
-    retryDelayTime *= 2;
-    if (MAX_DELAY_TIME <= retryDelayTime) {
-      retryDelayTime = MAX_DELAY_TIME;
-    }
-  }
 }

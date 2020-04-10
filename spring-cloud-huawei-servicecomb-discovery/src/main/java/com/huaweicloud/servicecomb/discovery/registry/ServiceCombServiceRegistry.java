@@ -18,6 +18,7 @@
 package com.huaweicloud.servicecomb.discovery.registry;
 
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
+import com.netflix.loadbalancer.DynamicServerListLoadBalancer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstance;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstanceSingleResponse;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * @Author wangqijun
@@ -39,6 +41,10 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   @Autowired(required = false)
   private ServiceCombSwaggerHandler serviceCombSwaggerHandler;
+
+  @Lazy
+  @Autowired(required = false)
+  private DynamicServerListLoadBalancer lb;
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombServiceRegistry.class);
 
@@ -69,6 +75,9 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     loopRegister(registration);
     RegisterCache.setInstanceID(instanceID);
     RegisterCache.setServiceID(serviceID);
+    ServiceCenterWatcher watcher = new ServiceCenterWatcher(lb);
+    watcher.start(serviceCombClient.getUrl(), serviceID);
+
     LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
     heartbeatScheduler.add(registration, serviceCombSwaggerHandler);
   }

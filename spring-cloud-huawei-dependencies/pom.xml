@@ -28,6 +28,7 @@
     <snakeyaml.version>1.24</snakeyaml.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <servicecomb.version>2.0.0</servicecomb.version>
+    <java.websocket.version>1.3.5</java.websocket.version>
   </properties>
 
   <dependencyManagement>
@@ -176,6 +177,11 @@
         <groupId>commons-configuration</groupId>
         <artifactId>commons-configuration</artifactId>
         <version>${commons-configuration.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.java-websocket</groupId>
+        <artifactId>Java-WebSocket</artifactId>
+        <version>${java.websocket.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

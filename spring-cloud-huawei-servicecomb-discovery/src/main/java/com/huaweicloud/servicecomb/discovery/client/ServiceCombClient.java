@@ -516,4 +516,8 @@ public class ServiceCombClient {
   public void toggle() {
     registryConfig.toggle();
   }
+
+  public String getUrl() {
+    return registryConfig.getUrl();
+  }
 }
