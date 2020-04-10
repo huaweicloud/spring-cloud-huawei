@@ -35,6 +35,8 @@ public class ConfigConstants {
 
   public static final String APPLICATION_CONFIG = "application";
 
+  public static final String REVISION = "revision";
+
   public static final String PROPERTYSOURCE_NAME = "servicecomb";
 
   public static final String SERVICE_NAME = "spring.application.name";

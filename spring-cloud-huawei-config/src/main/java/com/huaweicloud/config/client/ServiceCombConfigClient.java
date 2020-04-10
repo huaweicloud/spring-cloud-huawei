@@ -59,6 +59,8 @@ public class ServiceCombConfigClient {
 
   private AtomicBoolean isFirst = new AtomicBoolean(true);
 
+  private String revision = "0";
+
   public ServiceCombConfigClient(String urls, HttpTransport httpTransport) {
     this.httpTransport = httpTransport;
     configCenterConfig.addUrl(URLUtil.getEnvConfigUrl());
@@ -106,7 +108,7 @@ public class ServiceCombConfigClient {
       response = httpTransport.sendGetRequest(
           configCenterConfig.getUrl() + "/" + ConfigConstants.DEFAULT_API_VERSION
               + "/" + project + "/configuration/items?dimensionsInfo="
-              + URLEncoder.encode(dimensionsInfo, "UTF-8"));
+              + URLEncoder.encode(dimensionsInfo, "UTF-8")) + "&revision=" + revision;
       if (response == null) {
         return result;
       }
@@ -117,6 +119,9 @@ public class ServiceCombConfigClient {
                 new TypeReference<Map<String, Map<String, String>>>() {
                 });
         if (allConfigMap != null) {
+          if (allConfigMap.get(ConfigConstants.REVISION) != null) {
+            revision = allConfigMap.get(ConfigConstants.REVISION).get("version");
+          }
           if (allConfigMap.get(ConfigConstants.APPLICATION_CONFIG) != null) {
             result.putAll(allConfigMap.get(ConfigConstants.APPLICATION_CONFIG));
           }
@@ -132,15 +137,20 @@ public class ServiceCombConfigClient {
           }
         }
         return result;
-      }
-      if (response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
+      } else if (response.getStatusCode() == HttpStatus.SC_NOT_MODIFIED) {
+        return null;
+      } else if (response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
         LOGGER.info(response.getStatusMessage());
         return null;
+      } else {
+        throw new RemoteOperationException(
+            "read response failed. status:"
+                + response.getStatusCode()
+                + "; message:"
+                + response.getStatusMessage()
+                + "; content:"
+                + response.getContent());
       }
-      throw new RemoteOperationException(
-          "read response failed. status:" + response.getStatusCode() + "; message:" + response
-              .getStatusMessage() + "; content:" + response.getContent());
-
     } catch (RemoteServerUnavailableException e) {
       configCenterConfig.toggle();
       throw new RemoteOperationException("build url failed.", e);
@@ -168,7 +178,9 @@ public class ServiceCombConfigClient {
           + "/"
           + project
           + "/kie/kv?label=app:"
-          + serviceCombConfigProperties.getAppName();
+          + serviceCombConfigProperties.getAppName()
+          + "&revision="
+          + revision;
       if (isWatch && !isFirst.get()) {
         stringBuilder +=
             "&wait=" + serviceCombConfigProperties.getWatch().getPollingWaitTimeInSeconds() + "s";
@@ -179,6 +191,7 @@ public class ServiceCombConfigClient {
         return null;
       }
       if (response.getStatusCode() == HttpStatus.SC_OK) {
+        revision = response.getHeader("X-Kie-Revision");
         LOGGER.debug(response.getContent());
         KVResponse allConfigList = JsonUtils.OBJ_MAPPER
             .readValue(response.getContent(), KVResponse.class);
@@ -186,8 +199,6 @@ public class ServiceCombConfigClient {
       } else if (response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
         LOGGER.info(response.getStatusMessage());
         return null;
-      } else if (response.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
-        return result;
       } else if (response.getStatusCode() == HttpStatus.SC_NOT_MODIFIED) {
         return null;
       } else {
