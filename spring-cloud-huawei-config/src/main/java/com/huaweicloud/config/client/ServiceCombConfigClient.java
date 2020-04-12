@@ -108,7 +108,7 @@ public class ServiceCombConfigClient {
       response = httpTransport.sendGetRequest(
           configCenterConfig.getUrl() + "/" + ConfigConstants.DEFAULT_API_VERSION
               + "/" + project + "/configuration/items?dimensionsInfo="
-              + URLEncoder.encode(dimensionsInfo, "UTF-8")) + "&revision=" + revision;
+              + URLEncoder.encode(dimensionsInfo, "UTF-8") + "&revision=" + revision);
       if (response == null) {
         return result;
       }
