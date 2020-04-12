@@ -69,7 +69,7 @@ spring-cloud-huawei已发布在maven中央仓库。
 引入相应starter。
 
     <dependency>
-        <groupId>org.springframework.cloud</groupId>
+        <groupId>com.huaweicloud</groupId>
         <artifactId>spring-cloud-starter-huawei-servicecomb-discovery</artifactId>
     </dependency>
     

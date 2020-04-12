@@ -24,6 +24,7 @@ import com.google.common.hash.Hashing;
 import com.huaweicloud.common.transport.URLConfig;
 import com.huaweicloud.servicecomb.discovery.client.model.HeardBeatStatus;
 import com.huaweicloud.servicecomb.discovery.client.model.SchemaRequest;
+import com.huaweicloud.servicecomb.discovery.discovery.MicroserviceHandler;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -52,7 +53,6 @@ import com.huaweicloud.servicecomb.discovery.client.model.HeartbeatRequest;
 import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstance;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstanceSingleResponse;
-import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstanceStatus;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstancesResponse;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceResponse;
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
@@ -60,6 +60,7 @@ import com.huaweicloud.servicecomb.discovery.discovery.MicroserviceCache;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.springframework.util.StringUtils;
 
 
 /**
@@ -71,6 +72,10 @@ public class ServiceCombClient {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombClient.class);
 
   private URLConfig registryConfig = new URLConfig();
+
+  public static String INSTANCE_STATUS = "status";
+
+  public static String ZONE = "zone";
 
   private HttpTransport httpTransport;
 
@@ -179,7 +184,8 @@ public class ServiceCombClient {
     Response response = null;
     try {
       String path = buildURI("/registry/existence");
-      response = httpTransport.sendGetRequest(addParam2URI(path, "microservice", microservice));
+      response = httpTransport
+          .sendGetRequest(addParam2URI(path, "microservice", null, microservice));
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.info(response.getContent());
         HashMap<String, String> result = JsonUtils.OBJ_MAPPER
@@ -274,16 +280,19 @@ public class ServiceCombClient {
    * @return
    * @throws ServiceCombException
    */
-  public List<ServiceInstance> getInstances(Microservice microservice)
+  public List<ServiceInstance> getInstances(Microservice microservice, String revision)
       throws ServiceCombException {
     List<ServiceInstance> instanceList = new ArrayList<>();
     Response response = null;
     try {
       Map<String, String> heades = Maps.newHashMap();
-      heades.put("X-ConsumerId", RegisterCache.getServiceID());
+      String CONSUMER_HEADER = "X-ConsumerId";
+      heades.put(CONSUMER_HEADER, RegisterCache.getServiceID());
+      // rev是一个query字段，单位是app service version,需要缓存
       response = httpTransport
           .sendGetRequest(
-              addParam2URI(buildURI("/registry/instances"), null, microservice),
+              addParam2URI(buildURI("/registry/instances"), null, revision,
+                  microservice),
               heades);
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.info(response.getContent());
@@ -292,11 +301,13 @@ public class ServiceCombClient {
         if (result == null || result.getInstances() == null) {
           return instanceList;
         }
+        String REVISION_HEADER = "X-Resource-Revision";
+        if (!StringUtils.isEmpty(response.getHeader(REVISION_HEADER))) {
+          MicroserviceHandler.serviceRevision.put(
+              microservice.getServiceName(), response.getHeader(REVISION_HEADER));
+        }
         MicroserviceCache.initInsList(result.getInstances(), microservice.getServiceName());
         for (MicroserviceInstance instance : result.getInstances()) {
-          if (instance.getStatus() != MicroserviceInstanceStatus.UP) {
-            continue;
-          }
           int port;
           String host;
           if (!instance.getEndpoints().isEmpty()) {
@@ -309,9 +320,17 @@ public class ServiceCombClient {
                 "read response failed. status:" + response.getStatusCode() + "; message:" + response
                     .getStatusMessage() + "; content:" + response.getContent());
           }
+          Map<String, String> map = new HashMap<>();
+          map.put(INSTANCE_STATUS, instance.getStatus().name());
+          if (instance.getDataCenterInfo() != null) {
+            map.put(ZONE, instance.getDataCenterInfo().getZone());
+          }
           instanceList.add(
-              new DefaultServiceInstance(instance.getServiceId(), host, port, false));
+              new DefaultServiceInstance(instance.getInstanceId(), instance.getServiceId(), host,
+                  port, false, map));
         }
+      } else if (response.getStatusCode() == HttpStatus.SC_NOT_MODIFIED) {
+        return instanceList;
       } else {
         throw new RemoteOperationException(
             "read response failed. status:" + response.getStatusCode() + "; message:" + response
@@ -373,6 +392,7 @@ public class ServiceCombClient {
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
     } catch (IOException e) {
+      toggle();
       throw new RemoteOperationException("read response failed. ", e);
     }
   }
@@ -462,11 +482,14 @@ public class ServiceCombClient {
   }
 
   //just add param
-  private String addParam2URI(String path, String type, Microservice microservice)
+  private String addParam2URI(String path, String type, String revision, Microservice microservice)
       throws URISyntaxException {
     URIBuilder uriBuilder = new URIBuilder(path);
     if (null != type) {
       uriBuilder.setParameter("type", type);
+    }
+    if (null != revision) {
+      uriBuilder.setParameter("rev", revision);
     }
     uriBuilder.setParameter("appId", microservice.getAppId());
     uriBuilder.setParameter("serviceName", microservice.getServiceName());

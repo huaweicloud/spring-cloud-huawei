@@ -210,7 +210,7 @@ public class ServiceCombClientTest {
       }
     };
     ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport);
-    List<ServiceInstance> actual = serviceCombClient.getInstances(microservice);
+    List<ServiceInstance> actual = serviceCombClient.getInstances(microservice, null);
     Assert.assertEquals(1, actual.size());
   }
 

@@ -28,7 +28,6 @@ import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
 import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstance;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstanceSingleResponse;
-import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 
 /**
@@ -103,15 +102,6 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
         LOGGER.warn(
             "register failed, will retry. please check config file. message=" + e.getMessage());
       }
-      delay();
-    }
-  }
-
-  private void delay() {
-    try {
-      Thread.sleep(ServiceRegistryConfig.DEFAULT_DELAY_TIME);
-    } catch (InterruptedException e) {
-      LOGGER.warn("thread interrupted.");
     }
   }
 

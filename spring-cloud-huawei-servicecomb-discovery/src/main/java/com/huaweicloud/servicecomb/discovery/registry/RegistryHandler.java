@@ -18,8 +18,11 @@
 package com.huaweicloud.servicecomb.discovery.registry;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import java.util.Map;
+import org.apache.commons.configuration.EnvironmentConfiguration;
 import org.apache.servicecomb.foundation.common.net.NetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +34,7 @@ import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstance;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceStatus;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
+import org.springframework.util.StringUtils;
 
 /**
  * @Author wangqijun
@@ -40,6 +44,15 @@ public class RegistryHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RegistryHandler.class);
 
+  private static final String CAS_APPLICATION_ID = "CAS_APPLICATION_ID";
+
+  private static final String CAS_COMPONENT_NAME = "CAS_COMPONENT_NAME";
+
+  private static final String CAS_INSTANCE_VERSION = "CAS_INSTANCE_VERSION";
+
+  private static final String CAS_INSTANCE_ID = "CAS_INSTANCE_ID";
+
+  private static final String CAS_ENVIRONMENT_ID = "CAS_ENVIRONMENT_ID";
 
   public static MicroserviceInstance buildMicroServiceInstances(String serviceID,
       Microservice microservice,
@@ -60,6 +73,9 @@ public class RegistryHandler {
     MicroserviceInstance microserviceInstance = new MicroserviceInstance();
     microserviceInstance.setServiceId(serviceID);
     microserviceInstance.setHostName(NetUtil.getLocalHost());
+    if (null != serviceCombDiscoveryProperties.getDatacenter()) {
+      microserviceInstance.setDataCenterInfo(serviceCombDiscoveryProperties.getDatacenter());
+    }
     List<String> endPoints = new ArrayList<>();
     String address = NetUtils.getHostAddress();
     endPoints.add("rest://" + address + ":" + serviceCombDiscoveryProperties.getPort());
@@ -73,7 +89,12 @@ public class RegistryHandler {
     microserviceInstance.setTimestamp(currTime);
     microserviceInstance.setModTimestamp(currTime);
     microserviceInstance.setVersion(serviceCombDiscoveryProperties.getVersion());
-    microserviceInstance.setProperties(tagsProperties.getTag());
+    Map<String, String> properties = new HashMap<>();
+    if (tagsProperties.getTag() != null) {
+      properties.putAll(tagsProperties.getTag());
+    }
+    properties.putAll(genCasProperties());
+    microserviceInstance.setProperties(properties);
     return microserviceInstance;
   }
 
@@ -85,5 +106,26 @@ public class RegistryHandler {
     microservice.setFramework(new Framework());
     microservice.setEnvironment(registration.getEnvironment());
     return microservice;
+  }
+
+  public static Map<String, String> genCasProperties() {
+    Map<String, String> properties = new HashMap<>();
+    EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
+    if (!StringUtils.isEmpty(envConfig.getString(CAS_APPLICATION_ID))) {
+      properties.put(CAS_APPLICATION_ID, envConfig.getString(CAS_APPLICATION_ID));
+    }
+    if (!StringUtils.isEmpty(envConfig.getString(CAS_COMPONENT_NAME))) {
+      properties.put(CAS_COMPONENT_NAME, envConfig.getString(CAS_COMPONENT_NAME));
+    }
+    if (!StringUtils.isEmpty(envConfig.getString(CAS_INSTANCE_VERSION))) {
+      properties.put(CAS_INSTANCE_VERSION, envConfig.getString(CAS_INSTANCE_VERSION));
+    }
+    if (!StringUtils.isEmpty(envConfig.getString(CAS_INSTANCE_ID))) {
+      properties.put(CAS_INSTANCE_ID, envConfig.getString(CAS_INSTANCE_ID));
+    }
+    if (!StringUtils.isEmpty(envConfig.getString(CAS_ENVIRONMENT_ID))) {
+      properties.put(CAS_ENVIRONMENT_ID, envConfig.getString(CAS_ENVIRONMENT_ID));
+    }
+    return properties;
   }
 }

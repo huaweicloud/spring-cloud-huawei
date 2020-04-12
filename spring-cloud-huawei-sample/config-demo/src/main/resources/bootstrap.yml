@@ -6,7 +6,7 @@ spring:
       discovery:
         version: 0.0.1
       config:
-        serverAddr:  http://127.0.0.1:30103
+        serverAddr:  http://127.0.0.1:30113
         watch:
           delay: 10000
       credentials:

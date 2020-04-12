@@ -49,6 +49,8 @@ public class KieUtil {
 
   private static final String LABEL_VERSION = "version";
 
+  private static final String STATUS_ENABLED = "enabled";
+
   public static Map<String, String> getConfigByLabel(
       ServiceCombConfigProperties serviceCombConfigProperties, KVResponse resp) {
     Map<String, String> resultMap = new HashMap<>();
@@ -56,6 +58,9 @@ public class KieUtil {
     List<KVDoc> serviceList = new ArrayList<>();
     List<KVDoc> versionList = new ArrayList<>();
     for (KVDoc kvDoc : resp.getData()) {
+      if (!StringUtils.isEmpty(kvDoc.getStatus()) && !kvDoc.getStatus().equals(STATUS_ENABLED)) {
+        continue;
+      }
       Map<String, String> labelsMap = kvDoc.getLabels();
       if (labelsMap.containsKey(LABEL_APP) && labelsMap.get(LABEL_APP)
           .equals(serviceCombConfigProperties.getAppName())
@@ -127,10 +132,10 @@ public class KieUtil {
     Enumeration<String> keys = (Enumeration<String>) properties.propertyNames();
     while (keys.hasMoreElements()) {
       String key = keys.nextElement();
+      Object value = properties.getProperty(key);
       if (!StringUtils.isEmpty(prefix)) {
         key = prefix + "." + key;
       }
-      Object value = properties.getProperty(key);
       if (value != null) {
         result.put(key, ((String) value).trim());
       } else {

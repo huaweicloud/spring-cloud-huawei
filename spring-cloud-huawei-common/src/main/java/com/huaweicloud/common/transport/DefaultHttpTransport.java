@@ -110,6 +110,7 @@ public class DefaultHttpTransport implements HttpTransport {
       HttpResponse httpResponse = httpClient.execute(httpRequest);
       resp.setStatusCode(httpResponse.getStatusLine().getStatusCode());
       resp.setStatusMessage(httpResponse.getStatusLine().getReasonPhrase());
+      resp.setHeaders(httpResponse.getAllHeaders());
       if (httpResponse.getEntity() != null) {
         resp.setContent(EntityUtils.toString(httpResponse.getEntity()));
       }

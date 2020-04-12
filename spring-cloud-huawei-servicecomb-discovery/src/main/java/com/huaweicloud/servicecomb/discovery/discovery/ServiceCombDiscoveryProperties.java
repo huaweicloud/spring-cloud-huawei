@@ -17,6 +17,7 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
+import com.huaweicloud.servicecomb.discovery.client.model.DataCenter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
@@ -59,6 +60,16 @@ public class ServiceCombDiscoveryProperties {
 
   @Value("${server.port}")
   private String port;
+
+  private DataCenter datacenter;
+
+  public DataCenter getDatacenter() {
+    return datacenter;
+  }
+
+  public void setDatacenter(DataCenter datacenter) {
+    this.datacenter = datacenter;
+  }
 
   public String getAppName() {
     if (null == appName) {

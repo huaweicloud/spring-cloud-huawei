@@ -44,7 +44,7 @@ public class ServiceCombPropertySourceLocatorTest {
       @Injectable ServiceCombConfigClient serviceCombConfigClient,
       @Injectable Environment environment) {
     ServiceCombConfigProperties serviceCombConfigProperties = new ServiceCombConfigProperties();
-    serviceCombConfigProperties.setEnable(true);
+    serviceCombConfigProperties.setEnabled(true);
     serviceCombConfigProperties.setServerAddr("http://ddd");
     Watch watch = new Watch();
     watch.setEnable(true);

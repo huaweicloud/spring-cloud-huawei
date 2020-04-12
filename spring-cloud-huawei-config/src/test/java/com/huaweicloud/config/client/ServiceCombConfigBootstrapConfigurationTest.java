@@ -36,7 +36,7 @@ public class ServiceCombConfigBootstrapConfigurationTest {
     this.contextRunner.withUserConfiguration(ServiceCombConfigBootstrapConfiguration.class)
         .run(context -> {
           ServiceCombConfigProperties serviceCombConfigProperties = context.getBean(ServiceCombConfigProperties.class);
-          assertThat(serviceCombConfigProperties.isEnable())
+          assertThat(serviceCombConfigProperties.isEnabled())
               .isEqualTo(true);
         });
   }
