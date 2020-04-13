@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ByteArrayEntity;
@@ -103,9 +104,9 @@ public class ServiceCombClient {
         if (microserviceInstance.getEndpoints() == null) {
           continue;
         }
-        microserviceInstance.getEndpoints().forEach(endpoint -> {
-            registryConfig.addUrlAfterDnsResolve(URLUtil.transform(endpoint));
-        });
+        registryConfig.addUrlAfterDnsResolve(
+            microserviceInstance.getEndpoints().stream().map(URLUtil::transform)
+                .collect(Collectors.toList()));
       }
     } catch (RemoteOperationException e) {
       LOGGER.error(e.getMessage(), e);
