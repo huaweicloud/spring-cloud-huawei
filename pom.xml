@@ -28,7 +28,7 @@
 
   <groupId>com.huaweicloud</groupId>
   <artifactId>spring-cloud-huawei</artifactId>
-  <version>1.2.0</version>
+  <version>1.2.0-Finchley</version>
   <packaging>pom</packaging>
   <name>Spring Cloud Huawei</name>
 
@@ -40,9 +40,9 @@
     <module>spring-cloud-huawei-parents</module>
     <module>spring-cloud-huawei-common</module>
     <module>spring-cloud-huawei-servicecomb-discovery</module>
-    <module>spring-cloud-huawei-sample</module>
+<!--    <module>spring-cloud-huawei-sample</module>-->
     <module>spring-cloud-starter-huawei</module>
-    <module>spring-cloud-huawei-dtm</module>
+<!--    <module>spring-cloud-huawei-dtm</module>-->
     <module>spring-cloud-huawei-config</module>
     <module>spring-cloud-huawei-router-core</module>
     <module>spring-cloud-huawei-router-client</module>
