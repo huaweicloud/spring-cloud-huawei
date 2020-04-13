@@ -326,8 +326,7 @@ public class ServiceCombClient {
             map.put(ZONE, instance.getDataCenterInfo().getZone());
           }
           instanceList.add(
-              new DefaultServiceInstance(instance.getInstanceId(), instance.getServiceId(), host,
-                  port, false, map));
+              new DefaultServiceInstance(instance.getServiceId(), host, port, false, map));
         }
       } else if (response.getStatusCode() == HttpStatus.SC_NOT_MODIFIED) {
         return instanceList;
