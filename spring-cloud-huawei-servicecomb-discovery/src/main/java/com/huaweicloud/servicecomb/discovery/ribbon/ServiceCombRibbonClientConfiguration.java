@@ -17,6 +17,7 @@
 
 package com.huaweicloud.servicecomb.discovery.ribbon;
 
+import com.netflix.loadbalancer.IPing;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 import org.springframework.context.annotation.Bean;
@@ -40,5 +41,10 @@ public class ServiceCombRibbonClientConfiguration {
     ServiceCombServerList serverList = new ServiceCombServerList(serviceCombProperties);
     serverList.initWithNiwsConfig(config);
     return serverList;
+  }
+
+  @Bean
+  public IPing ping() {
+    return new ServiceCombIPing();
   }
 }

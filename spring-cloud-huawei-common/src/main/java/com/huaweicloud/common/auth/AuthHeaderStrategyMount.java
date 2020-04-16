@@ -43,11 +43,11 @@ public class AuthHeaderStrategyMount extends AuthHeaderStrategy {
 
   public AuthHeaderStrategyMount() {
     try {
-      WatchService watchService = FileSystems.getDefault().newWatchService();
       Path p = Paths.get(DEFAULT_SECRET_AUTH_PATH);
       if (!p.toFile().exists()) {
         return;
       }
+      WatchService watchService = FileSystems.getDefault().newWatchService();
       p.register(watchService,
           StandardWatchEventKinds.ENTRY_MODIFY,
           StandardWatchEventKinds.ENTRY_CREATE);
