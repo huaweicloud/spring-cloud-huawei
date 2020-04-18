@@ -34,6 +34,8 @@ public class ServiceCombDiscoveryProperties {
 
   private boolean enabled = true;
 
+  private boolean isWatch = true;
+
   private String address;
 
   private String appName;
@@ -181,18 +183,32 @@ public class ServiceCombDiscoveryProperties {
     this.allowCrossApp = allowCrossApp;
   }
 
+  public boolean isWatch() {
+    return isWatch;
+  }
+
+  public void setWatch(boolean watch) {
+    isWatch = watch;
+  }
+
   @Override
   public String toString() {
     return "ServiceCombDiscoveryProperties{" +
         "enabled=" + enabled +
+        ", isWatch=" + isWatch +
         ", address='" + address + '\'' +
         ", appName='" + appName + '\'' +
         ", serviceName='" + serviceName + '\'' +
+        ", environment='" + environment + '\'' +
         ", version='" + version + '\'' +
         ", hostname='" + hostname + '\'' +
         ", preferIpAddress=" + preferIpAddress +
         ", healthCheck=" + healthCheck +
-        ", healthCheckInterval='" + healthCheckInterval + '\'' +
+        ", healthCheckInterval=" + healthCheckInterval +
+        ", autoDiscovery=" + autoDiscovery +
+        ", allowCrossApp=" + allowCrossApp +
+        ", port='" + port + '\'' +
+        ", datacenter=" + datacenter +
         '}';
   }
 }

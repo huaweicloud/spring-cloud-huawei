@@ -61,9 +61,6 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   private String instanceID = null;
 
-  @Value("${spring.cloud.servicecomb.discovery.watch:true}")
-  private boolean isWatch;
-
   public ServiceCombServiceRegistry(ServiceCombClient serviceCombClient,
       HeartbeatScheduler heartbeatScheduler,
       ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
@@ -79,7 +76,7 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     loopRegister(registration);
     RegisterCache.setInstanceID(instanceID);
     RegisterCache.setServiceID(serviceID);
-    if (isWatch) {
+    if (serviceCombDiscoveryProperties.isWatch()) {
       ServiceCenterWatcher watcher = new ServiceCenterWatcher(lb);
       watcher.start(serviceCombClient.getUrl(), serviceID);
     }

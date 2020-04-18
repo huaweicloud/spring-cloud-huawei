@@ -53,7 +53,8 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient {
     Microservice microService = MicroserviceHandler
         .createMicroservice(discoveryProperties, serviceId);
     //spring cloud serviceId equals servicecomb serviceName
-    return MicroserviceHandler.getInstances(microService, serviceCombClient);
+    return MicroserviceHandler
+        .getInstances(microService, serviceCombClient, discoveryProperties);
   }
 
   @Override

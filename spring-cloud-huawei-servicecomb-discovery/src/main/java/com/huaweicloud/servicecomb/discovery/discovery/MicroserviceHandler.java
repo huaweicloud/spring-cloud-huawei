@@ -46,13 +46,18 @@ public class MicroserviceHandler {
 
   public static final Map<String, List<ServiceInstance>> discoveryServerList = new ConcurrentHashMap<>();
 
-  public static List<ServiceInstance> getInstances(Microservice microservice, ServiceCombClient serviceCombClient) {
+  public static List<ServiceInstance> getInstances(Microservice microservice,
+      ServiceCombClient serviceCombClient,
+      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
     try {
       String revision = "0";
       if (serviceRevision.containsKey(microservice.getServiceName())) {
         revision = serviceRevision.get(microservice.getServiceName());
       }
       instanceList = serviceCombClient.getInstances(microservice, revision);
+      if (serviceCombDiscoveryProperties.isWatch()) {
+        return instanceList;
+      }
       if (instanceList.isEmpty()) {
         instanceList = discoveryServerList
             .getOrDefault(microservice.getServiceName(), new ArrayList<>());
