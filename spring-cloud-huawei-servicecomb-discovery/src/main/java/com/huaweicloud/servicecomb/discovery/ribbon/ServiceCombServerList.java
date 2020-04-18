@@ -18,7 +18,6 @@
 package com.huaweicloud.servicecomb.discovery.ribbon;
 
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstanceStatus;
-import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,9 +41,6 @@ public class ServiceCombServerList extends AbstractServerList<Server> {
 
   @Autowired
   private ServiceCombClient serviceCombClient;
-
-  @Autowired
-  private ILoadBalancer loadBalancer;
 
   private ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
 
@@ -72,9 +68,6 @@ public class ServiceCombServerList extends AbstractServerList<Server> {
     //spring cloud serviceId equals servicecomb serviceName
     List<ServiceInstance> instanceList = MicroserviceHandler
         .getInstances(microService, serviceCombClient);
-    if (instanceList.isEmpty()) {
-      return loadBalancer.getAllServers();
-    }
     return transform(instanceList);
   }
 

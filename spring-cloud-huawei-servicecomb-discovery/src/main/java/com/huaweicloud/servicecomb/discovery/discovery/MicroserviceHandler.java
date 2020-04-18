@@ -17,6 +17,7 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,6 +44,8 @@ public class MicroserviceHandler {
 
   public static final Map<String, String> serviceRevision = new ConcurrentHashMap<>();
 
+  public static final Map<String, List<ServiceInstance>> discoveryServerList = new ConcurrentHashMap<>();
+
   public static List<ServiceInstance> getInstances(Microservice microservice, ServiceCombClient serviceCombClient) {
     try {
       String revision = "0";
@@ -50,6 +53,12 @@ public class MicroserviceHandler {
         revision = serviceRevision.get(microservice.getServiceName());
       }
       instanceList = serviceCombClient.getInstances(microservice, revision);
+      if (instanceList.isEmpty()) {
+        instanceList = discoveryServerList
+            .getOrDefault(microservice.getServiceName(), new ArrayList<>());
+      } else {
+        discoveryServerList.put(microservice.getServiceName(), instanceList);
+      }
     } catch (ServiceCombException e) {
       LOGGER.warn("get instances failed.", e);
     }

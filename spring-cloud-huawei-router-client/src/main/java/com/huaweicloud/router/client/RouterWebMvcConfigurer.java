@@ -51,7 +51,7 @@ public class RouterWebMvcConfigurer implements WebMvcConfigurer {
   }
 
   @Bean
-  @ConditionalOnProperty(prefix = "servicecomb.router.hystrix", havingValue = "true", matchIfMissing = true)
+  @ConditionalOnProperty(value = "servicecomb.router.hystrix.enabled", matchIfMissing = true)
   public RouterHystrixConcurrencyStrategy routerHystrixConcurrencyStrategy() {
     return new RouterHystrixConcurrencyStrategy();
   }

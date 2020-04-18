@@ -35,7 +35,7 @@ public class RouterLoadBalanceRule extends ZoneAvoidanceRule {
   @Override
   public Server choose(Object key) {
     List<Server> serverList = RouterFilter
-        .getFilteredListOfServers(getLoadBalancer().getAllServers(),
+        .getFilteredListOfServers(getLoadBalancer().getReachableServers(),
             RouterTrackContext.getServiceName(),
             RouterTrackContext.getRequestHeader(),
             distributor);

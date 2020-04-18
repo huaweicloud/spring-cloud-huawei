@@ -19,7 +19,6 @@ package com.huaweicloud.servicecomb.discovery.ribbon;
 
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstanceStatus;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
-import com.netflix.loadbalancer.BaseLoadBalancer;
 import com.netflix.loadbalancer.Server;
 import java.net.URI;
 import java.util.ArrayList;
@@ -54,9 +53,6 @@ public class ServiceCombServerListTest {
 
   @Injectable
   ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
-
-  @Injectable
-  BaseLoadBalancer baseLoadBalancer;
 
   @Injectable
   IClientConfig iClientConfig;
