@@ -35,7 +35,7 @@ public class ServiceCenterWebSocketClient extends WebSocketClient {
 
   @Override
   public void onMessage(String s) {
-    LOGGER.debug("instance change : {}", s);
+    LOGGER.info("instance change : {}", s);
     //no matter what event , just refresh pull
     lb.updateListOfServers();
   }

@@ -22,6 +22,7 @@ import com.netflix.loadbalancer.DynamicServerListLoadBalancer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
 import com.huaweicloud.common.cache.RegisterCache;
 import com.huaweicloud.common.exception.ServiceCombException;
@@ -60,6 +61,9 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   private String instanceID = null;
 
+  @Value("${spring.cloud.servicecomb.discovery.watch:true}")
+  private boolean isWatch;
+
   public ServiceCombServiceRegistry(ServiceCombClient serviceCombClient,
       HeartbeatScheduler heartbeatScheduler,
       ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
@@ -75,9 +79,10 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     loopRegister(registration);
     RegisterCache.setInstanceID(instanceID);
     RegisterCache.setServiceID(serviceID);
-    ServiceCenterWatcher watcher = new ServiceCenterWatcher(lb);
-    watcher.start(serviceCombClient.getUrl(), serviceID);
-
+    if (isWatch) {
+      ServiceCenterWatcher watcher = new ServiceCenterWatcher(lb);
+      watcher.start(serviceCombClient.getUrl(), serviceID);
+    }
     LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
     heartbeatScheduler.add(registration, serviceCombSwaggerHandler);
   }
