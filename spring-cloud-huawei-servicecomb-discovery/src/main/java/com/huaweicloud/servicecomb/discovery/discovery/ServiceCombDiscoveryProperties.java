@@ -38,7 +38,7 @@ public class ServiceCombDiscoveryProperties {
 
   private String appName;
 
-  @Value("${spring.cloud.servicecomb.discovery.serviceName:${spring.application.name}}")
+  @Value("${spring.cloud.servicecomb.discovery.serviceName:${spring.application.name:}}")
   private String serviceName;
 
   @Value("${server.env:}")
