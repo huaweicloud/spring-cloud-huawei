@@ -44,9 +44,9 @@ public class HeaderRule {
     }
     if (exact == null && regex == null) {
       throw new RouterIllegalParamException(
-          "route management regex and exact can not br null at same time.");
+          "route management regex and exact can not be null at same time.");
     }
-    if (!caseInsensitive) {
+    if (caseInsensitive) {
       str = str.toLowerCase();
       exact = exact == null ? null : exact.toLowerCase();
       regex = regex == null ? null : regex.toLowerCase();

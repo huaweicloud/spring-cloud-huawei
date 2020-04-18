@@ -24,10 +24,11 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 /**
  * @Author GuoYl123
@@ -52,8 +53,7 @@ public class URLConfig {
       throw new ServiceCombRuntimeException("no available address");
     }
     if (resolveUrlSize > 0) {
-      String url = urlList.get(afterDnsResolveIndex);
-      return url;
+      return urlList.get(afterDnsResolveIndex);
     }
     return urlList.get(index);
   }
@@ -63,24 +63,26 @@ public class URLConfig {
       return;
     }
     urlList.addAll(urls);
+    index = new Random().nextInt(urlList.size());
   }
 
-  public void addUrlAfterDnsResolve(String url) {
-    if (StringUtils.isEmpty(url)) {
+
+  public void addUrlAfterDnsResolve(List<String> urls) {
+    if (CollectionUtils.isEmpty(urls)) {
       return;
     }
-    try (Socket s = new Socket()) {
-      String[] ipPort = URLUtil.splitIpPort(url);
-      s.connect(new InetSocketAddress(ipPort[0], Integer.parseInt(ipPort[1])), 3000);
-    } catch (IOException e) {
-      return;
-    }
-    LOGGER.info("choose auto discovery endpoint: {}", url);
-    if (resolveUrlSize == 0) {
-      afterDnsResolveIndex = urlList.size();
-    }
-    urlList.add(url);
-    resolveUrlSize++;
+    List<String> availableUrls = urls.stream().filter(url -> {
+      try (Socket s = new Socket()) {
+        String[] ipPort = URLUtil.splitIpPort(url);
+        s.connect(new InetSocketAddress(ipPort[0], Integer.parseInt(ipPort[1])), 3000);
+      } catch (IOException e) {
+        return false;
+      }
+      return true;
+    }).collect(Collectors.toList());
+    resolveUrlSize = availableUrls.size();
+    afterDnsResolveIndex = urlList.size() + new Random().nextInt(availableUrls.size());
+    urlList.addAll(availableUrls);
   }
 
   public boolean isEmpty() {
@@ -105,5 +107,4 @@ public class URLConfig {
     }
     backOff.waiting();
   }
-
 }

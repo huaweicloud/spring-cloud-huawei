@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.huaweicloud.router.client.hytrix.RouterHystrixConcurrencyStrategy;
 import com.huaweicloud.router.client.rest.RouterRestTemplateIntercptor;
 import com.huaweicloud.router.client.track.RouterHandlerInterceptor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,6 +51,7 @@ public class RouterWebMvcConfigurer implements WebMvcConfigurer {
   }
 
   @Bean
+  @ConditionalOnProperty(prefix = "servicecomb.router.hystrix", havingValue = "true", matchIfMissing = true)
   public RouterHystrixConcurrencyStrategy routerHystrixConcurrencyStrategy() {
     return new RouterHystrixConcurrencyStrategy();
   }
