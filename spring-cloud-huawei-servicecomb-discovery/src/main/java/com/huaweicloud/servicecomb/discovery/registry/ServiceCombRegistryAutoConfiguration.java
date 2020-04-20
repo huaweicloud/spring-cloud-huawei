@@ -18,7 +18,8 @@
 package com.huaweicloud.servicecomb.discovery.registry;
 
 
-import com.netflix.loadbalancer.DynamicServerListLoadBalancer;
+import com.huaweicloud.servicecomb.discovery.discovery.ServerListRefreshHandler;
+import com.huaweicloud.servicecomb.discovery.event.ServiceCombEventBus;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -83,6 +84,18 @@ public class ServiceCombRegistryAutoConfiguration {
       ServiceCombRegistration registration) {
     return new ServiceCombAutoServiceRegistration(registry,
         autoServiceRegistrationProperties, registration);
+  }
+
+  @Bean
+  @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.isWatch", matchIfMissing = true)
+  public ServiceCombEventBus serviceCombEventBus() {
+    return new ServiceCombEventBus();
+  }
+
+  @Bean
+  @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.isWatch", matchIfMissing = true)
+  public ServerListRefreshHandler serverListRefreshHandler() {
+    return new ServerListRefreshHandler();
   }
 }
 

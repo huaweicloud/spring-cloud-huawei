@@ -105,7 +105,9 @@ public class ServiceCombClient {
           continue;
         }
         registryConfig.addUrlAfterDnsResolve(
-            microserviceInstance.getEndpoints().stream().map(URLUtil::transform)
+            microserviceInstance.getEndpoints().stream()
+                .filter(url -> !url.contains("[::]") && url.startsWith("rest"))
+                .map(URLUtil::transform)
                 .collect(Collectors.toList()));
       }
     } catch (RemoteOperationException e) {
