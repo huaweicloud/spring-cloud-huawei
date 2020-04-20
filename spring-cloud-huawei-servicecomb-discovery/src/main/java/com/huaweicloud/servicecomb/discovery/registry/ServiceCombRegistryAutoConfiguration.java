@@ -79,9 +79,10 @@ public class ServiceCombRegistryAutoConfiguration {
   public ServiceCombAutoServiceRegistration serviceCombAutoServiceRegistration(
       ServiceCombServiceRegistry registry,
       AutoServiceRegistrationProperties autoServiceRegistrationProperties,
-      ServiceCombRegistration registration) {
+      ServiceCombRegistration registration,
+      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
     return new ServiceCombAutoServiceRegistration(registry,
-        autoServiceRegistrationProperties, registration);
+        autoServiceRegistrationProperties, registration,serviceCombDiscoveryProperties);
   }
 }
 

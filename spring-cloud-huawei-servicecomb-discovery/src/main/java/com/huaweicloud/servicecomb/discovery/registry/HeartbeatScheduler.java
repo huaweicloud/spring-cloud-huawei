@@ -74,6 +74,9 @@ public class HeartbeatScheduler {
     this.serviceCombSwaggerHandler = serviceCombSwaggerHandler;
     ScheduledFuture currentTask = this.scheduler
         .scheduleWithFixedDelay(() -> {
+              if (serviceCombSwaggerHandler != null) {
+                serviceCombSwaggerHandler.initAndRegister();
+              }
               try {
                 HeartbeatRequest heartbeatRequest = new HeartbeatRequest(RegisterCache.getServiceID(),
                     RegisterCache.getInstanceID());
@@ -111,18 +114,13 @@ public class HeartbeatScheduler {
   private void retryRegister(ServiceCombRegistration registration, String oldInstanceID) {
     LOGGER.info("retry registry to service center.");
     Microservice microservice = RegistryHandler.buildMicroservice(registration);
-    if (serviceCombSwaggerHandler != null) {
-      serviceCombSwaggerHandler.init(serviceCombDiscoveryProperties.getAppName(),
-          serviceCombDiscoveryProperties.getServiceName());
-      microservice.setSchemas(serviceCombSwaggerHandler.getSchemas());
-    }
     try {
       String serviceID = serviceCombClient.getServiceId(microservice);
       if (null == serviceID) {
         serviceID = serviceCombClient.registerMicroservice(microservice);
       }
       if (serviceCombSwaggerHandler != null) {
-        serviceCombSwaggerHandler.registerSwagger(serviceID, microservice.getSchemas());
+        serviceCombSwaggerHandler.initAndRegister();
       }
       MicroserviceInstance microserviceInstance = RegistryHandler
           .buildMicroServiceInstances(serviceID, microservice, serviceCombDiscoveryProperties,

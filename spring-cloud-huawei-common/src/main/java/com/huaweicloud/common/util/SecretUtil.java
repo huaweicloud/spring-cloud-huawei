@@ -44,6 +44,7 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 /**
  * @Author GuoYl123
@@ -110,6 +111,9 @@ public class SecretUtil {
   }
 
   public static String sha256Encode(String key, String data) throws Exception {
+    if (StringUtils.isEmpty(key)) {
+      return key;
+    }
     Mac sha256HMAC = Mac.getInstance("HmacSHA256");
     SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8),
         "HmacSHA256");

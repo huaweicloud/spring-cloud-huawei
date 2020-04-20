@@ -25,9 +25,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.lang.Nullable;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @Author GuoYl123
@@ -54,8 +54,15 @@ public class RouterHandlerInterceptor implements HandlerInterceptor {
   }
 
   @Override
+  public void postHandle(HttpServletRequest httpServletRequest,
+      HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView)
+      throws Exception {
+
+  }
+
+  @Override
   public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
-      Object handler, @Nullable Exception ex) {
+      Object handler, Exception ex) {
     RouterTrackContext.remove();
   }
 

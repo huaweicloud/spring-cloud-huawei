@@ -37,11 +37,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import springfox.documentation.service.ApiListing;
 import springfox.documentation.service.Documentation;
 import springfox.documentation.spring.web.DocumentationCache;
@@ -64,6 +66,8 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   @Autowired
   protected ServiceCombClient serviceCombClient;
 
+  private AtomicBoolean initialized = new AtomicBoolean(false);
+
   private Map<String, Swagger> swaggerMap = new HashMap<>();
 
   @Value("${spring.cloud.servicecomb.swagger.enableJavaChassisAdapter:true}")
@@ -79,6 +83,12 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
 
   private String INTF_SUFFIX = "Intf";
 
+  private String appName;
+
+  private String serviceName;
+
+  private String microserviceId;
+
   /**
    * Split registration
    */
@@ -87,6 +97,7 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
         .documentationByGroup(Docket.DEFAULT_GROUP_NAME);
     if (documentation == null) {
       LOGGER.warn("Unable to find specification for group {}", Docket.DEFAULT_GROUP_NAME);
+      return;
     }
     Multimap<String, ApiListing> allList = documentation.getApiListings();
     Iterator iter = allList.entries().iterator();
@@ -134,6 +145,28 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
       }
     }
     return;
+  }
+
+  public void initAndRegister() {
+    if (initialized.get()) {
+      return;
+    }
+    init(appName, serviceName);
+    if (this.getSchemas().isEmpty()) {
+      return;
+    }
+    registerSwagger(microserviceId, this.getSchemas());
+    initialized.compareAndSet(false, true);
+  }
+
+  public void initAndRegister(String appName, String serviceName, String microserviceId) {
+    if (initialized.get()) {
+      return;
+    }
+    this.appName = appName;
+    this.serviceName = serviceName;
+    this.microserviceId = microserviceId;
+    initAndRegister();
   }
 
   /**

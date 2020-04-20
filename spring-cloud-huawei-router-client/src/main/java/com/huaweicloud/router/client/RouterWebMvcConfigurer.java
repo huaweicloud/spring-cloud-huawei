@@ -28,13 +28,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
  * @Author GuoYl123
  * @Date 2019/10/17
  **/
 @Configuration
-public class RouterWebMvcConfigurer implements WebMvcConfigurer {
+public class RouterWebMvcConfigurer extends WebMvcConfigurerAdapter {
 
   @Autowired
   RouterHandlerInterceptor routerHandlerInterceptor;

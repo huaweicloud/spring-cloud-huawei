@@ -49,6 +49,11 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient {
   }
 
   @Override
+  public ServiceInstance getLocalServiceInstance() {
+    return null;
+  }
+
+  @Override
   public List<ServiceInstance> getInstances(String serviceId) {
     Microservice microService = MicroserviceHandler
         .createMicroservice(discoveryProperties, serviceId);

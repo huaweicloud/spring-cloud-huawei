@@ -18,10 +18,10 @@
     <spring-boot.version>1.5.22.RELEASE</spring-boot.version>
     <feign-core.version>9.5.1</feign-core.version>
     <httpclient.version>4.5.9</httpclient.version>
-    <jackson-databind.version>2.9.10.3</jackson-databind.version>
+    <jackson-databind.version>2.9.9</jackson-databind.version>
     <jmockit.version>1.36</jmockit.version>
     <junit.version>4.12</junit.version>
-    <spring-mvc.version>5.1.8.RELEASE</spring-mvc.version>
+    <spring-mvc.version>4.3.25.RELEASE</spring-mvc.version>
     <dtm-client.version>1.0.2</dtm-client.version>
     <guava.version>27.0.1-jre</guava.version>
     <snakeyaml.version>1.24</snakeyaml.version>
@@ -135,13 +135,6 @@
         <type>pom</type>
       </dependency>
       <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-openfeign-dependencies</artifactId>
-        <version>2.0.4.RELEASE</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-webmvc</artifactId>
         <version>${spring-mvc.version}</version>
@@ -169,6 +162,16 @@
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
+        <version>${jackson-databind.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <version>${jackson-databind.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
         <version>${jackson-databind.version}</version>
       </dependency>
       <dependency>

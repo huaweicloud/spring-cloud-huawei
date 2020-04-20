@@ -17,6 +17,7 @@
 
 package com.huaweicloud.servicecomb.discovery.registry;
 
+import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration;
@@ -32,15 +33,30 @@ public class ServiceCombAutoServiceRegistration extends AbstractAutoServiceRegis
 
   private ServiceCombRegistration serviceCombRegistration;
 
+  private ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
+
   public ServiceCombAutoServiceRegistration(ServiceCombServiceRegistry registry,
-      AutoServiceRegistrationProperties autoServiceRegistrationProperties, ServiceCombRegistration registration) {
+      AutoServiceRegistrationProperties autoServiceRegistrationProperties,
+      ServiceCombRegistration registration,
+      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
     super(registry, autoServiceRegistrationProperties);
     this.serviceCombRegistration = registration;
+    this.serviceCombDiscoveryProperties = serviceCombDiscoveryProperties;
   }
 
   @Override
   public void start() {
     super.start();
+  }
+
+  @Override
+  protected int getConfiguredPort() {
+    return Integer.parseInt(serviceCombDiscoveryProperties.getPort());
+  }
+
+  @Override
+  protected void setConfiguredPort(int i) {
+    //never use
   }
 
   @Override

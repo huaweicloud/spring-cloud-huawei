@@ -13,7 +13,7 @@
   <artifactId>spring-cloud-starter-huawei</artifactId>
   <modules>
     <module>spring-cloud-starter-huawei-servicecomb-discovery</module>
-    <module>spring-cloud-starter-huawei-dtm</module>
+<!--    <module>spring-cloud-starter-huawei-dtm</module>-->
     <module>spring-cloud-starter-huawei-router</module>
     <module>spring-cloud-starter-huawei-config</module>
     <module>spring-cloud-starter-huawei-swagger</module>

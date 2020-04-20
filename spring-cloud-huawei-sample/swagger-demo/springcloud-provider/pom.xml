@@ -5,7 +5,7 @@
   <parent>
     <artifactId>swagger-demo</artifactId>
     <groupId>com.huaweicloud</groupId>
-    <version>1.2.0</version>
+    <version>1.2.0-Edgware</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -15,18 +15,15 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-      <version>${spring-boot.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
-      <version>${spring-boot.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-commons</artifactId>
-      <version>${spring-cloud.version}</version>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
