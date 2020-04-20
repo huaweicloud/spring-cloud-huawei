@@ -55,6 +55,10 @@ public class MicroserviceHandler {
       if (serviceRevision.containsKey(microservice.getServiceName())) {
         revision = serviceRevision.get(microservice.getServiceName());
       }
+      //revision is useless when watch
+      if (serviceCombDiscoveryProperties.isWatch()) {
+        revision = null;
+      }
       List<ServiceInstance> instanceList = serviceCombClient.getInstances(microservice, revision);
       if (serviceCombDiscoveryProperties.isWatch()) {
         return instanceList;
@@ -71,6 +75,9 @@ public class MicroserviceHandler {
     List<ServiceInstance> resultList = new ArrayList<>();
     List<ServiceInstance> cacheList = discoveryServerList
         .getOrDefault(serviceName, new ArrayList<>());
+    if (instanceList == null) {
+      return cacheList;
+    }
     //if list is empty, maybe the service center is restarted , check before clear
     if (instanceList.isEmpty()) {
       for (ServiceInstance server : cacheList) {

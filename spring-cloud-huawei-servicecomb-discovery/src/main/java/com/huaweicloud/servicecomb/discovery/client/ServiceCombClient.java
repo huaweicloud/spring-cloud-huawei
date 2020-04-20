@@ -333,7 +333,7 @@ public class ServiceCombClient {
                   port, false, map));
         }
       } else if (response.getStatusCode() == HttpStatus.SC_NOT_MODIFIED) {
-        return instanceList;
+        return null;
       } else {
         throw new RemoteOperationException(
             "read response failed. status:" + response.getStatusCode() + "; message:" + response
