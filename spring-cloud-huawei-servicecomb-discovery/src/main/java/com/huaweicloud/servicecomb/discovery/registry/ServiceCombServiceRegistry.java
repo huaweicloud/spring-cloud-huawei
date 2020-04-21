@@ -75,11 +75,6 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   private void loopRegister(ServiceCombRegistration registration) {
     Microservice microservice = RegistryHandler.buildMicroservice(registration);
-    if (serviceCombSwaggerHandler != null) {
-      serviceCombSwaggerHandler.init(serviceCombDiscoveryProperties.getAppName(),
-          serviceCombDiscoveryProperties.getServiceName());
-      microservice.setSchemas(serviceCombSwaggerHandler.getSchemas());
-    }
     while (true) {
       try {
         serviceID = serviceCombClient.getServiceId(microservice);
@@ -87,7 +82,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
           serviceID = serviceCombClient.registerMicroservice(microservice);
         }
         if (serviceCombSwaggerHandler != null) {
-          serviceCombSwaggerHandler.registerSwagger(serviceID, microservice.getSchemas());
+          serviceCombSwaggerHandler.initAndRegister(serviceCombDiscoveryProperties.getAppName(),
+              serviceCombDiscoveryProperties.getServiceName(), serviceID);
         }
         MicroserviceInstance microserviceInstance = RegistryHandler
             .buildMicroServiceInstances(serviceID, microservice, serviceCombDiscoveryProperties,

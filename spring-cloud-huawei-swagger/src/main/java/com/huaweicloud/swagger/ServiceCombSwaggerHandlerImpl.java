@@ -82,7 +82,7 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   /**
    * Split registration
    */
-  public void init(String appName, String serviceName) {
+  private void init(String appName, String serviceName) {
     Documentation documentation = documentationCache
         .documentationByGroup(Docket.DEFAULT_GROUP_NAME);
     if (documentation == null) {
@@ -136,6 +136,14 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
     return;
   }
 
+  public void initAndRegister(String appName, String serviceName, String microserviceId) {
+    init(appName, serviceName);
+    if (swaggerMap.isEmpty()) {
+      return;
+    }
+    registerSwagger(microserviceId, new ArrayList<>(swaggerMap.keySet()));
+  }
+
   /**
    * todo: schema generate also can be async , use aop around method
    * schema注册调用接口可以改为异步,在和java-chassis组网场景下需要同步加载
@@ -143,16 +151,12 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
    * @param microserviceId
    * @param schemaIds
    */
-  public void registerSwagger(String microserviceId, List<String> schemaIds) {
+  private void registerSwagger(String microserviceId, List<String> schemaIds) {
     if (withJavaChassis) {
       registerSwaggerSync(microserviceId, schemaIds);
     } else {
       registerSwaggerAsync(microserviceId, schemaIds);
     }
-  }
-
-  public List<String> getSchemas() {
-    return new ArrayList<>(swaggerMap.keySet());
   }
 
   /**
