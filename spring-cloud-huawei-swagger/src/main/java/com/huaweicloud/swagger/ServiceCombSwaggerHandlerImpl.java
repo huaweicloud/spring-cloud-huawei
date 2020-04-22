@@ -25,6 +25,7 @@ import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
 import io.swagger.models.AbstractModel;
 import io.swagger.models.Info;
 import io.swagger.models.Swagger;
+import io.swagger.models.parameters.AbstractSerializableParameter;
 import io.swagger.util.Yaml;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -82,7 +83,7 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   /**
    * Split registration
    */
-  public void init(String appName, String serviceName) {
+  private void init(String appName, String serviceName) {
     Documentation documentation = documentationCache
         .documentationByGroup(Docket.DEFAULT_GROUP_NAME);
     if (documentation == null) {
@@ -136,6 +137,14 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
     return;
   }
 
+  public void initAndRegister(String appName, String serviceName, String microserviceId) {
+    init(appName, serviceName);
+    if (swaggerMap.isEmpty()) {
+      return;
+    }
+    registerSwagger(microserviceId, new ArrayList<>(swaggerMap.keySet()));
+  }
+
   /**
    * todo: schema generate also can be async , use aop around method
    * schema注册调用接口可以改为异步,在和java-chassis组网场景下需要同步加载
@@ -143,16 +152,12 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
    * @param microserviceId
    * @param schemaIds
    */
-  public void registerSwagger(String microserviceId, List<String> schemaIds) {
+  private void registerSwagger(String microserviceId, List<String> schemaIds) {
     if (withJavaChassis) {
       registerSwaggerSync(microserviceId, schemaIds);
     } else {
       registerSwaggerAsync(microserviceId, schemaIds);
     }
-  }
-
-  public List<String> getSchemas() {
-    return new ArrayList<>(swaggerMap.keySet());
   }
 
   /**
@@ -167,6 +172,14 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
     Set<String> methodFilter = new HashSet<>();
     temSwagger.getPaths().forEach((k, v) ->
         v.getOperations().forEach(method -> {
+          method.getParameters().forEach(parameter -> {
+            if (parameter instanceof AbstractSerializableParameter
+                && parameter.getIn().equals("query")
+                && ((AbstractSerializableParameter) parameter).getType().equals("object")) {
+              throw new RuntimeException("class: " + className + " , path: " + k
+                  + " object in query can not parse by java chassis , please set enableJavaChassisAdapter");
+            }
+          });
           String processOptId = method.getOperationId();
           processOptId = processOptId.substring(0, processOptId.indexOf("Using"));
           if (methodFilter.contains(processOptId)) {
