@@ -25,6 +25,7 @@ import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
 import io.swagger.models.AbstractModel;
 import io.swagger.models.Info;
 import io.swagger.models.Swagger;
+import io.swagger.models.parameters.AbstractSerializableParameter;
 import io.swagger.util.Yaml;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -171,6 +172,14 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
     Set<String> methodFilter = new HashSet<>();
     temSwagger.getPaths().forEach((k, v) ->
         v.getOperations().forEach(method -> {
+          method.getParameters().forEach(parameter -> {
+            if (parameter instanceof AbstractSerializableParameter
+                && parameter.getIn().equals("query")
+                && ((AbstractSerializableParameter) parameter).getType().equals("object")) {
+              throw new RuntimeException("class: " + className + " , path: " + k
+                  + " object in query can not parse by java chassis , please set enableJavaChassisAdapter");
+            }
+          });
           String processOptId = method.getOperationId();
           processOptId = processOptId.substring(0, processOptId.indexOf("Using"));
           if (methodFilter.contains(processOptId)) {
