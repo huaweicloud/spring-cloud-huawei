@@ -18,6 +18,12 @@
 package com.huaweicloud.servicecomb.discovery.registry;
 
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
+import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
+import com.huaweicloud.servicecomb.discovery.discovery.ServerListRefreshHandler;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.concurrent.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +35,11 @@ import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstance;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstanceSingleResponse;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
+import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.web.socket.WebSocketHttpHeaders;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.client.WebSocketClient;
+import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
 /**
  * @Author wangqijun
@@ -54,6 +65,9 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   private String instanceID = null;
 
+  @Autowired
+  private ServerListRefreshHandler serverListRefreshHandler;
+
   public ServiceCombServiceRegistry(ServiceCombClient serviceCombClient,
       HeartbeatScheduler heartbeatScheduler,
       ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
@@ -69,8 +83,34 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     loopRegister(registration);
     RegisterCache.setInstanceID(instanceID);
     RegisterCache.setServiceID(serviceID);
+    if (serviceCombDiscoveryProperties.isWatch()) {
+      startWatch();
+    }
     LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
     heartbeatScheduler.add(registration, serviceCombSwaggerHandler);
+  }
+
+  private void startWatch() {
+    WebSocketClient webSocketClient = new StandardWebSocketClient();
+    try {
+      URI uri = new URI(serviceCombClient.getUrl());
+      String url =
+          "ws://" + uri.getHost() + ":" + uri.getPort() + "/v4/"
+              + ServiceRegistryConfig.DEFAULT_PROJECT
+              + "/registry/microservices/" + serviceID + "/watcher";
+      WebSocketHttpHeaders signedHeader = new WebSocketHttpHeaders();
+      signedHeader
+          .put("x-domain-name", Collections.singletonList(ServiceRegistryConfig.DEFAULT_PROJECT));
+      ListenableFuture<WebSocketSession> listenableFuture = webSocketClient
+          .doHandshake(serverListRefreshHandler, signedHeader, new URI(url));
+      listenableFuture.get();
+    } catch (URISyntaxException e) {
+      LOGGER.error("parse url error");
+    } catch (InterruptedException e) {
+      LOGGER.error("thread interrupted");
+    } catch (ExecutionException e) {
+      LOGGER.error("execution watch error", e);
+    }
   }
 
   private void loopRegister(ServiceCombRegistration registration) {
