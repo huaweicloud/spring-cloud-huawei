@@ -84,13 +84,13 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     RegisterCache.setInstanceID(instanceID);
     RegisterCache.setServiceID(serviceID);
     if (serviceCombDiscoveryProperties.isWatch()) {
-      statWatch();
+      startWatch();
     }
     LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
     heartbeatScheduler.add(registration, serviceCombSwaggerHandler);
   }
 
-  private void statWatch() {
+  private void startWatch() {
     WebSocketClient webSocketClient = new StandardWebSocketClient();
     try {
       URI uri = new URI(serviceCombClient.getUrl());

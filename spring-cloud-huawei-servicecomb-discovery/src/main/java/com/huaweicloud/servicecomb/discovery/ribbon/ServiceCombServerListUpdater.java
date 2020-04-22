@@ -1,7 +1,7 @@
 package com.huaweicloud.servicecomb.discovery.ribbon;
 
 import com.huaweicloud.servicecomb.discovery.event.ServiceCombEventBus;
-import com.netflix.loadbalancer.ServerListUpdater;
+import com.netflix.loadbalancer.PollingServerListUpdater;
 import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @Author GuoYl123
  * @Date 2020/4/20
  */
-public class ServiceCombServerListUpdater implements ServerListUpdater {
+public class ServiceCombServerListUpdater extends PollingServerListUpdater {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombServerListUpdater.class);
 
@@ -40,6 +40,7 @@ public class ServiceCombServerListUpdater implements ServerListUpdater {
 
   @Override
   public void start(UpdateAction updateAction) {
+    super.start(updateAction);
     if (isActive.compareAndSet(false, true)) {
       this.updateAction = updateAction;
       eventBus.register(event -> {
@@ -60,12 +61,12 @@ public class ServiceCombServerListUpdater implements ServerListUpdater {
           }
         }
       });
-      eventBus.trigger();
     }
   }
 
   @Override
   public void stop() {
+    super.stop();
     if (isActive.compareAndSet(true, false)) {
       // stop listening
       refreshExecutor.shutdown();
@@ -76,22 +77,24 @@ public class ServiceCombServerListUpdater implements ServerListUpdater {
 
   @Override
   public String getLastUpdate() {
-    return new Date(lastUpdated.get()).toString();
+    Date pullTime = new Date(super.getLastUpdate());
+    Date watchTime = new Date(lastUpdated.get());
+    return pullTime.after(watchTime) ? pullTime.toString() : watchTime.toString();
   }
 
   @Override
   public long getDurationSinceLastUpdateMs() {
-    return 0;
+    return super.getDurationSinceLastUpdateMs();
   }
 
   @Override
   public int getNumberMissedCycles() {
-    return 0;
+    return super.getNumberMissedCycles();
   }
 
   @Override
   public int getCoreThreads() {
-    return 1;
+    return super.getCoreThreads();
   }
 
 }

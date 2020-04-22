@@ -51,7 +51,6 @@ public class ServiceCombDiscoveryClientTest {
     serviceCombDiscoveryProperties.setAppName("test");
     serviceCombDiscoveryProperties.setServiceName("testservice");
     serviceCombDiscoveryProperties.setVersion("latest");
-    ServiceCombDiscoveryProperties finalProperties = serviceCombDiscoveryProperties;
     List<ServiceInstance> serviceInstanceList = new ArrayList<>();
     serviceInstanceList.add(
         new DefaultServiceInstance("111", "1", "127.0.0.1", 1000, false));
@@ -62,8 +61,7 @@ public class ServiceCombDiscoveryClientTest {
       {
         MicroserviceHandler.createMicroservice((ServiceCombDiscoveryProperties) any, anyString);
         result = microservice;
-        MicroserviceHandler
-            .getInstances((Microservice) any, (ServiceCombClient) any, finalProperties);
+        MicroserviceHandler.getInstances((Microservice) any, (ServiceCombClient) any);
         result = serviceInstanceList;
       }
     };

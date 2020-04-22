@@ -48,21 +48,13 @@ public class MicroserviceHandler {
   public static final Map<String, List<ServiceInstance>> discoveryServerList = new ConcurrentHashMap<>();
 
   public static List<ServiceInstance> getInstances(Microservice microservice,
-      ServiceCombClient serviceCombClient,
-      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
+      ServiceCombClient serviceCombClient) {
     try {
       String revision = "0";
       if (serviceRevision.containsKey(microservice.getServiceName())) {
         revision = serviceRevision.get(microservice.getServiceName());
       }
-      //revision is useless when watch
-      if (serviceCombDiscoveryProperties.isWatch()) {
-        revision = null;
-      }
       List<ServiceInstance> instanceList = serviceCombClient.getInstances(microservice, revision);
-      if (serviceCombDiscoveryProperties.isWatch()) {
-        return instanceList;
-      }
       return getList(instanceList, microservice.getServiceName());
     } catch (ServiceCombException e) {
       LOGGER.warn("get instances failed.", e);
@@ -84,7 +76,7 @@ public class MicroserviceHandler {
         try (Socket s = new Socket()) {
           s.connect(new InetSocketAddress(server.getHost(), server.getPort()), 3000);
         } catch (IOException e) {
-          //ignore
+          continue;
         }
         resultList.add(server);
       }

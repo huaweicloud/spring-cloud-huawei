@@ -9,20 +9,13 @@ import java.util.List;
  **/
 public class ServiceCombEventBus {
 
-  private ServerListRefreshEvent cacheEvent;
-
   private List<ServiceCombListener> listeners = new ArrayList<>();
 
   public void register(ServiceCombListener listener) {
     listeners.add(listener);
   }
 
-  public void trigger() {
-    publish(cacheEvent);
-  }
-
   public void publish(ServerListRefreshEvent event) {
-    cacheEvent = event;
     listeners.forEach(l -> l.onEvent(event));
   }
 }

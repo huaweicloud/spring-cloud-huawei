@@ -58,7 +58,6 @@ public class MicroserviceHandlerTest {
         result = serviceInstanceList;
       }
     };
-    MicroserviceHandler
-        .getInstances(microservice, serviceCombClient, serviceCombDiscoveryProperties);
+    MicroserviceHandler.getInstances(microservice, serviceCombClient);
   }
 }
