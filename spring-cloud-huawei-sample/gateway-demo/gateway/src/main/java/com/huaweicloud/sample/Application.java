@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 @EnableDiscoveryClient
 public class Application {
+  //todo
   public static void main(String[] args) {
     SpringApplication.run(Application.class, args);
   }

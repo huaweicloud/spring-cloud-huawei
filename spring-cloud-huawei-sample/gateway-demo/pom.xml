@@ -24,13 +24,6 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-boot.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
         <groupId>com.huaweicloud</groupId>
         <artifactId>spring-cloud-huawei-dependencies</artifactId>
         <version>${project.version}</version>
