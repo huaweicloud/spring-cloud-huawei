@@ -105,7 +105,9 @@ public class ServiceCombClient {
           continue;
         }
         registryConfig.addUrlAfterDnsResolve(
-            microserviceInstance.getEndpoints().stream().map(URLUtil::transform)
+            microserviceInstance.getEndpoints().stream()
+                .filter(url -> !url.contains("[::]") && url.startsWith("rest"))
+                .map(URLUtil::transform)
                 .collect(Collectors.toList()));
       }
     } catch (RemoteOperationException e) {
@@ -331,7 +333,7 @@ public class ServiceCombClient {
                   port, false, map));
         }
       } else if (response.getStatusCode() == HttpStatus.SC_NOT_MODIFIED) {
-        return instanceList;
+        return null;
       } else {
         throw new RemoteOperationException(
             "read response failed. status:" + response.getStatusCode() + "; message:" + response
@@ -516,5 +518,9 @@ public class ServiceCombClient {
 
   public void toggle() {
     registryConfig.toggle();
+  }
+
+  public String getUrl() {
+    return registryConfig.getUrl();
   }
 }

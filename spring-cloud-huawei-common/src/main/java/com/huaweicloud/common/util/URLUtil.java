@@ -65,10 +65,10 @@ public class URLUtil {
    * @return
    */
   public static String transform(String restUrl) {
-    String scheme = "http";
     if (restUrl == null) {
       return null;
     }
+    String scheme = "http";
     if (isSSLEnable(restUrl)) {
       scheme = "https";
     }

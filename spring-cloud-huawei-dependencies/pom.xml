@@ -28,6 +28,7 @@
     <snakeyaml.version>1.24</snakeyaml.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <servicecomb.version>2.0.0</servicecomb.version>
+    <spring.websocket.version>2.2.6.RELEASE</spring.websocket.version>
   </properties>
 
   <dependencyManagement>
@@ -176,6 +177,11 @@
         <groupId>commons-configuration</groupId>
         <artifactId>commons-configuration</artifactId>
         <version>${commons-configuration.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-websocket</artifactId>
+        <version>${spring.websocket.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
