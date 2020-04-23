@@ -13,6 +13,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <version>${spring-boot.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-servicecomb-discovery</artifactId>
       <version>${project.version}</version>

@@ -16,10 +16,8 @@
     <module>javachassis-consumer</module>
     <module>edge-service</module>
   </modules>
+
   <properties>
-    <java.version>1.8</java.version>
-    <spring-cloud.version>2.1.2.RELEASE</spring-cloud.version>
-    <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
     <java-chassis.version>2.0.0</java-chassis.version>
   </properties>
 

@@ -11,10 +11,11 @@
 
   <artifactId>ssl-demo</artifactId>
 
-  <properties>
-    <java.version>1.8</java.version>
-  </properties>
   <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-servicecomb-discovery</artifactId>
