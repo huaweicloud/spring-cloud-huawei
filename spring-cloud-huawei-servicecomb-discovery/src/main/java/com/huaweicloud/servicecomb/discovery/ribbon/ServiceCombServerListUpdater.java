@@ -23,8 +23,6 @@ public class ServiceCombServerListUpdater extends PollingServerListUpdater {
 
   private final AtomicLong lastUpdated = new AtomicLong(System.currentTimeMillis());
 
-  private UpdateAction updateAction;
-
   private ScheduledExecutorService refreshExecutor =
       Executors.newScheduledThreadPool(
           1,
@@ -42,7 +40,6 @@ public class ServiceCombServerListUpdater extends PollingServerListUpdater {
   public void start(UpdateAction updateAction) {
     super.start(updateAction);
     if (isActive.compareAndSet(false, true)) {
-      this.updateAction = updateAction;
       eventBus.register(event -> {
         if (!refreshExecutor.isShutdown()) {
           try {

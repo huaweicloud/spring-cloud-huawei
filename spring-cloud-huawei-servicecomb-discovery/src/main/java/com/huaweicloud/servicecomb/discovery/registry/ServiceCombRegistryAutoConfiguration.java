@@ -18,7 +18,6 @@
 package com.huaweicloud.servicecomb.discovery.registry;
 
 
-import com.huaweicloud.servicecomb.discovery.discovery.ServerListRefreshHandler;
 import com.huaweicloud.servicecomb.discovery.event.ServiceCombEventBus;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -87,15 +86,14 @@ public class ServiceCombRegistryAutoConfiguration {
   }
 
   @Bean
-  @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.isWatch", matchIfMissing = true)
   public ServiceCombEventBus serviceCombEventBus() {
     return new ServiceCombEventBus();
   }
 
   @Bean
-  @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.isWatch", matchIfMissing = true)
-  public ServerListRefreshHandler serverListRefreshHandler() {
-    return new ServerListRefreshHandler();
+  public ServiceCombWatcher serviceCombWatcher() {
+    return new ServiceCombWatcher();
   }
+
 }
 
