@@ -14,8 +14,8 @@
   <packaging>pom</packaging>
   <properties>
     <java.version>1.8</java.version>
-    <spring-cloud.version>Greenwich.SR5</spring-cloud.version>
-    <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
+    <spring-cloud.version>Hoxton.SR3</spring-cloud.version>
+    <spring-boot.version>2.2.6.RELEASE</spring-boot.version>
   </properties>
   <modules>
 <!--    <module>dtm-demo</module>-->
