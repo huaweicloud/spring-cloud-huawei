@@ -18,17 +18,6 @@
       <version>${spring-boot.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <version>${spring-boot.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-commons</artifactId>
-      <version>${spring-cloud.version}</version>
-    </dependency>
-    <dependency>
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-servicecomb-discovery</artifactId>
       <version>${project.version}</version>
