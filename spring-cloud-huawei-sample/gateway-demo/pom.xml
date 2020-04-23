@@ -16,11 +16,6 @@
     <module>zuul</module>
   </modules>
 
-  <properties>
-    <spring-cloud.version>Greenwich.SR2</spring-cloud.version>
-    <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
-  </properties>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -31,16 +26,16 @@
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-huawei-dependencies</artifactId>
-        <version>${project.version}</version>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-dependencies</artifactId>
-        <version>${spring-cloud.version}</version>
+        <groupId>com.huaweicloud</groupId>
+        <artifactId>spring-cloud-huawei-dependencies</artifactId>
+        <version>${project.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
