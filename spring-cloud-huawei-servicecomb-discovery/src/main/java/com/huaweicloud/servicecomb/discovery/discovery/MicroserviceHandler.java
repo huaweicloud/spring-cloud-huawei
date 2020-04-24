@@ -45,7 +45,7 @@ public class MicroserviceHandler {
 
   public static final Map<String, String> serviceRevision = new ConcurrentHashMap<>();
 
-  public static final Map<String, List<ServiceInstance>> discoveryServerList = new ConcurrentHashMap<>();
+  private static final Map<String, List<ServiceInstance>> discoveryServerList = new ConcurrentHashMap<>();
 
   public static List<ServiceInstance> getInstances(Microservice microservice,
       ServiceCombClient serviceCombClient) {

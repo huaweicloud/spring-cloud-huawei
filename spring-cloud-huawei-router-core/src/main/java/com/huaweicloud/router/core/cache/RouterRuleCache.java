@@ -53,7 +53,7 @@ public class RouterRuleCache {
    * @return
    */
   public static boolean doInit(String targetServiceName) {
-    if (!isServerContainRule(targetServiceName)) {
+    if (isServerContainRule(targetServiceName)) {
       return false;
     }
     if (!serviceInfoCacheMap.containsKey(targetServiceName)) {
@@ -110,9 +110,9 @@ public class RouterRuleCache {
     DynamicStringProperty lookFor = DynamicPropertyFactory.getInstance()
         .getStringProperty(String.format(ROUTE_RULE, targetServiceName), null);
     if (StringUtils.isEmpty(lookFor.get())) {
-      return false;
+      return true;
     }
-    return true;
+    return false;
   }
 
   public static void refresh() {

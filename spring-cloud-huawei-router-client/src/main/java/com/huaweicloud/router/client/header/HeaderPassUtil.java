@@ -50,7 +50,7 @@ public class HeaderPassUtil {
     if (!isHaveHeadersRule()) {
       return null;
     }
-    if (!RouterRuleCache.isServerContainRule(RouterTrackContext.getServiceName())) {
+    if (RouterRuleCache.isServerContainRule(RouterTrackContext.getServiceName())) {
       return null;
     }
     if (loadHeaders()) {
