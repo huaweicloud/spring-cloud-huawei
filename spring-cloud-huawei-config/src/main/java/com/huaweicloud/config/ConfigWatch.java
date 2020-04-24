@@ -109,11 +109,6 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
         return;
       }
       md5Value = MD5Util.encrypt(remoteConfig.toString());
-      // first load
-      if (refreshRecord.getLastMD5() == null || refreshRecord.getLastMD5().isEmpty()) {
-        refreshRecord.setLastMD5(md5Value);
-        return;
-      }
       if (md5Value.equals(refreshRecord.getLastMD5())) {
         return;
       }
