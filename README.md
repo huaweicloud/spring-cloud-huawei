@@ -56,11 +56,6 @@ commercial such as Huawei Cloud
 ## How to use
 spring-cloud-huawei has been released in Maven's central repository.
 
-Dependent component version：
-* Spring Cloud ：2.1.2.RELEASE
-* Spring Boot ：2.1.6.RELEASE
-* JDK ：1.8 +
-
 Use dependencyManagement to manage dependencies.
 
     <dependencyManagement>
@@ -84,6 +79,15 @@ introduce starter.
     </dependency>
     
 [more document](https://support.huaweicloud.com/devg-servicestage/cse_java_0054.html)
+
+## Compatibility instructions
+
+| spring cloud huawei | spring cloud | spring boot |
+| ------------------- | ------------ | ----------- |
+| 1.3.1               | Hoxton       | 2.2.x       |
+| 1.3.1-Greenwich     | Greenwich    | 2.1.x       |
+| 1.2.0-Finchley      | Finchley     | 2.0.x       |
+| 1.2.0-Edgware       | Edgware      | 1.5.x       |
 
 ## RoadMap
 - [ ] Support WebFlux
