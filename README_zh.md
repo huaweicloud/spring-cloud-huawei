@@ -47,11 +47,6 @@
 ## 如何使用
 spring-cloud-huawei已发布在maven中央仓库。
 
-依赖的版本：
-* Spring Cloud ：2.1.2.RELEASE
-* Spring Boot ：2.1.6.RELEASE
-* JDK ：1.8 +
-
 使用dependencyManagement引入依赖。
 
     <dependencyManagement>
@@ -74,6 +69,15 @@ spring-cloud-huawei已发布在maven中央仓库。
     </dependency>
     
 [更多文档](https://support.huaweicloud.com/devg-servicestage/cse_java_0054.html)
+
+## 兼容性说明
+
+| spring cloud huawei | spring cloud | spring boot |
+| ------------------- | ------------ | ----------- |
+| 1.3.1               | Hoxton       | 2.2.x       |
+| 1.3.1-Greenwich     | Greenwich    | 2.1.x       |
+| 1.2.0-Finchley      | Finchley     | 2.0.x       |
+| 1.2.0-Edgware       | Edgware      | 1.5.x       |
 
 ## 开发路径
 - [ ] 支持WebFlux
