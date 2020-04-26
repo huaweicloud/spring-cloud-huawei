@@ -17,6 +17,9 @@
 package com.huaweicloud.sample;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -57,12 +60,18 @@ public class ProviderController {
 
   @GetMapping("/longCall")
   public String longCall() {
-    Info request = new Info();
-    String str1 = "spring cloud call java chassis.\n" + restTemplate
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    Info info = new Info();
+    HttpEntity<Info> request = new HttpEntity<>(info, headers);
+    String str1 = "spring cloud call java chassis.\n";
+    String javaChssisResult = restTemplate
         .postForObject("http://swagger-consumer/consumer/longCall", request, String.class);
+    javaChssisResult = javaChssisResult.replace("\"", "");
+    javaChssisResult = javaChssisResult.replace("\\n", "\n");
     String str2 = "spring cloud call go chassis.\n" + restTemplate
         .postForObject("http://GoChassis-Demo/longCall", request, String.class);
-    return str1 + "\n" + str2 + "\n";
+    return str1 + javaChssisResult + "\n" + str2 + "\n";
   }
 
   @PostMapping("/callBack")

@@ -69,14 +69,13 @@ public class ConsumerController {
     return "hello";
   }
 
-  //todo:
   @PostMapping("/longCall")
   public String longCall(@RequestBody Info info) {
     String str1 = "java chassis call go chassis.\n" + restTemplate
-        .postForObject("http://GoChassis-Demo/callBack", info, String.class);
+        .postForObject("cse://GoChassis-Demo/callBack", info, String.class);
     String str2 = "java chassis call spring cloud.\n" + restTemplate
-        .postForObject("http://swagger-provider/callBack", info, String.class);
-    return str1 + "\n" + str2 + "\n";
+        .postForObject("cse://swagger-provider/callBack", info, String.class);
+    return str1 + "\n" + str2;
   }
 
   @PostMapping("/callBack")

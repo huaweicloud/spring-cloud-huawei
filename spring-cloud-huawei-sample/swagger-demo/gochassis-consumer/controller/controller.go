@@ -52,7 +52,9 @@ func (r *MainRouter) LongCall(b *rf.Context) {
 	resp2, _ := core.NewRestInvoker().ContextDo(context.TODO(), req2)
 	result := httputil.ReadBody(resp)
 	result2 := httputil.ReadBody(resp2)
+	b.Write([]byte("go chassis call java chassis: \n "))
 	b.Write(result)
+	b.Write([]byte("\n go chassis call spring cloud: \n "))
 	b.Write(result2)
 }
 
@@ -63,7 +65,8 @@ func (r *MainRouter) CallBack(b *rf.Context) {
 		lager.Logger.Error("Decode failed.")
 		return
 	}
-	b.Write([]byte("go chassis : " + info.Var3.Info))
+	result, _ := json.Marshal("go chassis : " + info.Var3.Info)
+	b.Write(result)
 }
 
 func (s *MainRouter) URLPatterns() []rf.Route {
@@ -73,8 +76,10 @@ func (s *MainRouter) URLPatterns() []rf.Route {
 		{Method: http.MethodGet, Path: "/hello", ResourceFunc: s.Hello,
 			Returns: []*rf.Returns{{Code: 200}}},
 		{Method: http.MethodPost, Path: "/longCall", ResourceFunc: s.LongCall,
+			Read:    model.Info{},
 			Returns: []*rf.Returns{{Code: 200}}},
 		{Method: http.MethodPost, Path: "/callBack", ResourceFunc: s.CallBack,
+			Read:    model.Info{},
 			Returns: []*rf.Returns{{Code: 200}}},
 	}
 }
