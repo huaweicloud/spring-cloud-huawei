@@ -31,7 +31,7 @@ import org.springframework.util.StringUtils;
 @ConfigurationProperties("spring.cloud.servicecomb.config")
 public class ServiceCombConfigProperties {
 
-  private boolean enable = true;
+  private boolean enabled = true;
 
   @Value("${spring.cloud.servicecomb.discovery.serviceName:${spring.application.name:}}")
   private String serviceName;
@@ -73,12 +73,12 @@ public class ServiceCombConfigProperties {
     this.retry = retry;
   }
 
-  public boolean isEnable() {
-    return enable;
+  public boolean isEnabled() {
+    return enabled;
   }
 
-  public void setEnable(boolean enable) {
-    this.enable = enable;
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
   }
 
   public String getServerAddr() {

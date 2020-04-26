@@ -18,6 +18,7 @@
 package com.huaweicloud.servicecomb.discovery.registry;
 
 
+import com.huaweicloud.servicecomb.discovery.event.ServiceCombEventBus;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -83,5 +84,16 @@ public class ServiceCombRegistryAutoConfiguration {
     return new ServiceCombAutoServiceRegistration(registry,
         autoServiceRegistrationProperties, registration);
   }
+
+  @Bean
+  public ServiceCombEventBus serviceCombEventBus() {
+    return new ServiceCombEventBus();
+  }
+
+  @Bean
+  public ServiceCombWatcher serviceCombWatcher() {
+    return new ServiceCombWatcher();
+  }
+
 }
 

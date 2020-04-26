@@ -31,6 +31,7 @@ import java.util.concurrent.ScheduledFuture;
 import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
 import com.huaweicloud.servicecomb.discovery.client.model.HeartbeatRequest;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.TaskScheduler;
@@ -56,6 +57,8 @@ public class HeartbeatScheduler {
 
   private ServiceCombSwaggerHandler serviceCombSwaggerHandler;
 
+  private AtomicBoolean heartbeatLog = new AtomicBoolean(true);
+
   public HeartbeatScheduler(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
       ServiceCombClient serviceCombClient, TagsProperties tagsProperties) {
     this.serviceCombDiscoveryProperties = serviceCombDiscoveryProperties;
@@ -78,7 +81,12 @@ public class HeartbeatScheduler {
                 if (result == HeardBeatStatus.FAILED) {
                   retryRegister(registration, heartbeatRequest.getInstances().get(0).getInstanceId());
                 }
+                if (heartbeatLog.get()) {
+                  LOGGER.info("heartbeat success.");
+                  heartbeatLog.compareAndSet(true, false);
+                }
               } catch (ServiceCombException e) {
+                heartbeatLog.compareAndSet(false, true);
                 LOGGER.warn("heartbeat failed.", e);
               }
             },
@@ -103,18 +111,14 @@ public class HeartbeatScheduler {
   private void retryRegister(ServiceCombRegistration registration, String oldInstanceID) {
     LOGGER.info("retry registry to service center.");
     Microservice microservice = RegistryHandler.buildMicroservice(registration);
-    if (serviceCombSwaggerHandler != null) {
-      serviceCombSwaggerHandler.init(serviceCombDiscoveryProperties.getAppName(),
-          serviceCombDiscoveryProperties.getServiceName());
-      microservice.setSchemas(serviceCombSwaggerHandler.getSchemas());
-    }
     try {
       String serviceID = serviceCombClient.getServiceId(microservice);
       if (null == serviceID) {
         serviceID = serviceCombClient.registerMicroservice(microservice);
       }
       if (serviceCombSwaggerHandler != null) {
-        serviceCombSwaggerHandler.registerSwagger(serviceID, microservice.getSchemas());
+        serviceCombSwaggerHandler.initAndRegister(serviceCombDiscoveryProperties.getAppName(),
+            serviceCombDiscoveryProperties.getServiceName(), serviceID);
       }
       MicroserviceInstance microserviceInstance = RegistryHandler
           .buildMicroServiceInstances(serviceID, microservice, serviceCombDiscoveryProperties,

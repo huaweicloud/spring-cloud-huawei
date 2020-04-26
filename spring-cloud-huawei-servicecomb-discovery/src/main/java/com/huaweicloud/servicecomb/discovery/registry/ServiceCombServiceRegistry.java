@@ -18,6 +18,9 @@
 package com.huaweicloud.servicecomb.discovery.registry;
 
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
+import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
+import java.net.URI;
+import java.net.URISyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +57,9 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   private String instanceID = null;
 
+  @Autowired
+  private ServiceCombWatcher serviceCombWatcher;
+
   public ServiceCombServiceRegistry(ServiceCombClient serviceCombClient,
       HeartbeatScheduler heartbeatScheduler,
       ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
@@ -69,17 +75,28 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     loopRegister(registration);
     RegisterCache.setInstanceID(instanceID);
     RegisterCache.setServiceID(serviceID);
+    if (serviceCombDiscoveryProperties.isWatch()) {
+      startWatch();
+    }
     LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
     heartbeatScheduler.add(registration, serviceCombSwaggerHandler);
   }
 
+  private void startWatch() {
+    try {
+      URI uri = new URI(serviceCombClient.getUrl());
+      String url =
+          "ws://" + uri.getHost() + ":" + uri.getPort() + "/v4/"
+              + ServiceRegistryConfig.DEFAULT_PROJECT
+              + "/registry/microservices/" + serviceID + "/watcher";
+      serviceCombWatcher.start(url);
+    } catch (URISyntaxException e) {
+      LOGGER.error("parse url error");
+    }
+  }
+
   private void loopRegister(ServiceCombRegistration registration) {
     Microservice microservice = RegistryHandler.buildMicroservice(registration);
-    if (serviceCombSwaggerHandler != null) {
-      serviceCombSwaggerHandler.init(serviceCombDiscoveryProperties.getAppName(),
-          serviceCombDiscoveryProperties.getServiceName());
-      microservice.setSchemas(serviceCombSwaggerHandler.getSchemas());
-    }
     while (true) {
       try {
         serviceID = serviceCombClient.getServiceId(microservice);
@@ -87,7 +104,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
           serviceID = serviceCombClient.registerMicroservice(microservice);
         }
         if (serviceCombSwaggerHandler != null) {
-          serviceCombSwaggerHandler.registerSwagger(serviceID, microservice.getSchemas());
+          serviceCombSwaggerHandler.initAndRegister(serviceCombDiscoveryProperties.getAppName(),
+              serviceCombDiscoveryProperties.getServiceName(), serviceID);
         }
         MicroserviceInstance microserviceInstance = RegistryHandler
             .buildMicroServiceInstances(serviceID, microservice, serviceCombDiscoveryProperties,

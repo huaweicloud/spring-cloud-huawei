@@ -24,10 +24,11 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 /**
  * @Author GuoYl123
@@ -45,9 +46,7 @@ public class URLConfig {
 
   private int afterDnsResolveIndex = 0;
 
-  private static final int MAX_DELAY_TIME = 60 * 1000;
-
-  private int retryDelayTime = 1000;
+  private BackOff backOff = new BackOff();
 
   public String getUrl() {
     if (isEmpty()) {
@@ -64,24 +63,26 @@ public class URLConfig {
       return;
     }
     urlList.addAll(urls);
+    index = new Random().nextInt(urlList.size());
   }
 
-  public void addUrlAfterDnsResolve(String url) {
-    if (StringUtils.isEmpty(url)) {
+
+  public void addUrlAfterDnsResolve(List<String> urls) {
+    if (CollectionUtils.isEmpty(urls)) {
       return;
     }
-    try (Socket s = new Socket()) {
-      String[] ipPort = URLUtil.splitIpPort(url);
-      s.connect(new InetSocketAddress(ipPort[0], Integer.parseInt(ipPort[1])), 3000);
-    } catch (IOException e) {
-      return;
-    }
-    LOGGER.info("choose auto discovery endpoint: {}", url);
-    if (resolveUrlSize == 0) {
-      afterDnsResolveIndex = urlList.size();
-    }
-    urlList.add(url);
-    resolveUrlSize++;
+    List<String> availableUrls = urls.stream().filter(url -> {
+      try (Socket s = new Socket()) {
+        String[] ipPort = URLUtil.splitIpPort(url);
+        s.connect(new InetSocketAddress(ipPort[0], Integer.parseInt(ipPort[1])), 3000);
+      } catch (IOException e) {
+        return false;
+      }
+      return true;
+    }).collect(Collectors.toList());
+    resolveUrlSize = availableUrls.size();
+    afterDnsResolveIndex = urlList.size() + new Random().nextInt(availableUrls.size());
+    urlList.addAll(availableUrls);
   }
 
   public boolean isEmpty() {
@@ -96,28 +97,14 @@ public class URLConfig {
       afterDnsResolveIndex = afterDnsResolveIndex + 1 < urlList.size() ? afterDnsResolveIndex + 1
           : urlList.size() - resolveUrlSize;
       if (afterDnsResolveIndex == 0) {
-        backOff();
+        backOff.backOff();
       }
     } else {
       index = (index + 1) % urlList.size();
       if (index == 0) {
-        backOff();
+        backOff.backOff();
       }
     }
-    try {
-      Thread.sleep(retryDelayTime);
-    } catch (InterruptedException e) {
-      LOGGER.warn("thread interrupted.");
-    }
-  }
-
-  private void backOff() {
-    if (MAX_DELAY_TIME == retryDelayTime) {
-      return;
-    }
-    retryDelayTime *= 2;
-    if (MAX_DELAY_TIME <= retryDelayTime) {
-      retryDelayTime = MAX_DELAY_TIME;
-    }
+    backOff.waiting();
   }
 }

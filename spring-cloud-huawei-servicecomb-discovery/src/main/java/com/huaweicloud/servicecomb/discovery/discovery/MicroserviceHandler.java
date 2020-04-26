@@ -17,6 +17,10 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,20 +43,46 @@ import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
 public class MicroserviceHandler {
   private static final Logger LOGGER = LoggerFactory.getLogger(MicroserviceHandler.class);
 
-  private static List<ServiceInstance> instanceList = Collections.emptyList();
-
   public static final Map<String, String> serviceRevision = new ConcurrentHashMap<>();
 
-  public static List<ServiceInstance> getInstances(Microservice microservice, ServiceCombClient serviceCombClient) {
+  public static final Map<String, List<ServiceInstance>> discoveryServerList = new ConcurrentHashMap<>();
+
+  public static List<ServiceInstance> getInstances(Microservice microservice,
+      ServiceCombClient serviceCombClient) {
     try {
       String revision = "0";
       if (serviceRevision.containsKey(microservice.getServiceName())) {
         revision = serviceRevision.get(microservice.getServiceName());
       }
-      instanceList = serviceCombClient.getInstances(microservice, revision);
+      List<ServiceInstance> instanceList = serviceCombClient.getInstances(microservice, revision);
+      return getList(instanceList, microservice.getServiceName());
     } catch (ServiceCombException e) {
       LOGGER.warn("get instances failed.", e);
     }
+    return Collections.emptyList();
+  }
+
+  private static List<ServiceInstance> getList(List<ServiceInstance> instanceList,
+      String serviceName) {
+    List<ServiceInstance> resultList = new ArrayList<>();
+    List<ServiceInstance> cacheList = discoveryServerList
+        .getOrDefault(serviceName, new ArrayList<>());
+    if (instanceList == null) {
+      return cacheList;
+    }
+    //if list is empty, maybe the service center is restarted , check before clear
+    if (instanceList.isEmpty()) {
+      for (ServiceInstance server : cacheList) {
+        try (Socket s = new Socket()) {
+          s.connect(new InetSocketAddress(server.getHost(), server.getPort()), 3000);
+        } catch (IOException e) {
+          continue;
+        }
+        resultList.add(server);
+      }
+      return resultList;
+    }
+    discoveryServerList.put(serviceName, instanceList);
     return instanceList;
   }
 

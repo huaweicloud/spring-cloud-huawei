@@ -120,10 +120,14 @@ public class TagItem {
     if(version != null && !version.equals(item.version)){
       return 0;
     }
+    cnt++;
     for (Map.Entry<String, String> entry : param.entrySet()) {
       if (item.getParam().containsKey(entry.getKey()) &&
           !item.getParam().get(entry.getKey()).equals(entry.getValue())) {
         return 0;
+      }
+      if (!item.getParam().containsKey(entry.getKey())) {
+        continue;
       }
       cnt++;
     }

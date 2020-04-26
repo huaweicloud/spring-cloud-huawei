@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ByteArrayEntity;
@@ -103,9 +104,11 @@ public class ServiceCombClient {
         if (microserviceInstance.getEndpoints() == null) {
           continue;
         }
-        microserviceInstance.getEndpoints().forEach(endpoint -> {
-            registryConfig.addUrlAfterDnsResolve(URLUtil.transform(endpoint));
-        });
+        registryConfig.addUrlAfterDnsResolve(
+            microserviceInstance.getEndpoints().stream()
+                .filter(url -> !url.contains("[::]") && url.startsWith("rest"))
+                .map(URLUtil::transform)
+                .collect(Collectors.toList()));
       }
     } catch (RemoteOperationException e) {
       LOGGER.error(e.getMessage(), e);
@@ -330,7 +333,7 @@ public class ServiceCombClient {
                   port, false, map));
         }
       } else if (response.getStatusCode() == HttpStatus.SC_NOT_MODIFIED) {
-        return instanceList;
+        return null;
       } else {
         throw new RemoteOperationException(
             "read response failed. status:" + response.getStatusCode() + "; message:" + response
@@ -392,6 +395,7 @@ public class ServiceCombClient {
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
     } catch (IOException e) {
+      toggle();
       throw new RemoteOperationException("read response failed. ", e);
     }
   }
@@ -514,5 +518,9 @@ public class ServiceCombClient {
 
   public void toggle() {
     registryConfig.toggle();
+  }
+
+  public String getUrl() {
+    return registryConfig.getUrl();
   }
 }
