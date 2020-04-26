@@ -18,6 +18,7 @@ package com.huaweicloud.sample;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +37,7 @@ public class Application {
 
   @LoadBalanced
   @Bean
-  public RestTemplate restTemplate(){
-    return new RestTemplate();
+  public RestTemplate restTemplate(RestTemplateBuilder builder){
+    return builder.build();
   }
 }

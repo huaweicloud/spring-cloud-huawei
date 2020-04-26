@@ -1,0 +1,5 @@
+APPLICATION_ID: swagger
+service_description:
+  name: GoChassis-Demo
+  version: 0.0.1
+  environment: development

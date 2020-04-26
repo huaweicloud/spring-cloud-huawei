@@ -1,0 +1,13 @@
+---
+cse:
+  noRefreshSchema: true
+  service:
+    registry:
+      address: http://127.0.0.1:30100
+  protocols:
+    rest:
+      listenAddress: "127.0.0.1:5001"
+#  handler:
+#    chain:
+#      Provider:
+#        default: tracing-provider,bizkeeper-provider
