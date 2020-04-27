@@ -1,6 +1,8 @@
 package com.huaweicloud.servicecomb.discovery.registry;
 
+import com.huaweicloud.servicecomb.discovery.event.ServerCloseEvent;
 import com.huaweicloud.servicecomb.discovery.event.ServerListRefreshEvent;
+import com.huaweicloud.servicecomb.discovery.event.ServiceCombEvent;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
@@ -19,10 +21,10 @@ public class ServiceCombWebSocketClient extends WebSocketClient {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombWebSocketClient.class);
 
-  Consumer<ServerListRefreshEvent> publisher;
+  Consumer<ServiceCombEvent> publisher;
 
   public ServiceCombWebSocketClient(String serverUri, Map<String, String> map,
-      Consumer<ServerListRefreshEvent> publisher)
+      Consumer<ServiceCombEvent> publisher)
       throws URISyntaxException {
     super(new URI(serverUri), new Draft_6455(), map, 0);
     this.publisher = publisher;
@@ -41,11 +43,13 @@ public class ServiceCombWebSocketClient extends WebSocketClient {
 
   @Override
   public void onClose(int i, String s, boolean b) {
-    LOGGER.info("connection is closed accidentally, code : {}, reason : {}, remote : {}", i, s, b);
+    LOGGER.warn("connection is closed accidentally, code : {}, reason : {}, remote : {}", i, s, b);
+    publisher.accept(new ServerCloseEvent());
   }
 
   @Override
   public void onError(Exception e) {
     LOGGER.error("connection error ", e);
+    publisher.accept(new ServerCloseEvent());
   }
 }
