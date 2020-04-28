@@ -85,9 +85,9 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
   private void startWatch() {
     try {
       URI uri = new URI(serviceCombClient.getUrl());
-      String url =
-          "ws://" + uri.getHost() + ":" + uri.getPort() + "/v4/"
-              + ServiceRegistryConfig.DEFAULT_PROJECT
+      String url = "ws://" + uri.getHost() +
+          (uri.getPort() == -1 ? "" : (":" + uri.getPort()))
+          + "/v4/" + ServiceRegistryConfig.DEFAULT_PROJECT
               + "/registry/microservices/" + serviceID + "/watcher";
       serviceCombWatcher.start(url);
     } catch (URISyntaxException e) {
