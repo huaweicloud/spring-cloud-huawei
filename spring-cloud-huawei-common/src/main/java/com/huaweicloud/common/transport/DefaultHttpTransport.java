@@ -116,7 +116,7 @@ public class DefaultHttpTransport implements HttpTransport {
       }
     } catch (IOException e) {
       throw new RemoteServerUnavailableException(
-          "service center unavailable. message=" + e.getMessage(), e);
+          "server is unavailable. message=" + e.getMessage(), e);
     }
     return resp;
   }

@@ -9,8 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import org.java_websocket.WebSocket;
-import org.java_websocket.WebSocket.READYSTATE;
+import org.java_websocket.client.WebSocketClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,9 @@ public class ServiceCombWatcher {
   @Autowired
   private ServiceCombEventBus eventBus;
 
-  private ServiceCombWebSocketClient webSocketClient;
+  private String url;
+
+  private BackOff backOff = new BackOff();
 
   private ScheduledExecutorService EXECUTOR = Executors.newScheduledThreadPool(1, (r) -> {
     Thread thread = new Thread(r);
@@ -36,33 +37,43 @@ public class ServiceCombWatcher {
   });
 
   public void start(String url) {
-    try {
-      Map<String, String> signedHeader = new HashMap<>();
-      signedHeader.put("x-domain-name", ServiceRegistryConfig.DEFAULT_PROJECT);
-      webSocketClient = new ServiceCombWebSocketClient(url, signedHeader, eventBus::publish);
+    this.url = url;
+    connect();
+    eventBus.register((event) -> {
+      if (!(event instanceof ServerCloseEvent)) {
+        return;
+      }
+      LOGGER.info("retrying to establish websocket connecting.");
       connect();
-      eventBus.register((event) -> {
-        if (!(event instanceof ServerCloseEvent)) {
-          return;
-        }
-        LOGGER.info("will retry to establish websocket connecting.");
-        connect();
-      });
-    } catch (URISyntaxException e) {
-      LOGGER.error("parse url error");
-    }
+    });
   }
 
-  private void connect() {
+  private synchronized void connect() {
+    WebSocketClient webSocketClient = buildClient();
     EXECUTOR.execute(() -> {
-      BackOff backOff = new BackOff();
-      while (!webSocketClient.getReadyState().equals(WebSocket.READYSTATE.OPEN)) {
-        if (!webSocketClient.getReadyState().equals(READYSTATE.CONNECTING)) {
-          webSocketClient.connect();
-        }
-        LOGGER.debug("trying to establish websocket connecting.");
-        backOff.waitingAndBackoff();
+      if (webSocketClient == null) {
+        return;
       }
+      try {
+        webSocketClient.connect();
+      } catch (IllegalStateException e) {
+        LOGGER.debug("establish websocket connect failed.", e);
+        return;
+      }
+      backOff.waitingAndBackoff();
     });
+  }
+
+  private WebSocketClient buildClient() {
+    Map<String, String> signedHeader = new HashMap<>();
+    signedHeader.put("x-domain-name", ServiceRegistryConfig.DEFAULT_PROJECT);
+    WebSocketClient webSocketClient;
+    try {
+      webSocketClient = new ServiceCombWebSocketClient(url, signedHeader, eventBus::publish);
+    } catch (URISyntaxException e) {
+      LOGGER.error("parse url error");
+      return null;
+    }
+    return webSocketClient;
   }
 }

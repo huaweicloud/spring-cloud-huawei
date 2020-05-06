@@ -153,7 +153,8 @@ public class ServiceCombConfigClient {
       }
     } catch (RemoteServerUnavailableException e) {
       configCenterConfig.toggle();
-      throw new RemoteOperationException("build url failed.", e);
+      throw new RemoteOperationException(
+          "config center address is not available , will retry.", e);
     } catch (IOException e) {
       configCenterConfig.toggle();
       throw new RemoteOperationException("read response failed. " + response, e);
