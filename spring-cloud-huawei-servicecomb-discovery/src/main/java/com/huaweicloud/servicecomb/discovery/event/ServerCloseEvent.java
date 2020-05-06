@@ -2,21 +2,21 @@ package com.huaweicloud.servicecomb.discovery.event;
 
 /**
  * @Author GuoYl123
- * @Date 2020/4/20
+ * @Date 2020/4/27
  **/
-public class ServerListRefreshEvent implements ServiceCombEvent {
+public class ServerCloseEvent implements ServiceCombEvent {
 
   private Object source;
 
-  public ServerListRefreshEvent() {
+  public ServerCloseEvent() {
   }
 
-  public ServerListRefreshEvent(Object source) {
+  public ServerCloseEvent(Object source) {
     this.source = source;
   }
 
   @Override
   public Object getSource() {
-    return source;
+    return null;
   }
 }

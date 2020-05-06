@@ -1,5 +1,6 @@
 package com.huaweicloud.servicecomb.discovery.ribbon;
 
+import com.huaweicloud.servicecomb.discovery.event.ServerListRefreshEvent;
 import com.huaweicloud.servicecomb.discovery.event.ServiceCombEventBus;
 import com.netflix.loadbalancer.PollingServerListUpdater;
 import java.util.Date;
@@ -41,6 +42,9 @@ public class ServiceCombServerListUpdater extends PollingServerListUpdater {
     super.start(updateAction);
     if (isActive.compareAndSet(false, true)) {
       eventBus.register(event -> {
+        if (!(event instanceof ServerListRefreshEvent)) {
+          return;
+        }
         if (!refreshExecutor.isShutdown()) {
           try {
             refreshExecutor.submit(

@@ -15,7 +15,7 @@ public class ServiceCombEventBus {
     listeners.add(listener);
   }
 
-  public void publish(ServerListRefreshEvent event) {
+  public void publish(ServiceCombEvent event) {
     listeners.forEach(l -> l.onEvent(event));
   }
 }

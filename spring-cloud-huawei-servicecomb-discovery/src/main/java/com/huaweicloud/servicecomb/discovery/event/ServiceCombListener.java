@@ -6,5 +6,5 @@ package com.huaweicloud.servicecomb.discovery.event;
  **/
 public interface ServiceCombListener {
 
-  void onEvent(ServerListRefreshEvent event);
+  void onEvent(ServiceCombEvent event);
 }
