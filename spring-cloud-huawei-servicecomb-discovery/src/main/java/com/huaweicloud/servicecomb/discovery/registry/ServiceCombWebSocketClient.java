@@ -24,8 +24,7 @@ public class ServiceCombWebSocketClient extends WebSocketClient {
   Consumer<ServiceCombEvent> publisher;
 
   public ServiceCombWebSocketClient(String serverUri, Map<String, String> map,
-      Consumer<ServiceCombEvent> publisher)
-      throws URISyntaxException {
+      Consumer<ServiceCombEvent> publisher) throws URISyntaxException {
     super(new URI(serverUri), new Draft_6455(), map, 0);
     this.publisher = publisher;
   }
@@ -49,7 +48,7 @@ public class ServiceCombWebSocketClient extends WebSocketClient {
 
   @Override
   public void onError(Exception e) {
-    LOGGER.error("connection error ", e);
+    LOGGER.error("connection error , msg:{} ", e.getMessage());
     publisher.accept(new ServerCloseEvent());
   }
 }
