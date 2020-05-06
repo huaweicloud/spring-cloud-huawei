@@ -17,7 +17,7 @@
       <dependency>
         <groupId>com.huaweicloud</groupId>
         <artifactId>spring-cloud-huawei-dependencies</artifactId>
-        <version>1.3.5</version>
+        <version>1.3.1-Greenwich</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -32,6 +32,10 @@
     <dependency>
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-servicecomb-discovery</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.huaweicloud</groupId>
+      <artifactId>spring-cloud-starter-huawei-governance</artifactId>
     </dependency>
   </dependencies>
 
