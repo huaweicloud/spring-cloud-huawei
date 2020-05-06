@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -35,8 +33,6 @@ import org.springframework.util.CollectionUtils;
  * @Date 2019/12/19
  **/
 public class URLConfig {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(URLConfig.class);
 
   private List<String> urlList = new ArrayList<>();
 
@@ -63,7 +59,7 @@ public class URLConfig {
       return;
     }
     urlList.addAll(urls);
-    index = new Random().nextInt(urlList.size());
+    index = urlList.size() == 0 ? 0 : new Random().nextInt(urlList.size());
   }
 
 
@@ -81,7 +77,8 @@ public class URLConfig {
       return true;
     }).collect(Collectors.toList());
     resolveUrlSize = availableUrls.size();
-    afterDnsResolveIndex = urlList.size() + new Random().nextInt(availableUrls.size());
+    afterDnsResolveIndex =
+        urlList.size() + availableUrls.size() == 0 ? 0 : new Random().nextInt(availableUrls.size());
     urlList.addAll(availableUrls);
   }
 
