@@ -77,8 +77,8 @@ public class URLConfig {
       return true;
     }).collect(Collectors.toList());
     resolveUrlSize = availableUrls.size();
-    afterDnsResolveIndex =
-        urlList.size() + availableUrls.size() == 0 ? 0 : new Random().nextInt(availableUrls.size());
+    afterDnsResolveIndex = urlList.size() +
+        (availableUrls.size() == 0 ? 0 : new Random().nextInt(availableUrls.size()));
     urlList.addAll(availableUrls);
   }
 
