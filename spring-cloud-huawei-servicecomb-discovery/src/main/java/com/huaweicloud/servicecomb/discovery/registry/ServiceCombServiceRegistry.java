@@ -17,10 +17,15 @@
 
 package com.huaweicloud.servicecomb.discovery.registry;
 
+import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
+import com.huaweicloud.servicecomb.discovery.client.model.SchemaResponse;
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,15 +102,22 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   private void loopRegister(ServiceCombRegistration registration) {
     Microservice microservice = RegistryHandler.buildMicroservice(registration);
+    if (serviceCombSwaggerHandler != null) {
+      serviceCombSwaggerHandler.init(serviceCombDiscoveryProperties.getAppName(),
+          serviceCombDiscoveryProperties.getServiceName());
+      microservice.setSchemas(serviceCombSwaggerHandler.getSchemas());
+    }
     while (true) {
       try {
         serviceID = serviceCombClient.getServiceId(microservice);
         if (null == serviceID) {
           serviceID = serviceCombClient.registerMicroservice(microservice);
-        }
-        if (serviceCombSwaggerHandler != null) {
-          serviceCombSwaggerHandler.initAndRegister(serviceCombDiscoveryProperties.getAppName(),
-              serviceCombDiscoveryProperties.getServiceName(), serviceID);
+          if (serviceCombSwaggerHandler != null) {
+            serviceCombSwaggerHandler.registerSwagger(serviceID, microservice.getSchemas());
+          }
+        } else if (serviceCombSwaggerHandler != null) {
+          List<String> schemas = filterSchema(serviceCombSwaggerHandler.getSchemasSummaryMap());
+          serviceCombSwaggerHandler.registerSwagger(serviceID, schemas);
         }
         MicroserviceInstance microserviceInstance = RegistryHandler
             .buildMicroServiceInstances(serviceID, microservice, serviceCombDiscoveryProperties,
@@ -121,6 +133,36 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
             "register failed, will retry. please check config file. message=" + e.getMessage());
       }
     }
+  }
+
+  /**
+   * production时：
+   * 1.先检查，对于已经注册的契约：i.没有删除 ii.没有summary变更的schema
+   * 2.检查不通过 启动失败
+   * 3.检查成功，只注册新增的接口
+   * 非production时:
+   * 1.全部重新注册
+   *
+   * @param localSchemas
+   * @return
+   * @throws ServiceCombException
+   */
+  private List<String> filterSchema(Map<String, String> localSchemas) throws ServiceCombException {
+
+    if (!serviceCombDiscoveryProperties.getEnvironment().equals("production")) {
+      return new ArrayList<>(localSchemas.keySet());
+    }
+    SchemaResponse schemas = serviceCombClient.getSchemas(serviceID);
+    schemas.getSchemas().forEach(schema -> {
+      if (!localSchemas.containsKey(schema.getSchemaId()) ||
+          !localSchemas.get(schema.getSchemaId()).equals(schema.getSummary())) {
+        LOGGER.warn(
+            "schemas {} is changed , won't registry. if want to overwrite schema please upgrade version.",
+            schema.getSchemaId());
+      }
+      localSchemas.remove(schema.getSchemaId());
+    });
+    return new ArrayList<>(localSchemas.keySet());
   }
 
   @Override

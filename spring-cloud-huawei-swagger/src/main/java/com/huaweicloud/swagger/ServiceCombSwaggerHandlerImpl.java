@@ -17,8 +17,10 @@
 package com.huaweicloud.swagger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.base.Charsets;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.hash.Hashing;
 import com.huaweicloud.common.exception.RemoteOperationException;
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
@@ -35,9 +37,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +87,7 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   /**
    * Split registration
    */
-  private void init(String appName, String serviceName) {
+  public void init(String appName, String serviceName) {
     Documentation documentation = documentationCache
         .documentationByGroup(Docket.DEFAULT_GROUP_NAME);
     if (documentation == null) {
@@ -137,14 +141,6 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
     return;
   }
 
-  public void initAndRegister(String appName, String serviceName, String microserviceId) {
-    init(appName, serviceName);
-    if (swaggerMap.isEmpty()) {
-      return;
-    }
-    registerSwagger(microserviceId, new ArrayList<>(swaggerMap.keySet()));
-  }
-
   /**
    * todo: schema generate also can be async , use aop around method
    * schema注册调用接口可以改为异步,在和java-chassis组网场景下需要同步加载
@@ -152,12 +148,32 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
    * @param microserviceId
    * @param schemaIds
    */
-  private void registerSwagger(String microserviceId, List<String> schemaIds) {
+  public void registerSwagger(String microserviceId, List<String> schemaIds) {
     if (withJavaChassis) {
       registerSwaggerSync(microserviceId, schemaIds);
     } else {
       registerSwaggerAsync(microserviceId, schemaIds);
     }
+  }
+
+  public List<String> getSchemas() {
+    return new ArrayList<>(swaggerMap.keySet());
+  }
+
+  public Map<String, String> getSchemasSummaryMap() {
+    return swaggerMap.entrySet().stream()
+        .collect(Collectors.toMap(Entry::getKey, entry -> {
+          try {
+            return calcSchemaSummary(Yaml.mapper().writeValueAsString(entry.getValue()));
+          } catch (JsonProcessingException e) {
+            LOGGER.error("error when calcSchemaSummary.");
+          }
+          return null;
+        }));
+  }
+
+  private static String calcSchemaSummary(String schemaContent) {
+    return Hashing.sha256().newHasher().putString(schemaContent, Charsets.UTF_8).hash().toString();
   }
 
   /**

@@ -97,8 +97,12 @@ public class SwaggerHandlerImplTest {
     service.documentationCache = documentationCache;
     service.mapper = mapper;
     service.serviceCombClient = serviceCombClient;
-    service.initAndRegister("app", "xx","xx");
+    service.init("app", "xx");
+    List<String> slist = new ArrayList<>();
+    slist.add("xx");
+    service.registerSwagger("xx", slist);
     service.withJavaChassis = true;
-    service.initAndRegister("app", "xx","xx");
+    service.init("app", "xx");
+    service.registerSwagger("xx", slist);
   }
 }
