@@ -27,7 +27,7 @@ public class ServiceCombWatcher {
 
   private String url;
 
-  private BackOff backOff = new BackOff();
+  private BackOff backOff = new BackOff(5000);
 
   private ScheduledExecutorService EXECUTOR = Executors.newScheduledThreadPool(1, (r) -> {
     Thread thread = new Thread(r);

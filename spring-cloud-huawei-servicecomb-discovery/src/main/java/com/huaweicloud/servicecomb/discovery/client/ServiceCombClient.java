@@ -18,12 +18,16 @@
 package com.huaweicloud.servicecomb.discovery.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
+import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 import com.huaweicloud.common.transport.URLConfig;
 import com.huaweicloud.servicecomb.discovery.client.model.HeardBeatStatus;
 import com.huaweicloud.servicecomb.discovery.client.model.SchemaRequest;
+import com.huaweicloud.servicecomb.discovery.client.model.SchemaResponse;
 import com.huaweicloud.servicecomb.discovery.discovery.MicroserviceHandler;
 import java.io.IOException;
 import java.net.URI;
@@ -34,6 +38,7 @@ import java.util.List;
 
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.lang.model.type.ReferenceType;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ByteArrayEntity;
@@ -195,7 +200,31 @@ public class ServiceCombClient {
             .readValue(response.getContent(), HashMap.class);
         return result.get("serviceId");
       } else if (response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
-        LOGGER.info(response.getStatusMessage());
+        LOGGER.info(response.getContent());
+        return null;
+      } else {
+        throw new RemoteOperationException(
+            "read response failed. status:" + response.getStatusCode() + "; message:" + response
+                .getStatusMessage() + "; content:" + response.getContent());
+      }
+    } catch (URISyntaxException e) {
+      throw new RemoteOperationException("build url failed.", e);
+    } catch (IOException e) {
+      handleRemoteOperationException(response, e);
+    }
+    return null;
+  }
+
+  public SchemaResponse getSchemas(String serviceId) throws ServiceCombException {
+    Response response = null;
+    try {
+      response = httpTransport
+          .sendGetRequest(buildURI("/registry/microservices/" + serviceId + "/schemas"));
+      if (response.getStatusCode() == HttpStatus.SC_OK) {
+        return JsonUtils.OBJ_MAPPER
+            .readValue(response.getContent(), SchemaResponse.class);
+      } else if (response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
+        LOGGER.info(response.getContent());
         return null;
       } else {
         throw new RemoteOperationException(
@@ -460,7 +489,8 @@ public class ServiceCombClient {
         LOGGER.info("register schema {}/{} success.", microserviceId, schemaId);
         return true;
       }
-      LOGGER.error("Register schema {}/{} failed.", microserviceId, schemaId);
+      LOGGER.error("Register schema {}/{} failed, code:{} , msg:{} ", microserviceId, schemaId,
+          response.getStatusCode(), response.getContent());
       return false;
     } catch (JsonProcessingException e) {
       LOGGER.error("registerSchema serialization failed : {}", e.getMessage());
@@ -497,6 +527,7 @@ public class ServiceCombClient {
     uriBuilder.setParameter("appId", microservice.getAppId());
     uriBuilder.setParameter("serviceName", microservice.getServiceName());
     uriBuilder.setParameter("version", microservice.getVersion());
+    uriBuilder.setParameter("env", microservice.getEnvironment());
     return uriBuilder.build().toString();
   }
 

@@ -15,6 +15,13 @@ public class BackOff {
 
   private int retryDelayTime = 1000;
 
+  public BackOff() {
+  }
+
+  public BackOff(int retryDelayTime) {
+    this.retryDelayTime = retryDelayTime;
+  }
+
   public void backOff() {
     if (MAX_DELAY_TIME == retryDelayTime) {
       return;

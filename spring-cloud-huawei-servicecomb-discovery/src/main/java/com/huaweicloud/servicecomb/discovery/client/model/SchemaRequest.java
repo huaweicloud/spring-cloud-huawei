@@ -17,6 +17,8 @@
 
 package com.huaweicloud.servicecomb.discovery.client.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * @Author GuoYl123
  * @Date 2019/12/18
@@ -25,7 +27,17 @@ public class SchemaRequest {
 
   private String schema;
 
+  private String schemaId;
+
   private String summary;
+
+  public String getSchemaId() {
+    return schemaId;
+  }
+
+  public void setSchemaId(String schemaId) {
+    this.schemaId = schemaId;
+  }
 
   public String getSchema() {
     return schema;

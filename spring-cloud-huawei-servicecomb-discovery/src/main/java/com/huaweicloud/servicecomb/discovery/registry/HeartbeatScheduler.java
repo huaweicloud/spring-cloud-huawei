@@ -111,15 +111,8 @@ public class HeartbeatScheduler {
   private void retryRegister(ServiceCombRegistration registration, String oldInstanceID) {
     LOGGER.info("retry registry to service center.");
     Microservice microservice = RegistryHandler.buildMicroservice(registration);
+    String serviceID = RegisterCache.getServiceID();
     try {
-      String serviceID = serviceCombClient.getServiceId(microservice);
-      if (null == serviceID) {
-        serviceID = serviceCombClient.registerMicroservice(microservice);
-      }
-      if (serviceCombSwaggerHandler != null) {
-        serviceCombSwaggerHandler.initAndRegister(serviceCombDiscoveryProperties.getAppName(),
-            serviceCombDiscoveryProperties.getServiceName(), serviceID);
-      }
       MicroserviceInstance microserviceInstance = RegistryHandler
           .buildMicroServiceInstances(serviceID, microservice, serviceCombDiscoveryProperties,
               tagsProperties);
