@@ -5,24 +5,24 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-huawei</artifactId>
-    <version>1.3.1-Greenwich</version>
+    <version>1.3.2</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>spring-cloud-huawei-dependencies</artifactId>
   <packaging>pom</packaging>
-  <version>1.3.1-Greenwich</version>
+  <version>1.3.2</version>
   <name>Spring Cloud Huawei Dependencies</name>
   <properties>
-    <spring-cloud.version>2.1.2.RELEASE</spring-cloud.version>
-    <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
-    <feign-core.version>10.2.3</feign-core.version>
+    <spring-cloud.version>2.2.2.RELEASE</spring-cloud.version>
+    <spring-boot.version>2.2.6.RELEASE</spring-boot.version>
+    <feign-core.version>11.0</feign-core.version>
     <httpclient.version>4.5.9</httpclient.version>
-    <jackson-databind.version>2.9.10.4</jackson-databind.version>
+    <jackson-databind.version>2.9.10.3</jackson-databind.version>
     <jmockit.version>1.36</jmockit.version>
     <junit.version>4.12</junit.version>
-    <spring-mvc.version>5.1.8.RELEASE</spring-mvc.version>
+    <spring-mvc.version>5.2.5.RELEASE</spring-mvc.version>
     <dtm-client.version>1.0.2</dtm-client.version>
     <guava.version>27.0.1-jre</guava.version>
     <snakeyaml.version>1.24</snakeyaml.version>
