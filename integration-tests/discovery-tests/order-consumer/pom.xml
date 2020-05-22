@@ -49,6 +49,9 @@
   <profiles>
     <profile>
       <id>docker</id>
+      <properties>
+        <server.port>8088</server.port>
+      </properties>
       <build>
         <plugins>
           <plugin>

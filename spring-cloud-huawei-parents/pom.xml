@@ -62,5 +62,31 @@
         </executions>
       </plugin>
     </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.gmaven</groupId>
+          <artifactId>gmaven-plugin</artifactId>
+          <version>1.5</version>
+        </plugin>
+        <plugin>
+          <groupId>com.github.odavid.maven.plugins</groupId>
+          <artifactId>mixin-maven-plugin</artifactId>
+          <version>0.1-alpha-39</version>
+          <extensions>true</extensions>
+        </plugin>
+        <plugin>
+          <groupId>org.commonjava.maven.plugins</groupId>
+          <artifactId>directory-maven-plugin</artifactId>
+          <version>0.1</version>
+        </plugin>
+        <plugin>
+          <groupId>io.fabric8</groupId>
+          <artifactId>docker-maven-plugin</artifactId>
+          <version>0.20.0</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 </project>

@@ -44,8 +44,7 @@
                 <build>
                   <from>openjdk:8-jre-alpine</from>
                   <ports>
-                    <port>7070</port>
-                    <port>8080</port>
+                    <port>${server.port}</port>
                   </ports>
                   <assembly>
                     <mode>tar</mode>
