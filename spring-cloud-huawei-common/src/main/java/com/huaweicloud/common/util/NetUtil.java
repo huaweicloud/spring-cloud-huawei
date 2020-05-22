@@ -17,11 +17,10 @@
 
 package com.huaweicloud.common.util;
 
-import java.net.InetAddress;
 import java.net.URISyntaxException;
-import java.net.UnknownHostException;
 
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.servicecomb.foundation.common.net.NetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,14 +36,7 @@ public class NetUtil {
    * @return
    */
   public static String getLocalHost() {
-    InetAddress address;
-    try {
-      address = InetAddress.getLocalHost();
-      return address.getHostName();
-    } catch (UnknownHostException e) {
-      LOGGER.error(e.getMessage(), e);
-    }
-    return null;
+    return NetUtils.getHostName();
   }
 
   public static Integer getPort(String url) {
