@@ -28,6 +28,17 @@
 
   <artifactId>spring-cloud-huawei-dtm</artifactId>
 
+  <repositories>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>huaweicloud-sdk</id>
+      <name>huaweicloud-sdk</name>
+      <url>https://repo.huaweicloud.com/repository/maven/huaweicloudsdk/</url>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
