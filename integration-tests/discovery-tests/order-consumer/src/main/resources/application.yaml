@@ -1,0 +1,20 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: order
+  cloud:
+    servicecomb:
+      discovery:
+        enabled: true
+        address: http://127.0.0.1:30100
+        serviceName: order
+        version: 0.0.1
+
+      credentials:
+        enabled: true
+        accessKey: your ak
+        secretKey: your sk
+        akskCustomCipher: default
+        project: cn-east-2

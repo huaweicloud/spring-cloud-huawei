@@ -1,0 +1,12 @@
+server:
+  port: 8089
+
+spring:
+  application:
+    name: product
+  cloud:
+    servicecomb:
+      discovery:
+        enabled: true
+        address: http://127.0.0.1:30100
+        version: 0.0.1

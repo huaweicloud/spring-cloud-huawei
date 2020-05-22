@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: price
+  cloud:
+    servicecomb:
+      discovery:
+        enabled: true
+#        multiple registries
+        address: http://127.0.0.2:30100,http://127.0.0.1:30100
+        serviceName: price
+        version: 0.0.1
+        healthCheckInterval: 30
+      credentials:
+        enabled: true
+        accessKey: your ak
+        secretKey: your sk
+        akskCustomCipher: default
+        project: cn-east-2
