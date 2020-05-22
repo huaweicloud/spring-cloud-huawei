@@ -162,7 +162,7 @@
             <configuration>
               <mixins>
                 <mixin>
-                  <groupId>org.apache.servicecomb.demo</groupId>
+                  <groupId>com.huaweicloud</groupId>
                   <artifactId>docker-run-config</artifactId>
                   <version>${project.version}</version>
                 </mixin>
