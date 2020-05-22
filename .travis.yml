@@ -17,6 +17,6 @@ jobs:
         - mvn clean package findbugs:findbugs -Dmaven.test.skip=true  -Dmaven.javadoc.skip=true
     - stage: install
       script:
-        - mvn install -Dmaven.javadoc.skip=true -Dcheckstyle.skip=false -Drat.skip=false
+        - mvn clean install -Pit -Pdocker -Dmaven.javadoc.skip=true -Dcheckstyle.skip=false -Drat.skip=false
 after_success:
   - bash <(curl -s https://codecov.io/bash)
