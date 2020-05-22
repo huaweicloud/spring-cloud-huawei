@@ -104,5 +104,11 @@
         </repository>
       </distributionManagement>
     </profile>
+    <profile>
+      <id>it</id>
+      <modules>
+        <module>integration-tests</module>
+      </modules>
+    </profile>
   </profiles>
 </project>
