@@ -53,6 +53,108 @@
           <plugin>
             <groupId>io.fabric8</groupId>
             <artifactId>docker-maven-plugin</artifactId>
+            <configuration>
+              <images>
+
+                <image>
+                  <name>servicecomb/service-center</name>
+                  <alias>service-center</alias>
+                  <run>
+                    <wait>
+                      <log>server is ready</log>
+                      <tcp>
+                        <ports>
+                          <port>30100</port>
+                        </ports>
+                      </tcp>
+                      <time>60000</time>
+                    </wait>
+                    <ports>
+                      <port>service.center.port:30100</port>
+                    </ports>
+                  </run>
+                </image>
+
+
+                <image>
+                  <name>price-provider-test:${project.version}</name>
+                  <alias>price-provider-test</alias>
+                  <run>
+                    <env>
+                      <JAVA_OPTS>
+                        -Dspring.cloud.servicecomb.discovery.address=http://sc.servicecomb.io:30100
+                      </JAVA_OPTS>
+                      <JAR_PATH>/price-provider-test-${project.version}.jar</JAR_PATH>
+                    </env>
+                    <links>
+                      <link>service-center:sc.servicecomb.io</link>
+                    </links>
+                    <wait>
+                      <log>watching microservice successfully</log>
+                      <tcp>
+                        <ports>
+                          <port>8080</port>
+                        </ports>
+                      </tcp>
+                      <time>120000</time>
+                    </wait>
+                    <ports>
+                      <port>8080:8080</port>
+                    </ports>
+                    <dependsOn>
+                      <container>service-center</container>
+                    </dependsOn>
+                  </run>
+                </image>
+
+                <image>
+                  <name>order-consumer-test:${project.version}</name>
+                  <alias>order-consumer-test</alias>
+                  <run>
+                    <env>
+                      <JAVA_OPTS>
+                        -Dspring.cloud.servicecomb.discovery.address=http://sc.servicecomb.io:30100
+                      </JAVA_OPTS>
+                      <JAR_PATH>/order-consumer-test-${project.version}.jar</JAR_PATH>
+                    </env>
+                    <links>
+                      <link>service-center:sc.servicecomb.io</link>
+                    </links>
+                    <wait>
+                      <log>watching microservice successfully</log>
+                      <tcp>
+                        <ports>
+                          <port>8088</port>
+                        </ports>
+                      </tcp>
+                      <time>120000</time>
+                    </wait>
+                    <ports>
+                      <port>8088:8088</port>
+                    </ports>
+                    <dependsOn>
+                      <container>service-center</container>
+                    </dependsOn>
+                  </run>
+                </image>
+              </images>
+            </configuration>
+            <executions>
+              <execution>
+                <id>start</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>start</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>stop</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>stop</goal>
+                </goals>
+              </execution>
+            </executions>
           </plugin>
           <plugin>
             <groupId>com.github.odavid.maven.plugins</groupId>
