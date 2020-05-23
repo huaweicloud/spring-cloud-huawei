@@ -12,11 +12,7 @@ cache:
 
 jobs:
   include:
-    - stage: findbugs
-      script:
-        - mvn clean package findbugs:findbugs -Dmaven.test.skip=true  -Dmaven.javadoc.skip=true
-    - stage: install
-      script:
-        - mvn clean install -Pit -Pdocker -Dmaven.javadoc.skip=true -Dcheckstyle.skip=false -Drat.skip=false
+    - stage: Compilation and Installation
+      script: scripts/travis.sh install
 after_success:
   - bash <(curl -s https://codecov.io/bash)
