@@ -20,7 +20,13 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+    - uses: actions/cache@v1
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven
     - name: Compilation and Installation
-      run: sh scripts/travis.sh install
+      run: bash scripts/travis.sh install
     - name: publish coverage report
       run: bash <(curl -s https://codecov.io/bash)
