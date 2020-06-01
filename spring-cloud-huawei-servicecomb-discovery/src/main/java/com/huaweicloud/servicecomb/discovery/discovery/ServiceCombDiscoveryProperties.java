@@ -34,7 +34,7 @@ public class ServiceCombDiscoveryProperties {
 
   private boolean enabled = true;
 
-  private boolean isWatch = true;
+  private boolean watch = true;
 
   private String address;
 
@@ -184,18 +184,18 @@ public class ServiceCombDiscoveryProperties {
   }
 
   public boolean isWatch() {
-    return isWatch;
+    return watch;
   }
 
   public void setWatch(boolean watch) {
-    isWatch = watch;
+    this.watch = watch;
   }
 
   @Override
   public String toString() {
     return "ServiceCombDiscoveryProperties{" +
         "enabled=" + enabled +
-        ", isWatch=" + isWatch +
+        ", watch=" + watch +
         ", address='" + address + '\'' +
         ", appName='" + appName + '\'' +
         ", serviceName='" + serviceName + '\'' +
