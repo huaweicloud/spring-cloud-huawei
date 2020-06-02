@@ -17,7 +17,6 @@
 
 package com.huaweicloud.servicecomb.discovery.registry;
 
-import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 import com.huaweicloud.servicecomb.discovery.client.model.SchemaResponse;
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
@@ -90,8 +89,7 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
   private void startWatch() {
     try {
       URI uri = new URI(serviceCombClient.getUrl());
-      String url = "ws://" + uri.getHost() +
-          (uri.getPort() == -1 ? "" : (":" + uri.getPort()))
+      String url = uri.getHost() + (uri.getPort() == -1 ? "" : (":" + uri.getPort()))
           + "/v4/" + ServiceRegistryConfig.DEFAULT_PROJECT
               + "/registry/microservices/" + serviceID + "/watcher";
       serviceCombWatcher.start(url);
