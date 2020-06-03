@@ -18,12 +18,9 @@
 package com.huaweicloud.servicecomb.discovery.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
-import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 import com.huaweicloud.common.transport.URLConfig;
 import com.huaweicloud.servicecomb.discovery.client.model.HeardBeatStatus;
 import com.huaweicloud.servicecomb.discovery.client.model.SchemaRequest;
@@ -38,7 +35,6 @@ import java.util.List;
 
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.lang.model.type.ReferenceType;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ByteArrayEntity;

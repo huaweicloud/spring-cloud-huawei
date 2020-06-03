@@ -84,7 +84,7 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
       startWatch();
     }
     LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
-    heartbeatScheduler.add(registration, serviceCombSwaggerHandler);
+    heartbeatScheduler.add(registration);
   }
 
   private void startWatch() {

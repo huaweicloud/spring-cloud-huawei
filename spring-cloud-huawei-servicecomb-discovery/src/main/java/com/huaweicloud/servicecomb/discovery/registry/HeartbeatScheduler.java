@@ -19,7 +19,6 @@ package com.huaweicloud.servicecomb.discovery.registry;
 
 import com.huaweicloud.common.cache.RegisterCache;
 import com.huaweicloud.common.exception.ServiceCombException;
-import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 import com.huaweicloud.servicecomb.discovery.client.model.HeardBeatStatus;
 import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstance;
@@ -55,8 +54,6 @@ public class HeartbeatScheduler {
 
   private TagsProperties tagsProperties;
 
-  private ServiceCombSwaggerHandler serviceCombSwaggerHandler;
-
   private AtomicBoolean heartbeatLog = new AtomicBoolean(true);
 
   public HeartbeatScheduler(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
@@ -66,12 +63,10 @@ public class HeartbeatScheduler {
     this.tagsProperties = tagsProperties;
   }
 
-  public void add(ServiceCombRegistration registration,
-      ServiceCombSwaggerHandler serviceCombSwaggerHandler) {
+  public void add(ServiceCombRegistration registration) {
     if (!serviceCombDiscoveryProperties.isHealthCheck()) {
       return;
     }
-    this.serviceCombSwaggerHandler = serviceCombSwaggerHandler;
     ScheduledFuture currentTask = this.scheduler
         .scheduleWithFixedDelay(() -> {
               try {
