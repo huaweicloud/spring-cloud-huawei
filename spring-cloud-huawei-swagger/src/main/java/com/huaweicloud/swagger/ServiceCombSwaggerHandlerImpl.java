@@ -133,7 +133,7 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
               })
           );
         }
-        swaggerMap.put(className, temSwagger);
+        swaggerMap.put(className.replace("$", "_"), temSwagger);
       } catch (NoSuchFieldException | IllegalAccessException e) {
         LOGGER.error("parse swagger failed:{}", e.getMessage());
       }

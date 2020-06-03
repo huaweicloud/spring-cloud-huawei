@@ -54,6 +54,9 @@ public class ServiceCombServiceRegistryTest {
   @Mocked
   ServiceCombRegistration registration;
 
+  @Mocked
+  ServiceCombWatcher serviceCombWatcher;
+
   @Test
   public void hasRegisterMicroservice() throws ServiceCombException {
     new Expectations() {
@@ -67,7 +70,7 @@ public class ServiceCombServiceRegistryTest {
     };
     ServiceCombServiceRegistry serviceCombServiceRegistry = new ServiceCombServiceRegistry(
         serviceCombClient,
-        heartbeatScheduler, serviceCombDiscoveryProperties, tagsProperties);
+        heartbeatScheduler, serviceCombDiscoveryProperties, serviceCombWatcher, tagsProperties);
     serviceCombServiceRegistry.register(registration);
     Assert.assertEquals(serviceCombServiceRegistry.getInstanceID(), "2");
     Assert.assertEquals(serviceCombServiceRegistry.getServiceID(), "1");
@@ -85,7 +88,7 @@ public class ServiceCombServiceRegistryTest {
     };
     ServiceCombServiceRegistry serviceCombServiceRegistry = new ServiceCombServiceRegistry(
         serviceCombClient,
-        heartbeatScheduler, serviceCombDiscoveryProperties, tagsProperties);
+        heartbeatScheduler, serviceCombDiscoveryProperties, serviceCombWatcher, tagsProperties);
     serviceCombServiceRegistry.register(registration);
     Assert.assertEquals(serviceCombServiceRegistry.getInstanceID(), "2");
     Assert.assertEquals(serviceCombServiceRegistry.getServiceID(), "4");
@@ -101,7 +104,7 @@ public class ServiceCombServiceRegistryTest {
     };
     ServiceCombServiceRegistry serviceCombServiceRegistry = new ServiceCombServiceRegistry(
         serviceCombClient,
-        heartbeatScheduler, serviceCombDiscoveryProperties, tagsProperties);
+        heartbeatScheduler, serviceCombDiscoveryProperties, serviceCombWatcher, tagsProperties);
     serviceCombServiceRegistry.deregister(registration);
   }
 
@@ -115,7 +118,7 @@ public class ServiceCombServiceRegistryTest {
     };
     ServiceCombServiceRegistry serviceCombServiceRegistry = new ServiceCombServiceRegistry(
         serviceCombClient,
-        heartbeatScheduler, serviceCombDiscoveryProperties, tagsProperties);
+        heartbeatScheduler, serviceCombDiscoveryProperties, serviceCombWatcher, tagsProperties);
     serviceCombServiceRegistry.setStatus(registration, "UP");
   }
 
@@ -133,7 +136,7 @@ public class ServiceCombServiceRegistryTest {
     };
     ServiceCombServiceRegistry serviceCombServiceRegistry = new ServiceCombServiceRegistry(
         serviceCombClient,
-        heartbeatScheduler, serviceCombDiscoveryProperties, tagsProperties);
+        heartbeatScheduler, serviceCombDiscoveryProperties, serviceCombWatcher, tagsProperties);
     String actual = serviceCombServiceRegistry.getStatus(registration);
     Assert.assertEquals(actual, MicroserviceInstanceStatus.UP.name());
   }

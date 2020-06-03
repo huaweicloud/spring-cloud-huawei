@@ -83,6 +83,9 @@ public class SwaggerHandlerImplTest {
         documentationCache.documentationByGroup(anyString);
         result = mockDoc;
 
+        DefinitionCache.getClassNameBySchema(anyString);
+        result = "app";
+
         mapper.mapDocumentation((Documentation) any);
         result = mockSwagger;
 

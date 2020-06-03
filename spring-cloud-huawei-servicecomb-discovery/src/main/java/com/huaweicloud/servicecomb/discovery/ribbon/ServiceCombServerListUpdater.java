@@ -34,8 +34,11 @@ public class ServiceCombServerListUpdater extends PollingServerListUpdater {
             return thread;
           });
 
-  @Autowired
   private ServiceCombEventBus eventBus;
+
+  public ServiceCombServerListUpdater(ServiceCombEventBus eventBus) {
+    this.eventBus = eventBus;
+  }
 
   @Override
   public void start(UpdateAction updateAction) {

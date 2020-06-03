@@ -18,6 +18,7 @@
 package com.huaweicloud.servicecomb.discovery.registry;
 
 
+import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.servicecomb.discovery.event.ServiceCombEventBus;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -63,9 +64,10 @@ public class ServiceCombRegistryAutoConfiguration {
   public ServiceCombServiceRegistry serviceCombServiceRegistry(ServiceCombClient serviceCombClient,
       HeartbeatScheduler heartbeatScheduler,
       ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
+      ServiceCombWatcher serviceCombWatcher,
       TagsProperties tagsProperties) {
     return new ServiceCombServiceRegistry(serviceCombClient, heartbeatScheduler,
-        serviceCombDiscoveryProperties, tagsProperties);
+        serviceCombDiscoveryProperties, serviceCombWatcher, tagsProperties);
   }
 
   @Bean
@@ -91,8 +93,11 @@ public class ServiceCombRegistryAutoConfiguration {
   }
 
   @Bean
-  public ServiceCombWatcher serviceCombWatcher() {
-    return new ServiceCombWatcher();
+  public ServiceCombWatcher serviceCombWatcher(ServiceCombEventBus eventBus,
+      ServiceCombSSLProperties serviceCombSSLProperties,
+      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
+    return new ServiceCombWatcher(eventBus, serviceCombSSLProperties,
+        serviceCombDiscoveryProperties);
   }
 
 }
