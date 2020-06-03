@@ -35,18 +35,25 @@ public class ServiceCombWatcher {
 
   private static final String DEFAULT_PREFIX = "ws://";
 
-  @Autowired
   private ServiceCombEventBus eventBus;
 
-  @Autowired
   private ServiceCombSSLProperties serviceCombSSLProperties;
 
-  @Autowired
   private ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
 
   private String url;
 
   private BackOff backOff = new BackOff(5000);
+
+  private SSLContext sslContext;
+
+  public ServiceCombWatcher(ServiceCombEventBus eventBus,
+      ServiceCombSSLProperties serviceCombSSLProperties,
+      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
+    this.eventBus = eventBus;
+    this.serviceCombSSLProperties = serviceCombSSLProperties;
+    this.serviceCombDiscoveryProperties = serviceCombDiscoveryProperties;
+  }
 
   private ScheduledExecutorService EXECUTOR = Executors.newScheduledThreadPool(1, (r) -> {
     Thread thread = new Thread(r);
@@ -56,7 +63,12 @@ public class ServiceCombWatcher {
   });
 
   public void start(String url) {
-    this.url = url;
+    if (serviceCombDiscoveryProperties.getAddress().contains("https")) {
+      this.url = SSL_PREFIX + url;
+      initSSL();
+    } else {
+      this.url = DEFAULT_PREFIX + url;
+    }
     connect();
     eventBus.register((event) -> {
       if (!(event instanceof ServerCloseEvent)) {
@@ -83,22 +95,8 @@ public class ServiceCombWatcher {
     });
   }
 
-  private WebSocketClient buildClient() {
-    Map<String, String> signedHeader = new HashMap<>();
-    signedHeader.put("x-domain-name", ServiceRegistryConfig.DEFAULT_PROJECT);
-    if (serviceCombDiscoveryProperties.getAddress().contains("https")) {
-      url = SSL_PREFIX + url;
-    } else {
-      url = DEFAULT_PREFIX + url;
-    }
-    WebSocketClient webSocketClient;
-    try {
-      webSocketClient = new ServiceCombWebSocketClient(url, signedHeader, eventBus::publish);
-    } catch (URISyntaxException e) {
-      LOGGER.error("parse url error");
-      return null;
-    }
-    SSLContext sslContext = SecretUtil.getSSLContext(serviceCombSSLProperties);
+  private void initSSL() {
+    sslContext = SecretUtil.getSSLContext(serviceCombSSLProperties);
     try {
       sslContext.init(null, new TrustManager[]{new X509TrustManager() {
         @Override
@@ -119,7 +117,21 @@ public class ServiceCombWatcher {
     } catch (KeyManagementException e) {
       LOGGER.error("websocket ssl init failed.");
     }
-    webSocketClient.setSocketFactory(sslContext.getSocketFactory());
+  }
+
+  private WebSocketClient buildClient() {
+    Map<String, String> signedHeader = new HashMap<>();
+    signedHeader.put("x-domain-name", ServiceRegistryConfig.DEFAULT_PROJECT);
+    WebSocketClient webSocketClient;
+    try {
+      webSocketClient = new ServiceCombWebSocketClient(url, signedHeader, eventBus::publish);
+    } catch (URISyntaxException e) {
+      LOGGER.error("parse url error");
+      return null;
+    }
+    if (sslContext != null) {
+      webSocketClient.setSocketFactory(sslContext.getSocketFactory());
+    }
     return webSocketClient;
   }
 }

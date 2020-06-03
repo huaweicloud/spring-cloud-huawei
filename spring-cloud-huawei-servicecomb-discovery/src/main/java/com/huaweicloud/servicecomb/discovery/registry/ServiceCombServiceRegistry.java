@@ -61,13 +61,14 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   private String instanceID = null;
 
-  @Autowired
   private ServiceCombWatcher serviceCombWatcher;
 
   public ServiceCombServiceRegistry(ServiceCombClient serviceCombClient,
       HeartbeatScheduler heartbeatScheduler,
       ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
+      ServiceCombWatcher serviceCombWatcher,
       TagsProperties tagsProperties) {
+    this.serviceCombWatcher = serviceCombWatcher;
     this.tagsProperties = tagsProperties;
     this.serviceCombClient = serviceCombClient;
     this.heartbeatScheduler = heartbeatScheduler;

@@ -39,7 +39,6 @@ import com.netflix.loadbalancer.AbstractServerList;
  **/
 public class ServiceCombServerList extends AbstractServerList<Server> {
 
-  @Autowired
   private ServiceCombClient serviceCombClient;
 
   private ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
@@ -47,8 +46,10 @@ public class ServiceCombServerList extends AbstractServerList<Server> {
   private String serviceId;
 
   public ServiceCombServerList(
-      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
+      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
+      ServiceCombClient serviceCombClient) {
     this.serviceCombDiscoveryProperties = serviceCombDiscoveryProperties;
+    this.serviceCombClient = serviceCombClient;
   }
 
   @Override

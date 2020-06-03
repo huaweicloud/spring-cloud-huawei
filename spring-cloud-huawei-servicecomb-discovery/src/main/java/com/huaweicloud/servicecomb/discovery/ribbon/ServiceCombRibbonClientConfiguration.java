@@ -17,6 +17,8 @@
 
 package com.huaweicloud.servicecomb.discovery.ribbon;
 
+import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
+import com.huaweicloud.servicecomb.discovery.event.ServiceCombEventBus;
 import com.netflix.loadbalancer.IPing;
 import com.netflix.loadbalancer.ServerListUpdater;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -39,8 +41,10 @@ public class ServiceCombRibbonClientConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public ServerList<?> ribbonServerList(IClientConfig config,
-      ServiceCombDiscoveryProperties serviceCombProperties) {
-    ServiceCombServerList serverList = new ServiceCombServerList(serviceCombProperties);
+      ServiceCombDiscoveryProperties serviceCombProperties,
+      ServiceCombClient serviceCombClient) {
+    ServiceCombServerList serverList = new ServiceCombServerList(serviceCombProperties,
+        serviceCombClient);
     serverList.initWithNiwsConfig(config);
     return serverList;
   }
@@ -52,7 +56,7 @@ public class ServiceCombRibbonClientConfiguration {
   }
 
   @Bean
-  public ServerListUpdater serviceCombServerListUpdater() {
-    return new ServiceCombServerListUpdater();
+  public ServerListUpdater serviceCombServerListUpdater(ServiceCombEventBus eventBus) {
+    return new ServiceCombServerListUpdater(eventBus);
   }
 }
