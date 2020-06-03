@@ -25,7 +25,7 @@ public class ServiceCombWebSocketClient extends WebSocketClient {
 
   public ServiceCombWebSocketClient(String serverUri, Map<String, String> map,
       Consumer<ServiceCombEvent> publisher) throws URISyntaxException {
-    super(new URI(serverUri), new Draft_6455(), map, 0);
+    super(new URI(serverUri), new Draft_6455(), map, 60);
     this.publisher = publisher;
   }
 
