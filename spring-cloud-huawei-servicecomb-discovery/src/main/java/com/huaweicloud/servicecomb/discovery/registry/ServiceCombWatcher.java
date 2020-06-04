@@ -63,6 +63,13 @@ public class ServiceCombWatcher {
 
   private SSLContext sslContext;
 
+  private ScheduledExecutorService EXECUTOR = Executors.newScheduledThreadPool(1, (r) -> {
+    Thread thread = new Thread(r);
+    thread.setName("com.huaweicloud.servercenter.watch");
+    thread.setDaemon(true);
+    return thread;
+  });
+
   public ServiceCombWatcher(ServiceCombEventBus eventBus,
       ServiceCombSSLProperties serviceCombSSLProperties,
       ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
@@ -70,13 +77,6 @@ public class ServiceCombWatcher {
     this.serviceCombSSLProperties = serviceCombSSLProperties;
     this.serviceCombDiscoveryProperties = serviceCombDiscoveryProperties;
   }
-
-  private ScheduledExecutorService EXECUTOR = Executors.newScheduledThreadPool(1, (r) -> {
-    Thread thread = new Thread(r);
-    thread.setName("com.huaweicloud.servercenter.watch");
-    thread.setDaemon(true);
-    return thread;
-  });
 
   public void start(String url) {
     if (serviceCombDiscoveryProperties.getAddress().contains("https")) {

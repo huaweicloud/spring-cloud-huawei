@@ -72,8 +72,13 @@ public class ServiceCombServiceRegistryTest {
         serviceCombClient,
         heartbeatScheduler, serviceCombDiscoveryProperties, serviceCombWatcher, tagsProperties);
     serviceCombServiceRegistry.register(registration);
-    Assert.assertEquals(serviceCombServiceRegistry.getInstanceID(), "2");
-    Assert.assertEquals(serviceCombServiceRegistry.getServiceID(), "1");
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    Assert.assertEquals("2", serviceCombServiceRegistry.getInstanceID());
+    Assert.assertEquals("1", serviceCombServiceRegistry.getServiceID());
   }
 
   @Test
@@ -90,8 +95,13 @@ public class ServiceCombServiceRegistryTest {
         serviceCombClient,
         heartbeatScheduler, serviceCombDiscoveryProperties, serviceCombWatcher, tagsProperties);
     serviceCombServiceRegistry.register(registration);
-    Assert.assertEquals(serviceCombServiceRegistry.getInstanceID(), "2");
-    Assert.assertEquals(serviceCombServiceRegistry.getServiceID(), "4");
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    Assert.assertEquals("2", serviceCombServiceRegistry.getInstanceID());
+    Assert.assertEquals("4", serviceCombServiceRegistry.getServiceID());
   }
 
   @Test
