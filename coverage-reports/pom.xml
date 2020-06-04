@@ -65,12 +65,6 @@
     <!-- discovery-tests -->
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>discovery-tests-client</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.huaweicloud</groupId>
       <artifactId>order-consumer</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
@@ -78,6 +72,12 @@
     <dependency>
       <groupId>com.huaweicloud</groupId>
       <artifactId>price-provider</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.huaweicloud</groupId>
+      <artifactId>discovery-tests-client</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
