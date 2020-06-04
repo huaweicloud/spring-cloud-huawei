@@ -107,6 +107,7 @@
     <profile>
       <id>it</id>
       <modules>
+        <module>coverage-reports</module>
         <module>integration-tests</module>
       </modules>
     </profile>
