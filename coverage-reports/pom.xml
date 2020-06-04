@@ -81,7 +81,7 @@
 
   <profiles>
     <profile>
-      <id>jacoco</id>
+      <id>it</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
