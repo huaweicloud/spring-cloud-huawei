@@ -33,12 +33,60 @@
                 </jacocoReports>
               </configuration>
             </plugin>
+            <plugin>
+              <groupId>org.jacoco</groupId>
+              <artifactId>jacoco-maven-plugin</artifactId>
+              <version>0.8.2</version>
+              <configuration>
+                <excludes>
+                  <exclude>*$Impl_*</exclude>
+                </excludes>
+              </configuration>
+              <executions>
+                <execution>
+                  <id>default-prepare-agent</id>
+                  <goals>
+                    <goal>prepare-agent</goal>
+                  </goals>
+                  <configuration>
+                    <destFile>${project.build.directory}/jacoco.exec</destFile>
+                  </configuration>
+                </execution>
+                <execution>
+                  <id>default-prepare-agent-integration</id>
+                  <phase>pre-integration-test</phase>
+                  <goals>
+                    <goal>prepare-agent-integration</goal>
+                  </goals>
+                  <configuration>
+                    <destFile>${project.build.directory}/jacoco-it.exec</destFile>
+                    <propertyName>jacoco.failsafe.argLine</propertyName>
+                  </configuration>
+                </execution>
+                <execution>
+                  <id>default-report</id>
+                  <goals>
+                    <goal>report</goal>
+                  </goals>
+                </execution>
+                <execution>
+                  <id>default-report-integration</id>
+                  <goals>
+                    <goal>report-integration</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
           </plugins>
         </pluginManagement>
         <plugins>
           <plugin>
             <groupId>org.eluder.coveralls</groupId>
             <artifactId>coveralls-maven-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
           </plugin>
         </plugins>
       </build>
@@ -65,25 +113,6 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.19.1</version>
-        </plugin>
-        <plugin>
-          <groupId>org.jacoco</groupId>
-          <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.8.2</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>prepare-agent</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>report</id>
-              <phase>test</phase>
-              <goals>
-                <goal>report</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
         <plugin>
           <groupId>org.codehaus.gmaven</groupId>
@@ -121,10 +150,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>
