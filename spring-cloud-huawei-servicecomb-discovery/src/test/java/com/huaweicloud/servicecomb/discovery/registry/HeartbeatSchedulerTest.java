@@ -45,7 +45,7 @@ public class HeartbeatSchedulerTest {
     HeartbeatScheduler heartbeatScheduler = new HeartbeatScheduler(serviceCombDiscoveryProperties,
         serviceCombClient, tagsProperties);
     RegisterCache.setInstanceID("11");
-    heartbeatScheduler.add(null, null);
+    heartbeatScheduler.add(null);
     heartbeatScheduler.remove();
   }
 }
