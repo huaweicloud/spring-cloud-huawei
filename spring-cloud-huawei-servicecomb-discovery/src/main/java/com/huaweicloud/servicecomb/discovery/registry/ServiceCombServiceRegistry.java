@@ -25,6 +25,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +65,13 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   private ServiceCombWatcher serviceCombWatcher;
 
+  private ScheduledExecutorService EXECUTOR = Executors.newScheduledThreadPool(1, (r) -> {
+    Thread thread = new Thread(r);
+    thread.setName("com.huaweicloud.registry");
+    thread.setDaemon(true);
+    return thread;
+  });
+
   public ServiceCombServiceRegistry(ServiceCombClient serviceCombClient,
       HeartbeatScheduler heartbeatScheduler,
       ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
@@ -77,14 +86,20 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   @Override
   public void register(ServiceCombRegistration registration) {
-    loopRegister(registration);
-    RegisterCache.setInstanceID(instanceID);
-    RegisterCache.setServiceID(serviceID);
-    if (serviceCombDiscoveryProperties.isWatch()) {
-      startWatch();
-    }
-    LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
-    heartbeatScheduler.add(registration);
+    asyncRegister(registration);
+  }
+
+  private void asyncRegister(ServiceCombRegistration registration) {
+    EXECUTOR.execute(() -> {
+      loopRegister(registration);
+      RegisterCache.setInstanceID(instanceID);
+      RegisterCache.setServiceID(serviceID);
+      if (serviceCombDiscoveryProperties.isWatch()) {
+        startWatch();
+      }
+      LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
+      heartbeatScheduler.add(registration);
+    });
   }
 
   private void startWatch() {
