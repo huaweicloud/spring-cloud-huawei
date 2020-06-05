@@ -19,12 +19,12 @@ schemes: []
 consumes: []
 produces: []
 paths:
-  /price:
+  /sayHelloGet:
     get:
       tags:
-        - "price-controller"
-      summary: "sayHello"
-      operationId: "sayHelloUsingGET"
+        - "schema-content-controller"
+      summary: "sayHelloGet"
+      operationId: "sayHelloGetUsingGET"
       schemes: []
       consumes: []
       produces:
@@ -58,9 +58,9 @@ paths:
       deprecated: false
     head:
       tags:
-        - "price-controller"
-      summary: "sayHello"
-      operationId: "sayHelloUsingHEAD"
+        - "schema-content-controller"
+      summary: "sayHelloGet"
+      operationId: "sayHelloGetUsingHEAD"
       schemes: []
       consumes:
         - "application/json"
@@ -95,9 +95,9 @@ paths:
       deprecated: false
     post:
       tags:
-        - "price-controller"
-      summary: "sayHello"
-      operationId: "sayHelloUsingPOST"
+        - "schema-content-controller"
+      summary: "sayHelloGet"
+      operationId: "sayHelloGetUsingPOST"
       schemes: []
       consumes:
         - "application/json"
@@ -136,9 +136,9 @@ paths:
       deprecated: false
     put:
       tags:
-        - "price-controller"
-      summary: "sayHello"
-      operationId: "sayHelloUsingPUT"
+        - "schema-content-controller"
+      summary: "sayHelloGet"
+      operationId: "sayHelloGetUsingPUT"
       schemes: []
       consumes:
         - "application/json"
@@ -177,9 +177,9 @@ paths:
       deprecated: false
     delete:
       tags:
-        - "price-controller"
-      summary: "sayHello"
-      operationId: "sayHelloUsingDELETE"
+        - "schema-content-controller"
+      summary: "sayHelloGet"
+      operationId: "sayHelloGetUsingDELETE"
       schemes: []
       consumes: []
       produces:
@@ -213,9 +213,9 @@ paths:
       deprecated: false
     options:
       tags:
-        - "price-controller"
-      summary: "sayHello"
-      operationId: "sayHelloUsingOPTIONS"
+        - "schema-content-controller"
+      summary: "sayHelloGet"
+      operationId: "sayHelloGetUsingOPTIONS"
       schemes: []
       consumes:
         - "application/json"
@@ -250,9 +250,9 @@ paths:
       deprecated: false
     patch:
       tags:
-        - "price-controller"
-      summary: "sayHello"
-      operationId: "sayHelloUsingPATCH"
+        - "schema-content-controller"
+      summary: "sayHelloGet"
+      operationId: "sayHelloGetUsingPATCH"
       schemes: []
       consumes:
         - "application/json"
@@ -281,6 +281,48 @@ paths:
           headers: {}
         "403":
           description: "Forbidden"
+          examples: {}
+          headers: {}
+      security: []
+      deprecated: false
+  /sayHelloPost:
+    post:
+      tags:
+        - "schema-content-controller"
+      summary: "sayHelloPost"
+      operationId: "sayHelloPostUsingPOST"
+      schemes: []
+      consumes:
+        - "application/json"
+      produces:
+        - "*/*"
+      parameters:
+        - name: "id"
+          in: "query"
+          description: "id"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          examples: {}
+          headers: {}
+          schema:
+            type: "string"
+        "201":
+          description: "Created"
+          examples: {}
+          headers: {}
+        "401":
+          description: "Unauthorized"
+          examples: {}
+          headers: {}
+        "403":
+          description: "Forbidden"
+          examples: {}
+          headers: {}
+        "404":
+          description: "Not Found"
           examples: {}
           headers: {}
       security: []

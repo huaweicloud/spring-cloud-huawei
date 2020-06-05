@@ -83,7 +83,8 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
         .documentationByGroup(Docket.DEFAULT_GROUP_NAME);
 
     if (withJavaChassis) {
-      DocumentationSwaggerMapper documentationSwaggerMapper = new ServiceCombDocumentationSwaggerMapper(mapper);
+      DocumentationSwaggerMapper documentationSwaggerMapper =
+          new ServiceCombDocumentationSwaggerMapper(appName, serviceName, mapper);
       this.swaggerMap = documentationSwaggerMapper.documentationToSwaggers(documentation);
     } else {
       DocumentationSwaggerMapper documentationSwaggerMapper = new SpringCloudDocumentationSwaggerMapper(mapper);
