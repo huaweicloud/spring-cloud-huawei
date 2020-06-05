@@ -8,7 +8,7 @@ spring:
     servicecomb:
       discovery:
         enabled: true
-#        multiple registries
+        # testing multiple registries
         address: http://127.0.0.2:30100,http://127.0.0.1:30100
         serviceName: price
         version: 0.0.1
@@ -19,3 +19,7 @@ spring:
         secretKey: your sk
         akskCustomCipher: default
         project: cn-east-2
+
+      # testing spring cloud swagger generation
+      swagger:
+        enableJavaChassisAdapter: false

@@ -13,7 +13,9 @@ public interface ServiceCombSwaggerHandler {
 
   void registerSwagger(String microserviceId, List<String> schemas);
 
-  List<String> getSchemas();
+  List<String> getSchemaIds();
+
+  Map<String, String> getSchemasMap();
 
   Map<String, String> getSchemasSummaryMap();
 }

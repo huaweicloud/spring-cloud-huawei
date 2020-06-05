@@ -119,7 +119,7 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     if (serviceCombSwaggerHandler != null) {
       serviceCombSwaggerHandler.init(serviceCombDiscoveryProperties.getAppName(),
           serviceCombDiscoveryProperties.getServiceName());
-      microservice.setSchemas(serviceCombSwaggerHandler.getSchemas());
+      microservice.setSchemas(serviceCombSwaggerHandler.getSchemaIds());
     }
     while (true) {
       try {
