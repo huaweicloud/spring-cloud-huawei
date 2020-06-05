@@ -47,8 +47,8 @@ public class SchemaController {
     Map<String, String> schemaContents = serviceCombSwaggerHandler.getSchemasMap();
     assertThat(schemaContents.size()).isGreaterThan(2);
 
-    String a1 = schemaContents.get("PriceController").replaceAll("\\s", "");
-    String a2 = readFile("PriceController.yaml").replaceAll("\\s", "");
+    String a1 = schemaContents.get("SchemaContentController").replaceAll("\\s", "");
+    String a2 = readFile("SchemaContentController.yaml").replaceAll("\\s", "");
     assertThat(a1).isEqualTo(a2);
     return "success";
   }
