@@ -28,3 +28,4 @@ spring.cloud.servicecomb.swagger.enableJavaChassisAdapter: false
   spring cloud `@RequestMapping` 声明的接口，既可以使用 `Get` 访问， 也可以使用 `Post` 访问，
   注册契约的时候，裁剪为只注册 `Get` 访问。 
 
+其他详细裁剪细节可以参考 `ServiceCombDocumentationSwaggerMapper` 的实现。
