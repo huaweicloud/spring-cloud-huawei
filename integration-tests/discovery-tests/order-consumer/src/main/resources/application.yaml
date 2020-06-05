@@ -18,3 +18,7 @@ spring:
         secretKey: your sk
         akskCustomCipher: default
         project: cn-east-2
+
+      # testing servicecomb swagger generation
+      swagger:
+        enableJavaChassisAdapter: true

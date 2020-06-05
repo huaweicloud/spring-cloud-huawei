@@ -1,0 +1,289 @@
+---
+swagger: "2.0"
+info:
+  description: "Api Documentation"
+  version: "1.0"
+  title: "Api Documentation"
+  termsOfService: "urn:tos"
+  contact:
+    name: ""
+    url: ""
+    email: ""
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0"
+host: ""
+basePath: "/"
+tags: []
+schemes: []
+consumes: []
+produces: []
+paths:
+  /price:
+    get:
+      tags:
+        - "price-controller"
+      summary: "sayHello"
+      operationId: "sayHelloUsingGET"
+      schemes: []
+      consumes: []
+      produces:
+        - "*/*"
+      parameters:
+        - name: "id"
+          in: "query"
+          description: "id"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          examples: {}
+          headers: {}
+          schema:
+            type: "string"
+        "401":
+          description: "Unauthorized"
+          examples: {}
+          headers: {}
+        "403":
+          description: "Forbidden"
+          examples: {}
+          headers: {}
+        "404":
+          description: "Not Found"
+          examples: {}
+          headers: {}
+      security: []
+      deprecated: false
+    head:
+      tags:
+        - "price-controller"
+      summary: "sayHello"
+      operationId: "sayHelloUsingHEAD"
+      schemes: []
+      consumes:
+        - "application/json"
+      produces:
+        - "*/*"
+      parameters:
+        - name: "id"
+          in: "query"
+          description: "id"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          examples: {}
+          headers: {}
+          schema:
+            type: "string"
+        "204":
+          description: "No Content"
+          examples: {}
+          headers: {}
+        "401":
+          description: "Unauthorized"
+          examples: {}
+          headers: {}
+        "403":
+          description: "Forbidden"
+          examples: {}
+          headers: {}
+      security: []
+      deprecated: false
+    post:
+      tags:
+        - "price-controller"
+      summary: "sayHello"
+      operationId: "sayHelloUsingPOST"
+      schemes: []
+      consumes:
+        - "application/json"
+      produces:
+        - "*/*"
+      parameters:
+        - name: "id"
+          in: "query"
+          description: "id"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          examples: {}
+          headers: {}
+          schema:
+            type: "string"
+        "201":
+          description: "Created"
+          examples: {}
+          headers: {}
+        "401":
+          description: "Unauthorized"
+          examples: {}
+          headers: {}
+        "403":
+          description: "Forbidden"
+          examples: {}
+          headers: {}
+        "404":
+          description: "Not Found"
+          examples: {}
+          headers: {}
+      security: []
+      deprecated: false
+    put:
+      tags:
+        - "price-controller"
+      summary: "sayHello"
+      operationId: "sayHelloUsingPUT"
+      schemes: []
+      consumes:
+        - "application/json"
+      produces:
+        - "*/*"
+      parameters:
+        - name: "id"
+          in: "query"
+          description: "id"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          examples: {}
+          headers: {}
+          schema:
+            type: "string"
+        "201":
+          description: "Created"
+          examples: {}
+          headers: {}
+        "401":
+          description: "Unauthorized"
+          examples: {}
+          headers: {}
+        "403":
+          description: "Forbidden"
+          examples: {}
+          headers: {}
+        "404":
+          description: "Not Found"
+          examples: {}
+          headers: {}
+      security: []
+      deprecated: false
+    delete:
+      tags:
+        - "price-controller"
+      summary: "sayHello"
+      operationId: "sayHelloUsingDELETE"
+      schemes: []
+      consumes: []
+      produces:
+        - "*/*"
+      parameters:
+        - name: "id"
+          in: "query"
+          description: "id"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          examples: {}
+          headers: {}
+          schema:
+            type: "string"
+        "204":
+          description: "No Content"
+          examples: {}
+          headers: {}
+        "401":
+          description: "Unauthorized"
+          examples: {}
+          headers: {}
+        "403":
+          description: "Forbidden"
+          examples: {}
+          headers: {}
+      security: []
+      deprecated: false
+    options:
+      tags:
+        - "price-controller"
+      summary: "sayHello"
+      operationId: "sayHelloUsingOPTIONS"
+      schemes: []
+      consumes:
+        - "application/json"
+      produces:
+        - "*/*"
+      parameters:
+        - name: "id"
+          in: "query"
+          description: "id"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          examples: {}
+          headers: {}
+          schema:
+            type: "string"
+        "204":
+          description: "No Content"
+          examples: {}
+          headers: {}
+        "401":
+          description: "Unauthorized"
+          examples: {}
+          headers: {}
+        "403":
+          description: "Forbidden"
+          examples: {}
+          headers: {}
+      security: []
+      deprecated: false
+    patch:
+      tags:
+        - "price-controller"
+      summary: "sayHello"
+      operationId: "sayHelloUsingPATCH"
+      schemes: []
+      consumes:
+        - "application/json"
+      produces:
+        - "*/*"
+      parameters:
+        - name: "id"
+          in: "query"
+          description: "id"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          examples: {}
+          headers: {}
+          schema:
+            type: "string"
+        "204":
+          description: "No Content"
+          examples: {}
+          headers: {}
+        "401":
+          description: "Unauthorized"
+          examples: {}
+          headers: {}
+        "403":
+          description: "Forbidden"
+          examples: {}
+          headers: {}
+      security: []
+      deprecated: false
+securityDefinitions: {}
+definitions: {}
