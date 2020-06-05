@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-// make this class the same in order service, so that can compare the difference
+// make this class the same in order and price service, so that can compare the difference
 // of spring cloud swagger & servicecomb swagger
 
 @RestController
