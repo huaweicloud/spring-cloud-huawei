@@ -16,60 +16,63 @@
  */
 package com.huaweicloud.swagger;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
-import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
-import io.swagger.models.Info;
-import io.swagger.models.Model;
-import io.swagger.models.ModelImpl;
-import io.swagger.models.Path;
-import io.swagger.models.Swagger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.junit.Test;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
+
+import io.swagger.models.Info;
+import io.swagger.models.Model;
+import io.swagger.models.ModelImpl;
+import io.swagger.models.Path;
+import io.swagger.models.Swagger;
 import mockit.Expectations;
 import mockit.Injectable;
-import mockit.Mock;
 import mockit.Mocked;
-import org.junit.Test;
 import springfox.documentation.service.ApiListing;
 import springfox.documentation.service.Documentation;
 import springfox.documentation.spring.web.DocumentationCache;
 import springfox.documentation.swagger2.mappers.ServiceModelToSwagger2Mapper;
 
 /**
- * @Author GuoYl123
- * @Date 2019/12/30
+ * @author GuoYl123
  **/
 public class SwaggerHandlerImplTest {
 
   @Injectable
-  DocumentationCache documentationCache;
+  private DocumentationCache documentationCache;
 
   @Injectable
-  ServiceModelToSwagger2Mapper mapper;
+  private ServiceModelToSwagger2Mapper mapper;
 
   @Injectable
-  ServiceCombClient serviceCombClient;
+  private ServiceCombClient serviceCombClient;
 
   @Mocked
-  DefinitionCache def;
+  private DefinitionCache def;
 
-  ServiceCombSwaggerHandlerImpl service = new ServiceCombSwaggerHandlerImpl();
+  @Injectable
+  private ApiListing apiListing;
 
-  Multimap<String, ApiListing> mockMap = HashMultimap.create();
+  private ServiceCombSwaggerHandlerImpl service = new ServiceCombSwaggerHandlerImpl();
 
-  Documentation mockDoc;
+  private Multimap<String, ApiListing> mockMap = HashMultimap.create();
 
-  Swagger mockSwagger;
+  private Documentation mockDoc;
 
-  public void init() {
-    mockMap.put("xxxx", null);
+  private Swagger mockSwagger;
+
+  private void init() {
+    mockMap.put("xxxx", apiListing);
     mockDoc = new Documentation("xx", "/xx", null, mockMap,
-        null, null, null, null, null, Collections.emptyList());
+        null, Collections.emptySet(), Collections.emptySet(), null, Collections.emptySet(), Collections.emptyList());
     mockSwagger = new Swagger();
     mockSwagger.setInfo(new Info());
     Map<String, Model> defMap = new HashMap<>();
@@ -88,7 +91,6 @@ public class SwaggerHandlerImplTest {
 
         mapper.mapDocumentation((Documentation) any);
         result = mockSwagger;
-
       }
     };
   }
