@@ -327,5 +327,48 @@ paths:
           headers: {}
       security: []
       deprecated: false
+  /stringRequestBody:
+    post:
+      tags:
+        - "schema-content-controller"
+      summary: "stringRequestBody"
+      operationId: "stringRequestBodyUsingPOST"
+      schemes: []
+      consumes:
+        - "application/json"
+      produces:
+        - "*/*"
+      parameters:
+        - in: "body"
+          name: "id"
+          description: "id"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "OK"
+          examples: {}
+          headers: {}
+          schema:
+            type: "string"
+        "201":
+          description: "Created"
+          examples: {}
+          headers: {}
+        "401":
+          description: "Unauthorized"
+          examples: {}
+          headers: {}
+        "403":
+          description: "Forbidden"
+          examples: {}
+          headers: {}
+        "404":
+          description: "Not Found"
+          examples: {}
+          headers: {}
+      security: []
+      deprecated: false
 securityDefinitions: {}
 definitions: {}
