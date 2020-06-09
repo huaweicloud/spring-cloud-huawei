@@ -31,6 +31,8 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.core.MediaType;
 
+import org.springframework.http.HttpMethod;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
@@ -40,13 +42,13 @@ import io.swagger.models.Info;
 import io.swagger.models.Swagger;
 import springfox.documentation.builders.ApiDescriptionBuilder;
 import springfox.documentation.builders.ApiListingBuilder;
-import springfox.documentation.builders.OperationBuilder;
 import springfox.documentation.service.ApiDescription;
 import springfox.documentation.service.ApiListing;
 import springfox.documentation.service.Documentation;
 import springfox.documentation.service.Operation;
+import springfox.documentation.service.Parameter;
+import springfox.documentation.service.StringVendorExtension;
 import springfox.documentation.spi.service.contexts.Orderings;
-import springfox.documentation.spring.web.readers.operation.CachingOperationNameGenerator;
 import springfox.documentation.swagger2.mappers.ServiceModelToSwagger2Mapper;
 
 public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwaggerMapper {
@@ -57,6 +59,8 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
   private static final String X_JAVA_INTERFACE = "x-java-interface";
 
   private static final String X_JAVA_CLASS = "x-java-class";
+
+  private static final String X_RAW_JSON_TYPE = "x-raw-json";
 
   private static final String INTF_SUFFIX = "Intf";
 
@@ -130,8 +134,10 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
     apiListingBuilder.apiVersion(apiListing.getApiVersion())
         .basePath(apiListing.getBasePath())
         .resourcePath(apiListing.getResourcePath())
-        .produces(validateContentType(apiListing.getProduces())) // 02-02 only keep one produces
-        .consumes(validateContentType(apiListing.getConsumes()))// 02-03 only keep one consumers
+        .produces(validateContentType(apiListing.getProduces()
+            , MediaType.APPLICATION_JSON)) // 02-02 only keep one produces
+        .consumes(validateContentType(apiListing.getConsumes()
+            , MediaType.APPLICATION_JSON))// 02-03 only keep one consumers
         .host(apiListing.getHost())
         .protocols(apiListing.getProtocols())
         .securityReferences(apiListing.getSecurityReferences())
@@ -157,35 +163,65 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
   }
 
   private Operation validateOperation(Operation operation) {
-    OperationBuilder builder = new OperationBuilder(new CachingOperationNameGenerator());
-    return builder.method(operation.getMethod())
-        .summary(operation.getSummary())
-        .notes(operation.getNotes())
-        .uniqueId(operation.getUniqueId())
-        .position(operation.getPosition())
-        .produces(validateContentType(operation.getProduces()))
-        .consumes(validateContentType(operation.getConsumes()))
-        .protocols(operation.getProtocol())
-        .parameters(operation.getParameters())
-        .responseMessages(operation.getResponseMessages())
-        .deprecated(operation.getDeprecated())
-        .hidden(operation.isHidden())
-        .responseModel(operation.getResponseModel())
-        .tags(operation.getTags())
-        .extensions(operation.getVendorExtensions()).build();
+    Operation result = new Operation(operation.getMethod(),
+        operation.getSummary(),
+        operation.getNotes(),
+        operation.getResponseModel(),
+        validateOpererationId(operation.getMethod(), operation.getUniqueId()),
+        operation.getPosition(),
+        operation.getTags(),
+        validateResponseContentType(operation),
+        validateContentType(operation.getConsumes(), MediaType.APPLICATION_JSON),
+        operation.getProtocol(),
+        Collections.EMPTY_LIST,
+        validateParameter(operation.getParameters()),
+        operation.getResponseMessages(),
+        operation.getDeprecated(),
+        operation.isHidden(),
+        operation.getVendorExtensions()
+    );
+    return result;
+  }
+
+  private String validateOpererationId(HttpMethod method, String uniqueId) {
+    String suffix = String.format("Using%s", method);
+    if (uniqueId.endsWith(suffix)) {
+      return uniqueId.substring(0, uniqueId.length() - suffix.length());
+    }
+    return uniqueId;
+  }
+
+  private List<Parameter> validateParameter(List<Parameter> parameters) {
+    for (Parameter parameter : parameters) {
+      if ("body".equals(parameter.getParamType()) &&
+          "string".equals(parameter.getModelRef().getType())) {
+        // TODO: springfox do not support boolean type and can not add a customization
+        // springfox has long time no release version since 2018.9 and version 2.9.2
+        // use string type instead
+        parameter.getVendorExtentions().add(new StringVendorExtension(X_RAW_JSON_TYPE, "true"));
+      }
+    }
+    return parameters;
+  }
+
+  private Set<String> validateResponseContentType(Operation operation) {
+    if ("string".equals(operation.getResponseModel().getType())) {
+      return validateContentType(operation.getProduces(), MediaType.TEXT_PLAIN);
+    }
+    return validateContentType(operation.getProduces(), MediaType.APPLICATION_JSON);
   }
 
   // only keep one produces or consumes
-  private Set<String> validateContentType(Set<String> contentTypes) {
+  private Set<String> validateContentType(Set<String> contentTypes, String defaultPrefer) {
     if (contentTypes.isEmpty()) {
       return contentTypes;
     }
 
     Set<String> onlyOne = new HashSet<>(1);
 
-    if (contentTypes.contains(MediaType.WILDCARD)
-        || contentTypes.contains(MediaType.APPLICATION_JSON)) {
-      onlyOne.add(MediaType.APPLICATION_JSON);
+    if (contentTypes.contains(MediaType.WILDCARD) ||
+        contentTypes.contains(defaultPrefer)) {
+      onlyOne.add(defaultPrefer);
       return onlyOne;
     }
 

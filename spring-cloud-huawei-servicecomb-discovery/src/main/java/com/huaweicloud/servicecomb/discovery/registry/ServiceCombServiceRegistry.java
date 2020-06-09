@@ -17,9 +17,6 @@
 
 package com.huaweicloud.servicecomb.discovery.registry;
 
-import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
-import com.huaweicloud.servicecomb.discovery.client.model.SchemaResponse;
-import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -27,16 +24,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
+
 import com.huaweicloud.common.cache.RegisterCache;
 import com.huaweicloud.common.exception.ServiceCombException;
+import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
 import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstance;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstanceSingleResponse;
+import com.huaweicloud.servicecomb.discovery.client.model.SchemaResponse;
+import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 
 /**
@@ -91,14 +93,18 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   private void asyncRegister(ServiceCombRegistration registration) {
     EXECUTOR.execute(() -> {
-      loopRegister(registration);
-      RegisterCache.setInstanceID(instanceID);
-      RegisterCache.setServiceID(serviceID);
-      if (serviceCombDiscoveryProperties.isWatch()) {
-        startWatch();
+      try {
+        loopRegister(registration);
+        RegisterCache.setInstanceID(instanceID);
+        RegisterCache.setServiceID(serviceID);
+        if (serviceCombDiscoveryProperties.isWatch()) {
+          startWatch();
+        }
+        LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
+        heartbeatScheduler.add(registration);
+      } catch (Throwable e) {
+        LOGGER.error("Unexpected exception in register. ", e);
       }
-      LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
-      heartbeatScheduler.add(registration);
     });
   }
 
@@ -107,7 +113,7 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
       URI uri = new URI(serviceCombClient.getUrl());
       String url = uri.getHost() + (uri.getPort() == -1 ? "" : (":" + uri.getPort()))
           + "/v4/" + ServiceRegistryConfig.DEFAULT_PROJECT
-              + "/registry/microservices/" + serviceID + "/watcher";
+          + "/registry/microservices/" + serviceID + "/watcher";
       serviceCombWatcher.start(url);
     } catch (URISyntaxException e) {
       LOGGER.error("parse url error");
