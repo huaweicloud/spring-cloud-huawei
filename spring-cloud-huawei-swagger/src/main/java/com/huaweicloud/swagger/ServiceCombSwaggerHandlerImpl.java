@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -65,19 +64,7 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   @Value("${spring.cloud.servicecomb.swagger.enableJavaChassisAdapter:true}")
   protected boolean withJavaChassis;
 
-  private String TITLE_PREFIX = "swagger definition for ";
-
-  private String X_JAVA_INTERFACE_PREFIX = "cse.gen.";
-
-  private String X_JAVA_INTERFACE = "x-java-interface";
-
-  private String X_JAVA_CLASS = "x-java-class";
-
-  private String INTF_SUFFIX = "Intf";
-
-  /**
-   * Split registration
-   */
+  @Override
   public void init(String appName, String serviceName) {
     Documentation documentation = documentationCache
         .documentationByGroup(Docket.DEFAULT_GROUP_NAME);
@@ -92,19 +79,19 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
     }
   }
 
-  /**
-   * todo: schema generate also can be async , use aop around method
-   * schema注册调用接口可以改为异步,在和java-chassis组网场景下需要同步加载
-   *
-   * @param microserviceId
-   * @param schemaIds
-   */
+  @Override
   public void registerSwagger(String microserviceId, List<String> schemaIds) {
-    if (withJavaChassis) {
-      registerSwaggerSync(microserviceId, schemaIds);
-    } else {
-      registerSwaggerAsync(microserviceId, schemaIds);
-    }
+    schemaIds.forEach(schemaId -> {
+      try {
+        String str = Yaml.mapper().writeValueAsString(swaggerMap.get(schemaId));
+        LOGGER.info("register swagger {}, content: {}{}", schemaId, System.lineSeparator(), str);
+        serviceCombClient.registerSchema(microserviceId, schemaId, str);
+      } catch (RemoteOperationException e) {
+        LOGGER.error("register swagger to server-center failed : {}", e.getMessage());
+      } catch (JsonProcessingException e) {
+        LOGGER.error("swagger parse failed : {}", e.getMessage());
+      }
+    });
   }
 
   @Override
@@ -139,29 +126,5 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
 
   private static String calcSchemaSummary(String schemaContent) {
     return Hashing.sha256().newHasher().putString(schemaContent, Charsets.UTF_8).hash().toString();
-  }
-
-  /**
-   * @param microserviceId
-   * @param schemaIds
-   */
-  private void registerSwaggerSync(String microserviceId, List<String> schemaIds) {
-    schemaIds.forEach(schemaId -> {
-      try {
-        String str = Yaml.mapper().writeValueAsString(swaggerMap.get(schemaId));
-        LOGGER.info("register swagger {}, content: {}{}", schemaId, System.lineSeparator(), str);
-        serviceCombClient.registerSchema(microserviceId, schemaId, str);
-      } catch (RemoteOperationException e) {
-        LOGGER.error("register swagger to server-center failed : {}", e.getMessage());
-      } catch (JsonProcessingException e) {
-        LOGGER.error("swagger parse failed : {}", e.getMessage());
-      }
-    });
-  }
-
-  private void registerSwaggerAsync(String microserviceId, List<String> schemaIds) {
-    Executors.newSingleThreadExecutor().execute(() ->
-        registerSwaggerSync(microserviceId, schemaIds)
-    );
   }
 }
