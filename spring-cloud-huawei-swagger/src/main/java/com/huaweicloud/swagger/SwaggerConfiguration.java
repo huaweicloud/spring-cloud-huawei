@@ -26,7 +26,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @Author GuoYl123
  * @Date 2019/12/17
  **/
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableSwagger2
 public class SwaggerConfiguration {
 
