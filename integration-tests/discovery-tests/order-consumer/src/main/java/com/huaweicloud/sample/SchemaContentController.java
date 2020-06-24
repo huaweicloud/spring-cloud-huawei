@@ -44,4 +44,9 @@ public class SchemaContentController {
   public String stringRequestBody(@RequestBody String id) {
     return null;
   }
+
+  @PostMapping("/danglingPattern/**")
+  public String danglingPattern(@RequestBody String id) {
+    return null;
+  }
 }
