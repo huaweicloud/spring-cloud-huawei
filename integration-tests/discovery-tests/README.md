@@ -7,5 +7,8 @@
 
 - discovery-test-client: 集成测试用例，宿主机运行。
 
-maven 插件先在 docker 中启动 order-consumer 和 
-price-provider，然后运行discovery-test-client的集成测试用例。 
+集成测试自动运行： maven 插件先在 docker 中启动 order-consumer 和 
+price-provider，然后运行discovery-test-client的集成测试用例。
+
+本地手工运行：在 IDEA 中依次启动 order-consumer 和 
+price-provider, 然后运行discovery-test-client的集成测试用例。

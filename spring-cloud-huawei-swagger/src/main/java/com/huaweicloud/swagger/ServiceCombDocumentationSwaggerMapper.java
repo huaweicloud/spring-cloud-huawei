@@ -150,7 +150,7 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
     List<ApiDescription> newApiDescriptions = new ArrayList<>(apiDescriptions.size());
     apiDescriptions.forEach(apiDescription -> newApiDescriptions.add(
         new ApiDescriptionBuilder(Ordering.from(Orderings.positionComparator()))
-            .path(apiDescription.getPath())
+            .path(validatePath(apiDescription.getPath()))
             .description(apiDescription.getDescription())
             // 02-01 only keep the first operation and convert operation.
             .operations(Arrays.asList(validateOperation(apiDescription.getOperations().get(0))))
@@ -160,6 +160,13 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
     apiListingBuilder.apis(newApiDescriptions);
     map.put(entry.getKey(), apiListingBuilder.build());
     return map;
+  }
+
+  private String validatePath(String path) {
+    if (path.endsWith("/**")) {
+      return path.substring(0, path.length() - "/**".length()) + "/(.*)";
+    }
+    return path;
   }
 
   private Operation validateOperation(Operation operation) {

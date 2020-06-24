@@ -20,6 +20,50 @@ schemes: []
 consumes: []
 produces: []
 paths:
+  /danglingPattern/(.*):
+    post:
+      tags:
+        - "schema-content-controller"
+      summary: "danglingPattern"
+      operationId: "danglingPattern"
+      schemes: []
+      consumes:
+        - "application/json"
+      produces:
+        - "text/plain"
+      parameters:
+        - in: "body"
+          name: "id"
+          description: "id"
+          required: true
+          schema:
+            type: "string"
+          x-raw-json: "true"
+      responses:
+        "200":
+          description: "OK"
+          examples: {}
+          headers: {}
+          schema:
+            type: "string"
+        "201":
+          description: "Created"
+          examples: {}
+          headers: {}
+        "401":
+          description: "Unauthorized"
+          examples: {}
+          headers: {}
+        "403":
+          description: "Forbidden"
+          examples: {}
+          headers: {}
+        "404":
+          description: "Not Found"
+          examples: {}
+          headers: {}
+      security: []
+      deprecated: false
   /sayHelloGet:
     get:
       tags:
