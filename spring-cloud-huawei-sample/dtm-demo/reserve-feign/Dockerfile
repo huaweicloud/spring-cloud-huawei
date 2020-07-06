@@ -4,7 +4,7 @@ ENV LOG_ROOT=/var/log/reserve-feign/
 RUN mkdir -p $APP_ROOT
 RUN mkdir -p $LOG_ROOT
 
-COPY target/reserve-feign-1.3.2/reserve-feign-1.3.2 $APP_ROOT
+COPY target/reserve-feign-1.3.3-Hoxton-SNAPSHOT/reserve-feign-1.3.3-Hoxton-SNAPSHOT $APP_ROOT
 
 
 RUN cd $APP_ROOT && chmod -R 770 .
