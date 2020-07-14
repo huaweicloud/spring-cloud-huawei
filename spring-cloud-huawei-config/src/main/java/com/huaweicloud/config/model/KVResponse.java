@@ -15,17 +15,43 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.config.kie;
+package com.huaweicloud.config.model;
+
+import java.util.List;
 
 /**
  * @Author GuoYl123
- * @Date 2020/1/8
+ * @Date 2020/1/7
  **/
-public enum ValueType {
-  yml,
-  yaml,
-  string,
-  text,
-  json,
-  properties
+public class KVResponse {
+
+  private List<KVDoc> data;
+
+  private LabelDocResponse label;
+
+  private Integer total;
+
+  public Integer getTotal() {
+    return total;
+  }
+
+  public void setTotal(Integer total) {
+    this.total = total;
+  }
+
+  public List<KVDoc> getData() {
+    return data;
+  }
+
+  public LabelDocResponse getLabel() {
+    return label;
+  }
+
+  public void setData(List<KVDoc> data) {
+    this.data = data;
+  }
+
+  public void setLabel(LabelDocResponse label) {
+    this.label = label;
+  }
 }

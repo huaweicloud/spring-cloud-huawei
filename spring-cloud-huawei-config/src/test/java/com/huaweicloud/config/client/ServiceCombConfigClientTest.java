@@ -65,7 +65,7 @@ public class ServiceCombConfigClientTest {
         result = response;
       }
     };
-    ServiceCombConfigClient serviceCombClient = new ServiceCombConfigClient(url, httpTransport);
+    ServiceCombConfigClient serviceCombClient = new ConfigCenterClient(url, httpTransport);
     ServiceCombConfigProperties serviceCombConfigProperties = new ServiceCombConfigProperties();
     serviceCombConfigProperties.setServiceName("price");
     serviceCombConfigProperties.setAppName("default");

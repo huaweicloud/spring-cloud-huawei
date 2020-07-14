@@ -39,6 +39,16 @@ public class ConfigConstants {
 
   public static final String PROPERTYSOURCE_NAME = "servicecomb";
 
+  public static final String LABEL_ENV = "environment";
+
+  public static final String LABEL_APP = "app";
+
+  public static final String LABEL_SERVICE = "service";
+
+  public static final String LABEL_VERSION = "version";
+
+  public static final String STATUS_ENABLED = "enabled";
+
   public static final String SERVICE_NAME = "spring.application.name";
 
   public static final String INSTANCE_TAGS = "instance_description.properties.tags";
