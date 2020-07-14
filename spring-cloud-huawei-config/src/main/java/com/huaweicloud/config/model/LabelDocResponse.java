@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.config.kie;
+package com.huaweicloud.config.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import java.util.HashMap;

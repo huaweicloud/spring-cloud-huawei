@@ -15,22 +15,17 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.config.client;
-
-import com.huaweicloud.config.ServiceCombConfigProperties;
+package com.huaweicloud.config.model;
 
 /**
- * @Author wangqijun
- * @Date 09:59 2019-11-20
+ * @Author GuoYl123
+ * @Date 2020/1/8
  **/
-public class QueryParamUtil {
-
-  public static String spliceDimensionsInfo(ServiceCombConfigProperties serviceCombConfigProperties) {
-    String result = serviceCombConfigProperties.getServiceName() + ConfigConstants.DEFAULT_APP_SEPARATOR
-        + serviceCombConfigProperties.getAppName();
-    if (serviceCombConfigProperties.getVersion() != null && !serviceCombConfigProperties.getVersion().isEmpty()) {
-      result = result + ConfigConstants.DEFAULT_SERVICE_SEPARATOR + serviceCombConfigProperties.getVersion();
-    }
-    return result;
-  }
+public enum ValueType {
+  yml,
+  yaml,
+  string,
+  text,
+  json,
+  properties
 }

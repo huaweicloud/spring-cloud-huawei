@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.huaweicloud.common.exception.RemoteOperationException;
-import com.huaweicloud.config.client.QueryParamUtil;
 import com.huaweicloud.config.client.ServiceCombConfigClient;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.retry.annotation.Retryable;

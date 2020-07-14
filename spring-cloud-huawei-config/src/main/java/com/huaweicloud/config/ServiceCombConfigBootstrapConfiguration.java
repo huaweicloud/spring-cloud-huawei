@@ -64,8 +64,8 @@ public class ServiceCombConfigBootstrapConfiguration {
       throw new ServiceCombRuntimeException(
           "config credentials.enable has change to credentials.enabled ,old names are no longer supported, please change it.");
     }
-    builder.setUrl(serviceCombConfigProperties.getServerAddr())
-        .setServiceCombSSLProperties(serviceCombSSLProperties)
+    builder.setServiceCombSSLProperties(serviceCombSSLProperties)
+        .setServiceCombConfigProperties(serviceCombConfigProperties)
         .setServiceCombAkSkProperties(serviceCombAkSkProperties);
     return builder.createServiceCombConfigClient();
   }
