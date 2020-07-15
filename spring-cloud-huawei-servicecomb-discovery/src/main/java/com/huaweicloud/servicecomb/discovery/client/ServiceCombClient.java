@@ -411,12 +411,13 @@ public class ServiceCombClient {
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.debug("heartbeat success.");
         return HeardBeatStatus.SUCCESS;
-      } else {
+      } else if (response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
         LOGGER.error(
             "heartbeat to service center failed. status:" + response.getStatusCode() + "; message:"
                 + response.getStatusMessage() + "; content:" + response.getContent());
         return HeardBeatStatus.FAILED;
       }
+      throw new IOException();
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
     } catch (IOException e) {
