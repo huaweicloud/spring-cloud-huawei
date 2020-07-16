@@ -323,7 +323,6 @@ public class ServiceCombClient {
                   microservice),
               heades);
       if (response.getStatusCode() == HttpStatus.SC_OK) {
-        LOGGER.info(response.getContent());
         Microservice result = JsonUtils.OBJ_MAPPER
             .readValue(response.getContent(), Microservice.class);
         if (result == null || result.getInstances() == null) {
@@ -358,6 +357,11 @@ public class ServiceCombClient {
                   port, false, map));
         }
       } else if (response.getStatusCode() == HttpStatus.SC_NOT_MODIFIED) {
+        return null;
+      } else if (response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
+        LOGGER.debug(
+            "read response failed. status:" + response.getStatusCode() + "; message:" + response
+                .getStatusMessage() + "; content:" + response.getContent());
         return null;
       } else {
         throw new RemoteOperationException(
