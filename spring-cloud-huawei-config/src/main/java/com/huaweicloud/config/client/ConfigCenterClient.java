@@ -14,6 +14,7 @@ import org.apache.http.HttpStatus;
 import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 /**
  * @Author GuoYl123
@@ -30,7 +31,7 @@ public class ConfigCenterClient extends ServiceCombConfigClient {
 
   public Map<String, String> loadAll(ServiceCombConfigProperties serviceCombConfigProperties,
       String project) throws RemoteOperationException {
-    project = project != null && !project.isEmpty() ? project : ConfigConstants.DEFAULT_PROJECT;
+    project = StringUtils.isEmpty(project) ? ConfigConstants.DEFAULT_PROJECT : project;
     String dimensionsInfo = spliceDimensionsInfo(serviceCombConfigProperties);
     Response response = null;
     Map<String, String> result = new HashMap<>();
@@ -96,8 +97,7 @@ public class ConfigCenterClient extends ServiceCombConfigClient {
     String result =
         serviceCombConfigProperties.getServiceName() + ConfigConstants.DEFAULT_APP_SEPARATOR
             + serviceCombConfigProperties.getAppName();
-    if (serviceCombConfigProperties.getVersion() != null && !serviceCombConfigProperties
-        .getVersion().isEmpty()) {
+    if (!StringUtils.isEmpty(serviceCombConfigProperties.getVersion())) {
       result = result + ConfigConstants.DEFAULT_SERVICE_SEPARATOR + serviceCombConfigProperties
           .getVersion();
     }

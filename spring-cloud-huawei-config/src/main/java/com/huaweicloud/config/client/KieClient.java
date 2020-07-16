@@ -150,21 +150,21 @@ public class KieClient extends ServiceCombConfigClient {
     Properties properties = new Properties();
     Map<String, String> kvMap = new HashMap<>();
     try {
-      if (vtype == (ValueType.yaml) || vtype == (ValueType.yml)) {
-        YamlPropertiesFactoryBean yamlFactory = new YamlPropertiesFactoryBean();
-        yamlFactory.setResources(new ByteArrayResource(kvDoc.getValue().getBytes()));
-        properties = yamlFactory.getObject();
-      } else if (vtype == (ValueType.properties)) {
-        properties.load(new StringReader(kvDoc.getValue()));
-      } else if (vtype == (ValueType.text) || vtype == (ValueType.string)) {
-        kvMap.put(kvDoc.getKey(), kvDoc.getValue());
-        return kvMap;
-      } else {
-        kvMap.put(kvDoc.getKey(), kvDoc.getValue());
-        return kvMap;
+      switch (vtype) {
+        case yml:
+        case yaml:
+          YamlPropertiesFactoryBean yamlFactory = new YamlPropertiesFactoryBean();
+          yamlFactory.setResources(new ByteArrayResource(kvDoc.getValue().getBytes()));
+          return toMap(kvDoc.getKey(), yamlFactory.getObject());
+        case properties:
+          properties.load(new StringReader(kvDoc.getValue()));
+          return toMap(kvDoc.getKey(), properties);
+        case text:
+        case string:
+        default:
+          kvMap.put(kvDoc.getKey(), kvDoc.getValue());
+          return kvMap;
       }
-      kvMap = toMap(kvDoc.getKey(), properties);
-      return kvMap;
     } catch (Exception e) {
       LOGGER.error("read config failed");
     }
@@ -173,6 +173,9 @@ public class KieClient extends ServiceCombConfigClient {
 
 
   private Map<String, String> toMap(String prefix, Properties properties) {
+    if (properties == null) {
+      return Collections.emptyMap();
+    }
     Map<String, String> result = new HashMap<>();
     Enumeration<String> keys = (Enumeration<String>) properties.propertyNames();
     while (keys.hasMoreElements()) {

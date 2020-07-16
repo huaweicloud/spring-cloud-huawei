@@ -56,8 +56,7 @@ public class ServiceCombConfigClientBuilder {
   public ServiceCombConfigClient createServiceCombConfigClient() {
     DefaultHttpTransport httpTransport = DefaultHttpTransport.getInstance(serviceCombSSLProperties);
     httpTransport.setServiceCombAkSkProperties(serviceCombAkSkProperties);
-    if (!StringUtils.isEmpty(serviceCombConfigProperties.getServerType())
-        && serviceCombConfigProperties.getServerType().equals("kie")) {
+    if ("kie".equalsIgnoreCase(serviceCombConfigProperties.getServerType())) {
       return new KieClient(serviceCombConfigProperties.getServerAddr(), httpTransport);
     }
     return new ConfigCenterClient(serviceCombConfigProperties.getServerAddr(), httpTransport);
