@@ -29,12 +29,12 @@ public class ConfigCenterClient extends ServiceCombConfigClient {
     super(urls, httpTransport);
   }
 
-  public Map<String, String> loadAll(ServiceCombConfigProperties serviceCombConfigProperties,
+  public Map<String, Object> loadAll(ServiceCombConfigProperties serviceCombConfigProperties,
       String project) throws RemoteOperationException {
     project = StringUtils.isEmpty(project) ? ConfigConstants.DEFAULT_PROJECT : project;
     String dimensionsInfo = spliceDimensionsInfo(serviceCombConfigProperties);
     Response response = null;
-    Map<String, String> result = new HashMap<>();
+    Map<String, Object> result = new HashMap<>();
     try {
       response = httpTransport.sendGetRequest(
           configCenterConfig.getUrl() + "/" + ConfigConstants.DEFAULT_API_VERSION
@@ -45,13 +45,13 @@ public class ConfigCenterClient extends ServiceCombConfigClient {
       }
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.debug(response.getContent());
-        Map<String, Map<String, String>> allConfigMap = JsonUtils.OBJ_MAPPER
+        Map<String, Map<String, Object>> allConfigMap = JsonUtils.OBJ_MAPPER
             .readValue(response.getContent(),
-                new TypeReference<Map<String, Map<String, String>>>() {
+                new TypeReference<Map<String, Map<String, Object>>>() {
                 });
         if (allConfigMap != null) {
           if (allConfigMap.get(ConfigConstants.REVISION) != null) {
-            revision = allConfigMap.get(ConfigConstants.REVISION).get("version");
+            revision = (String) allConfigMap.get(ConfigConstants.REVISION).get("version");
           }
           if (allConfigMap.get(ConfigConstants.APPLICATION_CONFIG) != null) {
             result.putAll(allConfigMap.get(ConfigConstants.APPLICATION_CONFIG));

@@ -95,7 +95,7 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
 
   private void watch() {
     String md5Value;
-    Map<String, String> remoteConfig = null;
+    Map<String, Object> remoteConfig = null;
     if (ready.get()) {
       try {
         remoteConfig = serviceCombConfigClient.loadAll(serviceCombConfigProperties, project);

@@ -41,7 +41,7 @@ public class KieClient extends ServiceCombConfigClient {
     super(urls, httpTransport);
   }
 
-  public Map<String, String> loadAll(ServiceCombConfigProperties serviceCombConfigProperties,
+  public Map<String, Object> loadAll(ServiceCombConfigProperties serviceCombConfigProperties,
       String project) throws RemoteOperationException {
     project = project != null && !project.isEmpty() ? project : ConfigConstants.DEFAULT_PROJECT;
     boolean isWatch = false;
@@ -91,9 +91,9 @@ public class KieClient extends ServiceCombConfigClient {
   }
 
 
-  private Map<String, String> getConfigByLabel(
+  private Map<String, Object> getConfigByLabel(
       ServiceCombConfigProperties serviceCombConfigProperties, KVResponse resp) {
-    Map<String, String> resultMap = new HashMap<>();
+    Map<String, Object> resultMap = new HashMap<>();
     List<KVDoc> appList = new ArrayList<>();
     List<KVDoc> serviceList = new ArrayList<>();
     List<KVDoc> versionList = new ArrayList<>();
@@ -140,7 +140,7 @@ public class KieClient extends ServiceCombConfigClient {
   }
 
 
-  private Map<String, String> processValueType(KVDoc kvDoc) {
+  private Map<String, Object> processValueType(KVDoc kvDoc) {
     ValueType vtype;
     try {
       vtype = ValueType.valueOf(kvDoc.getValueType());
@@ -148,7 +148,7 @@ public class KieClient extends ServiceCombConfigClient {
       throw new ServiceCombRuntimeException("value type not support");
     }
     Properties properties = new Properties();
-    Map<String, String> kvMap = new HashMap<>();
+    Map<String, Object> kvMap = new HashMap<>();
     try {
       switch (vtype) {
         case yml:
@@ -172,11 +172,11 @@ public class KieClient extends ServiceCombConfigClient {
   }
 
 
-  private Map<String, String> toMap(String prefix, Properties properties) {
+  private Map<String, Object> toMap(String prefix, Properties properties) {
     if (properties == null) {
       return Collections.emptyMap();
     }
-    Map<String, String> result = new HashMap<>();
+    Map<String, Object> result = new HashMap<>();
     Enumeration<String> keys = (Enumeration<String>) properties.propertyNames();
     while (keys.hasMoreElements()) {
       String key = keys.nextElement();
@@ -185,7 +185,7 @@ public class KieClient extends ServiceCombConfigClient {
         key = prefix + "." + key;
       }
       if (value != null) {
-        result.put(key, ((String) value).trim());
+        result.put(key, value);
       } else {
         result.put(key, null);
       }

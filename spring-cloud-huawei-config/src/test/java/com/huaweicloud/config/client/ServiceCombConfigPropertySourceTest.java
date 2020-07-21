@@ -59,7 +59,7 @@ public class ServiceCombConfigPropertySourceTest extends MockUp<ServiceCombConfi
     };
     ServiceCombConfigPropertySource serviceCombConfigPropertySource = new ServiceCombConfigPropertySource(name, source);
     Deencapsulation.setField(serviceCombConfigPropertySource, properties);
-    Map<String, String> result = serviceCombConfigPropertySource.loadAllRemoteConfig(serviceCombConfigProperties, "");
+    Map<String, Object> result = serviceCombConfigPropertySource.loadAllRemoteConfig(serviceCombConfigProperties, "");
     Assert.assertEquals(result.size(), 2);
   }
 
