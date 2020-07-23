@@ -50,7 +50,7 @@ public abstract class ServiceCombConfigClient {
    * @return
    * @throws RemoteOperationException
    */
-  public abstract Map<String, String> loadAll(
+  public abstract Map<String, Object> loadAll(
       ServiceCombConfigProperties serviceCombConfigProperties, String project)
       throws RemoteOperationException;
 }

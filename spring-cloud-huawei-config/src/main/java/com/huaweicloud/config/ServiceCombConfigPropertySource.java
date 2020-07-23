@@ -45,10 +45,10 @@ public class ServiceCombConfigPropertySource extends EnumerablePropertySource<Se
   }
 
   @Retryable(interceptor = "serviceCombConfigRetryInterceptor")
-  public Map<String, String> loadAllRemoteConfig(ServiceCombConfigProperties serviceCombConfigProperties,
+  public Map<String, Object> loadAllRemoteConfig(ServiceCombConfigProperties serviceCombConfigProperties,
       String project)
       throws RemoteOperationException {
-    Map<String, String> remoteConfig = serviceCombConfigClient
+    Map<String, Object> remoteConfig = serviceCombConfigClient
         .loadAll(serviceCombConfigProperties, project);
     if (remoteConfig == null) {
       return Collections.emptyMap();
