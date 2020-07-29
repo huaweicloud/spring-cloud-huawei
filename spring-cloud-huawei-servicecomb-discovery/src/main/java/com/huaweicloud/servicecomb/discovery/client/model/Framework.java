@@ -25,7 +25,8 @@ public class Framework {
 
   public static final String DEFAULT_NAME = "springCloud";
 
-  public static final String DEFAULT_VERSION = "1.3.2";
+  public static final String DEFAULT_VERSION = Framework.class.getPackage()
+      .getImplementationVersion();
 
   private String name = DEFAULT_NAME;
 
