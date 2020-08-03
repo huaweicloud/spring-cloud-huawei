@@ -49,17 +49,12 @@ public class MicroserviceHandler {
 
   public static List<ServiceInstance> getInstances(Microservice microservice,
       ServiceCombClient serviceCombClient) {
-    try {
       String revision = "0";
       if (serviceRevision.containsKey(microservice.getServiceName())) {
         revision = serviceRevision.get(microservice.getServiceName());
       }
       List<ServiceInstance> instanceList = serviceCombClient.getInstances(microservice, revision);
       return getList(instanceList, microservice.getServiceName());
-    } catch (ServiceCombException e) {
-      LOGGER.warn("get instances failed.", e);
-    }
-    return Collections.emptyList();
   }
 
   private static List<ServiceInstance> getList(List<ServiceInstance> instanceList,
