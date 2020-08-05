@@ -44,6 +44,12 @@ public class RegistryHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RegistryHandler.class);
 
+  private static final String SERVICE_MAPPING = "SERVICE_MAPPING";
+
+  private static final String VERSION_MAPPING = "VERSION_MAPPING";
+
+  private static final String APP_MAPPING = "APP_MAPPING";
+
   private static final String CAS_APPLICATION_ID = "CAS_APPLICATION_ID";
 
   private static final String CAS_COMPONENT_NAME = "CAS_COMPONENT_NAME";
@@ -88,7 +94,13 @@ public class RegistryHandler {
     String currTime = String.valueOf(System.currentTimeMillis());
     microserviceInstance.setTimestamp(currTime);
     microserviceInstance.setModTimestamp(currTime);
-    microserviceInstance.setVersion(serviceCombDiscoveryProperties.getVersion());
+    EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
+    if (!StringUtils.isEmpty(envConfig.getString(VERSION_MAPPING)) &&
+        !StringUtils.isEmpty(envConfig.getString(envConfig.getString(VERSION_MAPPING)))) {
+      microserviceInstance.setVersion(envConfig.getString(VERSION_MAPPING));
+    } else {
+      microserviceInstance.setVersion(serviceCombDiscoveryProperties.getVersion());
+    }
     Map<String, String> properties = new HashMap<>();
     if (tagsProperties.getTag() != null) {
       properties.putAll(tagsProperties.getTag());
@@ -100,9 +112,25 @@ public class RegistryHandler {
 
   public static Microservice buildMicroservice(ServiceCombRegistration registration) {
     Microservice microservice = new Microservice();
-    microservice.setAppId(registration.getAppName());
-    microservice.setServiceName(registration.getServiceId());
-    microservice.setVersion(registration.getVersion());
+    EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
+    if (!StringUtils.isEmpty(envConfig.getString(APP_MAPPING)) &&
+        !StringUtils.isEmpty(envConfig.getString(envConfig.getString(APP_MAPPING)))) {
+      microservice.setAppId(envConfig.getString(envConfig.getString(APP_MAPPING)));
+    } else {
+      microservice.setAppId(registration.getAppName());
+    }
+    if (!StringUtils.isEmpty(envConfig.getString(SERVICE_MAPPING)) &&
+        !StringUtils.isEmpty(envConfig.getString(envConfig.getString(SERVICE_MAPPING)))) {
+      microservice.setServiceName(envConfig.getString(envConfig.getString(SERVICE_MAPPING)));
+    } else {
+      microservice.setServiceName(registration.getServiceId());
+    }
+    if (!StringUtils.isEmpty(envConfig.getString(VERSION_MAPPING)) &&
+        !StringUtils.isEmpty(envConfig.getString(envConfig.getString(VERSION_MAPPING)))) {
+      microservice.setVersion(envConfig.getString(envConfig.getString(VERSION_MAPPING)));
+    } else {
+      microservice.setVersion(registration.getVersion());
+    }
     microservice.setFramework(new Framework());
     microservice.setEnvironment(registration.getEnvironment());
     return microservice;
