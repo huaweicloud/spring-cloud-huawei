@@ -1,0 +1,20 @@
+---
+cse:
+  noRefreshSchema: true
+  service:
+    registry:
+      address: ${ssAddr:http://127.0.0.1:30100}
+  protocols:
+    rest:
+      listenAddress: "127.0.0.1:5001"
+  handler:
+    chain:
+      Provider:
+        default: tracing-provider,bizkeeper-provider
+tracer:
+  tracer: zipkin
+  settings:
+    URI: ${zipkinAddr:http://127.0.0.1:9411}
+    batchSize: 10000
+    batchInterval: 10s
+    collector: http

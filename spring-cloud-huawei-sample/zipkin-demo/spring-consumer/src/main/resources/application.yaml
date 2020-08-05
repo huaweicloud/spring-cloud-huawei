@@ -1,0 +1,15 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: consumer
+  cloud:
+    servicecomb:
+      discovery:
+        address: ${ssAddr:http://127.0.0.1:30100}
+  zipkin:
+    base-url: ${zipkinAddr:http://127.0.0.1:9411}
+  sleuth:
+    sampler:
+      percentage: 1.0
