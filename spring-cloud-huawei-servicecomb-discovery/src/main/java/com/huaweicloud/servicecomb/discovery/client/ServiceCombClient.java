@@ -119,7 +119,7 @@ public class ServiceCombClient {
 
   public MicroserviceInstancesResponse getServiceCenterInstances()
       throws RemoteOperationException {
-    Response response = null;
+    Response response = new Response();
     try {
       String formatUrl = buildURI("/registry/health");
       response = httpTransport.sendGetRequest(formatUrl);
@@ -135,9 +135,8 @@ public class ServiceCombClient {
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
     } catch (IOException | RemoteServerUnavailableException e) {
-      handleRemoteOperationException(response, e);
+      throw new RemoteOperationException("read response failed. " + response, e);
     }
-    return null;
   }
 
   /**
@@ -172,7 +171,8 @@ public class ServiceCombClient {
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
     } catch (IOException e) {
-      handleRemoteOperationException(response, e);
+      throw new RemoteOperationException(
+          response == null ? "read response failed. " : "read response failed. " + response, e);
     }
     return null;
   }
@@ -206,9 +206,8 @@ public class ServiceCombClient {
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
     } catch (IOException e) {
-      handleRemoteOperationException(response, e);
+      throw new RemoteOperationException("read response failed. " + response, e);
     }
-    return null;
   }
 
   public SchemaResponse getSchemas(String serviceId) throws ServiceCombException {
@@ -230,9 +229,8 @@ public class ServiceCombClient {
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
     } catch (IOException e) {
-      handleRemoteOperationException(response, e);
+      throw new RemoteOperationException("read response failed. " + response, e);
     }
-    return null;
   }
 
   /**
@@ -267,9 +265,9 @@ public class ServiceCombClient {
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
     } catch (IOException e) {
-      handleRemoteOperationException(response, e);
+      throw new RemoteOperationException(
+          response == null ? "read response failed. " : "read response failed. " + response, e);
     }
-    return null;
   }
 
   /**
@@ -395,7 +393,7 @@ public class ServiceCombClient {
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
     } catch (IOException e) {
-      handleRemoteOperationException(response, e);
+      throw new RemoteOperationException("read response failed. " + response, e);
     }
     return result;
   }
@@ -468,7 +466,7 @@ public class ServiceCombClient {
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
     } catch (IOException e) {
-      handleRemoteOperationException(response, e);
+      throw new RemoteOperationException("read response failed. " + response, e);
     }
     return result;
   }
@@ -497,7 +495,7 @@ public class ServiceCombClient {
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
     } catch (RemoteServerUnavailableException e) {
-      handleRemoteOperationException(response, e);
+      throw new RemoteOperationException("read response failed. ", e);
     }
     return false;
   }
@@ -529,19 +527,6 @@ public class ServiceCombClient {
     uriBuilder.setParameter("version", microservice.getVersion());
     uriBuilder.setParameter("env", microservice.getEnvironment());
     return uriBuilder.build().toString();
-  }
-
-  /**
-   * Merge message
-   *
-   * @param response
-   * @param e
-   * @throws RemoteOperationException
-   */
-  private void handleRemoteOperationException(Response response, Exception e)
-      throws RemoteOperationException {
-    throw new RemoteOperationException(
-        response == null ? "read response failed. " : "read response failed. " + response, e);
   }
 
   public void toggle() {
