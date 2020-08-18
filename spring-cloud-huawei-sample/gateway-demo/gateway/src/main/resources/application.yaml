@@ -6,13 +6,6 @@ spring:
     name: gateway-service
   cloud:
     gateway:
-      routes:
-        - id: backend-service             # 将 /provider1/开头的请求，转发到provider1
-          uri: lb://backend-service
-          predicates:
-            - Path=/**
-          filters:
-            - StripPrefix=1
       discovery:
         locator:
           enabled: true
