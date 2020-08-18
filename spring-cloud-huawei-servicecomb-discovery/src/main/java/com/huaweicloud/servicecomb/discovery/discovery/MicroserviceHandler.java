@@ -21,15 +21,11 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
-import com.huaweicloud.common.exception.ServiceCombException;
 import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
 import com.huaweicloud.servicecomb.discovery.client.model.Framework;
 import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
@@ -41,7 +37,6 @@ import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
  * @Date 12:26 2019-07-17
  **/
 public class MicroserviceHandler {
-  private static final Logger LOGGER = LoggerFactory.getLogger(MicroserviceHandler.class);
 
   public static final Map<String, String> serviceRevision = new ConcurrentHashMap<>();
 

@@ -354,12 +354,12 @@ public class ServiceCombClient {
             map.put(ZONE, instance.getDataCenterInfo().getZone());
           }
           instanceList.add(
-              new DefaultServiceInstance(instance.getInstanceId(), instance.getServiceId(), host,
+              new DefaultServiceInstance(instance.getInstanceId(), instance.getServiceName(), host,
                   port, false, map));
         }
         return instanceList;
       } else if (response.getStatusCode() != HttpStatus.SC_NOT_MODIFIED) {
-        LOGGER.warn(
+        LOGGER.debug(
             "read response failed. status:" + response.getStatusCode() + "; message:" + response
                 .getStatusMessage() + "; content:" + response.getContent());
       }
