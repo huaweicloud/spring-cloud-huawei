@@ -120,7 +120,7 @@ public class KieClient extends ServiceCombConfigClient {
           }
           if (labelsMap.containsKey(ConfigConstants.LABEL_VERSION) && labelsMap
               .get(ConfigConstants.LABEL_VERSION)
-              .equals(serviceCombConfigProperties.getServiceName())) {
+              .equals(serviceCombConfigProperties.getVersion())) {
             versionList.add(kvDoc);
           }
         }
