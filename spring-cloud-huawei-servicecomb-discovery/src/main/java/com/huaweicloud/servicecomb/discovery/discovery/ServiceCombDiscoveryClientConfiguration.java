@@ -94,7 +94,7 @@ public class ServiceCombDiscoveryClientConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public ServiceCombWatch serviceCombWatch() {
-    return new ServiceCombWatch();
+  public ServiceCombWatch serviceCombWatch(ServiceCombDiscoveryProperties discoveryProperties) {
+    return new ServiceCombWatch(discoveryProperties);
   }
 }

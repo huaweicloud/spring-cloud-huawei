@@ -18,6 +18,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
  **/
 public class ServiceCombWatch implements ApplicationEventPublisherAware, SmartLifecycle {
 
+  private ServiceCombDiscoveryProperties discoveryProperties;
 
   private final AtomicBoolean isActive = new AtomicBoolean(false);
 
@@ -30,6 +31,11 @@ public class ServiceCombWatch implements ApplicationEventPublisherAware, SmartLi
 
   private final AtomicLong index = new AtomicLong(0);
 
+  public ServiceCombWatch(
+      ServiceCombDiscoveryProperties discoveryProperties) {
+    this.discoveryProperties = discoveryProperties;
+  }
+
   @Override
   public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
     this.publisher = applicationEventPublisher;
@@ -41,7 +47,7 @@ public class ServiceCombWatch implements ApplicationEventPublisherAware, SmartLi
       this.watchFuture = this.taskScheduler.scheduleWithFixedDelay(
           () -> {
             this.publisher.publishEvent(new HeartbeatEvent(this, index.getAndIncrement()));
-          }, 30000);
+          }, discoveryProperties.getRefreshInterval());
     }
   }
 
