@@ -56,6 +56,8 @@ public class ServiceCombDiscoveryProperties {
 
   private int healthCheckInterval;
 
+  private int refreshInterval = 30000;
+
   private boolean autoDiscovery = false;
 
   private boolean allowCrossApp = false;
@@ -157,6 +159,14 @@ public class ServiceCombDiscoveryProperties {
 
   public void setHealthCheckInterval(int healthCheckInterval) {
     this.healthCheckInterval = healthCheckInterval;
+  }
+
+  public int getRefreshInterval() {
+    return refreshInterval;
+  }
+
+  public void setRefreshInterval(int refreshInterval) {
+    this.refreshInterval = refreshInterval;
   }
 
   public boolean isAutoDiscovery() {

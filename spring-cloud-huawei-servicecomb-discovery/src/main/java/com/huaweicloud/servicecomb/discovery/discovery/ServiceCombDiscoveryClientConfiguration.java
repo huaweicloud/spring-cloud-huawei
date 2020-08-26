@@ -91,4 +91,10 @@ public class ServiceCombDiscoveryClientConfiguration {
       ServiceCombDiscoveryProperties discoveryProperties, ServiceCombClient serviceCombClient) {
     return new ServiceCombDiscoveryClient(discoveryProperties, serviceCombClient);
   }
+
+  @Bean
+  @ConditionalOnMissingBean
+  public ServiceCombWatch serviceCombWatch(ServiceCombDiscoveryProperties discoveryProperties) {
+    return new ServiceCombWatch(discoveryProperties);
+  }
 }
