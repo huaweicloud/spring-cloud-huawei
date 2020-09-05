@@ -6,10 +6,12 @@ import com.huaweicloud.common.exception.RemoteServerUnavailableException;
 import com.huaweicloud.common.transport.HttpTransport;
 import com.huaweicloud.common.transport.Response;
 import com.huaweicloud.config.ServiceCombConfigProperties;
+
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.http.HttpStatus;
 import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.slf4j.Logger;
@@ -33,13 +35,15 @@ public class ConfigCenterClient extends ServiceCombConfigClient {
       String project) throws RemoteOperationException {
     project = StringUtils.isEmpty(project) ? ConfigConstants.DEFAULT_PROJECT : project;
     String dimensionsInfo = spliceDimensionsInfo(serviceCombConfigProperties);
+    Map<String, String> headers = new HashMap<>();
+    headers.put("x-environment", serviceCombConfigProperties.getEnv());
     Response response = null;
     Map<String, Object> result = new HashMap<>();
     try {
       response = httpTransport.sendGetRequest(
           configCenterConfig.getUrl() + "/" + ConfigConstants.DEFAULT_API_VERSION
               + "/" + project + "/configuration/items?dimensionsInfo="
-              + URLEncoder.encode(dimensionsInfo, "UTF-8") + "&revision=" + revision);
+              + URLEncoder.encode(dimensionsInfo, "UTF-8") + "&revision=" + revision, headers);
       if (response == null) {
         return result;
       }

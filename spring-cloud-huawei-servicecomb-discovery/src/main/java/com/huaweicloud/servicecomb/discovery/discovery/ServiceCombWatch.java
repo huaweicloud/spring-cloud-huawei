@@ -4,6 +4,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+
 import org.springframework.cloud.client.discovery.event.HeartbeatEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -45,9 +46,8 @@ public class ServiceCombWatch implements ApplicationEventPublisherAware, SmartLi
   public void start() {
     if (this.isActive.compareAndSet(false, true)) {
       this.watchFuture = this.taskScheduler.scheduleWithFixedDelay(
-          () -> {
-            this.publisher.publishEvent(new HeartbeatEvent(this, index.getAndIncrement()));
-          }, discoveryProperties.getRefreshInterval());
+          () -> this.publisher.publishEvent(new HeartbeatEvent(this, index.getAndIncrement())),
+          discoveryProperties.getRefreshInterval());
     }
   }
 
