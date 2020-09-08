@@ -18,10 +18,12 @@
 package com.huaweicloud.config.client;
 
 import com.huaweicloud.config.ServiceCombConfigProperties;
+
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
+
 import com.huaweicloud.common.exception.RemoteOperationException;
 import com.huaweicloud.common.exception.RemoteServerUnavailableException;
 import com.huaweicloud.common.transport.DefaultHttpTransport;
@@ -61,7 +63,7 @@ public class ServiceCombConfigClientTest {
       {
         Deencapsulation.newUninitializedInstance(DefaultHttpTransport.class);
         result = httpTransport;
-        httpTransport.sendGetRequest(anyString);
+        httpTransport.sendGetRequest(anyString, (Map<String, String>) any);
         result = response;
       }
     };
