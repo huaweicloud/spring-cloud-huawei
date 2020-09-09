@@ -18,9 +18,12 @@
 package com.huaweicloud.servicecomb.discovery.discovery;
 
 import com.huaweicloud.servicecomb.discovery.client.model.DataCenter;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
+
 import org.springframework.stereotype.Component;
 
 /**
@@ -62,10 +65,21 @@ public class ServiceCombDiscoveryProperties {
 
   private boolean allowCrossApp = false;
 
+  @Value("${server.address}")
+  private String serverAddress;
+
   @Value("${server.port}")
   private String port;
 
   private DataCenter datacenter;
+
+  public String getServerAddress() {
+    return serverAddress;
+  }
+
+  public void setServerAddress(String serverAddress) {
+    this.serverAddress = serverAddress;
+  }
 
   public DataCenter getDatacenter() {
     return datacenter;

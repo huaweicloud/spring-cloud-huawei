@@ -54,8 +54,6 @@ public class ServiceCombWatch implements ApplicationEventPublisherAware, SmartLi
   @Override
   public void stop() {
     if (this.isActive.compareAndSet(true, false) && this.watchFuture != null) {
-      ((ThreadPoolTaskScheduler) this.taskScheduler).shutdown();
-
       this.watchFuture.cancel(true);
     }
   }
