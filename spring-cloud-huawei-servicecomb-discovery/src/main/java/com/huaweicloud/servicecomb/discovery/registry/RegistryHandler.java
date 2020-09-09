@@ -22,10 +22,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import java.util.Map;
+
 import org.apache.commons.configuration.EnvironmentConfiguration;
 import org.apache.servicecomb.foundation.common.net.NetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.huaweicloud.common.util.NetUtil;
 import com.huaweicloud.servicecomb.discovery.client.model.Framework;
 import com.huaweicloud.servicecomb.discovery.client.model.HealthCheck;
@@ -34,6 +36,7 @@ import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstance;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceStatus;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
+
 import org.springframework.util.StringUtils;
 
 /**
@@ -83,7 +86,12 @@ public class RegistryHandler {
       microserviceInstance.setDataCenterInfo(serviceCombDiscoveryProperties.getDatacenter());
     }
     List<String> endPoints = new ArrayList<>();
-    String address = NetUtils.getHostAddress();
+    String address;
+    if (StringUtils.isEmpty(serviceCombDiscoveryProperties.getServerAddress())) {
+      address = NetUtils.getHostAddress();
+    } else {
+      address = serviceCombDiscoveryProperties.getServerAddress();
+    }
     endPoints.add("rest://" + address + ":" + serviceCombDiscoveryProperties.getPort());
     microserviceInstance.setEndpoints(endPoints);
     HealthCheck healthCheck = new HealthCheck();
