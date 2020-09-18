@@ -84,8 +84,8 @@ introduce starter.
 
 | spring cloud huawei | spring cloud | spring boot |
 | ------------------- | ------------ | ----------- |
-| 1.3.6               | Hoxton       | 2.2.x       |
-| 1.3.6-Greenwich     | Greenwich    | 2.1.x       |
+| 1.3.7               | Hoxton       | 2.2.x       |
+| 1.3.7-Greenwich     | Greenwich    | 2.1.x       |
 | 1.2.0-Finchley      | Finchley     | 2.0.x       |
 | 1.2.0-Edgware       | Edgware      | 1.5.x       |
 
