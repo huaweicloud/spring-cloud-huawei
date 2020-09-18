@@ -5,7 +5,7 @@
   <parent>
     <artifactId>spring-cloud-starter-huawei</artifactId>
     <groupId>com.huaweicloud</groupId>
-    <version>1.3.6-Greenwich</version>
+    <version>1.3.7-Greenwich</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
