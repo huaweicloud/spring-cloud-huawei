@@ -26,6 +26,7 @@ import com.huaweicloud.servicecomb.discovery.client.model.HeardBeatStatus;
 import com.huaweicloud.servicecomb.discovery.client.model.SchemaRequest;
 import com.huaweicloud.servicecomb.discovery.client.model.SchemaResponse;
 import com.huaweicloud.servicecomb.discovery.discovery.MicroserviceHandler;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -35,6 +36,7 @@ import java.util.List;
 
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ByteArrayEntity;
@@ -44,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
+
 import com.huaweicloud.common.cache.RegisterCache;
 import com.huaweicloud.common.exception.RemoteOperationException;
 import com.huaweicloud.common.exception.RemoteServerUnavailableException;
@@ -62,6 +65,7 @@ import com.huaweicloud.servicecomb.discovery.discovery.MicroserviceCache;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
 import org.springframework.util.StringUtils;
 
 
@@ -388,7 +392,7 @@ public class ServiceCombClient {
       } else {
         throw new RemoteOperationException(
             "read response failed. status:" + response.getStatusCode() + "; message:" + response
-                .getStatusMessage() +  "; content:" + response.getContent());
+                .getStatusMessage() + "; content:" + response.getContent());
       }
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
@@ -423,7 +427,7 @@ public class ServiceCombClient {
       throw new RemoteOperationException("build url failed.", e);
     } catch (IOException e) {
       toggle();
-      throw new RemoteOperationException("read response failed. ", e);
+      throw new RemoteOperationException("read response failed , msg: {} " + response, e);
     }
   }
 
@@ -443,7 +447,7 @@ public class ServiceCombClient {
       }
       throw new RemoteOperationException(
           "update instance status failed. status:" + response.getStatusCode() + "; message:"
-              + response.getStatusMessage() +  "; content:" + response.getContent());
+              + response.getStatusMessage() + "; content:" + response.getContent());
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
     }
@@ -461,7 +465,7 @@ public class ServiceCombClient {
       } else {
         throw new RemoteOperationException(
             "read response failed. status:" + response.getStatusCode() + "; message:" + response
-                .getStatusMessage() +  "; content:" + response.getContent());
+                .getStatusMessage() + "; content:" + response.getContent());
       }
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
