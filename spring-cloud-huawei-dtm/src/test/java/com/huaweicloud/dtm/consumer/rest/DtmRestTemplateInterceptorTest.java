@@ -21,10 +21,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Map;
 
 import org.junit.Test;
-import com.huaweicloud.dtm.DtmContextDTO;
-import com.huaweicloud.dtm.util.DtmConstants;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -32,6 +31,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
 import com.huawei.middleware.dtm.client.context.DTMContext;
+import com.huaweicloud.dtm.DtmConstants;
 
 import io.vertx.core.json.Json;
 
@@ -42,11 +42,9 @@ import io.vertx.core.json.Json;
 public class DtmRestTemplateInterceptorTest {
 
   private final ClientHttpRequestInterceptor clientHttpRequestInterceptor = new DtmRestTemplateInterceptor();
+
   @Test
   public void intercept() throws IOException {
-    DTMContext dtmContext = DTMContext.getDTMContext();
-    int expectGlobalTxId = 100;
-    dtmContext.setGlobalTxId(expectGlobalTxId);
     ClientHttpRequestExecution clientHttpRequestExecution = new ClientHttpRequestExecution() {
       @Override
       public ClientHttpResponse execute(HttpRequest request, byte[] body) throws IOException {
@@ -71,8 +69,7 @@ public class DtmRestTemplateInterceptorTest {
       }
     };
     clientHttpRequestInterceptor.intercept(request, null, clientHttpRequestExecution);
-    DtmContextDTO dtmContextDTO = Json.decodeValue(header.get(DtmConstants.DTM_CONTEXT).get(0), DtmContextDTO.class);
-    assertEquals(dtmContextDTO.getGlobalTxId(), expectGlobalTxId);
+    Map<String, String> dtmContextDTO = Json.decodeValue(header.get(DtmConstants.DTM_CONTEXT).get(0), Map.class);
+    assertEquals(DTMContext.GLOBAL_TX_ID, dtmContextDTO.get(DTMContext.GLOBAL_TX_ID_KEY));
   }
-
 }

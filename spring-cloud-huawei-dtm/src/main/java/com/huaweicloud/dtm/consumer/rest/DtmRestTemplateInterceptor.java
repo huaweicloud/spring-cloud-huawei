@@ -17,20 +17,17 @@
 package com.huaweicloud.dtm.consumer.rest;
 
 import java.io.IOException;
+import java.util.Map;
 
+import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.huaweicloud.dtm.DtmContextDTO;
-import com.huaweicloud.dtm.util.DtmConstants;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
-import com.huawei.middleware.dtm.client.context.DTMContext;
-
-import io.vertx.core.json.Json;
+import com.huaweicloud.dtm.DtmConstants;
 
 /**
  * @Author wangqijun
@@ -43,13 +40,22 @@ public class DtmRestTemplateInterceptor implements ClientHttpRequestInterceptor 
   @Override
   public ClientHttpResponse intercept(HttpRequest httpRequest, byte[] bytes,
       ClientHttpRequestExecution clientHttpRequestExecution) throws IOException {
-    DTMContext dtmContext = DTMContext.getDTMContext();
-    long gid = dtmContext.getGlobalTxId();
-    HttpHeaders headers = httpRequest.getHeaders();
-    if (gid != -1) {
-      DtmContextDTO dtmContextDTO = DtmContextDTO.fromDtmContext(dtmContext);
-      headers.add(DtmConstants.DTM_CONTEXT, Json.encode(dtmContextDTO));
-    }
+    exportDtmContextToHeader(httpRequest);
     return clientHttpRequestExecution.execute(httpRequest, bytes);
+  }
+
+  private void exportDtmContextToHeader(HttpRequest httpRequest) {
+    if (DtmConstants.DTM_CONTEXT_EX_METHOD == null) {
+      return;
+    }
+    try {
+      Object context = DtmConstants.DTM_CONTEXT_EX_METHOD.invoke(null);
+      if (context instanceof Map) {
+        httpRequest.getHeaders().add(DtmConstants.DTM_CONTEXT, JsonUtils.OBJ_MAPPER.writeValueAsString(context));
+      }
+    } catch (Throwable e) {
+      // ignore
+      LOGGER.warn("Failed to export dtm context", e);
+    }
   }
 }

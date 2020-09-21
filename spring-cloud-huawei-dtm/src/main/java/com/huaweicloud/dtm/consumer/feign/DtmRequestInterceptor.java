@@ -16,12 +16,14 @@
  */
 package com.huaweicloud.dtm.consumer.feign;
 
-import com.huaweicloud.dtm.DtmContextDTO;
-import com.huaweicloud.dtm.util.DtmConstants;
+import java.util.Map;
 
-import com.huawei.middleware.dtm.client.context.DTMContext;
+import org.apache.servicecomb.foundation.common.utils.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import io.vertx.core.json.Json;
+import com.huaweicloud.dtm.DtmConstants;
+
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 
@@ -30,13 +32,22 @@ import feign.RequestTemplate;
  * @Date 09:52 2019-09-26
  **/
 public class DtmRequestInterceptor implements RequestInterceptor {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(DtmRequestInterceptor.class);
+
   @Override
   public void apply(RequestTemplate template) {
-    DTMContext dtmContext = DTMContext.getDTMContext();
-    long gid = dtmContext.getGlobalTxId();
-    if (gid != -1) {
-      DtmContextDTO dtmContextDTO = DtmContextDTO.fromDtmContext(dtmContext);
-      template.header(DtmConstants.DTM_CONTEXT, Json.encode(dtmContextDTO));
+    if (DtmConstants.DTM_CONTEXT_EX_METHOD == null) {
+      return;
+    }
+    try {
+      Object context = DtmConstants.DTM_CONTEXT_EX_METHOD.invoke(null);
+      if (context instanceof Map) {
+        template.header(DtmConstants.DTM_CONTEXT, JsonUtils.OBJ_MAPPER.writeValueAsString(context));
+      }
+    } catch (Throwable e) {
+      // ignore
+      LOGGER.warn("Failed to export dtm context", e);
     }
   }
 }
