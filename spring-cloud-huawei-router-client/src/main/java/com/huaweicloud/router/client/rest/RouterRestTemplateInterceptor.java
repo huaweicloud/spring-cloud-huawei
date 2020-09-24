@@ -30,7 +30,7 @@ import org.springframework.http.client.ClientHttpResponse;
  * @Author GuoYl123
  * @Date 2019/10/11
  **/
-public class RouterRestTemplateIntercptor implements ClientHttpRequestInterceptor {
+public class RouterRestTemplateInterceptor implements ClientHttpRequestInterceptor {
 
   private static final String ROUTER_HEADER = "X-RouterContext";
 
