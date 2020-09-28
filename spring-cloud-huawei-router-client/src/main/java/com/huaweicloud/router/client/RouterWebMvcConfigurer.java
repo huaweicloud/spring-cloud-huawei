@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import com.huaweicloud.router.client.hytrix.RouterHystrixConcurrencyStrategy;
-import com.huaweicloud.router.client.rest.RouterRestTemplateIntercptor;
+import com.huaweicloud.router.client.rest.RouterRestTemplateInterceptor;
 import com.huaweicloud.router.client.track.RouterHandlerInterceptor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -41,9 +41,9 @@ public class RouterWebMvcConfigurer implements WebMvcConfigurer {
   RouterHandlerInterceptor routerHandlerInterceptor;
 
   @Bean
-  public RouterRestTemplateIntercptor routerClientHttpRequestIntercptor(
+  public RouterRestTemplateInterceptor routerClientHttpRequestIntercptor(
       @Autowired(required = false) @LoadBalanced List<RestTemplate> restTemplates) {
-    RouterRestTemplateIntercptor intercptor = new RouterRestTemplateIntercptor();
+    RouterRestTemplateInterceptor intercptor = new RouterRestTemplateInterceptor();
     if (restTemplates != null) {
       restTemplates.forEach(restTemplate -> restTemplate.getInterceptors().add(intercptor));
     }
