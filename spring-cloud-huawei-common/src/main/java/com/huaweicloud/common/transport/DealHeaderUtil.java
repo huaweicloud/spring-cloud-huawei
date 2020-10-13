@@ -21,6 +21,8 @@ import com.huaweicloud.common.auth.AuthHeaderUtils;
 import java.util.Map;
 
 import org.apache.http.client.methods.HttpUriRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -28,6 +30,8 @@ import org.springframework.util.CollectionUtils;
  * @Date 18:44 2019-09-05
  **/
 public class DealHeaderUtil {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(DealHeaderUtil.class);
 
   public static final int CONNECT_TIMEOUT = 5000;
 
@@ -58,6 +62,7 @@ public class DealHeaderUtil {
     Map<String, String> headerMap = AuthHeaderUtils.genAuthHeaders();
     if ((serviceCombAkSkProperties == null || serviceCombAkSkProperties.isAkSkEmpty())
         && !CollectionUtils.isEmpty(headerMap)) {
+      LOGGER.warn("please configure ak/sk manually, we will offline automatic read ak/sk soon!");
       httpRequest.addHeader(X_SERVICE_AK, headerMap.get(X_SERVICE_AK));
       httpRequest.addHeader(X_SERVICE_SHA_AKSK, headerMap.get(X_SERVICE_SHA_AKSK));
     } else if (serviceCombAkSkProperties != null && !serviceCombAkSkProperties.isAkSkEmpty()) {

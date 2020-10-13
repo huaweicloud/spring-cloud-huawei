@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
  * @Author GuoYl123
  * @Date 2020/1/10
  **/
+@Deprecated
 public class AuthHeaderStrategyMount extends AuthHeaderStrategy {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(AuthHeaderStrategyMount.class);
