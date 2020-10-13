@@ -31,6 +31,7 @@ import org.springframework.util.StringUtils;
  * @Author GuoYl123
  * @Date 2020/1/10
  **/
+@Deprecated
 public abstract class AuthHeaderStrategy {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(AuthHeaderStrategy.class);

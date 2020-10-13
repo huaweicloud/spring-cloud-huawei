@@ -26,6 +26,7 @@ import java.util.Map;
  * @Author GuoYl123
  * @Date 2020/1/10
  **/
+@Deprecated
 public class AuthHeaderUtils {
 
   private static AuthHeaderStrategy authHeaderStrategy = new AuthHeaderStrategyMount();
