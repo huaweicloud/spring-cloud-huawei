@@ -19,8 +19,10 @@ package com.huaweicloud.config.client;
 
 import com.huaweicloud.common.transport.DefaultHttpTransport;
 import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
+import com.huaweicloud.common.transport.ServiceCombRBACProperties;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.config.ServiceCombConfigProperties;
+
 import org.springframework.util.StringUtils;
 
 /**
@@ -30,6 +32,8 @@ import org.springframework.util.StringUtils;
 public class ServiceCombConfigClientBuilder {
 
   private ServiceCombAkSkProperties serviceCombAkSkProperties;
+
+  private ServiceCombRBACProperties serviceCombRBACProperties;
 
   private ServiceCombSSLProperties serviceCombSSLProperties;
 
@@ -53,8 +57,15 @@ public class ServiceCombConfigClientBuilder {
     return this;
   }
 
+  public ServiceCombConfigClientBuilder setServiceCombRBACProperties(
+      ServiceCombRBACProperties serviceCombRBACProperties) {
+    this.serviceCombRBACProperties = serviceCombRBACProperties;
+    return this;
+  }
+
   public ServiceCombConfigClient createServiceCombConfigClient() {
     DefaultHttpTransport httpTransport = DefaultHttpTransport.getInstance(serviceCombSSLProperties);
+    httpTransport.setRBACToken(serviceCombRBACProperties, serviceCombConfigProperties.getDiscoveryAddress());
     httpTransport.setServiceCombAkSkProperties(serviceCombAkSkProperties);
     if ("kie".equalsIgnoreCase(serviceCombConfigProperties.getServerType())) {
       return new KieClient(serviceCombConfigProperties.getServerAddr(), httpTransport);

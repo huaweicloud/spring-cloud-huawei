@@ -18,18 +18,22 @@
 package com.huaweicloud.servicecomb.discovery.discovery;
 
 import com.huaweicloud.common.exception.ServiceCombRuntimeException;
+import com.huaweicloud.common.transport.ServiceCombRBACProperties;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.servicecomb.discovery.registry.TagsProperties;
+
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.CommonsClientAutoConfiguration;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration;
+
 import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
 import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
 import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
 import com.huaweicloud.servicecomb.discovery.client.ServiceCombClientBuilder;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -70,9 +74,17 @@ public class ServiceCombDiscoveryClientConfiguration {
   }
 
   @Bean
+  @ConditionalOnMissingBean
+  public ServiceCombRBACProperties serviceCombRBACProperties() {
+    return new ServiceCombRBACProperties();
+  }
+
+  @Bean
   @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.enabled", matchIfMissing = true)
   public ServiceCombClient serviceCombClient(ServiceCombDiscoveryProperties serviceCombProperties,
-      ServiceCombAkSkProperties serviceCombAkSkProperties, ServiceCombSSLProperties serviceCombSSLProperties) {
+      ServiceCombRBACProperties serviceCombRBACProperties,
+      ServiceCombAkSkProperties serviceCombAkSkProperties,
+      ServiceCombSSLProperties serviceCombSSLProperties) {
     ServiceCombClientBuilder builder = new ServiceCombClientBuilder();
     if (!StringUtils.isEmpty(serviceCombAkSkProperties.getEnable())) {
       throw new ServiceCombRuntimeException(
@@ -80,6 +92,7 @@ public class ServiceCombDiscoveryClientConfiguration {
     }
     builder
         .setUrl(serviceCombProperties.getAddress())
+        .setServiceCombRBACProperties(serviceCombRBACProperties)
         .setServiceCombAkSkProperties(serviceCombAkSkProperties)
         .setServiceCombSSLProperties(serviceCombSSLProperties);
     return builder.createServiceCombClient();
