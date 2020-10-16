@@ -14,12 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.dtm.util;
+package com.huawei.middleware.dtm.client.context;
 
-/**
- * @Author wangqijun
- * @Date 17:48 2019-09-25
- **/
-public class DtmConstants {
-  public static final String DTM_CONTEXT = "DTM_CONTEXT";
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.util.CollectionUtils;
+
+public class DTMContext {
+  public static final String GLOBAL_TX_ID_KEY = "dtm-global-tx-key";
+
+  public static String GLOBAL_TX_ID = "";
+
+  public static Map<String, String> getContextData() {
+    HashMap<String, String> context = new HashMap<>();
+    context.put(GLOBAL_TX_ID_KEY, GLOBAL_TX_ID);
+    return context;
+  }
+
+  public static void setContextData(Map<String, String> context) {
+    if (CollectionUtils.isEmpty(context)) {
+      return;
+    }
+    GLOBAL_TX_ID = context.getOrDefault(GLOBAL_TX_ID_KEY, "");
+  }
 }

@@ -16,19 +16,19 @@
  */
 package com.huaweicloud.dtm.provider;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.huaweicloud.dtm.DtmContextDTO;
-import com.huaweicloud.dtm.util.DtmConstants;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.huawei.middleware.dtm.client.context.DTMContext;
-
-import io.vertx.core.json.Json;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.huaweicloud.dtm.DtmConstants;
 
 /**
  * Implement filter, convert the data before the request is processed, before being processed by the business
@@ -40,27 +40,21 @@ public class DtmHandlerInterceptor implements HandlerInterceptor {
 
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    if (DtmConstants.DTM_CONTEXT_IM_METHOD == null) {
+      return true;
+    }
     //get header then fill to DTMContext for business use it
-    DTMContext dtmContext = DTMContext.getDTMContext();
-    String dtmHeader = request.getHeader(DtmConstants.DTM_CONTEXT);
-    if (StringUtils.isNotEmpty(dtmHeader)) {
-      DtmContextDTO dtmContextDTO = Json.decodeValue(dtmHeader, DtmContextDTO.class);
-      LOGGER.debug("dtm info, provider dtmContextDTO:" + dtmContextDTO);
-      transform(dtmContext, dtmContextDTO);
+    try {
+      String dtmHeader = request.getHeader(DtmConstants.DTM_CONTEXT);
+      if (StringUtils.isNotEmpty(dtmHeader)) {
+        Map<String, String> context = JsonUtils.OBJ_MAPPER
+            .readValue(dtmHeader, new TypeReference<Map<String, String>>() {
+            });
+        DtmConstants.DTM_CONTEXT_IM_METHOD.invoke(null, context);
+      }
+    } catch (Throwable e) {
+      LOGGER.warn("Failed to import dtm context", e);
     }
     return true;
-  }
-
-  /**
-   * transform DtmContextDTO to DTMContext
-   * @param dtmContext
-   * @param dtmContextDTO
-   */
-  private void transform(DTMContext dtmContext, DtmContextDTO dtmContextDTO) {
-    dtmContext.setGlobalTxId(dtmContextDTO.getGlobalTxId());
-    dtmContext.setBranchTxId(dtmContextDTO.getBranchTxId());
-    dtmContext.setBranchOptionalData(dtmContextDTO.getBranchOptionalData());
-    dtmContext.setGlobalOptionalData(dtmContextDTO.getGlobalOptionalData());
-    dtmContext.setChannelKey(dtmContextDTO.getChannelKey());
   }
 }

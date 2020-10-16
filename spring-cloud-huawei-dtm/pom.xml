@@ -49,8 +49,8 @@
       <artifactId>spring-boot-configuration-processor</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.huawei.paas.dtm</groupId>
-      <artifactId>dtm-client</artifactId>
+      <groupId>com.huaweicloud</groupId>
+      <artifactId>spring-cloud-huawei-common</artifactId>
     </dependency>
     <dependency>
       <groupId>io.github.openfeign</groupId>

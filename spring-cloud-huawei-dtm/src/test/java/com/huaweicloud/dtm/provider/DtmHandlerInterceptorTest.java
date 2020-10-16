@@ -19,13 +19,15 @@ package com.huaweicloud.dtm.provider;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Test;
-import com.huaweicloud.dtm.DtmContextDTO;
-import com.huaweicloud.dtm.util.DtmConstants;
 
 import com.huawei.middleware.dtm.client.context.DTMContext;
+import com.huaweicloud.dtm.DtmConstants;
 
 import io.vertx.core.json.Json;
 import mockit.Expectations;
@@ -40,16 +42,17 @@ public class DtmHandlerInterceptorTest {
   @Test
   public void preHandle(@Injectable HttpServletRequest request) throws Exception {
     DtmHandlerInterceptor dtmHandlerInterceptor = new DtmHandlerInterceptor();
-    DtmContextDTO dtmContextDTO = new DtmContextDTO();
-    dtmContextDTO.setGlobalTxId(100);
+    Map<String, String> header = new HashMap<>();
+    String expectTxId = "100";
+    header.put(DTMContext.GLOBAL_TX_ID_KEY, expectTxId);
     new Expectations() {
       {
         request.getHeader(DtmConstants.DTM_CONTEXT);
-        result = Json.encode(dtmContextDTO);
+        result = Json.encode(header);
       }
     };
     dtmHandlerInterceptor.preHandle(request, null, null);
 
-    assertEquals(DTMContext.getDTMContext().getGlobalTxId(), 100);
+    assertEquals(expectTxId, DTMContext.GLOBAL_TX_ID);
   }
 }
