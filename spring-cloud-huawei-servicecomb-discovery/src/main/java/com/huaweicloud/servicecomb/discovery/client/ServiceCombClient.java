@@ -17,23 +17,12 @@
 
 package com.huaweicloud.servicecomb.discovery.client;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.common.base.Charsets;
-import com.google.common.collect.Maps;
-import com.google.common.hash.Hashing;
-import com.huaweicloud.common.transport.URLConfig;
-import com.huaweicloud.servicecomb.discovery.client.model.HeardBeatStatus;
-import com.huaweicloud.servicecomb.discovery.client.model.SchemaRequest;
-import com.huaweicloud.servicecomb.discovery.client.model.SchemaResponse;
-import com.huaweicloud.servicecomb.discovery.discovery.MicroserviceHandler;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -46,27 +35,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
+import com.google.common.hash.Hashing;
 import com.huaweicloud.common.cache.RegisterCache;
 import com.huaweicloud.common.exception.RemoteOperationException;
 import com.huaweicloud.common.exception.RemoteServerUnavailableException;
 import com.huaweicloud.common.exception.ServiceCombException;
 import com.huaweicloud.common.transport.HttpTransport;
 import com.huaweicloud.common.transport.Response;
+import com.huaweicloud.common.transport.URLConfig;
 import com.huaweicloud.common.util.URLUtil;
+import com.huaweicloud.servicecomb.discovery.client.model.HeardBeatStatus;
 import com.huaweicloud.servicecomb.discovery.client.model.HeartbeatRequest;
 import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstance;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstanceSingleResponse;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstancesResponse;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceResponse;
+import com.huaweicloud.servicecomb.discovery.client.model.SchemaRequest;
+import com.huaweicloud.servicecomb.discovery.client.model.SchemaResponse;
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
 import com.huaweicloud.servicecomb.discovery.discovery.MicroserviceCache;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
-import org.springframework.util.StringUtils;
+import com.huaweicloud.servicecomb.discovery.discovery.MicroserviceHandler;
 
 
 /**
@@ -339,27 +335,23 @@ public class ServiceCombClient {
         }
         MicroserviceCache.initInsList(result.getInstances(), microservice.getServiceName());
         for (MicroserviceInstance instance : result.getInstances()) {
-          int port;
-          String host;
-          if (!instance.getEndpoints().isEmpty()) {
-            String endpoint = instance.getEndpoints().get(0);
+          for (String endpoint : instance.getEndpoints()) {
+            if (!endpoint.startsWith("rest://")) {
+              continue;
+            }
             URI endpointURIBuilder = new URIBuilder(endpoint).build();
-            port = endpointURIBuilder.getPort();
-            host = endpointURIBuilder.getHost();
-          } else {
-            LOGGER.warn(
-                "read response failed. status:" + response.getStatusCode() + "; message:" + response
-                    .getStatusMessage() + "; content:" + response.getContent());
-            return null;
+            int port = endpointURIBuilder.getPort();
+            String host = endpointURIBuilder.getHost();
+
+            Map<String, String> map = new HashMap<>();
+            map.put(INSTANCE_STATUS, instance.getStatus().name());
+            if (instance.getDataCenterInfo() != null) {
+              map.put(ZONE, instance.getDataCenterInfo().getZone());
+            }
+            instanceList.add(
+                new DefaultServiceInstance(instance.getInstanceId(), instance.getServiceName(), host,
+                    port, false, map));
           }
-          Map<String, String> map = new HashMap<>();
-          map.put(INSTANCE_STATUS, instance.getStatus().name());
-          if (instance.getDataCenterInfo() != null) {
-            map.put(ZONE, instance.getDataCenterInfo().getZone());
-          }
-          instanceList.add(
-              new DefaultServiceInstance(instance.getInstanceId(), instance.getServiceName(), host,
-                  port, false, map));
         }
         return instanceList;
       } else if (response.getStatusCode() != HttpStatus.SC_NOT_MODIFIED) {
