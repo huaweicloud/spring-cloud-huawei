@@ -184,7 +184,7 @@ public class ServiceCombClientTest {
         + "      \"version\": \"0.1\",\n"
         + "      \"hostName\": \"string\",\n"
         + "      \"endpoints\": [\n"
-        + "        \"string\"\n"
+        + "        \"rest://localhost\"\n"
         + "      ],\n"
         + "      \"status\": \"UP\",\n"
         + "      \"dataCenterInfo\": {\n"
