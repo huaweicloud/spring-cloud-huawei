@@ -17,17 +17,15 @@
 
 package com.huaweicloud.common.cache;
 
-import com.huaweicloud.common.transport.RBACToken;
-
 public class TokenCache {
 
-  private static RBACToken token;
+  private static String token;
 
-  public static RBACToken getToken() {
+  public static String getToken() {
     return token;
   }
 
-  public static void setToken(RBACToken token) {
+  public static void setToken(String token) {
     TokenCache.token = token;
   }
 }

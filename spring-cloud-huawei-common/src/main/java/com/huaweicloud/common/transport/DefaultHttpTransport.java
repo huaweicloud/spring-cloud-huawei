@@ -29,6 +29,7 @@ import javax.net.ssl.SSLContext;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpDelete;
@@ -89,11 +90,11 @@ public class DefaultHttpTransport implements HttpTransport {
         StringEntity stringEntity = new StringEntity(
             JsonUtils.OBJ_MAPPER.writeValueAsString(serviceCombRBACProperties), "utf-8");
         response = this.sendPostRequest(url + "/v4/token", stringEntity);
-        if (response.getStatusCode() == 200) {
+        if (response.getStatusCode() == HttpStatus.SC_OK) {
           RBACToken token = JsonUtils.OBJ_MAPPER
               .readValue(response.getContent(), RBACToken.class);
           LOGGER.info("get token success.");
-          TokenCache.setToken(token);
+          TokenCache.setToken(token.getToken());
           break;
         } else {
           LOGGER.error("response failed. status:" + response.getStatusCode() + "; message:" + response
@@ -110,8 +111,8 @@ public class DefaultHttpTransport implements HttpTransport {
 
 
   private void addToken(HttpUriRequest httpRequest) {
-    if (TokenCache.getToken() != null) {
-      httpRequest.addHeader("Authorization", "Bearer " + TokenCache.getToken().getToken());
+    if (!StringUtils.isEmpty(TokenCache.getToken())) {
+      httpRequest.addHeader("Authorization", "Bearer " + TokenCache.getToken());
     }
   }
 

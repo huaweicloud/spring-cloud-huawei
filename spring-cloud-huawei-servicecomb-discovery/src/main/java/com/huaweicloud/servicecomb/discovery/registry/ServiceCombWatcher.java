@@ -42,6 +42,7 @@ import javax.net.ssl.X509TrustManager;
 import org.java_websocket.client.WebSocketClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 /**
  * @Author GuoYl123
@@ -142,8 +143,8 @@ public class ServiceCombWatcher {
   private WebSocketClient buildClient() {
     Map<String, String> signedHeader = new HashMap<>();
     signedHeader.put("x-domain-name", ServiceRegistryConfig.DEFAULT_PROJECT);
-    if (TokenCache.getToken() != null) {
-      signedHeader.put("Authorization", "Bearer " + TokenCache.getToken().getToken());
+    if (StringUtils.isEmpty(TokenCache.getToken())) {
+      signedHeader.put("Authorization", "Bearer " + TokenCache.getToken());
     }
     WebSocketClient webSocketClient;
     try {
