@@ -33,6 +33,9 @@ public class ServiceCombConfigProperties {
 
   private boolean enabled = true;
 
+  @Value("${spring.cloud.servicecomb.discovery.address:}")
+  private String discoveryAddress;
+
   @Value("${spring.cloud.servicecomb.discovery.serviceName:${spring.application.name:}}")
   private String serviceName;
 
@@ -56,6 +59,18 @@ public class ServiceCombConfigProperties {
   private Watch watch = new Watch();
 
   private Retry retry = new Retry();
+
+  public String getDiscoveryAddress() {
+    return discoveryAddress;
+  }
+
+  public void setDiscoveryAddress(String discoveryAddress) {
+    this.discoveryAddress = discoveryAddress;
+  }
+
+  public boolean isEnableLongPolling() {
+    return enableLongPolling;
+  }
 
   public boolean getEnableLongPolling() {
     return enableLongPolling;

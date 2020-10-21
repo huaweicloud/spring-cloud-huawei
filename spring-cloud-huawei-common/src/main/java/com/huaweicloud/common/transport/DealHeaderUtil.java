@@ -80,4 +80,6 @@ public class DealHeaderUtil {
     httpRequest.addHeader(X_DOMAIN_NAME, DEFAULT_X_DOMAIN_NAME);
     httpRequest.addHeader(CONTENT_TYPE, CONTENT_TYPE_APPLICATION_JSON);
   }
+
+
 }

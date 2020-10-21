@@ -17,6 +17,7 @@
 
 package com.huaweicloud.servicecomb.discovery.registry;
 
+import com.huaweicloud.common.cache.TokenCache;
 import com.huaweicloud.common.transport.BackOff;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.common.util.SecretUtil;
@@ -24,6 +25,7 @@ import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 import com.huaweicloud.servicecomb.discovery.event.ServerCloseEvent;
 import com.huaweicloud.servicecomb.discovery.event.ServiceCombEventBus;
+
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.SecureRandom;
@@ -32,12 +34,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
 import org.java_websocket.client.WebSocketClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 /**
  * @Author GuoYl123
@@ -114,7 +119,7 @@ public class ServiceCombWatcher {
   private void initSSL() {
     sslContext = SecretUtil.getSSLContext(serviceCombSSLProperties);
     try {
-      sslContext.init(null, new TrustManager[]{new X509TrustManager() {
+      sslContext.init(null, new TrustManager[] {new X509TrustManager() {
         @Override
         public void checkClientTrusted(X509Certificate[] chain,
             String authType) {
@@ -138,6 +143,9 @@ public class ServiceCombWatcher {
   private WebSocketClient buildClient() {
     Map<String, String> signedHeader = new HashMap<>();
     signedHeader.put("x-domain-name", ServiceRegistryConfig.DEFAULT_PROJECT);
+    if (StringUtils.isEmpty(TokenCache.getToken())) {
+      signedHeader.put("Authorization", "Bearer " + TokenCache.getToken());
+    }
     WebSocketClient webSocketClient;
     try {
       webSocketClient = new ServiceCombWebSocketClient(url, signedHeader, eventBus::publish);

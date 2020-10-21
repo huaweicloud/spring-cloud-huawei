@@ -17,14 +17,19 @@
 
 package com.huaweicloud.common.transport;
 
+import com.huaweicloud.common.cache.TokenCache;
 import com.huaweicloud.common.util.SecretUtil;
+
 import java.io.IOException;
 
+import java.util.List;
 import java.util.Map;
+
 import javax.net.ssl.SSLContext;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpDelete;
@@ -38,10 +43,17 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
+
 import com.huaweicloud.common.exception.RemoteServerUnavailableException;
+import com.huaweicloud.common.util.URLUtil;
+
+import org.apache.servicecomb.foundation.common.utils.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 
@@ -51,11 +63,58 @@ import org.springframework.util.StringUtils;
  **/
 public class DefaultHttpTransport implements HttpTransport {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(DefaultHttpTransport.class);
+
   private volatile static DefaultHttpTransport DEFAULT_HTTP_TRANSPORT;
 
   private ServiceCombAkSkProperties serviceCombAkSkProperties;
 
   private HttpClient httpClient;
+
+  public void setRBACToken(ServiceCombRBACProperties serviceCombRBACProperties,
+      String urls) {
+    if (StringUtils.isEmpty(serviceCombRBACProperties.getName()) ||
+        StringUtils.isEmpty(serviceCombRBACProperties.getPassword())) {
+      return;
+    }
+    List<String> urlList = URLUtil.dealMultiUrl(urls);
+    getToken(serviceCombRBACProperties, urlList);
+  }
+
+  private void getToken(ServiceCombRBACProperties serviceCombRBACProperties, List<String> urlList) {
+    Response response = null;
+    String url;
+    for (String s : urlList) {
+      url = s;
+      try {
+        StringEntity stringEntity = new StringEntity(
+            JsonUtils.OBJ_MAPPER.writeValueAsString(serviceCombRBACProperties), "utf-8");
+        response = this.sendPostRequest(url + "/v4/token", stringEntity);
+        if (response.getStatusCode() == HttpStatus.SC_OK) {
+          RBACToken token = JsonUtils.OBJ_MAPPER
+              .readValue(response.getContent(), RBACToken.class);
+          LOGGER.info("get token success.");
+          TokenCache.setToken(token.getToken());
+          break;
+        } else {
+          LOGGER.error("response failed. status:" + response.getStatusCode() + "; message:" + response
+              .getStatusMessage() + "; content:" + response.getContent());
+        }
+      } catch (RemoteServerUnavailableException e) {
+        LOGGER.error(url + " response failed. status:" + response.getStatusCode() + "; message:" + response
+            .getStatusMessage() + "; content:" + response.getContent());
+      } catch (IOException e) {
+        LOGGER.warn("parse result failed, {}", response);
+      }
+    }
+  }
+
+
+  private void addToken(HttpUriRequest httpRequest) {
+    if (!StringUtils.isEmpty(TokenCache.getToken())) {
+      httpRequest.addHeader("Authorization", "Bearer " + TokenCache.getToken());
+    }
+  }
 
   private DefaultHttpTransport(ServiceCombSSLProperties serviceCombSSLProperties) {
     SSLContext sslContext = SecretUtil.getSSLContext(serviceCombSSLProperties);
@@ -107,6 +166,7 @@ public class DefaultHttpTransport implements HttpTransport {
     try {
       DealHeaderUtil.addDefautHeader(httpRequest);
       DealHeaderUtil.addAKSKHeader(httpRequest, serviceCombAkSkProperties);
+      addToken(httpRequest);
       HttpResponse httpResponse = httpClient.execute(httpRequest);
       resp.setStatusCode(httpResponse.getStatusLine().getStatusCode());
       resp.setStatusMessage(httpResponse.getStatusLine().getReasonPhrase());
@@ -166,5 +226,4 @@ public class DefaultHttpTransport implements HttpTransport {
   public void setServiceCombAkSkProperties(ServiceCombAkSkProperties serviceCombAkSkProperties) {
     this.serviceCombAkSkProperties = serviceCombAkSkProperties;
   }
-
 }

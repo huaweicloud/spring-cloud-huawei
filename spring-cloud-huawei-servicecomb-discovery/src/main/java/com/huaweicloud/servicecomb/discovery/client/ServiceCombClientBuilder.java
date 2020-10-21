@@ -19,6 +19,7 @@ package com.huaweicloud.servicecomb.discovery.client;
 
 import com.huaweicloud.common.transport.DefaultHttpTransport;
 import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
+import com.huaweicloud.common.transport.ServiceCombRBACProperties;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 
 /**
@@ -32,6 +33,9 @@ public class ServiceCombClientBuilder {
   private ServiceCombSSLProperties serviceCombSSLProperties;
 
   private ServiceCombAkSkProperties serviceCombAkSkProperties;
+
+  private ServiceCombRBACProperties serviceCombRBACProperties;
+
   /**
    * registry address, e.g. http://127.0.0.1:30100
    * @param url registry address
@@ -54,12 +58,19 @@ public class ServiceCombClientBuilder {
     return this;
   }
 
+  public ServiceCombClientBuilder setServiceCombRBACProperties(
+      ServiceCombRBACProperties serviceCombRBACProperties) {
+    this.serviceCombRBACProperties = serviceCombRBACProperties;
+    return this;
+  }
+
   /**
    * create ServiceComb-Service-Center client, ServiceCombClient is singleton.
    * @return
    */
   public ServiceCombClient createServiceCombClient() {
     DefaultHttpTransport httpTransport = DefaultHttpTransport.getInstance(serviceCombSSLProperties);
+    httpTransport.setRBACToken(serviceCombRBACProperties, url);
     httpTransport.setServiceCombAkSkProperties(serviceCombAkSkProperties);
     return new ServiceCombClient(url, httpTransport);
   }
