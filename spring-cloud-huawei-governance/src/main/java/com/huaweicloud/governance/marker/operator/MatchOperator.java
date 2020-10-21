@@ -19,6 +19,4 @@ package com.huaweicloud.governance.marker.operator;
 public interface MatchOperator {
 
   boolean match(String targetStr, String patternStr);
-
-  String name();
 }

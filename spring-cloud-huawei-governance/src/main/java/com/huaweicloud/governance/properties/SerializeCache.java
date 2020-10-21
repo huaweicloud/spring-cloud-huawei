@@ -21,12 +21,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
 
 import com.huaweicloud.common.util.MD5Util;
 
 public class SerializeCache<T> {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(SerializeCache.class);
 
   Map<String, String> md5Map = new HashMap<>();
 
@@ -42,8 +47,14 @@ public class SerializeCache<T> {
         continue;
       }
       Yaml yaml = new Yaml();
-      T marker = yaml.loadAs(entry.getValue(), entityClass);
-      cacheMap.put(key, marker);
+      try {
+        T marker = yaml.loadAs(entry.getValue(), entityClass);
+        cacheMap.put(key, marker);
+      } catch (YAMLException e) {
+        //todo: 避免每次打印
+        LOGGER.error("governance config yaml is illegal : {}", e.getMessage());
+        return Collections.emptyMap();
+      }
     }
     Map<String, T> resultMap = new HashMap<>();
     for (Entry<String, T> entry : cacheMap.entrySet()) {
@@ -52,7 +63,7 @@ public class SerializeCache<T> {
           resultMap.put(entry.getKey(), entry.getValue());
         }
       } catch (InstantiationException | IllegalAccessException e) {
-        e.printStackTrace();
+        LOGGER.error("internal error.", e);
       }
     }
     return resultMap;

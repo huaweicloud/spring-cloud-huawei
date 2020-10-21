@@ -77,11 +77,6 @@
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
     </dependency>
-    <!--dd-->
-<!--    <dependency>-->
-<!--      <groupId>com.huaweicloud</groupId>-->
-<!--      <artifactId>spring-cloud-huawei-config</artifactId>-->
-<!--    </dependency>-->
     
   </dependencies>
 </project>

@@ -21,12 +21,12 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
-import com.huaweicloud.common.exception.IllegalArgsOperator;
+import com.huaweicloud.common.exception.IllegalArgsOperatorException;
 
 @Component
 public class CompareOperator implements MatchOperator {
 
-  Set<Character> charSet = new HashSet<>();
+  private Set<Character> charSet = new HashSet<>();
 
   public CompareOperator() {
     charSet.add('>');
@@ -50,7 +50,7 @@ public class CompareOperator implements MatchOperator {
     } else if (isLegalChar(chars[0])) {
       return process(targetStr, patternStr.substring(0, 1), patternStr.substring(1));
     } else {
-      throw new IllegalArgsOperator("operator " + patternStr + " is illegal.");
+      throw new IllegalArgsOperatorException("operator " + patternStr + " is illegal.");
     }
   }
 
@@ -65,7 +65,7 @@ public class CompareOperator implements MatchOperator {
         result = Double.parseDouble(numStr);
       }
     } catch (NumberFormatException e) {
-      throw new IllegalArgsOperator("operator " + charStr + numStr + " is illegal.");
+      throw new IllegalArgsOperatorException("operator " + charStr + numStr + " is illegal.");
     }
     switch (charStr) {
       case ">":
@@ -82,7 +82,7 @@ public class CompareOperator implements MatchOperator {
       case "!=":
         return !doubleEquals(target, result);
       default:
-        throw new IllegalArgsOperator("operator " + charStr + numStr + " is illegal.");
+        throw new IllegalArgsOperatorException("operator " + charStr + numStr + " is illegal.");
     }
   }
 
@@ -92,10 +92,5 @@ public class CompareOperator implements MatchOperator {
 
   private boolean doubleEquals(double target, double result) {
     return target - result < 1e-6 || target - result > -1e-6;
-  }
-
-  @Override
-  public String name() {
-    return "compare";
   }
 }

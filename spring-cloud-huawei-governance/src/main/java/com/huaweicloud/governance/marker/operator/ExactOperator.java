@@ -25,9 +25,4 @@ public class ExactOperator implements MatchOperator {
   public boolean match(String targetStr, String patternStr) {
     return targetStr.equals(patternStr);
   }
-
-  @Override
-  public String name() {
-    return "exact";
-  }
 }

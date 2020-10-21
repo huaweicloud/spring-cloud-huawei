@@ -25,9 +25,4 @@ public class ContainsOperator implements MatchOperator {
   public boolean match(String targetStr, String patternStr) {
     return targetStr.contains(patternStr);
   }
-
-  @Override
-  public String name() {
-    return "contains";
-  }
 }

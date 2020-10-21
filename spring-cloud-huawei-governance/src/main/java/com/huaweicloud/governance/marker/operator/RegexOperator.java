@@ -25,12 +25,12 @@ import java.util.concurrent.TimeoutException;
 
 import org.springframework.stereotype.Component;
 
-import com.huaweicloud.common.exception.IllegalArgsOperator;
+import com.huaweicloud.common.exception.IllegalArgsOperatorException;
 
 @Component
 public class RegexOperator implements MatchOperator {
 
-  ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+  private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
   /**
    * 该功能慎用，如果正则复杂+并发高效率低
@@ -45,14 +45,9 @@ public class RegexOperator implements MatchOperator {
     try {
       return f.get(1, TimeUnit.SECONDS);
     } catch (InterruptedException | ExecutionException | TimeoutException e) {
-      throw new IllegalArgsOperator(
+      throw new IllegalArgsOperatorException(
           "operator regex failed or timeout,targetStr: " + targetStr + " ,patternStr:" + patternStr
               + " ,please check.");
     }
-  }
-
-  @Override
-  public String name() {
-    return "regex";
   }
 }

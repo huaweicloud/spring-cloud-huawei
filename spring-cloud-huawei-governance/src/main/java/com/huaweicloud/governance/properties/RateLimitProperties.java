@@ -23,10 +23,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import com.huaweicloud.governance.policy.Policy;
 import com.huaweicloud.governance.policy.RateLimitingPolicy;
 
 @Component
-@ConfigurationProperties("spring.cloud.servicecomb")
+@ConfigurationProperties("servicecomb")
 public class RateLimitProperties {
 
   Map<String, String> rateLimiting;

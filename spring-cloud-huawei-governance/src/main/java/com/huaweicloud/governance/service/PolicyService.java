@@ -24,6 +24,8 @@ public interface PolicyService {
 
   List<Policy> getAllPolicies(String mark);
 
+  Policy getCustomPolicy(String kind, String mark);
+
   Policy getRateLimitPolicy(String mark);
 
   Policy getCircuitBreakerPolicy(String mark);

@@ -35,7 +35,7 @@ servicecomb:
 
 这套规则目前在spring cloud huawei项目中已经有了[实现](https://github.com/GuoYL123/spring-cloud-huawei/tree/gover/spring-cloud-huawei-governance)。后续考虑在java chassis中加入对该功能的支持。
 
-在实现过程中，定义一套interface和spec，叫做：servicecomb runtime interface ( SCRI )，基于
+在实现过程中，定义一套interface和spec，叫做：servicecomb runtime interface ( SCRI )，默认实现基于
 
 Netfilx archaius的基础上实现一套可以获取标准spec的治理Policy的interface方便用户进行拓展。
 

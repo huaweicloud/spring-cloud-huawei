@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 import com.huaweicloud.governance.marker.TrafficMarker;
 
 @Component
-@ConfigurationProperties("spring.cloud.servicecomb")
+@ConfigurationProperties("servicecomb")
 public class MatchProperties {
 
   Map<String, String> match;

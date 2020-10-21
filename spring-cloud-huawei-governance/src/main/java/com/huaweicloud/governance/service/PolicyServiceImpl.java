@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.huaweicloud.governance.policy.AbstractPolicy;
 import com.huaweicloud.governance.policy.Policy;
 import com.huaweicloud.governance.policy.RateLimitingPolicy;
 import com.huaweicloud.governance.properties.RateLimitProperties;
@@ -29,6 +30,8 @@ import com.huaweicloud.governance.properties.RateLimitProperties;
 import java.util.List;
 
 public class PolicyServiceImpl implements PolicyService {
+
+  private static final String MATCH_NONE = "none";
 
   @Autowired
   private RateLimitProperties rateLimitProperties;
@@ -44,28 +47,38 @@ public class PolicyServiceImpl implements PolicyService {
   }
 
   @Override
-  public Policy getRateLimitPolicy(String mark) {
-    RateLimitingPolicy policyResult;
-    Map<String, RateLimitingPolicy> ratePolicies = rateLimitProperties.covert();
-    if (mark == null) {
-      policyResult = ratePolicies.get("global");
-      if (policyResult != null) {
-        policyResult.setName("global");
-      }
-      return policyResult;
+  public Policy getCustomPolicy(String kind, String mark) {
+    switch (kind) {
+      case "RateLimit":
+        return getRateLimitPolicy(mark);
+      case "CircuitBreaker":
+      default:
+        return null;
     }
-    for (Entry<String, RateLimitingPolicy> entry : ratePolicies.entrySet()) {
+  }
+
+  @Override
+  public Policy getRateLimitPolicy(String mark) {
+    return match(rateLimitProperties.covert(), mark);
+  }
+
+  @Override
+  public Policy getCircuitBreakerPolicy(String mark) {
+    return null;
+  }
+
+  private <T extends AbstractPolicy> Policy match(Map<String, T> policies, String mark) {
+    AbstractPolicy policyResult;
+    if (mark == null) {
+      mark = MATCH_NONE;
+    }
+    for (Entry<String, T> entry : policies.entrySet()) {
       if (entry.getValue().match(mark)) {
         policyResult = entry.getValue();
         policyResult.setName(entry.getKey());
         return policyResult;
       }
     }
-    return null;
-  }
-
-  @Override
-  public Policy getCircuitBreakerPolicy(String mark) {
     return null;
   }
 }

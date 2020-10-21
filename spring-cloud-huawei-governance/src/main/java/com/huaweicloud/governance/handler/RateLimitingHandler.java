@@ -59,11 +59,20 @@ public class RateLimitingHandler implements GovHandler {
   private RateLimiter getRateLimiter(RateLimitingPolicy policy) {
     RateLimiter limiter = map.get(policy.name());
     if (limiter == null) {
-      RateLimiterConfig config = RateLimiterConfig.custom()
-          .limitRefreshPeriod(Duration.ofMillis(policy.getLimitRefreshPeriod()))
-          .limitForPeriod(policy.getLimitForPeriod())
-          .timeoutDuration(Duration.ofMillis(policy.getTimeoutDuration()))
-          .build();
+      RateLimiterConfig config;
+      if (policy.simple()) {
+        config = RateLimiterConfig.custom()
+            .limitRefreshPeriod(Duration.ofMillis(1000))
+            .limitForPeriod(policy.getRate())
+            .timeoutDuration(Duration.ofMillis(0))
+            .build();
+      } else {
+        config = RateLimiterConfig.custom()
+            .limitRefreshPeriod(Duration.ofMillis(policy.getLimitRefreshPeriod()))
+            .limitForPeriod(policy.getLimitForPeriod())
+            .timeoutDuration(Duration.ofMillis(policy.getTimeoutDuration()))
+            .build();
+      }
       RateLimiterRegistry rateLimiterRegistry = RateLimiterRegistry.of(config);
       limiter = rateLimiterRegistry.rateLimiter(policy.name());
       map.put(policy.name(), limiter);

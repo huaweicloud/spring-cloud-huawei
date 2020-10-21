@@ -114,4 +114,9 @@ public class CircuitBreakerPolicy extends AbstractPolicy {
   public boolean legal() {
     return true;
   }
+
+  @Override
+  public boolean simple() {
+    return false;
+  }
 }

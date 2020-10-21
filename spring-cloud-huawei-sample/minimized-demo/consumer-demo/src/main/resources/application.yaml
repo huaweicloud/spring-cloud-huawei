@@ -5,21 +5,5 @@ spring:
   application:
     name: consumer
   cloud:
-    servicecomb:
-      match:
-        traffic-to-some-api-from-jack: |
-          matches:
-            - apiPath:
-                exact: "/hello"
-              method:
-                - GET
-                - POST
-              trafficMarkPolicy: once
-      rateLimiting:
-        limiterPolicy1: |
-          match: traffic-to-some-api-from-jack
-          timeoutDuration: 25
-          limitRefreshPeriod: 1000
-          limitForPeriod: 1
       discovery:
         address: http://127.0.0.1:30100

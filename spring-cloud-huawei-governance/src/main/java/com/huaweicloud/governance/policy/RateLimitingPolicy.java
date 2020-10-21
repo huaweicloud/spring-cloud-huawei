@@ -29,6 +29,9 @@ public class RateLimitingPolicy extends AbstractPolicy {
 
   private Integer limitForPeriod;
 
+  // 简化配置
+  private Integer rate;
+
   public Integer getTimeoutDuration() {
     return timeoutDuration;
   }
@@ -53,6 +56,14 @@ public class RateLimitingPolicy extends AbstractPolicy {
     this.limitForPeriod = limitForPeriod;
   }
 
+  public Integer getRate() {
+    return rate;
+  }
+
+  public void setRate(Integer rate) {
+    this.rate = rate;
+  }
+
   public RateLimitingPolicy() {
   }
 
@@ -63,6 +74,11 @@ public class RateLimitingPolicy extends AbstractPolicy {
 
   @Override
   public boolean legal() {
-    return timeoutDuration != null && limitRefreshPeriod != null && limitForPeriod != null;
+    return (timeoutDuration != null && limitRefreshPeriod != null && limitForPeriod != null) || rate != null;
+  }
+
+  @Override
+  public boolean simple() {
+    return !(timeoutDuration != null && limitRefreshPeriod != null && limitForPeriod != null) && rate != null;
   }
 }

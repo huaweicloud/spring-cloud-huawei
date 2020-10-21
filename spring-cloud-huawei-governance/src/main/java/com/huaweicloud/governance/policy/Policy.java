@@ -29,4 +29,6 @@ public interface Policy {
   String name();
 
   boolean legal();
+
+  boolean simple();
 }

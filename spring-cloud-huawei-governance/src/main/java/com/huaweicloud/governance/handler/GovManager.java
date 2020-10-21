@@ -48,7 +48,8 @@ public class GovManager {
     DecorateSupplier ds = Decorators.ofSupplier(supplier);
     for (Policy policy : policies) {
       if (!policy.legal()) {
-        LOGGER.warn("policy %s is not legal, will skip.", policy.name());
+        //todo: 避免每次请求打印
+        LOGGER.warn("policy {} is not legal, will skip.", policy.name());
         continue;
       }
       ds = handlers.get(policy.handler()).process(ds, policy);
