@@ -1,0 +1,24 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: consumer
+  cloud:
+    servicecomb:
+      discovery:
+        address: http://127.0.0.1:30100
+servicecomb:
+  match:
+    demo-mark: |
+      matches:
+        - apiPath:
+            exact: "/hello"
+          method:
+            - GET
+            - POST
+          trafficMarkPolicy: once
+  rateLimiting:
+    xxxxx: |
+      match: demo-mark
+      rate: 1

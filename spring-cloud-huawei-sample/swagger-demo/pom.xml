@@ -18,7 +18,7 @@
   </modules>
 
   <properties>
-    <java-chassis.version>2.0.0</java-chassis.version>
+    <java-chassis.version>2.0.2</java-chassis.version>
   </properties>
 
 </project>

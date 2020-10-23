@@ -5,6 +5,5 @@ spring:
   application:
     name: consumer
   cloud:
-    servicecomb:
       discovery:
         address: http://127.0.0.1:30100

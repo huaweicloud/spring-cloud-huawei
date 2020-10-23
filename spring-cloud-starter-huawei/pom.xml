@@ -17,6 +17,7 @@
     <module>spring-cloud-starter-huawei-router</module>
     <module>spring-cloud-starter-huawei-config</module>
     <module>spring-cloud-starter-huawei-swagger</module>
+    <module>spring-cloud-starter-huawei-governance</module>
   </modules>
 
 </project>
