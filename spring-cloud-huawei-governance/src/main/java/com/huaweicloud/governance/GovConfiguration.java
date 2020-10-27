@@ -16,6 +16,12 @@
  */
 package com.huaweicloud.governance;
 
+import com.huaweicloud.governance.client.FeignProxyAop;
+import com.huaweicloud.governance.client.GovRibbonServerFilter;
+import com.huaweicloud.governance.client.RestTemplateProxyAop;
+import com.huaweicloud.common.ribbon.ServiceCombLoadBalanceRule;
+import com.huaweicloud.governance.handler.RetryHandler;
+import com.huaweicloud.governance.properties.RetryProperties;
 import com.huaweicloud.governance.properties.SerializeCache;
 import com.huaweicloud.governance.service.MatchersService;
 import com.huaweicloud.governance.service.MatchersServiceImpl;
@@ -32,7 +38,13 @@ import com.huaweicloud.governance.marker.operator.ExactOperator;
 import com.huaweicloud.governance.marker.operator.MatchOperator;
 import com.huaweicloud.governance.marker.operator.RegexOperator;
 import com.huaweicloud.governance.properties.RateLimitProperties;
+import com.netflix.client.config.IClientConfig;
+import com.netflix.loadbalancer.IRule;
+import com.netflix.loadbalancer.ZoneAvoidanceRule;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.cloud.netflix.ribbon.RibbonLoadBalancerClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -56,6 +68,11 @@ public class GovConfiguration {
   @Bean
   public RateLimitProperties rateLimitProperties() {
     return new RateLimitProperties();
+  }
+
+  @Bean
+  public RetryProperties retryProperties() {
+    return new RetryProperties();
   }
 
   @Bean
@@ -93,6 +110,11 @@ public class GovConfiguration {
     return new CircuitBreakerHandler();
   }
 
+  @Bean(name = "GovRetry")
+  public RetryHandler retryHandler() {
+    return new RetryHandler();
+  }
+
   @Bean(name = "exactOperator")
   public MatchOperator exactOperator() {
     return new ExactOperator();
@@ -116,5 +138,28 @@ public class GovConfiguration {
   @Bean
   public RequestProcessor operatorProcessor() {
     return new RequestProcessor();
+  }
+
+  @Bean
+  public IRule ribbonRule(@Autowired(required = false) IClientConfig config) {
+    ZoneAvoidanceRule rule = new ServiceCombLoadBalanceRule();
+    rule.initWithNiwsConfig(config);
+    return rule;
+  }
+
+  @Bean
+  public GovRibbonServerFilter govRibbonServerFilter() {
+    return new GovRibbonServerFilter();
+  }
+
+  @Bean
+  public RestTemplateProxyAop restTemplateProxyAop() {
+    return new RestTemplateProxyAop();
+  }
+
+  @Bean
+  @ConditionalOnBean(RibbonLoadBalancerClient.class)
+  public FeignProxyAop feignProxyAop() {
+    return new FeignProxyAop();
   }
 }

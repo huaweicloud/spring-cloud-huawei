@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.common.ribbon.ServiceCombLoadBalanceRule;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.IRule;
 import com.netflix.loadbalancer.ZoneAvoidanceRule;
@@ -28,10 +29,14 @@ import com.netflix.loadbalancer.ZoneAvoidanceRule;
 public class RouterClientConfiguration {
 
   @Bean
-  public IRule ribbonRule(
-      @Autowired(required = false) IClientConfig config) {
-    ZoneAvoidanceRule rule = new RouterLoadBalanceRule();
+  public IRule ribbonRule(@Autowired(required = false) IClientConfig config) {
+    ZoneAvoidanceRule rule = new ServiceCombLoadBalanceRule();
     rule.initWithNiwsConfig(config);
     return rule;
+  }
+
+  @Bean
+  public RouterRibbonServerFilter routerRibbonServerFilter() {
+    return new RouterRibbonServerFilter();
   }
 }

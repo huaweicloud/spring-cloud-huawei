@@ -16,11 +16,12 @@
  */
 package com.huaweicloud.governance;
 
+import com.huaweicloud.common.util.HeaderUtil;
+import com.huaweicloud.governance.client.track.RequestTrackContext;
 import com.huaweicloud.governance.handler.GovManager;
 import com.huaweicloud.governance.marker.GovHttpRequest;
 import com.huaweicloud.governance.policy.Policy;
 
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,6 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 
@@ -63,11 +63,13 @@ public class InvokeProxyAop {
   @Around("pointCut()")
   public Object aroundInvoke(ProceedingJoinPoint pjp) throws Throwable {
     HttpServletRequest request = (HttpServletRequest) pjp.getArgs()[0];
+    HttpServletResponse response = (HttpServletResponse) pjp.getArgs()[1];
     List<Policy> policies = matchersManager.match(convert(request));
+    RequestTrackContext.setPolicies(policies);
     Map<String, Throwable> localContext = new HashMap<>();
     Object result = null;
     try {
-      result = govManager.process(policies, () -> {
+      result = govManager.processServer(policies, () -> {
         try {
           return pjp.proceed();
         } catch (Throwable throwable) {
@@ -76,7 +78,6 @@ public class InvokeProxyAop {
         return null;
       });
     } catch (Throwable th) {
-      HttpServletResponse response = (HttpServletResponse) pjp.getArgs()[1];
       if (th instanceof RequestNotPermitted) {
         response.setStatus(502);
         response.getWriter().print("rate limit !!");
@@ -84,6 +85,7 @@ public class InvokeProxyAop {
         localContext.put(THROWABLE_KEY, th);
       }
     }
+    RequestTrackContext.remove();
     if (result == null && localContext.containsKey(THROWABLE_KEY)) {
       throw localContext.get(THROWABLE_KEY);
     }
@@ -92,22 +94,9 @@ public class InvokeProxyAop {
 
   private GovHttpRequest convert(HttpServletRequest request) {
     GovHttpRequest govHttpRequest = new GovHttpRequest();
-    govHttpRequest.setHeaders(getHeaders(request));
+    govHttpRequest.setHeaders(HeaderUtil.getHeaders(request));
     govHttpRequest.setMethod(request.getMethod());
     govHttpRequest.setUri(request.getRequestURI());
     return govHttpRequest;
-  }
-
-  private static Map<String, String> getHeaders(HttpServletRequest servletRequest) {
-    Enumeration<String> headerNames = servletRequest.getHeaderNames();
-    HttpHeaders httpHeaders = new HttpHeaders();
-    while (headerNames.hasMoreElements()) {
-      String headerName = headerNames.nextElement();
-      Enumeration<String> headerValues = servletRequest.getHeaders(headerName);
-      while (headerValues.hasMoreElements()) {
-        httpHeaders.add(headerName, headerValues.nextElement());
-      }
-    }
-    return httpHeaders.toSingleValueMap();
   }
 }

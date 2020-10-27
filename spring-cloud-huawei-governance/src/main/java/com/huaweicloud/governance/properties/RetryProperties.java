@@ -14,15 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.service;
+package com.huaweicloud.governance.properties;
 
-import com.huaweicloud.governance.policy.Policy;
+import java.util.Map;
 
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
-public interface PolicyService {
+import com.huaweicloud.governance.policy.RetryPolicy;
 
-  List<Policy> getAllPolicies(String mark);
+@Component
+@ConfigurationProperties("servicecomb")
+public class RetryProperties implements GovProperties<RetryPolicy> {
 
-  Policy getCustomPolicy(String kind, String mark);
+  Map<String, String> retry;
+
+  @Autowired
+  SerializeCache<RetryPolicy> cache;
+
+  public Map<String, String> getRetry() {
+    return retry;
+  }
+
+  public void setRetry(Map<String, String> retry) {
+    this.retry = retry;
+  }
+
+  public Map<String, RetryPolicy> covert() {
+    return cache.get(retry, RetryPolicy.class);
+  }
 }

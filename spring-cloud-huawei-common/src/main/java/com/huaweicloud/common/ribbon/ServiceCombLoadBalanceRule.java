@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.router.client.ribbon;
+package com.huaweicloud.common.ribbon;
 
+import java.util.Comparator;
 import java.util.List;
 
-import com.huaweicloud.router.client.track.RouterTrackContext;
-import com.huaweicloud.router.core.RouterFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.huaweicloud.common.cache.LastInvokeServerCache;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ZoneAvoidanceRule;
 
@@ -28,17 +29,25 @@ import com.netflix.loadbalancer.ZoneAvoidanceRule;
  * @Author GuoYl123
  * @Date 2019/10/11
  **/
-public class RouterLoadBalanceRule extends ZoneAvoidanceRule {
+public class ServiceCombLoadBalanceRule extends ZoneAvoidanceRule {
 
-  RouterDistributor distributor = new RouterDistributor();
+  @Autowired
+  private List<RibbonServerFilter> list;
+
+  boolean isSorted = false;
 
   @Override
   public Server choose(Object key) {
-    List<Server> serverList = RouterFilter
-        .getFilteredListOfServers(getLoadBalancer().getReachableServers(),
-            RouterTrackContext.getServiceName(),
-            RouterTrackContext.getRequestHeader(),
-            distributor);
-    return super.getPredicate().chooseRoundRobinAfterFiltering(serverList, key).orNull();
+    List<Server> serverList = getLoadBalancer().getReachableServers();
+    if (!isSorted) {
+      list.sort(Comparator.comparingInt(RibbonServerFilter::order));
+      isSorted = true;
+    }
+    for (RibbonServerFilter filter : list) {
+      serverList = filter.filter(serverList);
+    }
+    Server lastInvoke = super.getPredicate().chooseRoundRobinAfterFiltering(serverList, key).orNull();
+    LastInvokeServerCache.setServer(lastInvoke);
+    return lastInvoke;
   }
 }

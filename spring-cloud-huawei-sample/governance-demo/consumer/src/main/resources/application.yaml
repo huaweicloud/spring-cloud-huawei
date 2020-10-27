@@ -22,3 +22,7 @@ servicecomb:
     xxxxx: |
       match: demo-mark
       rate: 1
+  retry:
+    xxx: |
+      match: none
+      maxAttempts: 3

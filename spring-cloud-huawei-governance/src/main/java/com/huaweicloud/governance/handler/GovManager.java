@@ -17,6 +17,7 @@
 package com.huaweicloud.governance.handler;
 
 import com.huaweicloud.governance.policy.Policy;
+import com.huaweicloud.governance.policy.RetryPolicy;
 
 import io.github.resilience4j.decorators.Decorators;
 import io.github.resilience4j.decorators.Decorators.DecorateSupplier;
@@ -44,15 +45,35 @@ public class GovManager {
   @Autowired
   Map<String, GovHandler> handlers;
 
-  public Object process(List<Policy> policies, Supplier supplier) {
+  @Autowired
+  RetryHandler retryHandler;
+
+  public Object processServer(List<Policy> policies, Supplier supplier) {
     DecorateSupplier ds = Decorators.ofSupplier(supplier);
     for (Policy policy : policies) {
-      if (!policy.legal()) {
-        //todo: 避免每次请求打印
+      if (!policy.legal() || handlers.get(policy.handler()) == null) {
         LOGGER.warn("policy {} is not legal, will skip.", policy.name());
         continue;
       }
       ds = handlers.get(policy.handler()).process(ds, policy);
+    }
+    return Try.ofSupplier(ds.decorate())
+        .recover(throwable -> {
+          throw (RuntimeException) throwable;
+        }).get();
+  }
+
+  public Object processClient(List<Policy> policies, Supplier supplier) {
+    DecorateSupplier ds = Decorators.ofSupplier(supplier);
+    for (Policy policy : policies) {
+      if (!policy.legal() || retryHandler == null) {
+        LOGGER.warn("policy {} is not legal, will skip.", policy.name());
+        continue;
+      }
+      if (policy instanceof RetryPolicy) {
+        ds = retryHandler.process(ds, policy);
+        break;
+      }
     }
     return Try.ofSupplier(ds.decorate())
         .recover(throwable -> {

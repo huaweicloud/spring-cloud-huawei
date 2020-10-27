@@ -20,4 +20,9 @@ public class ConsumerController {
   public String hello() {
     return restTemplate.getForObject("http://provider/hello", String.class);
   }
+
+  @RequestMapping("/retry")
+  public String retry() {
+    return restTemplate.getForObject("http://provider/retry", String.class);
+  }
 }

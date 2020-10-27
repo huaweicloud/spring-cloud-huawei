@@ -14,15 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.service;
+package com.huaweicloud.governance.client.track;
 
-import com.huaweicloud.governance.policy.Policy;
+import com.huaweicloud.common.cache.LastInvokeServerCache;
+import com.netflix.loadbalancer.Server;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-public interface PolicyService {
+public class ServerExcluder {
 
-  List<Policy> getAllPolicies(String mark);
+  private boolean enabled;
 
-  Policy getCustomPolicy(String kind, String mark);
+  private final Set<Server> ignoreServers = new HashSet<>();
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
+
+  public Set<Server> getIgnoreServers() {
+    if (LastInvokeServerCache.getServer() != null) {
+      ignoreServers.add(LastInvokeServerCache.getServer());
+    }
+    return ignoreServers;
+  }
 }

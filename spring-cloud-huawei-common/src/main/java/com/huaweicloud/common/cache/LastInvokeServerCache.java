@@ -14,15 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.service;
 
-import com.huaweicloud.governance.policy.Policy;
+package com.huaweicloud.common.cache;
 
-import java.util.List;
+import com.netflix.loadbalancer.Server;
 
-public interface PolicyService {
+public class LastInvokeServerCache {
 
-  List<Policy> getAllPolicies(String mark);
+  private static ThreadLocal<Server> serverThreadLocal = new ThreadLocal<>();
 
-  Policy getCustomPolicy(String kind, String mark);
+  public static Server getServer() {
+    return serverThreadLocal.get();
+  }
+
+  public static void setServer(Server server) {
+    serverThreadLocal.set(server);
+  }
 }

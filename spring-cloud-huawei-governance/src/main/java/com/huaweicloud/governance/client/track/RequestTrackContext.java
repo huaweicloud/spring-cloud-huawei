@@ -14,15 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.service;
+package com.huaweicloud.governance.client.track;
 
 import com.huaweicloud.governance.policy.Policy;
 
 import java.util.List;
 
-public interface PolicyService {
+public class RequestTrackContext {
 
-  List<Policy> getAllPolicies(String mark);
+  private static ThreadLocal<ServerExcluder> serverThreadLocal = new ThreadLocal<>();
 
-  Policy getCustomPolicy(String kind, String mark);
+  private static ThreadLocal<List<Policy>> policyThreadLocal = new ThreadLocal<>();
+
+  public static void remove() {
+    serverThreadLocal.remove();
+    policyThreadLocal.remove();
+  }
+
+  public static List<Policy> getPolicies() {
+    return policyThreadLocal.get();
+  }
+
+  public static void setPolicies(List<Policy> policies) {
+    policyThreadLocal.set(policies);
+  }
+
+  public static ServerExcluder getServerExcluder() {
+    if (serverThreadLocal.get() == null) {
+      serverThreadLocal.set(new ServerExcluder());
+    }
+    return serverThreadLocal.get();
+  }
 }

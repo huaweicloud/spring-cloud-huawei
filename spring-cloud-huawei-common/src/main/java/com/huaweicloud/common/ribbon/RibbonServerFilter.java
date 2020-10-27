@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.service;
-
-import com.huaweicloud.governance.policy.Policy;
+package com.huaweicloud.common.ribbon;
 
 import java.util.List;
 
-public interface PolicyService {
+import com.netflix.loadbalancer.Server;
 
-  List<Policy> getAllPolicies(String mark);
+public interface RibbonServerFilter {
+  List<Server> filter(List<Server> list);
 
-  Policy getCustomPolicy(String kind, String mark);
+  int order();
 }

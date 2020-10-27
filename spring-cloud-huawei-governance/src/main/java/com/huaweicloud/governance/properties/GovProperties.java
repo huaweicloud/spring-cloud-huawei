@@ -14,15 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.service;
+package com.huaweicloud.governance.properties;
 
-import com.huaweicloud.governance.policy.Policy;
+import java.util.Map;
 
-import java.util.List;
-
-public interface PolicyService {
-
-  List<Policy> getAllPolicies(String mark);
-
-  Policy getCustomPolicy(String kind, String mark);
+public interface GovProperties<T> {
+  Map<String, T> covert();
 }

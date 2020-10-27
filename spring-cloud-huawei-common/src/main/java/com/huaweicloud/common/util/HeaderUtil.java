@@ -14,15 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.service;
+package com.huaweicloud.common.util;
 
-import com.huaweicloud.governance.policy.Policy;
+import java.util.Enumeration;
+import java.util.Map;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
-public interface PolicyService {
+import org.springframework.http.HttpHeaders;
 
-  List<Policy> getAllPolicies(String mark);
+public class HeaderUtil {
 
-  Policy getCustomPolicy(String kind, String mark);
+
+  public static Map<String, String> getHeaders(HttpServletRequest servletRequest) {
+    Enumeration<String> headerNames = servletRequest.getHeaderNames();
+    HttpHeaders httpHeaders = new HttpHeaders();
+    while (headerNames.hasMoreElements()) {
+      String headerName = headerNames.nextElement();
+      Enumeration<String> headerValues = servletRequest.getHeaders(headerName);
+      while (headerValues.hasMoreElements()) {
+        httpHeaders.add(headerName, headerValues.nextElement());
+      }
+    }
+    return httpHeaders.toSingleValueMap();
+  }
 }

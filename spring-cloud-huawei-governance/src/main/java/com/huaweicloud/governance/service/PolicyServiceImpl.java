@@ -24,8 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.huaweicloud.governance.policy.AbstractPolicy;
 import com.huaweicloud.governance.policy.Policy;
-import com.huaweicloud.governance.policy.RateLimitingPolicy;
-import com.huaweicloud.governance.properties.RateLimitProperties;
+import com.huaweicloud.governance.properties.GovProperties;
 
 import java.util.List;
 
@@ -34,36 +33,27 @@ public class PolicyServiceImpl implements PolicyService {
   private static final String MATCH_NONE = "none";
 
   @Autowired
-  private RateLimitProperties rateLimitProperties;
+  private List<GovProperties> propertiesList;
 
   @Override
   public List<Policy> getAllPolicies(String mark) {
     List<Policy> policies = new ArrayList<>();
-    Policy ratePolicy = this.getRateLimitPolicy(mark);
-    if (ratePolicy != null) {
-      policies.add(ratePolicy);
+    for (GovProperties properties : propertiesList) {
+      Policy ratePolicy = match(properties.covert(), mark);
+      if (ratePolicy != null) {
+        policies.add(ratePolicy);
+      }
     }
     return policies;
   }
 
   @Override
   public Policy getCustomPolicy(String kind, String mark) {
-    switch (kind) {
-      case "RateLimit":
-        return getRateLimitPolicy(mark);
-      case "CircuitBreaker":
-      default:
-        return null;
+    for (GovProperties properties : propertiesList) {
+      if (properties.getClass().getName().startsWith(kind)) {
+        return match(properties.covert(), mark);
+      }
     }
-  }
-
-  @Override
-  public Policy getRateLimitPolicy(String mark) {
-    return match(rateLimitProperties.covert(), mark);
-  }
-
-  @Override
-  public Policy getCircuitBreakerPolicy(String mark) {
     return null;
   }
 
