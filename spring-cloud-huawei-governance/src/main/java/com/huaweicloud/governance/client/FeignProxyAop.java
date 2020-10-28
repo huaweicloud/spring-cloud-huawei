@@ -16,9 +16,7 @@
  */
 package com.huaweicloud.governance.client;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -34,8 +32,6 @@ import com.huaweicloud.governance.policy.Policy;
 @Aspect
 public class FeignProxyAop {
 
-  private static final String THROWABLE_KEY = "TH";
-
   @Autowired
   private MatchersManager matchersManager;
 
@@ -47,20 +43,8 @@ public class FeignProxyAop {
   }
 
   @Around("pointCut()")
-  public Object aroundInvoke(ProceedingJoinPoint pjp) throws Throwable {
+  public Object aroundInvoke(ProceedingJoinPoint pjp) {
     List<Policy> policies = RequestTrackContext.getPolicies();
-    Map<String, Throwable> localContext = new HashMap<>();
-    Object result = govManager.processClient(policies, () -> {
-      try {
-        return pjp.proceed();
-      } catch (Throwable throwable) {
-        localContext.put(THROWABLE_KEY, throwable);
-      }
-      return null;
-    });
-    if (result == null && localContext.containsKey(THROWABLE_KEY)) {
-      throw localContext.get(THROWABLE_KEY);
-    }
-    return result;
+    return govManager.processClient(policies, pjp::proceed);
   }
 }

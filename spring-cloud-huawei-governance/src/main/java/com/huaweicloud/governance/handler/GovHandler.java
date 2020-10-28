@@ -17,7 +17,8 @@
 package com.huaweicloud.governance.handler;
 
 import com.huaweicloud.governance.policy.Policy;
-import io.github.resilience4j.decorators.Decorators.DecorateSupplier;
+
+import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
 
 /**
  * @Author GuoYl123
@@ -25,6 +26,6 @@ import io.github.resilience4j.decorators.Decorators.DecorateSupplier;
  **/
 public interface GovHandler {
 
-  DecorateSupplier process(DecorateSupplier supplier, Policy policy);
+  DecorateCheckedSupplier process(DecorateCheckedSupplier supplier, Policy policy);
 
 }

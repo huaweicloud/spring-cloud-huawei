@@ -16,6 +16,8 @@
  */
 package com.huaweicloud.governance.policy;
 
+import org.springframework.util.StringUtils;
+
 /**
  *  intervalFunction  失败时可以更改等待时间的函数
  *  retryOnResultPredicate  根据返回结果决定是否进行重试
@@ -23,23 +25,34 @@ package com.huaweicloud.governance.policy;
  *
  */
 public class RetryPolicy extends AbstractPolicy {
+
+  public static final int DEFAULT_MAX_ATTEMPTS = 3;
+
+  public static final int DEFAULT_WAIT_DURATION = 0;
+
+  public static final String DEFAULT_RETRY_ON_RESPONSE_STATUS = "502";
+
   //最多尝试次数
   private Integer maxAttempts;
 
   //每次重试尝试等待的时间，默认给0
-  private String waitDuration;
+  private Integer waitDuration;
 
+  //需要重试的http status, 逗号分隔
   private String retryOnResponseStatus;
 
-  //需要进行重试的异常列表，反射取异常
+  //todo: 需要进行重试的异常列表，反射取异常
   private String retryExceptions;
 
-  //需要进行忽略的异常列表
+  //todo: 需要进行忽略的异常列表
   private String ignoreExceptions;
 
   private boolean onSame;
 
   public String getRetryOnResponseStatus() {
+    if (StringUtils.isEmpty(retryOnResponseStatus)) {
+      return DEFAULT_RETRY_ON_RESPONSE_STATUS;
+    }
     return retryOnResponseStatus;
   }
 
@@ -48,6 +61,9 @@ public class RetryPolicy extends AbstractPolicy {
   }
 
   public Integer getMaxAttempts() {
+    if (maxAttempts == null) {
+      return DEFAULT_MAX_ATTEMPTS;
+    }
     return maxAttempts;
   }
 
@@ -55,11 +71,14 @@ public class RetryPolicy extends AbstractPolicy {
     this.maxAttempts = maxAttempts;
   }
 
-  public String getWaitDuration() {
+  public Integer getWaitDuration() {
+    if (waitDuration == null) {
+      return DEFAULT_WAIT_DURATION;
+    }
     return waitDuration;
   }
 
-  public void setWaitDuration(String waitDuration) {
+  public void setWaitDuration(Integer waitDuration) {
     this.waitDuration = waitDuration;
   }
 
@@ -91,16 +110,4 @@ public class RetryPolicy extends AbstractPolicy {
   public String handler() {
     return "GovRetry";
   }
-
-  //todo
-  @Override
-  public boolean legal() {
-    return true;
-  }
-
-  @Override
-  public boolean simple() {
-    return false;
-  }
-
 }

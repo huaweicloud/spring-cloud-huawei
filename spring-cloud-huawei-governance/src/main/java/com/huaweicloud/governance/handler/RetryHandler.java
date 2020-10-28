@@ -18,15 +18,16 @@ package com.huaweicloud.governance.handler;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import com.huaweicloud.governance.client.track.RequestTrackContext;
 import com.huaweicloud.governance.policy.Policy;
 import com.huaweicloud.governance.policy.RetryPolicy;
 
-import io.github.resilience4j.decorators.Decorators.DecorateSupplier;
+import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import io.github.resilience4j.retry.RetryRegistry;
@@ -45,31 +46,31 @@ public class RetryHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RetryHandler.class);
 
+  private Map<String, Retry> map = new HashMap<>();
+
   /**
    * @param supplier
    * @param policy
    * @return
    */
-  public DecorateSupplier process(DecorateSupplier supplier, Policy policy) {
-    RetryPolicy retryPolicy = (RetryPolicy) policy;
-    List<Integer> statusList;
-    if (retryPolicy.getRetryOnResponseStatus() == null) {
-      statusList = new ArrayList<>();
-      statusList.add(502);
-    } else {
-      statusList = Arrays.stream(retryPolicy.getRetryOnResponseStatus().split(","))
+  public DecorateCheckedSupplier process(DecorateCheckedSupplier supplier, Policy policy) {
+    Retry retry = map.get(policy.name());
+    if (retry == null) {
+      RetryPolicy retryPolicy = (RetryPolicy) policy;
+      List<Integer> statusList = Arrays.stream(retryPolicy.getRetryOnResponseStatus().split(","))
           .map(Integer::parseInt).collect(Collectors.toList());
-    }
-    RequestTrackContext.getServerExcluder().setEnabled(!retryPolicy.isOnSame());
-    RetryConfig config = RetryConfig.custom()
-        .maxAttempts(retryPolicy.getMaxAttempts())
-        .retryOnResult(getPredicate(statusList))
-        .retryExceptions(HttpServerErrorException.class)
-        .waitDuration(Duration.ofMillis(0))
-        .build();
+      RequestTrackContext.getServerExcluder().setEnabled(!retryPolicy.isOnSame());
+      RetryConfig config = RetryConfig.custom()
+          .maxAttempts(retryPolicy.getMaxAttempts())
+          .retryOnResult(getPredicate(statusList))
+          .retryExceptions(HttpServerErrorException.class)
+          .waitDuration(Duration.ofMillis(retryPolicy.getWaitDuration()))
+          .build();
 
-    RetryRegistry registry = RetryRegistry.of(config);
-    Retry retry = registry.retry(policy.name());
+      RetryRegistry registry = RetryRegistry.of(config);
+      retry = registry.retry(policy.name());
+      map.put(policy.name(), retry);
+    }
     return supplier.withRetry(retry);
   }
 

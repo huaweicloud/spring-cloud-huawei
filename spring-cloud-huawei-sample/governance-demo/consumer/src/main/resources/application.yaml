@@ -10,19 +10,28 @@ spring:
         address: http://127.0.0.1:30100
 servicecomb:
   match:
-    demo-mark: |
+    demo-rateLimiting: |
       matches:
         - apiPath:
             exact: "/hello"
-          method:
-            - GET
-            - POST
-          trafficMarkPolicy: once
+    demo-retry: |
+      matches:
+        - apiPath:
+            exact: "/retry"
+    demo-circuitBreaker: |
+      matches:
+        - apiPath:
+            exact: "/circuitBreaker"
   rateLimiting:
     xxxxx: |
-      match: demo-mark
+      match: demo-rateLimiting
       rate: 1
   retry:
     xxx: |
-      match: none
+      match: demo-retry
       maxAttempts: 3
+  circuitBreaker:
+    xxx: |
+      match: demo-circuitBreaker
+      minimumNumberOfCalls: 2
+      slidingWindowSize: 2

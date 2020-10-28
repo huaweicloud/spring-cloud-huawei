@@ -27,8 +27,4 @@ public interface Policy {
   String handler();
 
   String name();
-
-  boolean legal();
-
-  boolean simple();
 }

@@ -22,9 +22,7 @@ import com.huaweicloud.governance.handler.GovManager;
 import com.huaweicloud.governance.marker.GovHttpRequest;
 import com.huaweicloud.governance.policy.Policy;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,10 +31,9 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 
 /**
@@ -45,10 +42,6 @@ import io.github.resilience4j.ratelimiter.RequestNotPermitted;
  **/
 @Aspect
 public class InvokeProxyAop {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(InvokeProxyAop.class);
-
-  private static final String THROWABLE_KEY = "TH";
 
   @Autowired
   private MatchersManager matchersManager;
@@ -66,28 +59,21 @@ public class InvokeProxyAop {
     HttpServletResponse response = (HttpServletResponse) pjp.getArgs()[1];
     List<Policy> policies = matchersManager.match(convert(request));
     RequestTrackContext.setPolicies(policies);
-    Map<String, Throwable> localContext = new HashMap<>();
     Object result = null;
     try {
-      result = govManager.processServer(policies, () -> {
-        try {
-          return pjp.proceed();
-        } catch (Throwable throwable) {
-          localContext.put(THROWABLE_KEY, throwable);
-        }
-        return null;
-      });
+      result = govManager.processServer(policies, pjp::proceed);
     } catch (Throwable th) {
       if (th instanceof RequestNotPermitted) {
         response.setStatus(502);
         response.getWriter().print("rate limit !!");
+      } else if (th instanceof CallNotPermittedException) {
+        response.setStatus(502);
+        response.getWriter().print("circuitBreaker is open !!");
       } else {
-        localContext.put(THROWABLE_KEY, th);
+        throw th;
       }
-    }
-    RequestTrackContext.remove();
-    if (result == null && localContext.containsKey(THROWABLE_KEY)) {
-      throw localContext.get(THROWABLE_KEY);
+    } finally {
+      RequestTrackContext.remove();
     }
     return result;
   }

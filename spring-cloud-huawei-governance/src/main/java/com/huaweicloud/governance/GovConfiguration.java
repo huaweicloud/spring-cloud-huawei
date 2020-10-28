@@ -21,6 +21,7 @@ import com.huaweicloud.governance.client.GovRibbonServerFilter;
 import com.huaweicloud.governance.client.RestTemplateProxyAop;
 import com.huaweicloud.common.ribbon.ServiceCombLoadBalanceRule;
 import com.huaweicloud.governance.handler.RetryHandler;
+import com.huaweicloud.governance.properties.CircuitBreakerProperties;
 import com.huaweicloud.governance.properties.RetryProperties;
 import com.huaweicloud.governance.properties.SerializeCache;
 import com.huaweicloud.governance.service.MatchersService;
@@ -68,6 +69,11 @@ public class GovConfiguration {
   @Bean
   public RateLimitProperties rateLimitProperties() {
     return new RateLimitProperties();
+  }
+
+  @Bean
+  public CircuitBreakerProperties circuitBreakerProperties() {
+    return new CircuitBreakerProperties();
   }
 
   @Bean

@@ -28,4 +28,9 @@ public class ProviderController {
     response.setStatus(502);
     return null;
   }
+
+  @RequestMapping("/circuitBreaker")
+  public String circuitBreaker() {
+    throw new RuntimeException("circuitBreaker by provider.");
+  }
 }

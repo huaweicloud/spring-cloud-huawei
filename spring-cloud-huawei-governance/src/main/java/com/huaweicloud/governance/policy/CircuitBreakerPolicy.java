@@ -16,11 +16,31 @@
  */
 package com.huaweicloud.governance.policy;
 
+import org.springframework.util.StringUtils;
+
+import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig.SlidingWindowType;
+
 /**
  * @Author GuoYl123
  * @Date 2020/5/11
  **/
 public class CircuitBreakerPolicy extends AbstractPolicy {
+
+  public static final int DEFAULT_FAILURE_RATE_THRESHOLD = 50;
+
+  public static final int DEFAULT_SLOW_CALL_RATE_THRESHOLD = 100;
+
+  public static final int DEFAULT_WAIT_DURATION_IN_OPEN_STATUS = 60000;
+
+  //ms
+  public static final int DEFAULT_SLOW_CALL_DURATION_THRESHOLD = 60000;
+
+  // the number of permitted calls when the CircuitBreaker is half open.
+  public static final int DEFAULT_PERMITTED = 10;
+
+  public static final int DEFAULT_MINIMUM_NUMBER_CALLS = 100;
+
+  public static final int DEFAULT_SLIDING_WINDOW_SIZE = 100;
 
   private Integer failureRateThreshold;
 
@@ -34,7 +54,7 @@ public class CircuitBreakerPolicy extends AbstractPolicy {
 
   private Integer minimumNumberOfCalls;
 
-  private Integer slidingWindowType;
+  private String slidingWindowType;
 
   private Integer slidingWindowSize;
 
@@ -42,6 +62,9 @@ public class CircuitBreakerPolicy extends AbstractPolicy {
   }
 
   public Integer getFailureRateThreshold() {
+    if (StringUtils.isEmpty(failureRateThreshold)) {
+      return DEFAULT_FAILURE_RATE_THRESHOLD;
+    }
     return failureRateThreshold;
   }
 
@@ -50,6 +73,9 @@ public class CircuitBreakerPolicy extends AbstractPolicy {
   }
 
   public Integer getSlowCallRateThreshold() {
+    if (StringUtils.isEmpty(slowCallRateThreshold)) {
+      return DEFAULT_SLOW_CALL_RATE_THRESHOLD;
+    }
     return slowCallRateThreshold;
   }
 
@@ -58,6 +84,9 @@ public class CircuitBreakerPolicy extends AbstractPolicy {
   }
 
   public Integer getWaitDurationInOpenState() {
+    if (StringUtils.isEmpty(waitDurationInOpenState)) {
+      return DEFAULT_WAIT_DURATION_IN_OPEN_STATUS;
+    }
     return waitDurationInOpenState;
   }
 
@@ -66,6 +95,9 @@ public class CircuitBreakerPolicy extends AbstractPolicy {
   }
 
   public Integer getSlowCallDurationThreshold() {
+    if (StringUtils.isEmpty(slowCallDurationThreshold)) {
+      return DEFAULT_SLOW_CALL_DURATION_THRESHOLD;
+    }
     return slowCallDurationThreshold;
   }
 
@@ -74,6 +106,9 @@ public class CircuitBreakerPolicy extends AbstractPolicy {
   }
 
   public Integer getPermittedNumberOfCallsInHalfOpenState() {
+    if (StringUtils.isEmpty(permittedNumberOfCallsInHalfOpenState)) {
+      return DEFAULT_PERMITTED;
+    }
     return permittedNumberOfCallsInHalfOpenState;
   }
 
@@ -82,6 +117,9 @@ public class CircuitBreakerPolicy extends AbstractPolicy {
   }
 
   public Integer getMinimumNumberOfCalls() {
+    if (StringUtils.isEmpty(minimumNumberOfCalls)) {
+      return DEFAULT_MINIMUM_NUMBER_CALLS;
+    }
     return minimumNumberOfCalls;
   }
 
@@ -89,15 +127,28 @@ public class CircuitBreakerPolicy extends AbstractPolicy {
     this.minimumNumberOfCalls = minimumNumberOfCalls;
   }
 
-  public Integer getSlidingWindowType() {
-    return slidingWindowType;
+  public SlidingWindowType getSlidingWindowType() {
+    if (StringUtils.isEmpty(slidingWindowType)) {
+      return SlidingWindowType.COUNT_BASED;
+    }
+    switch (slidingWindowType) {
+      case "time":
+        return SlidingWindowType.TIME_BASED;
+      case "count":
+      default:
+        return SlidingWindowType.COUNT_BASED;
+    }
   }
 
-  public void setSlidingWindowType(Integer slidingWindowType) {
+  public void setSlidingWindowType(String slidingWindowType) {
     this.slidingWindowType = slidingWindowType;
   }
 
+  // time's unit is second
   public Integer getSlidingWindowSize() {
+    if (StringUtils.isEmpty(slidingWindowSize)) {
+      return DEFAULT_SLIDING_WINDOW_SIZE;
+    }
     return slidingWindowSize;
   }
 
@@ -110,13 +161,4 @@ public class CircuitBreakerPolicy extends AbstractPolicy {
     return "GovCircuitBreaker";
   }
 
-  @Override
-  public boolean legal() {
-    return true;
-  }
-
-  @Override
-  public boolean simple() {
-    return false;
-  }
 }

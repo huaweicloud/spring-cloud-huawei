@@ -16,16 +16,18 @@
  */
 package com.huaweicloud.governance.handler;
 
+import com.huaweicloud.governance.handler.ext.ClientRecoverPolicy;
+import com.huaweicloud.governance.handler.ext.ServerRecoverPolicy;
 import com.huaweicloud.governance.policy.Policy;
 import com.huaweicloud.governance.policy.RetryPolicy;
 
 import io.github.resilience4j.decorators.Decorators;
-import io.github.resilience4j.decorators.Decorators.DecorateSupplier;
+import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
+import io.vavr.CheckedFunction0;
 import io.vavr.control.Try;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,35 +41,42 @@ public class GovManager {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(GovManager.class);
 
-  /**
-   * 对于限流、熔断、等不同的治理
-   */
   @Autowired
   Map<String, GovHandler> handlers;
 
   @Autowired
   RetryHandler retryHandler;
 
-  public Object processServer(List<Policy> policies, Supplier supplier) {
-    DecorateSupplier ds = Decorators.ofSupplier(supplier);
+  @Autowired(required = false)
+  ServerRecoverPolicy serverRecoverPolicy;
+
+  @Autowired(required = false)
+  ClientRecoverPolicy clientRecoverPolicy;
+
+  public Object processServer(List<Policy> policies, CheckedFunction0 supplier) {
+    DecorateCheckedSupplier ds = Decorators.ofCheckedSupplier(supplier);
     for (Policy policy : policies) {
-      if (!policy.legal() || handlers.get(policy.handler()) == null) {
-        LOGGER.warn("policy {} is not legal, will skip.", policy.name());
+      if (handlers.get(policy.handler()) == null) {
+        LOGGER.debug("policy {} handlers is null, will skip", policy.name());
         continue;
       }
       ds = handlers.get(policy.handler()).process(ds, policy);
     }
-    return Try.ofSupplier(ds.decorate())
+    return Try.of(ds.decorate())
         .recover(throwable -> {
-          throw (RuntimeException) throwable;
+          if (serverRecoverPolicy == null) {
+            throw (RuntimeException) throwable;
+          } else {
+            return serverRecoverPolicy.apply((Throwable) throwable);
+          }
         }).get();
   }
 
-  public Object processClient(List<Policy> policies, Supplier supplier) {
-    DecorateSupplier ds = Decorators.ofSupplier(supplier);
+  public Object processClient(List<Policy> policies, CheckedFunction0 supplier) {
+    DecorateCheckedSupplier ds = Decorators.ofCheckedSupplier(supplier);
     for (Policy policy : policies) {
-      if (!policy.legal() || retryHandler == null) {
-        LOGGER.warn("policy {} is not legal, will skip.", policy.name());
+      if (retryHandler == null) {
+        LOGGER.debug("policy {} handlers is null, will skip", policy.name());
         continue;
       }
       if (policy instanceof RetryPolicy) {
@@ -75,9 +84,13 @@ public class GovManager {
         break;
       }
     }
-    return Try.ofSupplier(ds.decorate())
+    return Try.of(ds.decorate())
         .recover(throwable -> {
-          throw (RuntimeException) throwable;
+          if (clientRecoverPolicy == null) {
+            throw (RuntimeException) throwable;
+          } else {
+            return clientRecoverPolicy.apply((Throwable) throwable);
+          }
         }).get();
   }
 }

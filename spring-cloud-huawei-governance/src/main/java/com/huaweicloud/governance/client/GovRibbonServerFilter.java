@@ -31,7 +31,6 @@ public class GovRibbonServerFilter implements RibbonServerFilter {
    */
   @Override
   public List<Server> filter(List<Server> list) {
-
     List<Server> copyList = new ArrayList<>(list);
     if (RequestTrackContext.getServerExcluder().isEnabled()) {
       copyList.removeAll(RequestTrackContext.getServerExcluder().getIgnoreServers());
