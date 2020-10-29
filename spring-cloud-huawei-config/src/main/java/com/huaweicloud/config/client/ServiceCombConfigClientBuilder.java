@@ -17,6 +17,7 @@
 
 package com.huaweicloud.config.client;
 
+import com.huaweicloud.common.transport.DealHeaderUtil;
 import com.huaweicloud.common.transport.DefaultHttpTransport;
 import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
 import com.huaweicloud.common.transport.ServiceCombRBACProperties;
@@ -64,9 +65,9 @@ public class ServiceCombConfigClientBuilder {
   }
 
   public ServiceCombConfigClient createServiceCombConfigClient() {
-    DefaultHttpTransport httpTransport = DefaultHttpTransport.getInstance(serviceCombSSLProperties);
-    httpTransport.setRBACToken(serviceCombRBACProperties, serviceCombConfigProperties.getDiscoveryAddress());
-    httpTransport.setServiceCombAkSkProperties(serviceCombAkSkProperties);
+    DefaultHttpTransport httpTransport = new DefaultHttpTransport(serviceCombSSLProperties, serviceCombAkSkProperties,
+        serviceCombRBACProperties, serviceCombConfigProperties.getDiscoveryAddress(),
+        DealHeaderUtil.LONG_POLLING_SOCKET_TIMEOUT);
     if ("kie".equalsIgnoreCase(serviceCombConfigProperties.getServerType())) {
       return new KieClient(serviceCombConfigProperties.getServerAddr(), httpTransport);
     }

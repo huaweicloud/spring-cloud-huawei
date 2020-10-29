@@ -17,6 +17,7 @@
 
 package com.huaweicloud.servicecomb.discovery.client;
 
+import com.huaweicloud.common.transport.DealHeaderUtil;
 import com.huaweicloud.common.transport.DefaultHttpTransport;
 import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
 import com.huaweicloud.common.transport.ServiceCombRBACProperties;
@@ -69,9 +70,8 @@ public class ServiceCombClientBuilder {
    * @return
    */
   public ServiceCombClient createServiceCombClient() {
-    DefaultHttpTransport httpTransport = DefaultHttpTransport.getInstance(serviceCombSSLProperties);
-    httpTransport.setRBACToken(serviceCombRBACProperties, url);
-    httpTransport.setServiceCombAkSkProperties(serviceCombAkSkProperties);
+    DefaultHttpTransport httpTransport = new DefaultHttpTransport(serviceCombSSLProperties, serviceCombAkSkProperties,
+        serviceCombRBACProperties, url, DealHeaderUtil.SOCKET_TIMEOUT);
     return new ServiceCombClient(url, httpTransport);
   }
 }

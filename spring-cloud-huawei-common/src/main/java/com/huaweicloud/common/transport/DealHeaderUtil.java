@@ -18,6 +18,7 @@
 package com.huaweicloud.common.transport;
 
 import com.huaweicloud.common.auth.AuthHeaderUtils;
+
 import java.util.Map;
 
 import org.apache.http.client.methods.HttpUriRequest;
@@ -37,7 +38,9 @@ public class DealHeaderUtil {
 
   public static final int CONNECTION_REQUEST_TIMEOUT = 5000;
 
-  public static final int SOCKET_TIMEOUT = 50000;
+  public static final int LONG_POLLING_SOCKET_TIMEOUT = 50000;
+
+  public static final int SOCKET_TIMEOUT = 5000;
 
   public static final int MAX_TOTAL = 1000;
 
@@ -80,6 +83,4 @@ public class DealHeaderUtil {
     httpRequest.addHeader(X_DOMAIN_NAME, DEFAULT_X_DOMAIN_NAME);
     httpRequest.addHeader(CONTENT_TYPE, CONTENT_TYPE_APPLICATION_JSON);
   }
-
-
 }
