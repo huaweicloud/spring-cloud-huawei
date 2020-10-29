@@ -8,3 +8,14 @@ spring:
     servicecomb:
       discovery:
         address: http://127.0.0.1:30100
+
+servicecomb:
+  match:
+    demo-circuitBreaker: |
+      matches:
+        - apiPath:
+            exact: "/circuitBreaker"
+  circuitBreaker:
+    xxx: |
+      match: demo-circuitBreaker
+      minimumNumberOfCalls: 2

@@ -14,40 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance;
+package com.huaweicloud.governance.client;
 
-import com.huaweicloud.governance.marker.GovHttpRequest;
-import com.huaweicloud.governance.policy.Policy;
-import com.huaweicloud.governance.service.MatchersService;
-import com.huaweicloud.governance.service.PolicyService;
+import java.util.List;
 
-import java.util.Map;
-
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * @Author GuoYl123
- * @Date 2020/5/11
- **/
-public class MatchersManager {
+import com.huaweicloud.governance.MatchersManager;
+import com.huaweicloud.governance.client.track.RequestTrackContext;
+import com.huaweicloud.governance.GovManager;
+import com.huaweicloud.governance.policy.Policy;
+
+@Aspect
+public class FeignProxyAop {
 
   @Autowired
-  private MatchersService matchersService;
+  private MatchersManager matchersManager;
 
   @Autowired
-  private PolicyService policyService;
+  private GovManager govManager;
 
-  public MatchersManager() {
+  @Pointcut("execution(* org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient.execute(..))")
+  public void pointCut() {
   }
 
-  public Map<String, Policy> match(GovHttpRequest request) {
-    /**
-     * 1.获取该请求携带的marker
-     */
-    String mark = matchersService.getMatchStr(request);
-    /**
-     * 2.通过 marker获取到所有的policy
-     */
-    return policyService.getAllPolicies(mark);
+  @Around("pointCut()")
+  public Object aroundInvoke(ProceedingJoinPoint pjp) {
+    List<Policy> policies = RequestTrackContext.getPolicies();
+    return govManager.processClient(policies, pjp::proceed);
   }
 }

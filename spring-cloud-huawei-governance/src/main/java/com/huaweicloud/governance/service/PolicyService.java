@@ -19,14 +19,11 @@ package com.huaweicloud.governance.service;
 import com.huaweicloud.governance.policy.Policy;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PolicyService {
 
-  List<Policy> getAllPolicies(String mark);
+  Map<String, Policy> getAllPolicies(String mark);
 
   Policy getCustomPolicy(String kind, String mark);
-
-  Policy getRateLimitPolicy(String mark);
-
-  Policy getCircuitBreakerPolicy(String mark);
 }

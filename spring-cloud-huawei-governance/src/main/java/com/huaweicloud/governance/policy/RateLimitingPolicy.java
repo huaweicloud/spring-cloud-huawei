@@ -17,11 +17,21 @@
 package com.huaweicloud.governance.policy;
 
 /**
+ * resilience4j 采用类似令牌桶的思想，其原理:
+ * 每隔limitRefreshPeriod的时间会加入limitForPeriod个新许可
+ * 如果获取不到新的许可(已经触发限流)，当前线程会park，最多等待timeoutDuration的时间
+ * 采用默认单位为ms
  *
  * @Author GuoYl123
  * @Date 2020/5/11
  **/
 public class RateLimitingPolicy extends AbstractPolicy {
+
+  public static final int DEFAULT_TIMEOUT_DURATION = 0;
+
+  public static final int DEFAULT_LIMIT_REFRESH_PERIOD = 1000;
+
+  public static final int DEFAULT_LIMIT_FOR_PERIOD = 1000;
 
   private Integer timeoutDuration;
 
@@ -33,6 +43,9 @@ public class RateLimitingPolicy extends AbstractPolicy {
   private Integer rate;
 
   public Integer getTimeoutDuration() {
+    if (timeoutDuration == null) {
+      timeoutDuration = DEFAULT_TIMEOUT_DURATION;
+    }
     return timeoutDuration;
   }
 
@@ -41,6 +54,9 @@ public class RateLimitingPolicy extends AbstractPolicy {
   }
 
   public Integer getLimitRefreshPeriod() {
+    if (limitRefreshPeriod == null) {
+      limitRefreshPeriod = DEFAULT_LIMIT_REFRESH_PERIOD;
+    }
     return limitRefreshPeriod;
   }
 
@@ -49,6 +65,9 @@ public class RateLimitingPolicy extends AbstractPolicy {
   }
 
   public Integer getLimitForPeriod() {
+    if (limitForPeriod == null) {
+      limitForPeriod = DEFAULT_LIMIT_FOR_PERIOD;
+    }
     return limitForPeriod;
   }
 
@@ -73,12 +92,12 @@ public class RateLimitingPolicy extends AbstractPolicy {
   }
 
   @Override
-  public boolean legal() {
-    return (timeoutDuration != null && limitRefreshPeriod != null && limitForPeriod != null) || rate != null;
-  }
-
-  @Override
-  public boolean simple() {
-    return !(timeoutDuration != null && limitRefreshPeriod != null && limitForPeriod != null) && rate != null;
+  public String toString() {
+    return "RateLimitingPolicy{" +
+        "timeoutDuration=" + timeoutDuration +
+        ", limitRefreshPeriod=" + limitRefreshPeriod +
+        ", limitForPeriod=" + limitForPeriod +
+        ", rate=" + rate + " req/s" +
+        '}';
   }
 }

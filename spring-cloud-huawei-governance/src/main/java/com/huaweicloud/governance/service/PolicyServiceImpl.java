@@ -17,6 +17,7 @@
 package com.huaweicloud.governance.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -24,8 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.huaweicloud.governance.policy.AbstractPolicy;
 import com.huaweicloud.governance.policy.Policy;
-import com.huaweicloud.governance.policy.RateLimitingPolicy;
-import com.huaweicloud.governance.properties.RateLimitProperties;
+import com.huaweicloud.governance.properties.GovProperties;
 
 import java.util.List;
 
@@ -34,36 +34,29 @@ public class PolicyServiceImpl implements PolicyService {
   private static final String MATCH_NONE = "none";
 
   @Autowired
-  private RateLimitProperties rateLimitProperties;
+  private List<GovProperties> propertiesList;
 
   @Override
-  public List<Policy> getAllPolicies(String mark) {
-    List<Policy> policies = new ArrayList<>();
-    Policy ratePolicy = this.getRateLimitPolicy(mark);
-    if (ratePolicy != null) {
-      policies.add(ratePolicy);
+  public Map<String, Policy> getAllPolicies(String mark) {
+    Map<String, Policy> policies = new HashMap<>();
+    for (GovProperties properties : propertiesList) {
+      Policy ratePolicy = match(properties.covert(), mark);
+      if (ratePolicy != null) {
+        String name = ratePolicy.name();
+        name = name.substring(name.lastIndexOf('.') + 1);
+        policies.put(name, ratePolicy);
+      }
     }
     return policies;
   }
 
   @Override
   public Policy getCustomPolicy(String kind, String mark) {
-    switch (kind) {
-      case "RateLimit":
-        return getRateLimitPolicy(mark);
-      case "CircuitBreaker":
-      default:
-        return null;
+    for (GovProperties properties : propertiesList) {
+      if (properties.getClass().getName().startsWith(kind)) {
+        return match(properties.covert(), mark);
+      }
     }
-  }
-
-  @Override
-  public Policy getRateLimitPolicy(String mark) {
-    return match(rateLimitProperties.covert(), mark);
-  }
-
-  @Override
-  public Policy getCircuitBreakerPolicy(String mark) {
     return null;
   }
 
