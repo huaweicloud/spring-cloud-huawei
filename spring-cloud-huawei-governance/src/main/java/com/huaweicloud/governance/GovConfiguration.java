@@ -20,7 +20,9 @@ import com.huaweicloud.governance.client.FeignProxyAop;
 import com.huaweicloud.governance.client.GovRibbonServerFilter;
 import com.huaweicloud.governance.client.RestTemplateProxyAop;
 import com.huaweicloud.common.ribbon.ServiceCombLoadBalanceRule;
+import com.huaweicloud.governance.handler.BulkheadHandler;
 import com.huaweicloud.governance.handler.RetryHandler;
+import com.huaweicloud.governance.properties.BulkheadProperties;
 import com.huaweicloud.governance.properties.CircuitBreakerProperties;
 import com.huaweicloud.governance.properties.RetryProperties;
 import com.huaweicloud.governance.properties.SerializeCache;
@@ -29,7 +31,6 @@ import com.huaweicloud.governance.service.MatchersServiceImpl;
 import com.huaweicloud.governance.service.PolicyService;
 import com.huaweicloud.governance.service.PolicyServiceImpl;
 import com.huaweicloud.governance.handler.CircuitBreakerHandler;
-import com.huaweicloud.governance.handler.GovManager;
 import com.huaweicloud.governance.handler.RateLimitingHandler;
 import com.huaweicloud.governance.properties.MatchProperties;
 import com.huaweicloud.governance.marker.RequestProcessor;
@@ -82,6 +83,11 @@ public class GovConfiguration {
   }
 
   @Bean
+  public BulkheadProperties bulkheadProperties() {
+    return new BulkheadProperties();
+  }
+
+  @Bean
   public MatchersManager matchersManager() {
     return new MatchersManager();
   }
@@ -119,6 +125,11 @@ public class GovConfiguration {
   @Bean(name = "GovRetry")
   public RetryHandler retryHandler() {
     return new RetryHandler();
+  }
+
+  @Bean(name = "GovBulkhead")
+  public BulkheadHandler bulkheadHandler() {
+    return new BulkheadHandler();
   }
 
   @Bean(name = "exactOperator")

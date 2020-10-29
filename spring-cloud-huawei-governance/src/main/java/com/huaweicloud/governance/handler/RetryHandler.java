@@ -42,7 +42,7 @@ import org.springframework.web.client.HttpServerErrorException;
 
 import feign.Response;
 
-public class RetryHandler {
+public class RetryHandler extends AbstractGovHandler<Retry> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RetryHandler.class);
 
@@ -53,25 +53,30 @@ public class RetryHandler {
    * @param policy
    * @return
    */
+  @Override
   public DecorateCheckedSupplier process(DecorateCheckedSupplier supplier, Policy policy) {
-    Retry retry = map.get(policy.name());
-    if (retry == null) {
-      RetryPolicy retryPolicy = (RetryPolicy) policy;
-      List<Integer> statusList = Arrays.stream(retryPolicy.getRetryOnResponseStatus().split(","))
-          .map(Integer::parseInt).collect(Collectors.toList());
-      RequestTrackContext.getServerExcluder().setEnabled(!retryPolicy.isOnSame());
-      RetryConfig config = RetryConfig.custom()
-          .maxAttempts(retryPolicy.getMaxAttempts())
-          .retryOnResult(getPredicate(statusList))
-          .retryExceptions(HttpServerErrorException.class)
-          .waitDuration(Duration.ofMillis(retryPolicy.getWaitDuration()))
-          .build();
-
-      RetryRegistry registry = RetryRegistry.of(config);
-      retry = registry.retry(policy.name());
-      map.put(policy.name(), retry);
-    }
+    Retry retry = getActuator(policy.name(), (RetryPolicy) policy, this::getRetry);
     return supplier.withRetry(retry);
+  }
+
+  @Override
+  public HandlerType type() {
+    return HandlerType.CLIENT;
+  }
+
+  private Retry getRetry(RetryPolicy retryPolicy) {
+    List<Integer> statusList = Arrays.stream(retryPolicy.getRetryOnResponseStatus().split(","))
+        .map(Integer::parseInt).collect(Collectors.toList());
+    RequestTrackContext.getServerExcluder().setEnabled(!retryPolicy.isOnSame());
+    RetryConfig config = RetryConfig.custom()
+        .maxAttempts(retryPolicy.getMaxAttempts())
+        .retryOnResult(getPredicate(statusList))
+        .retryExceptions(HttpServerErrorException.class)
+        .waitDuration(Duration.ofMillis(retryPolicy.getWaitDuration()))
+        .build();
+
+    RetryRegistry registry = RetryRegistry.of(config);
+    return registry.retry(retryPolicy.name());
   }
 
   private Predicate getPredicate(List<Integer> statusList) {

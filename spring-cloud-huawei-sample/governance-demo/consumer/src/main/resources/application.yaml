@@ -22,6 +22,10 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/circuitBreaker"
+    demo-bulkhead: |
+      matches:
+        - apiPath:
+            exact: "/bulkhead"
   rateLimiting:
     xxxxx: |
       match: demo-rateLimiting
@@ -35,3 +39,7 @@ servicecomb:
       match: demo-circuitBreaker
       minimumNumberOfCalls: 2
       slidingWindowSize: 2
+  bulkhead:
+    xxx: |
+      match: demo-bulkhead
+      maxConcurrentCalls: 1

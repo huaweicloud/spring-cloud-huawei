@@ -25,49 +25,45 @@ import io.github.resilience4j.ratelimiter.RateLimiterConfig;
 import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
 
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
  * @Author GuoYl123
  * @Date 2020/5/11
  **/
-public class RateLimitingHandler implements GovHandler {
-
-  private Map<String, RateLimiter> map = new HashMap<>();
+public class RateLimitingHandler extends AbstractGovHandler<RateLimiter> {
 
   @Override
   public DecorateCheckedSupplier process(DecorateCheckedSupplier supplier, Policy policy) {
-    return supplier.withRateLimiter(getRateLimiter((RateLimitingPolicy) policy));
+    RateLimiter rateLimiter = getActuator(policy.name(), (RateLimitingPolicy) policy, this::getRateLimiter);
+    return supplier.withRateLimiter(rateLimiter);
+  }
+
+  @Override
+  public HandlerType type() {
+    return HandlerType.SERVER;
   }
 
   /**
-   * todo: 考虑并发
    * @param policy
    * @return
    */
   private RateLimiter getRateLimiter(RateLimitingPolicy policy) {
-    RateLimiter limiter = map.get(policy.name());
-    if (limiter == null) {
-      RateLimiterConfig config;
-      if (policy.getRate() != null) {
-        config = RateLimiterConfig.custom()
-            .limitForPeriod(policy.getRate())
-            .limitRefreshPeriod(Duration.ofMillis(RateLimitingPolicy.DEFAULT_LIMIT_REFRESH_PERIOD))
-            .timeoutDuration(Duration.ofMillis(RateLimitingPolicy.DEFAULT_TIMEOUT_DURATION))
-            .build();
-      } else {
-        config = RateLimiterConfig.custom()
-            .limitForPeriod(policy.getLimitForPeriod())
-            .limitRefreshPeriod(Duration.ofMillis(policy.getLimitRefreshPeriod()))
-            .timeoutDuration(Duration.ofMillis(policy.getTimeoutDuration()))
-            .build();
-      }
-      RateLimiterRegistry rateLimiterRegistry = RateLimiterRegistry.of(config);
-      limiter = rateLimiterRegistry.rateLimiter(policy.name());
-      map.put(policy.name(), limiter);
+    RateLimiterConfig config;
+    if (policy.getRate() != null) {
+      config = RateLimiterConfig.custom()
+          .limitForPeriod(policy.getRate())
+          .limitRefreshPeriod(Duration.ofMillis(RateLimitingPolicy.DEFAULT_LIMIT_REFRESH_PERIOD))
+          .timeoutDuration(Duration.ofMillis(RateLimitingPolicy.DEFAULT_TIMEOUT_DURATION))
+          .build();
+    } else {
+      config = RateLimiterConfig.custom()
+          .limitForPeriod(policy.getLimitForPeriod())
+          .limitRefreshPeriod(Duration.ofMillis(policy.getLimitRefreshPeriod()))
+          .timeoutDuration(Duration.ofMillis(policy.getTimeoutDuration()))
+          .build();
     }
-    return limiter;
+    RateLimiterRegistry rateLimiterRegistry = RateLimiterRegistry.of(config);
+    return rateLimiterRegistry.rateLimiter(policy.name());
   }
 }

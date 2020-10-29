@@ -18,7 +18,6 @@ package com.huaweicloud.governance;
 
 import com.huaweicloud.common.util.HeaderUtil;
 import com.huaweicloud.governance.client.track.RequestTrackContext;
-import com.huaweicloud.governance.handler.GovManager;
 import com.huaweicloud.governance.marker.GovHttpRequest;
 import com.huaweicloud.governance.policy.Policy;
 
@@ -33,6 +32,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import io.github.resilience4j.bulkhead.BulkheadFullException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 
@@ -69,9 +69,11 @@ public class InvokeProxyAop {
       } else if (th instanceof CallNotPermittedException) {
         response.setStatus(502);
         response.getWriter().print("circuitBreaker is open !!");
-      } else {
-        throw th;
+      } else if (th instanceof BulkheadFullException) {
+        response.setStatus(502);
+        response.getWriter().print("Bulkhead is full and does not permit further calls!");
       }
+      throw th;
     } finally {
       RequestTrackContext.remove();
     }

@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.huaweicloud.governance.MatchersManager;
 import com.huaweicloud.governance.client.track.RequestTrackContext;
-import com.huaweicloud.governance.handler.GovManager;
+import com.huaweicloud.governance.GovManager;
 import com.huaweicloud.governance.policy.Policy;
 
 

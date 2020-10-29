@@ -28,4 +28,5 @@ public interface GovHandler {
 
   DecorateCheckedSupplier process(DecorateCheckedSupplier supplier, Policy policy);
 
+  HandlerType type();
 }

@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.handler;
+package com.huaweicloud.governance;
 
+import com.huaweicloud.governance.handler.GovHandler;
+import com.huaweicloud.governance.handler.HandlerType;
 import com.huaweicloud.governance.handler.ext.ClientRecoverPolicy;
 import com.huaweicloud.governance.handler.ext.ServerRecoverPolicy;
 import com.huaweicloud.governance.policy.Policy;
-import com.huaweicloud.governance.policy.RetryPolicy;
 
 import io.github.resilience4j.decorators.Decorators;
 import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
@@ -39,13 +40,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  **/
 public class GovManager {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(GovManager.class);
-
   @Autowired
   Map<String, GovHandler> handlers;
-
-  @Autowired
-  RetryHandler retryHandler;
 
   @Autowired(required = false)
   ServerRecoverPolicy serverRecoverPolicy;
@@ -56,8 +52,8 @@ public class GovManager {
   public Object processServer(List<Policy> policies, CheckedFunction0 supplier) {
     DecorateCheckedSupplier ds = Decorators.ofCheckedSupplier(supplier);
     for (Policy policy : policies) {
-      if (handlers.get(policy.handler()) == null) {
-        LOGGER.debug("policy {} handlers is null, will skip", policy.name());
+      if (handlers.get(policy.handler()) == null ||
+          handlers.get(policy.handler()).type() == HandlerType.CLIENT) {
         continue;
       }
       ds = handlers.get(policy.handler()).process(ds, policy);
@@ -75,14 +71,11 @@ public class GovManager {
   public Object processClient(List<Policy> policies, CheckedFunction0 supplier) {
     DecorateCheckedSupplier ds = Decorators.ofCheckedSupplier(supplier);
     for (Policy policy : policies) {
-      if (retryHandler == null) {
-        LOGGER.debug("policy {} handlers is null, will skip", policy.name());
+      if (handlers.get(policy.handler()) == null ||
+          handlers.get(policy.handler()).type() == HandlerType.SERVER) {
         continue;
       }
-      if (policy instanceof RetryPolicy) {
-        ds = retryHandler.process(ds, policy);
-        break;
-      }
+      ds = handlers.get(policy.handler()).process(ds, policy);
     }
     return Try.of(ds.decorate())
         .recover(throwable -> {

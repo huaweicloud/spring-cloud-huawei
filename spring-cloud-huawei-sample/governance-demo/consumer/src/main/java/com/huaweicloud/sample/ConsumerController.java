@@ -36,6 +36,10 @@ public class ConsumerController {
       return "ok";
     }
     throw new RuntimeException("test error");
-    // return restTemplate.getForObject("http://provider/circuitBreaker", String.class);
+  }
+
+  @RequestMapping("/bulkhead")
+  public String bulkhead() {
+    return restTemplate.getForObject("http://provider/hello", String.class);
   }
 }
