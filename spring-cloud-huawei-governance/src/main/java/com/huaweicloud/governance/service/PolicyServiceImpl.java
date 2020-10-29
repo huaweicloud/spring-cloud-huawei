@@ -17,6 +17,7 @@
 package com.huaweicloud.governance.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -36,12 +37,14 @@ public class PolicyServiceImpl implements PolicyService {
   private List<GovProperties> propertiesList;
 
   @Override
-  public List<Policy> getAllPolicies(String mark) {
-    List<Policy> policies = new ArrayList<>();
+  public Map<String, Policy> getAllPolicies(String mark) {
+    Map<String, Policy> policies = new HashMap<>();
     for (GovProperties properties : propertiesList) {
       Policy ratePolicy = match(properties.covert(), mark);
       if (ratePolicy != null) {
-        policies.add(ratePolicy);
+        String name = ratePolicy.name();
+        name = name.substring(name.lastIndexOf('.') + 1);
+        policies.put(name, ratePolicy);
       }
     }
     return policies;

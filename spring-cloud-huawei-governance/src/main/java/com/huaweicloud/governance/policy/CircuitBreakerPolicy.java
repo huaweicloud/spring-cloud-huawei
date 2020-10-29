@@ -63,7 +63,7 @@ public class CircuitBreakerPolicy extends AbstractPolicy {
 
   public Integer getFailureRateThreshold() {
     if (StringUtils.isEmpty(failureRateThreshold)) {
-      return DEFAULT_FAILURE_RATE_THRESHOLD;
+      failureRateThreshold = DEFAULT_FAILURE_RATE_THRESHOLD;
     }
     return failureRateThreshold;
   }
@@ -74,7 +74,7 @@ public class CircuitBreakerPolicy extends AbstractPolicy {
 
   public Integer getSlowCallRateThreshold() {
     if (StringUtils.isEmpty(slowCallRateThreshold)) {
-      return DEFAULT_SLOW_CALL_RATE_THRESHOLD;
+      slowCallRateThreshold = DEFAULT_SLOW_CALL_RATE_THRESHOLD;
     }
     return slowCallRateThreshold;
   }
@@ -85,7 +85,7 @@ public class CircuitBreakerPolicy extends AbstractPolicy {
 
   public Integer getWaitDurationInOpenState() {
     if (StringUtils.isEmpty(waitDurationInOpenState)) {
-      return DEFAULT_WAIT_DURATION_IN_OPEN_STATUS;
+      waitDurationInOpenState = DEFAULT_WAIT_DURATION_IN_OPEN_STATUS;
     }
     return waitDurationInOpenState;
   }
@@ -96,7 +96,7 @@ public class CircuitBreakerPolicy extends AbstractPolicy {
 
   public Integer getSlowCallDurationThreshold() {
     if (StringUtils.isEmpty(slowCallDurationThreshold)) {
-      return DEFAULT_SLOW_CALL_DURATION_THRESHOLD;
+      slowCallDurationThreshold = DEFAULT_SLOW_CALL_DURATION_THRESHOLD;
     }
     return slowCallDurationThreshold;
   }
@@ -107,7 +107,7 @@ public class CircuitBreakerPolicy extends AbstractPolicy {
 
   public Integer getPermittedNumberOfCallsInHalfOpenState() {
     if (StringUtils.isEmpty(permittedNumberOfCallsInHalfOpenState)) {
-      return DEFAULT_PERMITTED;
+      permittedNumberOfCallsInHalfOpenState = DEFAULT_PERMITTED;
     }
     return permittedNumberOfCallsInHalfOpenState;
   }
@@ -118,7 +118,7 @@ public class CircuitBreakerPolicy extends AbstractPolicy {
 
   public Integer getMinimumNumberOfCalls() {
     if (StringUtils.isEmpty(minimumNumberOfCalls)) {
-      return DEFAULT_MINIMUM_NUMBER_CALLS;
+      minimumNumberOfCalls = DEFAULT_MINIMUM_NUMBER_CALLS;
     }
     return minimumNumberOfCalls;
   }
@@ -129,7 +129,7 @@ public class CircuitBreakerPolicy extends AbstractPolicy {
 
   public SlidingWindowType getSlidingWindowType() {
     if (StringUtils.isEmpty(slidingWindowType)) {
-      return SlidingWindowType.COUNT_BASED;
+      slidingWindowType = "count";
     }
     switch (slidingWindowType) {
       case "time":
@@ -147,7 +147,7 @@ public class CircuitBreakerPolicy extends AbstractPolicy {
   // time's unit is second
   public Integer getSlidingWindowSize() {
     if (StringUtils.isEmpty(slidingWindowSize)) {
-      return DEFAULT_SLIDING_WINDOW_SIZE;
+      slidingWindowSize = DEFAULT_SLIDING_WINDOW_SIZE;
     }
     return slidingWindowSize;
   }
@@ -161,4 +161,17 @@ public class CircuitBreakerPolicy extends AbstractPolicy {
     return "GovCircuitBreaker";
   }
 
+  @Override
+  public String toString() {
+    return "CircuitBreakerPolicy{" +
+        "failureRateThreshold=" + failureRateThreshold +
+        ", slowCallRateThreshold=" + slowCallRateThreshold +
+        ", waitDurationInOpenState=" + waitDurationInOpenState +
+        ", slowCallDurationThreshold=" + slowCallDurationThreshold +
+        ", permittedNumberOfCallsInHalfOpenState=" + permittedNumberOfCallsInHalfOpenState +
+        ", minimumNumberOfCalls=" + minimumNumberOfCalls +
+        ", slidingWindowType='" + slidingWindowType + '\'' +
+        ", slidingWindowSize=" + slidingWindowSize +
+        '}';
+  }
 }

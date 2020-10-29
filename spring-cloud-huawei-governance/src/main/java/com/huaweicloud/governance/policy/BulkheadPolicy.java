@@ -18,7 +18,7 @@ public class BulkheadPolicy extends AbstractPolicy {
 
   public Integer getMaxConcurrentCalls() {
     if (maxConcurrentCalls == null) {
-      return DEFAULT_MAX_CONCURRENT_CALLS;
+      maxConcurrentCalls = DEFAULT_MAX_CONCURRENT_CALLS;
     }
     return maxConcurrentCalls;
   }
@@ -29,7 +29,7 @@ public class BulkheadPolicy extends AbstractPolicy {
 
   public Integer getMaxWaitDuration() {
     if (maxWaitDuration == null) {
-      return DEFAULT_MAX_WAIT_DURATION;
+      maxWaitDuration = DEFAULT_MAX_WAIT_DURATION;
     }
     return maxWaitDuration;
   }
@@ -41,5 +41,13 @@ public class BulkheadPolicy extends AbstractPolicy {
   @Override
   public String handler() {
     return "GovBulkhead";
+  }
+
+  @Override
+  public String toString() {
+    return "BulkheadPolicy{" +
+        "maxConcurrentCalls=" + maxConcurrentCalls +
+        ", maxWaitDuration=" + maxWaitDuration +
+        '}';
   }
 }

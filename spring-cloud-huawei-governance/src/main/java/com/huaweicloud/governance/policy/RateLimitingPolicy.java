@@ -44,7 +44,7 @@ public class RateLimitingPolicy extends AbstractPolicy {
 
   public Integer getTimeoutDuration() {
     if (timeoutDuration == null) {
-      return DEFAULT_TIMEOUT_DURATION;
+      timeoutDuration = DEFAULT_TIMEOUT_DURATION;
     }
     return timeoutDuration;
   }
@@ -55,7 +55,7 @@ public class RateLimitingPolicy extends AbstractPolicy {
 
   public Integer getLimitRefreshPeriod() {
     if (limitRefreshPeriod == null) {
-      return DEFAULT_LIMIT_REFRESH_PERIOD;
+      limitRefreshPeriod = DEFAULT_LIMIT_REFRESH_PERIOD;
     }
     return limitRefreshPeriod;
   }
@@ -66,7 +66,7 @@ public class RateLimitingPolicy extends AbstractPolicy {
 
   public Integer getLimitForPeriod() {
     if (limitForPeriod == null) {
-      return DEFAULT_LIMIT_FOR_PERIOD;
+      limitForPeriod = DEFAULT_LIMIT_FOR_PERIOD;
     }
     return limitForPeriod;
   }
@@ -89,5 +89,15 @@ public class RateLimitingPolicy extends AbstractPolicy {
   @Override
   public String handler() {
     return "GovRateLimiting";
+  }
+
+  @Override
+  public String toString() {
+    return "RateLimitingPolicy{" +
+        "timeoutDuration=" + timeoutDuration +
+        ", limitRefreshPeriod=" + limitRefreshPeriod +
+        ", limitForPeriod=" + limitForPeriod +
+        ", rate=" + rate + " req/s" +
+        '}';
   }
 }

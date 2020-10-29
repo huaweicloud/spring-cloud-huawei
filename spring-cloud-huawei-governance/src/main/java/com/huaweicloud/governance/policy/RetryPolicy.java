@@ -51,7 +51,7 @@ public class RetryPolicy extends AbstractPolicy {
 
   public String getRetryOnResponseStatus() {
     if (StringUtils.isEmpty(retryOnResponseStatus)) {
-      return DEFAULT_RETRY_ON_RESPONSE_STATUS;
+      retryOnResponseStatus = DEFAULT_RETRY_ON_RESPONSE_STATUS;
     }
     return retryOnResponseStatus;
   }
@@ -62,7 +62,7 @@ public class RetryPolicy extends AbstractPolicy {
 
   public Integer getMaxAttempts() {
     if (maxAttempts == null) {
-      return DEFAULT_MAX_ATTEMPTS;
+      maxAttempts = DEFAULT_MAX_ATTEMPTS;
     }
     return maxAttempts;
   }
@@ -73,7 +73,7 @@ public class RetryPolicy extends AbstractPolicy {
 
   public Integer getWaitDuration() {
     if (waitDuration == null) {
-      return DEFAULT_WAIT_DURATION;
+      waitDuration = DEFAULT_WAIT_DURATION;
     }
     return waitDuration;
   }
@@ -109,5 +109,17 @@ public class RetryPolicy extends AbstractPolicy {
   @Override
   public String handler() {
     return "GovRetry";
+  }
+
+  @Override
+  public String toString() {
+    return "RetryPolicy{" +
+        "maxAttempts=" + maxAttempts +
+        ", waitDuration=" + waitDuration +
+        ", retryOnResponseStatus='" + retryOnResponseStatus + '\'' +
+        ", retryExceptions='" + retryExceptions + '\'' +
+        ", ignoreExceptions='" + ignoreExceptions + '\'' +
+        ", onSame=" + onSame +
+        '}';
   }
 }
