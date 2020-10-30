@@ -28,6 +28,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
 import org.junit.Before;
 import org.junit.Test;
+
 import com.huaweicloud.common.exception.RemoteServerUnavailableException;
 
 import mockit.Deencapsulation;
@@ -57,11 +58,10 @@ public class DefaultHttpTransportTest {
   }
 
   @Test
-  public void getInstance() {
-    DefaultHttpTransport instance = DefaultHttpTransport.getInstance(null);
+  public void newInstance() {
+    DefaultHttpTransport instance = new DefaultHttpTransport(null, null,
+        null, null, DealHeaderUtil.SOCKET_TIMEOUT);
     assertNotNull(instance);
-    DefaultHttpTransport instance2 = DefaultHttpTransport.getInstance(null);
-    assertEquals(instance, instance2);
   }
 
   @Test

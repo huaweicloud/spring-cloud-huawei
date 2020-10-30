@@ -65,15 +65,14 @@ public class DefaultHttpTransport implements HttpTransport {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DefaultHttpTransport.class);
 
-  private volatile static DefaultHttpTransport DEFAULT_HTTP_TRANSPORT;
-
   private ServiceCombAkSkProperties serviceCombAkSkProperties;
 
   private HttpClient httpClient;
 
   public void setRBACToken(ServiceCombRBACProperties serviceCombRBACProperties,
       String urls) {
-    if (StringUtils.isEmpty(serviceCombRBACProperties.getName()) ||
+    if (serviceCombRBACProperties == null ||
+        StringUtils.isEmpty(serviceCombRBACProperties.getName()) ||
         StringUtils.isEmpty(serviceCombRBACProperties.getPassword())) {
       return;
     }
@@ -116,14 +115,23 @@ public class DefaultHttpTransport implements HttpTransport {
     }
   }
 
-  private DefaultHttpTransport(ServiceCombSSLProperties serviceCombSSLProperties) {
+  public DefaultHttpTransport(ServiceCombSSLProperties serviceCombSSLProperties,
+      ServiceCombAkSkProperties serviceCombAkSkProperties,
+      ServiceCombRBACProperties serviceCombRBACProperties,
+      String urls, Integer socketTimeout) {
+    this(serviceCombSSLProperties, socketTimeout);
+    setServiceCombAkSkProperties(serviceCombAkSkProperties);
+    setRBACToken(serviceCombRBACProperties, urls);
+  }
+
+  public DefaultHttpTransport(ServiceCombSSLProperties serviceCombSSLProperties, Integer socketTimeout) {
     SSLContext sslContext = SecretUtil.getSSLContext(serviceCombSSLProperties);
 
     RequestConfig config = RequestConfig.custom()
         .setConnectTimeout(DealHeaderUtil.CONNECT_TIMEOUT)
         .setConnectionRequestTimeout(
             DealHeaderUtil.CONNECTION_REQUEST_TIMEOUT)
-        .setSocketTimeout(DealHeaderUtil.SOCKET_TIMEOUT).build();
+        .setSocketTimeout(socketTimeout).build();
 
     //register http/https socket factory
     Registry<ConnectionSocketFactory> connectionSocketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
@@ -146,18 +154,6 @@ public class DefaultHttpTransport implements HttpTransport {
         disableCookieManagement();
 
     this.httpClient = httpClientBuilder.build();
-  }
-
-  public static DefaultHttpTransport getInstance(
-      ServiceCombSSLProperties serviceCombSSLProperties) {
-    if (null == DEFAULT_HTTP_TRANSPORT) {
-      synchronized (DefaultHttpTransport.class) {
-        if (null == DEFAULT_HTTP_TRANSPORT) {
-          DEFAULT_HTTP_TRANSPORT = new DefaultHttpTransport(serviceCombSSLProperties);
-        }
-      }
-    }
-    return DEFAULT_HTTP_TRANSPORT;
   }
 
   @Override
