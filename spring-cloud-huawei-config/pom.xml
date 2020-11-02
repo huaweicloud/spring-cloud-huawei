@@ -55,6 +55,10 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-aop</artifactId>
     </dependency>
+      <dependency>
+          <groupId>com.huaweicloud</groupId>
+          <artifactId>spring-cloud-huawei-servicecomb-discovery</artifactId>
+      </dependency>
   </dependencies>
 
 </project>

@@ -24,6 +24,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.huaweicloud.common.cache.RegisterCache;
+import com.huaweicloud.common.log.StructuredLog;
+import com.huaweicloud.common.log.logConstantValue;
+import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.huaweicloud.common.exception.RemoteOperationException;
@@ -115,7 +120,8 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
       refreshRecord.setLastMD5(md5Value);
       Set<String> changeData = contextRefresher.refresh();
       if (changeData != null && !changeData.isEmpty()) {
-        LOGGER.info("config data changed  = {}", changeData);
+//        LOGGER.info("config data changed  = {}", changeData);
+        LOGGER.info(generateStructureLog(serviceCombConfigProperties, changeData));
         applicationEventPublisher.publishEvent(new ConfigRefreshEvent(this, changeData));
       }
     }
@@ -124,6 +130,29 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
   private boolean isLongPolling() {
     return serviceCombConfigProperties.getServerType().equals("kie") && serviceCombConfigProperties
         .getEnableLongPolling();
+  }
+
+  private String generateStructureLog(ServiceCombConfigProperties serviceCombConfigProperties, Set<String> changeData) {
+    StructuredLog log = new StructuredLog();
+    long curTime = System.currentTimeMillis();
+    log.setLevel(logConstantValue.LOG_LEVEL_INFO);
+    log.setModule(logConstantValue.MODULE_CONFIG);
+    log.setEvent(logConstantValue.EVENT_POLL);
+    log.setTimestamp(curTime);
+    log.setMsg("config data changed  = :"+ changeData.toString());
+    log.setService(serviceCombConfigProperties.getServiceName());
+    log.setVersion(serviceCombConfigProperties.getVersion());
+    log.setEnv(serviceCombConfigProperties.getEnv());
+    log.setApp(serviceCombConfigProperties.getAppName());
+    log.setInstance(RegisterCache.getInstanceID());
+    log.setSystem(logConstantValue.SYSTEM_SERVICECOMB);
+    try {
+      String jasonDataLog  = JsonUtils.OBJ_MAPPER.writeValueAsString(log);
+      return jasonDataLog;
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   @Override

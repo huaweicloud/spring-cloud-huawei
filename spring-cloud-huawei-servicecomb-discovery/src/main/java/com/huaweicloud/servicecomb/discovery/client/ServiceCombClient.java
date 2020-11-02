@@ -20,12 +20,12 @@ package com.huaweicloud.servicecomb.discovery.client;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.huaweicloud.common.log.logConstantValue;
+import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
+import com.huaweicloud.servicecomb.discovery.log.GenerateLog;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ByteArrayEntity;
@@ -33,6 +33,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.util.StringUtils;
@@ -81,6 +82,9 @@ public class ServiceCombClient {
 
   private HttpTransport httpTransport;
 
+  @Autowired
+  private ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
+
   /**
    * Get a single instance
    *
@@ -116,7 +120,6 @@ public class ServiceCombClient {
     }
   }
 
-
   public MicroserviceInstancesResponse getServiceCenterInstances()
       throws RemoteOperationException {
     Response response = new Response();
@@ -127,6 +130,8 @@ public class ServiceCombClient {
         MicroserviceInstancesResponse result = JsonUtils.OBJ_MAPPER
             .readValue(response.getContent(), MicroserviceInstancesResponse.class);
         LOGGER.info("getServiceCenterInstances result=" + result);
+        LOGGER.info(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_INFO,
+            "getServiceCenterInstances success.", logConstantValue.EVENT_REQUEST));
         return result;
       }
       throw new RemoteOperationException(
@@ -158,6 +163,8 @@ public class ServiceCombClient {
           .sendPostRequest(buildURI("/registry/microservices"), stringEntity);
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.info(response.getContent());
+        LOGGER.info(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_INFO,
+            "registry microservices success.", logConstantValue.EVENT_REGISTER));
         HashMap<String, String> result = objectMapper
             .readValue(response.getContent(), HashMap.class);
         if (null != result) {
@@ -192,11 +199,15 @@ public class ServiceCombClient {
           .sendGetRequest(addParam2URI(path, "microservice", null, microservice));
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.info(response.getContent());
+        LOGGER.info(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_INFO,
+            "getServiceId success.", logConstantValue.EVENT_REQUEST));
         HashMap<String, String> result = JsonUtils.OBJ_MAPPER
             .readValue(response.getContent(), HashMap.class);
         return result.get("serviceId");
       } else if (response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
         LOGGER.info(response.getContent());
+        LOGGER.info(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_INFO,
+            "getServiceId fail.", logConstantValue.EVENT_REQUEST));
         return null;
       } else {
         throw new RemoteOperationException(
@@ -220,6 +231,8 @@ public class ServiceCombClient {
             .readValue(response.getContent(), SchemaResponse.class);
       } else if (response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
         LOGGER.info(response.getContent());
+        LOGGER.info(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_INFO,
+            "getSchemas fail.", logConstantValue.EVENT_REQUEST));
         return null;
       } else {
         throw new RemoteOperationException(
@@ -253,6 +266,8 @@ public class ServiceCombClient {
               stringEntity);
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.info(response.getContent());
+        LOGGER.info(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_INFO,
+            "registerInstance success.", logConstantValue.EVENT_REGISTER));
         HashMap<String, String> result = objectMapper
             .readValue(response.getContent(), HashMap.class);
         return result.get("instanceId");
@@ -287,6 +302,8 @@ public class ServiceCombClient {
           .sendDeleteRequest(formatUrl);
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.info("deRegister success.");
+        LOGGER.info(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_INFO,
+            "registerInstance success", logConstantValue.EVENT_RETRY));
         return true;
       } else {
         throw new RemoteOperationException(
@@ -358,13 +375,21 @@ public class ServiceCombClient {
         LOGGER.debug(
             "read response failed. status:" + response.getStatusCode() + "; message:" + response
                 .getStatusMessage() + "; content:" + response.getContent());
+        LOGGER.debug(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_DEBUG,
+            "read response failed." + response.getContent(), logConstantValue.EVENT_REQUEST));
       }
     } catch (URISyntaxException e) {
       LOGGER.warn("build url failed.", e);
+      LOGGER.debug(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_WARN,
+          "build url failed.", logConstantValue.EVENT_REQUEST));
     } catch (IOException e) {
       LOGGER.warn("read response failed. " + response);
+      LOGGER.debug(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_WARN,
+          "read response failed.", logConstantValue.EVENT_REQUEST));
     } catch (RemoteServerUnavailableException e) {
       LOGGER.warn("get instances failed.", e);
+      LOGGER.debug(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_WARN,
+          "get instances failed.", logConstantValue.EVENT_REQUEST));
     }
     return null;
   }
@@ -379,6 +404,8 @@ public class ServiceCombClient {
               buildURI("/registry/microservices/" + serviceId + "/instances/" + instanceId));
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.info(response.getContent());
+        LOGGER.info(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_INFO,
+            "get microservices success.", logConstantValue.EVENT_REQUEST));
         result = JsonUtils.OBJ_MAPPER
             .readValue(response.getContent(), MicroserviceInstanceSingleResponse.class);
       } else {
@@ -407,11 +434,15 @@ public class ServiceCombClient {
           .sendPutRequest(buildURI("/registry/heartbeats"), stringEntity);
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.debug("heartbeat success.");
+        LOGGER.debug(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_DEBUG,
+            "heartbeat success.", logConstantValue.EVENT_HEARTBEAT));
         return HeardBeatStatus.SUCCESS;
       } else if (response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
         LOGGER.error(
             "heartbeat to service center failed. status:" + response.getStatusCode() + "; message:"
                 + response.getStatusMessage() + "; content:" + response.getContent());
+        LOGGER.error(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_ERROR,
+            "heartbeat to service center failed", logConstantValue.EVENT_HEARTBEAT));
         return HeardBeatStatus.FAILED;
       }
       throw new IOException();
@@ -435,6 +466,8 @@ public class ServiceCombClient {
           stringEntity);
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.info(" update instance status success.");
+        LOGGER.info(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_INFO,
+            "update instance status success", logConstantValue.EVENT_UPDATE));
         return true;
       }
       throw new RemoteOperationException(
@@ -481,13 +514,19 @@ public class ServiceCombClient {
       response = httpTransport.sendPutRequest(formatUrl, byteArrayEntity);
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.info("register schema {}/{} success.", microserviceId, schemaId);
+        LOGGER.info(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_INFO,
+            "register schema success.", logConstantValue.EVENT_CREATE));
         return true;
       }
       LOGGER.error("Register schema {}/{} failed, code:{} , msg:{} ", microserviceId, schemaId,
           response.getStatusCode(), response.getContent());
+      LOGGER.error(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_ERROR,
+          "Register schema failed.", logConstantValue.EVENT_CREATE));
       return false;
     } catch (JsonProcessingException e) {
       LOGGER.error("registerSchema serialization failed : {}", e.getMessage());
+      LOGGER.error(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_ERROR,
+          "registerSchema serialization failed.", logConstantValue.EVENT_CREATE));
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
     } catch (RemoteServerUnavailableException e) {

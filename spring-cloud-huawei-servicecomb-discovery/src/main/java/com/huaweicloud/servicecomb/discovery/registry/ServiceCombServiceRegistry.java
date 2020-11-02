@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import com.huaweicloud.common.log.logConstantValue;
+import com.huaweicloud.servicecomb.discovery.log.GenerateLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,9 +103,13 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
           startWatch();
         }
         LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
+        LOGGER.info(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_INFO,
+            "register success.", logConstantValue.EVENT_CREATE));
         heartbeatScheduler.add(registration);
       } catch (Throwable e) {
         LOGGER.error("Unexpected exception in register. ", e);
+        LOGGER.error(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_ERROR,
+            "register failed.", logConstantValue.EVENT_CREATE));
       }
     });
   }
@@ -117,6 +123,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
       serviceCombWatcher.start(url);
     } catch (URISyntaxException e) {
       LOGGER.error("parse url error");
+      LOGGER.error(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_ERROR,
+          "parse url error.", logConstantValue.EVENT_WATCH));
     }
   }
 
@@ -151,6 +159,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
         serviceCombClient.toggle();
         LOGGER.warn(
             "register failed, will retry. please check config file. message=" + e.getMessage());
+        LOGGER.warn(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_WARN,
+            "register failed.", logConstantValue.EVENT_POLL));
       }
     }
   }
@@ -179,6 +189,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
         LOGGER.warn(
             "schemas {} is changed , won't registry. if want to overwrite schema please upgrade version.",
             schema.getSchemaId());
+        LOGGER.warn(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_WARN,
+            "schemas is changed , won't registry.", logConstantValue.EVENT_UPDATE));
       }
       localSchemas.remove(schema.getSchemaId());
     });
@@ -193,6 +205,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
           .deRegisterInstance(RegisterCache.getServiceID(), RegisterCache.getInstanceID());
     } catch (ServiceCombException e) {
       LOGGER.error("deRegisterInstance failed", e);
+      LOGGER.error(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_ERROR,
+          "deRegisterInstance failed.", logConstantValue.EVENT_CREATE));
     }
   }
 
@@ -200,6 +214,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
   @Override
   public void close() {
     LOGGER.info("close");
+    LOGGER.info(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_INFO,
+        "close.", logConstantValue.EVENT_CLOSE));
   }
 
   @Override
@@ -208,6 +224,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
       serviceCombClient.updateInstanceStatus(serviceID, instanceID, status);
     } catch (ServiceCombException e) {
       LOGGER.error("setStatus failed", e);
+      LOGGER.info(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_INFO,
+          "setStatus failed.", logConstantValue.EVENT_CREATE));
     }
   }
 
@@ -221,6 +239,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
       }
     } catch (ServiceCombException e) {
       LOGGER.error("getStatus failed", e);
+      LOGGER.info(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_INFO,
+          "getStatus failed.", logConstantValue.EVENT_UPDATE));
     }
     return null;
   }

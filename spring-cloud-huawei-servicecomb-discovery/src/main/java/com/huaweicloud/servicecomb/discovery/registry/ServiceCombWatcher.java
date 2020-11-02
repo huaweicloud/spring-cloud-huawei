@@ -18,6 +18,7 @@
 package com.huaweicloud.servicecomb.discovery.registry;
 
 import com.huaweicloud.common.cache.TokenCache;
+import com.huaweicloud.common.log.logConstantValue;
 import com.huaweicloud.common.transport.BackOff;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.common.util.SecretUtil;
@@ -39,6 +40,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import com.huaweicloud.servicecomb.discovery.log.GenerateLog;
 import org.java_websocket.client.WebSocketClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,6 +98,8 @@ public class ServiceCombWatcher {
         return;
       }
       LOGGER.info("retrying to establish websocket connecting.");
+      LOGGER.info(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_INFO,
+          "heartbeat success.", logConstantValue.EVENT_WATCH));
       connect();
     });
   }
@@ -110,6 +114,8 @@ public class ServiceCombWatcher {
         webSocketClient.connect();
       } catch (IllegalStateException e) {
         LOGGER.debug("establish websocket connect failed.", e);
+        LOGGER.debug(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_DEBUG,
+            "establish websocket connect failed..", logConstantValue.LOG_LEVEL_ERROR));
         return;
       }
       backOff.waitingAndBackoff();
@@ -148,7 +154,7 @@ public class ServiceCombWatcher {
     }
     WebSocketClient webSocketClient;
     try {
-      webSocketClient = new ServiceCombWebSocketClient(url, signedHeader, eventBus::publish);
+      webSocketClient = new ServiceCombWebSocketClient(url, signedHeader, eventBus::publish, serviceCombDiscoveryProperties);
     } catch (URISyntaxException e) {
       LOGGER.error("parse url error");
       return null;

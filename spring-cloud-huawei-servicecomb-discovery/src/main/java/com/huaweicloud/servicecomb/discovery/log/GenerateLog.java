@@ -15,53 +15,43 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.config.client;
-
-import static org.junit.Assert.assertEquals;
+package com.huaweicloud.servicecomb.discovery.log;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.huaweicloud.common.cache.RegisterCache;
 import com.huaweicloud.common.log.StructuredLog;
 import com.huaweicloud.common.log.logConstantValue;
-import com.huaweicloud.config.ConfigWatch;
-import io.vertx.core.json.Json;
+import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 import org.apache.servicecomb.foundation.common.utils.JsonUtils;
-import org.junit.Test;
 
 /**
- * @Author wangqijun
- * @Date 20:42 2019-10-27
+ * @Author zyl
+ * @Date 16:09 2019-10-30
  **/
-public class ConfigWatchTest {
+public class GenerateLog {
 
-
-  @Test
-  public void isRunning() {
-    ConfigWatch configWatch = new ConfigWatch();
-    assertEquals(configWatch.isRunning(), false);
-  }
-
-  @Test
-  public void isAutoStartup() {
-    ConfigWatch configWatch = new ConfigWatch();
-    assertEquals(configWatch.isAutoStartup(), true);
-  }
-
-  @Test
-  public void testLog() throws JsonProcessingException {
+  //生成结构化日志
+  public static String generateStructureLog(ServiceCombDiscoveryProperties serviceCombConfigProperties,
+      String logLevel, String msg, String Event) {
     StructuredLog log = new StructuredLog();
     long curTime = System.currentTimeMillis();
-    log.setLevel(logConstantValue.LOG_LEVEL_INFO);
-    log.setModule(logConstantValue.MODULE_CONFIG);
-    log.setEvent(logConstantValue.EVENT_POLL);
+    log.setLevel(logLevel);
+    log.setModule(logConstantValue.MODULE_DISCOVERY);
+    log.setEvent(Event);
     log.setTimestamp(curTime);
-    log.setMsg("");
-    log.setService("price");
-    log.setVersion("1.0.1");
-    log.setEnv("");
-    log.setApp("app");
-    log.setInstance("13245312564");
+    log.setMsg(msg);
+    log.setService(serviceCombConfigProperties.getServiceName());
+    log.setVersion(serviceCombConfigProperties.getVersion());
+    log.setEnv(serviceCombConfigProperties.getEnvironment());
+    log.setApp(serviceCombConfigProperties.getAppName());
+    log.setInstance(RegisterCache.getInstanceID());
     log.setSystem(logConstantValue.SYSTEM_SERVICECOMB);
-    String jasonDataLog  = JsonUtils.OBJ_MAPPER.writeValueAsString(log);
-    System.out.println(jasonDataLog);
+    try {
+      String jasonDataLog  = JsonUtils.OBJ_MAPPER.writeValueAsString(log);
+      return jasonDataLog;
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 }
