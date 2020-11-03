@@ -14,11 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.service;
+package com.huaweicloud.governance.client;
 
-import com.huaweicloud.governance.marker.GovHttpRequest;
+import java.util.ArrayList;
+import java.util.List;
 
-public interface MatchersService {
+import com.huaweicloud.common.ribbon.RibbonServerFilter;
+import com.huaweicloud.governance.client.track.RequestTrackContext;
+import com.netflix.loadbalancer.Server;
 
-  String getMatchStr(GovHttpRequest govHttpRequest);
+public class GovRibbonServerFilter implements RibbonServerFilter {
+
+  /**
+   * @param list
+   * @return
+   */
+  @Override
+  public List<Server> filter(List<Server> list) {
+    List<Server> copyList = new ArrayList<>(list);
+    if (RequestTrackContext.getServerExcluder().isEnabled()) {
+      copyList.removeAll(RequestTrackContext.getServerExcluder().getIgnoreServers());
+      if (!copyList.isEmpty()) {
+        return copyList;
+      }
+    }
+    return list;
+  }
+
+  @Override
+  public int order() {
+    return 0;
+  }
 }

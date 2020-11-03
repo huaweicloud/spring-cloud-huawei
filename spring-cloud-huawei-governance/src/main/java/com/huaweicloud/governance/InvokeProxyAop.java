@@ -16,13 +16,12 @@
  */
 package com.huaweicloud.governance;
 
-import com.huaweicloud.governance.handler.GovManager;
+import com.huaweicloud.common.util.HeaderUtil;
+import com.huaweicloud.governance.client.track.RequestTrackContext;
 import com.huaweicloud.governance.marker.GovHttpRequest;
 import com.huaweicloud.governance.policy.Policy;
 
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,8 +34,9 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 
+import io.github.resilience4j.bulkhead.BulkheadFullException;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 
 /**
@@ -48,7 +48,11 @@ public class InvokeProxyAop {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(InvokeProxyAop.class);
 
-  private static final String THROWABLE_KEY = "TH";
+  private static final String RATE_LIMITING_POLICY_NAME = "RateLimitingPolicy";
+
+  private static final String CIRCUIT_BREAKER_POLICY_NAME = "CircuitBreakerPolicy";
+
+  private static final String BULKHEAD_POLICY_NAME = "BulkheadPolicy";
 
   @Autowired
   private MatchersManager matchersManager;
@@ -63,51 +67,43 @@ public class InvokeProxyAop {
   @Around("pointCut()")
   public Object aroundInvoke(ProceedingJoinPoint pjp) throws Throwable {
     HttpServletRequest request = (HttpServletRequest) pjp.getArgs()[0];
-    List<Policy> policies = matchersManager.match(convert(request));
-    Map<String, Throwable> localContext = new HashMap<>();
+    HttpServletResponse response = (HttpServletResponse) pjp.getArgs()[1];
+    Map<String, Policy> policies = matchersManager.match(convert(request));
+    RequestTrackContext.setPolicies(new ArrayList(policies.values()));
     Object result = null;
     try {
-      result = govManager.process(policies, () -> {
-        try {
-          return pjp.proceed();
-        } catch (Throwable throwable) {
-          localContext.put(THROWABLE_KEY, throwable);
-        }
-        return null;
-      });
+      result = govManager.processServer(RequestTrackContext.getPolicies(), pjp::proceed);
     } catch (Throwable th) {
-      HttpServletResponse response = (HttpServletResponse) pjp.getArgs()[1];
+      LOGGER.debug("request error, detail info print : {}", request);
       if (th instanceof RequestNotPermitted) {
         response.setStatus(502);
-        response.getWriter().print("rate limit !!");
+        response.getWriter().print("rate limit!");
+        LOGGER.warn("the request is rate limit by policy : {}",
+            policies.get(RATE_LIMITING_POLICY_NAME));
+      } else if (th instanceof CallNotPermittedException) {
+        response.setStatus(502);
+        response.getWriter().print("circuitBreaker is open!");
+        LOGGER.warn("circuitBreaker is open by policy : {}",
+            policies.get(CIRCUIT_BREAKER_POLICY_NAME));
+      } else if (th instanceof BulkheadFullException) {
+        response.setStatus(502);
+        response.getWriter().print("bulkhead is full and does not permit further calls!");
+        LOGGER.warn("bulkhead is full and does not permit further calls by policy : {}",
+            policies.get(BULKHEAD_POLICY_NAME));
       } else {
-        localContext.put(THROWABLE_KEY, th);
+        throw th;
       }
-    }
-    if (result == null && localContext.containsKey(THROWABLE_KEY)) {
-      throw localContext.get(THROWABLE_KEY);
+    } finally {
+      RequestTrackContext.remove();
     }
     return result;
   }
 
   private GovHttpRequest convert(HttpServletRequest request) {
     GovHttpRequest govHttpRequest = new GovHttpRequest();
-    govHttpRequest.setHeaders(getHeaders(request));
+    govHttpRequest.setHeaders(HeaderUtil.getHeaders(request));
     govHttpRequest.setMethod(request.getMethod());
     govHttpRequest.setUri(request.getRequestURI());
     return govHttpRequest;
-  }
-
-  private static Map<String, String> getHeaders(HttpServletRequest servletRequest) {
-    Enumeration<String> headerNames = servletRequest.getHeaderNames();
-    HttpHeaders httpHeaders = new HttpHeaders();
-    while (headerNames.hasMoreElements()) {
-      String headerName = headerNames.nextElement();
-      Enumeration<String> headerValues = servletRequest.getHeaders(headerName);
-      while (headerValues.hasMoreElements()) {
-        httpHeaders.add(headerName, headerValues.nextElement());
-      }
-    }
-    return httpHeaders.toSingleValueMap();
   }
 }

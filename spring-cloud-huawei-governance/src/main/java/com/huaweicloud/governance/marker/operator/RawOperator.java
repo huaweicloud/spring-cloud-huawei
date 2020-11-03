@@ -17,5 +17,6 @@
 package com.huaweicloud.governance.marker.operator;
 
 import java.util.HashMap;
+
 public class RawOperator extends HashMap<String, String> {
 }

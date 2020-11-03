@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.service;
+package com.huaweicloud.governance.properties;
 
-import com.huaweicloud.governance.marker.GovHttpRequest;
+import java.util.Map;
 
-public interface MatchersService {
-
-  String getMatchStr(GovHttpRequest govHttpRequest);
+public interface GovProperties<T> {
+  Map<String, T> covert();
 }

@@ -14,19 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.handler;
+package com.huaweicloud.governance.client.track;
 
 import com.huaweicloud.governance.policy.Policy;
 
-import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
+import java.util.List;
 
-/**
- * @Author GuoYl123
- * @Date 2020/5/11
- **/
-public interface GovHandler {
+public class RequestTrackContext {
 
-  DecorateCheckedSupplier process(DecorateCheckedSupplier supplier, Policy policy);
+  private static ThreadLocal<ServerExcluder> serverThreadLocal = new ThreadLocal<>();
 
-  HandlerType type();
+  private static ThreadLocal<List<Policy>> policyThreadLocal = new ThreadLocal<>();
+
+  public static void remove() {
+    serverThreadLocal.remove();
+    policyThreadLocal.remove();
+  }
+
+  public static List<Policy> getPolicies() {
+    return policyThreadLocal.get();
+  }
+
+  public static void setPolicies(List<Policy> policies) {
+    policyThreadLocal.set(policies);
+  }
+
+  public static ServerExcluder getServerExcluder() {
+    if (serverThreadLocal.get() == null) {
+      serverThreadLocal.set(new ServerExcluder());
+    }
+    return serverThreadLocal.get();
+  }
 }

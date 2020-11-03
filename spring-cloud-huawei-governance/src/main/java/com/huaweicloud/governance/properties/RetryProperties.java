@@ -14,11 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.service;
+package com.huaweicloud.governance.properties;
 
-import com.huaweicloud.governance.marker.GovHttpRequest;
+import java.util.Map;
 
-public interface MatchersService {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
-  String getMatchStr(GovHttpRequest govHttpRequest);
+import com.huaweicloud.governance.policy.RetryPolicy;
+
+@Component
+@ConfigurationProperties("servicecomb")
+public class RetryProperties implements GovProperties<RetryPolicy> {
+
+  Map<String, String> retry;
+
+  @Autowired
+  SerializeCache<RetryPolicy> cache;
+
+  public Map<String, String> getRetry() {
+    return retry;
+  }
+
+  public void setRetry(Map<String, String> retry) {
+    this.retry = retry;
+  }
+
+  public Map<String, RetryPolicy> covert() {
+    return cache.get(retry, RetryPolicy.class);
+  }
 }

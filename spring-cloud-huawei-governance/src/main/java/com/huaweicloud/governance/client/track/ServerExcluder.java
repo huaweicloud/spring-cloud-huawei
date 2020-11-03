@@ -14,11 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.service;
+package com.huaweicloud.governance.client.track;
 
-import com.huaweicloud.governance.marker.GovHttpRequest;
+import com.huaweicloud.common.cache.LastInvokeServerCache;
+import com.netflix.loadbalancer.Server;
 
-public interface MatchersService {
+import java.util.HashSet;
+import java.util.Set;
 
-  String getMatchStr(GovHttpRequest govHttpRequest);
+public class ServerExcluder {
+
+  private boolean enabled;
+
+  private final Set<Server> ignoreServers = new HashSet<>();
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
+
+  public Set<Server> getIgnoreServers() {
+    if (LastInvokeServerCache.getServer() != null) {
+      ignoreServers.add(LastInvokeServerCache.getServer());
+    }
+    return ignoreServers;
+  }
 }

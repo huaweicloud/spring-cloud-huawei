@@ -14,40 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance;
-
-import com.huaweicloud.governance.marker.GovHttpRequest;
-import com.huaweicloud.governance.policy.Policy;
-import com.huaweicloud.governance.service.MatchersService;
-import com.huaweicloud.governance.service.PolicyService;
+package com.huaweicloud.governance.properties;
 
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
-/**
- * @Author GuoYl123
- * @Date 2020/5/11
- **/
-public class MatchersManager {
+import com.huaweicloud.governance.policy.CircuitBreakerPolicy;
+
+@Component
+@ConfigurationProperties("servicecomb")
+public class CircuitBreakerProperties implements GovProperties<CircuitBreakerPolicy> {
+
+  Map<String, String> circuitBreaker;
 
   @Autowired
-  private MatchersService matchersService;
+  SerializeCache<CircuitBreakerPolicy> cache;
 
-  @Autowired
-  private PolicyService policyService;
-
-  public MatchersManager() {
+  public Map<String, String> getCircuitBreaker() {
+    return circuitBreaker;
   }
 
-  public Map<String, Policy> match(GovHttpRequest request) {
-    /**
-     * 1.获取该请求携带的marker
-     */
-    String mark = matchersService.getMatchStr(request);
-    /**
-     * 2.通过 marker获取到所有的policy
-     */
-    return policyService.getAllPolicies(mark);
+  public void setCircuitBreaker(Map<String, String> circuitBreaker) {
+    this.circuitBreaker = circuitBreaker;
+  }
+
+  @Override
+  public Map<String, CircuitBreakerPolicy> covert() {
+    return cache.get(circuitBreaker, CircuitBreakerPolicy.class);
   }
 }

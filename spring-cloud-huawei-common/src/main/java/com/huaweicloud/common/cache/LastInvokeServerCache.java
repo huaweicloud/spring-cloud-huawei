@@ -14,11 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.service;
 
-import com.huaweicloud.governance.marker.GovHttpRequest;
+package com.huaweicloud.common.cache;
 
-public interface MatchersService {
+import com.netflix.loadbalancer.Server;
 
-  String getMatchStr(GovHttpRequest govHttpRequest);
+public class LastInvokeServerCache {
+
+  private static ThreadLocal<Server> serverThreadLocal = new ThreadLocal<>();
+
+  public static Server getServer() {
+    return serverThreadLocal.get();
+  }
+
+  public static void setServer(Server server) {
+    serverThreadLocal.set(server);
+  }
 }
