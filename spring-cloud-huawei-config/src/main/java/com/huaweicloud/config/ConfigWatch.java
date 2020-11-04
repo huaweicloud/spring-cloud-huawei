@@ -25,7 +25,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.huaweicloud.common.log.ServiceCombLogProperties;
-import com.huaweicloud.common.log.logConstantValue;
+import com.huaweicloud.common.log.LogConstantValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.huaweicloud.common.exception.RemoteOperationException;
@@ -123,8 +123,8 @@ public class ConfigWatch implements ApplicationEventPublisherAware, SmartLifecyc
       if (changeData != null && !changeData.isEmpty()) {
         LOGGER.info("config data changed  = {}", changeData);
         LOGGER.info(serviceCombLogProperties.generateStructureLog(changeData.toString(),
-            logConstantValue.LOG_LEVEL_INFO, logConstantValue.MODULE_CONFIG,
-            logConstantValue.EVENT_POLL));
+            LogConstantValue.LOG_LEVEL_INFO, LogConstantValue.MODULE_CONFIG,
+            LogConstantValue.EVENT_POLL));
         applicationEventPublisher.publishEvent(new ConfigRefreshEvent(this, changeData));
       }
     }

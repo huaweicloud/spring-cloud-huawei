@@ -21,9 +21,10 @@ import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.huaweicloud.common.log.StructuredLog;
-import com.huaweicloud.common.log.logConstantValue;
+import com.huaweicloud.common.log.LogConstantValue;
 import com.huaweicloud.config.ConfigWatch;
 import org.apache.servicecomb.foundation.common.utils.JsonUtils;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -47,20 +48,32 @@ public class ConfigWatchTest {
 
   @Test
   public void testLog() throws JsonProcessingException {
-    StructuredLog log = new StructuredLog();
-    long curTime = System.currentTimeMillis();
-    log.setLevel(logConstantValue.LOG_LEVEL_INFO);
-    log.setModule(logConstantValue.MODULE_CONFIG);
-    log.setEvent(logConstantValue.EVENT_POLL);
-    log.setTimestamp(curTime);
-    log.setMsg("");
-    log.setService("price");
-    log.setVersion("1.0.1");
-    log.setEnv("");
-    log.setApp("app");
-    log.setInstance("13245312564");
-    log.setSystem(logConstantValue.SYSTEM_SERVICECOMB);
-    String jasonDataLog  = JsonUtils.OBJ_MAPPER.writeValueAsString(log);
-    System.out.println(jasonDataLog);
+    StructuredLog structuredLog = new StructuredLog();
+    structuredLog.setLevel(LogConstantValue.LOG_LEVEL_INFO);
+    structuredLog.setModule(LogConstantValue.MODULE_CONFIG);
+    structuredLog.setEvent(LogConstantValue.EVENT_POLL);
+    structuredLog.setMsg("");
+    structuredLog.setService("price");
+    structuredLog.setVersion("1.0.1");
+    structuredLog.setEnv("");
+    structuredLog.setApp("app");
+    structuredLog.setInstance("13245312564");
+    structuredLog.setSystem(LogConstantValue.SYSTEM_SERVICECOMB);
+    String jasonDataLog  = JsonUtils.OBJ_MAPPER.writeValueAsString(structuredLog);
+    String expectResult = "{" +
+        "\"level\":\"INFO\"," +
+        "\"timestamp\":0," +
+        "\"msg\":\"\"," +
+        "\"module\":\"ConfigServer\"," +
+        "\"event\":\"poll\"," +
+        "\"service\":\"price\"," +
+        "\"version\":\"1.0.1\"," +
+        "\"env\":\"\"," +
+        "\"app\":\"app\"," +
+        "\"instance\":\"13245312564\"," +
+        "\"system\":\"serviceComb\"" +
+        "}";
+
+    Assert.assertEquals(expectResult, jasonDataLog);
   }
 }

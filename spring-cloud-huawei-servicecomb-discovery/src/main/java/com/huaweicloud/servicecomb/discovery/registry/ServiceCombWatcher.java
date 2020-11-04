@@ -19,7 +19,7 @@ package com.huaweicloud.servicecomb.discovery.registry;
 
 import com.huaweicloud.common.cache.TokenCache;
 import com.huaweicloud.common.log.ServiceCombLogProperties;
-import com.huaweicloud.common.log.logConstantValue;
+import com.huaweicloud.common.log.LogConstantValue;
 import com.huaweicloud.common.transport.BackOff;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.common.util.SecretUtil;
@@ -104,8 +104,8 @@ public class ServiceCombWatcher {
       LOGGER.info("retrying to establish websocket connecting.");
       LOGGER.info(serviceCombLogProperties.generateStructureLog(
           "retrying to establish websocket connecting.",
-          logConstantValue.LOG_LEVEL_INFO, logConstantValue.MODULE_DISCOVERY,
-          logConstantValue.EVENT_RETRY));
+          LogConstantValue.LOG_LEVEL_INFO, LogConstantValue.MODULE_DISCOVERY,
+          LogConstantValue.EVENT_RETRY));
       connect();
     });
   }

@@ -18,7 +18,7 @@
 package com.huaweicloud.servicecomb.discovery.registry;
 
 import com.huaweicloud.common.log.ServiceCombLogProperties;
-import com.huaweicloud.common.log.logConstantValue;
+import com.huaweicloud.common.log.LogConstantValue;
 import com.huaweicloud.servicecomb.discovery.event.ServerCloseEvent;
 import com.huaweicloud.servicecomb.discovery.event.ServerListRefreshEvent;
 import com.huaweicloud.servicecomb.discovery.event.ServiceCombEvent;
@@ -56,16 +56,16 @@ public class ServiceCombWebSocketClient extends WebSocketClient {
   public void onOpen(ServerHandshake serverHandshake) {
     LOGGER.info("watching microservice successfully.");
     LOGGER.info(serviceCombLogProperties.generateStructureLog("watching microservice successfully.",
-        logConstantValue.LOG_LEVEL_INFO, logConstantValue.MODULE_DISCOVERY,
-        logConstantValue.EVENT_OPEN));
+        LogConstantValue.LOG_LEVEL_INFO, LogConstantValue.MODULE_DISCOVERY,
+        LogConstantValue.EVENT_OPEN));
   }
 
   @Override
   public void onMessage(String s) {
     LOGGER.info("instance change : {}", s);
     LOGGER.info(serviceCombLogProperties.generateStructureLog("instance change : " + s,
-        logConstantValue.LOG_LEVEL_INFO, logConstantValue.MODULE_DISCOVERY,
-        logConstantValue.EVENT_WATCH));
+        LogConstantValue.LOG_LEVEL_INFO, LogConstantValue.MODULE_DISCOVERY,
+        LogConstantValue.EVENT_WATCH));
     publisher.accept(new ServerListRefreshEvent());
   }
 
@@ -73,8 +73,8 @@ public class ServiceCombWebSocketClient extends WebSocketClient {
   public void onClose(int i, String s, boolean b) {
     LOGGER.warn("connection is closed accidentally, code : {}, reason : {}, remote : {}", i, s, b);
     LOGGER.warn(serviceCombLogProperties.generateStructureLog("connection is closed accidentally.",
-        logConstantValue.LOG_LEVEL_WARN, logConstantValue.MODULE_DISCOVERY,
-        logConstantValue.EVENT_OPEN));
+        LogConstantValue.LOG_LEVEL_WARN, LogConstantValue.MODULE_DISCOVERY,
+        LogConstantValue.EVENT_OPEN));
     publisher.accept(new ServerCloseEvent());
   }
 
@@ -82,8 +82,8 @@ public class ServiceCombWebSocketClient extends WebSocketClient {
   public void onError(Exception e) {
     LOGGER.error("connection error , msg:{} ", e.getMessage());
     LOGGER.error(serviceCombLogProperties.generateStructureLog("connection error, msg: " + e.getMessage(),
-        logConstantValue.LOG_LEVEL_WARN, logConstantValue.MODULE_DISCOVERY,
-        logConstantValue.EVENT_ERROR));
+        LogConstantValue.LOG_LEVEL_WARN, LogConstantValue.MODULE_DISCOVERY,
+        LogConstantValue.EVENT_ERROR));
     publisher.accept(new ServerCloseEvent());
   }
 }

@@ -20,7 +20,7 @@ package com.huaweicloud.servicecomb.discovery.registry;
 import com.huaweicloud.common.cache.RegisterCache;
 import com.huaweicloud.common.exception.ServiceCombException;
 import com.huaweicloud.common.log.ServiceCombLogProperties;
-import com.huaweicloud.common.log.logConstantValue;
+import com.huaweicloud.common.log.LogConstantValue;
 import com.huaweicloud.servicecomb.discovery.client.model.HeardBeatStatus;
 import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstance;
@@ -86,16 +86,16 @@ public class HeartbeatScheduler {
                 if (heartbeatLog.get()) {
                   LOGGER.info("heartbeat success.");
                   LOGGER.info(serviceCombLogProperties.generateStructureLog("heartbeat success.",
-                      logConstantValue.LOG_LEVEL_INFO, logConstantValue.MODULE_DISCOVERY,
-                      logConstantValue.EVENT_UPDATE));
+                      LogConstantValue.LOG_LEVEL_INFO, LogConstantValue.MODULE_DISCOVERY,
+                      LogConstantValue.EVENT_UPDATE));
                   heartbeatLog.compareAndSet(true, false);
                 }
               } catch (ServiceCombException e) {
                 heartbeatLog.compareAndSet(false, true);
                 LOGGER.warn("heartbeat failed.", e);
                 LOGGER.warn(serviceCombLogProperties.generateStructureLog("heartbeat failed.",
-                    logConstantValue.LOG_LEVEL_WARN, logConstantValue.MODULE_DISCOVERY,
-                    logConstantValue.EVENT_UPDATE));
+                    LogConstantValue.LOG_LEVEL_WARN, LogConstantValue.MODULE_DISCOVERY,
+                    LogConstantValue.EVENT_UPDATE));
               }
             },
             serviceCombDiscoveryProperties.getHealthCheckInterval() * 1000);
@@ -119,8 +119,8 @@ public class HeartbeatScheduler {
   private void retryRegister(ServiceCombRegistration registration, String oldInstanceID) {
     LOGGER.info("retry registry to service center.");
     LOGGER.info(serviceCombLogProperties.generateStructureLog("retry registry to service center.",
-        logConstantValue.LOG_LEVEL_INFO, logConstantValue.MODULE_DISCOVERY,
-        logConstantValue.EVENT_RETRY));
+        LogConstantValue.LOG_LEVEL_INFO, LogConstantValue.MODULE_DISCOVERY,
+        LogConstantValue.EVENT_RETRY));
     Microservice microservice = RegistryHandler.buildMicroservice(registration);
     String serviceID = RegisterCache.getServiceID();
     try {
@@ -135,16 +135,16 @@ public class HeartbeatScheduler {
         refreshLocalMap(instanceID, heartbeatRequestMap.remove(oldInstanceID));
         LOGGER.info("register success,instanceID:{};serviceID:{}", instanceID, serviceID);
         LOGGER.info(serviceCombLogProperties.generateStructureLog("register success.",
-            logConstantValue.LOG_LEVEL_INFO, logConstantValue.MODULE_DISCOVERY,
-            logConstantValue.EVENT_REGISTER));
+            LogConstantValue.LOG_LEVEL_INFO, LogConstantValue.MODULE_DISCOVERY,
+            LogConstantValue.EVENT_REGISTER));
       }
     } catch (ServiceCombException e) {
       serviceCombClient.toggle();
       LOGGER.warn(
           "register failed, will retry. please check config file. message=" + e.getMessage());
       LOGGER.warn(serviceCombLogProperties.generateStructureLog("register failed.",
-          logConstantValue.LOG_LEVEL_WARN, logConstantValue.MODULE_DISCOVERY,
-          logConstantValue.EVENT_REGISTER));
+          LogConstantValue.LOG_LEVEL_WARN, LogConstantValue.MODULE_DISCOVERY,
+          LogConstantValue.EVENT_REGISTER));
     }
   }
 }

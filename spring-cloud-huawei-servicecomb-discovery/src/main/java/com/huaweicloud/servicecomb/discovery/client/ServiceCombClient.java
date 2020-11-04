@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.huaweicloud.common.log.ServiceCombLogProperties;
-import com.huaweicloud.common.log.logConstantValue;
+import com.huaweicloud.common.log.LogConstantValue;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ByteArrayEntity;
@@ -290,8 +290,8 @@ public class ServiceCombClient {
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.info("deRegister success.");
         LOGGER.info(serviceCombLogProperties.generateStructureLog("deRegister success.",
-            logConstantValue.LOG_LEVEL_INFO, logConstantValue.MODULE_DISCOVERY,
-            logConstantValue.EVENT_REGISTER));
+            LogConstantValue.LOG_LEVEL_INFO, LogConstantValue.MODULE_DISCOVERY,
+            LogConstantValue.EVENT_REGISTER));
         return true;
       } else {
         throw new RemoteOperationException(
@@ -367,18 +367,18 @@ public class ServiceCombClient {
     } catch (URISyntaxException e) {
       LOGGER.warn("build url failed.", e);
       LOGGER.warn(serviceCombLogProperties.generateStructureLog("build url failed.",
-          logConstantValue.LOG_LEVEL_WARN, logConstantValue.MODULE_DISCOVERY,
-          logConstantValue.EVENT_CREATE));
+          LogConstantValue.LOG_LEVEL_WARN, LogConstantValue.MODULE_DISCOVERY,
+          LogConstantValue.EVENT_CREATE));
     } catch (IOException e) {
       LOGGER.warn("read response failed. " + response);
       LOGGER.warn(serviceCombLogProperties.generateStructureLog("read response failed.",
-          logConstantValue.LOG_LEVEL_WARN, logConstantValue.MODULE_DISCOVERY,
-          logConstantValue.EVENT_OPEN));
+          LogConstantValue.LOG_LEVEL_WARN, LogConstantValue.MODULE_DISCOVERY,
+          LogConstantValue.EVENT_OPEN));
     } catch (RemoteServerUnavailableException e) {
       LOGGER.warn("get instances failed.", e);
       LOGGER.warn(serviceCombLogProperties.generateStructureLog("get instances failed.",
-          logConstantValue.LOG_LEVEL_WARN, logConstantValue.MODULE_DISCOVERY,
-          logConstantValue.EVENT_REQUEST));
+          LogConstantValue.LOG_LEVEL_WARN, LogConstantValue.MODULE_DISCOVERY,
+          LogConstantValue.EVENT_REQUEST));
     }
     return null;
   }
@@ -427,8 +427,8 @@ public class ServiceCombClient {
             "heartbeat to service center failed. status:" + response.getStatusCode() + "; message:"
                 + response.getStatusMessage() + "; content:" + response.getContent());
         LOGGER.error(serviceCombLogProperties.generateStructureLog("heartbeat to service center failed.",
-            logConstantValue.LOG_LEVEL_ERROR, logConstantValue.MODULE_DISCOVERY,
-            logConstantValue.EVENT_UPDATE));
+            LogConstantValue.LOG_LEVEL_ERROR, LogConstantValue.MODULE_DISCOVERY,
+            LogConstantValue.EVENT_UPDATE));
         return HeardBeatStatus.FAILED;
       }
       throw new IOException();
@@ -499,22 +499,22 @@ public class ServiceCombClient {
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.info("register schema {}/{} success.", microserviceId, schemaId);
         LOGGER.info(serviceCombLogProperties.generateStructureLog("register schema success.",
-            logConstantValue.LOG_LEVEL_INFO, logConstantValue.MODULE_DISCOVERY,
-            logConstantValue.EVENT_REGISTER));
+            LogConstantValue.LOG_LEVEL_INFO, LogConstantValue.MODULE_DISCOVERY,
+            LogConstantValue.EVENT_REGISTER));
         return true;
       }
       LOGGER.error("Register schema {}/{} failed, code:{} , msg:{} ", microserviceId, schemaId,
           response.getStatusCode(), response.getContent());
       LOGGER.error(serviceCombLogProperties.generateStructureLog("Register schema failed.",
-          logConstantValue.LOG_LEVEL_ERROR, logConstantValue.MODULE_DISCOVERY,
-          logConstantValue.EVENT_REGISTER));
+          LogConstantValue.LOG_LEVEL_ERROR, LogConstantValue.MODULE_DISCOVERY,
+          LogConstantValue.EVENT_REGISTER));
       return false;
     } catch (JsonProcessingException e) {
       LOGGER.error("registerSchema serialization failed : {}", e.getMessage());
       LOGGER.error(serviceCombLogProperties.generateStructureLog(
           "registerSchema serialization failed.",
-          logConstantValue.LOG_LEVEL_ERROR, logConstantValue.MODULE_DISCOVERY,
-          logConstantValue.EVENT_REGISTER));
+          LogConstantValue.LOG_LEVEL_ERROR, LogConstantValue.MODULE_DISCOVERY,
+          LogConstantValue.EVENT_REGISTER));
     } catch (URISyntaxException e) {
       throw new RemoteOperationException("build url failed.", e);
     } catch (RemoteServerUnavailableException e) {

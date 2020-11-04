@@ -20,7 +20,7 @@ package com.huaweicloud.common.log;
  * @Author zyl
  * @Date 2020/10/28
  **/
-public class logConstantValue {
+public class LogConstantValue {
 
   /**
    * log level

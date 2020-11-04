@@ -20,7 +20,7 @@ package com.huaweicloud.config.client;
 import com.huaweicloud.common.exception.RemoteOperationException;
 import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 import com.huaweicloud.common.log.ServiceCombLogProperties;
-import com.huaweicloud.common.log.logConstantValue;
+import com.huaweicloud.common.log.LogConstantValue;
 import com.huaweicloud.common.transport.HttpTransport;
 import com.huaweicloud.common.transport.Response;
 import com.huaweicloud.config.ServiceCombConfigProperties;
@@ -100,8 +100,8 @@ public class KieClient extends ServiceCombConfigClient {
         LOGGER.info(response.getStatusMessage());
         LOGGER.info(serviceCombLogProperties.generateStructureLog(
             "bad request from serviceCenter.",
-            logConstantValue.LOG_LEVEL_INFO, logConstantValue.MODULE_CONFIG,
-            logConstantValue.EVENT_REQUEST));
+            LogConstantValue.LOG_LEVEL_INFO, LogConstantValue.MODULE_CONFIG,
+            LogConstantValue.EVENT_REQUEST));
         return null;
       } else if (response.getStatusCode() == HttpStatus.SC_NOT_MODIFIED) {
         return null;

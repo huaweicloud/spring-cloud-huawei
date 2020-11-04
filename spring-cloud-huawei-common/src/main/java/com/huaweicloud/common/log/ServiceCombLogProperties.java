@@ -112,7 +112,7 @@ public class ServiceCombLogProperties {
     log.setEnv(this.getEnv());
     log.setApp(this.getAppName());
     log.setInstance(RegisterCache.getInstanceID());
-    log.setSystem(logConstantValue.SYSTEM_SERVICECOMB);
+    log.setSystem(LogConstantValue.SYSTEM_SERVICECOMB);
     try {
       String jasonDataLog  = JsonUtils.OBJ_MAPPER.writeValueAsString(log);
       return jasonDataLog;

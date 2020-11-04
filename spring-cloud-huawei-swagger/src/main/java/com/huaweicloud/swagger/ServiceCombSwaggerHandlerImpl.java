@@ -24,8 +24,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import com.huaweicloud.common.log.ServiceCombLogProperties;
-import com.huaweicloud.common.log.logConstantValue;
-import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
+import com.huaweicloud.common.log.LogConstantValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,13 +94,13 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
       } catch (RemoteOperationException e) {
         LOGGER.error("register swagger to server-center failed : {}", e.getMessage());
         LOGGER.error(serviceCombLogProperties.generateStructureLog("register swagger to server-center failed.",
-            logConstantValue.LOG_LEVEL_ERROR, logConstantValue.MODULE_CONFIG,
-            logConstantValue.EVENT_REGISTER));
+            LogConstantValue.LOG_LEVEL_ERROR, LogConstantValue.MODULE_CONFIG,
+            LogConstantValue.EVENT_REGISTER));
       } catch (JsonProcessingException e) {
         LOGGER.error("swagger parse failed : {}", e.getMessage());
         LOGGER.error(serviceCombLogProperties.generateStructureLog("swagger parse failed.",
-            logConstantValue.LOG_LEVEL_ERROR, logConstantValue.MODULE_CONFIG,
-            logConstantValue.EVENT_REGISTER));
+            LogConstantValue.LOG_LEVEL_ERROR, LogConstantValue.MODULE_CONFIG,
+            LogConstantValue.EVENT_REGISTER));
       }
     });
   }

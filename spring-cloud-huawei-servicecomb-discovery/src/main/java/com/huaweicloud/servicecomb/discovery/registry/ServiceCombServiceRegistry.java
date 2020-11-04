@@ -26,7 +26,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import com.huaweicloud.common.log.ServiceCombLogProperties;
-import com.huaweicloud.common.log.logConstantValue;
+import com.huaweicloud.common.log.LogConstantValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,14 +107,14 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
         }
         LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
         LOGGER.info(serviceCombLogProperties.generateStructureLog("register success.",
-            logConstantValue.LOG_LEVEL_INFO, logConstantValue.MODULE_DISCOVERY,
-            logConstantValue.EVENT_REGISTER));
+            LogConstantValue.LOG_LEVEL_INFO, LogConstantValue.MODULE_DISCOVERY,
+            LogConstantValue.EVENT_REGISTER));
         heartbeatScheduler.add(registration);
       } catch (Throwable e) {
         LOGGER.error("Unexpected exception in register. ", e);
         LOGGER.error(serviceCombLogProperties.generateStructureLog("Unexpected exception in register.",
-            logConstantValue.LOG_LEVEL_ERROR, logConstantValue.MODULE_DISCOVERY,
-            logConstantValue.EVENT_REGISTER));
+            LogConstantValue.LOG_LEVEL_ERROR, LogConstantValue.MODULE_DISCOVERY,
+            LogConstantValue.EVENT_REGISTER));
       }
     });
   }
@@ -129,8 +129,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     } catch (URISyntaxException e) {
       LOGGER.error("parse url error");
       LOGGER.error(serviceCombLogProperties.generateStructureLog("parse url error.",
-          logConstantValue.LOG_LEVEL_ERROR, logConstantValue.MODULE_DISCOVERY,
-          logConstantValue.EVENT_WATCH));
+          LogConstantValue.LOG_LEVEL_ERROR, LogConstantValue.MODULE_DISCOVERY,
+          LogConstantValue.EVENT_WATCH));
     }
   }
 
@@ -167,8 +167,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
             "register failed, will retry. please check config file. message=" + e.getMessage());
         LOGGER.warn(serviceCombLogProperties.generateStructureLog(
             "register failed, will retry. please check config file.",
-            logConstantValue.LOG_LEVEL_WARN, logConstantValue.MODULE_DISCOVERY,
-            logConstantValue.EVENT_REGISTER));
+            LogConstantValue.LOG_LEVEL_WARN, LogConstantValue.MODULE_DISCOVERY,
+            LogConstantValue.EVENT_REGISTER));
       }
     }
   }
@@ -199,8 +199,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
             schema.getSchemaId());
         LOGGER.warn(serviceCombLogProperties.generateStructureLog(
             "schemas is changed , won't registry. if want to overwrite schema please upgrade version.",
-            logConstantValue.LOG_LEVEL_WARN, logConstantValue.MODULE_DISCOVERY,
-            logConstantValue.EVENT_REGISTER));
+            LogConstantValue.LOG_LEVEL_WARN, LogConstantValue.MODULE_DISCOVERY,
+            LogConstantValue.EVENT_REGISTER));
       }
       localSchemas.remove(schema.getSchemaId());
     });
@@ -216,8 +216,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     } catch (ServiceCombException e) {
       LOGGER.error("deRegisterInstance failed", e);
       LOGGER.error(serviceCombLogProperties.generateStructureLog("deRegisterInstance failed.",
-          logConstantValue.LOG_LEVEL_ERROR, logConstantValue.MODULE_DISCOVERY,
-          logConstantValue.EVENT_REGISTER));
+          LogConstantValue.LOG_LEVEL_ERROR, LogConstantValue.MODULE_DISCOVERY,
+          LogConstantValue.EVENT_REGISTER));
     }
   }
 
@@ -226,8 +226,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
   public void close() {
     LOGGER.info("close");
     LOGGER.info(serviceCombLogProperties.generateStructureLog("close.",
-        logConstantValue.LOG_LEVEL_INFO, logConstantValue.MODULE_DISCOVERY,
-        logConstantValue.EVENT_CLOSE));
+        LogConstantValue.LOG_LEVEL_INFO, LogConstantValue.MODULE_DISCOVERY,
+        LogConstantValue.EVENT_CLOSE));
   }
 
   @Override
@@ -237,8 +237,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     } catch (ServiceCombException e) {
       LOGGER.error("setStatus failed", e);
       LOGGER.error(serviceCombLogProperties.generateStructureLog("setStatus failed.",
-          logConstantValue.LOG_LEVEL_ERROR, logConstantValue.MODULE_DISCOVERY,
-          logConstantValue.EVENT_CREATE));
+          LogConstantValue.LOG_LEVEL_ERROR, LogConstantValue.MODULE_DISCOVERY,
+          LogConstantValue.EVENT_CREATE));
     }
   }
 
@@ -253,8 +253,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     } catch (ServiceCombException e) {
       LOGGER.error("getStatus failed", e);
       LOGGER.error(serviceCombLogProperties.generateStructureLog("getStatus failed.",
-          logConstantValue.LOG_LEVEL_ERROR, logConstantValue.MODULE_DISCOVERY,
-          logConstantValue.EVENT_UPDATE));
+          LogConstantValue.LOG_LEVEL_ERROR, LogConstantValue.MODULE_DISCOVERY,
+          LogConstantValue.EVENT_UPDATE));
     }
     return null;
   }
