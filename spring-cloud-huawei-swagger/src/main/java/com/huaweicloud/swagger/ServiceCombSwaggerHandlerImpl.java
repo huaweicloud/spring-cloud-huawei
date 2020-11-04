@@ -23,9 +23,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import com.huaweicloud.common.log.ServiceCombLogProperties;
 import com.huaweicloud.common.log.logConstantValue;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
-import com.huaweicloud.servicecomb.discovery.log.GenerateLog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +63,7 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   protected ServiceCombClient serviceCombClient;
 
   @Autowired
-  protected ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
+  private ServiceCombLogProperties serviceCombLogProperties;
 
   private Map<String, Swagger> swaggerMap = new HashMap<>();
 
@@ -91,17 +91,17 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
       try {
         String str = Yaml.mapper().writeValueAsString(swaggerMap.get(schemaId));
         LOGGER.info("register swagger {}, content: {}{}", schemaId, System.lineSeparator(), str);
-        LOGGER.info(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_INFO,
-            "register swagger.", logConstantValue.EVENT_REGISTER));
         serviceCombClient.registerSchema(microserviceId, schemaId, str);
       } catch (RemoteOperationException e) {
         LOGGER.error("register swagger to server-center failed : {}", e.getMessage());
-        LOGGER.error(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_ERROR,
-            "register swagger to server-center failed.", logConstantValue.EVENT_REGISTER));
+        LOGGER.error(serviceCombLogProperties.generateStructureLog("register swagger to server-center failed.",
+            logConstantValue.LOG_LEVEL_ERROR, logConstantValue.MODULE_CONFIG,
+            logConstantValue.EVENT_REGISTER));
       } catch (JsonProcessingException e) {
         LOGGER.error("swagger parse failed : {}", e.getMessage());
-        LOGGER.error(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_ERROR,
-            "swagger parse failed.", logConstantValue.EVENT_REGISTER));
+        LOGGER.error(serviceCombLogProperties.generateStructureLog("swagger parse failed.",
+            logConstantValue.LOG_LEVEL_ERROR, logConstantValue.MODULE_CONFIG,
+            logConstantValue.EVENT_REGISTER));
       }
     });
   }
@@ -118,8 +118,6 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
         return Yaml.mapper().writeValueAsString(entry.getValue());
       } catch (JsonProcessingException e) {
         LOGGER.error("error when calcSchemaSummary.");
-        LOGGER.error(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_ERROR,
-            "error when calcSchemaSummary.", logConstantValue.EVENT_UPDATE));
       }
       return null;
     }));
@@ -133,8 +131,6 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
             return calcSchemaSummary(Yaml.mapper().writeValueAsString(entry.getValue()));
           } catch (JsonProcessingException e) {
             LOGGER.error("error when calcSchemaSummary.");
-            LOGGER.error(GenerateLog.generateStructureLog(serviceCombDiscoveryProperties, logConstantValue.LOG_LEVEL_ERROR,
-                "error when calcSchemaSummary.", logConstantValue.EVENT_UPDATE));
           }
           return null;
         }));

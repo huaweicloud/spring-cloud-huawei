@@ -23,7 +23,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.huaweicloud.common.log.StructuredLog;
 import com.huaweicloud.common.log.logConstantValue;
 import com.huaweicloud.config.ConfigWatch;
-import io.vertx.core.json.Json;
 import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.junit.Test;
 

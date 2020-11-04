@@ -26,7 +26,6 @@ import org.junit.Test;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
 
 import io.swagger.models.Info;
 import io.swagger.models.Model;

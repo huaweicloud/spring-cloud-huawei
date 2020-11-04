@@ -1,7 +1,26 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.huaweicloud.config.client;
 
 import com.huaweicloud.common.exception.RemoteOperationException;
 import com.huaweicloud.common.exception.ServiceCombRuntimeException;
+import com.huaweicloud.common.log.ServiceCombLogProperties;
+import com.huaweicloud.common.log.logConstantValue;
 import com.huaweicloud.common.transport.HttpTransport;
 import com.huaweicloud.common.transport.Response;
 import com.huaweicloud.config.ServiceCombConfigProperties;
@@ -21,6 +40,7 @@ import org.apache.http.HttpStatus;
 import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.util.StringUtils;
@@ -33,6 +53,8 @@ public class KieClient extends ServiceCombConfigClient {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(KieClient.class);
 
+  @Autowired
+  private ServiceCombLogProperties serviceCombLogProperties;
 
   private AtomicBoolean isFirst = new AtomicBoolean(true);
 
@@ -76,6 +98,10 @@ public class KieClient extends ServiceCombConfigClient {
         return getConfigByLabel(serviceCombConfigProperties, allConfigList);
       } else if (response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
         LOGGER.info(response.getStatusMessage());
+        LOGGER.info(serviceCombLogProperties.generateStructureLog(
+            "bad request from serviceCenter.",
+            logConstantValue.LOG_LEVEL_INFO, logConstantValue.MODULE_CONFIG,
+            logConstantValue.EVENT_REQUEST));
         return null;
       } else if (response.getStatusCode() == HttpStatus.SC_NOT_MODIFIED) {
         return null;
