@@ -18,6 +18,7 @@
      - 使用reactive线程模型的高性能网关edge-service，表现优于spring cloud gateway和netflix zuul。
      - 利用[ServiceComb-Mesher](https://github.com/apache/servicecomb-mesher)实现多语言构建的微服务系统，mesher是service mesh的一种实现。
      - go语言微服务框架 [go-chassis](https://github.com/go-chassis/go-chassis)。
+ 4. 完全代码无侵入的核心思想，力求做到所有能力全部做在配置中，用户业务无感知，无迁移成本。
 
 
 ## 功能模块
@@ -38,12 +39,18 @@
      * 路由管理模块，通过配置实现灰度发布、金丝雀发布、流量分配管理，支持匹配http header、比例分配流量。
 
  * **spring-cloud-starter-huawei-swagger:**
-     * 基于代码零配置自动生成swagger接口契约，自动注册到Service-Center注册中心进行接口文档化管理。
+     * 基于代码零配置自动生成swagger接口契约(基于[spring-fox](https://github.com/springfox/springfox)的能力)，自动注册到Service-Center注册中心进行接口文档化管理。
      * 基于契约与微服务框架[ServiceComb-Java-Chassis](https://github.com/apache/servicecomb-java-chassis)组网。
      * 使用[Edge-Service](https://support.huaweicloud.com/bestpractice-servicestage/servicestage_bestpractice_0111.html)网关，
  [表现](https://github.com/AngLi2/api-gateway-benchmark/blob/master/Spring%20Cloud%20Gateway%2C%20Zuul%2C%20Edge%20Service%20%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94.md)
  优于spring cloud gateway和netflix zuul，体验reactive带来的性能提升。
 
+ * **spring-cloud-starter-huawei-governance:**
+     * 服务治理模块，提供基于动态配置的熔断、限流、隔离、重试功能特性，核心能力基于[resilience4j](https://github.com/resilience4j/resilience4j)。
+     * 流量粒度的治理管控，可以针对请求Path、请求Method、请求Header进行相应的算子匹配来进行流量标记，进行精确的流量治理。
+     * 利用动态配置，做到零等待下发治理规则生效。无代码侵入，用户无需学习繁琐的sdk使用，只需下发配置。
+     * [更多信息](https://github.com/GuoYL123/spring-cloud-huawei/tree/gover/spring-cloud-huawei-governance)
+     
 ## 如何使用
 spring-cloud-huawei已发布在maven中央仓库。
 
@@ -76,7 +83,7 @@ spring-cloud-huawei已发布在maven中央仓库。
 | ------------------- | ------------ | ----------- |
 | 1.3.7               | Hoxton       | 2.2.x       |
 | 1.3.7-Greenwich     | Greenwich    | 2.1.x       |
-| 1.2.0-Finchley      | Finchley     | 2.0.x       |
+| 1.3.7-Finchley      | Finchley     | 2.0.x       |
 | 1.2.0-Edgware       | Edgware      | 1.5.x       |
 
 ## 开发路径
