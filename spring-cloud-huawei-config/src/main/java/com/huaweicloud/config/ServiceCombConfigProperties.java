@@ -18,7 +18,6 @@
 package com.huaweicloud.config;
 
 import com.huaweicloud.common.exception.ServiceCombRuntimeException;
-import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

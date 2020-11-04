@@ -18,7 +18,7 @@ package com.huaweicloud.common.log;
 
 /**
  * @Author zyl
- * @Date 2020/10/28
+ * @Date 2020/11/02
  **/
 public class StructuredLog {
 
