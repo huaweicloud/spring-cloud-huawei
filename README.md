@@ -21,6 +21,7 @@ commercial such as Huawei Cloud
      - Apply multilingual paradigm to your microservice system by using [mesher](https://github.com/apache/servicecomb-mesher), an implementation of service mesh, java or spring cloud is not the only choice anymore.
      - Developer is able to use edge-service, a high-performance gateway which benifits from reactive, outperforms than spring cloud gateway and Netflix zuul.
      - A [go microservice framework](https://github.com/go-chassis/go-chassis) can work with springcloud.
+ 4. zero-code thinking, all features are based on configuration, transparent to users, no migration costs.
 
 ## Modules
 
@@ -47,11 +48,17 @@ commercial such as Huawei Cloud
  it supports matching HTTP header and proportional traffic distribution.
  
  * **spring-cloud-starter-huawei-swagger:**
-     * Automatically generate swagger document with zero-code,
+     * Automatically generate swagger document with zero-code (based on [spring-fox](https://github.com/springfox/springfox)),
       and register to the server-center for interface documentation management.
      * Networking with [ServiceComb-Java-Chassis](https://github.com/apache/servicecomb-java-chassis) based swagger.
      * Using [Edge-Service](https://support.huaweicloud.com/bestpractice-servicestage/servicestage_bestpractice_0111.html) gateway，
  Better performance than spring cloud gateway and netflix zuul.
+
+ * **spring-cloud-starter-huawei-governance:**
+     * Based on the dynamic configuration, provide CircuitBreaker, Bulkhead, RateLimiter and Retry feature, based on [resilience4j](https://github.com/resilience4j/resilience4j)。
+     * For traffic governance, the operator matching is used to label the traffic, which can accurately govern the traffic for the request path , request method and request header.
+     * By using dynamic configuration, zero waiting for governance rules to take effect. No code intrusion, only need distribution configuration.
+     * [more information](https://github.com/GuoYL123/spring-cloud-huawei/tree/gover/spring-cloud-huawei-governance)
 
 ## How to use
 spring-cloud-huawei has been released in Maven's central repository.
@@ -86,7 +93,7 @@ introduce starter.
 | ------------------- | ------------ | ----------- |
 | 1.3.7               | Hoxton       | 2.2.x       |
 | 1.3.7-Greenwich     | Greenwich    | 2.1.x       |
-| 1.2.0-Finchley      | Finchley     | 2.0.x       |
+| 1.3.7-Finchley      | Finchley     | 2.0.x       |
 | 1.2.0-Edgware       | Edgware      | 1.5.x       |
 
 ## RoadMap

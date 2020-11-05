@@ -46,8 +46,6 @@ public class RetryHandler extends AbstractGovHandler<Retry> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RetryHandler.class);
 
-  private Map<String, Retry> map = new HashMap<>();
-
   /**
    * @param supplier
    * @param policy
