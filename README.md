@@ -21,7 +21,7 @@ commercial such as Huawei Cloud
      - Apply multilingual paradigm to your microservice system by using [mesher](https://github.com/apache/servicecomb-mesher), an implementation of service mesh, java or spring cloud is not the only choice anymore.
      - Developer is able to use edge-service, a high-performance gateway which benifits from reactive, outperforms than spring cloud gateway and Netflix zuul.
      - A [go microservice framework](https://github.com/go-chassis/go-chassis) can work with springcloud.
- 4. zero-code thinking, all features are based on configuration, transparent to users, no migration costs.
+ 4. Zero-code thinking, all features are based on configuration, transparent to users, no migration costs.
 
 ## Modules
 
@@ -58,7 +58,7 @@ commercial such as Huawei Cloud
      * Based on the dynamic configuration, provide CircuitBreaker, Bulkhead, RateLimiter and Retry feature, based on [resilience4j](https://github.com/resilience4j/resilience4j)。
      * For traffic governance, the operator matching is used to label the traffic, which can accurately govern the traffic for the request path , request method and request header.
      * By using dynamic configuration, zero waiting for governance rules to take effect. No code intrusion, only need distribution configuration.
-     * [more information](https://github.com/GuoYL123/spring-cloud-huawei/tree/gover/spring-cloud-huawei-governance)
+     * [more information](https://github.com/huaweicloud/spring-cloud-huawei/tree/master/spring-cloud-huawei-governance)
 
 ## How to use
 spring-cloud-huawei has been released in Maven's central repository.
