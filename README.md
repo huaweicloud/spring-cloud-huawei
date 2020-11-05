@@ -51,7 +51,7 @@ commercial such as Huawei Cloud
      * Automatically generate swagger document with zero-code (based on [spring-fox](https://github.com/springfox/springfox)),
       and register to the server-center for interface documentation management.
      * Networking with [ServiceComb-Java-Chassis](https://github.com/apache/servicecomb-java-chassis) based swagger.
-     * Using [Edge-Service](https://support.huaweicloud.com/bestpractice-servicestage/servicestage_bestpractice_0111.html) gateway，
+     * Using [Edge-Service](https://docs.servicecomb.io/java-chassis/en_US/edge/by-servicecomb-sdk/) gateway，
  Better performance than spring cloud gateway and netflix zuul.
 
  * **spring-cloud-starter-huawei-governance:**
