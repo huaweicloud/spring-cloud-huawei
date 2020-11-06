@@ -41,7 +41,7 @@
  * **spring-cloud-starter-huawei-swagger:**
      * 基于代码零配置自动生成swagger接口契约(基于[spring-fox](https://github.com/springfox/springfox)的能力)，自动注册到Service-Center注册中心进行接口文档化管理。
      * 基于契约与微服务框架[ServiceComb-Java-Chassis](https://github.com/apache/servicecomb-java-chassis)组网。
-     * 使用[Edge-Service](https://support.huaweicloud.com/bestpractice-servicestage/servicestage_bestpractice_0111.html)网关，
+     * 使用[Edge-Service](https://docs.servicecomb.io/java-chassis/zh_CN/edge/by-servicecomb-sdk/)网关，
  [表现](https://github.com/AngLi2/api-gateway-benchmark/blob/master/Spring%20Cloud%20Gateway%2C%20Zuul%2C%20Edge%20Service%20%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94.md)
  优于spring cloud gateway和netflix zuul，体验reactive带来的性能提升。
 
