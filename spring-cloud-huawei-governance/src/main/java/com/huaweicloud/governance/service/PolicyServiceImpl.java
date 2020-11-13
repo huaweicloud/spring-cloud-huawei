@@ -16,7 +16,6 @@
  */
 package com.huaweicloud.governance.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,41 +36,43 @@ public class PolicyServiceImpl implements PolicyService {
   private List<GovProperties> propertiesList;
 
   @Override
-  public Map<String, Policy> getAllPolicies(String mark) {
+  public Map<String, Policy> getAllPolicies(List<String> marks) {
     Map<String, Policy> policies = new HashMap<>();
     for (GovProperties properties : propertiesList) {
-      Policy ratePolicy = match(properties.covert(), mark);
-      if (ratePolicy != null) {
-        String name = ratePolicy.name();
+      Policy policy = match(properties.covert(), marks);
+      if (policy != null) {
+        String name = policy.name();
         name = name.substring(name.lastIndexOf('.') + 1);
-        policies.put(name, ratePolicy);
+        policies.put(name, policy);
       }
     }
     return policies;
   }
 
   @Override
-  public Policy getCustomPolicy(String kind, String mark) {
+  public Policy getCustomPolicy(String kind, List<String> marks) {
     for (GovProperties properties : propertiesList) {
       if (properties.getClass().getName().startsWith(kind)) {
-        return match(properties.covert(), mark);
+        return match(properties.covert(), marks);
       }
     }
     return null;
   }
 
-  private <T extends AbstractPolicy> Policy match(Map<String, T> policies, String mark) {
+  private <T extends AbstractPolicy> Policy match(Map<String, T> policies, List<String> marks) {
     AbstractPolicy policyResult;
-    if (mark == null) {
-      mark = MATCH_NONE;
-    }
+    AbstractPolicy defaultPolicy = null;
     for (Entry<String, T> entry : policies.entrySet()) {
-      if (entry.getValue().match(mark)) {
+      if (entry.getValue().getRules().getMatch().equals(MATCH_NONE)) {
+        defaultPolicy = entry.getValue();
+        defaultPolicy.setName(entry.getKey());
+      }
+      if (entry.getValue().match(marks)) {
         policyResult = entry.getValue();
         policyResult.setName(entry.getKey());
         return policyResult;
       }
     }
-    return null;
+    return defaultPolicy;
   }
 }

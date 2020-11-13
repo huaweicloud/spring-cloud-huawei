@@ -91,6 +91,6 @@ public class CompareOperator implements MatchOperator {
   }
 
   private boolean doubleEquals(double target, double result) {
-    return target - result < 1e-6 || target - result > -1e-6;
+    return Math.abs(target - result) < 1e-6;
   }
 }

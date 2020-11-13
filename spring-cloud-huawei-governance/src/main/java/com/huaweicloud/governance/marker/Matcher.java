@@ -28,7 +28,7 @@ public class Matcher {
 
   private List<String> method;
 
-  private String trafficMarkPolicy;
+  private String name;
 
   public Map<String, RawOperator> getHeaders() {
     return headers;
@@ -54,11 +54,11 @@ public class Matcher {
     this.method = method;
   }
 
-  public String getTrafficMarkPolicy() {
-    return trafficMarkPolicy;
+  public String getName() {
+    return name;
   }
 
-  public void setTrafficMarkPolicy(String trafficMarkPolicy) {
-    this.trafficMarkPolicy = trafficMarkPolicy;
+  public void setName(String name) {
+    this.name = name;
   }
 }

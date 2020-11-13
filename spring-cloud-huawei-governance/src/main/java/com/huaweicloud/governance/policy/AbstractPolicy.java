@@ -16,18 +16,20 @@
  */
 package com.huaweicloud.governance.policy;
 
+import java.util.List;
+
 public abstract class AbstractPolicy implements Policy {
 
   private String name;
 
-  private String match;
+  private GovRule rules;
 
-  public String getMatch() {
-    return match;
+  public GovRule getRules() {
+    return rules;
   }
 
-  public void setMatch(String match) {
-    this.match = match;
+  public void setRules(GovRule rules) {
+    this.rules = rules;
   }
 
   public void setName(String name) {
@@ -35,8 +37,13 @@ public abstract class AbstractPolicy implements Policy {
   }
 
   @Override
-  public boolean match(String str) {
-    return str.startsWith(match);
+  public boolean match(List<String> strings) {
+    for (String string : strings) {
+      if (rules.getMatch().contains(string)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override

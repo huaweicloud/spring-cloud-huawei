@@ -16,6 +16,7 @@
  */
 package com.huaweicloud.governance.service;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -27,6 +28,8 @@ import com.huaweicloud.governance.marker.Matcher;
 import com.huaweicloud.governance.marker.RequestProcessor;
 import com.huaweicloud.governance.marker.TrafficMarker;
 
+import java.util.List;
+
 public class MatchersServiceImpl implements MatchersService {
 
   @Autowired
@@ -36,26 +39,21 @@ public class MatchersServiceImpl implements MatchersService {
   private MatchProperties matchProperties;
 
   /**
+   *
    * @param govHttpRequest
    * @return
    */
   @Override
-  public String getMatchStr(GovHttpRequest govHttpRequest) {
+  public List<String> getMatchStr(GovHttpRequest govHttpRequest) {
     Map<String, TrafficMarker> map = matchProperties.covert();
-    String mark = null;
+    List<String> marks = new ArrayList<>();
     for (Entry<String, TrafficMarker> entry : map.entrySet()) {
-      boolean isMatch = true;
       for (Matcher match : entry.getValue().getMatches()) {
-        if (!requestProcessor.match(govHttpRequest, match)) {
-          isMatch = false;
-          break;
+        if (requestProcessor.match(govHttpRequest, match)) {
+          marks.add(entry.getKey() + "." + match.getName());
         }
       }
-      if (isMatch) {
-        mark = entry.getKey();
-        break;
-      }
     }
-    return mark;
+    return marks;
   }
 }

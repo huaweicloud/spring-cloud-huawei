@@ -23,7 +23,7 @@ import java.util.Map;
 
 public interface PolicyService {
 
-  Map<String, Policy> getAllPolicies(String mark);
+  Map<String, Policy> getAllPolicies(List<String> mark);
 
-  Policy getCustomPolicy(String kind, String mark);
+  Policy getCustomPolicy(String kind, List<String> mark);
 }

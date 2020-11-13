@@ -14,32 +14,40 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/hello"
+          name: xx
     demo-retry: |
       matches:
         - apiPath:
             exact: "/retry"
+          name: xx
     demo-circuitBreaker: |
       matches:
         - apiPath:
             exact: "/circuitBreaker"
+          name: xx
     demo-bulkhead: |
       matches:
         - apiPath:
             exact: "/bulkhead"
+          name: xx
   rateLimiting:
     xxxxx: |
-      match: demo-rateLimiting
+      rules:
+        match: demo-rateLimiting.xx
       rate: 1
   retry:
     xxx: |
-      match: demo-retry
+      rules:
+        match: demo-retry.xx
       maxAttempts: 3
   circuitBreaker:
     xxx: |
-      match: demo-circuitBreaker
+      rules:
+        match: demo-circuitBreaker.xx
       minimumNumberOfCalls: 2
       slidingWindowSize: 2
   bulkhead:
     xxx: |
-      match: demo-bulkhead
+      rules:
+        match: demo-bulkhead.xx
       maxConcurrentCalls: 1

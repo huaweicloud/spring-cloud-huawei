@@ -16,13 +16,15 @@
  */
 package com.huaweicloud.governance.policy;
 
+import java.util.List;
+
 /**
  * @Author GuoYl123
  * @Date 2020/5/11
  **/
 public interface Policy {
 
-  boolean match(String str);
+  boolean match(List<String> strings);
 
   String handler();
 
