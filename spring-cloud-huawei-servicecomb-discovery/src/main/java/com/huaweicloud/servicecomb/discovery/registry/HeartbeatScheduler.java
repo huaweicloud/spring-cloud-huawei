@@ -21,16 +21,17 @@ import com.huaweicloud.common.cache.RegisterCache;
 import com.huaweicloud.common.exception.ServiceCombException;
 import com.huaweicloud.servicecomb.discovery.client.model.HeardBeatStatus;
 import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
-import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstance;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 
 import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
-import com.huaweicloud.servicecomb.discovery.client.model.HeartbeatRequest;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
+
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.TaskScheduler;
@@ -52,29 +53,26 @@ public class HeartbeatScheduler {
 
   private ServiceCombClient serviceCombClient;
 
-  private TagsProperties tagsProperties;
-
   private AtomicBoolean heartbeatLog = new AtomicBoolean(true);
 
   public HeartbeatScheduler(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
-      ServiceCombClient serviceCombClient, TagsProperties tagsProperties) {
+      ServiceCombClient serviceCombClient) {
     this.serviceCombDiscoveryProperties = serviceCombDiscoveryProperties;
     this.serviceCombClient = serviceCombClient;
-    this.tagsProperties = tagsProperties;
   }
 
-  public void add(ServiceCombRegistration registration) {
-    if (!serviceCombDiscoveryProperties.isHealthCheck()) {
-      return;
-    }
+  public void add(Microservice microservice, Function<Microservice, Boolean> registryFunc) {
     ScheduledFuture currentTask = this.scheduler
         .scheduleWithFixedDelay(() -> {
               try {
-                HeartbeatRequest heartbeatRequest = new HeartbeatRequest(RegisterCache.getServiceID(),
-                    RegisterCache.getInstanceID());
-                HeardBeatStatus result = serviceCombClient.heartbeat(heartbeatRequest);
+                HeardBeatStatus result = serviceCombClient
+                    .heartbeat(RegisterCache.getServiceID(), RegisterCache.getInstanceID());
                 if (result == HeardBeatStatus.FAILED) {
-                  retryRegister(registration, heartbeatRequest.getInstances().get(0).getInstanceId());
+                  LOGGER.info("retry registry to service center.");
+                  String oldInstanceID = RegisterCache.getInstanceID();
+                  if (registryFunc.apply(microservice)) {
+                    refreshLocalMap(RegisterCache.getInstanceID(), heartbeatRequestMap.remove(oldInstanceID));
+                  }
                 }
                 if (heartbeatLog.get()) {
                   LOGGER.info("heartbeat success.");
@@ -100,29 +98,6 @@ public class HeartbeatScheduler {
     ScheduledFuture preScheduled = heartbeatRequestMap.put(instanceId, currentTask);
     if (null != preScheduled) {
       preScheduled.cancel(true);
-    }
-  }
-
-  private void retryRegister(ServiceCombRegistration registration, String oldInstanceID) {
-    LOGGER.info("retry registry to service center.");
-    Microservice microservice = RegistryHandler.buildMicroservice(registration);
-    String serviceID = RegisterCache.getServiceID();
-    try {
-      MicroserviceInstance microserviceInstance = RegistryHandler
-          .buildMicroServiceInstances(serviceID, microservice, serviceCombDiscoveryProperties,
-              tagsProperties);
-      String instanceID = serviceCombClient.registerInstance(microserviceInstance);
-      if (null != instanceID) {
-        serviceCombClient.autoDiscovery(serviceCombDiscoveryProperties.isAutoDiscovery());
-        RegisterCache.setInstanceID(instanceID);
-        RegisterCache.setServiceID(serviceID);
-        refreshLocalMap(instanceID, heartbeatRequestMap.remove(oldInstanceID));
-        LOGGER.info("register success,instanceID:{};serviceID:{}", instanceID, serviceID);
-      }
-    } catch (ServiceCombException e) {
-      serviceCombClient.toggle();
-      LOGGER.warn(
-          "register failed, will retry. please check config file. message=" + e.getMessage());
     }
   }
 }

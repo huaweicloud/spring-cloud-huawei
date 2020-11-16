@@ -21,17 +21,19 @@ import java.io.IOException;
 import java.util.List;
 
 import java.util.Map;
+
 import org.apache.http.HttpEntity;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.cloud.client.ServiceInstance;
+
 import com.huaweicloud.common.exception.RemoteOperationException;
 import com.huaweicloud.common.exception.RemoteServerUnavailableException;
 import com.huaweicloud.common.exception.ServiceCombException;
 import com.huaweicloud.common.transport.DefaultHttpTransport;
 import com.huaweicloud.common.transport.HttpTransport;
 import com.huaweicloud.common.transport.Response;
-import com.huaweicloud.servicecomb.discovery.client.model.HeartbeatRequest;
+import com.huaweicloud.servicecomb.discovery.client.model.HeardBeatStatus;
 import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstance;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstanceSingleResponse;
@@ -224,7 +226,6 @@ public class ServiceCombClientTest {
 
     response.setContent(responseString);
 
-    HeartbeatRequest heartbeatRequest = new HeartbeatRequest("1", "2");
     new Expectations() {
       {
         Deencapsulation.newUninitializedInstance(DefaultHttpTransport.class);
@@ -234,7 +235,8 @@ public class ServiceCombClientTest {
       }
     };
     ServiceCombClient serviceCombClient = new ServiceCombClient(url, httpTransport);
-    serviceCombClient.heartbeat(heartbeatRequest);
+    HeardBeatStatus status = serviceCombClient.heartbeat("1", "2");
+    Assert.assertEquals(HeardBeatStatus.SUCCESS, status);
   }
 
   @Test
