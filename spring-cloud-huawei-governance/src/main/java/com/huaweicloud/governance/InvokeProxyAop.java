@@ -34,6 +34,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import io.github.resilience4j.bulkhead.BulkheadFullException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
@@ -69,6 +70,9 @@ public class InvokeProxyAop {
     HttpServletRequest request = (HttpServletRequest) pjp.getArgs()[0];
     HttpServletResponse response = (HttpServletResponse) pjp.getArgs()[1];
     Map<String, Policy> policies = matchersManager.match(convert(request));
+    if (CollectionUtils.isEmpty(policies)) {
+      return pjp.proceed();
+    }
     RequestTrackContext.setPolicies(new ArrayList(policies.values()));
     Object result = null;
     try {

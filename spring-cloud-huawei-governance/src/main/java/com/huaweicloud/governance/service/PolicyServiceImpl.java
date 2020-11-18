@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import com.huaweicloud.governance.policy.AbstractPolicy;
 import com.huaweicloud.governance.policy.Policy;
@@ -37,6 +38,9 @@ public class PolicyServiceImpl implements PolicyService {
 
   @Override
   public Map<String, Policy> getAllPolicies(List<String> marks) {
+    if (CollectionUtils.isEmpty(marks)) {
+      return null;
+    }
     Map<String, Policy> policies = new HashMap<>();
     for (GovProperties properties : propertiesList) {
       Policy policy = match(properties.covert(), marks);
