@@ -20,6 +20,7 @@ package com.huaweicloud.servicecomb.discovery.registry;
 
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.servicecomb.discovery.event.ServiceCombEventBus;
+
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -30,9 +31,11 @@ import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationA
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationConfiguration;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationProperties;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistryAutoConfiguration;
+
 import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombEnabled;
 import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -56,8 +59,7 @@ public class ServiceCombRegistryAutoConfiguration {
       ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
       ServiceCombClient serviceCombClient,
       TagsProperties tagsProperties) {
-    return new HeartbeatScheduler(serviceCombDiscoveryProperties, serviceCombClient,
-        tagsProperties);
+    return new HeartbeatScheduler(serviceCombDiscoveryProperties, serviceCombClient);
   }
 
   @Bean
@@ -99,6 +101,5 @@ public class ServiceCombRegistryAutoConfiguration {
     return new ServiceCombWatcher(eventBus, serviceCombSSLProperties,
         serviceCombDiscoveryProperties);
   }
-
 }
 

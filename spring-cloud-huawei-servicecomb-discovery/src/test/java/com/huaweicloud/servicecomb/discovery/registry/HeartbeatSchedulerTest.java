@@ -18,7 +18,9 @@
 package com.huaweicloud.servicecomb.discovery.registry;
 
 import com.huaweicloud.common.cache.RegisterCache;
+
 import org.junit.Test;
+
 import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 
@@ -33,19 +35,14 @@ public class HeartbeatSchedulerTest {
   @Injectable
   ServiceCombClient serviceCombClient;
 
-  @Injectable
-  ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
-
-  @Injectable
-  TagsProperties tagsProperties;
+  ServiceCombDiscoveryProperties serviceCombDiscoveryProperties = new ServiceCombDiscoveryProperties();
 
   @Test
   public void addAndRemove() {
     serviceCombDiscoveryProperties.setHealthCheckInterval(10);
-    HeartbeatScheduler heartbeatScheduler = new HeartbeatScheduler(serviceCombDiscoveryProperties,
-        serviceCombClient, tagsProperties);
+    HeartbeatScheduler heartbeatScheduler = new HeartbeatScheduler(serviceCombDiscoveryProperties, serviceCombClient);
     RegisterCache.setInstanceID("11");
-    heartbeatScheduler.add(null);
+    heartbeatScheduler.add(null, null);
     heartbeatScheduler.remove();
   }
 }

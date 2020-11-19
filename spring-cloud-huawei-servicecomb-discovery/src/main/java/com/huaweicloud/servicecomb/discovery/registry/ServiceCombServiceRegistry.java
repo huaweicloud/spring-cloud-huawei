@@ -94,21 +94,20 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
   private void asyncRegister(ServiceCombRegistration registration) {
     EXECUTOR.execute(() -> {
       try {
-        loopRegister(registration);
-        RegisterCache.setInstanceID(instanceID);
-        RegisterCache.setServiceID(serviceID);
-        if (serviceCombDiscoveryProperties.isWatch()) {
-          startWatch();
-        }
-        LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
-        heartbeatScheduler.add(registration);
+        Microservice microservice = getMicroservice(registration);
+        loopRegister(microservice);
+        doWatch();
+        heartbeatScheduler.add(microservice, this::doRegister);
       } catch (Throwable e) {
         LOGGER.error("Unexpected exception in register. ", e);
       }
     });
   }
 
-  private void startWatch() {
+  private void doWatch() {
+    if (!serviceCombDiscoveryProperties.isWatch()) {
+      return;
+    }
     try {
       URI uri = new URI(serviceCombClient.getUrl());
       String url = uri.getHost() + (uri.getPort() == -1 ? "" : (":" + uri.getPort()))
@@ -120,39 +119,55 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     }
   }
 
-  private void loopRegister(ServiceCombRegistration registration) {
+  private void loopRegister(Microservice microservice) {
+    while (true) {
+      if (doRegister(microservice)) {
+        break;
+      }
+    }
+  }
+
+  private Microservice getMicroservice(ServiceCombRegistration registration) {
     Microservice microservice = RegistryHandler.buildMicroservice(registration);
     if (serviceCombSwaggerHandler != null) {
       serviceCombSwaggerHandler.init(serviceCombDiscoveryProperties.getAppName(),
           serviceCombDiscoveryProperties.getServiceName());
       microservice.setSchemas(serviceCombSwaggerHandler.getSchemaIds());
     }
-    while (true) {
-      try {
-        serviceID = serviceCombClient.getServiceId(microservice);
-        if (null == serviceID) {
-          serviceID = serviceCombClient.registerMicroservice(microservice);
-          if (serviceCombSwaggerHandler != null) {
-            serviceCombSwaggerHandler.registerSwagger(serviceID, microservice.getSchemas());
-          }
-        } else if (serviceCombSwaggerHandler != null) {
-          List<String> schemas = filterSchema(serviceCombSwaggerHandler.getSchemasSummaryMap());
-          serviceCombSwaggerHandler.registerSwagger(serviceID, schemas);
-        }
-        MicroserviceInstance microserviceInstance = RegistryHandler
-            .buildMicroServiceInstances(serviceID, microservice, serviceCombDiscoveryProperties,
-                tagsProperties);
-        instanceID = serviceCombClient.registerInstance(microserviceInstance);
-        if (null != instanceID) {
-          serviceCombClient.autoDiscovery(serviceCombDiscoveryProperties.isAutoDiscovery());
-          break;
-        }
-      } catch (ServiceCombException e) {
-        serviceCombClient.toggle();
-        LOGGER.warn(
-            "register failed, will retry. please check config file. message=" + e.getMessage());
+    return microservice;
+  }
+
+  private boolean doRegister(Microservice microservice) {
+    try {
+      serviceID = serviceCombClient.getServiceId(microservice);
+      List<String> schemas = null;
+      if (null == serviceID) {
+        serviceID = serviceCombClient.registerMicroservice(microservice);
+        schemas = microservice.getSchemas();
       }
+      if (serviceCombSwaggerHandler != null) {
+        if (schemas != null) {
+          schemas = filterSchema(serviceCombSwaggerHandler.getSchemasSummaryMap());
+        }
+        serviceCombSwaggerHandler.registerSwagger(serviceID, schemas);
+      }
+      MicroserviceInstance microserviceInstance = RegistryHandler
+          .buildMicroServiceInstances(serviceID, microservice, serviceCombDiscoveryProperties,
+              tagsProperties);
+      instanceID = serviceCombClient.registerInstance(microserviceInstance);
+      if (null != instanceID) {
+        serviceCombClient.autoDiscovery(serviceCombDiscoveryProperties.isAutoDiscovery());
+        RegisterCache.setInstanceID(instanceID);
+        RegisterCache.setServiceID(serviceID);
+        LOGGER.info("register success,instanceID=" + instanceID + ";serviceID=" + serviceID);
+        return true;
+      }
+    } catch (ServiceCombException e) {
+      serviceCombClient.toggle();
+      LOGGER.warn(
+          "register failed, will retry. please check config file. message=" + e.getMessage());
     }
+    return false;
   }
 
   /**
@@ -196,7 +211,6 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     }
   }
 
-
   @Override
   public void close() {
     LOGGER.info("close");
@@ -224,7 +238,6 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     }
     return null;
   }
-
 
   public String getServiceID() {
     return serviceID;

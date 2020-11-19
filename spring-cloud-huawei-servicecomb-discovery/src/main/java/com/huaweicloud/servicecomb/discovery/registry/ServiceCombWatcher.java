@@ -18,6 +18,7 @@
 package com.huaweicloud.servicecomb.discovery.registry;
 
 import com.huaweicloud.common.cache.TokenCache;
+import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 import com.huaweicloud.common.transport.BackOff;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.common.util.SecretUtil;
@@ -64,9 +65,11 @@ public class ServiceCombWatcher {
 
   private String url;
 
-  private BackOff backOff = new BackOff(5000);
+  private BackOff backOff = new BackOff(15000);
 
   private SSLContext sslContext;
+
+  private WebSocketClient webSocketClient;
 
   private ScheduledExecutorService EXECUTOR = Executors.newScheduledThreadPool(1, (r) -> {
     Thread thread = new Thread(r);
@@ -100,14 +103,18 @@ public class ServiceCombWatcher {
     });
   }
 
-  private synchronized void connect() {
-    WebSocketClient webSocketClient = buildClient();
+  public synchronized void connect() {
     EXECUTOR.execute(() -> {
-      if (webSocketClient == null) {
-        return;
-      }
       try {
-        webSocketClient.connect();
+        if (webSocketClient == null) {
+          webSocketClient = buildClient();
+          webSocketClient.connect();
+        } else {
+          if (webSocketClient.isOpen()) {
+            return;
+          }
+          webSocketClient.reconnect();
+        }
       } catch (IllegalStateException e) {
         LOGGER.debug("establish websocket connect failed.", e);
         return;
@@ -150,8 +157,7 @@ public class ServiceCombWatcher {
     try {
       webSocketClient = new ServiceCombWebSocketClient(url, signedHeader, eventBus::publish);
     } catch (URISyntaxException e) {
-      LOGGER.error("parse url error");
-      return null;
+      throw new ServiceCombRuntimeException("parse webSocketClient url error");
     }
     if (sslContext != null) {
       webSocketClient.setSocketFactory(sslContext.getSocketFactory());

@@ -394,17 +394,12 @@ public class ServiceCombClient {
     return result;
   }
 
-  /**
-   * @param heartbeatRequest
-   * @throws ServiceCombException
-   */
-  public HeardBeatStatus heartbeat(HeartbeatRequest heartbeatRequest) throws ServiceCombException {
+  public HeardBeatStatus heartbeat(String serviceId, String instanceId) throws ServiceCombException {
     Response response = null;
     try {
-      String content = JsonUtils.OBJ_MAPPER.writeValueAsString(heartbeatRequest);
-      StringEntity stringEntity = new StringEntity(content, "utf-8");
       response = httpTransport
-          .sendPutRequest(buildURI("/registry/heartbeats"), stringEntity);
+          .sendPutRequest(buildURI("/registry/microservices/" + serviceId + "/instances/" + instanceId + "/heartbeat"),
+              null);
       if (response.getStatusCode() == HttpStatus.SC_OK) {
         LOGGER.debug("heartbeat success.");
         return HeardBeatStatus.SUCCESS;
