@@ -91,7 +91,6 @@ public class ServiceCombDiscoveryClientConfiguration {
   }
 
   @Bean
-  @ConditionalOnMissingBean
   public DiscoveryClient serviceCombDiscoveryClient(
       ServiceCombDiscoveryProperties discoveryProperties, ServiceCombClient serviceCombClient) {
     return new ServiceCombDiscoveryClient(discoveryProperties, serviceCombClient);
