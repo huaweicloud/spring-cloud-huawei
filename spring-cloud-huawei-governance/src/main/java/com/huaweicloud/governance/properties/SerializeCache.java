@@ -35,21 +35,22 @@ public class SerializeCache<T> {
 
   Map<String, String> md5Map = new HashMap<>();
 
-  Map<String, T> cacheMap = new HashMap<>();
+  Map<String, Map<String, T>> cacheMap = new HashMap<>();
 
   public Map<String, T> get(Map<String, String> t, Class<T> entityClass) {
     if (CollectionUtils.isEmpty(t)) {
       return Collections.emptyMap();
     }
+    String classKey = entityClass.getName();
     for (Entry<String, String> entry : t.entrySet()) {
-      String key = entry.getKey() + entityClass.getName();
-      if (!check(key, entry.getValue())) {
+      String realKey = entry.getKey();
+      if (!check(classKey + realKey, entry.getValue())) {
         continue;
       }
       Yaml yaml = new Yaml();
       try {
         T marker = yaml.loadAs(entry.getValue(), entityClass);
-        cacheMap.put(key, marker);
+        cacheMap.computeIfAbsent(classKey, k -> new HashMap<>()).put(realKey, marker);
       } catch (YAMLException e) {
         //todo: 避免每次打印
         LOGGER.error("governance config yaml is illegal : {}", e.getMessage());
@@ -57,7 +58,7 @@ public class SerializeCache<T> {
       }
     }
     Map<String, T> resultMap = new HashMap<>();
-    for (Entry<String, T> entry : cacheMap.entrySet()) {
+    for (Entry<String, T> entry : cacheMap.get(classKey).entrySet()) {
       try {
         if (entry.getValue().getClass().isInstance(entityClass.newInstance())) {
           resultMap.put(entry.getKey(), entry.getValue());

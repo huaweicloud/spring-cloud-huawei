@@ -40,7 +40,7 @@ public class RegexOperator implements MatchOperator {
    * @return
    */
   @Override
-  public synchronized boolean match(String targetStr, String patternStr) {
+  public boolean match(String targetStr, String patternStr) {
     Future<Boolean> f = executor.submit(() -> targetStr.matches(patternStr));
     try {
       return f.get(1, TimeUnit.SECONDS);

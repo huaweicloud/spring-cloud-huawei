@@ -18,7 +18,9 @@ package com.huaweicloud.governance.service;
 
 import com.huaweicloud.governance.marker.GovHttpRequest;
 
+import java.util.List;
+
 public interface MatchersService {
 
-  String getMatchStr(GovHttpRequest govHttpRequest);
+  List<String> getMatchStr(GovHttpRequest govHttpRequest);
 }

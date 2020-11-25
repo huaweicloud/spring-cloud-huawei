@@ -20,6 +20,9 @@ import com.huaweicloud.common.util.HeaderUtil;
 import com.huaweicloud.governance.client.track.RequestTrackContext;
 import com.huaweicloud.governance.marker.GovHttpRequest;
 import com.huaweicloud.governance.policy.Policy;
+import com.huaweicloud.governance.properties.BulkheadProperties;
+import com.huaweicloud.governance.properties.CircuitBreakerProperties;
+import com.huaweicloud.governance.properties.RateLimitProperties;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -34,6 +37,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import io.github.resilience4j.bulkhead.BulkheadFullException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
@@ -47,12 +51,6 @@ import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 public class InvokeProxyAop {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(InvokeProxyAop.class);
-
-  private static final String RATE_LIMITING_POLICY_NAME = "RateLimitingPolicy";
-
-  private static final String CIRCUIT_BREAKER_POLICY_NAME = "CircuitBreakerPolicy";
-
-  private static final String BULKHEAD_POLICY_NAME = "BulkheadPolicy";
 
   @Autowired
   private MatchersManager matchersManager;
@@ -69,6 +67,9 @@ public class InvokeProxyAop {
     HttpServletRequest request = (HttpServletRequest) pjp.getArgs()[0];
     HttpServletResponse response = (HttpServletResponse) pjp.getArgs()[1];
     Map<String, Policy> policies = matchersManager.match(convert(request));
+    if (CollectionUtils.isEmpty(policies)) {
+      return pjp.proceed();
+    }
     RequestTrackContext.setPolicies(new ArrayList(policies.values()));
     Object result = null;
     try {
@@ -79,17 +80,17 @@ public class InvokeProxyAop {
         response.setStatus(502);
         response.getWriter().print("rate limit!");
         LOGGER.warn("the request is rate limit by policy : {}",
-            policies.get(RATE_LIMITING_POLICY_NAME));
+            policies.get(RateLimitProperties.class.getName()));
       } else if (th instanceof CallNotPermittedException) {
         response.setStatus(502);
         response.getWriter().print("circuitBreaker is open!");
         LOGGER.warn("circuitBreaker is open by policy : {}",
-            policies.get(CIRCUIT_BREAKER_POLICY_NAME));
+            policies.get(CircuitBreakerProperties.class.getName()));
       } else if (th instanceof BulkheadFullException) {
         response.setStatus(502);
         response.getWriter().print("bulkhead is full and does not permit further calls!");
         LOGGER.warn("bulkhead is full and does not permit further calls by policy : {}",
-            policies.get(BULKHEAD_POLICY_NAME));
+            policies.get(BulkheadProperties.class.getName()));
       } else {
         throw th;
       }

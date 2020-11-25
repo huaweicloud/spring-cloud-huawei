@@ -17,11 +17,13 @@
 package com.huaweicloud.governance.service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import com.huaweicloud.governance.policy.AbstractPolicy;
 import com.huaweicloud.governance.policy.Policy;
@@ -37,41 +39,49 @@ public class PolicyServiceImpl implements PolicyService {
   private List<GovProperties> propertiesList;
 
   @Override
-  public Map<String, Policy> getAllPolicies(String mark) {
+  public Map<String, Policy> getAllPolicies(List<String> marks) {
+    if (CollectionUtils.isEmpty(marks)) {
+      return null;
+    }
     Map<String, Policy> policies = new HashMap<>();
     for (GovProperties properties : propertiesList) {
-      Policy ratePolicy = match(properties.covert(), mark);
-      if (ratePolicy != null) {
-        String name = ratePolicy.name();
-        name = name.substring(name.lastIndexOf('.') + 1);
-        policies.put(name, ratePolicy);
+      Policy policy = match(properties.covert(), marks);
+      if (policy != null) {
+        policies.put(properties.getClass().getName(), policy);
       }
     }
     return policies;
   }
 
   @Override
-  public Policy getCustomPolicy(String kind, String mark) {
+  public Policy getCustomPolicy(String kind, List<String> marks) {
     for (GovProperties properties : propertiesList) {
       if (properties.getClass().getName().startsWith(kind)) {
-        return match(properties.covert(), mark);
+        return match(properties.covert(), marks);
       }
     }
     return null;
   }
 
-  private <T extends AbstractPolicy> Policy match(Map<String, T> policies, String mark) {
-    AbstractPolicy policyResult;
-    if (mark == null) {
-      mark = MATCH_NONE;
-    }
+  private <T extends AbstractPolicy> Policy match(Map<String, T> policies, List<String> marks) {
+    List<AbstractPolicy> policyList = new ArrayList<>();
+    AbstractPolicy defaultPolicy = null;
     for (Entry<String, T> entry : policies.entrySet()) {
-      if (entry.getValue().match(mark)) {
+      if (entry.getValue().getRules().getMatch().equals(MATCH_NONE)) {
+        defaultPolicy = entry.getValue();
+        defaultPolicy.setName(entry.getKey());
+      }
+      if (entry.getValue().match(marks)) {
+        AbstractPolicy policyResult;
         policyResult = entry.getValue();
         policyResult.setName(entry.getKey());
-        return policyResult;
+        policyList.add(policyResult);
       }
     }
-    return null;
+    if (!policyList.isEmpty()) {
+      policyList.sort(Comparator.comparingInt(p -> p.getRules().getPrecedence()));
+      return policyList.get(0);
+    }
+    return defaultPolicy;
   }
 }

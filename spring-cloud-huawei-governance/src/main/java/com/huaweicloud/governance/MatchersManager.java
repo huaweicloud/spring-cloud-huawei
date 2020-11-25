@@ -21,6 +21,7 @@ import com.huaweicloud.governance.policy.Policy;
 import com.huaweicloud.governance.service.MatchersService;
 import com.huaweicloud.governance.service.PolicyService;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +45,10 @@ public class MatchersManager {
     /**
      * 1.获取该请求携带的marker
      */
-    String mark = matchersService.getMatchStr(request);
+    List<String> marks = matchersService.getMatchStr(request);
     /**
      * 2.通过 marker获取到所有的policy
      */
-    return policyService.getAllPolicies(mark);
+    return policyService.getAllPolicies(marks);
   }
 }

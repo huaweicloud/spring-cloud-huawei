@@ -58,7 +58,7 @@ import org.springframework.context.annotation.Configuration;
 public class GovConfiguration {
 
   @Bean
-  public InvokeProxyAop apiModelReaderAop() {
+  public InvokeProxyAop invokeProxyAop() {
     return new InvokeProxyAop();
   }
 

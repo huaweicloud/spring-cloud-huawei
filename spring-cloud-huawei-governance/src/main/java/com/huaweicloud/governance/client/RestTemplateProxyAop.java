@@ -23,6 +23,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 import com.huaweicloud.governance.MatchersManager;
 import com.huaweicloud.governance.client.track.RequestTrackContext;
@@ -44,8 +45,11 @@ public class RestTemplateProxyAop {
   }
 
   @Around("pointCut()")
-  public Object aroundInvoke(ProceedingJoinPoint pjp) {
+  public Object aroundInvoke(ProceedingJoinPoint pjp) throws Throwable {
     List<Policy> policies = RequestTrackContext.getPolicies();
+    if (CollectionUtils.isEmpty(policies)) {
+      return pjp.proceed();
+    }
     return govManager.processClient(policies, pjp::proceed);
   }
 }
