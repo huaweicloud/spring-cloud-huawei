@@ -29,7 +29,7 @@
 
   <groupId>com.huaweicloud</groupId>
   <artifactId>spring-cloud-huawei</artifactId>
-  <version>1.3.3-Hoxton-SNAPSHOT</version>
+  <version>1.3.8-Greenwich</version>
   <packaging>pom</packaging>
   <name>Spring Cloud Huawei</name>
 
@@ -37,8 +37,8 @@
     <java.version>1.8</java.version>
     <!-- spring-cloud-dependencies do not import spring-boot-dependencies, spring-boot-dependencies
      import spring-framework-bom. No need configure spring version. -->
-    <spring-cloud.version>Hoxton.SR4</spring-cloud.version>
-    <spring-boot.version>2.2.5.RELEASE</spring-boot.version>
+    <spring-cloud.version>Greenwich.SR6</spring-cloud.version>
+    <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
     <servicecomb.version>2.0.2</servicecomb.version>
   </properties>
 
@@ -47,7 +47,7 @@
     <module>spring-cloud-huawei-parents</module>
     <module>spring-cloud-huawei-common</module>
     <module>spring-cloud-huawei-servicecomb-discovery</module>
-    <module>spring-cloud-huawei-sample</module>
+<!--    <module>spring-cloud-huawei-sample</module>-->
     <module>spring-cloud-starter-huawei</module>
     <module>spring-cloud-huawei-dtm</module>
     <module>spring-cloud-huawei-config</module>
