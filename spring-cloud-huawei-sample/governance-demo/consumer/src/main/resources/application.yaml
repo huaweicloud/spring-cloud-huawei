@@ -9,7 +9,7 @@ spring:
       discovery:
         address: http://127.0.0.1:30100
 servicecomb:
-  match:
+  matchGroup:
     demo-rateLimiting: |
       matches:
         - apiPath:

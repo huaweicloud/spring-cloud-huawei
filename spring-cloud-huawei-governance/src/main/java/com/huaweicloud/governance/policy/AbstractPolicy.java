@@ -37,13 +37,8 @@ public abstract class AbstractPolicy implements Policy {
   }
 
   @Override
-  public boolean match(List<String> strings) {
-    for (String string : strings) {
-      if (rules.getMatch().contains(string)) {
-        return true;
-      }
-    }
-    return false;
+  public boolean match(List<String> strs) {
+    return strs.stream().anyMatch(str -> rules.getMatch().contains(str));
   }
 
   @Override

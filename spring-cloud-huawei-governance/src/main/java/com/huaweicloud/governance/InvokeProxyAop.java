@@ -20,6 +20,9 @@ import com.huaweicloud.common.util.HeaderUtil;
 import com.huaweicloud.governance.client.track.RequestTrackContext;
 import com.huaweicloud.governance.marker.GovHttpRequest;
 import com.huaweicloud.governance.policy.Policy;
+import com.huaweicloud.governance.properties.BulkheadProperties;
+import com.huaweicloud.governance.properties.CircuitBreakerProperties;
+import com.huaweicloud.governance.properties.RateLimitProperties;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -49,12 +52,6 @@ public class InvokeProxyAop {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(InvokeProxyAop.class);
 
-  private static final String RATE_LIMITING_POLICY_NAME = "RateLimitingPolicy";
-
-  private static final String CIRCUIT_BREAKER_POLICY_NAME = "CircuitBreakerPolicy";
-
-  private static final String BULKHEAD_POLICY_NAME = "BulkheadPolicy";
-
   @Autowired
   private MatchersManager matchersManager;
 
@@ -83,17 +80,17 @@ public class InvokeProxyAop {
         response.setStatus(502);
         response.getWriter().print("rate limit!");
         LOGGER.warn("the request is rate limit by policy : {}",
-            policies.get(RATE_LIMITING_POLICY_NAME));
+            policies.get(RateLimitProperties.class.getName()));
       } else if (th instanceof CallNotPermittedException) {
         response.setStatus(502);
         response.getWriter().print("circuitBreaker is open!");
         LOGGER.warn("circuitBreaker is open by policy : {}",
-            policies.get(CIRCUIT_BREAKER_POLICY_NAME));
+            policies.get(CircuitBreakerProperties.class.getName()));
       } else if (th instanceof BulkheadFullException) {
         response.setStatus(502);
         response.getWriter().print("bulkhead is full and does not permit further calls!");
         LOGGER.warn("bulkhead is full and does not permit further calls by policy : {}",
-            policies.get(BULKHEAD_POLICY_NAME));
+            policies.get(BulkheadProperties.class.getName()));
       } else {
         throw th;
       }

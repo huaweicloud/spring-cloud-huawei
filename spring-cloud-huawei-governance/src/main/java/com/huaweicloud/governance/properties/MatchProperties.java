@@ -28,20 +28,20 @@ import com.huaweicloud.governance.marker.TrafficMarker;
 @ConfigurationProperties("servicecomb")
 public class MatchProperties {
 
-  Map<String, String> match;
+  Map<String, String> matchGroup;
 
   @Autowired
   SerializeCache<TrafficMarker> cache;
 
-  public Map<String, String> getMatch() {
-    return match;
+  public Map<String, String> getMatchGroup() {
+    return matchGroup;
   }
 
-  public void setMatch(Map<String, String> match) {
-    this.match = match;
+  public void setMatchGroup(Map<String, String> matchGroup) {
+    this.matchGroup = matchGroup;
   }
 
   public Map<String, TrafficMarker> covert() {
-    return cache.get(match, TrafficMarker.class);
+    return cache.get(matchGroup, TrafficMarker.class);
   }
 }

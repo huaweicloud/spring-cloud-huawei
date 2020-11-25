@@ -16,6 +16,8 @@
  */
 package com.huaweicloud.governance.service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -45,9 +47,7 @@ public class PolicyServiceImpl implements PolicyService {
     for (GovProperties properties : propertiesList) {
       Policy policy = match(properties.covert(), marks);
       if (policy != null) {
-        String name = policy.name();
-        name = name.substring(name.lastIndexOf('.') + 1);
-        policies.put(name, policy);
+        policies.put(properties.getClass().getName(), policy);
       }
     }
     return policies;
@@ -64,7 +64,7 @@ public class PolicyServiceImpl implements PolicyService {
   }
 
   private <T extends AbstractPolicy> Policy match(Map<String, T> policies, List<String> marks) {
-    AbstractPolicy policyResult;
+    List<AbstractPolicy> policyList = new ArrayList<>();
     AbstractPolicy defaultPolicy = null;
     for (Entry<String, T> entry : policies.entrySet()) {
       if (entry.getValue().getRules().getMatch().equals(MATCH_NONE)) {
@@ -72,10 +72,15 @@ public class PolicyServiceImpl implements PolicyService {
         defaultPolicy.setName(entry.getKey());
       }
       if (entry.getValue().match(marks)) {
+        AbstractPolicy policyResult;
         policyResult = entry.getValue();
         policyResult.setName(entry.getKey());
-        return policyResult;
+        policyList.add(policyResult);
       }
+    }
+    if (!policyList.isEmpty()) {
+      policyList.sort(Comparator.comparingInt(p -> p.getRules().getPrecedence()));
+      return policyList.get(0);
     }
     return defaultPolicy;
   }
