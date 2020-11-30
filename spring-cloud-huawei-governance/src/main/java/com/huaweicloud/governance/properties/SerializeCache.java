@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
+import org.yaml.snakeyaml.representer.Representer;
 
 import com.huaweicloud.common.util.MD5Util;
 
@@ -33,9 +34,15 @@ public class SerializeCache<T> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SerializeCache.class);
 
-  Map<String, String> md5Map = new HashMap<>();
+  private Map<String, String> md5Map = new HashMap<>();
 
-  Map<String, Map<String, T>> cacheMap = new HashMap<>();
+  private Map<String, Map<String, T>> cacheMap = new HashMap<>();
+
+  private Representer representer = new Representer();
+
+  public SerializeCache() {
+    representer.getPropertyUtils().setSkipMissingProperties(true);
+  }
 
   public Map<String, T> get(Map<String, String> t, Class<T> entityClass) {
     if (CollectionUtils.isEmpty(t)) {
@@ -47,7 +54,7 @@ public class SerializeCache<T> {
       if (!check(classKey + realKey, entry.getValue())) {
         continue;
       }
-      Yaml yaml = new Yaml();
+      Yaml yaml = new Yaml(representer);
       try {
         T marker = yaml.loadAs(entry.getValue(), entityClass);
         cacheMap.computeIfAbsent(classKey, k -> new HashMap<>()).put(realKey, marker);
