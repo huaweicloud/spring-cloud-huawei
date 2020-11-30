@@ -20,7 +20,17 @@ import java.util.List;
 
 public class TrafficMarker {
 
+  private String services;
+
   private List<Matcher> matches;
+
+  public String getServices() {
+    return services;
+  }
+
+  public void setServices(String services) {
+    this.services = services;
+  }
 
   public List<Matcher> getMatches() {
     return matches;

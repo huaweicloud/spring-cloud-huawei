@@ -52,9 +52,7 @@ public class SerializeCache<T> {
         T marker = yaml.loadAs(entry.getValue(), entityClass);
         cacheMap.computeIfAbsent(classKey, k -> new HashMap<>()).put(realKey, marker);
       } catch (YAMLException e) {
-        //todo: 避免每次打印
         LOGGER.error("governance config yaml is illegal : {}", e.getMessage());
-        return Collections.emptyMap();
       }
     }
     Map<String, T> resultMap = new HashMap<>();
