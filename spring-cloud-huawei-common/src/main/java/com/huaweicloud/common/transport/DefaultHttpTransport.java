@@ -78,6 +78,8 @@ public class DefaultHttpTransport implements HttpTransport {
 
   private final TaskScheduler scheduler = new ConcurrentTaskScheduler(Executors.newSingleThreadScheduledExecutor());
 
+  private static final int REFRESH_TOKEN_TIME = 28 * 60 * 1000;
+
   public void setRBACToken(ServiceCombRBACProperties serviceCombRBACProperties,
       String urls) {
     if (serviceCombRBACProperties == null ||
@@ -88,7 +90,7 @@ public class DefaultHttpTransport implements HttpTransport {
     this.urlList = URLUtil.dealMultiUrl(urls);
     this.serviceCombRBACProperties = serviceCombRBACProperties;
     // 30min token expire  /
-    scheduler.scheduleWithFixedDelay(this::refreshToken, 28 * 60 * 1000);
+    scheduler.scheduleWithFixedDelay(this::refreshToken, REFRESH_TOKEN_TIME);
   }
 
   private void refreshToken() {
