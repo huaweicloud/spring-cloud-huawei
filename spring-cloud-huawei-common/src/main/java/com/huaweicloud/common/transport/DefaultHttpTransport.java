@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 import javax.net.ssl.SSLContext;
 
@@ -54,6 +55,8 @@ import com.huaweicloud.common.util.URLUtil;
 import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.util.StringUtils;
 
 
@@ -69,6 +72,12 @@ public class DefaultHttpTransport implements HttpTransport {
 
   private HttpClient httpClient;
 
+  private ServiceCombRBACProperties serviceCombRBACProperties;
+
+  private List<String> urlList;
+
+  private final TaskScheduler scheduler = new ConcurrentTaskScheduler(Executors.newSingleThreadScheduledExecutor());
+
   public void setRBACToken(ServiceCombRBACProperties serviceCombRBACProperties,
       String urls) {
     if (serviceCombRBACProperties == null ||
@@ -76,11 +85,13 @@ public class DefaultHttpTransport implements HttpTransport {
         StringUtils.isEmpty(serviceCombRBACProperties.getPassword())) {
       return;
     }
-    List<String> urlList = URLUtil.dealMultiUrl(urls);
-    getToken(serviceCombRBACProperties, urlList);
+    this.urlList = URLUtil.dealMultiUrl(urls);
+    this.serviceCombRBACProperties = serviceCombRBACProperties;
+    // 30min token expire  /
+    scheduler.scheduleWithFixedDelay(this::refreshToken, 28 * 60 * 1000);
   }
 
-  private void getToken(ServiceCombRBACProperties serviceCombRBACProperties, List<String> urlList) {
+  private void refreshToken() {
     Response response = null;
     String url;
     for (String s : urlList) {
@@ -169,6 +180,9 @@ public class DefaultHttpTransport implements HttpTransport {
       resp.setHeaders(httpResponse.getAllHeaders());
       if (httpResponse.getEntity() != null) {
         resp.setContent(EntityUtils.toString(httpResponse.getEntity()));
+      }
+      if (resp.getStatusCode() == 401 && resp.getContent().contains("Token is expired")) {
+        refreshToken();
       }
     } catch (IOException e) {
       throw new RemoteServerUnavailableException(
