@@ -66,7 +66,7 @@ public class RateLimitingPolicy extends AbstractPolicy {
 
   public Integer getLimitForPeriod() {
     if (limitForPeriod == null) {
-      limitForPeriod = DEFAULT_LIMIT_FOR_PERIOD;
+      limitForPeriod = getRate();
     }
     return limitForPeriod;
   }
@@ -76,6 +76,9 @@ public class RateLimitingPolicy extends AbstractPolicy {
   }
 
   public Integer getRate() {
+    if (rate == null) {
+      rate = DEFAULT_LIMIT_FOR_PERIOD;
+    }
     return rate;
   }
 
