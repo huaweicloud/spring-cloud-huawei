@@ -18,6 +18,7 @@
 package com.huaweicloud.config;
 
 import com.huaweicloud.common.exception.ServiceCombRuntimeException;
+import com.huaweicloud.common.gov.GovConfigChangeConverter;
 import com.huaweicloud.common.transport.ServiceCombRBACProperties;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 
@@ -89,5 +90,15 @@ public class ServiceCombConfigBootstrapConfiguration {
     return new ServiceCombPropertySourceLocator(serviceCombConfigProperties,
         serviceCombConfigClient,
         serviceCombAkSkProperties.getProject());
+  }
+
+  @Bean
+  public GovConfigChangeConverter govConfigChangeConverter() {
+    return event -> {
+      if (event instanceof ConfigRefreshEvent) {
+        return ((ConfigRefreshEvent) event).getChange();
+      }
+      return null;
+    };
   }
 }
