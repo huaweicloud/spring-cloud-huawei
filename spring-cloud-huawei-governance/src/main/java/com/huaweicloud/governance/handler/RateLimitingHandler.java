@@ -51,19 +51,11 @@ public class RateLimitingHandler extends AbstractGovHandler<RateLimiter> {
    */
   private RateLimiter getRateLimiter(RateLimitingPolicy policy) {
     RateLimiterConfig config;
-    if (policy.getRate() != null) {
-      config = RateLimiterConfig.custom()
-          .limitForPeriod(policy.getRate())
-          .limitRefreshPeriod(Duration.ofMillis(RateLimitingPolicy.DEFAULT_LIMIT_REFRESH_PERIOD))
-          .timeoutDuration(Duration.ofMillis(RateLimitingPolicy.DEFAULT_TIMEOUT_DURATION))
-          .build();
-    } else {
-      config = RateLimiterConfig.custom()
-          .limitForPeriod(policy.getLimitForPeriod())
-          .limitRefreshPeriod(Duration.ofMillis(policy.getLimitRefreshPeriod()))
-          .timeoutDuration(Duration.ofMillis(policy.getTimeoutDuration()))
-          .build();
-    }
+    config = RateLimiterConfig.custom()
+        .limitForPeriod(policy.getLimitForPeriod())
+        .limitRefreshPeriod(Duration.ofMillis(policy.getLimitRefreshPeriod()))
+        .timeoutDuration(Duration.ofMillis(policy.getTimeoutDuration()))
+        .build();
     RateLimiterRegistry rateLimiterRegistry = RateLimiterRegistry.of(config);
     return rateLimiterRegistry.rateLimiter(policy.name());
   }

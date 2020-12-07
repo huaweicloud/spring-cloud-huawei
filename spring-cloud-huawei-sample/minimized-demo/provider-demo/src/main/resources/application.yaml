@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8083
 
 spring:
   application:
@@ -7,4 +7,4 @@ spring:
   cloud:
     servicecomb:
       discovery:
-        address: http://127.0.0.1:30100
+        address: https://cse.cn-north-4.myhuaweicloud.com
