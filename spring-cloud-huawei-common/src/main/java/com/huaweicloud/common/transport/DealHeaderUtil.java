@@ -32,8 +32,6 @@ import org.springframework.util.CollectionUtils;
  **/
 public class DealHeaderUtil {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(DealHeaderUtil.class);
-
   public static final int CONNECT_TIMEOUT = 5000;
 
   public static final int CONNECTION_REQUEST_TIMEOUT = 5000;
@@ -63,18 +61,14 @@ public class DealHeaderUtil {
   public static void addAKSKHeader(HttpUriRequest httpRequest,
       ServiceCombAkSkProperties serviceCombAkSkProperties) {
     Map<String, String> headerMap = AuthHeaderUtils.genAuthHeaders();
-    if ((serviceCombAkSkProperties == null || serviceCombAkSkProperties.isAkSkEmpty())
-        && !CollectionUtils.isEmpty(headerMap)) {
-      LOGGER.warn("please configure ak/sk manually, we will offline automatic read ak/sk soon!");
-      httpRequest.addHeader(X_SERVICE_AK, headerMap.get(X_SERVICE_AK));
-      httpRequest.addHeader(X_SERVICE_SHA_AKSK, headerMap.get(X_SERVICE_SHA_AKSK));
-    } else if (serviceCombAkSkProperties != null && !serviceCombAkSkProperties.isAkSkEmpty()) {
-      httpRequest.addHeader(X_SERVICE_AK, serviceCombAkSkProperties.getAccessKey());
-      httpRequest.addHeader(X_SERVICE_SHA_AKSK, serviceCombAkSkProperties.getSecretKey());
+    if (serviceCombAkSkProperties == null) {
+      return;
     }
+    httpRequest.addHeader(X_SERVICE_AK, serviceCombAkSkProperties.getAccessKey());
+    httpRequest.addHeader(X_SERVICE_SHA_AKSK, serviceCombAkSkProperties.getSecretKey());
     if (!CollectionUtils.isEmpty(headerMap)) {
       httpRequest.addHeader(X_SERVICE_PROJECT, headerMap.get(X_SERVICE_PROJECT));
-    } else if (serviceCombAkSkProperties != null && !serviceCombAkSkProperties.isProjectEmpty()) {
+    } else {
       httpRequest.addHeader(X_SERVICE_PROJECT, serviceCombAkSkProperties.getProject());
     }
   }
