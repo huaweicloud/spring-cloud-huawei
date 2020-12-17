@@ -89,6 +89,9 @@ public class DefaultHttpTransport implements HttpTransport {
     }
     this.urlList = URLUtil.dealMultiUrl(urls);
     this.serviceCombRBACProperties = serviceCombRBACProperties;
+    if (TokenCache.getToken() == null) {
+      refreshToken();
+    }
     // 30min token expire  /
     scheduler.scheduleWithFixedDelay(this::refreshToken, REFRESH_TOKEN_TIME);
   }

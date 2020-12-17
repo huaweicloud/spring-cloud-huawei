@@ -146,7 +146,7 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
         schemas = microservice.getSchemas();
       }
       if (serviceCombSwaggerHandler != null) {
-        if (schemas != null) {
+        if (schemas == null) {
           schemas = filterSchema(serviceCombSwaggerHandler.getSchemasSummaryMap());
         }
         serviceCombSwaggerHandler.registerSwagger(serviceID, schemas);
