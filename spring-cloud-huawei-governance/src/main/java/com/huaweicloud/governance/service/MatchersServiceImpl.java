@@ -18,21 +18,22 @@ package com.huaweicloud.governance.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.huaweicloud.governance.marker.GovHttpRequest;
-import com.huaweicloud.governance.properties.MatchProperties;
 import com.huaweicloud.governance.marker.Matcher;
 import com.huaweicloud.governance.marker.RequestProcessor;
 import com.huaweicloud.governance.marker.TrafficMarker;
+import com.huaweicloud.governance.properties.MatchProperties;
 
-import java.util.List;
-
+@Component
 public class MatchersServiceImpl implements MatchersService {
 
   @Autowired
@@ -53,8 +54,8 @@ public class MatchersServiceImpl implements MatchersService {
    * @return
    */
   @Override
-  public List<String> getMatchStr(GovHttpRequest govHttpRequest) {
-    Map<String, TrafficMarker> map = matchProperties.covert();
+  public List<String> getMatchedNames(GovHttpRequest govHttpRequest) {
+    Map<String, TrafficMarker> map = matchProperties.getParsedEntity();
     List<String> marks = new ArrayList<>();
     for (Entry<String, TrafficMarker> entry : map.entrySet()) {
       //过滤服务名和版本

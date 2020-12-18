@@ -61,7 +61,7 @@ public class DealHeaderUtil {
   public static void addAKSKHeader(HttpUriRequest httpRequest,
       ServiceCombAkSkProperties serviceCombAkSkProperties) {
     Map<String, String> headerMap = AuthHeaderUtils.genAuthHeaders();
-    if (serviceCombAkSkProperties == null) {
+    if (serviceCombAkSkProperties == null || !serviceCombAkSkProperties.isEnabled()) {
       return;
     }
     httpRequest.addHeader(X_SERVICE_AK, serviceCombAkSkProperties.getAccessKey());
