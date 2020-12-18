@@ -7,4 +7,4 @@ spring:
   cloud:
     servicecomb:
       discovery:
-        address: https://cse.cn-north-4.myhuaweicloud.com
+        address: http://127.0.0.1:30100

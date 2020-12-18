@@ -27,7 +27,7 @@ public class ServiceCombReactiveDiscoveryClientConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public ServiceCombReactiveDiscoveryClient serviceCombDiscoveryClient(
+  public ServiceCombReactiveDiscoveryClient serviceCombReactiveDiscoveryClient(
       ServiceCombDiscoveryProperties discoveryProperties, ServiceCombClient serviceCombClient) {
     return new ServiceCombReactiveDiscoveryClient(
         new ServiceCombDiscoveryClient(discoveryProperties, serviceCombClient));
