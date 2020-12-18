@@ -26,7 +26,6 @@ import com.huaweicloud.governance.marker.operator.CompareOperator;
 import com.huaweicloud.governance.marker.operator.ContainsOperator;
 import com.huaweicloud.governance.marker.operator.ExactOperator;
 import com.huaweicloud.governance.marker.operator.MatchOperator;
-import com.huaweicloud.governance.marker.operator.RegexOperator;
 
 public class TestOperator {
 
@@ -42,7 +41,6 @@ public class TestOperator {
 
   {
     operatorMap = new HashMap<>();
-    operatorMap.put(REGEX_KEY, new RegexOperator());
     operatorMap.put(EXACT_KEY, new ExactOperator());
     operatorMap.put(CONTAINS_KEY, new ContainsOperator());
     operatorMap.put(COMPARE_KEY, new CompareOperator());

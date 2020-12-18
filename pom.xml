@@ -54,6 +54,7 @@
     <module>spring-cloud-huawei-router-core</module>
     <module>spring-cloud-huawei-router-client</module>
     <module>spring-cloud-huawei-swagger</module>
+    <module>governance</module>
     <module>spring-cloud-huawei-governance</module>
   </modules>
 

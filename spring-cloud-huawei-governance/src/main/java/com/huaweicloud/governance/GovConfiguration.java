@@ -16,39 +16,39 @@
  */
 package com.huaweicloud.governance;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.cloud.netflix.ribbon.RibbonLoadBalancerClient;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.huaweicloud.common.ribbon.ServiceCombLoadBalanceRule;
 import com.huaweicloud.governance.client.FeignProxyAop;
 import com.huaweicloud.governance.client.GovRibbonServerFilter;
 import com.huaweicloud.governance.client.RestTemplateProxyAop;
-import com.huaweicloud.common.ribbon.ServiceCombLoadBalanceRule;
 import com.huaweicloud.governance.handler.BulkheadHandler;
+import com.huaweicloud.governance.handler.CircuitBreakerHandler;
+import com.huaweicloud.governance.handler.RateLimitingHandler;
 import com.huaweicloud.governance.handler.RetryHandler;
+import com.huaweicloud.governance.handler.ext.RetryExtension;
+import com.huaweicloud.governance.marker.RequestProcessor;
+import com.huaweicloud.governance.marker.operator.CompareOperator;
+import com.huaweicloud.governance.marker.operator.ContainsOperator;
+import com.huaweicloud.governance.marker.operator.ExactOperator;
+import com.huaweicloud.governance.marker.operator.MatchOperator;
 import com.huaweicloud.governance.properties.BulkheadProperties;
 import com.huaweicloud.governance.properties.CircuitBreakerProperties;
+import com.huaweicloud.governance.properties.MatchProperties;
+import com.huaweicloud.governance.properties.RateLimitProperties;
 import com.huaweicloud.governance.properties.RetryProperties;
 import com.huaweicloud.governance.properties.SerializeCache;
 import com.huaweicloud.governance.service.MatchersService;
 import com.huaweicloud.governance.service.MatchersServiceImpl;
 import com.huaweicloud.governance.service.PolicyService;
 import com.huaweicloud.governance.service.PolicyServiceImpl;
-import com.huaweicloud.governance.handler.CircuitBreakerHandler;
-import com.huaweicloud.governance.handler.RateLimitingHandler;
-import com.huaweicloud.governance.properties.MatchProperties;
-import com.huaweicloud.governance.marker.RequestProcessor;
-import com.huaweicloud.governance.marker.operator.CompareOperator;
-import com.huaweicloud.governance.marker.operator.ContainsOperator;
-import com.huaweicloud.governance.marker.operator.ExactOperator;
-import com.huaweicloud.governance.marker.operator.MatchOperator;
-import com.huaweicloud.governance.marker.operator.RegexOperator;
-import com.huaweicloud.governance.properties.RateLimitProperties;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.IRule;
 import com.netflix.loadbalancer.ZoneAvoidanceRule;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.cloud.netflix.ribbon.RibbonLoadBalancerClient;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * @Author GuoYl123
@@ -132,14 +132,14 @@ public class GovConfiguration {
     return new BulkheadHandler();
   }
 
+  @Bean(name = "retryExtension")
+  public RetryExtension retryExtension() {
+    return new SpringCloudRetryExtension();
+  }
+
   @Bean(name = "exactOperator")
   public MatchOperator exactOperator() {
     return new ExactOperator();
-  }
-
-  @Bean(name = "regexOperator")
-  public MatchOperator regexOperator() {
-    return new RegexOperator();
   }
 
   @Bean(name = "containsOperator")

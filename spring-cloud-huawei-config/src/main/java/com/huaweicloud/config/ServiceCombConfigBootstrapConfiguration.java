@@ -17,21 +17,18 @@
 
 package com.huaweicloud.config;
 
-import com.huaweicloud.common.exception.ServiceCombRuntimeException;
-import com.huaweicloud.common.gov.GovConfigChangeConverter;
-import com.huaweicloud.common.transport.ServiceCombRBACProperties;
-import com.huaweicloud.common.transport.ServiceCombSSLProperties;
-
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-
-import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
-import com.huaweicloud.config.client.ServiceCombConfigClient;
-import com.huaweicloud.config.client.ServiceCombConfigClientBuilder;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
+
+import com.huaweicloud.common.exception.ServiceCombRuntimeException;
+import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
+import com.huaweicloud.common.transport.ServiceCombRBACProperties;
+import com.huaweicloud.common.transport.ServiceCombSSLProperties;
+import com.huaweicloud.config.client.ServiceCombConfigClient;
+import com.huaweicloud.config.client.ServiceCombConfigClientBuilder;
 
 /**
  * @Author wangqijun
@@ -90,15 +87,5 @@ public class ServiceCombConfigBootstrapConfiguration {
     return new ServiceCombPropertySourceLocator(serviceCombConfigProperties,
         serviceCombConfigClient,
         serviceCombAkSkProperties.getProject());
-  }
-
-  @Bean
-  public GovConfigChangeConverter govConfigChangeConverter() {
-    return event -> {
-      if (event instanceof ConfigRefreshEvent) {
-        return ((ConfigRefreshEvent) event).getChange();
-      }
-      return null;
-    };
   }
 }
