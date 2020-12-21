@@ -22,3 +22,47 @@ spring:
       # testing servicecomb swagger generation
       swagger:
         enableJavaChassisAdapter: true
+
+servicecomb:
+  matchGroup:
+    demo-rateLimiting: |
+      matches:
+        - apiPath:
+            exact: "/govern/hello"
+          name: xx
+    demo-retry: |
+      matches:
+        - apiPath:
+            exact: "/govern/retry"
+          name: xx
+    demo-circuitBreaker: |
+      matches:
+        - apiPath:
+            exact: "/govern/circuitBreaker"
+          name: xx
+    demo-bulkhead: |
+      matches:
+        - apiPath:
+            exact: "/govern/bulkhead"
+          name: xx
+  rateLimiting:
+    xxxxx: |
+      rules:
+        match: demo-rateLimiting.xx
+      rate: 1
+  retry:
+    xxx: |
+      rules:
+        match: demo-retry.xx
+      maxAttempts: 3
+  circuitBreaker:
+    xxx: |
+      rules:
+        match: demo-circuitBreaker.xx
+      minimumNumberOfCalls: 2
+      slidingWindowSize: 2
+  bulkhead:
+    xxx: |
+      rules:
+        match: demo-bulkhead.xx
+      maxConcurrentCalls: 1

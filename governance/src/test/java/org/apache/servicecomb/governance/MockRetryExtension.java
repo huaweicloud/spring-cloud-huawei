@@ -14,24 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.properties;
 
-import java.util.Map;
+package org.apache.servicecomb.governance;
+
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.huaweicloud.governance.marker.TrafficMarker;
+import com.huaweicloud.governance.handler.ext.RetryExtension;
 
 @Component
-public class MatchProperties extends GovProperties<TrafficMarker> {
-  public static final String MATCH_POLICY_KEY = "servicecomb.matchGroup";
-
-  public MatchProperties() {
-    super(MATCH_POLICY_KEY);
+public class MockRetryExtension implements RetryExtension {
+  @Override
+  public boolean isRetry(List<Integer> statusList, Object result) {
+    return false;
   }
 
   @Override
-  public Map<String, TrafficMarker> covert(Map<String, String> properties) {
-    return parseEntity(properties, TrafficMarker.class);
+  public Class<? extends Throwable>[] retryExceptions() {
+    return null;
   }
 }

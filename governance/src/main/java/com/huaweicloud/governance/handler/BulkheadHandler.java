@@ -2,6 +2,8 @@ package com.huaweicloud.governance.handler;
 
 import java.time.Duration;
 
+import org.springframework.stereotype.Component;
+
 import com.huaweicloud.governance.policy.BulkheadPolicy;
 import com.huaweicloud.governance.policy.Policy;
 
@@ -10,6 +12,7 @@ import io.github.resilience4j.bulkhead.BulkheadConfig;
 import io.github.resilience4j.bulkhead.BulkheadRegistry;
 import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
 
+@Component("BulkheadHandler")
 public class BulkheadHandler extends AbstractGovHandler<Bulkhead> {
 
   @Override

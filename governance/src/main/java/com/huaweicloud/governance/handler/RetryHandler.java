@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.huaweicloud.governance.handler.ext.RetryExtension;
 import com.huaweicloud.governance.policy.Policy;
@@ -35,6 +36,7 @@ import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import io.github.resilience4j.retry.RetryRegistry;
 
+@Component("RetryHandler")
 public class RetryHandler extends AbstractGovHandler<Retry> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RetryHandler.class);

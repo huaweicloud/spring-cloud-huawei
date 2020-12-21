@@ -18,6 +18,8 @@ package com.huaweicloud.governance.handler;
 
 import java.time.Duration;
 
+import org.springframework.stereotype.Component;
+
 import com.huaweicloud.governance.policy.CircuitBreakerPolicy;
 import com.huaweicloud.governance.policy.Policy;
 
@@ -26,10 +28,7 @@ import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
 
-/**
- * @Author GuoYl123
- * @Date 2020/5/11
- **/
+@Component("CircuitBreakerHandler")
 public class CircuitBreakerHandler extends AbstractGovHandler<CircuitBreaker> {
 
   @Override

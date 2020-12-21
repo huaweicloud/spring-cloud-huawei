@@ -14,24 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.properties;
 
-import java.util.Map;
+package org.apache.servicecomb.governance;
+
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.huaweicloud.governance.marker.TrafficMarker;
+import com.huaweicloud.governance.marker.GovHttpRequest;
+import com.huaweicloud.governance.service.MatchersService;
 
 @Component
-public class MatchProperties extends GovProperties<TrafficMarker> {
-  public static final String MATCH_POLICY_KEY = "servicecomb.matchGroup";
-
-  public MatchProperties() {
-    super(MATCH_POLICY_KEY);
-  }
-
+public class MockMatchersService implements MatchersService {
   @Override
-  public Map<String, TrafficMarker> covert(Map<String, String> properties) {
-    return parseEntity(properties, TrafficMarker.class);
+  public List<String> getMatchedNames(GovHttpRequest govHttpRequest) {
+    return null;
   }
 }
