@@ -26,6 +26,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.huaweicloud.common.event.ConfigRefreshEvent;
 import com.huaweicloud.common.exception.RemoteOperationException;
 import com.huaweicloud.common.util.MD5Util;
 import org.springframework.cloud.context.refresh.ContextRefresher;

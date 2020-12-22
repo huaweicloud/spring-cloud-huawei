@@ -17,17 +17,27 @@
 
 package org.apache.servicecomb.governance;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.EnumerablePropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.huaweicloud.governance.event.ConfigurationChangedEvent;
+import com.huaweicloud.governance.event.EventManager;
 import com.huaweicloud.governance.marker.Matcher;
 import com.huaweicloud.governance.marker.TrafficMarker;
 import com.huaweicloud.governance.policy.AbstractPolicy;
@@ -64,6 +74,44 @@ public class GovPropertiesTest {
   @Autowired
   private RetryProperties retryProperties;
 
+  @Autowired
+  private Environment environment;
+
+  private Map<String, Object> dynamicValues = new HashMap<>();
+
+  public GovPropertiesTest() {
+    System.out.print(1);
+  }
+
+  @Before
+  public void setUp() {
+    ConfigurableEnvironment configurableEnvironment = (ConfigurableEnvironment) environment;
+
+    if (configurableEnvironment.getPropertySources().contains("testDynamicChange")) {
+      configurableEnvironment.getPropertySources().remove("testDynamicChange");
+    }
+
+    configurableEnvironment.getPropertySources()
+        .addFirst(new EnumerablePropertySource<Map<String, Object>>("testDynamicChange", dynamicValues) {
+          @Override
+          public Object getProperty(String s) {
+            return this.getSource().get(s);
+          }
+
+          @Override
+          public String[] getPropertyNames() {
+            return this.getSource().keySet().toArray(new String[0]);
+          }
+        });
+  }
+
+  @After
+  public void tearDown() {
+    Set<String> keys = dynamicValues.keySet();
+    keys.forEach(k -> dynamicValues.put(k, null));
+    EventManager.post(new ConfigurationChangedEvent(new ArrayList<>(dynamicValues.keySet())));
+  }
+
   @Test
   public void test_all_bean_is_loaded() {
     Assert.assertEquals(4, propertiesList.size());
@@ -79,6 +127,68 @@ public class GovPropertiesTest {
     Matcher matcher = matchers.get(0);
     Assert.assertEquals("match0", matcher.getName());
     Assert.assertEquals("/hello", matcher.getApiPath().get("exact"));
+  }
+
+  @Test
+  public void test_match_properties_changed() {
+    dynamicValues.put("servicecomb.matchGroup.demo-rateLimiting", "matches:\n"
+        + "  - apiPath:\n"
+        + "      exact: \"/hello2\"\n"
+        + "    name: match0");
+    dynamicValues.put("servicecomb.matchGroup.demo-rateLimiting2", "matches:\n"
+        + "  - apiPath:\n"
+        + "      exact: \"/hello2\"\n"
+        + "    name: match0");
+
+    EventManager.post(new ConfigurationChangedEvent(new ArrayList<>(dynamicValues.keySet())));
+
+    Map<String, TrafficMarker> markers = matchProperties.getParsedEntity();
+    Assert.assertEquals(5, markers.size());
+    TrafficMarker demoRateLimiting = markers.get("demo-rateLimiting");
+    List<Matcher> matchers = demoRateLimiting.getMatches();
+    Assert.assertEquals(1, matchers.size());
+    Matcher matcher = matchers.get(0);
+    Assert.assertEquals("match0", matcher.getName());
+    Assert.assertEquals("/hello2", matcher.getApiPath().get("exact"));
+
+    demoRateLimiting = markers.get("demo-rateLimiting2");
+    matchers = demoRateLimiting.getMatches();
+    Assert.assertEquals(1, matchers.size());
+    matcher = matchers.get(0);
+    Assert.assertEquals("match0", matcher.getName());
+    Assert.assertEquals("/hello2", matcher.getApiPath().get("exact"));
+  }
+
+  @Test
+  public void test_bulkhead_properties_changed() {
+    dynamicValues.put("servicecomb.bulkhead.bulkhead0", "rules:\n"
+        + "  match: demo-bulkhead.xx\n"
+        + "  precedence: 100\n"
+        + "maxConcurrentCalls: 2\n"
+        + "maxWaitDuration: 2000");
+    dynamicValues.put("servicecomb.bulkhead.bulkhead1", "rules:\n"
+        + "  match: demo-bulkhead.xx\n"
+        + "  precedence: 100\n"
+        + "maxConcurrentCalls: 3\n"
+        + "maxWaitDuration: 3000");
+
+    EventManager.post(new ConfigurationChangedEvent(new ArrayList<>(dynamicValues.keySet())));
+
+    Map<String, BulkheadPolicy> policies = bulkheadProperties.getParsedEntity();
+    Assert.assertEquals(2, policies.size());
+    BulkheadPolicy policy = policies.get("bulkhead0");
+    Assert.assertEquals(2, policy.getMaxConcurrentCalls());
+    Assert.assertEquals(2000, policy.getMaxWaitDuration());
+    Assert.assertEquals("demo-bulkhead.xx", policy.getRules().getMatch());
+    Assert.assertEquals(100, policy.getRules().getPrecedence());
+
+    policies = bulkheadProperties.getParsedEntity();
+    Assert.assertEquals(2, policies.size());
+    policy = policies.get("bulkhead1");
+    Assert.assertEquals(3, policy.getMaxConcurrentCalls());
+    Assert.assertEquals(3000, policy.getMaxWaitDuration());
+    Assert.assertEquals("demo-bulkhead.xx", policy.getRules().getMatch());
+    Assert.assertEquals(100, policy.getRules().getPrecedence());
   }
 
   @Test

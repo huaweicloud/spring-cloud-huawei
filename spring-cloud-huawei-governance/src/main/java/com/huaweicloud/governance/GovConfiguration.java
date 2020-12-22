@@ -16,17 +16,23 @@
  */
 package com.huaweicloud.governance;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.cloud.netflix.ribbon.RibbonLoadBalancerClient;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.common.event.ConfigRefreshEvent;
 import com.huaweicloud.common.ribbon.ServiceCombLoadBalanceRule;
 import com.huaweicloud.governance.client.FeignProxyAop;
 import com.huaweicloud.governance.client.GovRibbonServerFilter;
 import com.huaweicloud.governance.client.RestTemplateProxyAop;
+import com.huaweicloud.governance.event.ConfigurationChangedEvent;
+import com.huaweicloud.governance.event.EventManager;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.IRule;
 import com.netflix.loadbalancer.ZoneAvoidanceRule;
@@ -72,5 +78,11 @@ public class GovConfiguration {
   @ConditionalOnBean(RibbonLoadBalancerClient.class)
   public FeignProxyAop feignProxyAop() {
     return new FeignProxyAop();
+  }
+
+  @Bean
+  public ApplicationListener<ConfigRefreshEvent> eventListener() {
+    return configRefreshEvent -> EventManager
+        .post(new ConfigurationChangedEvent(new ArrayList<>(configRefreshEvent.getChange())));
   }
 }

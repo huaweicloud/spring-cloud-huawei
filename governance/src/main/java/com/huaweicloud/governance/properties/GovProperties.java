@@ -33,13 +33,17 @@ import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.error.YAMLException;
 import org.yaml.snakeyaml.representer.Representer;
 
-//TODO: 监听动态配置的变化
+import com.google.common.eventbus.Subscribe;
+import com.huaweicloud.governance.event.ConfigurationChangedEvent;
+import com.huaweicloud.governance.event.EventManager;
+
 public abstract class GovProperties<T> implements InitializingBean {
   private static final Logger LOGGER = LoggerFactory.getLogger(GovProperties.class);
 
@@ -52,14 +56,34 @@ public abstract class GovProperties<T> implements InitializingBean {
 
   protected Map<String, T> parsedEntity;
 
+  protected Class<T> entityClass;
+
   protected GovProperties(String key) {
     configKey = key;
     representer.getPropertyUtils().setSkipMissingProperties(true);
+    EventManager.register(this);
+    entityClass = getEntityClass();
   }
 
   @Override
   public void afterPropertiesSet() {
-    parsedEntity = covert(readPropertiesFromPrefix());
+    parsedEntity = parseEntity(readPropertiesFromPrefix());
+  }
+
+  @Subscribe
+  public void onConfigurationChangedEvent(ConfigurationChangedEvent event) {
+    for (String key : event.getChangedConfigurations()) {
+      if (key.startsWith(configKey + ".")) {
+        // 删除的情况， 从配置文件读取配置。 需要保证 environment 已经刷新配置值。
+        T entityItem = parseEntityItem(environment.getProperty(key));
+        String mapKey = key.substring((configKey + ".").length());
+        if (entityItem == null) {
+          parsedEntity.remove(mapKey);
+        } else {
+          parsedEntity.put(mapKey, entityItem);
+        }
+      }
+    }
   }
 
   private Map<String, String> readPropertiesFromPrefix() {
@@ -111,25 +135,34 @@ public abstract class GovProperties<T> implements InitializingBean {
     return this.parsedEntity;
   }
 
-  protected abstract Map<String, T> covert(Map<String, String> properties);
-
-  protected Map<String, T> parseEntity(Map<String, String> yamlEntity, Class<T> entityClass) {
+  protected Map<String, T> parseEntity(Map<String, String> yamlEntity) {
     if (CollectionUtils.isEmpty(yamlEntity)) {
       return Collections.emptyMap();
     }
 
-    Yaml entityParser = new Yaml(new Constructor(new TypeDescription(entityClass, entityClass)), representer);
-
     Map<String, T> resultMap = new HashMap<>();
-    String classKey = entityClass.getName();
     for (Entry<String, String> entry : yamlEntity.entrySet()) {
-      try {
-        T marker = entityParser.loadAs(entry.getValue(), entityClass);
+      T marker = parseEntityItem(entry.getValue());
+      if (marker != null) {
         resultMap.put(entry.getKey(), marker);
-      } catch (YAMLException e) {
-        LOGGER.error("governance config yaml is illegal : {}", e.getMessage());
       }
     }
     return resultMap;
+  }
+
+  protected abstract Class<T> getEntityClass();
+
+  protected T parseEntityItem(String value) {
+    if (StringUtils.isEmpty(value)) {
+      return null;
+    }
+
+    try {
+      Yaml entityParser = new Yaml(new Constructor(new TypeDescription(entityClass, entityClass)), representer);
+      return entityParser.loadAs(value, entityClass);
+    } catch (YAMLException e) {
+      LOGGER.error("governance config yaml is illegal : {}", e.getMessage());
+    }
+    return null;
   }
 }

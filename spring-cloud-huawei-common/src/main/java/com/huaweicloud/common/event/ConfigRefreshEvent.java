@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.config;
+package com.huaweicloud.common.event;
 
 import java.util.Set;
 

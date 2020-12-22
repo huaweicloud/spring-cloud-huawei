@@ -16,8 +16,6 @@
  */
 package com.huaweicloud.governance.properties;
 
-import java.util.Map;
-
 import org.springframework.stereotype.Component;
 
 import com.huaweicloud.governance.policy.CircuitBreakerPolicy;
@@ -31,7 +29,7 @@ public class CircuitBreakerProperties extends GovProperties<CircuitBreakerPolicy
   }
 
   @Override
-  public Map<String, CircuitBreakerPolicy> covert(Map<String, String> properties) {
-    return parseEntity(properties, CircuitBreakerPolicy.class);
+  public Class<CircuitBreakerPolicy> getEntityClass() {
+    return CircuitBreakerPolicy.class;
   }
 }

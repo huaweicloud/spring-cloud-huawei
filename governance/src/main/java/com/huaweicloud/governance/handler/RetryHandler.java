@@ -61,6 +61,8 @@ public class RetryHandler extends AbstractGovHandler<Retry> {
   }
 
   private Retry getRetry(RetryPolicy retryPolicy) {
+    LOGGER.info("applying new policy: {}", retryPolicy.toString());
+
     List<Integer> statusList = Arrays.stream(retryPolicy.getRetryOnResponseStatus().split(","))
         .map(Integer::parseInt).collect(Collectors.toList());
 
