@@ -20,7 +20,11 @@ package com.huaweicloud.sample;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.web.client.RestTemplate;
 
@@ -36,32 +40,108 @@ public class GovernanceControllerIT {
     assertThat(result).isEqualTo("try times: 3");
   }
 
-  //TODO: 测试用例无法通过，应该需要通过用例
-//  @Test
-//  public void testRateLimiting() throws Exception {
-//    CountDownLatch latch = new CountDownLatch(200);
-//    AtomicBoolean failed = new AtomicBoolean(false);
-//
-//    for (int i = 0; i < 20; i++) {
-//      for (int j = 0; j < 10; j++) {
-//        new Thread() {
-//          public void run() {
-//            try {
-//              String result = template.getForObject(url + "/govern/hello", String.class);
-//              Assert.assertEquals(result, "Hello world!");
-//            } catch (Exception e) {
-//              Assert.assertEquals("", e.getMessage());
-//              failed.set(true);
-//              e.printStackTrace();
-//            }
-//            latch.countDown();
-//          }
-//        }.start();
-//      }
-//      Thread.sleep(100);
-//    }
-//
-//    latch.await(20, TimeUnit.SECONDS);
-//    Assert.assertEquals(true, failed.get());
-//  }
+  @Test
+  public void testCircuitBreaker() throws Exception {
+    CountDownLatch latch = new CountDownLatch(100);
+    AtomicBoolean expectedFailed = new AtomicBoolean(false);
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+
+    for (int i = 0; i < 10; i++) {
+      for (int j = 0; j < 10; j++) {
+        String name = "t-" + i + "-" + j;
+        new Thread(name) {
+          public void run() {
+            try {
+              String result = template.getForObject(url + "/govern/circuitBreaker", String.class);
+              if (!"ok".equals(result)) {
+                notExpectedFailed.set(true);
+              }
+            } catch (Exception e) {
+              if (!"429 : [circuitBreaker is open.]".equals(e.getMessage())
+                  && !e.getMessage().contains("test error")) {
+                notExpectedFailed.set(true);
+              }
+              if ("429 : [circuitBreaker is open.]".equals(e.getMessage())) {
+                expectedFailed.set(true);
+              }
+            }
+            latch.countDown();
+          }
+        }.start();
+      }
+      Thread.sleep(100);
+    }
+
+    latch.await(20, TimeUnit.SECONDS);
+    Assert.assertEquals(true, expectedFailed.get());
+    Assert.assertEquals(false, notExpectedFailed.get());
+  }
+
+  @Test
+  public void testBulkhead() throws Exception {
+    CountDownLatch latch = new CountDownLatch(100);
+    AtomicBoolean expectedFailed = new AtomicBoolean(false);
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+
+    for (int i = 0; i < 10; i++) {
+      for (int j = 0; j < 10; j++) {
+        String name = "t-" + i + "-" + j;
+        new Thread(name) {
+          public void run() {
+            try {
+              String result = template.getForObject(url + "/govern/bulkhead", String.class);
+              if (!"Hello world!".equals(result)) {
+                notExpectedFailed.set(true);
+              }
+            } catch (Exception e) {
+              if (!"429 : [bulkhead is full and does not permit further calls.]".equals(e.getMessage())) {
+                notExpectedFailed.set(true);
+              }
+              expectedFailed.set(true);
+            }
+            latch.countDown();
+          }
+        }.start();
+      }
+      Thread.sleep(100);
+    }
+
+    latch.await(20, TimeUnit.SECONDS);
+    Assert.assertEquals(true, expectedFailed.get());
+    Assert.assertEquals(false, notExpectedFailed.get());
+  }
+
+  @Test
+  public void testRateLimiting() throws Exception {
+    CountDownLatch latch = new CountDownLatch(100);
+    AtomicBoolean expectedFailed = new AtomicBoolean(false);
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+
+    for (int i = 0; i < 10; i++) {
+      for (int j = 0; j < 10; j++) {
+        String name = "t-" + i + "-" + j;
+        new Thread(name) {
+          public void run() {
+            try {
+              String result = template.getForObject(url + "/govern/hello", String.class);
+              if (!"Hello world!".equals(result)) {
+                notExpectedFailed.set(true);
+              }
+            } catch (Exception e) {
+              if (!"429 : [rate limited.]".equals(e.getMessage())) {
+                notExpectedFailed.set(true);
+              }
+              expectedFailed.set(true);
+            }
+            latch.countDown();
+          }
+        }.start();
+      }
+      Thread.sleep(100);
+    }
+
+    latch.await(20, TimeUnit.SECONDS);
+    Assert.assertEquals(true, expectedFailed.get());
+    Assert.assertEquals(false, notExpectedFailed.get());
+  }
 }

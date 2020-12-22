@@ -77,18 +77,18 @@ public class InvokeProxyAop {
     } catch (Throwable th) {
       LOGGER.debug("request error, detail info print : {}", request);
       if (th instanceof RequestNotPermitted) {
-        response.setStatus(502);
-        response.getWriter().print("rate limit!");
+        response.setStatus(429);
+        response.getWriter().print("rate limited.");
         LOGGER.warn("the request is rate limit by policy : {}",
             policies.get(RateLimitProperties.class.getName()));
       } else if (th instanceof CallNotPermittedException) {
-        response.setStatus(502);
-        response.getWriter().print("circuitBreaker is open!");
+        response.setStatus(429);
+        response.getWriter().print("circuitBreaker is open.");
         LOGGER.warn("circuitBreaker is open by policy : {}",
             policies.get(CircuitBreakerProperties.class.getName()));
       } else if (th instanceof BulkheadFullException) {
-        response.setStatus(502);
-        response.getWriter().print("bulkhead is full and does not permit further calls!");
+        response.setStatus(429);
+        response.getWriter().print("bulkhead is full and does not permit further calls.");
         LOGGER.warn("bulkhead is full and does not permit further calls by policy : {}",
             policies.get(BulkheadProperties.class.getName()));
       } else {

@@ -42,7 +42,7 @@ public class GovRibbonServerFilter implements RibbonServerFilter {
   }
 
   @Override
-  public int order() {
+  public int getOrder() {
     return 0;
   }
 }

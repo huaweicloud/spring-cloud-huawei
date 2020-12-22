@@ -22,7 +22,7 @@ public class RouterRibbonServerFilter implements RibbonServerFilter {
   }
 
   @Override
-  public int order() {
+  public int getOrder() {
     return 1;
   }
 }

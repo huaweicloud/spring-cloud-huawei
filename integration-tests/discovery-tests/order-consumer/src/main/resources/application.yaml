@@ -49,7 +49,7 @@ servicecomb:
     xxxxx: |
       rules:
         match: demo-rateLimiting.xx
-      rate: 1
+      rate: 10
   retry:
     xxx: |
       rules:
@@ -59,10 +59,11 @@ servicecomb:
     xxx: |
       rules:
         match: demo-circuitBreaker.xx
-      minimumNumberOfCalls: 2
-      slidingWindowSize: 2
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      failureRateThreshold: 20
   bulkhead:
     xxx: |
       rules:
         match: demo-bulkhead.xx
-      maxConcurrentCalls: 1
+      maxConcurrentCalls: 5

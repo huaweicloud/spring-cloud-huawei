@@ -50,7 +50,7 @@ public class RateLimitingHandler extends AbstractGovHandler<RateLimiter> {
   private RateLimiter getRateLimiter(RateLimitingPolicy policy) {
     RateLimiterConfig config;
     config = RateLimiterConfig.custom()
-        .limitForPeriod(policy.getLimitForPeriod())
+        .limitForPeriod(policy.getRate())
         .limitRefreshPeriod(Duration.ofMillis(policy.getLimitRefreshPeriod()))
         .timeoutDuration(Duration.ofMillis(policy.getTimeoutDuration()))
         .build();

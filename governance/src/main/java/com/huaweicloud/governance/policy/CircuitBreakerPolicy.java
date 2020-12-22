@@ -54,7 +54,7 @@ public class CircuitBreakerPolicy extends AbstractPolicy {
 
   private String slidingWindowType;
 
-  private Integer slidingWindowSize;
+  private int slidingWindowSize = DEFAULT_SLIDING_WINDOW_SIZE;
 
   public CircuitBreakerPolicy() {
   }
