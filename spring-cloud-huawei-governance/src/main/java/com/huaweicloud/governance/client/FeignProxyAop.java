@@ -18,6 +18,9 @@ package com.huaweicloud.governance.client;
 
 import java.util.List;
 
+import org.apache.servicecomb.governance.GovManager;
+import org.apache.servicecomb.governance.MatchersManager;
+import org.apache.servicecomb.governance.policy.Policy;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -25,10 +28,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
-import com.huaweicloud.governance.MatchersManager;
 import com.huaweicloud.governance.client.track.RequestTrackContext;
-import com.huaweicloud.governance.GovManager;
-import com.huaweicloud.governance.policy.Policy;
 
 @Aspect
 public class FeignProxyAop {

@@ -14,35 +14,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.client.track;
+package org.apache.servicecomb.governance.marker;
 
 import java.util.List;
+import java.util.Map;
 
-import org.apache.servicecomb.governance.policy.Policy;
+import org.apache.servicecomb.governance.marker.operator.RawOperator;
 
-public class RequestTrackContext {
+public class Matcher {
+  private Map<String, RawOperator> headers;
 
-  private static ThreadLocal<ServerExcluder> serverThreadLocal = new ThreadLocal<>();
+  private RawOperator apiPath;
 
-  private static ThreadLocal<List<Policy>> policyThreadLocal = new ThreadLocal<>();
+  private List<String> method;
 
-  public static void remove() {
-    serverThreadLocal.remove();
-    policyThreadLocal.remove();
+  private String name;
+
+  public Map<String, RawOperator> getHeaders() {
+    return headers;
   }
 
-  public static List<Policy> getPolicies() {
-    return policyThreadLocal.get();
+  public void setHeaders(Map<String, RawOperator> headers) {
+    this.headers = headers;
   }
 
-  public static void setPolicies(List<Policy> policies) {
-    policyThreadLocal.set(policies);
+  public RawOperator getApiPath() {
+    return apiPath;
   }
 
-  public static ServerExcluder getServerExcluder() {
-    if (serverThreadLocal.get() == null) {
-      serverThreadLocal.set(new ServerExcluder());
-    }
-    return serverThreadLocal.get();
+  public void setApiPath(RawOperator apiPath) {
+    this.apiPath = apiPath;
+  }
+
+  public List<String> getMethod() {
+    return method;
+  }
+
+  public void setMethod(List<String> method) {
+    this.method = method;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 }

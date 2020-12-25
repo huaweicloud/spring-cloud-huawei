@@ -41,7 +41,7 @@ public class GovernanceController {
     retryTimes.put(invocationID, retryTimes.get(invocationID) + 1);
 
     int retry = retryTimes.get(invocationID);
-    retry++;
+
     if (retry  == 3) {
       return "try times: " + retry;
     }

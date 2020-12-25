@@ -20,13 +20,12 @@ package com.huaweicloud.governance;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.servicecomb.governance.handler.ext.RetryExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
-
-import com.huaweicloud.governance.handler.ext.RetryExtension;
 
 import feign.Response;
 

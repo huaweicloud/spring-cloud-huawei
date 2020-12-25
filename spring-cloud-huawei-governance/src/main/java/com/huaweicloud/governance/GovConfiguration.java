@@ -18,6 +18,8 @@ package com.huaweicloud.governance;
 
 import java.util.ArrayList;
 
+import org.apache.servicecomb.governance.event.ConfigurationChangedEvent;
+import org.apache.servicecomb.governance.event.EventManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.cloud.netflix.ribbon.RibbonLoadBalancerClient;
@@ -31,8 +33,6 @@ import com.huaweicloud.common.ribbon.ServiceCombLoadBalanceRule;
 import com.huaweicloud.governance.client.FeignProxyAop;
 import com.huaweicloud.governance.client.GovRibbonServerFilter;
 import com.huaweicloud.governance.client.RestTemplateProxyAop;
-import com.huaweicloud.governance.event.ConfigurationChangedEvent;
-import com.huaweicloud.governance.event.EventManager;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.IRule;
 import com.netflix.loadbalancer.ZoneAvoidanceRule;
@@ -42,20 +42,13 @@ import com.netflix.loadbalancer.ZoneAvoidanceRule;
  * @Date 2020/5/11
  **/
 @Configuration
-@ComponentScan(basePackages = {"com.huaweicloud.governance"})
+@ComponentScan(basePackages = {"org.apache.servicecomb.governance,com.huaweicloud.governance"})
 public class GovConfiguration {
 
   @Bean
   public InvokeProxyAop invokeProxyAop() {
     return new InvokeProxyAop();
   }
-
-
-  @Bean
-  public GovManager processorManager() {
-    return new GovManager();
-  }
-
 
   @Bean
   public IRule ribbonRule(@Autowired(required = false) IClientConfig config) {
