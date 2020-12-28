@@ -51,14 +51,28 @@ servicecomb:
 
 1. exact：
   精确匹配：模式字符串和目标字符串必须完全匹配。
-2. regex:
-  正则匹配：模式字符串为正则表达式来对目标字符串进行正则匹配，限制1s时间执行，防护正则注入攻击。
+2. prefix,suffix:
+  前缀匹配、后缀匹配。
 3. contains:
   包含： 目标字符串是否包含模式字符串。
 4. compare:
   比较： 支持 >,<,>=,<=,=,!= 符号匹配，处理时会把模式字符串和目标字符串转化为double类型进行比较，支持的数据范围为double的数据范围。
   在进行 = 和 != 判断时 ， 如果二者的差值小于1e-6就视为相等。
   例如模式串为: >-10 会对大于-10以上的目标串匹配成功
+
+自定义扩展算子：
+
+例如用户想实现一些自定义的算子逻辑，只需要在代码中自己实现
+org.apache.servicecomb.governance.marker.operator.MatchOperator 接口
+然后注入到spring容器中即可在配置中使用：
+
+```java
+  @Bean(name = "regexOperator")
+  public MatchOperator exactOperator() {
+    return new RegexOperator();
+  }
+```
+
 
 ### 模块：
 

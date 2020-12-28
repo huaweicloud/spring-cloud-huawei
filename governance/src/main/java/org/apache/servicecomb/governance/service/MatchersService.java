@@ -17,10 +17,15 @@
 package org.apache.servicecomb.governance.service;
 
 import org.apache.servicecomb.governance.marker.GovHttpRequest;
+import org.apache.servicecomb.governance.policy.AbstractPolicy;
 
 import java.util.List;
 
 public interface MatchersService {
 
   List<String> getMatchedNames(GovHttpRequest govHttpRequest);
+
+  boolean process(String matchGroup, AbstractPolicy policy, MatchHashModel model);
+
+  MatchHashModel getMatchHashModel(GovHttpRequest govHttpRequest);
 }

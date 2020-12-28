@@ -56,6 +56,16 @@ public class PolicyServiceImpl implements PolicyService {
     return policies;
   }
 
+  @Override
+  public Map<String, Policy> getCustomPolicy(String kind) {
+    for (GovProperties<? extends AbstractPolicy> properties : propertiesList) {
+      if (properties.getClass().getName().startsWith(kind)) {
+        return new HashMap<>(properties.getParsedEntity());
+      }
+    }
+    return null;
+  }
+
   private <T extends AbstractPolicy> Policy match(Map<String, T> policies, List<String> marks) {
     List<AbstractPolicy> policyList = new ArrayList<>();
     AbstractPolicy defaultPolicy = null;

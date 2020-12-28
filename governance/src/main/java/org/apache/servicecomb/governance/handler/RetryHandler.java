@@ -51,7 +51,7 @@ public class RetryHandler extends AbstractGovHandler<Retry> {
    */
   @Override
   public <RESULT> DecorateCheckedSupplier<RESULT> process(DecorateCheckedSupplier<RESULT> supplier, Policy policy) {
-    Retry retry = getActuator("servicecomb.retry." + policy.name(), (RetryPolicy) policy, this::getRetry);
+    Retry retry = getActuator("servicecomb.retry." + policy.getName(), (RetryPolicy) policy, this::getRetry);
     return supplier.withRetry(retry);
   }
 
@@ -74,7 +74,7 @@ public class RetryHandler extends AbstractGovHandler<Retry> {
         .build();
 
     RetryRegistry registry = RetryRegistry.of(config);
-    return registry.retry(retryPolicy.name());
+    return registry.retry(retryPolicy.getName());
   }
 
   private Predicate<Object> getPredicate(List<Integer> statusList) {

@@ -36,7 +36,7 @@ public class CircuitBreakerHandler extends AbstractGovHandler<CircuitBreaker> {
 
   @Override
   public <RESULT> DecorateCheckedSupplier<RESULT> process(DecorateCheckedSupplier<RESULT> supplier, Policy policy) {
-    CircuitBreaker circuitBreaker = getActuator("servicecomb.circuitBreaker." + policy.name(),
+    CircuitBreaker circuitBreaker = getActuator("servicecomb.circuitBreaker." + policy.getName(),
         (CircuitBreakerPolicy) policy, this::getCircuitBreaker);
     return supplier.withCircuitBreaker(circuitBreaker);
   }
@@ -74,6 +74,6 @@ public class CircuitBreakerHandler extends AbstractGovHandler<CircuitBreaker> {
         .slidingWindowSize(policy.getSlidingWindowSize())
         .build();
     CircuitBreakerRegistry circuitBreakerRegistry = CircuitBreakerRegistry.of(circuitBreakerConfig);
-    return circuitBreakerRegistry.circuitBreaker(policy.name(), circuitBreakerConfig);
+    return circuitBreakerRegistry.circuitBreaker(policy.getName(), circuitBreakerConfig);
   }
 }

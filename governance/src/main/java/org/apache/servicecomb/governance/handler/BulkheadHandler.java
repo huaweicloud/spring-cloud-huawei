@@ -37,7 +37,7 @@ public class BulkheadHandler extends AbstractGovHandler<Bulkhead> {
 
   @Override
   public <RESULT> DecorateCheckedSupplier<RESULT> process(DecorateCheckedSupplier<RESULT> supplier, Policy policy) {
-    Bulkhead bulkhead = getActuator("servicecomb.bulkhead." + policy.name(), (BulkheadPolicy) policy,
+    Bulkhead bulkhead = getActuator("servicecomb.bulkhead." + policy.getName(), (BulkheadPolicy) policy,
         this::getBulkhead);
     return supplier.withBulkhead(bulkhead);
   }
@@ -57,6 +57,6 @@ public class BulkheadHandler extends AbstractGovHandler<Bulkhead> {
 
     BulkheadRegistry registry = BulkheadRegistry.of(config);
 
-    return registry.bulkhead(policy.name());
+    return registry.bulkhead(policy.getName());
   }
 }

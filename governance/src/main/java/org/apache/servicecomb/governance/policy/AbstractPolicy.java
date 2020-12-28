@@ -33,6 +33,10 @@ public abstract class AbstractPolicy implements Policy {
     this.rules = rules;
   }
 
+  public String getName() {
+    return name;
+  }
+
   public void setName(String name) {
     this.name = name;
   }
@@ -46,10 +50,5 @@ public abstract class AbstractPolicy implements Policy {
     List<String> configuredItems = Arrays.asList(rules.getMatch().split(","));
 
     return items.stream().anyMatch(item -> configuredItems.contains(item));
-  }
-
-  @Override
-  public String name() {
-    return name;
   }
 }

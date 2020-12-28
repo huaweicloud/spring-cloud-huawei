@@ -28,5 +28,5 @@ public interface Policy {
 
   String handler();
 
-  String name();
+  String getName();
 }

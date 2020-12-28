@@ -46,24 +46,28 @@ servicecomb:
             exact: "/govern/bulkhead"
           name: xx
   rateLimiting:
-    xxxxx: |
+    demo-rateLimiting: |
       rules:
-        match: demo-rateLimiting.xx
+        match: xx
       rate: 10
+      name: xx
   retry:
-    xxx: |
+    demo-retry: |
       rules:
-        match: demo-retry.xx
+        match: xx
       maxAttempts: 3
+      name: xx
   circuitBreaker:
-    xxx: |
+    demo-circuitBreaker: |
       rules:
-        match: demo-circuitBreaker.xx
+        match: xx
       minimumNumberOfCalls: 10
       slidingWindowSize: 10
       failureRateThreshold: 20
+      name: xx
   bulkhead:
-    xxx: |
+    demo-bulkhead: |
       rules:
-        match: demo-bulkhead.xx
+        match: xx
       maxConcurrentCalls: 5
+      name: xx
