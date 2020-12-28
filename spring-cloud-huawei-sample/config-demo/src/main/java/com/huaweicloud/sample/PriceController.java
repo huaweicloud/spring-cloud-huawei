@@ -1,6 +1,6 @@
 package com.huaweicloud.sample;
 
-import com.huaweicloud.config.ConfigRefreshEvent;
+import com.huaweicloud.common.event.ConfigRefreshEvent;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationListener;

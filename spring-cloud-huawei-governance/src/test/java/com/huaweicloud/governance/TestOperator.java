@@ -19,14 +19,12 @@ package com.huaweicloud.governance;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.servicecomb.governance.marker.operator.CompareOperator;
+import org.apache.servicecomb.governance.marker.operator.ContainsOperator;
+import org.apache.servicecomb.governance.marker.operator.ExactOperator;
+import org.apache.servicecomb.governance.marker.operator.MatchOperator;
 import org.junit.Assert;
 import org.junit.Test;
-
-import com.huaweicloud.governance.marker.operator.CompareOperator;
-import com.huaweicloud.governance.marker.operator.ContainsOperator;
-import com.huaweicloud.governance.marker.operator.ExactOperator;
-import com.huaweicloud.governance.marker.operator.MatchOperator;
-import com.huaweicloud.governance.marker.operator.RegexOperator;
 
 public class TestOperator {
 
@@ -42,7 +40,6 @@ public class TestOperator {
 
   {
     operatorMap = new HashMap<>();
-    operatorMap.put(REGEX_KEY, new RegexOperator());
     operatorMap.put(EXACT_KEY, new ExactOperator());
     operatorMap.put(CONTAINS_KEY, new ContainsOperator());
     operatorMap.put(COMPARE_KEY, new CompareOperator());

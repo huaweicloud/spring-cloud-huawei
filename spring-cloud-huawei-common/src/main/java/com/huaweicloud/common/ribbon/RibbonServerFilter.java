@@ -18,10 +18,10 @@ package com.huaweicloud.common.ribbon;
 
 import java.util.List;
 
+import org.springframework.core.Ordered;
+
 import com.netflix.loadbalancer.Server;
 
-public interface RibbonServerFilter {
+public interface RibbonServerFilter extends Ordered {
   List<Server> filter(List<Server> list);
-
-  int order();
 }

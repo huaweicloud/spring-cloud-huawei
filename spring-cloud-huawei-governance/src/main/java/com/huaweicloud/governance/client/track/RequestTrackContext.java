@@ -16,9 +16,9 @@
  */
 package com.huaweicloud.governance.client.track;
 
-import com.huaweicloud.governance.policy.Policy;
-
 import java.util.List;
+
+import org.apache.servicecomb.governance.policy.Policy;
 
 public class RequestTrackContext {
 

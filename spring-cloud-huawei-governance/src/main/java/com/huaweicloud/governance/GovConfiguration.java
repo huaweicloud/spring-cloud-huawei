@@ -16,145 +16,38 @@
  */
 package com.huaweicloud.governance;
 
-import com.huaweicloud.governance.client.FeignProxyAop;
-import com.huaweicloud.governance.client.GovRibbonServerFilter;
-import com.huaweicloud.governance.client.RestTemplateProxyAop;
-import com.huaweicloud.common.ribbon.ServiceCombLoadBalanceRule;
-import com.huaweicloud.governance.handler.BulkheadHandler;
-import com.huaweicloud.governance.handler.RetryHandler;
-import com.huaweicloud.governance.properties.BulkheadProperties;
-import com.huaweicloud.governance.properties.CircuitBreakerProperties;
-import com.huaweicloud.governance.properties.RetryProperties;
-import com.huaweicloud.governance.properties.SerializeCache;
-import com.huaweicloud.governance.service.MatchersService;
-import com.huaweicloud.governance.service.MatchersServiceImpl;
-import com.huaweicloud.governance.service.PolicyService;
-import com.huaweicloud.governance.service.PolicyServiceImpl;
-import com.huaweicloud.governance.handler.CircuitBreakerHandler;
-import com.huaweicloud.governance.handler.RateLimitingHandler;
-import com.huaweicloud.governance.properties.MatchProperties;
-import com.huaweicloud.governance.marker.RequestProcessor;
-import com.huaweicloud.governance.marker.operator.CompareOperator;
-import com.huaweicloud.governance.marker.operator.ContainsOperator;
-import com.huaweicloud.governance.marker.operator.ExactOperator;
-import com.huaweicloud.governance.marker.operator.MatchOperator;
-import com.huaweicloud.governance.marker.operator.RegexOperator;
-import com.huaweicloud.governance.properties.RateLimitProperties;
-import com.netflix.client.config.IClientConfig;
-import com.netflix.loadbalancer.IRule;
-import com.netflix.loadbalancer.ZoneAvoidanceRule;
+import java.util.ArrayList;
 
+import org.apache.servicecomb.governance.event.ConfigurationChangedEvent;
+import org.apache.servicecomb.governance.event.EventManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.cloud.netflix.ribbon.RibbonLoadBalancerClient;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+
+import com.huaweicloud.common.event.ConfigRefreshEvent;
+import com.huaweicloud.common.ribbon.ServiceCombLoadBalanceRule;
+import com.huaweicloud.governance.client.FeignProxyAop;
+import com.huaweicloud.governance.client.GovRibbonServerFilter;
+import com.huaweicloud.governance.client.RestTemplateProxyAop;
+import com.netflix.client.config.IClientConfig;
+import com.netflix.loadbalancer.IRule;
+import com.netflix.loadbalancer.ZoneAvoidanceRule;
 
 /**
  * @Author GuoYl123
  * @Date 2020/5/11
  **/
 @Configuration
+@ComponentScan(basePackages = {"org.apache.servicecomb.governance,com.huaweicloud.governance"})
 public class GovConfiguration {
 
   @Bean
   public InvokeProxyAop invokeProxyAop() {
     return new InvokeProxyAop();
-  }
-
-  @Bean
-  public MatchProperties matchProperties() {
-    return new MatchProperties();
-  }
-
-  @Bean
-  public RateLimitProperties rateLimitProperties() {
-    return new RateLimitProperties();
-  }
-
-  @Bean
-  public CircuitBreakerProperties circuitBreakerProperties() {
-    return new CircuitBreakerProperties();
-  }
-
-  @Bean
-  public RetryProperties retryProperties() {
-    return new RetryProperties();
-  }
-
-  @Bean
-  public BulkheadProperties bulkheadProperties() {
-    return new BulkheadProperties();
-  }
-
-  @Bean
-  public MatchersManager matchersManager() {
-    return new MatchersManager();
-  }
-
-  @Bean
-  public SerializeCache serializeCache() {
-    return new SerializeCache();
-  }
-
-  @Bean
-  public MatchersService matchersService() {
-    return new MatchersServiceImpl();
-  }
-
-  @Bean
-  public PolicyService policyService() {
-    return new PolicyServiceImpl();
-  }
-
-  @Bean
-  public GovManager processorManager() {
-    return new GovManager();
-  }
-
-  @Bean(name = "GovRateLimiting")
-  public RateLimitingHandler rateLimitingHandler() {
-    return new RateLimitingHandler();
-  }
-
-  @Bean(name = "GovCircuitBreaker")
-  public CircuitBreakerHandler circuitBreakerHandler() {
-    return new CircuitBreakerHandler();
-  }
-
-  @Bean(name = "GovRetry")
-  public RetryHandler retryHandler() {
-    return new RetryHandler();
-  }
-
-  @Bean(name = "GovBulkhead")
-  public BulkheadHandler bulkheadHandler() {
-    return new BulkheadHandler();
-  }
-
-  @Bean(name = "exactOperator")
-  public MatchOperator exactOperator() {
-    return new ExactOperator();
-  }
-
-  @Bean(name = "regexOperator")
-  public MatchOperator regexOperator() {
-    return new RegexOperator();
-  }
-
-  @Bean(name = "containsOperator")
-  public MatchOperator containsOperator() {
-    return new ContainsOperator();
-  }
-
-  @Bean(name = "compareOperator")
-  public MatchOperator compareOperator() {
-    return new CompareOperator();
-  }
-
-  @Bean
-  public RequestProcessor operatorProcessor() {
-    return new RequestProcessor();
   }
 
   @Bean
@@ -178,5 +71,11 @@ public class GovConfiguration {
   @ConditionalOnBean(RibbonLoadBalancerClient.class)
   public FeignProxyAop feignProxyAop() {
     return new FeignProxyAop();
+  }
+
+  @Bean
+  public ApplicationListener<ConfigRefreshEvent> eventListener() {
+    return configRefreshEvent -> EventManager
+        .post(new ConfigurationChangedEvent(new ArrayList<>(configRefreshEvent.getChange())));
   }
 }

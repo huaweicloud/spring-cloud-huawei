@@ -16,7 +16,6 @@
  */
 package com.huaweicloud.common.ribbon;
 
-import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,15 +33,9 @@ public class ServiceCombLoadBalanceRule extends ZoneAvoidanceRule {
   @Autowired
   private List<RibbonServerFilter> list;
 
-  boolean isSorted = false;
-
   @Override
   public Server choose(Object key) {
     List<Server> serverList = getLoadBalancer().getReachableServers();
-    if (!isSorted) {
-      list.sort(Comparator.comparingInt(RibbonServerFilter::order));
-      isSorted = true;
-    }
     for (RibbonServerFilter filter : list) {
       serverList = filter.filter(serverList);
     }
