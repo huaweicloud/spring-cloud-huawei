@@ -36,7 +36,7 @@ public class RateLimitingHandler extends AbstractGovHandler<RateLimiter> {
 
   @Override
   public <RESULT> DecorateCheckedSupplier<RESULT> process(DecorateCheckedSupplier<RESULT> supplier, Policy policy) {
-    RateLimiter rateLimiter = getActuator("servicecomb.rateLimiting." + policy.name(), (RateLimitingPolicy) policy,
+    RateLimiter rateLimiter = getActuator("servicecomb.rateLimiting." + policy.getName(), (RateLimitingPolicy) policy,
         this::getRateLimiter);
     return supplier.withRateLimiter(rateLimiter);
   }
@@ -60,6 +60,6 @@ public class RateLimitingHandler extends AbstractGovHandler<RateLimiter> {
         .timeoutDuration(Duration.ofMillis(policy.getTimeoutDuration()))
         .build();
     RateLimiterRegistry rateLimiterRegistry = RateLimiterRegistry.of(config);
-    return rateLimiterRegistry.rateLimiter(policy.name());
+    return rateLimiterRegistry.rateLimiter(policy.getName());
   }
 }

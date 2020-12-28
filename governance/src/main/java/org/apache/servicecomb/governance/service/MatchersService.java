@@ -25,7 +25,7 @@ public interface MatchersService {
 
   List<String> getMatchedNames(GovHttpRequest govHttpRequest);
 
-  boolean process(AbstractPolicy policy, MatchHashModel model);
+  boolean process(String matchGroup, AbstractPolicy policy, MatchHashModel model);
 
   MatchHashModel getMatchHashModel(GovHttpRequest govHttpRequest);
 }

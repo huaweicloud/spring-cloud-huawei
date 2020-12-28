@@ -87,15 +87,16 @@ public class MatchersServiceImpl implements MatchersService {
   }
 
   @Override
-  public boolean process(AbstractPolicy policy, MatchHashModel model) {
+  public boolean process(String matchGroup, AbstractPolicy policy, MatchHashModel model) {
     String[] strArray = policy.getRules().getMatch().split(",");
     for (String str : strArray) {
-      if (model.getBoolMatchMap().get(str) == null) {
-        model.getBoolMatchMap().put(str,
+      String mapKey = matchGroup + "." + str;
+      if (model.getBoolMatchMap().get(mapKey) == null) {
+        model.getBoolMatchMap().put(mapKey,
             requestProcessor.match(model.getGovHttpRequest(),
-                model.getMatchMap().get(str)));
+                model.getMatchMap().get(mapKey)));
       }
-      if (model.getBoolMatchMap().get(str)) {
+      if (model.getBoolMatchMap().get(mapKey)) {
         return true;
       }
     }

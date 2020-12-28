@@ -85,13 +85,17 @@ public class MatchersManager {
     return result;
   }
 
+
   private Policy getPolicyByKind(String kind, MatchHashModel match) {
     List<AbstractPolicy> policyList = new ArrayList<>();
     for (Entry<String, Policy> entry : policyService.getCustomPolicy(kind).entrySet()) {
-      if (matchersService.process((AbstractPolicy) entry.getValue(), match)) {
-        ((AbstractPolicy) entry.getValue()).setName(entry.getKey());
+      AbstractPolicy policy = (AbstractPolicy) entry.getValue();
+      if (matchersService.process(entry.getKey(), policy, match)) {
         policyList.add((AbstractPolicy) entry.getValue());
       }
+    }
+    if (policyList.isEmpty()) {
+      return null;
     }
     policyList.sort(Comparator.comparingInt(p -> p.getRules().getPrecedence()));
     return policyList.get(0);
