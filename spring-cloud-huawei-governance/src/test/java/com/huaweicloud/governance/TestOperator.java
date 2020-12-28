@@ -23,6 +23,7 @@ import org.apache.servicecomb.governance.marker.operator.CompareOperator;
 import org.apache.servicecomb.governance.marker.operator.ContainsOperator;
 import org.apache.servicecomb.governance.marker.operator.ExactOperator;
 import org.apache.servicecomb.governance.marker.operator.MatchOperator;
+import org.apache.servicecomb.governance.marker.operator.PrefixOperator;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -30,7 +31,7 @@ public class TestOperator {
 
   private Map<String, MatchOperator> operatorMap;
 
-  private static final String REGEX_KEY = "regex";
+  private static final String PREFIX_KEY = "prefix";
 
   private static final String EXACT_KEY = "exact";
 
@@ -40,18 +41,19 @@ public class TestOperator {
 
   {
     operatorMap = new HashMap<>();
+    operatorMap.put(PREFIX_KEY, new PrefixOperator());
     operatorMap.put(EXACT_KEY, new ExactOperator());
     operatorMap.put(CONTAINS_KEY, new ContainsOperator());
     operatorMap.put(COMPARE_KEY, new CompareOperator());
   }
 
   @Test
-  public void testRegex() {
-    String patternStr = "/.*";
+  public void testPrefix() {
+    String patternStr = "/xx";
     String targetStr1 = "/xxxx/xxx1";
-    String targetStr2 = "xxxx/xxx1";
-    Assert.assertTrue(operatorMap.get(REGEX_KEY).match(targetStr1, patternStr));
-    Assert.assertFalse(operatorMap.get(REGEX_KEY).match(targetStr2, patternStr));
+    String targetStr2 = "xxx";
+    Assert.assertTrue(operatorMap.get(PREFIX_KEY).match(targetStr1, patternStr));
+    Assert.assertFalse(operatorMap.get(PREFIX_KEY).match(targetStr2, patternStr));
   }
 
   @Test
