@@ -68,7 +68,7 @@ public class InvokeProxyAop {
   public Object aroundInvoke(ProceedingJoinPoint pjp) throws Throwable {
     HttpServletRequest request = (HttpServletRequest) pjp.getArgs()[0];
     HttpServletResponse response = (HttpServletResponse) pjp.getArgs()[1];
-    Map<String, Policy> policies = matchersManager.match(convert(request));
+    Map<String, Policy> policies = matchersManager.matchByPolicy(convert(request));
     if (CollectionUtils.isEmpty(policies)) {
       return pjp.proceed();
     }

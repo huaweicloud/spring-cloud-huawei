@@ -34,7 +34,7 @@ public class MockMatchersService implements MatchersService {
   }
 
   @Override
-  public boolean process(AbstractPolicy policy, MatchHashModel model) {
+  public boolean process(String matchGroup, AbstractPolicy policy, MatchHashModel model) {
     return false;
   }
 
