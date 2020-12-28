@@ -46,6 +46,13 @@ public class MatchersManager {
   @Autowired
   private PolicyService policyService;
 
+  private final String[] policyNames = {
+      RateLimitProperties.class.getName(),
+      RetryProperties.class.getName(),
+      CircuitBreakerProperties.class.getName(),
+      BulkheadProperties.class.getName()
+  };
+
   public MatchersManager() {
   }
 
@@ -69,12 +76,6 @@ public class MatchersManager {
    */
   public Map<String, Policy> matchByPolicy(GovHttpRequest request) {
     Map<String, Policy> result = new HashMap<>();
-    String[] policyNames = {
-        RateLimitProperties.class.getName(),
-        RetryProperties.class.getName(),
-        CircuitBreakerProperties.class.getName(),
-        BulkheadProperties.class.getName()
-    };
     MatchHashModel match = matchersService.getMatchHashModel(request);
     for (String policyName : policyNames) {
       Policy policy = getPolicyByKind(policyName, match);
