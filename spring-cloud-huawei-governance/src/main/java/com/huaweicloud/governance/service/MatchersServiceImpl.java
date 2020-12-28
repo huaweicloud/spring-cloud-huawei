@@ -27,7 +27,9 @@ import org.apache.servicecomb.governance.marker.GovHttpRequest;
 import org.apache.servicecomb.governance.marker.Matcher;
 import org.apache.servicecomb.governance.marker.RequestProcessor;
 import org.apache.servicecomb.governance.marker.TrafficMarker;
+import org.apache.servicecomb.governance.policy.AbstractPolicy;
 import org.apache.servicecomb.governance.properties.MatchProperties;
+import org.apache.servicecomb.governance.service.MatchHashModel;
 import org.apache.servicecomb.governance.service.MatchersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +44,7 @@ public class MatchersServiceImpl implements MatchersService {
   @Autowired
   private MatchProperties matchProperties;
 
-  @Value("spring.cloud.servicecomb.discovery.version")
+  @Value("${spring.cloud.servicecomb.discovery.version:}")
   private String version;
 
   @Value("${spring.cloud.servicecomb.discovery.serviceName:${spring.application.name:}}")
@@ -82,5 +84,26 @@ public class MatchersServiceImpl implements MatchersService {
       }
     }
     return marks;
+  }
+
+  @Override
+  public boolean process(AbstractPolicy policy, MatchHashModel model) {
+    String[] strArray = policy.getRules().getMatch().split(",");
+    for (String str : strArray) {
+      if (model.getBoolMatchMap().get(str) == null) {
+        model.getBoolMatchMap().put(str,
+            requestProcessor.match(model.getGovHttpRequest(),
+                model.getMatchMap().get(str)));
+      }
+      if (model.getBoolMatchMap().get(str)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public MatchHashModel getMatchHashModel(GovHttpRequest govHttpRequest) {
+    return new MatchHashModel(govHttpRequest, matchProperties.getParsedEntity(), serviceName, version);
   }
 }

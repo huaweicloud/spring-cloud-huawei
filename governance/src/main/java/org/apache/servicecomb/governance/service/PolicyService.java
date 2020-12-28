@@ -23,4 +23,6 @@ import org.apache.servicecomb.governance.policy.Policy;
 
 public interface PolicyService {
   Map<String, Policy> getAllPolicies(List<String> mark);
+
+  Map<String, Policy> getCustomPolicy(String kind);
 }
