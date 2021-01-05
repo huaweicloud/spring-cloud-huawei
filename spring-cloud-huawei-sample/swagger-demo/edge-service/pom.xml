@@ -17,6 +17,11 @@
       <artifactId>edge-core</artifactId>
       <version>${java-chassis.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>27.0.1-jre</version>
+    </dependency>
     <!--log 4j -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
