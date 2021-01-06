@@ -88,6 +88,9 @@ public class MatchersServiceImpl implements MatchersService {
 
   @Override
   public boolean process(String matchGroup, AbstractPolicy policy, MatchHashModel model) {
+    if (policy.getRules() == null || StringUtils.isEmpty(policy.getRules().getMatch())) {
+      return true;
+    }
     String[] strArray = policy.getRules().getMatch().split(",");
     for (String str : strArray) {
       String mapKey = matchGroup + "." + str;
