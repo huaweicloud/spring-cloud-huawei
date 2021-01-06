@@ -144,20 +144,13 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
       if (null == serviceID) {
         serviceID = serviceCombClient.registerMicroservice(microservice);
         schemas = microservice.getSchemas();
-
-        if (serviceCombSwaggerHandler != null) {
-          if (schemas != null) {
-            schemas = filterSchema(serviceCombSwaggerHandler.getSchemasSummaryMap());
-          }
-          serviceCombSwaggerHandler.registerSwagger(serviceID, schemas);
-        }
-      } else {
-        if (serviceCombSwaggerHandler != null) {
-          schemas = filterSchema(serviceCombSwaggerHandler.getSchemasSummaryMap());
-          serviceCombSwaggerHandler.registerSwagger(serviceID, schemas);
-        }
       }
-
+      if (serviceCombSwaggerHandler != null) {
+        if (schemas == null) {
+          schemas = filterSchema(serviceCombSwaggerHandler.getSchemasSummaryMap());
+        }
+        serviceCombSwaggerHandler.registerSwagger(serviceID, schemas);
+      }
       MicroserviceInstance microserviceInstance = RegistryHandler
           .buildMicroServiceInstances(serviceID, microservice, serviceCombDiscoveryProperties,
               tagsProperties);
