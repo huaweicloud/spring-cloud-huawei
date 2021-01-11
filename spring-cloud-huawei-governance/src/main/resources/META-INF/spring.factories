@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.huaweicloud.governance.GovConfiguration
+  com.huaweicloud.governance.GovernanceConfiguration

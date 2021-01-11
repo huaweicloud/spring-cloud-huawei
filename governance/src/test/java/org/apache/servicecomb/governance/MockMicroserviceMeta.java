@@ -17,29 +17,17 @@
 
 package org.apache.servicecomb.governance;
 
-import java.util.List;
-
-import org.apache.servicecomb.governance.policy.AbstractPolicy;
-import org.apache.servicecomb.governance.service.MatchHashModel;
 import org.springframework.stereotype.Component;
 
-import org.apache.servicecomb.governance.marker.GovHttpRequest;
-import org.apache.servicecomb.governance.service.MatchersService;
-
 @Component
-public class MockMatchersService implements MatchersService {
+public class MockMicroserviceMeta implements MicroserviceMeta {
   @Override
-  public List<String> getMatchedNames(GovHttpRequest govHttpRequest) {
-    return null;
+  public String getName() {
+    return "myself";
   }
 
   @Override
-  public boolean process(String matchGroup, AbstractPolicy policy, MatchHashModel model) {
-    return false;
-  }
-
-  @Override
-  public MatchHashModel getMatchHashModel(GovHttpRequest govHttpRequest) {
-    return null;
+  public String getVersion() {
+    return "1.0";
   }
 }

@@ -14,32 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.client.track;
 
-import com.huaweicloud.common.cache.LastInvokeServerCache;
-import com.netflix.loadbalancer.Server;
+package org.apache.servicecomb.governance.entity;
 
-import java.util.HashSet;
-import java.util.Set;
+/**
+ * Indicates a object can be configure in configuration file or config center.
+ */
+public abstract class Configurable {
+  protected String name;
 
-public class ServerExcluder {
+  protected String services;
 
-  private boolean enabled;
+  public abstract boolean isValid();
 
-  private final Set<Server> ignoreServers = new HashSet<>();
-
-  public boolean isEnabled() {
-    return enabled;
+  public String getName() {
+    return name;
   }
 
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
+  public void setName(String name) {
+    this.name = name;
   }
 
-  public Set<Server> getIgnoreServers() {
-    if (LastInvokeServerCache.getServer() != null) {
-      ignoreServers.add(LastInvokeServerCache.getServer());
-    }
-    return ignoreServers;
+  public String getServices() {
+    return this.services;
+  }
+
+  public void setServices(String services) {
+    this.services = services;
   }
 }

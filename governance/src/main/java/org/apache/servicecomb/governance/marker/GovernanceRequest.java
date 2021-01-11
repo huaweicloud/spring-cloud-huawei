@@ -18,8 +18,7 @@ package org.apache.servicecomb.governance.marker;
 
 import java.util.Map;
 
-public class GovHttpRequest {
-
+public class GovernanceRequest {
   private Map<String, String> headers;
 
   private String uri;

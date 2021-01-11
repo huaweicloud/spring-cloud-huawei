@@ -14,35 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.client;
 
-import java.util.ArrayList;
-import java.util.List;
+package org.apache.servicecomb.governance;
 
-import com.huaweicloud.common.ribbon.RibbonServerFilter;
-import com.huaweicloud.governance.client.track.RequestTrackContext;
-import com.netflix.loadbalancer.Server;
+import java.util.Map;
 
-public class GovRibbonServerFilter implements RibbonServerFilter {
+public interface InvocationContext {
+  Map<String, Boolean> getCalculatedMatches();
 
-  /**
-   * @param list
-   * @return
-   */
-  @Override
-  public List<Server> filter(List<Server> list) {
-    List<Server> copyList = new ArrayList<>(list);
-    if (RequestTrackContext.getServerExcluder().isEnabled()) {
-      copyList.removeAll(RequestTrackContext.getServerExcluder().getIgnoreServers());
-      if (!copyList.isEmpty()) {
-        return copyList;
-      }
-    }
-    return list;
-  }
-
-  @Override
-  public int getOrder() {
-    return 0;
-  }
+  void addMatch(String key, Boolean value);
 }

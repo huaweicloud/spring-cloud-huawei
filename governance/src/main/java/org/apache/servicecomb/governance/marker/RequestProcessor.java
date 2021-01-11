@@ -19,11 +19,10 @@ package org.apache.servicecomb.governance.marker;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import org.apache.servicecomb.governance.marker.operator.MatchOperator;
 import org.apache.servicecomb.governance.marker.operator.RawOperator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 public class RequestProcessor {
@@ -33,7 +32,7 @@ public class RequestProcessor {
   @Autowired
   private Map<String, MatchOperator> operatorMap;
 
-  public boolean match(GovHttpRequest request, Matcher matcher) {
+  public boolean match(GovernanceRequest request, Matcher matcher) {
     if ((matcher.getMethod() != null && !matcher.getMethod().contains(request.getMethod())) ||
         (matcher.getApiPath() != null && !operatorMatch(request.getUri(), matcher.getApiPath()))) {
       return false;
@@ -51,6 +50,10 @@ public class RequestProcessor {
   }
 
   private boolean operatorMatch(String str, RawOperator rawOperator) {
+    if (rawOperator.isEmpty()) {
+      return false;
+    }
+
     for (Entry<String, String> entry : rawOperator.entrySet()) {
       if (!operatorMap.get(entry.getKey() + OPERATOR_SUFFIX).match(str, entry.getValue())) {
         return false;

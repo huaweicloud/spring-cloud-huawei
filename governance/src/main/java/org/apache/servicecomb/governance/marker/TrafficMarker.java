@@ -16,41 +16,21 @@
  */
 package org.apache.servicecomb.governance.marker;
 
-import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.servicecomb.governance.entity.Configurable;
 
-public class TrafficMarker {
-
-  private String services;
+public class TrafficMarker extends Configurable {
+  private String name;
 
   private List<Matcher> matches;
 
-  public boolean isCurrentService(String serviceName, String version) {
-    if (!StringUtils.isEmpty(this.getServices())) {
-      String[] services = this.getServices().split(",");
-      boolean matchService = Arrays.stream(services).anyMatch(ser -> {
-        String[] serAndVer = ser.split(":");
-        if (serAndVer.length == 1) {
-          return serviceName.equals(serAndVer[0]);
-        } else if (serAndVer.length == 2) {
-          return serviceName.equals(serAndVer[0]) && version.equals(serAndVer[1]);
-        } else {
-          return false;
-        }
-      });
-      return true;
+  @Override
+  public boolean isValid() {
+    if (matches == null || matches.isEmpty()) {
+      return false;
     }
     return true;
-  }
-
-  public String getServices() {
-    return services;
-  }
-
-  public void setServices(String services) {
-    this.services = services;
   }
 
   public List<Matcher> getMatches() {
@@ -59,5 +39,20 @@ public class TrafficMarker {
 
   public void setMatches(List<Matcher> matches) {
     this.matches = matches;
+  }
+
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  @Override
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public boolean checkMatch(GovernanceRequest governanceRequest, RequestProcessor requestProcessor) {
+    return this.matches.stream().anyMatch(match ->
+        this.name.equals(name) && requestProcessor.match(governanceRequest, match));
   }
 }
