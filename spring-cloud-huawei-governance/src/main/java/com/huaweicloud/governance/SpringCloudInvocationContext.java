@@ -14,16 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.servicecomb.governance.marker.operator;
 
-import org.apache.commons.lang3.StringUtils;
+package com.huaweicloud.governance;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.servicecomb.governance.InvocationContext;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ExactOperator implements MatchOperator {
+public class SpringCloudInvocationContext implements InvocationContext {
+  private static ThreadLocal<Map<String, Boolean>> context = new ThreadLocal<>();
+
+  public static void setInvocationContext() {
+    context.set(new HashMap<>());
+  }
+
+  public static void removeInvocationContext() {
+    context.remove();
+  }
 
   @Override
-  public boolean match(String targetStr, String patternStr) {
-    return StringUtils.equals(targetStr, patternStr);
+  public Map<String, Boolean> getCalculatedMatches() {
+    return context.get();
+  }
+
+  @Override
+  public void addMatch(String key, Boolean value) {
+    Map<String, Boolean> result = context.get();
+    result.put(key, value);
   }
 }

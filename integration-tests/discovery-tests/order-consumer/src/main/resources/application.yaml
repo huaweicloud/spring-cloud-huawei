@@ -29,45 +29,29 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/govern/hello"
-          name: xx
     demo-retry: |
       matches:
         - apiPath:
-            exact: "/govern/retry"
-          name: xx
+            prefix: "/retry"
     demo-circuitBreaker: |
       matches:
         - apiPath:
             exact: "/govern/circuitBreaker"
-          name: xx
     demo-bulkhead: |
       matches:
         - apiPath:
             exact: "/govern/bulkhead"
-          name: xx
   rateLimiting:
     demo-rateLimiting: |
-      rules:
-        match: xx
       rate: 10
-      name: xx
   retry:
     demo-retry: |
-      rules:
-        match: xx
       maxAttempts: 3
-      name: xx
   circuitBreaker:
     demo-circuitBreaker: |
-      rules:
-        match: xx
       minimumNumberOfCalls: 10
       slidingWindowSize: 10
       failureRateThreshold: 20
-      name: xx
   bulkhead:
     demo-bulkhead: |
-      rules:
-        match: xx
       maxConcurrentCalls: 5
-      name: xx

@@ -14,15 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.servicecomb.governance.handler;
 
-import org.apache.servicecomb.governance.policy.Policy;
+package org.apache.servicecomb.governance.properties;
 
-import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
+import org.apache.servicecomb.governance.policy.AbstractPolicy;
 
-public interface GovHandler {
-
-  <RESULT> DecorateCheckedSupplier<RESULT> process(DecorateCheckedSupplier<RESULT> supplier, Policy policy);
-
-  HandlerType type();
+public abstract class PolicyProperties<T extends AbstractPolicy> extends GovernanceProperties<T> {
+  protected PolicyProperties(String key) {
+    super(key);
+  }
 }

@@ -14,21 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.servicecomb.governance.properties;
 
+package org.apache.servicecomb.governance.service;
+
+import java.util.Map;
+
+import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.RequestProcessor;
 import org.apache.servicecomb.governance.marker.TrafficMarker;
+import org.apache.servicecomb.governance.properties.MatchProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MatchProperties extends GovernanceProperties<TrafficMarker> {
-  public static final String MATCH_POLICY_KEY = "servicecomb.matchGroup";
+public class MatchersServiceImpl implements MatchersService {
+  @Autowired
+  private RequestProcessor requestProcessor;
 
-  public MatchProperties() {
-    super(MATCH_POLICY_KEY);
-  }
+  @Autowired
+  private MatchProperties matchProperties;
 
   @Override
-  public Class<TrafficMarker> getEntityClass() {
-    return TrafficMarker.class;
+  public boolean checkMatch(GovernanceRequest governanceRequest, String key) {
+    Map<String, TrafficMarker> parsedEntity = matchProperties.getParsedEntity();
+
+    TrafficMarker trafficMarker = parsedEntity.get(key);
+
+    if (trafficMarker == null) {
+      return false;
+    }
+
+    return trafficMarker.checkMatch(governanceRequest, requestProcessor);
   }
 }

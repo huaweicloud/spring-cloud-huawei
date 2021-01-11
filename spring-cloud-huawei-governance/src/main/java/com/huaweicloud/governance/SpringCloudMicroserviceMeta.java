@@ -15,27 +15,27 @@
  * limitations under the License.
  */
 
-package org.apache.servicecomb.governance.policy;
+package com.huaweicloud.governance;
 
-public class GovRule {
+import org.apache.servicecomb.governance.MicroserviceMeta;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-  private String match;
+@Component
+public class SpringCloudMicroserviceMeta implements MicroserviceMeta {
+  @Value("${spring.cloud.servicecomb.discovery.version:}")
+  private String version;
 
-  private int precedence;
+  @Value("${spring.cloud.servicecomb.discovery.serviceName:${spring.application.name:}}")
+  private String serviceName;
 
-  public String getMatch() {
-    return match;
+  @Override
+  public String getName() {
+    return serviceName;
   }
 
-  public void setMatch(String match) {
-    this.match = match;
-  }
-
-  public int getPrecedence() {
-    return precedence;
-  }
-
-  public void setPrecedence(int precedence) {
-    this.precedence = precedence;
+  @Override
+  public String getVersion() {
+    return version;
   }
 }

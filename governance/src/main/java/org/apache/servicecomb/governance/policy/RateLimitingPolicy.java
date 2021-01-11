@@ -18,15 +18,6 @@ package org.apache.servicecomb.governance.policy;
 
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
 
-/**
- * resilience4j 采用类似令牌桶的思想，其原理:
- * 每隔limitRefreshPeriod的时间会加入limitForPeriod个新许可
- * 如果获取不到新的许可(已经触发限流)，当前线程会park，最多等待timeoutDuration的时间
- * 采用默认单位为ms
- *
- * @Author GuoYl123
- * @Date 2020/5/11
- **/
 public class RateLimitingPolicy extends AbstractPolicy {
 
   public static final int DEFAULT_TIMEOUT_DURATION = 0;
@@ -67,6 +58,20 @@ public class RateLimitingPolicy extends AbstractPolicy {
   }
 
   public RateLimitingPolicy() {
+  }
+
+  @Override
+  public boolean isValid() {
+    if (timeoutDuration < 0) {
+      return false;
+    }
+    if (limitRefreshPeriod <= 0) {
+      return false;
+    }
+    if (rate <= 0) {
+      return false;
+    }
+    return super.isValid();
   }
 
   @Override

@@ -41,6 +41,14 @@ public class GovernanceControllerIT {
   }
 
   @Test
+  public void testRetryFeign() {
+    String invocationID = UUID.randomUUID().toString();
+    String result = template.getForObject(url + "/govern/retryFeign?invocationID={1}", String.class, invocationID);
+    assertThat(result).isEqualTo("try times: 3");
+  }
+
+
+  @Test
   public void testCircuitBreaker() throws Exception {
     CountDownLatch latch = new CountDownLatch(100);
     AtomicBoolean expectedFailed = new AtomicBoolean(false);

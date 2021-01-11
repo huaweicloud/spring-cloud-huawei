@@ -14,35 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.client.track;
 
-import java.util.List;
+package org.apache.servicecomb.governance;
 
-import org.apache.servicecomb.governance.policy.Policy;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
-public class RequestTrackContext {
+import org.springframework.stereotype.Component;
 
-  private static ThreadLocal<ServerExcluder> serverThreadLocal = new ThreadLocal<>();
+@Component
+public class MockInvocationContext implements InvocationContext {
+  private ThreadLocal<Map<String, Boolean>> context = new ThreadLocal<>();
 
-  private static ThreadLocal<List<Policy>> policyThreadLocal = new ThreadLocal<>();
-
-  public static void remove() {
-    serverThreadLocal.remove();
-    policyThreadLocal.remove();
-  }
-
-  public static List<Policy> getPolicies() {
-    return policyThreadLocal.get();
-  }
-
-  public static void setPolicies(List<Policy> policies) {
-    policyThreadLocal.set(policies);
-  }
-
-  public static ServerExcluder getServerExcluder() {
-    if (serverThreadLocal.get() == null) {
-      serverThreadLocal.set(new ServerExcluder());
+  @Override
+  public Map<String, Boolean> getCalculatedMatches() {
+    Map<String, Boolean> result = context.get();
+    if (result == null) {
+      return Collections.emptyMap();
     }
-    return serverThreadLocal.get();
+    return result;
+  }
+
+  @Override
+  public void addMatch(String key, Boolean value) {
+    Map<String, Boolean> result = context.get();
+    if (result == null) {
+      result = new HashMap<>();
+      context.set(result);
+    }
+    result.put(key, value);
   }
 }

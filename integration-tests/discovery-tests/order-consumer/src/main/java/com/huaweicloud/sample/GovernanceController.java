@@ -29,6 +29,9 @@ public class GovernanceController {
   @Autowired
   private RestTemplate restTemplate;
 
+  @Autowired
+  private FeignService feignService;
+
   private int count = 0;
 
   @RequestMapping("/hello")
@@ -39,6 +42,11 @@ public class GovernanceController {
   @RequestMapping("/retry")
   public String retry(@RequestParam(name = "invocationID") String invocationID) {
     return restTemplate.getForObject("http://price/retry?invocationID={1}", String.class, invocationID);
+  }
+
+  @RequestMapping("/retryFeign")
+  public String retryFeign(@RequestParam(name = "invocationID") String invocationID) {
+    return feignService.retry(invocationID);
   }
 
   @RequestMapping("/circuitBreaker")
