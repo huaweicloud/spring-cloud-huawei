@@ -22,12 +22,9 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.servicecomb.governance.MatchersManager;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
-import org.apache.servicecomb.governance.policy.RetryPolicy;
-import org.apache.servicecomb.governance.properties.RetryProperties;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -36,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import io.github.resilience4j.decorators.Decorators;
 import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
+import io.github.resilience4j.retry.Retry;
 import io.vavr.CheckedFunction0;
 import feign.Request;
 import feign.Response;
@@ -43,13 +41,7 @@ import feign.Response;
 @Aspect
 public class GovernanceFeignClient {
   @Autowired
-  private MatchersManager matchersManager;
-
-  @Autowired
   private RetryHandler retryHandler;
-
-  @Autowired
-  private RetryProperties retryProperties;
 
   @Autowired(required = false)
   private ClientRecoverPolicy<Object> clientRecoverPolicy;
@@ -101,9 +93,9 @@ public class GovernanceFeignClient {
   }
 
   private void addRetry(DecorateCheckedSupplier<Object> dcs, GovernanceRequest request) {
-    RetryPolicy retryPolicy = matchersManager.match(request, retryProperties.getParsedEntity());
-    if (retryPolicy != null) {
-      dcs.withRetry(retryHandler.getActuator(retryPolicy));
+    Retry retry = retryHandler.getActuator(request);
+    if (retry != null) {
+      dcs.withRetry(retry);
     }
   }
 }
