@@ -21,9 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.servicecomb.governance.InvocationContext;
-import org.springframework.stereotype.Component;
 
-@Component
 public class SpringCloudInvocationContext implements InvocationContext {
   private static ThreadLocal<Map<String, Boolean>> context = new ThreadLocal<>();
 

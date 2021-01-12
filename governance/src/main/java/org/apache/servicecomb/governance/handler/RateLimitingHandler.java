@@ -27,7 +27,7 @@ import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.ratelimiter.RateLimiterConfig;
 import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
 
-@Component("RateLimitingHandler")
+@Component
 public class RateLimitingHandler extends AbstractGovernanceHandler<RateLimiter, RateLimitingPolicy> {
   private static final Logger LOGGER = LoggerFactory.getLogger(RateLimitingHandler.class);
 
