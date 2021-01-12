@@ -19,9 +19,7 @@ package com.huaweicloud.governance;
 
 import org.apache.servicecomb.governance.MicroserviceMeta;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
-@Component
 public class SpringCloudMicroserviceMeta implements MicroserviceMeta {
   @Value("${spring.cloud.servicecomb.discovery.version:}")
   private String version;

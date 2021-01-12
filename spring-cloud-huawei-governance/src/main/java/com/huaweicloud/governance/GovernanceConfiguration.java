@@ -20,8 +20,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.servicecomb.governance.InvocationContext;
+import org.apache.servicecomb.governance.MicroserviceMeta;
 import org.apache.servicecomb.governance.event.ConfigurationChangedEvent;
 import org.apache.servicecomb.governance.event.EventManager;
+import org.apache.servicecomb.governance.handler.ext.RetryExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -37,16 +40,16 @@ import org.springframework.web.client.RestTemplate;
 import com.huaweicloud.common.event.ConfigRefreshEvent;
 
 @Configuration
-@ComponentScan(basePackages = {"org.apache.servicecomb.governance,com.huaweicloud.governance"})
+@ComponentScan(basePackages = {"org.apache.servicecomb.governance"})
 public class GovernanceConfiguration {
 
   @Bean
-  public GovernanceRequestMappingHandlerAdapter invokeProxyAop() {
+  public GovernanceRequestMappingHandlerAdapter governanceRequestMappingHandlerAdapter() {
     return new GovernanceRequestMappingHandlerAdapter();
   }
 
   @Bean
-  public ApplicationListener<ConfigRefreshEvent> eventListener() {
+  public ApplicationListener<ConfigRefreshEvent> governanceApplicationListener() {
     return configRefreshEvent -> EventManager
         .post(new ConfigurationChangedEvent(new HashSet<>(configRefreshEvent.getChange())));
   }
@@ -77,5 +80,20 @@ public class GovernanceConfiguration {
   @Bean
   public GovernanceFeignClient governanceFeignClient() {
     return new GovernanceFeignClient();
+  }
+
+  @Bean
+  public MicroserviceMeta governanceMicroserviceMeta() {
+    return new SpringCloudMicroserviceMeta();
+  }
+
+  @Bean
+  public InvocationContext governanceInvocationContext() {
+    return new SpringCloudInvocationContext();
+  }
+
+  @Bean
+  public RetryExtension governanceRetryExtension() {
+    return new SpringCloudRetryExtension();
   }
 }

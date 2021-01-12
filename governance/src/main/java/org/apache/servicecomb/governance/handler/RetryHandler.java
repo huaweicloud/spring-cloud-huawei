@@ -33,7 +33,7 @@ import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import io.github.resilience4j.retry.RetryRegistry;
 
-@Component("RetryHandler")
+@Component
 public class RetryHandler extends AbstractGovernanceHandler<Retry, RetryPolicy> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RetryHandler.class);

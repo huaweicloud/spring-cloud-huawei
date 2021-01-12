@@ -24,12 +24,10 @@ import org.apache.servicecomb.governance.handler.ext.RetryExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 
 import feign.Response;
 
-@Component
 public class SpringCloudRetryExtension implements RetryExtension {
   private static final Logger LOGGER = LoggerFactory.getLogger(SpringCloudRetryExtension.class);
 
