@@ -19,12 +19,9 @@ package com.huaweicloud.governance;
 
 import java.io.IOException;
 
-import org.apache.servicecomb.governance.MatchersManager;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
-import org.apache.servicecomb.governance.policy.RetryPolicy;
-import org.apache.servicecomb.governance.properties.RetryProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -33,18 +30,13 @@ import org.springframework.http.client.ClientHttpResponse;
 
 import io.github.resilience4j.decorators.Decorators;
 import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
+import io.github.resilience4j.retry.Retry;
 import io.vavr.CheckedFunction0;
 
 public class GovernanceClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
   @Autowired
-  private MatchersManager matchersManager;
-
-  @Autowired
   private RetryHandler retryHandler;
-
-  @Autowired
-  private RetryProperties retryProperties;
 
   @Autowired(required = false)
   private ClientRecoverPolicy<Object> clientRecoverPolicy;
@@ -82,9 +74,9 @@ public class GovernanceClientHttpRequestInterceptor implements ClientHttpRequest
   }
 
   private void addRetry(DecorateCheckedSupplier<ClientHttpResponse> dcs, GovernanceRequest request) {
-    RetryPolicy retryPolicy = matchersManager.match(request, retryProperties.getParsedEntity());
-    if (retryPolicy != null) {
-      dcs.withRetry(retryHandler.getActuator(retryPolicy));
+    Retry retry = retryHandler.getActuator(request);
+    if (retry != null) {
+      dcs.withRetry(retry);
     }
   }
 }
