@@ -27,6 +27,7 @@ import org.apache.servicecomb.governance.event.EventManager;
 import org.apache.servicecomb.governance.handler.ext.RetryExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor;
 import org.springframework.cloud.client.loadbalancer.RestTemplateCustomizer;
@@ -65,6 +66,7 @@ public class GovernanceConfiguration {
   // 这里也指定为 ConditionalOnMissingBean。
   @Bean
   @ConditionalOnMissingBean
+  @ConditionalOnMissingClass("org.springframework.retry.support.RetryTemplate")
   public RestTemplateCustomizer governanceRestTemplateCustomizer(
       final GovernanceClientHttpRequestInterceptor governanceClientHttpRequestInterceptor,
       final LoadBalancerInterceptor loadBalancerInterceptor) {
