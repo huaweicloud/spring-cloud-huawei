@@ -17,11 +17,12 @@
 
 package com.huaweicloud.config;
 
-import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 
 /**
  * @Author wangqijun
@@ -58,8 +59,6 @@ public class ServiceCombConfigProperties {
 
   private Watch watch = new Watch();
 
-  private Retry retry = new Retry();
-
   public String getDiscoveryAddress() {
     return discoveryAddress;
   }
@@ -78,14 +77,6 @@ public class ServiceCombConfigProperties {
 
   public void setEnableLongPolling(boolean enableLongPolling) {
     this.enableLongPolling = enableLongPolling;
-  }
-
-  public Retry getRetry() {
-    return retry;
-  }
-
-  public void setRetry(Retry retry) {
-    this.retry = retry;
   }
 
   public boolean isEnabled() {
@@ -195,58 +186,6 @@ public class ServiceCombConfigProperties {
 
     public void setWaitTime(int waitTime) {
       this.waitTime = waitTime;
-    }
-  }
-
-  public static class Retry {
-    private boolean enable = true;
-
-    private long initialInterval = 1000;
-
-    private double multiplier = 1.1;
-
-    private long maxInterval = 20 * 1000;
-
-    private int maxAttempts = 10;
-
-    public boolean isEnable() {
-      return enable;
-    }
-
-    public void setEnable(boolean enable) {
-      this.enable = enable;
-    }
-
-    public long getInitialInterval() {
-      return initialInterval;
-    }
-
-    public void setInitialInterval(long initialInterval) {
-      this.initialInterval = initialInterval;
-    }
-
-    public double getMultiplier() {
-      return multiplier;
-    }
-
-    public void setMultiplier(double multiplier) {
-      this.multiplier = multiplier;
-    }
-
-    public long getMaxInterval() {
-      return maxInterval;
-    }
-
-    public void setMaxInterval(long maxInterval) {
-      this.maxInterval = maxInterval;
-    }
-
-    public int getMaxAttempts() {
-      return maxAttempts;
-    }
-
-    public void setMaxAttempts(int maxAttempts) {
-      this.maxAttempts = maxAttempts;
     }
   }
 }

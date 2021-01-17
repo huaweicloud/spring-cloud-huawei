@@ -22,10 +22,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.core.env.EnumerablePropertySource;
+
 import com.huaweicloud.common.exception.RemoteOperationException;
 import com.huaweicloud.config.client.ServiceCombConfigClient;
-import org.springframework.core.env.EnumerablePropertySource;
-import org.springframework.retry.annotation.Retryable;
 
 /**
  * @Author wangqijun
@@ -44,7 +44,6 @@ public class ServiceCombConfigPropertySource extends EnumerablePropertySource<Se
     this.serviceCombConfigClient = source;
   }
 
-  @Retryable(interceptor = "serviceCombConfigRetryInterceptor")
   public Map<String, Object> loadAllRemoteConfig(ServiceCombConfigProperties serviceCombConfigProperties,
       String project)
       throws RemoteOperationException {
