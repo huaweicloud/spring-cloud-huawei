@@ -18,6 +18,7 @@
 package com.huaweicloud.common.transport;
 
 import com.huaweicloud.common.util.SecretUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -111,4 +112,7 @@ public class ServiceCombAkSkProperties {
     return StringUtils.isEmpty(project);
   }
 
+  public boolean isEmpty() {
+    return getAccessKey() == null || getSecretKey() == null;
+  }
 }
