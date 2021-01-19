@@ -12,13 +12,6 @@ spring:
         serviceName: order
         version: 0.0.1
 
-      credentials:
-        enabled: true
-        accessKey: your ak
-        secretKey: your sk
-        akskCustomCipher: default
-        project: cn-east-2
-
       # testing servicecomb swagger generation
       swagger:
         enableJavaChassisAdapter: true
