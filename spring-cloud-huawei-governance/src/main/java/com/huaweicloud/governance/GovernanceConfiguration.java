@@ -26,11 +26,13 @@ import org.apache.servicecomb.governance.event.ConfigurationChangedEvent;
 import org.apache.servicecomb.governance.event.EventManager;
 import org.apache.servicecomb.governance.handler.ext.RetryExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor;
 import org.springframework.cloud.client.loadbalancer.RestTemplateCustomizer;
+import org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -80,6 +82,7 @@ public class GovernanceConfiguration {
   }
 
   @Bean
+  @ConditionalOnClass(LoadBalancerFeignClient.class)
   public GovernanceFeignClient governanceFeignClient() {
     return new GovernanceFeignClient();
   }
