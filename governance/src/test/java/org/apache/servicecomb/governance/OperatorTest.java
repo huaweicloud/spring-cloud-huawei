@@ -40,6 +40,17 @@ public class OperatorTest {
   private RequestProcessor requestProcessor;
 
   @Test
+  public void test_unknown_operator() {
+    GovernanceRequest request = new GovernanceRequest();
+    request.setUri("/test");
+    Matcher matcher = new Matcher();
+    RawOperator apiPath = new RawOperator();
+    apiPath.put("unknown", "/test");
+    matcher.setApiPath(apiPath);
+    Assert.assertFalse(requestProcessor.match(request, matcher));
+  }
+
+  @Test
   public void test_exact_api_path_match() {
     GovernanceRequest request = new GovernanceRequest();
     request.setUri("/bulkhead");
