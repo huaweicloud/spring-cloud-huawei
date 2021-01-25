@@ -81,6 +81,18 @@ public class RouterDistributorTest {
   }
 
   @Test
+  public void testLowCase() {
+    Map headermap = new HashMap();
+    headermap.put("xxx", "xx");
+    headermap.put("xx", "xx");
+    headermap.put("FoRmaTe", "json");
+    List<ServiceIns> serverList = mainFilter(getMockList(), headermap);
+    Assert.assertEquals(1, serverList.size());
+    Assert.assertEquals("02", serverList.get(0).getHost());
+  }
+
+
+  @Test
   public void testVersionMatch() {
     Map headermap = new HashMap();
     headermap.put("xxx", "xx");
