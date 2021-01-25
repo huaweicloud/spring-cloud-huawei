@@ -44,8 +44,9 @@ public class DtmConstants {
       DTM_CONTEXT_IM_METHOD = clazz.getMethod(DTM_IMPORT_METHOD_NAME, Map.class);
     } catch (Throwable e) {
       // ignore just warn
-      LOGGER.error("Failed to init method {} {} {}", DTM_CONTEXT_DEFAULT_CLASS_NAME, DTM_EXPORT_METHOD_NAME,
-          DTM_IMPORT_METHOD_NAME, e);
+      LOGGER.error("Failed to init method {} {} {}, import dtm client libraries to use dtm",
+          DTM_CONTEXT_DEFAULT_CLASS_NAME, DTM_EXPORT_METHOD_NAME,
+          DTM_IMPORT_METHOD_NAME);
     }
   }
 }
