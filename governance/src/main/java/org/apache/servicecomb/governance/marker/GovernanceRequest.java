@@ -16,6 +16,7 @@
  */
 package org.apache.servicecomb.governance.marker;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class GovernanceRequest {
@@ -30,7 +31,7 @@ public class GovernanceRequest {
   }
 
   public void setHeaders(Map<String, String> headers) {
-    this.headers = headers;
+    this.headers = transUpperKey2Low(headers);
   }
 
   public String getUri() {
@@ -47,5 +48,16 @@ public class GovernanceRequest {
 
   public void setMethod(String method) {
     this.method = method;
+  }
+
+  private Map<String, String> transUpperKey2Low(Map<String, String> headers) {
+    Map<String, String> result = new HashMap<>();
+    if (headers == null || headers.isEmpty()) {
+      return result;
+    }
+    for (String key : headers.keySet()) {
+      result.put(key.toLowerCase(), headers.get(key));
+    }
+    return result;
   }
 }

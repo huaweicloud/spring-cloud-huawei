@@ -51,8 +51,8 @@ public class Matcher {
       return true;
     }
     for (Map.Entry<String, HeaderRule> entry : headers.entrySet()) {
-      if (!realHeaders.containsKey(entry.getKey().toLowerCase()) || !entry.getValue()
-          .match(realHeaders.get(entry.getKey()))) {
+      if (!realHeaders.containsKey(entry.getKey().toLowerCase()) ||
+          !entry.getValue().match(realHeaders.get(entry.getKey().toLowerCase()))) {
         return false;
       }
     }

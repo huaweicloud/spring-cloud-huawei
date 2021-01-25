@@ -26,6 +26,15 @@ import org.springframework.http.HttpHeaders;
 public class HeaderUtil {
 
 
+  /**
+   * 获取所有header的map,并将key转为小写
+   *
+   * 根据 RFC 7230(https://tools.ietf.org/html/rfc7230#section-3.2) 所描述
+   * http header key 应该不区分大小写 ，这里统一转成小写
+   *
+   * @param servletRequest
+   * @return
+   */
   public static Map<String, String> getHeaders(HttpServletRequest servletRequest) {
     Enumeration<String> headerNames = servletRequest.getHeaderNames();
     HttpHeaders httpHeaders = new HttpHeaders();
@@ -33,7 +42,7 @@ public class HeaderUtil {
       String headerName = headerNames.nextElement();
       Enumeration<String> headerValues = servletRequest.getHeaders(headerName);
       while (headerValues.hasMoreElements()) {
-        httpHeaders.add(headerName, headerValues.nextElement());
+        httpHeaders.add(headerName.toLowerCase(), headerValues.nextElement());
       }
     }
     return httpHeaders.toSingleValueMap();
