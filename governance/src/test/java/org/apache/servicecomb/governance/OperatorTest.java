@@ -161,6 +161,21 @@ public class OperatorTest {
   }
 
   @Test
+  public void test_header_low_case() {
+    GovernanceRequest request = new GovernanceRequest();
+    Map<String, String> reqHeaders = new HashMap<>();
+    reqHeaders.put("hEadeR", "100");
+    request.setHeaders(reqHeaders);
+    Matcher matcher = new Matcher();
+    Map<String, RawOperator> headers = new HashMap<>();
+    RawOperator header1 = new RawOperator();
+    header1.put("compare", ">10");
+    headers.put("HeAder", header1);
+    matcher.setHeaders(headers);
+    Assert.assertTrue(requestProcessor.match(request, matcher));
+  }
+
+  @Test
   public void test_compare_header_match() {
     GovernanceRequest request = new GovernanceRequest();
     Map<String, String> reqHeaders = new HashMap<>();
