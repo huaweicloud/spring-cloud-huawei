@@ -95,7 +95,7 @@ public class RegistryHandler {
     endPoints.add("rest://" + address + ":" + serviceCombDiscoveryProperties.getPort());
     microserviceInstance.setEndpoints(endPoints);
     HealthCheck healthCheck = new HealthCheck();
-    healthCheck.setMode(HealthCheckMode.PLATFORM);
+    healthCheck.setMode(HealthCheckMode.HEARTBEAT);
     healthCheck.setInterval(serviceCombDiscoveryProperties.getHealthCheckInterval());
     healthCheck.setTimes(3);
     microserviceInstance.setHealthCheck(healthCheck);
