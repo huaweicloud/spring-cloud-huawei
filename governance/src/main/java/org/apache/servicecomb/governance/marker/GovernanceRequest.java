@@ -16,8 +16,9 @@
  */
 package org.apache.servicecomb.governance.marker;
 
-import java.util.HashMap;
 import java.util.Map;
+
+import org.springframework.util.LinkedCaseInsensitiveMap;
 
 public class GovernanceRequest {
   private Map<String, String> headers;
@@ -31,7 +32,9 @@ public class GovernanceRequest {
   }
 
   public void setHeaders(Map<String, String> headers) {
-    this.headers = transUpperKey2Low(headers);
+    Map<String, String> temp = new LinkedCaseInsensitiveMap<>();
+    temp.putAll(headers);
+    this.headers = temp;
   }
 
   public String getUri() {
@@ -48,16 +51,5 @@ public class GovernanceRequest {
 
   public void setMethod(String method) {
     this.method = method;
-  }
-
-  private Map<String, String> transUpperKey2Low(Map<String, String> headers) {
-    Map<String, String> result = new HashMap<>();
-    if (headers == null || headers.isEmpty()) {
-      return result;
-    }
-    for (String key : headers.keySet()) {
-      result.put(key.toLowerCase(), headers.get(key));
-    }
-    return result;
   }
 }

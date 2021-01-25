@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.util.LinkedCaseInsensitiveMap;
 
 public class HeaderUtil {
 
@@ -42,9 +43,11 @@ public class HeaderUtil {
       String headerName = headerNames.nextElement();
       Enumeration<String> headerValues = servletRequest.getHeaders(headerName);
       while (headerValues.hasMoreElements()) {
-        httpHeaders.add(headerName.toLowerCase(), headerValues.nextElement());
+        httpHeaders.add(headerName, headerValues.nextElement());
       }
     }
-    return httpHeaders.toSingleValueMap();
+    Map<String, String> m = new LinkedCaseInsensitiveMap<>();
+    m.putAll(httpHeaders.toSingleValueMap());
+    return m;
   }
 }
