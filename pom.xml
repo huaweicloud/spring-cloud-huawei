@@ -44,6 +44,7 @@
 
   <modules>
     <module>spring-cloud-huawei-dependencies</module>
+    <module>spring-cloud-huawei-bom</module>
     <module>spring-cloud-huawei-parents</module>
     <module>spring-cloud-huawei-common</module>
     <module>spring-cloud-huawei-servicecomb-discovery</module>

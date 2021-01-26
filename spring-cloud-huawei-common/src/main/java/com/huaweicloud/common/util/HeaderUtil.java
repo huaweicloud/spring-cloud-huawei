@@ -21,33 +21,22 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 
 public class HeaderUtil {
-
-
-  /**
-   * 获取所有header的map,并将key转为小写
-   *
-   * 根据 RFC 7230(https://tools.ietf.org/html/rfc7230#section-3.2) 所描述
-   * http header key 应该不区分大小写 ，这里统一转成小写
-   *
-   * @param servletRequest
-   * @return
-   */
   public static Map<String, String> getHeaders(HttpServletRequest servletRequest) {
     Enumeration<String> headerNames = servletRequest.getHeaderNames();
-    HttpHeaders httpHeaders = new HttpHeaders();
+    Map<String, String> result = new LinkedCaseInsensitiveMap<>();
+
     while (headerNames.hasMoreElements()) {
       String headerName = headerNames.nextElement();
       Enumeration<String> headerValues = servletRequest.getHeaders(headerName);
-      while (headerValues.hasMoreElements()) {
-        httpHeaders.add(headerName, headerValues.nextElement());
+      // 多个 value 的情况下， 只取其中一个
+      if (headerValues.hasMoreElements()) {
+        result.put(headerName, headerValues.nextElement());
       }
     }
-    Map<String, String> m = new LinkedCaseInsensitiveMap<>();
-    m.putAll(httpHeaders.toSingleValueMap());
-    return m;
+
+    return result;
   }
 }

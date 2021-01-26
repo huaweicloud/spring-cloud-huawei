@@ -46,6 +46,7 @@ import com.huaweicloud.common.event.ConfigRefreshEvent;
 public class GovernanceConfiguration {
 
   @Bean
+  @ConditionalOnClass(name = "org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter")
   public GovernanceRequestMappingHandlerAdapter governanceRequestMappingHandlerAdapter() {
     return new GovernanceRequestMappingHandlerAdapter();
   }
@@ -57,6 +58,7 @@ public class GovernanceConfiguration {
   }
 
   @Bean
+  @ConditionalOnClass(value = RestTemplate.class)
   public GovernanceClientHttpRequestInterceptor governanceClientHttpRequestInterceptor(
       @Autowired(required = false) @LoadBalanced List<RestTemplate> restTemplates) {
     return new GovernanceClientHttpRequestInterceptor();
