@@ -17,14 +17,7 @@
 
 package com.huaweicloud.common.transport;
 
-import com.huaweicloud.common.auth.AuthHeaderUtils;
-
-import java.util.Map;
-
 import org.apache.http.client.methods.HttpUriRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 
 /**
  * @Author wangqijun
@@ -60,7 +53,7 @@ public class DealHeaderUtil {
 
   public static void addAKSKHeader(HttpUriRequest httpRequest,
       ServiceCombAkSkProperties serviceCombAkSkProperties) {
-    Map<String, String> headerMap = AuthHeaderUtils.genAuthHeaders();
+
     if (serviceCombAkSkProperties == null ||
         serviceCombAkSkProperties.isEmpty() ||
         !serviceCombAkSkProperties.isEnabled()) {
@@ -68,11 +61,7 @@ public class DealHeaderUtil {
     }
     httpRequest.addHeader(X_SERVICE_AK, serviceCombAkSkProperties.getAccessKey());
     httpRequest.addHeader(X_SERVICE_SHA_AKSK, serviceCombAkSkProperties.getSecretKey());
-    if (!CollectionUtils.isEmpty(headerMap)) {
-      httpRequest.addHeader(X_SERVICE_PROJECT, headerMap.get(X_SERVICE_PROJECT));
-    } else {
-      httpRequest.addHeader(X_SERVICE_PROJECT, serviceCombAkSkProperties.getProject());
-    }
+    httpRequest.addHeader(X_SERVICE_PROJECT, serviceCombAkSkProperties.getProject());
   }
 
   public static void addDefautHeader(HttpUriRequest httpRequest) {

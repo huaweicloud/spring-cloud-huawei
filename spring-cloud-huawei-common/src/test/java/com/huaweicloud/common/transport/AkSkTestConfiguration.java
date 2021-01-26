@@ -15,27 +15,17 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.common.auth;
+package com.huaweicloud.common.transport;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.Map;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-/**
- * @Author GuoYl123
- * @Date 2020/1/10
- **/
-@Deprecated
-public class AuthHeaderUtils {
+import com.huaweicloud.common.util.Cipher;
 
-  private static AuthHeaderStrategy authHeaderStrategy = new AuthHeaderStrategyMount();
-
-  public static Map<String, String> genAuthHeaders() {
-    if (Files.exists(Paths.get(AuthHeaderStrategy.DEFAULT_SECRET_AUTH_PATH,
-        AuthHeaderStrategy.DEFAULT_SECRET_AUTH_NAME))) {
-      return authHeaderStrategy.getHeaders();
-    }
-    return Collections.emptyMap();
+@Configuration
+public class AkSkTestConfiguration {
+  @Bean
+  public Cipher customCipher() {
+    return new CustomCipher();
   }
 }

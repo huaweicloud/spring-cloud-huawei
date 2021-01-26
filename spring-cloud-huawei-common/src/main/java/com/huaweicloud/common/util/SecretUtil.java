@@ -17,7 +17,6 @@
 
 package com.huaweicloud.common.util;
 
-import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +29,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.net.ssl.KeyManager;
@@ -37,6 +37,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+
 import org.apache.commons.codec.binary.Hex;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.conn.ssl.TrustStrategy;
@@ -44,6 +45,8 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 
 /**
  * @Author GuoYl123
@@ -109,11 +112,15 @@ public class SecretUtil {
     return null;
   }
 
-  public static String sha256Encode(String key, String data) throws Exception {
-    Mac sha256HMAC = Mac.getInstance("HmacSHA256");
-    SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8),
-        "HmacSHA256");
-    sha256HMAC.init(secretKey);
-    return Hex.encodeHexString(sha256HMAC.doFinal(data.getBytes(StandardCharsets.UTF_8)));
+  public static String sha256Encode(String key, String data) {
+    try {
+      Mac sha256HMAC = Mac.getInstance("HmacSHA256");
+      SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8),
+          "HmacSHA256");
+      sha256HMAC.init(secretKey);
+      return Hex.encodeHexString(sha256HMAC.doFinal(data.getBytes(StandardCharsets.UTF_8)));
+    } catch (Exception e) {
+      throw new IllegalArgumentException(e);
+    }
   }
 }

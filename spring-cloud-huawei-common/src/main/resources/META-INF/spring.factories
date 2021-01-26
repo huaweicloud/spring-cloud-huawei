@@ -1,0 +1,3 @@
+org.springframework.cloud.bootstrap.BootstrapConfiguration=\
+com.huaweicloud.common.CommonConfiguration,\
+com.huaweicloud.common.transport.ServiceCombAkSkProperties

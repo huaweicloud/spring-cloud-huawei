@@ -1,0 +1,9 @@
+spring:
+  cloud:
+    servicecomb:
+      credentials:
+        enabled: true
+        accessKey: your ak
+        secretKey: your sk
+        akskCustomCipher: CustomCipher
+        project: cn-east-2

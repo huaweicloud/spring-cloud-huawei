@@ -19,10 +19,13 @@ package com.huaweicloud.config.client;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.huaweicloud.config.ServiceCombConfigBootstrapConfiguration;
-import com.huaweicloud.config.ServiceCombConfigProperties;
 import org.junit.Test;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+
+import com.huaweicloud.common.CommonConfiguration;
+import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
+import com.huaweicloud.config.ServiceCombConfigBootstrapConfiguration;
+import com.huaweicloud.config.ServiceCombConfigProperties;
 
 /**
  * @Author wangqijun
@@ -33,7 +36,8 @@ public class ServiceCombConfigBootstrapConfigurationTest {
 
   @Test
   public void serviceCombPropertySourceLocator() {
-    this.contextRunner.withUserConfiguration(ServiceCombConfigBootstrapConfiguration.class)
+    this.contextRunner.withUserConfiguration(ServiceCombConfigBootstrapConfiguration.class, CommonConfiguration.class,
+        ServiceCombAkSkProperties.class)
         .run(context -> {
           ServiceCombConfigProperties serviceCombConfigProperties = context.getBean(ServiceCombConfigProperties.class);
           assertThat(serviceCombConfigProperties.isEnabled())

@@ -17,26 +17,24 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
-import com.huaweicloud.common.exception.ServiceCombRuntimeException;
-import com.huaweicloud.common.transport.ServiceCombRBACProperties;
-import com.huaweicloud.common.transport.ServiceCombSSLProperties;
-import com.huaweicloud.servicecomb.discovery.registry.TagsProperties;
-
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.CommonsClientAutoConfiguration;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration;
-
-import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
-import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
-import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
-import com.huaweicloud.servicecomb.discovery.client.ServiceCombClientBuilder;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
+
+import com.huaweicloud.common.exception.ServiceCombRuntimeException;
+import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
+import com.huaweicloud.common.transport.ServiceCombRBACProperties;
+import com.huaweicloud.common.transport.ServiceCombSSLProperties;
+import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
+import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
+import com.huaweicloud.servicecomb.discovery.client.ServiceCombClientBuilder;
+import com.huaweicloud.servicecomb.discovery.registry.TagsProperties;
 
 /**
  * @Author wangqijun
@@ -59,12 +57,6 @@ public class ServiceCombDiscoveryClientConfiguration {
   @ConditionalOnMissingBean
   public TagsProperties tagsProperties() {
     return new TagsProperties();
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
-  public ServiceCombAkSkProperties serviceCombAkSkProperties() {
-    return new ServiceCombAkSkProperties();
   }
 
   @Bean

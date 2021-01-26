@@ -44,13 +44,6 @@ public class ServiceCombConfigBootstrapConfiguration {
     return new ServiceCombConfigProperties();
   }
 
-
-  @Bean
-  @ConditionalOnMissingBean
-  public ServiceCombAkSkProperties serviceCombAkSkProperties() {
-    return new ServiceCombAkSkProperties();
-  }
-
   @Bean
   @ConditionalOnMissingBean
   public ServiceCombRBACProperties serviceCombRBACProperties() {
