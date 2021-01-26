@@ -35,6 +35,7 @@ public class MicroserviceCache {
   private static Map<String, MicroserviceInstance> microserviceList = new ConcurrentHashMap<>();
 
   public static void initInsList(List<MicroserviceInstance> list, String serviceName) {
+    microserviceList.clear();
     list.forEach(ins -> {
       ins.setServiceName(serviceName);
       ins.getEndpoints()
