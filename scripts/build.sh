@@ -20,6 +20,14 @@
 ## whenever commit to the repository, do Compilation and Installation
 
 if [ "$1" == "install" ]; then
+    mvn apache-rat:check -Pit
+    if [ $? == 0 ]; then
+        echo "${green}Rat Check success..${reset}"
+    else
+        echo "${red}Rat Check failed, please check the above logs for more details.${reset}"
+        exit 1
+    fi
+
     mvn clean package findbugs:findbugs -Dmaven.test.skip=true  -Dmaven.javadoc.skip=true
     if [ $? != 0 ]; then
         echo "${red}Execute find bugs failed.${reset}"
