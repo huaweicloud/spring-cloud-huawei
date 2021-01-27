@@ -17,39 +17,38 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
-import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstance;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @Author GuoYl123
  * @Date 2019/10/17
  **/
 public class MicroserviceCache {
-    private static Map<String, MicroserviceInstance> microserviceList = new ConcurrentHashMap<>();
 
-    public static void initService(List<Microservice> list) {
-        list.forEach(item ->
-                item.getInstances().forEach(ins -> {
-                    ins.setServiceName(item.getServiceName());
-                    ins.getEndpoints()
-                        .forEach(ep -> microserviceList.put(ep.replaceAll("rest://", ""), ins));
-                })
-        );
-    }
+  private static Map<String, MicroserviceInstance> microserviceList = new ConcurrentHashMap<>();
 
-    public static void initInsList(List<MicroserviceInstance> list, String serviceName) {
-        list.forEach(ins -> {
-            ins.setServiceName(serviceName);
-            ins.getEndpoints()
-                .forEach(ep -> microserviceList.put(ep.replaceAll("rest://", ""), ins));
-        });
-    }
+  public static void initInsList(List<MicroserviceInstance> list, String serviceName) {
+    microserviceList.clear();
+    list.forEach(ins -> {
+      ins.setServiceName(serviceName);
+      ins.getEndpoints()
+          .forEach(ep -> {
+            URI uri = URI.create(ep);
+            if (!StringUtils.isEmpty(uri.getAuthority())) {
+              microserviceList.put(uri.getAuthority(), ins);
+            }
+          });
+    });
+  }
 
-    public static MicroserviceInstance getMicroserviceIns(String insId) {
-        return microserviceList.get(insId);
-    }
+  public static MicroserviceInstance getMicroserviceIns(String insId) {
+    return microserviceList.get(insId);
+  }
 }
