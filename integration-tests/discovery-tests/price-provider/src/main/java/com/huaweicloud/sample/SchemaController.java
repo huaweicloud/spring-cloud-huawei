@@ -48,7 +48,9 @@ public class SchemaController {
     assertThat(schemaContents.size()).isGreaterThan(2);
 
     String a1 = schemaContents.get("SchemaContentController").replaceAll("\\s", "");
-    String a2 = readFile("SchemaContentController.yaml").replaceAll("\\s", "");
+    String fileContent =  readFile("SchemaContentController.yaml");
+    fileContent = fileContent.substring(fileContent.indexOf("---"));
+    String a2 = fileContent.replaceAll("\\s", "");
     assertThat(a1).isEqualTo(a2);
     return "success";
   }
