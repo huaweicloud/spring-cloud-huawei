@@ -21,7 +21,7 @@
   <parent>
     <artifactId>spring-cloud-huawei-sample</artifactId>
     <groupId>com.huaweicloud</groupId>
-    <version>1.5.0</version>
+    <version>1.5.0-Hoxton</version>
   </parent>
   <packaging>pom</packaging>
   <modelVersion>4.0.0</modelVersion>

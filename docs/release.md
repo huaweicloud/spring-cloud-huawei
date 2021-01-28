@@ -14,6 +14,8 @@
 
         mvn versions:set -DgenerateBackupPoms=false -DnewVersion=1.5.0
         
+  部分 Dockerfile 里面也引用了版本号，需要排查一定修改。
+
 2. 下载项目代码。
 
         git clone https://github.com/huaweicloud/spring-cloud-huawei.git

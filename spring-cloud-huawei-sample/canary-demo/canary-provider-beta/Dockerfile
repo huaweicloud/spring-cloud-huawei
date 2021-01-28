@@ -17,7 +17,7 @@
 FROM openjdk:8u181-jdk-alpine
 
 WORKDIR /home/apps/
-ADD target/canary-provider-beta-1.5.0.jar .
+ADD target/canary-provider-beta-1.5.0-Hoxton.jar .
 ADD target/lib ./lib
 ADD start.sh .
 
