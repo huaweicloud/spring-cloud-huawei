@@ -21,7 +21,7 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-huawei-parents</artifactId>
-    <version>1.3.3-Hoxton-SNAPSHOT</version>
+    <version>1.5.0</version>
     <relativePath>../spring-cloud-huawei-parents</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
