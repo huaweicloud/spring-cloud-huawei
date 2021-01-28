@@ -28,7 +28,7 @@
         
 5. 发布
 
-        mvn clean deploy -Prelease
+        mvn clean deploy -Prelease -DskipTests
 
 6. 生成 release notes 。 在 github 页面打上 tag， 书写 release notes。
 

@@ -20,7 +20,7 @@
 ## whenever commit to the repository, do Compilation and Installation
 
 if [ "$1" == "install" ]; then
-    mvn apache-rat:check -Pit
+    mvn apache-rat:check -Pit -Psample
     if [ $? == 0 ]; then
         echo "${green}Rat Check success..${reset}"
     else
@@ -28,13 +28,13 @@ if [ "$1" == "install" ]; then
         exit 1
     fi
 
-    mvn clean package findbugs:findbugs -Dmaven.test.skip=true  -Dmaven.javadoc.skip=true
+    mvn clean package findbugs:findbugs -Pit -Psample -Dmaven.test.skip=true  -Dmaven.javadoc.skip=true
     if [ $? != 0 ]; then
         echo "${red}Execute find bugs failed.${reset}"
         exit 1
     fi
 
-    mvn clean install -Pit -Pdocker -Dmaven.javadoc.skip=true -Dcheckstyle.skip=false -Drat.skip=false
+    mvn clean install -Pit -Psample -Pdocker -Dmaven.javadoc.skip=true -Dcheckstyle.skip=false -Drat.skip=false
     if [ $? == 0 ]; then
         echo "${green}Installation Success..${reset}"
     else
