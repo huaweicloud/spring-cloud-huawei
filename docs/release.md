@@ -24,7 +24,7 @@
         
 4. 做一个简单的验证，保证代码正确
 
-        mvn clean install -Pit -Prelease
+        mvn clean install -Pit -Pdocker -Dmaven.javadoc.skip=true -Dcheckstyle.skip=false -Drat.skip=false
         
 5. 发布
 
