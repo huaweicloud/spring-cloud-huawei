@@ -16,7 +16,7 @@
 #
 #!/bin/bash
 
-JAR=canary-provider-beta-1.5.0-Hoxton.jar
+JAR=canary-provider-beta-1.6.0-Hoxton-SNAPSHOT.jar
 if [ ! -e $JAR ]; then
     JAR=target/$JAR
     if [ -e application.yaml ]; then

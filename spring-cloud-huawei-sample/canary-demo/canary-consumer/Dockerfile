@@ -17,7 +17,7 @@
 FROM openjdk:8u181-jdk-alpine
 
 WORKDIR /home/apps/
-ADD target/canary-consumer-1.5.0-Hoxton.jar .
+ADD target/canary-consumer-1.6.0-Hoxton-SNAPSHOT.jar .
 ADD target/lib ./lib
 ADD start.sh .
 

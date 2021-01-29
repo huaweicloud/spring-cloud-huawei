@@ -3,15 +3,25 @@
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.huaweicloud/spring-cloud-huawei/badge.svg)](https://search.maven.org/search?q=g:com.huaweicloud%20AND%20a:spring-cloud-huawei-dependencies) 
 
-# spring-cloud-huawei
-
-[English document](https://github.com/huaweicloud/spring-cloud-huawei)
+# Spring Cloud Huawei [English document](README.md)
 
 此框架的目的是为了让spring cloud 和华为的框架更好的融合在一起。
-包括开源的框架和商业的框架，开源的如[Apache ServiceComb](http://servicecomb.apache.org)
-，商业的如华为云[ServiceStage](https://www.huaweicloud.com/product/servicestage.html)。
+包括[Apache ServiceComb](http://servicecomb.apache.org) 和 [ServiceStage](https://www.huaweicloud.com/product/servicestage.html) 。
 
-### 为什么使用
+## 支持的版本列表
+
+| 分支 | 最新版本 | Spring Cloud基线版本 | Spring Boot基线版本 | 支持的Spring Cloud版本 | 支持的Spring Boot版本|
+| ---------- | ------------ | ----------- | ----------- | ----------- | ----------- |
+| master | 1.5.0-Hoxton | Hoxton.SR4 | 2.2.5.RELEASE | Hoxton | 2.2.x |
+| Greenwich | 1.3.8-Greenwich | Greenwich.SR6 | 2.1.6-RELEASE | Greenwich | 2.1.x |
+| Finchley | 1.2.0-Finchley | 2.0.4.RELEASE | 2.0.9.RELEASE     | Finchley     | 2.0.x       |
+| Edgware | 1.2.0-Edgware | 1.3.6.RELEASE  | 1.5.22.RELEASE    | Edgware      | 1.5.x       |
+
+***注意：***
+* 查询 [Spring Cloud Release Train](https://spring.io/projects/spring-cloud) 选择一个适合业务的版本使用。
+* Spring Cloud Edgeware, Finchley 已经停止维护，不建议在生产环境使用。 
+
+## 为什么使用
  1. 提供路由管理功能，对应用进行蓝绿部署、灰度发布。
  2. 自动生成open-api规范的swagger契约文档，并注册到注册中心，以便统一查看、下载API文档。
  3. 与Apache ServiceComb的生态体系结合：
@@ -76,16 +86,3 @@ spring-cloud-huawei已发布在maven中央仓库。
     </dependency>
     
 [更多文档](https://support.huaweicloud.com/devg-servicestage/cse_java_0054.html)
-
-## 兼容性说明
-
-| spring cloud huawei | spring cloud | spring boot |
-| ------------------- | ------------ | ----------- |
-| 1.3.8               | Hoxton       | 2.2.x       |
-| 1.3.8-Greenwich     | Greenwich    | 2.1.x       |
-| 1.3.7-Finchley      | Finchley     | 2.0.x       |
-| 1.2.0-Edgware       | Edgware      | 1.5.x       |
-
-## 开发路径
-- [ ] 支持WebFlux
-

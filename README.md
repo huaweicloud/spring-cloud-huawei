@@ -3,18 +3,25 @@
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.huaweicloud/spring-cloud-huawei/badge.svg)](https://search.maven.org/search?q=g:com.huaweicloud%20AND%20a:spring-cloud-huawei-dependencies) 
 
-# spring-cloud-huawei
+# Spring Cloud Huawei [查看中文文档](README_zh.md)
 
-[查看中文文档](./README_zh.md)
+Spring Cloud Huawei is a framework that makes it easier to integrate Spring Cloud and Huawei frameworks.
+Including [Apache ServiceComb](http://servicecomb.apache.org) and [ServiceStage](https://www.huaweicloud.com/product/servicestage.html).
 
-spring-cloud-huawei is a framework that makes it easier to integrate spring cloud and Huawei frameworks.
-Including open source framework and commercial framework, 
-open source such as 
-[Apache ServiceComb](http://servicecomb.apache.org), 
-commercial such as Huawei Cloud 
-[ServiceStage](https://www.huaweicloud.com/product/servicestage.html).
+## Supported version
 
-### Why use
+| Branch | Latest Version | Spring Cloud Base Version | Spring Boot Base Version | Supported Spring Cloud Version | Supported Spring Boot Version|
+| ---------- | ------------ | ----------- | ----------- | ----------- | ----------- |
+| master | 1.5.0-Hoxton | Hoxton.SR4 | 2.2.5.RELEASE | Hoxton | 2.2.x |
+| Greenwich | 1.3.8-Greenwich | Greenwich.SR6 | 2.1.6-RELEASE | Greenwich | 2.1.x |
+| Finchley | 1.2.0-Finchley | 2.0.4.RELEASE | 2.0.9.RELEASE     | Finchley     | 2.0.x       |
+| Edgware | 1.2.0-Edgware | 1.3.6.RELEASE  | 1.5.22.RELEASE    | Edgware      | 1.5.x       |
+
+***Notice：***
+* Check [Spring Cloud Release Train](https://spring.io/projects/spring-cloud), and find a proper version to use.
+* Spring Cloud Edgeware, Finchley have all reached end of life status and are no longer supported.
+
+## Why use
  1. Gives Blue-green Deployments and Canary Releases ability to your spring cloud application.
  2. Automatically generate a document, which follow open API specification, and register it to service registry, so that members of team can view and download API doc in unified service.
  3. Combined with the ecosystem of Apache servicecomb:
@@ -86,15 +93,3 @@ introduce starter.
     </dependency>
     
 [more document](https://support.huaweicloud.com/devg-servicestage/cse_java_0054.html)
-
-## Compatibility instructions
-
-| spring cloud huawei | spring cloud | spring boot |
-| ------------------- | ------------ | ----------- |
-| 1.3.8               | Hoxton       | 2.2.x       |
-| 1.3.8-Greenwich     | Greenwich    | 2.1.x       |
-| 1.3.7-Finchley      | Finchley     | 2.0.x       |
-| 1.2.0-Edgware       | Edgware      | 1.5.x       |
-
-## RoadMap
-- [ ] Support WebFlux
