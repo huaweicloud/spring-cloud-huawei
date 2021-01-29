@@ -14,5 +14,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-server:
-  port: 8083
+
+spring:
+  application:
+    name: consumer
+  cloud:
+    servicecomb:
+      discovery:
+        enabled: true
+        # address: https://cse.cn-south-1.myhuaweicloud.com
+        address: http://127.0.0.1:30100
+        appName: porter-application
+        serviceName: ${spring.application.name}
+        version: 0.0.1
+        healthCheckInterval: 30
+      config:
+        # serverAddr: https://cse.cn-south-1.myhuaweicloud.com
+        serverAddr:  http://127.0.0.1:30113
+        watch:
+          delay: 10000
+# need when running in huaweicloud
+#      credentials:
+#        enabled: true
+#        accessKey: your ak
+#        secretKey: your sk
+#        akskCustomCipher: default
+#        project: cn-east-2
