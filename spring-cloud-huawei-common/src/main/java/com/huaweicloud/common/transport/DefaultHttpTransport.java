@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
@@ -161,6 +162,8 @@ public class DefaultHttpTransport implements HttpTransport {
         connectionSocketFactoryRegistry);
     connectionManager.setMaxTotal(DealHeaderUtil.MAX_TOTAL);
     connectionManager.setDefaultMaxPerRoute(DealHeaderUtil.DEFAULT_MAX_PER_ROUTE);
+    connectionManager.closeExpiredConnections();
+    connectionManager.closeIdleConnections(30, TimeUnit.SECONDS);
 
     // construct httpClient
     // delete before code : setSSLHostnameVerifier(hostnameVerifier)
