@@ -22,7 +22,8 @@ spring:
       discovery:
         version: 0.0.1
       config:
-        serverAddr:  http://127.0.0.1:30113
+        serverAddr: http://127.0.0.1:30113
+        fileSource: file1,file2
         watch:
           delay: 10000
       credentials:

@@ -14,22 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.dtm.consumer.feign;
+package com.huaweicloud.config.client.kie;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import feign.RequestInterceptor;
+import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
+import org.springframework.core.io.ByteArrayResource;
 
-/**
- * @Author wangqijun
- * @Date 10:07 2019-09-26
- **/
-@Configuration
-public class DtmFeignConfiguration {
-
-  @Bean
-  public RequestInterceptor dtmRequestInterceptor() {
-    return new DtmRequestInterceptor();
+public class ConfigCenterFileProcessor extends ConfigValueProcessor<Map<String, Object>> {
+  @Override
+  public Map<String, Object> process(Map<String, Object> source) {
+    Map<String, Object> result = new HashMap<>();
+    for (Entry<String, Object> entry : source.entrySet()) {
+      YamlPropertiesFactoryBean yamlFactory = new YamlPropertiesFactoryBean();
+      yamlFactory.setResources(new ByteArrayResource(((String) entry.getValue()).getBytes()));
+      result.putAll(toMap("", yamlFactory.getObject()));
+    }
+    return result;
   }
 }

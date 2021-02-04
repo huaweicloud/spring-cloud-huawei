@@ -22,6 +22,7 @@ import com.huaweicloud.common.exception.RemoteServerUnavailableException;
 import com.huaweicloud.common.transport.HttpTransport;
 import com.huaweicloud.common.transport.Response;
 import com.huaweicloud.config.ServiceCombConfigProperties;
+import com.huaweicloud.config.client.kie.ConfigCenterFileProcessor;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -42,9 +43,11 @@ public class ConfigCenterClient extends ServiceCombConfigClient {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ConfigCenterClient.class);
 
+  private final ConfigCenterFileProcessor processor = new ConfigCenterFileProcessor();
+
   public ConfigCenterClient(String urls,
-      HttpTransport httpTransport) {
-    super(urls, httpTransport);
+      HttpTransport httpTransport, String fileSource) {
+    super(urls, httpTransport, fileSource);
   }
 
   public Map<String, Object> loadAll(ServiceCombConfigProperties serviceCombConfigProperties,
@@ -73,19 +76,7 @@ public class ConfigCenterClient extends ServiceCombConfigClient {
           if (allConfigMap.get(ConfigConstants.REVISION) != null) {
             revision = (String) allConfigMap.get(ConfigConstants.REVISION).get("version");
           }
-          if (allConfigMap.get(ConfigConstants.APPLICATION_CONFIG) != null) {
-            result.putAll(allConfigMap.get(ConfigConstants.APPLICATION_CONFIG));
-          }
-          if (dimensionsInfo.contains(ConfigConstants.DEFAULT_SERVICE_SEPARATOR)
-              && allConfigMap.get(dimensionsInfo
-              .substring(0, dimensionsInfo.indexOf(ConfigConstants.DEFAULT_SERVICE_SEPARATOR)))
-              != null) {
-            result.putAll(allConfigMap.get(dimensionsInfo
-                .substring(0, dimensionsInfo.indexOf(ConfigConstants.DEFAULT_SERVICE_SEPARATOR))));
-          }
-          if (allConfigMap.get(dimensionsInfo) != null) {
-            result.putAll(allConfigMap.get(dimensionsInfo));
-          }
+          return mergeConfig(allConfigMap, dimensionsInfo);
         }
         return result;
       } else if (response.getStatusCode() == HttpStatus.SC_NOT_MODIFIED) {
@@ -110,6 +101,27 @@ public class ConfigCenterClient extends ServiceCombConfigClient {
       configCenterConfig.toggle();
       throw new RemoteOperationException("read response failed. " + response, e);
     }
+  }
+
+  private Map<String, Object> mergeConfig(Map<String, Map<String, Object>> allConfigMap, String dimensionsInfo) {
+    Map<String, Object> result = new HashMap<>();
+    Map<String, Object> kvConfig = new HashMap<>();
+    Map<String, Object> fileConfig = new HashMap<>();
+    if (allConfigMap.get(ConfigConstants.APPLICATION_CONFIG) != null) {
+      filterConfig(allConfigMap.get(ConfigConstants.APPLICATION_CONFIG), kvConfig, fileConfig);
+    }
+    String serviceKey = dimensionsInfo
+        .substring(0, dimensionsInfo.indexOf(ConfigConstants.DEFAULT_SERVICE_SEPARATOR));
+    if (dimensionsInfo.contains(ConfigConstants.DEFAULT_SERVICE_SEPARATOR)
+        && allConfigMap.get(serviceKey) != null) {
+      filterConfig(allConfigMap.get(serviceKey), kvConfig, fileConfig);
+    }
+    if (allConfigMap.get(dimensionsInfo) != null) {
+      filterConfig(allConfigMap.get(dimensionsInfo), kvConfig, fileConfig);
+    }
+    result.putAll(processor.process(fileConfig));
+    result.putAll(kvConfig);
+    return result;
   }
 
 

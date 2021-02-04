@@ -20,7 +20,15 @@ package com.huaweicloud.config.client;
 import com.huaweicloud.common.transport.URLConfig;
 import com.huaweicloud.common.util.URLUtil;
 import com.huaweicloud.config.ServiceCombConfigProperties;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.huaweicloud.common.exception.RemoteOperationException;
 import com.huaweicloud.common.transport.HttpTransport;
 
@@ -34,13 +42,29 @@ public abstract class ServiceCombConfigClient {
 
   protected URLConfig configCenterConfig = new URLConfig();
 
+  protected List<String> fileSources = new ArrayList<>();
+
   protected String revision = "0";
 
-  public ServiceCombConfigClient(String urls, HttpTransport httpTransport) {
+  public ServiceCombConfigClient(String urls, HttpTransport httpTransport, String fileSource) {
     this.httpTransport = httpTransport;
     configCenterConfig.addUrl(URLUtil.getEnvConfigUrl());
     if (configCenterConfig.isEmpty()) {
       configCenterConfig.addUrl(URLUtil.dealMultiUrl(urls));
+    }
+    if (StringUtils.isNotEmpty(fileSource)) {
+      fileSources = Arrays.asList(fileSource.split(","));
+    }
+  }
+
+  protected void filterConfig(Map<String, Object> rawConfig, Map<String, Object> kvConfig,
+      Map<String, Object> fileConfig) {
+    for (Entry<String, Object> entry : rawConfig.entrySet()) {
+      if (fileSources.contains(entry.getKey())) {
+        fileConfig.put(entry.getKey(), entry.getValue());
+      } else {
+        kvConfig.put(entry.getKey(), entry.getValue());
+      }
     }
   }
 

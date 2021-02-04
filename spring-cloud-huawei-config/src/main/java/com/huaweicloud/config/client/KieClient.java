@@ -17,28 +17,23 @@
 package com.huaweicloud.config.client;
 
 import com.huaweicloud.common.exception.RemoteOperationException;
-import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 import com.huaweicloud.common.transport.HttpTransport;
 import com.huaweicloud.common.transport.Response;
 import com.huaweicloud.config.ServiceCombConfigProperties;
+import com.huaweicloud.config.client.kie.KieDefaultProcessor;
 import com.huaweicloud.config.model.KVDoc;
 import com.huaweicloud.config.model.KVResponse;
-import com.huaweicloud.config.model.ValueType;
-import java.io.StringReader;
+
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.http.HttpStatus;
 import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.util.StringUtils;
 
 /**
@@ -49,12 +44,13 @@ public class KieClient extends ServiceCombConfigClient {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(KieClient.class);
 
+  private final KieDefaultProcessor processor = new KieDefaultProcessor();
 
-  private AtomicBoolean isFirst = new AtomicBoolean(true);
+  private final AtomicBoolean isFirst = new AtomicBoolean(true);
 
   public KieClient(String urls,
-      HttpTransport httpTransport) {
-    super(urls, httpTransport);
+      HttpTransport httpTransport, String fileSource) {
+    super(urls, httpTransport, fileSource);
   }
 
   public Map<String, Object> loadAll(ServiceCombConfigProperties serviceCombConfigProperties,
@@ -144,68 +140,14 @@ public class KieClient extends ServiceCombConfigClient {
     }
     //kv is priority
     for (KVDoc kvDoc : appList) {
-      resultMap.putAll(processValueType(kvDoc));
+      resultMap.putAll(processor.process(kvDoc));
     }
     for (KVDoc kvDoc : serviceList) {
-      resultMap.putAll(processValueType(kvDoc));
+      resultMap.putAll(processor.process(kvDoc));
     }
     for (KVDoc kvDoc : versionList) {
-      resultMap.putAll(processValueType(kvDoc));
+      resultMap.putAll(processor.process(kvDoc));
     }
     return resultMap;
-  }
-
-
-  private Map<String, Object> processValueType(KVDoc kvDoc) {
-    ValueType vtype;
-    try {
-      vtype = ValueType.valueOf(kvDoc.getValueType());
-    } catch (IllegalArgumentException e) {
-      throw new ServiceCombRuntimeException("value type not support");
-    }
-    Properties properties = new Properties();
-    Map<String, Object> kvMap = new HashMap<>();
-    try {
-      switch (vtype) {
-        case yml:
-        case yaml:
-          YamlPropertiesFactoryBean yamlFactory = new YamlPropertiesFactoryBean();
-          yamlFactory.setResources(new ByteArrayResource(kvDoc.getValue().getBytes()));
-          return toMap(kvDoc.getKey(), yamlFactory.getObject());
-        case properties:
-          properties.load(new StringReader(kvDoc.getValue()));
-          return toMap(kvDoc.getKey(), properties);
-        case text:
-        case string:
-        default:
-          kvMap.put(kvDoc.getKey(), kvDoc.getValue());
-          return kvMap;
-      }
-    } catch (Exception e) {
-      LOGGER.error("read config failed");
-    }
-    return Collections.emptyMap();
-  }
-
-
-  private Map<String, Object> toMap(String prefix, Properties properties) {
-    if (properties == null) {
-      return Collections.emptyMap();
-    }
-    Map<String, Object> result = new HashMap<>();
-    Enumeration<String> keys = (Enumeration<String>) properties.propertyNames();
-    while (keys.hasMoreElements()) {
-      String key = keys.nextElement();
-      Object value = properties.getProperty(key);
-      if (!StringUtils.isEmpty(prefix)) {
-        key = prefix + "." + key;
-      }
-      if (value != null) {
-        result.put(key, value);
-      } else {
-        result.put(key, null);
-      }
-    }
-    return result;
   }
 }

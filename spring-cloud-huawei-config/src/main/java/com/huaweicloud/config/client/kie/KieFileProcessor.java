@@ -14,22 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.dtm.consumer.feign;
+package com.huaweicloud.config.client.kie;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import java.util.Map;
 
-import feign.RequestInterceptor;
+import com.huaweicloud.config.model.KVDoc;
 
-/**
- * @Author wangqijun
- * @Date 10:07 2019-09-26
- **/
-@Configuration
-public class DtmFeignConfiguration {
-
-  @Bean
-  public RequestInterceptor dtmRequestInterceptor() {
-    return new DtmRequestInterceptor();
+public class KieFileProcessor extends ConfigValueProcessor<KVDoc>{
+  @Override
+  public Map<String, Object> process(KVDoc kvDoc) {
+    return null;
   }
 }
