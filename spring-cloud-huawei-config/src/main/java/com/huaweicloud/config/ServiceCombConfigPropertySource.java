@@ -49,6 +49,7 @@ public class ServiceCombConfigPropertySource extends EnumerablePropertySource<Se
       throws RemoteOperationException {
     Map<String, Object> remoteConfig = serviceCombConfigClient
         .loadAll(serviceCombConfigProperties, project);
+    ConfigCache.config = remoteConfig;
     if (remoteConfig == null) {
       return Collections.emptyMap();
     }

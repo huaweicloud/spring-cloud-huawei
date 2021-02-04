@@ -40,8 +40,7 @@ public class ServiceCombConfigBootstrapConfigurationTest {
         ServiceCombAkSkProperties.class)
         .run(context -> {
           ServiceCombConfigProperties serviceCombConfigProperties = context.getBean(ServiceCombConfigProperties.class);
-          assertThat(serviceCombConfigProperties.isEnabled())
-              .isEqualTo(true);
+          assertThat(serviceCombConfigProperties.isEnabled()).isEqualTo(true);
         });
   }
 }

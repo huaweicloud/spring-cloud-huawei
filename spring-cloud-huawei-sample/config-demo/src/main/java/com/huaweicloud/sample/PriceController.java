@@ -16,7 +16,10 @@
  */
 package com.huaweicloud.sample;
 
+import java.util.Map;
 import com.huaweicloud.common.event.ConfigRefreshEvent;
+import com.huaweicloud.config.ConfigCache;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationListener;
@@ -43,6 +46,11 @@ public class PriceController implements ApplicationListener<ConfigRefreshEvent> 
   public String sayHello(@RequestParam("id") String id) {
 
     return "price ---> " + id + " port -->" + dd;
+  }
+
+  @RequestMapping("/allConfig")
+  public Map<String, Object> allConfig() {
+    return ConfigCache.config;
   }
 
   public void onApplicationEvent(ConfigRefreshEvent event) {

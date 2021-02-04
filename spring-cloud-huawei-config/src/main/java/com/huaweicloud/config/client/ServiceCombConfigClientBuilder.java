@@ -69,8 +69,10 @@ public class ServiceCombConfigClientBuilder {
         serviceCombRBACProperties, serviceCombConfigProperties.getDiscoveryAddress(),
         DealHeaderUtil.LONG_POLLING_SOCKET_TIMEOUT);
     if ("kie".equalsIgnoreCase(serviceCombConfigProperties.getServerType())) {
-      return new KieClient(serviceCombConfigProperties.getServerAddr(), httpTransport);
+      return new KieClient(serviceCombConfigProperties.getServerAddr(), httpTransport,
+          serviceCombConfigProperties.getFileSource());
     }
-    return new ConfigCenterClient(serviceCombConfigProperties.getServerAddr(), httpTransport);
+    return new ConfigCenterClient(serviceCombConfigProperties.getServerAddr(), httpTransport,
+        serviceCombConfigProperties.getFileSource());
   }
 }

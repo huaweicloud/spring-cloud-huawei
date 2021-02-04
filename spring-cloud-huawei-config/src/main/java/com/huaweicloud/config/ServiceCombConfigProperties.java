@@ -57,7 +57,18 @@ public class ServiceCombConfigProperties {
   @Value("${spring.cloud.servicecomb.config.enableLongPolling:true}")
   private boolean enableLongPolling;
 
+  @Value("${spring.cloud.servicecomb.config.fileSource:}")
+  private String fileSource;
+
   private Watch watch = new Watch();
+
+  public String getFileSource() {
+    return fileSource;
+  }
+
+  public void setFileSource(String fileSource) {
+    this.fileSource = fileSource;
+  }
 
   public String getDiscoveryAddress() {
     return discoveryAddress;
