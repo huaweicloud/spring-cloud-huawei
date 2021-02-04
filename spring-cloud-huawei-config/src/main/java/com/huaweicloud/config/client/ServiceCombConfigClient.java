@@ -60,19 +60,14 @@ public abstract class ServiceCombConfigClient {
   protected void filterConfig(Map<String, Object> rawConfig, Map<String, Object> kvConfig,
       Map<String, Object> fileConfig) {
     for (Entry<String, Object> entry : rawConfig.entrySet()) {
-      boolean isKV = true;
-      for (String source : fileSources) {
-        if (entry.getKey().equals(source)) {
-          fileConfig.put(entry.getKey(), entry.getValue());
-          isKV = false;
-          break;
-        }
-      }
-      if (isKV) {
+      if (fileSources.contains(entry.getKey())) {
+        fileConfig.put(entry.getKey(), entry.getValue());
+      } else {
         kvConfig.put(entry.getKey(), entry.getValue());
       }
     }
   }
+
   /**
    * load all remote config from config center
    *
