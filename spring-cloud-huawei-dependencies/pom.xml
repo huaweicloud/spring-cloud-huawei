@@ -32,7 +32,6 @@
   <version>1.6.0-Hoxton-SNAPSHOT</version>
   <name>Spring Cloud Huawei Dependencies</name>
   <properties>
-    <feign-core.version>11.0</feign-core.version>
     <httpclient.version>4.5.9</httpclient.version>
     <jackson-databind.version>2.9.10.5</jackson-databind.version>
     <jmockit.version>1.36</jmockit.version>
@@ -57,7 +56,21 @@
       </dependency>
       <dependency>
         <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-dependencies</artifactId>
+        <artifactId>spring-cloud-commons-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-netflix-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-openfeign-dependencies</artifactId>
         <version>${spring-cloud.version}</version>
         <type>pom</type>
         <scope>import</scope>
@@ -163,11 +176,6 @@
       </dependency>
 
       <!-- other 3rd parties -->
-      <dependency>
-        <groupId>io.github.openfeign</groupId>
-        <artifactId>feign-core</artifactId>
-        <version>${feign-core.version}</version>
-      </dependency>
       <dependency>
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>

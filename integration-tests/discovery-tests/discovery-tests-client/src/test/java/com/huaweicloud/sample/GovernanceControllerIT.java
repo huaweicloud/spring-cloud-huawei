@@ -65,11 +65,11 @@ public class GovernanceControllerIT {
                 notExpectedFailed.set(true);
               }
             } catch (Exception e) {
-              if (!"429 : [circuitBreaker is open.]".equals(e.getMessage())
-                  && !e.getMessage().contains("test error")) {
+              if (!e.getMessage().startsWith("429")
+                  && !e.getMessage().startsWith("500")) {
                 notExpectedFailed.set(true);
               }
-              if ("429 : [circuitBreaker is open.]".equals(e.getMessage())) {
+              if (e.getMessage().startsWith("429")) {
                 expectedFailed.set(true);
               }
             }
@@ -102,7 +102,7 @@ public class GovernanceControllerIT {
                 notExpectedFailed.set(true);
               }
             } catch (Exception e) {
-              if (!"429 : [bulkhead is full and does not permit further calls.]".equals(e.getMessage())) {
+              if (!e.getMessage().startsWith("429")) {
                 notExpectedFailed.set(true);
               }
               expectedFailed.set(true);
@@ -136,7 +136,7 @@ public class GovernanceControllerIT {
                 notExpectedFailed.set(true);
               }
             } catch (Exception e) {
-              if (!"429 : [rate limited.]".equals(e.getMessage())) {
+              if (!e.getMessage().startsWith("429")) {
                 notExpectedFailed.set(true);
               }
               expectedFailed.set(true);

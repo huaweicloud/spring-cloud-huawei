@@ -78,4 +78,20 @@ public class ServiceCombWatch implements ApplicationEventPublisherAware, SmartLi
   public boolean isRunning() {
     return this.isActive.get();
   }
+
+  @Override
+  public boolean isAutoStartup() {
+    return true;
+  }
+
+  @Override
+  public void stop(Runnable runnable) {
+    stop();
+    runnable.run();
+  }
+
+  @Override
+  public int getPhase() {
+    return Integer.MAX_VALUE;
+  }
 }

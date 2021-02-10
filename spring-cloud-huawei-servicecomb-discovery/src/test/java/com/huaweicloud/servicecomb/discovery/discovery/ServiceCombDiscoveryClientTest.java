@@ -24,6 +24,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
+
 import com.huaweicloud.common.exception.ServiceCombException;
 import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
 import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
@@ -53,7 +54,7 @@ public class ServiceCombDiscoveryClientTest {
     serviceCombDiscoveryProperties.setVersion("latest");
     List<ServiceInstance> serviceInstanceList = new ArrayList<>();
     serviceInstanceList.add(
-        new DefaultServiceInstance("111", "1", "127.0.0.1", 1000, false));
+        new DefaultServiceInstance("1", "127.0.0.1", 1000, false));
 
     Microservice microservice = new Microservice();
     microservice.setServiceName("testservice");

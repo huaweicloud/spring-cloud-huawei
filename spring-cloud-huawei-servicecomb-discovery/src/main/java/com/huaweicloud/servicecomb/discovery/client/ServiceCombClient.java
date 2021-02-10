@@ -52,7 +52,6 @@ import com.huaweicloud.common.transport.Response;
 import com.huaweicloud.common.transport.URLConfig;
 import com.huaweicloud.common.util.URLUtil;
 import com.huaweicloud.servicecomb.discovery.client.model.HeardBeatStatus;
-import com.huaweicloud.servicecomb.discovery.client.model.HeartbeatRequest;
 import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstance;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstanceSingleResponse;
@@ -349,7 +348,7 @@ public class ServiceCombClient {
               map.put(ZONE, instance.getDataCenterInfo().getZone());
             }
             instanceList.add(
-                new DefaultServiceInstance(instance.getInstanceId(), instance.getServiceName(), host,
+                new DefaultServiceInstance(instance.getServiceName(), host,
                     port, false, map));
           }
         }

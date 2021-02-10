@@ -56,25 +56,25 @@ paths:
             type: "string"
           x-raw-json: "true"
       responses:
-        "200":
+        200:
           description: "OK"
           examples: {}
           headers: {}
           schema:
             type: "string"
-        "201":
+        201:
           description: "Created"
           examples: {}
           headers: {}
-        "401":
+        401:
           description: "Unauthorized"
           examples: {}
           headers: {}
-        "403":
+        403:
           description: "Forbidden"
           examples: {}
           headers: {}
-        "404":
+        404:
           description: "Not Found"
           examples: {}
           headers: {}
@@ -97,21 +97,21 @@ paths:
           required: true
           type: "string"
       responses:
-        "200":
+        200:
           description: "OK"
           examples: {}
           headers: {}
           schema:
             type: "string"
-        "401":
+        401:
           description: "Unauthorized"
           examples: {}
           headers: {}
-        "403":
+        403:
           description: "Forbidden"
           examples: {}
           headers: {}
-        "404":
+        404:
           description: "Not Found"
           examples: {}
           headers: {}
@@ -135,25 +135,25 @@ paths:
           required: true
           type: "string"
       responses:
-        "200":
+        200:
           description: "OK"
           examples: {}
           headers: {}
           schema:
             type: "string"
-        "201":
+        201:
           description: "Created"
           examples: {}
           headers: {}
-        "401":
+        401:
           description: "Unauthorized"
           examples: {}
           headers: {}
-        "403":
+        403:
           description: "Forbidden"
           examples: {}
           headers: {}
-        "404":
+        404:
           description: "Not Found"
           examples: {}
           headers: {}
@@ -179,25 +179,25 @@ paths:
             type: "string"
           x-raw-json: "true"
       responses:
-        "200":
+        200:
           description: "OK"
           examples: {}
           headers: {}
           schema:
             type: "string"
-        "201":
+        201:
           description: "Created"
           examples: {}
           headers: {}
-        "401":
+        401:
           description: "Unauthorized"
           examples: {}
           headers: {}
-        "403":
+        403:
           description: "Forbidden"
           examples: {}
           headers: {}
-        "404":
+        404:
           description: "Not Found"
           examples: {}
           headers: {}

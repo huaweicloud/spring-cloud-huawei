@@ -54,25 +54,25 @@ paths:
           schema:
             type: "string"
       responses:
-        "200":
+        200:
           description: "OK"
           examples: {}
           headers: {}
           schema:
             type: "string"
-        "201":
+        201:
           description: "Created"
           examples: {}
           headers: {}
-        "401":
+        401:
           description: "Unauthorized"
           examples: {}
           headers: {}
-        "403":
+        403:
           description: "Forbidden"
           examples: {}
           headers: {}
-        "404":
+        404:
           description: "Not Found"
           examples: {}
           headers: {}
@@ -95,21 +95,21 @@ paths:
           required: true
           type: "string"
       responses:
-        "200":
+        200:
           description: "OK"
           examples: {}
           headers: {}
           schema:
             type: "string"
-        "401":
+        401:
           description: "Unauthorized"
           examples: {}
           headers: {}
-        "403":
+        403:
           description: "Forbidden"
           examples: {}
           headers: {}
-        "404":
+        404:
           description: "Not Found"
           examples: {}
           headers: {}
@@ -132,21 +132,21 @@ paths:
           required: true
           type: "string"
       responses:
-        "200":
+        200:
           description: "OK"
           examples: {}
           headers: {}
           schema:
             type: "string"
-        "204":
+        204:
           description: "No Content"
           examples: {}
           headers: {}
-        "401":
+        401:
           description: "Unauthorized"
           examples: {}
           headers: {}
-        "403":
+        403:
           description: "Forbidden"
           examples: {}
           headers: {}
@@ -169,25 +169,25 @@ paths:
           required: true
           type: "string"
       responses:
-        "200":
+        200:
           description: "OK"
           examples: {}
           headers: {}
           schema:
             type: "string"
-        "201":
+        201:
           description: "Created"
           examples: {}
           headers: {}
-        "401":
+        401:
           description: "Unauthorized"
           examples: {}
           headers: {}
-        "403":
+        403:
           description: "Forbidden"
           examples: {}
           headers: {}
-        "404":
+        404:
           description: "Not Found"
           examples: {}
           headers: {}
@@ -210,25 +210,25 @@ paths:
           required: true
           type: "string"
       responses:
-        "200":
+        200:
           description: "OK"
           examples: {}
           headers: {}
           schema:
             type: "string"
-        "201":
+        201:
           description: "Created"
           examples: {}
           headers: {}
-        "401":
+        401:
           description: "Unauthorized"
           examples: {}
           headers: {}
-        "403":
+        403:
           description: "Forbidden"
           examples: {}
           headers: {}
-        "404":
+        404:
           description: "Not Found"
           examples: {}
           headers: {}
@@ -250,21 +250,21 @@ paths:
           required: true
           type: "string"
       responses:
-        "200":
+        200:
           description: "OK"
           examples: {}
           headers: {}
           schema:
             type: "string"
-        "204":
+        204:
           description: "No Content"
           examples: {}
           headers: {}
-        "401":
+        401:
           description: "Unauthorized"
           examples: {}
           headers: {}
-        "403":
+        403:
           description: "Forbidden"
           examples: {}
           headers: {}
@@ -287,21 +287,21 @@ paths:
           required: true
           type: "string"
       responses:
-        "200":
+        200:
           description: "OK"
           examples: {}
           headers: {}
           schema:
             type: "string"
-        "204":
+        204:
           description: "No Content"
           examples: {}
           headers: {}
-        "401":
+        401:
           description: "Unauthorized"
           examples: {}
           headers: {}
-        "403":
+        403:
           description: "Forbidden"
           examples: {}
           headers: {}
@@ -324,21 +324,21 @@ paths:
           required: true
           type: "string"
       responses:
-        "200":
+        200:
           description: "OK"
           examples: {}
           headers: {}
           schema:
             type: "string"
-        "204":
+        204:
           description: "No Content"
           examples: {}
           headers: {}
-        "401":
+        401:
           description: "Unauthorized"
           examples: {}
           headers: {}
-        "403":
+        403:
           description: "Forbidden"
           examples: {}
           headers: {}
@@ -362,25 +362,25 @@ paths:
           required: true
           type: "string"
       responses:
-        "200":
+        200:
           description: "OK"
           examples: {}
           headers: {}
           schema:
             type: "string"
-        "201":
+        201:
           description: "Created"
           examples: {}
           headers: {}
-        "401":
+        401:
           description: "Unauthorized"
           examples: {}
           headers: {}
-        "403":
+        403:
           description: "Forbidden"
           examples: {}
           headers: {}
-        "404":
+        404:
           description: "Not Found"
           examples: {}
           headers: {}
@@ -405,25 +405,25 @@ paths:
           schema:
             type: "string"
       responses:
-        "200":
+        200:
           description: "OK"
           examples: {}
           headers: {}
           schema:
             type: "string"
-        "201":
+        201:
           description: "Created"
           examples: {}
           headers: {}
-        "401":
+        401:
           description: "Unauthorized"
           examples: {}
           headers: {}
-        "403":
+        403:
           description: "Forbidden"
           examples: {}
           headers: {}
-        "404":
+        404:
           description: "Not Found"
           examples: {}
           headers: {}
