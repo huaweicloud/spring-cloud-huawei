@@ -39,6 +39,13 @@ public class OrderControllerIT {
     assertThat(result).isEqualTo("hello");
   }
 
+  // tests can be enabled when dynamic configuration is enabled
+//  @Test
+//  public void testGetConfiguration() {
+//    String result = template.getForObject(url + "/configuration", String.class);
+//    assertThat(result).isEqualTo("[FIRST, SECOND]:name");
+//  }
+
   @Test
   @SuppressWarnings({"rawTypes", "unckecked"})
   public void testGetServices() {

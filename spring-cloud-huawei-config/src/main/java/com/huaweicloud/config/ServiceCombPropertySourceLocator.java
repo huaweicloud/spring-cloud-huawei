@@ -20,13 +20,16 @@ package com.huaweicloud.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
+
 import com.huaweicloud.common.exception.RemoteOperationException;
 import com.huaweicloud.config.client.ConfigConstants;
 import com.huaweicloud.config.client.ServiceCombConfigClient;
+
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
+import org.springframework.util.StringUtils;
 
 /**
  * @Author wangqijun
@@ -52,6 +55,11 @@ public class ServiceCombPropertySourceLocator implements PropertySourceLocator {
 
   @Override
   public PropertySource<?> locate(Environment environment) {
+    if (StringUtils.isEmpty(serviceCombConfigProperties.getServerAddr())) {
+      LOGGER.warn("Dynamic address is not configured, will not enable dynamic config.");
+      return null;
+    }
+
     ServiceCombConfigPropertySource serviceCombConfigPropertySource = new ServiceCombConfigPropertySource(
         ConfigConstants.PROPERTYSOURCE_NAME,
         serviceCombConfigClient);
