@@ -44,6 +44,11 @@ public class OrderController {
     return callServiceResult;
   }
 
+  @RequestMapping("/configuration")
+  public String getEnums() {
+    return restTemplate.getForObject("http://price/configuration", String.class);
+  }
+
   @RequestMapping(value = "/services", method = RequestMethod.GET)
   public Object services() {
     return discoveryClient.getServices();

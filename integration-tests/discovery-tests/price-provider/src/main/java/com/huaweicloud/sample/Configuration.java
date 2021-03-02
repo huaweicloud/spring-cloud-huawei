@@ -14,29 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.huaweicloud.sample;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
 
-@RestController
-public class PriceController {
-  @Autowired
-  private Configuration configuration;
+@Component
+@RefreshScope
+@ConfigurationProperties("price.test")
+public class Configuration {
+  private List<EnumType> enums;
 
-  @RequestMapping("/price")
-  public String sayHello(@RequestParam("id") String id) {
-    return id;
+  private String name;
+
+  public String getName() {
+    return name;
   }
 
-  @RequestMapping("/configuration")
-  public String getEnums() {
-    List<EnumType> enums = configuration.getEnums();
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    return enums.toString() + ":" + configuration.getName();
+  public List<EnumType> getEnums() {
+    return enums;
+  }
+
+  public void setEnums(List<EnumType> enums) {
+    this.enums = enums;
   }
 }

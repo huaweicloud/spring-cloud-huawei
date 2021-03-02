@@ -17,11 +17,14 @@
 
 package com.huaweicloud.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
 import com.huaweicloud.config.client.RefreshRecord;
@@ -35,6 +38,7 @@ import com.huaweicloud.config.client.ServiceCombConfigClient;
 @ConditionalOnServiceCombEnabled
 @ConditionalOnProperty(name = "spring.cloud.servicecomb.config.enabled", matchIfMissing = true)
 public class ServiceCombConfigAutoConfiguration {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombConfigAutoConfiguration.class);
 
   @Bean
   @ConditionalOnMissingBean
@@ -59,6 +63,11 @@ public class ServiceCombConfigAutoConfiguration {
         ServiceCombConfigClient serviceCombConfigClient,
         ContextRefresher contextRefresher, RefreshRecord refreshRecord,
         ServiceCombAkSkProperties serviceCombAkSkProperties) {
+      if (StringUtils.isEmpty(serviceCombConfigProperties.getServerAddr())) {
+        LOGGER.warn("Dynamic address is not configured, will not enable dynamic config watch.");
+        return null;
+      }
+
       ConfigWatch watch = new ConfigWatch();
       watch.setProject(serviceCombAkSkProperties.getProject());
       watch.setContextRefresher(contextRefresher);
