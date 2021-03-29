@@ -35,4 +35,4 @@ spring:
         accessKey: your ak
         secretKey: your sk
         akskCustomCipher: default
-        project: 北京一
+        project: cn-east-2
