@@ -17,6 +17,8 @@
 
 package com.huaweicloud.common.transport;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -92,7 +94,14 @@ public class ServiceCombAkSkProperties {
   }
 
   public String getProject() {
-    return project;
+    if (StringUtils.isEmpty(this.project)) {
+      return project;
+    }
+    try {
+      return URLEncoder.encode(project, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      return project;
+    }
   }
 
   public void setProject(String project) {
