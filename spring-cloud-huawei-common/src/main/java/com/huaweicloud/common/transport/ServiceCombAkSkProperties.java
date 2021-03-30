@@ -30,7 +30,6 @@ import org.springframework.util.StringUtils;
 
 import com.huaweicloud.common.util.Cipher;
 import com.huaweicloud.common.util.DefaultCipher;
-import com.huaweicloud.common.util.SecretUtil;
 import com.huaweicloud.common.util.ShaAKSKCipher;
 
 @Configuration
@@ -77,8 +76,7 @@ public class ServiceCombAkSkProperties {
     if (ShaAKSKCipher.CIPHER_NAME.equalsIgnoreCase(this.akskCustomCipher)) {
       return decodedSecretKey;
     }
-
-    return SecretUtil.sha256Encode(this.secretKey, this.accessKey);
+    return this.secretKey;
   }
 
   public void setSecretKey(String secretKey) {
@@ -94,7 +92,7 @@ public class ServiceCombAkSkProperties {
   }
 
   public String getProject() {
-    if (StringUtils.isEmpty(this.project)) {
+    if (StringUtils.isEmpty(project)) {
       return project;
     }
     try {
