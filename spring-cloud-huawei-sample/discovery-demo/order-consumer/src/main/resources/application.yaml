@@ -31,8 +31,8 @@ spring:
         version: 0.0.1
 
       credentials:
-        enabled: true
-        accessKey: XLZXT9TIJDEYJRQHTBDI
-        secretKey: mxrtiKd6Hkrfta6sWZp6Zz5W1Hc3tTAfIxz9zVvw
+        enable: true
+        accessKey: your ak
+        secretKey: your sk
         akskCustomCipher: default
-        project: cn-north-4
+        project: cn-east-2
