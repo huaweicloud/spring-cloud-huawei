@@ -78,7 +78,7 @@ public class ServiceCombAkSkProperties {
       return decodedSecretKey;
     }
 
-    return SecretUtil.sha256Encode(this.secretKey, this.accessKey);
+    return SecretUtil.sha256Encode(decodedSecretKey, this.accessKey);
   }
 
   public void setSecretKey(String secretKey) {
