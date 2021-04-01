@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.apache.servicecomb.service.center.client.ServiceCenterRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,8 +56,6 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   private ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
 
-  private ServiceCombClient serviceCombClient;
-
   private HeartbeatScheduler heartbeatScheduler;
 
   private TagsProperties tagsProperties;
@@ -74,20 +73,19 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     return thread;
   });
 
-  public ServiceCombServiceRegistry(ServiceCombClient serviceCombClient,
-      HeartbeatScheduler heartbeatScheduler,
+  public ServiceCombServiceRegistry(HeartbeatScheduler heartbeatScheduler,
       ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
       ServiceCombWatcher serviceCombWatcher,
       TagsProperties tagsProperties) {
     this.serviceCombWatcher = serviceCombWatcher;
     this.tagsProperties = tagsProperties;
-    this.serviceCombClient = serviceCombClient;
     this.heartbeatScheduler = heartbeatScheduler;
     this.serviceCombDiscoveryProperties = serviceCombDiscoveryProperties;
   }
 
   @Override
   public void register(ServiceCombRegistration registration) {
+    ServiceCenterRegistration serviceCenterRegistration = new ServiceCenterRegistration()
     asyncRegister(registration);
   }
 

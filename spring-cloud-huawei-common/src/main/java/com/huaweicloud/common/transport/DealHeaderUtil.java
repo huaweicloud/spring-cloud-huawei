@@ -17,6 +17,9 @@
 
 package com.huaweicloud.common.transport;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.http.client.methods.HttpUriRequest;
 
 /**
@@ -62,6 +65,14 @@ public class DealHeaderUtil {
     httpRequest.addHeader(X_SERVICE_AK, serviceCombAkSkProperties.getAccessKey());
     httpRequest.addHeader(X_SERVICE_SHA_AKSK, serviceCombAkSkProperties.getSecretKey());
     httpRequest.addHeader(X_SERVICE_PROJECT, serviceCombAkSkProperties.getProject());
+  }
+
+  public static Map<String, String> readAkSkHeader(ServiceCombAkSkProperties serviceCombAkSkProperties) {
+    Map<String, String> headers = new HashMap<>();
+    headers.put(X_SERVICE_AK, serviceCombAkSkProperties.getAccessKey());
+    headers.put(X_SERVICE_SHA_AKSK, serviceCombAkSkProperties.getSecretKey());
+    headers.put((X_SERVICE_PROJECT, serviceCombAkSkProperties.getProject());
+    return headers;
   }
 
   public static void addDefautHeader(HttpUriRequest httpRequest) {

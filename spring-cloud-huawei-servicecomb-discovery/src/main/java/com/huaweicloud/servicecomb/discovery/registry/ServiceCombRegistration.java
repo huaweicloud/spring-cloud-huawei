@@ -18,20 +18,19 @@
 package com.huaweicloud.servicecomb.discovery.registry;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.Map;
 
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.serviceregistry.Registration;
-import com.huaweicloud.common.util.NetUtil;
+
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 
 /**
- * @Author wangqijun
- * @Date 10:49 2019-07-08
- **/
-
-public class ServiceCombRegistration implements Registration, ServiceInstance {
+ * Spring Cloud Registration 实现。
+ *
+ * Spring Cloud Registration的注册过程要求 serviceId 是预先分配好的，service center的注册过程 serviceId 是注册成功
+ * 分配的， 两个过程不一样。因此 Registration 只是一个空的实现， 不能够使用， 相关信息在 ServiceRegistry 的实现里面提供。
+ */
+public class ServiceCombRegistration implements Registration {
 
   private ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
 
@@ -39,50 +38,33 @@ public class ServiceCombRegistration implements Registration, ServiceInstance {
     this.serviceCombDiscoveryProperties = serviceCombDiscoveryProperties;
   }
 
-
   @Override
   public String getServiceId() {
-    return serviceCombDiscoveryProperties.getServiceName();
+    throw new IllegalStateException("not supported");
   }
 
   @Override
   public String getHost() {
-    return NetUtil.getHost(serviceCombDiscoveryProperties.getAddress());
+    throw new IllegalStateException("not supported");
   }
 
   @Override
   public int getPort() {
-    return NetUtil.getPort(serviceCombDiscoveryProperties.getAddress());
+    throw new IllegalStateException("not supported");
   }
 
   @Override
   public boolean isSecure() {
-    return false;
+    throw new IllegalStateException("not supported");
   }
 
   @Override
   public URI getUri() {
-    return URI.create(serviceCombDiscoveryProperties.getAddress());
+    throw new IllegalStateException("not supported");
   }
 
-  @Override//TODO
+  @Override
   public Map<String, String> getMetadata() {
-    return Collections.emptyMap();
-  }
-
-  public ServiceCombDiscoveryProperties getServiceCombDiscoveryProperties() {
-    return serviceCombDiscoveryProperties;
-  }
-
-  public String getAppName() {
-    return serviceCombDiscoveryProperties.getAppName();
-  }
-
-  public String getVersion() {
-    return serviceCombDiscoveryProperties.getVersion();
-  }
-
-  public String getEnvironment() {
-    return serviceCombDiscoveryProperties.getEnvironment();
+    throw new IllegalStateException("not supported");
   }
 }

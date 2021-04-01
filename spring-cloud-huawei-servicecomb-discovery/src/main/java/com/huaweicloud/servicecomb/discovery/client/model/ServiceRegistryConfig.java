@@ -17,12 +17,14 @@
 
 package com.huaweicloud.servicecomb.discovery.client.model;
 
-/**
- * @Author wangqijun
- * @Date 11:34 2019-07-09
- **/
 public final class ServiceRegistryConfig {
   public static final String DEFAULT_API_VERSION = "v4";
+
+  public static final String CONFIG_ALLOW_CROSS_APP_KEY = "allowCrossApp";
+
+  public static final String INSTANCE_STATUS = "status";
+
+  public static final String INSTANCE_ZONE = "zone";
 
   public static final String DEFAULT_PROJECT = "default";
 

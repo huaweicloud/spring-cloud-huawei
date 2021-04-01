@@ -18,29 +18,70 @@
 package com.huaweicloud.servicecomb.discovery.discovery;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
+import org.apache.servicecomb.foundation.auth.SignRequest;
+import org.apache.servicecomb.http.client.auth.RequestAuthHeaderProvider;
+import org.apache.servicecomb.http.client.common.HttpConfiguration.SSLProperties;
+import org.apache.servicecomb.service.center.client.AddressManager;
+import org.apache.servicecomb.service.center.client.ServiceCenterClient;
+import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery;
+import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery.SubscriptionKey;
+import org.apache.servicecomb.service.center.client.exception.OperationException;
+import org.apache.servicecomb.service.center.client.model.Microservice;
+import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
+import org.apache.servicecomb.service.center.client.model.MicroservicesResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
-import com.huaweicloud.common.exception.ServiceCombException;
-import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
-import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
-import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceResponse;
+
+import com.huaweicloud.common.event.EventManager;
+import com.huaweicloud.common.util.URLUtil;
+import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
 
 public class ServiceCombDiscoveryClient implements DiscoveryClient {
-
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombDiscoveryClient.class);
 
-  private ServiceCombClient serviceCombClient;
+  private ServiceCenterClient serviceCenterClient;
 
   private ServiceCombDiscoveryProperties discoveryProperties;
 
+  ServiceCenterDiscovery serviceCenterDiscovery;
+
   public ServiceCombDiscoveryClient(ServiceCombDiscoveryProperties discoveryProperties,
-      ServiceCombClient serviceCombClient) {
+      List<AuthHeaderProvider> authHeaderProviders) {
     this.discoveryProperties = discoveryProperties;
-    this.serviceCombClient = serviceCombClient;
+
+    AddressManager addressManager = createAddressManager(discoveryProperties);
+    SSLProperties sslProperties = createSSLProperties();
+    serviceCenterClient = new ServiceCenterClient(addressManager, sslProperties,
+        new RequestAuthHeaderProvider() {
+          @Override
+          public Map<String, String> loadAuthHeader(SignRequest signRequest) {
+            Map<String, String> headers = new HashMap<>();
+            authHeaderProviders.forEach(provider -> headers.putAll(provider.authHeaders()));
+            return headers;
+          }
+        }, "default", new HashMap<>());
+    serviceCenterDiscovery = new ServiceCenterDiscovery(serviceCenterClient,
+        EventManager.getEventBus());
+    serviceCenterDiscovery.startDiscovery();
+  }
+
+  private SSLProperties createSSLProperties() {
+    return new SSLProperties();
+  }
+
+  private AddressManager createAddressManager(ServiceCombDiscoveryProperties discoveryProperties) {
+    List<String> addresses = URLUtil.getEnvServerURL();
+    if (addresses.isEmpty()) {
+      addresses = URLUtil.dealMultiUrl(discoveryProperties.getAddress());
+    }
+    return new AddressManager("default", addresses);
   }
 
   @Override
@@ -50,28 +91,40 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient {
 
   @Override
   public List<ServiceInstance> getInstances(String serviceId) {
-    Microservice microService = MicroserviceHandler
-        .createMicroservice(discoveryProperties, serviceId);
-    //spring cloud serviceId equals servicecomb serviceName
-    return MicroserviceHandler.getInstances(microService, serviceCombClient);
+    SubscriptionKey subscriptionKey = new SubscriptionKey(discoveryProperties.getAppName(), serviceId);
+    if (!serviceCenterDiscovery.isRegistered(subscriptionKey)) {
+      serviceCenterDiscovery.register(subscriptionKey);
+    }
+    List<MicroserviceInstance> instances = serviceCenterDiscovery.getInstanceCache(subscriptionKey);
+
+    return MicroserviceHandler.convertInstanceList(instances);
   }
 
   @Override
   public List<String> getServices() {
     List<String> serviceList = new ArrayList<>();
     try {
-      MicroserviceResponse microServiceResponse = serviceCombClient
-          .getServices();
+      MicroservicesResponse microServiceResponse = serviceCenterClient.getMicroserviceList();
       if (microServiceResponse == null || microServiceResponse.getServices() == null) {
         return serviceList;
       }
       for (Microservice microservice : microServiceResponse.getServices()) {
-        serviceList.add(microservice.getServiceName());
+        if (isAllowedMicroservice(microservice)) {
+          serviceList.add(microservice.getServiceName());
+        }
       }
       return serviceList;
-    } catch (ServiceCombException e) {
+    } catch (OperationException e) {
       LOGGER.error("getServices failed", e);
     }
     return serviceList;
+  }
+
+  private boolean isAllowedMicroservice(Microservice microservice) {
+    if (microservice.getAppId().equals(discoveryProperties.getAppName()) ||
+        Boolean.parseBoolean(microservice.getProperties().get(ServiceRegistryConfig.CONFIG_ALLOW_CROSS_APP_KEY))) {
+      return true;
+    }
+    return false;
   }
 }

@@ -17,75 +17,149 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.commons.configuration.EnvironmentConfiguration;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.servicecomb.foundation.common.net.NetUtils;
+import org.apache.servicecomb.service.center.client.model.Framework;
+import org.apache.servicecomb.service.center.client.model.HealthCheck;
+import org.apache.servicecomb.service.center.client.model.HealthCheckMode;
+import org.apache.servicecomb.service.center.client.model.Microservice;
+import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
+import org.apache.servicecomb.service.center.client.model.MicroserviceStatus;
+import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
-import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
-import com.huaweicloud.servicecomb.discovery.client.model.Framework;
-import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
-import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceStatus;
+import org.springframework.util.StringUtils;
+
+import com.huaweicloud.common.util.NetUtil;
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
+import com.huaweicloud.servicecomb.discovery.registry.TagsProperties;
 
-/**
- * @Author wangqijun
- * @Date 12:26 2019-07-17
- **/
 public class MicroserviceHandler {
+  private static final String SERVICE_MAPPING = "SERVICE_MAPPING";
 
-  public static final Map<String, String> serviceRevision = new ConcurrentHashMap<>();
+  private static final String VERSION_MAPPING = "VERSION_MAPPING";
 
-  public static final Map<String, List<ServiceInstance>> discoveryServerList = new ConcurrentHashMap<>();
+  private static final String APP_MAPPING = "APP_MAPPING";
 
-  public static List<ServiceInstance> getInstances(Microservice microservice,
-      ServiceCombClient serviceCombClient) {
-      String revision = "0";
-      if (serviceRevision.containsKey(microservice.getServiceName())) {
-        revision = serviceRevision.get(microservice.getServiceName());
-      }
-      List<ServiceInstance> instanceList = serviceCombClient.getInstances(microservice, revision);
-      return getList(instanceList, microservice.getServiceName());
-  }
+  private static final String CAS_APPLICATION_ID = "CAS_APPLICATION_ID";
 
-  private static List<ServiceInstance> getList(List<ServiceInstance> instanceList,
-      String serviceName) {
-    List<ServiceInstance> resultList = new ArrayList<>();
-    List<ServiceInstance> cacheList = discoveryServerList
-        .getOrDefault(serviceName, new ArrayList<>());
-    if (instanceList == null) {
-      return cacheList;
-    }
-    //if list is empty, maybe the service center is restarted , check before clear
-    if (instanceList.isEmpty()) {
-      for (ServiceInstance server : cacheList) {
-        try (Socket s = new Socket()) {
-          s.connect(new InetSocketAddress(server.getHost(), server.getPort()), 3000);
-        } catch (IOException e) {
+  private static final String CAS_COMPONENT_NAME = "CAS_COMPONENT_NAME";
+
+  private static final String CAS_INSTANCE_VERSION = "CAS_INSTANCE_VERSION";
+
+  private static final String CAS_INSTANCE_ID = "CAS_INSTANCE_ID";
+
+  private static final String CAS_ENVIRONMENT_ID = "CAS_ENVIRONMENT_ID";
+
+  public static List<ServiceInstance> convertInstanceList(List<MicroserviceInstance> instances) {
+    List<ServiceInstance> instanceList = new ArrayList<>(instances.size());
+    for (MicroserviceInstance instance : instances) {
+      for (String endpoint : instance.getEndpoints()) {
+        if (!endpoint.startsWith("rest://")) {
           continue;
         }
-        resultList.add(server);
+        URI endpointURIBuilder = null;
+        try {
+          endpointURIBuilder = new URIBuilder(endpoint).build();
+        } catch (URISyntaxException e) {
+          continue;
+        }
+        int port = endpointURIBuilder.getPort();
+        String host = endpointURIBuilder.getHost();
+
+        Map<String, String> map = new HashMap<>();
+        map.put(ServiceRegistryConfig.INSTANCE_STATUS, instance.getStatus().name());
+        if (instance.getDataCenterInfo() != null) {
+          map.put(ServiceRegistryConfig.INSTANCE_ZONE, instance.getDataCenterInfo().getAvailableZone());
+        }
+        instanceList.add(
+            new DefaultServiceInstance(instance.getInstanceId(), instance.getServiceId(), host,
+                port, false, map));
       }
-      return resultList;
     }
-    discoveryServerList.put(serviceName, instanceList);
     return instanceList;
   }
 
-  public static Microservice createMicroservice(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
-      String serviceName) {
+  public static Microservice createMicroservice(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
     Microservice microservice = new Microservice();
-    microservice.setServiceName(serviceName);
+    microservice.setAppId(serviceCombDiscoveryProperties.getAppName());
+    microservice.setServiceName(serviceCombDiscoveryProperties.getServiceName());
     microservice.setVersion(ServiceRegistryConfig.DEFAULT_CALL_VERSION);
     microservice.setFramework(new Framework());
     if (!serviceCombDiscoveryProperties.isAllowCrossApp()) {
-      microservice.setAppId(serviceCombDiscoveryProperties.getAppName());
+      microservice.getProperties().put(ServiceRegistryConfig.CONFIG_ALLOW_CROSS_APP_KEY, "true");
     }
     microservice.setStatus(MicroserviceStatus.UP);
     return microservice;
+  }
+
+  public static MicroserviceInstance createMicroserviceInstance(String serviceID,
+      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
+      TagsProperties tagsProperties) {
+    MicroserviceInstance microserviceInstance = new MicroserviceInstance();
+    microserviceInstance.setServiceId(serviceID);
+    microserviceInstance.setHostName(NetUtil.getLocalHost());
+    if (null != serviceCombDiscoveryProperties.getDatacenter()) {
+      microserviceInstance.setDataCenterInfo(serviceCombDiscoveryProperties.getDatacenter());
+    }
+    List<String> endPoints = new ArrayList<>();
+    String address;
+    if (StringUtils.isEmpty(serviceCombDiscoveryProperties.getServerAddress())) {
+      address = NetUtils.getHostAddress();
+    } else {
+      address = serviceCombDiscoveryProperties.getServerAddress();
+    }
+    endPoints.add("rest://" + address + ":" + serviceCombDiscoveryProperties.getPort());
+    microserviceInstance.setEndpoints(endPoints);
+    HealthCheck healthCheck = new HealthCheck();
+    healthCheck.setMode(HealthCheckMode.pull);
+    healthCheck.setInterval(serviceCombDiscoveryProperties.getHealthCheckInterval());
+    healthCheck.setTimes(3);
+    microserviceInstance.setHealthCheck(healthCheck);
+    String currTime = String.valueOf(System.currentTimeMillis());
+    microserviceInstance.setTimestamp(currTime);
+    microserviceInstance.setModTimestamp(currTime);
+    EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
+    if (!StringUtils.isEmpty(envConfig.getString(VERSION_MAPPING)) &&
+        !StringUtils.isEmpty(envConfig.getString(envConfig.getString(VERSION_MAPPING)))) {
+      microserviceInstance.setVersion(envConfig.getString(VERSION_MAPPING));
+    } else {
+      microserviceInstance.setVersion(serviceCombDiscoveryProperties.getVersion());
+    }
+    Map<String, String> properties = new HashMap<>();
+    if (tagsProperties.getTag() != null) {
+      properties.putAll(tagsProperties.getTag());
+    }
+    properties.putAll(genCasProperties());
+    microserviceInstance.setProperties(properties);
+    return microserviceInstance;
+  }
+
+  private static Map<String, String> genCasProperties() {
+    Map<String, String> properties = new HashMap<>();
+    EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
+    if (!StringUtils.isEmpty(envConfig.getString(CAS_APPLICATION_ID))) {
+      properties.put(CAS_APPLICATION_ID, envConfig.getString(CAS_APPLICATION_ID));
+    }
+    if (!StringUtils.isEmpty(envConfig.getString(CAS_COMPONENT_NAME))) {
+      properties.put(CAS_COMPONENT_NAME, envConfig.getString(CAS_COMPONENT_NAME));
+    }
+    if (!StringUtils.isEmpty(envConfig.getString(CAS_INSTANCE_VERSION))) {
+      properties.put(CAS_INSTANCE_VERSION, envConfig.getString(CAS_INSTANCE_VERSION));
+    }
+    if (!StringUtils.isEmpty(envConfig.getString(CAS_INSTANCE_ID))) {
+      properties.put(CAS_INSTANCE_ID, envConfig.getString(CAS_INSTANCE_ID));
+    }
+    if (!StringUtils.isEmpty(envConfig.getString(CAS_ENVIRONMENT_ID))) {
+      properties.put(CAS_ENVIRONMENT_ID, envConfig.getString(CAS_ENVIRONMENT_ID));
+    }
+    return properties;
   }
 }

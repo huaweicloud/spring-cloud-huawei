@@ -29,10 +29,6 @@
 
   <artifactId>spring-cloud-huawei-common</artifactId>
 
-  <properties>
-    <servicecomb.version>1.2.1</servicecomb.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -85,6 +81,10 @@
           <artifactId>spring-context</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.servicecomb</groupId>
+      <artifactId>foundation-spi</artifactId>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
