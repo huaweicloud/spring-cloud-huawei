@@ -23,6 +23,8 @@ import java.util.Map;
 
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.apache.servicecomb.foundation.auth.SignRequest;
+import org.apache.servicecomb.foundation.ssl.SSLCustom;
+import org.apache.servicecomb.foundation.ssl.SSLOption;
 import org.apache.servicecomb.http.client.auth.RequestAuthHeaderProvider;
 import org.apache.servicecomb.http.client.common.HttpConfiguration.SSLProperties;
 import org.apache.servicecomb.service.center.client.AddressManager;
@@ -31,6 +33,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.common.util.URLUtil;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 
@@ -40,9 +43,10 @@ public class DiscoveryAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public ServiceCenterClient serviceCenterClient(ServiceCombDiscoveryProperties discoveryProperties,
+      ServiceCombSSLProperties serviceCombSSLProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
     AddressManager addressManager = createAddressManager(discoveryProperties);
-    SSLProperties sslProperties = createSSLProperties();
+    SSLProperties sslProperties = createSSLProperties(addressManager, serviceCombSSLProperties);
     return new ServiceCenterClient(addressManager, sslProperties,
         new RequestAuthHeaderProvider() {
           @Override
@@ -51,11 +55,27 @@ public class DiscoveryAutoConfiguration {
             authHeaderProviders.forEach(provider -> headers.putAll(provider.authHeaders()));
             return headers;
           }
-        }, "default", new HashMap<>());
+        },
+        // TODO: add other headers needed for registration
+        "default", new HashMap<>());
   }
 
-  private SSLProperties createSSLProperties() {
-    return new SSLProperties();
+  private SSLProperties createSSLProperties(AddressManager addressManager,
+      ServiceCombSSLProperties serviceCombSSLProperties) {
+    SSLProperties sslProperties = new SSLProperties();
+    sslProperties.setEnabled(addressManager.sslEnabled());
+    SSLOption sslOption = new SSLOption();
+    sslOption.setKeyStoreType(serviceCombSSLProperties.getKeyStoreType().name());
+    sslOption.setKeyStore(serviceCombSSLProperties.getKeyStore());
+    sslOption.setKeyStoreValue(serviceCombSSLProperties.getKeyStoreValue());
+    sslOption.setTrustStoreType(ServiceCombSSLProperties.KeyStoreInstanceType.JKS.name());
+    sslOption.setTrustStore(serviceCombSSLProperties.getTrustStore());
+    sslOption.setTrustStoreValue(serviceCombSSLProperties.getTrustStoreValue());
+
+    sslProperties.setSslOption(sslOption);
+    // TODO: support ssl password encryption
+    sslProperties.setSslCustom(SSLCustom.defaultSSLCustom());
+    return sslProperties;
   }
 
   private AddressManager createAddressManager(ServiceCombDiscoveryProperties discoveryProperties) {
