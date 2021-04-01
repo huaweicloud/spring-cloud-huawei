@@ -17,6 +17,9 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
+import java.util.List;
+
+import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -93,8 +96,8 @@ public class ServiceCombDiscoveryClientConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public DiscoveryClient serviceCombDiscoveryClient(
-      ServiceCombDiscoveryProperties discoveryProperties, ServiceCombClient serviceCombClient) {
-    return new ServiceCombDiscoveryClient(discoveryProperties, serviceCombClient);
+      ServiceCombDiscoveryProperties discoveryProperties, List<AuthHeaderProvider> authHeaderProviders) {
+    return new ServiceCombDiscoveryClient(discoveryProperties, authHeaderProviders);
   }
 
   @Bean

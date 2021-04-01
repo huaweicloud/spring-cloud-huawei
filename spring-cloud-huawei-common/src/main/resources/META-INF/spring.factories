@@ -16,4 +16,6 @@
 #
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
 com.huaweicloud.common.CommonConfiguration,\
-com.huaweicloud.common.transport.ServiceCombAkSkProperties
+com.huaweicloud.common.transport.ServiceCombAkSkProperties,\
+com.huaweicloud.common.transport.ServiceCombRBACProperties,\
+com.huaweicloud.common.transport.ServiceCombSSLProperties

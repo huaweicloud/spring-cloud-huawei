@@ -17,13 +17,9 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
-import com.huaweicloud.servicecomb.discovery.client.model.DataCenter;
-
+import org.apache.servicecomb.service.center.client.model.DataCenterInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -41,7 +37,7 @@ public class ServiceCombDiscoveryProperties {
 
   private String address;
 
-  private String appName;
+  private String appName = "default";
 
   @Value("${spring.cloud.servicecomb.discovery.serviceName:${spring.application.name:}}")
   private String serviceName;
@@ -57,7 +53,7 @@ public class ServiceCombDiscoveryProperties {
 
   private boolean healthCheck = true;
 
-  private int healthCheckInterval;
+  private int healthCheckInterval = 10;
 
   private int refreshInterval = 30000;
 
@@ -71,7 +67,7 @@ public class ServiceCombDiscoveryProperties {
   @Value("${server.port}")
   private String port;
 
-  private DataCenter datacenter;
+  private DataCenterInfo datacenter;
 
   public String getServerAddress() {
     return serverAddress;
@@ -81,18 +77,15 @@ public class ServiceCombDiscoveryProperties {
     this.serverAddress = serverAddress;
   }
 
-  public DataCenter getDatacenter() {
+  public DataCenterInfo getDatacenter() {
     return datacenter;
   }
 
-  public void setDatacenter(DataCenter datacenter) {
+  public void setDatacenter(DataCenterInfo datacenter) {
     this.datacenter = datacenter;
   }
 
   public String getAppName() {
-    if (null == appName) {
-      return ServiceRegistryConfig.DEFAULT_APPID;
-    }
     return appName;
   }
 
@@ -165,9 +158,6 @@ public class ServiceCombDiscoveryProperties {
   }
 
   public int getHealthCheckInterval() {
-    if (healthCheckInterval == 0) {
-      healthCheckInterval = ServiceRegistryConfig.DEFAULT_HEALTHCHECK_INTERVAL;
-    }
     return healthCheckInterval;
   }
 
@@ -232,7 +222,7 @@ public class ServiceCombDiscoveryProperties {
         ", autoDiscovery=" + autoDiscovery +
         ", allowCrossApp=" + allowCrossApp +
         ", port='" + port + '\'' +
-        ", datacenter=" + datacenter +
+        ", dataCenter=" + datacenter +
         '}';
   }
 }
