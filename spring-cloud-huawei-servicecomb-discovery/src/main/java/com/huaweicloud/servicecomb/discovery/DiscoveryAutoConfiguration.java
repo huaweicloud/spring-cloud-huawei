@@ -29,6 +29,7 @@ import org.apache.servicecomb.http.client.auth.RequestAuthHeaderProvider;
 import org.apache.servicecomb.http.client.common.HttpConfiguration.SSLProperties;
 import org.apache.servicecomb.service.center.client.AddressManager;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
+import org.apache.servicecomb.service.center.client.ServiceCenterWatch;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,6 +57,25 @@ public class DiscoveryAutoConfiguration {
             return headers;
           }
         },
+        // TODO: add other headers needed for registration
+        "default", new HashMap<>());
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  public ServiceCenterWatch serviceCenterWatch(ServiceCombDiscoveryProperties discoveryProperties,
+      ServiceCombSSLProperties serviceCombSSLProperties,
+      List<AuthHeaderProvider> authHeaderProviders) {
+    AddressManager addressManager = createAddressManager(discoveryProperties);
+    SSLProperties sslProperties = createSSLProperties(addressManager, serviceCombSSLProperties);
+    return new ServiceCenterWatch(addressManager, sslProperties, new RequestAuthHeaderProvider() {
+      @Override
+      public Map<String, String> loadAuthHeader(SignRequest signRequest) {
+        Map<String, String> headers = new HashMap<>();
+        authHeaderProviders.forEach(provider -> headers.putAll(provider.authHeaders()));
+        return headers;
+      }
+    },
         // TODO: add other headers needed for registration
         "default", new HashMap<>());
   }

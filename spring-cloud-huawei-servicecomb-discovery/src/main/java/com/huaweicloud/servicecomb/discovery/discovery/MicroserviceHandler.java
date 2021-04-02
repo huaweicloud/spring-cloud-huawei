@@ -89,9 +89,27 @@ public class MicroserviceHandler {
 
   public static Microservice createMicroservice(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
     Microservice microservice = new Microservice();
-    microservice.setAppId(serviceCombDiscoveryProperties.getAppName());
-    microservice.setServiceName(serviceCombDiscoveryProperties.getServiceName());
-    microservice.setVersion(ServiceRegistryConfig.DEFAULT_CALL_VERSION);
+
+    EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
+    if (!StringUtils.isEmpty(envConfig.getString(APP_MAPPING)) &&
+        !StringUtils.isEmpty(envConfig.getString(envConfig.getString(APP_MAPPING)))) {
+      microservice.setAppId(envConfig.getString(envConfig.getString(APP_MAPPING)));
+    } else {
+      microservice.setAppId(serviceCombDiscoveryProperties.getAppName());
+    }
+    if (!StringUtils.isEmpty(envConfig.getString(SERVICE_MAPPING)) &&
+        !StringUtils.isEmpty(envConfig.getString(envConfig.getString(SERVICE_MAPPING)))) {
+      microservice.setServiceName(envConfig.getString(envConfig.getString(SERVICE_MAPPING)));
+    } else {
+      microservice.setServiceName(serviceCombDiscoveryProperties.getServiceName());
+    }
+    if (!StringUtils.isEmpty(envConfig.getString(VERSION_MAPPING)) &&
+        !StringUtils.isEmpty(envConfig.getString(envConfig.getString(VERSION_MAPPING)))) {
+      microservice.setVersion(envConfig.getString(envConfig.getString(VERSION_MAPPING)));
+    } else {
+      microservice.setVersion(serviceCombDiscoveryProperties.getVersion());
+    }
+
     microservice.setFramework(new Framework());
     if (!serviceCombDiscoveryProperties.isAllowCrossApp()) {
       microservice.getProperties().put(ServiceRegistryConfig.CONFIG_ALLOW_CROSS_APP_KEY, "true");
@@ -100,11 +118,10 @@ public class MicroserviceHandler {
     return microservice;
   }
 
-  public static MicroserviceInstance createMicroserviceInstance(String serviceID,
+  public static MicroserviceInstance createMicroserviceInstance(
       ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
       TagsProperties tagsProperties) {
     MicroserviceInstance microserviceInstance = new MicroserviceInstance();
-    microserviceInstance.setServiceId(serviceID);
     microserviceInstance.setHostName(NetUtil.getLocalHost());
     if (null != serviceCombDiscoveryProperties.getDatacenter()) {
       microserviceInstance.setDataCenterInfo(serviceCombDiscoveryProperties.getDatacenter());
@@ -126,6 +143,7 @@ public class MicroserviceHandler {
     String currTime = String.valueOf(System.currentTimeMillis());
     microserviceInstance.setTimestamp(currTime);
     microserviceInstance.setModTimestamp(currTime);
+
     EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
     if (!StringUtils.isEmpty(envConfig.getString(VERSION_MAPPING)) &&
         !StringUtils.isEmpty(envConfig.getString(envConfig.getString(VERSION_MAPPING)))) {
@@ -133,6 +151,7 @@ public class MicroserviceHandler {
     } else {
       microserviceInstance.setVersion(serviceCombDiscoveryProperties.getVersion());
     }
+
     Map<String, String> properties = new HashMap<>();
     if (tagsProperties.getTag() != null) {
       properties.putAll(tagsProperties.getTag());

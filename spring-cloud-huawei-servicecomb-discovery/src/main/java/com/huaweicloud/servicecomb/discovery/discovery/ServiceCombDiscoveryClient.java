@@ -18,15 +18,8 @@
 package com.huaweicloud.servicecomb.discovery.discovery;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
-import org.apache.servicecomb.foundation.auth.SignRequest;
-import org.apache.servicecomb.http.client.auth.RequestAuthHeaderProvider;
-import org.apache.servicecomb.http.client.common.HttpConfiguration.SSLProperties;
-import org.apache.servicecomb.service.center.client.AddressManager;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery;
 import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery.SubscriptionKey;
@@ -40,7 +33,6 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 
 import com.huaweicloud.common.event.EventManager;
-import com.huaweicloud.common.util.URLUtil;
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
 
 public class ServiceCombDiscoveryClient implements DiscoveryClient {
@@ -53,40 +45,18 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient {
   ServiceCenterDiscovery serviceCenterDiscovery;
 
   public ServiceCombDiscoveryClient(ServiceCombDiscoveryProperties discoveryProperties,
-      List<AuthHeaderProvider> authHeaderProviders) {
+      ServiceCenterClient serviceCenterClient) {
     this.discoveryProperties = discoveryProperties;
+    this.serviceCenterClient = serviceCenterClient;
 
-    AddressManager addressManager = createAddressManager(discoveryProperties);
-    SSLProperties sslProperties = createSSLProperties();
-    serviceCenterClient = new ServiceCenterClient(addressManager, sslProperties,
-        new RequestAuthHeaderProvider() {
-          @Override
-          public Map<String, String> loadAuthHeader(SignRequest signRequest) {
-            Map<String, String> headers = new HashMap<>();
-            authHeaderProviders.forEach(provider -> headers.putAll(provider.authHeaders()));
-            return headers;
-          }
-        }, "default", new HashMap<>());
     serviceCenterDiscovery = new ServiceCenterDiscovery(serviceCenterClient,
         EventManager.getEventBus());
     serviceCenterDiscovery.startDiscovery();
   }
 
-  private SSLProperties createSSLProperties() {
-    return new SSLProperties();
-  }
-
-  private AddressManager createAddressManager(ServiceCombDiscoveryProperties discoveryProperties) {
-    List<String> addresses = URLUtil.getEnvServerURL();
-    if (addresses.isEmpty()) {
-      addresses = URLUtil.dealMultiUrl(discoveryProperties.getAddress());
-    }
-    return new AddressManager("default", addresses);
-  }
-
   @Override
   public String description() {
-    return "this is servicecomb implement";
+    return "SerivceComb Discovery";
   }
 
   @Override

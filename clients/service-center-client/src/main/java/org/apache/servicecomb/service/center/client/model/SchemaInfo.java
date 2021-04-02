@@ -24,6 +24,16 @@ public class SchemaInfo {
 
   private String summary;
 
+  public SchemaInfo() {
+
+  }
+
+  public SchemaInfo(String schemaId, String schema, String summary) {
+    this.schemaId = schemaId;
+    this.schema = schema;
+    this.summary = summary;
+  }
+
   public String getSchema() {
     return schema;
   }

@@ -20,8 +20,11 @@ package com.huaweicloud.servicecomb.discovery.registry;
 import java.net.URI;
 import java.util.Map;
 
+import org.apache.servicecomb.service.center.client.model.Microservice;
+import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.cloud.client.serviceregistry.Registration;
 
+import com.huaweicloud.servicecomb.discovery.discovery.MicroserviceHandler;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 
 /**
@@ -32,10 +35,23 @@ import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryPrope
  */
 public class ServiceCombRegistration implements Registration {
 
-  private ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
+  private Microservice microservice;
 
-  public ServiceCombRegistration(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
-    this.serviceCombDiscoveryProperties = serviceCombDiscoveryProperties;
+  private MicroserviceInstance microserviceInstance;
+
+  public ServiceCombRegistration(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
+      TagsProperties tagsProperties) {
+    this.microservice = MicroserviceHandler.createMicroservice(serviceCombDiscoveryProperties);
+    this.microserviceInstance = MicroserviceHandler
+        .createMicroserviceInstance(serviceCombDiscoveryProperties, tagsProperties);
+  }
+
+  public MicroserviceInstance getMicroserviceInstance() {
+    return microserviceInstance;
+  }
+
+  public Microservice getMicroservice() {
+    return microservice;
   }
 
   @Override

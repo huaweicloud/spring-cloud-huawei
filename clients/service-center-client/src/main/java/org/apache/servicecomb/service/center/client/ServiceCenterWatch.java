@@ -69,6 +69,12 @@ public class ServiceCenterWatch implements WebSocketListener {
     }
   }
 
+  public void stop() {
+    if (webSocketTransport != null) {
+      webSocketTransport.close();
+    }
+  }
+  
   private void reconnect() {
     if (webSocketTransport != null) {
       webSocketTransport.close();
