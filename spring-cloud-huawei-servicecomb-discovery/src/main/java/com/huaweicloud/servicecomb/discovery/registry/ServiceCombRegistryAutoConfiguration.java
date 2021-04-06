@@ -18,26 +18,23 @@
 package com.huaweicloud.servicecomb.discovery.registry;
 
 
-import com.huaweicloud.common.transport.ServiceCombSSLProperties;
-import com.huaweicloud.servicecomb.discovery.event.ServiceCombEventBus;
-
+import org.apache.servicecomb.service.center.client.ServiceCenterClient;
+import org.apache.servicecomb.service.center.client.ServiceCenterWatch;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationAutoConfiguration;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationConfiguration;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationProperties;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistryAutoConfiguration;
-
-import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombEnabled;
-import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
-import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombEnabled;
+import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
+import com.huaweicloud.servicecomb.discovery.event.ServiceCombEventBus;
 
 /**
  * @Author wangqijun
@@ -52,31 +49,20 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureAfter({AutoServiceRegistrationConfiguration.class,
     AutoServiceRegistrationAutoConfiguration.class})
 public class ServiceCombRegistryAutoConfiguration {
-
   @Bean
-  @ConditionalOnMissingBean
-  public HeartbeatScheduler heartbeatScheduler(
+  public ServiceCombServiceRegistry serviceCombServiceRegistry(
       ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
-      ServiceCombClient serviceCombClient,
-      TagsProperties tagsProperties) {
-    return new HeartbeatScheduler(serviceCombDiscoveryProperties, serviceCombClient);
-  }
-
-  @Bean
-  public ServiceCombServiceRegistry serviceCombServiceRegistry(ServiceCombClient serviceCombClient,
-      HeartbeatScheduler heartbeatScheduler,
-      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
-      ServiceCombWatcher serviceCombWatcher,
-      TagsProperties tagsProperties) {
-    return new ServiceCombServiceRegistry(serviceCombClient, heartbeatScheduler,
-        serviceCombDiscoveryProperties, serviceCombWatcher, tagsProperties);
+      ServiceCenterClient serviceCenterClient,
+      ServiceCenterWatch serviceCenterWatch) {
+    return new ServiceCombServiceRegistry(
+        serviceCombDiscoveryProperties, serviceCenterClient, serviceCenterWatch);
   }
 
   @Bean
   @ConditionalOnBean(AutoServiceRegistrationProperties.class)
   public ServiceCombRegistration serviceCombRegistration(
-      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
-    return new ServiceCombRegistration(serviceCombDiscoveryProperties);
+      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties, TagsProperties tagsProperties) {
+    return new ServiceCombRegistration(serviceCombDiscoveryProperties, tagsProperties);
   }
 
   @Bean
@@ -92,14 +78,6 @@ public class ServiceCombRegistryAutoConfiguration {
   @Bean
   public ServiceCombEventBus serviceCombEventBus() {
     return new ServiceCombEventBus();
-  }
-
-  @Bean
-  public ServiceCombWatcher serviceCombWatcher(ServiceCombEventBus eventBus,
-      ServiceCombSSLProperties serviceCombSSLProperties,
-      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
-    return new ServiceCombWatcher(eventBus, serviceCombSSLProperties,
-        serviceCombDiscoveryProperties);
   }
 }
 

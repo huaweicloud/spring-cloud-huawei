@@ -20,8 +20,8 @@ package com.huaweicloud.servicecomb.discovery.registry;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import com.huaweicloud.common.exception.ServiceCombException;
-import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
 import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstance;
 import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstanceSingleResponse;
@@ -40,12 +40,6 @@ import mockit.integration.junit4.JMockit;
 public class ServiceCombServiceRegistryTest {
 
   @Mocked
-  ServiceCombClient serviceCombClient;
-
-  @Mocked
-  HeartbeatScheduler heartbeatScheduler;
-
-  @Mocked
   ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
 
   @Mocked
@@ -53,9 +47,6 @@ public class ServiceCombServiceRegistryTest {
 
   @Mocked
   ServiceCombRegistration registration;
-
-  @Mocked
-  ServiceCombWatcher serviceCombWatcher;
 
   @Test
   public void hasRegisterMicroservice() throws ServiceCombException {

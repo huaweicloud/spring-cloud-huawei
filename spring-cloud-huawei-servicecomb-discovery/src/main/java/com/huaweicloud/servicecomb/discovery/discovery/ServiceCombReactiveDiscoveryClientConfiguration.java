@@ -16,8 +16,7 @@
  */
 package com.huaweicloud.servicecomb.discovery.discovery;
 
-import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
-import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
+import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,6 +26,8 @@ import org.springframework.cloud.client.ReactiveCommonsClientAutoConfiguration;
 import org.springframework.cloud.client.discovery.composite.reactive.ReactiveCompositeDiscoveryClientAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
 
 /**
  * @Author GuoYl123
@@ -44,8 +45,8 @@ public class ServiceCombReactiveDiscoveryClientConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public ServiceCombReactiveDiscoveryClient serviceCombReactiveDiscoveryClient(
-      ServiceCombDiscoveryProperties discoveryProperties, ServiceCombClient serviceCombClient) {
+      ServiceCombDiscoveryProperties discoveryProperties, ServiceCenterClient serviceCenterClient) {
     return new ServiceCombReactiveDiscoveryClient(
-        new ServiceCombDiscoveryClient(discoveryProperties, serviceCombClient));
+        new ServiceCombDiscoveryClient(discoveryProperties, serviceCenterClient));
   }
 }
