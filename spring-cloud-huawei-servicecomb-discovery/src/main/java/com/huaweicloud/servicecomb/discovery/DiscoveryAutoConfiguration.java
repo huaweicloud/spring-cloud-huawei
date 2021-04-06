@@ -85,7 +85,8 @@ public class DiscoveryAutoConfiguration {
     SSLProperties sslProperties = new SSLProperties();
     sslProperties.setEnabled(addressManager.sslEnabled());
     SSLOption sslOption = new SSLOption();
-    sslOption.setKeyStoreType(serviceCombSSLProperties.getKeyStoreType().name());
+    sslOption.setKeyStoreType(serviceCombSSLProperties.getKeyStoreType() == null ? null :
+        serviceCombSSLProperties.getKeyStoreType().name());
     sslOption.setKeyStore(serviceCombSSLProperties.getKeyStore());
     sslOption.setKeyStoreValue(serviceCombSSLProperties.getKeyStoreValue());
     sslOption.setTrustStoreType(ServiceCombSSLProperties.KeyStoreInstanceType.JKS.name());

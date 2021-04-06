@@ -182,6 +182,8 @@ public class ServiceCenterRegistration extends AbstractTask {
           startTask(new BackOffSleepTask(failedCount + 1, new RegisterMicroserviceInstanceTask(failedCount + 1)));
         } else {
           microserviceInstance.setInstanceId(instance.getInstanceId());
+          LOGGER.info("register microservice successfully, service id={}, instance id={}", microservice.getServiceId(),
+              microserviceInstance.getInstanceId());
           eventBus.post(new MicroserviceInstanceRegistrationEvent(true));
           startTask(new SendHeartBeatTask(0));
         }

@@ -33,6 +33,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombEnabled;
+import com.huaweicloud.servicecomb.discovery.DiscoveryAutoConfiguration;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 import com.huaweicloud.servicecomb.discovery.event.ServiceCombEventBus;
 
@@ -47,7 +48,7 @@ import com.huaweicloud.servicecomb.discovery.event.ServiceCombEventBus;
 @EnableConfigurationProperties
 @AutoConfigureBefore(ServiceRegistryAutoConfiguration.class)//enable custom auto
 @AutoConfigureAfter({AutoServiceRegistrationConfiguration.class,
-    AutoServiceRegistrationAutoConfiguration.class})
+    AutoServiceRegistrationAutoConfiguration.class, DiscoveryAutoConfiguration.class})
 public class ServiceCombRegistryAutoConfiguration {
   @Bean
   public ServiceCombServiceRegistry serviceCombServiceRegistry(
