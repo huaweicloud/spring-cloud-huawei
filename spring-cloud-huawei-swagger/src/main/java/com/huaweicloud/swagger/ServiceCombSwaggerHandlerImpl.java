@@ -95,7 +95,7 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
 
   @Override
   public Map<String, String> getSchemasMap() {
-    return this.getSchemasMap();
+    return this.swaggerContent;
   }
 
   @Override

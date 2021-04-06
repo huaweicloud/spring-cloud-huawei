@@ -65,6 +65,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
         EventManager.getEventBus());
     serviceCenterRegistration.setMicroservice(registration.getMicroservice());
     serviceCenterRegistration.setMicroserviceInstance(registration.getMicroserviceInstance());
+    serviceCombSwaggerHandler
+        .init(registration.getMicroservice().getAppId(), registration.getMicroservice().getServiceName());
     registration.getMicroservice().setSchemas(serviceCombSwaggerHandler.getSchemaIds());
     Map<String, String> contents = serviceCombSwaggerHandler.getSchemasMap();
     Map<String, String> summary = serviceCombSwaggerHandler.getSchemasSummaryMap();
