@@ -21,11 +21,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 
-import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
+import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServer;
+import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.AbstractServerList;
 import com.netflix.loadbalancer.Server;
@@ -58,18 +58,7 @@ public class ServiceCombServerList extends AbstractServerList<Server> {
   private List<Server> transform(List<ServiceInstance> instanceList) {
     List<Server> serverList = new ArrayList<>();
     instanceList.forEach(
-        instance -> {
-          if (instance
-              .getMetadata()
-              .get(ServiceRegistryConfig.INSTANCE_STATUS)
-              .equals(MicroserviceInstanceStatus.UP.name())) {
-            Server server = new Server(instance.getHost(), instance.getPort());
-            if (instance.getMetadata().containsKey(ServiceRegistryConfig.INSTANCE_ZONE)) {
-              server.setZone(instance.getMetadata().get(ServiceRegistryConfig.INSTANCE_ZONE));
-            }
-            serverList.add(server);
-          }
-        });
+        instance -> serverList.add(new ServiceCombServer((ServiceCombServiceInstance) instance)));
     return serverList;
   }
 }

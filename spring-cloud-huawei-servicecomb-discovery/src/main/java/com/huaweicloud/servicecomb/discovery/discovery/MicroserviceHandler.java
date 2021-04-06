@@ -17,15 +17,12 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.configuration.EnvironmentConfiguration;
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.servicecomb.foundation.common.net.NetUtils;
 import org.apache.servicecomb.service.center.client.model.Framework;
 import org.apache.servicecomb.service.center.client.model.HealthCheck;
@@ -33,12 +30,10 @@ import org.apache.servicecomb.service.center.client.model.HealthCheckMode;
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.apache.servicecomb.service.center.client.model.MicroserviceStatus;
-import org.springframework.cloud.client.DefaultServiceInstance;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.util.StringUtils;
 
 import com.huaweicloud.common.util.NetUtil;
-import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
+import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
 import com.huaweicloud.servicecomb.discovery.registry.TagsProperties;
 
 public class MicroserviceHandler {
@@ -57,35 +52,6 @@ public class MicroserviceHandler {
   private static final String CAS_INSTANCE_ID = "CAS_INSTANCE_ID";
 
   private static final String CAS_ENVIRONMENT_ID = "CAS_ENVIRONMENT_ID";
-
-  public static List<ServiceInstance> convertInstanceList(List<MicroserviceInstance> instances) {
-    List<ServiceInstance> instanceList = new ArrayList<>(instances.size());
-    for (MicroserviceInstance instance : instances) {
-      for (String endpoint : instance.getEndpoints()) {
-        if (!endpoint.startsWith("rest://")) {
-          continue;
-        }
-        URI endpointURIBuilder = null;
-        try {
-          endpointURIBuilder = new URIBuilder(endpoint).build();
-        } catch (URISyntaxException e) {
-          continue;
-        }
-        int port = endpointURIBuilder.getPort();
-        String host = endpointURIBuilder.getHost();
-
-        Map<String, String> map = new HashMap<>();
-        map.put(ServiceRegistryConfig.INSTANCE_STATUS, instance.getStatus().name());
-        if (instance.getDataCenterInfo() != null) {
-          map.put(ServiceRegistryConfig.INSTANCE_ZONE, instance.getDataCenterInfo().getAvailableZone());
-        }
-        instanceList.add(
-            new DefaultServiceInstance(instance.getInstanceId(), instance.getServiceId(), host,
-                port, false, map));
-      }
-    }
-    return instanceList;
-  }
 
   public static Microservice createMicroservice(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
     Microservice microservice = new Microservice();
@@ -112,7 +78,7 @@ public class MicroserviceHandler {
 
     microservice.setFramework(new Framework());
     if (!serviceCombDiscoveryProperties.isAllowCrossApp()) {
-      microservice.getProperties().put(ServiceRegistryConfig.CONFIG_ALLOW_CROSS_APP_KEY, "true");
+      microservice.getProperties().put(DiscoveryConstants.CONFIG_ALLOW_CROSS_APP_KEY, "true");
     }
     microservice.setStatus(MicroserviceStatus.UP);
     return microservice;

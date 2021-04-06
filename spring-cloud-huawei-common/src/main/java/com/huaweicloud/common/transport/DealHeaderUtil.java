@@ -71,7 +71,7 @@ public class DealHeaderUtil {
     Map<String, String> headers = new HashMap<>();
     headers.put(X_SERVICE_AK, serviceCombAkSkProperties.getAccessKey());
     headers.put(X_SERVICE_SHA_AKSK, serviceCombAkSkProperties.getSecretKey());
-    headers.put((X_SERVICE_PROJECT, serviceCombAkSkProperties.getProject());
+    headers.put(X_SERVICE_PROJECT, serviceCombAkSkProperties.getProject());
     return headers;
   }
 

@@ -71,5 +71,9 @@
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-huawei-common</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.huaweicloud</groupId>
+      <artifactId>spring-cloud-huawei-servicecomb-discovery</artifactId>
+    </dependency>
   </dependencies>
 </project>

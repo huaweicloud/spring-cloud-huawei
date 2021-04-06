@@ -16,39 +16,33 @@
  */
 package com.huaweicloud.router.core.distribute;
 
-import com.netflix.loadbalancer.Server;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.huaweicloud.router.core.cache.RouterRuleCache;
-import com.huaweicloud.router.core.model.PolicyRuleItem;
-import com.huaweicloud.router.core.model.RouteItem;
-import com.huaweicloud.router.core.model.TagItem;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import com.huaweicloud.common.util.VersionCompareUtil;
+
+import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
+
+import com.huaweicloud.common.util.VersionCompareUtil;
+import com.huaweicloud.router.core.cache.RouterRuleCache;
+import com.huaweicloud.router.core.model.PolicyRuleItem;
+import com.huaweicloud.router.core.model.RouteItem;
+import com.huaweicloud.router.core.model.TagItem;
+import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServer;
+import com.netflix.loadbalancer.Server;
 
 /**
  * @Author GuoYl123
  * @Date 2019/10/17
  **/
-public abstract class AbstractRouterDistributor<T extends Server, E> implements
-    RouterDistributor<T, E> {
+public abstract class AbstractRouterDistributor<T extends Server> implements
+    RouterDistributor<T> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRouterDistributor.class);
-
-  private Function<T, E> getIns;
-
-  private Function<E, String> getVersion;
-
-  private Function<E, String> getServerName;
-
-  private Function<E, Map<String, String>> getProperties;
 
   @Override
   public List<T> distribute(String targetServiceName, List<T> list, PolicyRuleItem invokeRule) {
@@ -76,14 +70,7 @@ public abstract class AbstractRouterDistributor<T extends Server, E> implements
   }
 
   @Override
-  public void init(Function<T, E> getIns,
-      Function<E, String> getVersion,
-      Function<E, String> getServerName,
-      Function<E, Map<String, String>> getProperties) {
-    this.getIns = getIns;
-    this.getVersion = getVersion;
-    this.getServerName = getServerName;
-    this.getProperties = getProperties;
+  public void init() {
   }
 
   public TagItem getFiltedServerTagItem(PolicyRuleItem rule, String targetServiceName) {
@@ -105,12 +92,12 @@ public abstract class AbstractRouterDistributor<T extends Server, E> implements
     String latestV = RouterRuleCache.getServiceInfoCacheMap().get(serviceName).getLatestVersionTag()
         .getVersion();
     Map<TagItem, List<T>> versionServerMap = new HashMap<>();
-    for (T server : list) {
-      //获得目标服务
-      E ms = getIns.apply(server);
-      if (getServerName.apply(ms).equals(serviceName)) {
+    for (T item : list) {
+      ServiceCombServer server = (ServiceCombServer) item;
+      MicroserviceInstance instance = server.getServiceCombServiceInstance().getMicroserviceInstance();
+      if (instance.getServiceName().equals(serviceName)) {
         //最多匹配原则
-        TagItem tagItem = new TagItem(getVersion.apply(ms), getProperties.apply(ms));
+        TagItem tagItem = new TagItem(instance.getVersion(), instance.getProperties());
         TagItem targetTag = null;
         int maxMatch = 0;
         for (RouteItem entry : invokeRule.getRoute()) {
@@ -120,37 +107,37 @@ public abstract class AbstractRouterDistributor<T extends Server, E> implements
             targetTag = entry.getTagitem();
           }
         }
-        if (invokeRule.isWeightLess() && getVersion.apply(ms).equals(latestV)) {
+        if (invokeRule.isWeightLess() && instance.getVersion().equals(latestV)) {
           TagItem latestVTag = invokeRule.getRoute().get(invokeRule.getRoute().size() - 1)
               .getTagitem();
           if (!versionServerMap.containsKey(latestVTag)) {
             versionServerMap.put(latestVTag, new ArrayList<>());
           }
-          versionServerMap.get(latestVTag).add(server);
+          versionServerMap.get(latestVTag).add((T) server);
         }
         if (targetTag != null) {
           if (!versionServerMap.containsKey(targetTag)) {
             versionServerMap.put(targetTag, new ArrayList<>());
           }
-          versionServerMap.get(targetTag).add(server);
+          versionServerMap.get(targetTag).add((T) server);
         }
       }
     }
     return versionServerMap;
   }
 
-
   public void initLatestVersion(String serviceName, List<T> list) {
     if (RouterRuleCache.getServiceInfoCacheMap().get(serviceName).getLatestVersionTag() != null) {
       return;
     }
     String latestVersion = null;
-    for (T server : list) {
-      E ms = getIns.apply(server);
-      if (getServerName.apply(ms).equals(serviceName)) {
+    for (T item : list) {
+      ServiceCombServer server = (ServiceCombServer) item;
+      MicroserviceInstance instance = server.getServiceCombServiceInstance().getMicroserviceInstance();
+      if (instance.getServiceName().equals(serviceName)) {
         if (latestVersion == null || VersionCompareUtil
-            .compareVersion(latestVersion, getVersion.apply(ms)) == -1) {
-          latestVersion = getVersion.apply(ms);
+            .compareVersion(latestVersion, instance.getVersion()) == -1) {
+          latestVersion = instance.getVersion();
         }
       }
     }
@@ -158,12 +145,11 @@ public abstract class AbstractRouterDistributor<T extends Server, E> implements
     RouterRuleCache.getServiceInfoCacheMap().get(serviceName).setLatestVersionTag(tagitem);
   }
 
-
   public List<T> getLatestVersionList(List<T> list, String targetServiceName) {
     String latestV = RouterRuleCache.getServiceInfoCacheMap().get(targetServiceName)
         .getLatestVersionTag().getVersion();
-    return list.stream().filter(server ->
-        getVersion.apply(getIns.apply(server)).equals(latestV)
-    ).collect(Collectors.toList());
+    return list.stream().map(item -> (ServiceCombServer) item).filter(server ->
+        server.getServiceCombServiceInstance().getMicroserviceInstance().getVersion().equals(latestV)
+    ).map(item -> (T) item).collect(Collectors.toList());
   }
 }

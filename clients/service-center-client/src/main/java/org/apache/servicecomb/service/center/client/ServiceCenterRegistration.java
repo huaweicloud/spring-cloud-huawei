@@ -92,6 +92,7 @@ public class ServiceCenterRegistration extends AbstractTask {
           } else {
             microservice.setServiceId(response.getServiceId());
             microserviceInstance.setServiceId(response.getServiceId());
+            microserviceInstance.setMicroservice(microservice);
             eventBus.post(new MicroserviceRegistrationEvent(true));
             startTask(new RegisterSchemaTask(0));
           }
@@ -104,6 +105,7 @@ public class ServiceCenterRegistration extends AbstractTask {
           }
           microservice.setServiceId(serviceResponse.getServiceId());
           microserviceInstance.setServiceId(serviceResponse.getServiceId());
+          microserviceInstance.setMicroservice(microservice);
           eventBus.post(new MicroserviceRegistrationEvent(true));
           startTask(new RegisterSchemaTask(0));
         }

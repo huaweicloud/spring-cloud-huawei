@@ -19,6 +19,7 @@ package com.huaweicloud.servicecomb.discovery.discovery;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery;
@@ -33,7 +34,8 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 
 import com.huaweicloud.common.event.EventManager;
-import com.huaweicloud.servicecomb.discovery.client.model.ServiceRegistryConfig;
+import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
+import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
 
 public class ServiceCombDiscoveryClient implements DiscoveryClient {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombDiscoveryClient.class);
@@ -67,7 +69,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient {
     }
     List<MicroserviceInstance> instances = serviceCenterDiscovery.getInstanceCache(subscriptionKey);
 
-    return MicroserviceHandler.convertInstanceList(instances);
+    return instances.stream().map(item -> new ServiceCombServiceInstance(item)).collect(Collectors.toList());
   }
 
   @Override
@@ -92,7 +94,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient {
 
   private boolean isAllowedMicroservice(Microservice microservice) {
     if (microservice.getAppId().equals(discoveryProperties.getAppName()) ||
-        Boolean.parseBoolean(microservice.getProperties().get(ServiceRegistryConfig.CONFIG_ALLOW_CROSS_APP_KEY))) {
+        Boolean.parseBoolean(microservice.getProperties().get(DiscoveryConstants.CONFIG_ALLOW_CROSS_APP_KEY))) {
       return true;
     }
     return false;
