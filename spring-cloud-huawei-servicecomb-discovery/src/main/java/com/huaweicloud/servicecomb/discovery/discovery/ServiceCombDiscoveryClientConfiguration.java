@@ -17,9 +17,7 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
-import java.util.List;
-
-import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
+import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -28,15 +26,10 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
 
-import com.huaweicloud.common.exception.ServiceCombRuntimeException;
-import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
 import com.huaweicloud.common.transport.ServiceCombRBACProperties;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
-import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
-import com.huaweicloud.servicecomb.discovery.client.ServiceCombClientBuilder;
 import com.huaweicloud.servicecomb.discovery.registry.TagsProperties;
 
 /**
@@ -75,34 +68,10 @@ public class ServiceCombDiscoveryClientConfiguration {
   }
 
   @Bean
+  @ConditionalOnMissingBean
   @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.enabled", matchIfMissing = true)
-  public ServiceCombClient serviceCombClient(ServiceCombDiscoveryProperties serviceCombProperties,
-      ServiceCombRBACProperties serviceCombRBACProperties,
-      ServiceCombAkSkProperties serviceCombAkSkProperties,
-      ServiceCombSSLProperties serviceCombSSLProperties) {
-    ServiceCombClientBuilder builder = new ServiceCombClientBuilder();
-    if (!StringUtils.isEmpty(serviceCombAkSkProperties.getEnable())) {
-      throw new ServiceCombRuntimeException(
-          "config credentials.enable has change to credentials.enabled ,old names are no longer supported, please change it.");
-    }
-    builder
-        .setUrl(serviceCombProperties.getAddress())
-        .setServiceCombRBACProperties(serviceCombRBACProperties)
-        .setServiceCombAkSkProperties(serviceCombAkSkProperties)
-        .setServiceCombSSLProperties(serviceCombSSLProperties);
-    return builder.createServiceCombClient();
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
   public DiscoveryClient serviceCombDiscoveryClient(
-      ServiceCombDiscoveryProperties discoveryProperties, List<AuthHeaderProvider> authHeaderProviders) {
-    return new ServiceCombDiscoveryClient(discoveryProperties, authHeaderProviders);
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
-  public ServiceCombWatch serviceCombWatch(ServiceCombDiscoveryProperties discoveryProperties) {
-    return new ServiceCombWatch(discoveryProperties);
+      ServiceCombDiscoveryProperties discoveryProperties, ServiceCenterClient serviceCenterClient) {
+    return new ServiceCombDiscoveryClient(discoveryProperties, serviceCenterClient);
   }
 }
