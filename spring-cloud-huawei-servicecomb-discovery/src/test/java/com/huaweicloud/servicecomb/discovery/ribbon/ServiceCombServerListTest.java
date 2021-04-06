@@ -17,23 +17,20 @@
 
 package com.huaweicloud.servicecomb.discovery.ribbon;
 
-import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstanceStatus;
-import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
-import com.netflix.loadbalancer.Server;
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
+import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.cloud.client.ServiceInstance;
-import com.huaweicloud.common.exception.ServiceCombException;
-import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
-import com.huaweicloud.servicecomb.discovery.client.model.Microservice;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 
+import com.huaweicloud.common.exception.ServiceCombException;
+import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
 import com.netflix.client.config.IClientConfig;
+import com.netflix.loadbalancer.Server;
 
 import mockit.Expectations;
 import mockit.Injectable;
@@ -49,10 +46,7 @@ public class ServiceCombServerListTest {
   ServiceCombServerList serviceCombServerList;
 
   @Injectable
-  ServiceCombClient serviceCombClient;
-
-  @Injectable
-  ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
+  DiscoveryClient discoveryClient;
 
   @Injectable
   IClientConfig iClientConfig;
@@ -60,45 +54,16 @@ public class ServiceCombServerListTest {
   @Test
   public void getInitialListOfServers() throws ServiceCombException {
     List<ServiceInstance> instanceList = new ArrayList<>();
-    ServiceInstance serviceInstance = new ServiceInstance() {
-      @Override
-      public String getServiceId() {
-        return "serviceid11";
-      }
-
-      @Override
-      public String getHost() {
-        return null;
-      }
-
-      @Override
-      public int getPort() {
-        return 0;
-      }
-
-      @Override
-      public boolean isSecure() {
-        return false;
-      }
-
-      @Override
-      public URI getUri() {
-        return null;
-      }
-
-      @Override
-      public Map<String, String> getMetadata() {
-        Map<String, String> map = new HashMap<>();
-        map.put("status", MicroserviceInstanceStatus.UP.name());
-        return map;
-      }
-    };
+    MicroserviceInstance microserviceInstance = new MicroserviceInstance();
+    microserviceInstance.setServiceId("serviceid11");
+    microserviceInstance.setStatus(MicroserviceInstanceStatus.UP);
+    ServiceInstance serviceInstance = new ServiceCombServiceInstance(microserviceInstance);
     instanceList.add(serviceInstance);
     new Expectations() {
       {
         iClientConfig.getClientName();
         result = "serviceid11";
-        serviceCombClient.getInstances((Microservice) any, null);
+        discoveryClient.getInstances("serviceid11");
         result = instanceList;
       }
     };

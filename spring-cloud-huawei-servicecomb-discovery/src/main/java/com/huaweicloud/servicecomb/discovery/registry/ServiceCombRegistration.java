@@ -39,11 +39,18 @@ public class ServiceCombRegistration implements Registration {
 
   private MicroserviceInstance microserviceInstance;
 
+  private ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
+
   public ServiceCombRegistration(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
       TagsProperties tagsProperties) {
+    this.serviceCombDiscoveryProperties = serviceCombDiscoveryProperties;
     this.microservice = MicroserviceHandler.createMicroservice(serviceCombDiscoveryProperties);
     this.microserviceInstance = MicroserviceHandler
         .createMicroserviceInstance(serviceCombDiscoveryProperties, tagsProperties);
+  }
+
+  public ServiceCombDiscoveryProperties getServiceCombDiscoveryProperties() {
+    return this.serviceCombDiscoveryProperties;
   }
 
   public MicroserviceInstance getMicroserviceInstance() {

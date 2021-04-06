@@ -14,21 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.router.core.distribute;
 
-import java.util.List;
+package com.huaweicloud.servicecomb.discovery.client.model;
 
-import com.huaweicloud.router.core.model.PolicyRuleItem;
-import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServer;
-import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
+public final class DiscoveryConstants {
+  public static final String DEFAULT_API_VERSION = "v4";
 
-/**
- * @Author GuoYl123
- * @Date 2019/10/17
- **/
-public interface RouterDistributor<T> {
+  public static final String CONFIG_ALLOW_CROSS_APP_KEY = "allowCrossApp";
 
-  void init();
+  public static final String INSTANCE_STATUS = "status";
 
-  List<T> distribute(String targetServiceName, List<T> list, PolicyRuleItem invokeRule);
+  public static final String INSTANCE_ZONE = "zone";
+
+  public static final String DEFAULT_PROJECT = "default";
+
+  public static final String TENANT_NAME = "servicecomb.config.client.tenantName";
+
+  public static final String DOMAIN_NAME = "servicecomb.config.client.domainName";
+
+  public static final String NO_TENANT = "default";
+
+  public static final String DEFAULT_APPID = "default";
+
+  public static final String DEFAULT_CALL_VERSION = "0.0.0+";
+
+  public static final int DEFAULT_HEALTHCHECK_INTERVAL = 10;
 }

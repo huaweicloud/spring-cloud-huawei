@@ -17,8 +17,6 @@
 
 package com.huaweicloud.servicecomb.discovery.registry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationProperties;
 
@@ -28,8 +26,6 @@ import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationP
  **/
 
 public class ServiceCombAutoServiceRegistration extends AbstractAutoServiceRegistration<ServiceCombRegistration> {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombAutoServiceRegistration.class);
-
   private ServiceCombRegistration serviceCombRegistration;
 
   public ServiceCombAutoServiceRegistration(ServiceCombServiceRegistry registry,
@@ -65,8 +61,6 @@ public class ServiceCombAutoServiceRegistration extends AbstractAutoServiceRegis
 
   @Override
   protected ServiceCombRegistration getManagementRegistration() {
-    LOGGER.info("TODO//");
-    //TODO
-    return null;
+    throw new IllegalStateException("not implemented");
   }
 }

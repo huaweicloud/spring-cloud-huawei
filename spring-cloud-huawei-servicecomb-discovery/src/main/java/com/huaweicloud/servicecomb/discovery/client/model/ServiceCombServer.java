@@ -17,26 +17,19 @@
 
 package com.huaweicloud.servicecomb.discovery.client.model;
 
-public final class ServiceRegistryConfig {
-  public static final String DEFAULT_API_VERSION = "v4";
+import com.netflix.loadbalancer.Server;
 
-  public static final String CONFIG_ALLOW_CROSS_APP_KEY = "allowCrossApp";
+public class ServiceCombServer extends Server {
+  private ServiceCombServiceInstance serviceCombServiceInstance;
 
-  public static final String INSTANCE_STATUS = "status";
+  public ServiceCombServer(ServiceCombServiceInstance serviceCombServiceInstance) {
+    super(serviceCombServiceInstance.getScheme(), serviceCombServiceInstance.getHost(),
+        serviceCombServiceInstance.getPort());
+    this.serviceCombServiceInstance = serviceCombServiceInstance;
+    this.setZone(serviceCombServiceInstance.getMetadata().get(DiscoveryConstants.INSTANCE_ZONE));
+  }
 
-  public static final String INSTANCE_ZONE = "zone";
-
-  public static final String DEFAULT_PROJECT = "default";
-
-  public static final String TENANT_NAME = "servicecomb.config.client.tenantName";
-
-  public static final String DOMAIN_NAME = "servicecomb.config.client.domainName";
-
-  public static final String NO_TENANT = "default";
-
-  public static final String DEFAULT_APPID = "default";
-
-  public static final String DEFAULT_CALL_VERSION = "0.0.0+";
-
-  public static final int DEFAULT_HEALTHCHECK_INTERVAL = 10;
+  public ServiceCombServiceInstance getServiceCombServiceInstance() {
+    return this.serviceCombServiceInstance;
+  }
 }
