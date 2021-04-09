@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.servicecomb.service.center.client.RegistrationEvents.MicroserviceInstanceRegistrationEvent;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.ServiceCenterRegistration;
 import org.apache.servicecomb.service.center.client.ServiceCenterWatch;
@@ -34,8 +35,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
 
+import com.google.common.eventbus.Subscribe;
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
+import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 
 public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRegistration> {
@@ -52,6 +55,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   private ServiceCenterWatch watch;
 
+  private ServiceCombRegistration serviceCombRegistration;
+
   public ServiceCombServiceRegistry(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
       ServiceCenterClient serviceCenterClient, @Autowired(required = false) ServiceCenterWatch watch) {
     this.serviceCenterClient = serviceCenterClient;
@@ -59,27 +64,39 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     this.serviceCombDiscoveryProperties = serviceCombDiscoveryProperties;
   }
 
+  @Subscribe
+  public void onMicroserviceInstanceRegistrationEvent(MicroserviceInstanceRegistrationEvent event) {
+    if (event.isSuccess() && serviceCombDiscoveryProperties.isWatch()) {
+      watch.startWatch(DiscoveryConstants.DEFAULT_PROJECT, serviceCombRegistration.getMicroservice().getServiceId());
+    }
+  }
+
   @Override
   public void register(ServiceCombRegistration registration) {
+    serviceCombRegistration = registration;
     serviceCenterRegistration = new ServiceCenterRegistration(serviceCenterClient,
         EventManager.getEventBus());
+    EventManager.getEventBus().register(this);
     serviceCenterRegistration.setMicroservice(registration.getMicroservice());
     serviceCenterRegistration.setMicroserviceInstance(registration.getMicroserviceInstance());
-    serviceCombSwaggerHandler
-        .init(registration.getMicroservice().getAppId(), registration.getMicroservice().getServiceName());
-    registration.getMicroservice().setSchemas(serviceCombSwaggerHandler.getSchemaIds());
-    Map<String, String> contents = serviceCombSwaggerHandler.getSchemasMap();
-    Map<String, String> summary = serviceCombSwaggerHandler.getSchemasSummaryMap();
 
-    List<SchemaInfo> schemaInfos = serviceCombSwaggerHandler.getSchemaIds().stream()
-        .map(id -> new SchemaInfo(id, contents.get(id), summary.get(id)))
-        .collect(Collectors.toList());
-    serviceCenterRegistration.setSchemaInfos(schemaInfos);
+    addSchemaInfo(registration);
 
     serviceCenterRegistration.startRegistration();
+  }
 
-    if (serviceCombDiscoveryProperties.isWatch()) {
-      watch.startWatch();
+  private void addSchemaInfo(ServiceCombRegistration registration) {
+    if (serviceCombSwaggerHandler != null) {
+      serviceCombSwaggerHandler
+          .init(registration.getMicroservice().getAppId(), registration.getMicroservice().getServiceName());
+      registration.getMicroservice().setSchemas(serviceCombSwaggerHandler.getSchemaIds());
+      Map<String, String> contents = serviceCombSwaggerHandler.getSchemasMap();
+      Map<String, String> summary = serviceCombSwaggerHandler.getSchemasSummaryMap();
+
+      List<SchemaInfo> schemaInfos = serviceCombSwaggerHandler.getSchemaIds().stream()
+          .map(id -> new SchemaInfo(id, contents.get(id), summary.get(id)))
+          .collect(Collectors.toList());
+      serviceCenterRegistration.setSchemaInfos(schemaInfos);
     }
   }
 
@@ -88,8 +105,12 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     if (serviceCenterRegistration != null) {
       serviceCenterRegistration.stop();
       if (!StringUtils.isEmpty(registration.getMicroserviceInstance().getInstanceId())) {
-        serviceCenterClient.deleteMicroserviceInstance(registration.getMicroserviceInstance().getInstanceId(),
-            registration.getMicroserviceInstance().getServiceId());
+        try {
+          serviceCenterClient.deleteMicroserviceInstance(registration.getMicroserviceInstance().getServiceId(),
+              registration.getMicroserviceInstance().getInstanceId());
+        } catch (Exception e) {
+          LOGGER.error("delete microservice failed. ", e);
+        }
       }
     }
     if (watch != null) {

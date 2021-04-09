@@ -25,12 +25,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.servicecomb.http.client.task.AbstractTask;
 import org.apache.servicecomb.http.client.task.Task;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.InstanceChangedEvent;
+import org.apache.servicecomb.service.center.client.DiscoveryEvents.PullInstanceEvent;
 import org.apache.servicecomb.service.center.client.model.FindMicroserviceInstancesResponse;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 public class ServiceCenterDiscovery extends AbstractTask {
   private static final String ALL_VERSION = "0+";
@@ -88,6 +90,7 @@ public class ServiceCenterDiscovery extends AbstractTask {
     super("service-center-discovery-task");
     this.serviceCenterClient = serviceCenterClient;
     this.eventBus = eventBus;
+    this.eventBus.register(this);
   }
 
   public void updateMyselfServiceId(String myselfServiceId) {
@@ -112,6 +115,11 @@ public class ServiceCenterDiscovery extends AbstractTask {
 
   public boolean isRegistered(SubscriptionKey key) {
     return this.instancesCache.get(key) != null;
+  }
+
+  @Subscribe
+  public void onPullInstanceEvent(PullInstanceEvent event) {
+    pullAllInstance();
   }
 
   private void pullInstance(SubscriptionKey k, SubscriptionValue v) {
@@ -144,12 +152,16 @@ public class ServiceCenterDiscovery extends AbstractTask {
   class PullInstanceTask implements Task {
     @Override
     public void execute() {
-      instancesCache.forEach((k, v) -> {
-        pullInstance(k, v);
-      });
+      pullAllInstance();
 
       startTask(new BackOffSleepTask(POLL_INTERVAL, new PullInstanceTask()));
     }
+  }
+
+  private synchronized void pullAllInstance() {
+    instancesCache.forEach((k, v) -> {
+      pullInstance(k, v);
+    });
   }
 
   private static String instanceToString(List<MicroserviceInstance> instances) {

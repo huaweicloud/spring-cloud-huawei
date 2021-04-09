@@ -36,6 +36,8 @@ public final class DiscoveryConstants {
 
   public static final String DEFAULT_APPID = "default";
 
+  public static final String SERVICE_CENTER = "SERVICECENTER";
+
   public static final String DEFAULT_CALL_VERSION = "0.0.0+";
 
   public static final int DEFAULT_HEALTHCHECK_INTERVAL = 10;

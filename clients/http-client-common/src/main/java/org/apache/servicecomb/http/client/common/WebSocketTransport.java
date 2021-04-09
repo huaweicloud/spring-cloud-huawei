@@ -27,13 +27,9 @@ import org.apache.servicecomb.foundation.ssl.SSLManager;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ServerHandshake;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class WebSocketTransport extends WebSocketClient {
   public static final int CONNECT_TIMEOUT = 5000;
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketTransport.class);
 
   private WebSocketListener webSocketListener;
 
@@ -53,23 +49,21 @@ public class WebSocketTransport extends WebSocketClient {
 
   @Override
   public void onOpen(ServerHandshake serverHandshake) {
-    LOGGER.info("web socket connected to server {}, status={}, message={}", uri, serverHandshake.getHttpStatus(),
-        serverHandshake.getHttpStatusMessage());
+    this.webSocketListener.onOpen(serverHandshake);
   }
 
   @Override
   public void onMessage(String s) {
-
+    this.webSocketListener.onMessage(s);
   }
 
   @Override
   public void onClose(int code, String reason, boolean remote) {
-    LOGGER.info("web socket closed from server {}, code={}, reason={}, remote={}",
-        uri, code, reason, remote);
+    this.webSocketListener.onClose(code, reason, remote);
   }
 
   @Override
   public void onError(Exception e) {
-
+    this.webSocketListener.onError(e);
   }
 }

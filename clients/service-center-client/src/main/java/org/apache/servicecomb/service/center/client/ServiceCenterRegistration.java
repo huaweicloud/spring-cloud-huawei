@@ -107,7 +107,8 @@ public class ServiceCenterRegistration extends AbstractTask {
           microserviceInstance.setServiceId(serviceResponse.getServiceId());
           microserviceInstance.setMicroservice(microservice);
           eventBus.post(new MicroserviceRegistrationEvent(true));
-          startTask(new RegisterSchemaTask(0));
+          LOGGER.info("microservice is already registered, meta info like swagger contents will not be updated.");
+          startTask(new RegisterMicroserviceInstanceTask(0));
         }
       } catch (IllegalStateException e) {
         throw e;

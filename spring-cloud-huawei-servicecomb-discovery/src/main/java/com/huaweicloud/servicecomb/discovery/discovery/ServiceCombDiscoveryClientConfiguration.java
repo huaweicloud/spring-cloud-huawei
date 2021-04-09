@@ -19,59 +19,48 @@ package com.huaweicloud.servicecomb.discovery.discovery;
 
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.CommonsClientAutoConfiguration;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 import com.huaweicloud.common.transport.ServiceCombRBACProperties;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
+import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 import com.huaweicloud.servicecomb.discovery.registry.TagsProperties;
-
-/**
- * @Author wangqijun
- * @Date 10:49 2019-07-08
- **/
 
 @Configuration
 @ConditionalOnServiceCombDiscoveryEnabled
-@AutoConfigureBefore({SimpleDiscoveryClientAutoConfiguration.class,
-    CommonsClientAutoConfiguration.class})
+@AutoConfigureBefore({CommonsClientAutoConfiguration.class})
 public class ServiceCombDiscoveryClientConfiguration {
 
   @Bean
-  @ConditionalOnMissingBean
   public ServiceCombDiscoveryProperties serviceCombProperties() {
     return new ServiceCombDiscoveryProperties();
   }
 
   @Bean
-  @ConditionalOnMissingBean
   public TagsProperties tagsProperties() {
     return new TagsProperties();
   }
 
   @Bean
-  @ConditionalOnMissingBean
   public ServiceCombSSLProperties serviceCombSSLProperties() {
     return new ServiceCombSSLProperties();
   }
 
   @Bean
-  @ConditionalOnMissingBean
   public ServiceCombRBACProperties serviceCombRBACProperties() {
     return new ServiceCombRBACProperties();
   }
 
   @Bean
-  @ConditionalOnMissingBean
-  @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.enabled", matchIfMissing = true)
+  @Order(100)
   public DiscoveryClient serviceCombDiscoveryClient(
-      ServiceCombDiscoveryProperties discoveryProperties, ServiceCenterClient serviceCenterClient) {
-    return new ServiceCombDiscoveryClient(discoveryProperties, serviceCenterClient);
+      ServiceCombDiscoveryProperties discoveryProperties, ServiceCenterClient serviceCenterClient,
+      ServiceCombRegistration serviceCombRegistration) {
+    return new ServiceCombDiscoveryClient(discoveryProperties, serviceCenterClient, serviceCombRegistration);
   }
 }

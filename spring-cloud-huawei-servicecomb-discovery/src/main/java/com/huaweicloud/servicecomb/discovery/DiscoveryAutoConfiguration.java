@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
-import org.apache.servicecomb.foundation.auth.SignRequest;
 import org.apache.servicecomb.foundation.ssl.SSLCustom;
 import org.apache.servicecomb.foundation.ssl.SSLOption;
 import org.apache.servicecomb.http.client.auth.RequestAuthHeaderProvider;
@@ -34,6 +33,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.common.util.URLUtil;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
@@ -49,16 +49,17 @@ public class DiscoveryAutoConfiguration {
     AddressManager addressManager = createAddressManager(discoveryProperties);
     SSLProperties sslProperties = createSSLProperties(addressManager, serviceCombSSLProperties);
     return new ServiceCenterClient(addressManager, sslProperties,
-        new RequestAuthHeaderProvider() {
-          @Override
-          public Map<String, String> loadAuthHeader(SignRequest signRequest) {
-            Map<String, String> headers = new HashMap<>();
-            authHeaderProviders.forEach(provider -> headers.putAll(provider.authHeaders()));
-            return headers;
-          }
-        },
+        getRequestAuthHeaderProvider(authHeaderProviders),
         // TODO: add other headers needed for registration
         "default", new HashMap<>());
+  }
+
+  private RequestAuthHeaderProvider getRequestAuthHeaderProvider(List<AuthHeaderProvider> authHeaderProviders) {
+    return signRequest -> {
+      Map<String, String> headers = new HashMap<>();
+      authHeaderProviders.forEach(provider -> headers.putAll(provider.authHeaders()));
+      return headers;
+    };
   }
 
   @Bean
@@ -68,16 +69,9 @@ public class DiscoveryAutoConfiguration {
       List<AuthHeaderProvider> authHeaderProviders) {
     AddressManager addressManager = createAddressManager(discoveryProperties);
     SSLProperties sslProperties = createSSLProperties(addressManager, serviceCombSSLProperties);
-    return new ServiceCenterWatch(addressManager, sslProperties, new RequestAuthHeaderProvider() {
-      @Override
-      public Map<String, String> loadAuthHeader(SignRequest signRequest) {
-        Map<String, String> headers = new HashMap<>();
-        authHeaderProviders.forEach(provider -> headers.putAll(provider.authHeaders()));
-        return headers;
-      }
-    },
+    return new ServiceCenterWatch(addressManager, sslProperties, getRequestAuthHeaderProvider(authHeaderProviders),
         // TODO: add other headers needed for registration
-        "default", new HashMap<>());
+        "default", new HashMap<>(), EventManager.getEventBus());
   }
 
   private SSLProperties createSSLProperties(AddressManager addressManager,
