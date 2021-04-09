@@ -23,7 +23,6 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.huaweicloud.servicecomb.discovery.event.ServiceCombEventBus;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.IPing;
 import com.netflix.loadbalancer.ServerList;
@@ -50,7 +49,7 @@ public class ServiceCombRibbonClientConfiguration {
   }
 
   @Bean
-  public ServerListUpdater serviceCombServerListUpdater(ServiceCombEventBus eventBus) {
-    return new ServiceCombServerListUpdater(eventBus);
+  public ServerListUpdater serviceCombServerListUpdater() {
+    return new ServiceCombServerListUpdater();
   }
 }

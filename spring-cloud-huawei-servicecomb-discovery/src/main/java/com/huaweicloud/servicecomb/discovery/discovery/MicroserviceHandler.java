@@ -76,12 +76,20 @@ public class MicroserviceHandler {
       microservice.setVersion(serviceCombDiscoveryProperties.getVersion());
     }
 
-    microservice.setFramework(new Framework());
-    if (!serviceCombDiscoveryProperties.isAllowCrossApp()) {
+    Framework framework = createFramework();
+    microservice.setFramework(framework);
+    if (serviceCombDiscoveryProperties.isAllowCrossApp()) {
       microservice.getProperties().put(DiscoveryConstants.CONFIG_ALLOW_CROSS_APP_KEY, "true");
     }
     microservice.setStatus(MicroserviceStatus.UP);
     return microservice;
+  }
+
+  private static Framework createFramework() {
+    Framework framework = new Framework();
+    framework.setName("springCloud");
+    framework.setVersion(MicroserviceHandler.class.getPackage().getImplementationVersion());
+    return framework;
   }
 
   public static MicroserviceInstance createMicroserviceInstance(

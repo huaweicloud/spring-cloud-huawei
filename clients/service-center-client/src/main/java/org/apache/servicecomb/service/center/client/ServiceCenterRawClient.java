@@ -84,13 +84,12 @@ public class ServiceCenterRawClient {
       String retryAddress = addressManager.formatUrl(url, absoluteUrl);
       LOGGER.warn("send request to {} failed and retry to {} once. ", address,
           retryAddress, e);
-      httpRequest = new HttpRequest(address, headers, content, method);
+      httpRequest = new HttpRequest(retryAddress, headers, content, method);
       try {
         return httpTransport.doRequest(httpRequest);
       } catch (IOException ioException) {
         addressManager.changeAddress();
-        LOGGER.warn("retry to {} failed again, and change next address {}. ", retryAddress
-            , addressManager.address());
+        LOGGER.warn("retry to {} failed again. ", retryAddress, e);
         throw ioException;
       }
     }

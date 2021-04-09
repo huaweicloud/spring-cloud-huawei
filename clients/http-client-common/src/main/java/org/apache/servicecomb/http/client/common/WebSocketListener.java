@@ -17,8 +17,14 @@
 
 package org.apache.servicecomb.http.client.common;
 
+import org.java_websocket.handshake.ServerHandshake;
+
 public interface WebSocketListener {
   void onMessage(String s);
 
   void onError(Exception e);
+
+  void onClose(int code, String reason, boolean remote);
+
+  void onOpen(ServerHandshake serverHandshake);
 }

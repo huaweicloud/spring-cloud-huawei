@@ -17,19 +17,39 @@
 
 package org.apache.servicecomb.service.center.client;
 
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.servicecomb.http.client.auth.RequestAuthHeaderProvider;
 import org.apache.servicecomb.http.client.common.HttpConfiguration.SSLProperties;
 import org.apache.servicecomb.http.client.common.WebSocketListener;
 import org.apache.servicecomb.http.client.common.WebSocketTransport;
+import org.apache.servicecomb.service.center.client.DiscoveryEvents.PullInstanceEvent;
+import org.java_websocket.handshake.ServerHandshake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.eventbus.EventBus;
+
 public class ServiceCenterWatch implements WebSocketListener {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCenterWatch.class);
+
+  private static final String HTTP = "http://";
+
+  private static final String HTTPS = "https://";
+
+  private static final String WS = "ws://";
+
+  private static final String WSS = "wss://";
+
+  private static final String WATCH = "/v4/%s/registry/microservices/%s/watcher";
+
+  private static final long SLEEP_BASE = 3000;
+
+  private static final long SLEEP_MAX = 10 * 60 * 10000;
 
   private AddressManager addressManager;
 
@@ -43,30 +63,71 @@ public class ServiceCenterWatch implements WebSocketListener {
 
   private WebSocketTransport webSocketTransport;
 
+  private String project;
+
+  private String serviceId;
+
+  private int continuousError = 0;
+
+  private AtomicBoolean reconnecting = new AtomicBoolean(false);
+
+  private EventBus eventBus;
+
+  private ExecutorService connector = Executors.newFixedThreadPool(1, (r) -> new
+      Thread(r, "web-socket-connector"));
+
   public ServiceCenterWatch(AddressManager addressManager,
       SSLProperties sslProperties,
       RequestAuthHeaderProvider requestAuthHeaderProvider,
       String tenantName,
-      Map<String, String> extraGlobalHeaders) {
+      Map<String, String> extraGlobalHeaders,
+      EventBus eventBus) {
     this.addressManager = addressManager;
     this.sslProperties = sslProperties;
     this.requestAuthHeaderProvider = requestAuthHeaderProvider;
     this.tenantName = tenantName;
     this.extraGlobalHeaders = extraGlobalHeaders;
+    this.eventBus = eventBus;
   }
 
-  public void startWatch() {
-    try {
-      Map<String, String> headers = new HashMap<>();
-      headers.put("x-domain-name", this.tenantName);
-      headers.putAll(this.extraGlobalHeaders);
-      headers.putAll(this.requestAuthHeaderProvider.loadAuthHeader(null));
-      webSocketTransport = new WebSocketTransport(addressManager.address(), sslProperties,
-          headers, this);
-      webSocketTransport.connect();
-    } catch (URISyntaxException e) {
-      LOGGER.error("start watch failed. ", e);
+  public void startWatch(String project, String serviceId) {
+    this.project = project;
+    this.serviceId = serviceId;
+
+    startWatch();
+  }
+
+  private void startWatch() {
+    connector.submit(() -> {
+      backOff();
+
+      try {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("x-domain-name", this.tenantName);
+        headers.putAll(this.extraGlobalHeaders);
+        headers.putAll(this.requestAuthHeaderProvider.loadAuthHeader(null));
+        LOGGER.info("start watch to address {}", addressManager.address());
+        webSocketTransport = new WebSocketTransport(convertAddress(), sslProperties,
+            headers, this);
+        webSocketTransport.connectBlocking();
+      } catch (Exception e) {
+        LOGGER.error("start watch failed. ", e);
+      }
+    });
+  }
+
+  private String convertAddress() {
+    String address = addressManager.address();
+    String url = String.format(WATCH, project, serviceId);
+    if (address.startsWith(HTTP)) {
+      return WS + address.substring(HTTP.length()) + url;
     }
+
+    if (address.startsWith(HTTPS)) {
+      return WSS + address.substring(HTTPS.length()) + url;
+    }
+
+    return address + url;
   }
 
   public void stop() {
@@ -74,8 +135,12 @@ public class ServiceCenterWatch implements WebSocketListener {
       webSocketTransport.close();
     }
   }
-  
+
   private void reconnect() {
+    if (reconnecting.getAndSet(true)) {
+      return;
+    }
+    continuousError++;
     if (webSocketTransport != null) {
       webSocketTransport.close();
     }
@@ -83,14 +148,40 @@ public class ServiceCenterWatch implements WebSocketListener {
     startWatch();
   }
 
+  private void backOff() {
+    if (this.continuousError <= 0) {
+      return;
+    }
+    try {
+      Thread.sleep(Math.min(SLEEP_MAX, this.continuousError * this.continuousError * SLEEP_BASE));
+    } catch (InterruptedException e) {
+      // do not care
+    }
+  }
+
   @Override
   public void onMessage(String s) {
     LOGGER.info("web socket receive message [{}], start query instance", s);
+    this.eventBus.post(new PullInstanceEvent());
   }
 
   @Override
   public void onError(Exception e) {
     LOGGER.warn("web socket receive error [{}], will restart.", e.getMessage());
     reconnect();
+  }
+
+  @Override
+  public void onClose(int code, String reason, boolean remote) {
+    LOGGER.warn("web socket closed, code={}, reason={}.", code, reason);
+  }
+
+  @Override
+  public void onOpen(ServerHandshake serverHandshake) {
+    LOGGER.info("web socket connected to server {}, status={}, message={}", addressManager.address(),
+        serverHandshake.getHttpStatus(),
+        serverHandshake.getHttpStatusMessage());
+    continuousError = 0;
+    reconnecting.set(false);
   }
 }
