@@ -17,6 +17,8 @@
 
 package com.huaweicloud.common.transport;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -70,13 +72,14 @@ public class ServiceCombAkSkProperties {
   }
 
   public String getSecretKey() {
-    String decodedSecretKey = new String(findCipher().decrypt(this.secretKey.toCharArray()));
+    String decodedSecretKey = new String(DefaultCipher.findCipher(ciphers, this.akskCustomCipher).
+        decrypt(this.secretKey.toCharArray()));
 
     if (ShaAKSKCipher.CIPHER_NAME.equalsIgnoreCase(this.akskCustomCipher)) {
       return decodedSecretKey;
     }
 
-    return SecretUtil.sha256Encode(this.secretKey, this.accessKey);
+    return SecretUtil.sha256Encode(decodedSecretKey, this.accessKey);
   }
 
   public void setSecretKey(String secretKey) {
@@ -117,18 +120,5 @@ public class ServiceCombAkSkProperties {
 
   public boolean isEmpty() {
     return getAccessKey() == null || getSecretKey() == null;
-  }
-
-  private Cipher findCipher() {
-    if (DefaultCipher.CIPHER_NAME.equals(this.akskCustomCipher)) {
-      return DefaultCipher.getInstance();
-    }
-
-    if (ciphers == null) {
-      throw new IllegalArgumentException("failed to find cipher named " + this.akskCustomCipher);
-    }
-
-    return ciphers.stream().filter(c -> c.name().equals(this.akskCustomCipher)).findFirst()
-        .orElseThrow(() -> new IllegalArgumentException("failed to find cipher named " + this.akskCustomCipher));
   }
 }
