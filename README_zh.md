@@ -59,7 +59,7 @@
      * 服务治理模块，提供基于动态配置的熔断、限流、隔离、重试功能特性，核心能力基于[resilience4j](https://github.com/resilience4j/resilience4j)。
      * 流量粒度的治理管控，可以针对请求Path、请求Method、请求Header进行相应的算子匹配来进行流量标记，进行精确的流量治理。
      * 利用动态配置，做到零等待下发治理规则生效。无代码侵入，用户无需学习繁琐的sdk使用，只需下发配置。
-     * [更多信息](https://github.com/huaweicloud/spring-cloud-huawei/tree/master/spring-cloud-huawei-governance)
+     * [更多信息](https://support.huaweicloud.com/devg-servicestage/ss-devg-0021.html)
      
 ## 如何使用
 spring-cloud-huawei已发布在maven中央仓库。
