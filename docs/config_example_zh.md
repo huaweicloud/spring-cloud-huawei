@@ -26,8 +26,11 @@
         servicecomb:
           config:
             serverAddr: https://cse.cn-east-3.myhuaweicloud.com 
+            serverType: kie
             watch:
               delay: 10000
+
+==注意：CSE2.0使用kie配置中心==  
 
 ### step 4 验证
 访问http://127.0.0.1:8080/price?id=11
