@@ -43,6 +43,8 @@ public class ServiceCombSSLProperties {
   //identity certificate password
   private String keyStoreValue;
 
+  private String sslKey;
+
   public KeyStoreInstanceType getKeyStoreType() {
     return keyStoreType;
   }
@@ -83,9 +85,17 @@ public class ServiceCombSSLProperties {
     this.keyStoreValue = keyStoreValue;
   }
 
+  public String getSslKey() {
+    return sslKey;
+  }
+
+  public void setSslKey(String sslKey) {
+    this.sslKey = sslKey;
+  }
+
   public boolean isEmpty() {
     return StringUtils.isEmpty(trustStoreValue) || StringUtils.isEmpty(keyStoreValue) || StringUtils
-        .isEmpty(trustStore) || StringUtils.isEmpty(keyStore);
+        .isEmpty(trustStore) || StringUtils.isEmpty(keyStore) || StringUtils.isEmpty(sslKey);
   }
 
   //keyStore type

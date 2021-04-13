@@ -79,6 +79,7 @@ public class DiscoveryAutoConfiguration {
     SSLProperties sslProperties = new SSLProperties();
     sslProperties.setEnabled(addressManager.sslEnabled());
     SSLOption sslOption = new SSLOption();
+//    SSLOption sslOption = SSLOption.buildFromYaml(serviceCombSSLProperties.getSslKey());
     sslOption.setKeyStoreType(serviceCombSSLProperties.getKeyStoreType() == null ? null :
         serviceCombSSLProperties.getKeyStoreType().name());
     sslOption.setKeyStore(serviceCombSSLProperties.getKeyStore());
@@ -89,7 +90,7 @@ public class DiscoveryAutoConfiguration {
 
     sslProperties.setSslOption(sslOption);
     // TODO: support ssl password encryption
-    sslProperties.setSslCustom(SSLCustom.defaultSSLCustom());
+    sslProperties.setSslCustom(SSLCustom.createSSLCustom(sslOption.getSslCustomClass()));
     return sslProperties;
   }
 
