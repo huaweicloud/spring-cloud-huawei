@@ -205,8 +205,7 @@ public class ServiceCombSSLProperties {
 
   public boolean isEmpty() {
     return StringUtils.isEmpty(trustStoreValue) || StringUtils.isEmpty(keyStoreValue) || StringUtils
-        .isEmpty(trustStore) || StringUtils.isEmpty(keyStore) || StringUtils.isEmpty(sslCustomClass)
-        || StringUtils.isEmpty(ciphers) || StringUtils.isEmpty(protocols);
+        .isEmpty(trustStore) || StringUtils.isEmpty(keyStore);
   }
 
   //keyStore type
