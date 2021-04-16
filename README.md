@@ -65,7 +65,7 @@ Including [Apache ServiceComb](http://servicecomb.apache.org) and [ServiceStage]
      * Based on the dynamic configuration, provide CircuitBreaker, Bulkhead, RateLimiter and Retry feature, based on [resilience4j](https://github.com/resilience4j/resilience4j)。
      * For traffic governance, the operator matching is used to label the traffic, which can accurately govern the traffic for the request path , request method and request header.
      * By using dynamic configuration, zero waiting for governance rules to take effect. No code intrusion, only need distribution configuration.
-     * [more information](https://github.com/huaweicloud/spring-cloud-huawei/tree/master/spring-cloud-huawei-governance)
+     * [more information](https://support.huaweicloud.com/devg-servicestage/ss-devg-0021.html)
 
 ## How to use
 spring-cloud-huawei has been released in Maven's central repository.
