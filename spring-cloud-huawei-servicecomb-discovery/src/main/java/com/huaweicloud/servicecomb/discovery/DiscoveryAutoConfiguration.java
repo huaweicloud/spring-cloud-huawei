@@ -85,8 +85,8 @@ public class DiscoveryAutoConfiguration {
         SSLOption.DEFAULT_OPTION.getKeyStore() : serviceCombSSLProperties.getKeyStore());
     sslOption.setKeyStoreValue(serviceCombSSLProperties.getKeyStoreValue() == null?
         SSLOption.DEFAULT_OPTION.getKeyStoreValue() : serviceCombSSLProperties.getKeyStoreValue());
-    sslOption.setTrustStoreType(ServiceCombSSLProperties.KeyStoreInstanceType.JKS.name() == null?
-        SSLOption.DEFAULT_OPTION.getTrustStoreType() : ServiceCombSSLProperties.KeyStoreInstanceType.JKS.name());
+    sslOption.setTrustStoreType(serviceCombSSLProperties.getTrustStoreType() == null?
+        SSLOption.DEFAULT_OPTION.getTrustStoreType() : serviceCombSSLProperties.getTrustStoreType());
     sslOption.setTrustStore(serviceCombSSLProperties.getTrustStore() == null?
         SSLOption.DEFAULT_OPTION.getTrustStore() : serviceCombSSLProperties.getTrustStore());
     sslOption.setTrustStoreValue(serviceCombSSLProperties.getTrustStoreValue() == null?
@@ -111,7 +111,6 @@ public class DiscoveryAutoConfiguration {
     sslOption.setCheckCNWhite(serviceCombSSLProperties.isCheckCNWhite());
 
     sslProperties.setSslOption(sslOption);
-    // TODO: support ssl password encryption
     sslProperties.setSslCustom(SSLCustom.createSSLCustom(serviceCombSSLProperties.getSslCustomClass()));
     return sslProperties;
   }
