@@ -20,6 +20,9 @@ package com.huaweicloud.common.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.apache.commons.configuration.EnvironmentConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
 import org.springframework.util.StringUtils;
@@ -149,12 +152,18 @@ public class URLUtil {
   private static List<String> getEnvURL(String systemServer) {
     SystemConfiguration sysConfig = new SystemConfiguration();
     EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
-    String sysURL = sysConfig.getString(systemServer);
-    String envURL = envConfig.getString(systemServer);
+    List<Object> sysURL = sysConfig.getList(systemServer);
+    List<Object> envURL = envConfig.getList(systemServer);
     if (StringUtils.isEmpty(sysURL) && StringUtils.isEmpty(envURL)) {
-      sysURL = sysConfig.getString(SYSTEM_KEY_BOTH);
-      envURL = envConfig.getString(SYSTEM_KEY_BOTH);
+      sysURL = sysConfig.getList(SYSTEM_KEY_BOTH);
+      envURL = envConfig.getList(SYSTEM_KEY_BOTH);
     }
-    return StringUtils.isEmpty(sysURL) ? dealMultiUrl(envURL) : dealMultiUrl(sysURL);
+    List<String> res;
+    if (sysURL.size() == 0) {
+      res = envURL.stream().map(obj -> Objects.toString(obj, null)).collect(Collectors.toList());
+    } else {
+      res = sysURL.stream().map(obj -> Objects.toString(obj, null)).collect(Collectors.toList());
+    }
+    return res;
   }
 }
