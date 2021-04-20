@@ -24,16 +24,14 @@ import org.springframework.stereotype.Component;
 
 /**
  * @Author wangqijun
- * @Date 10:49 2019-07-08
  **/
-
 @Component
 @ConfigurationProperties("spring.cloud.servicecomb.discovery")
 public class ServiceCombDiscoveryProperties {
 
   private boolean enabled = true;
 
-  private boolean watch = true;
+  private boolean watch = false;
 
   private String address;
 
