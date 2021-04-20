@@ -152,24 +152,32 @@ public class URLUtil {
 
   private static List<String> getEnvURL(String systemServer) {
     SystemConfiguration sysConfig = new SystemConfiguration();
-    EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
-
     List<Object> sysURL = sysConfig.getList(systemServer);
+
+    if (!CollectionUtils.isEmpty(sysURL)) {
+      return toStringList(sysURL);
+    }
+
+    EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
     List<Object> envURL = envConfig.getList(systemServer);
-
-    if (CollectionUtils.isEmpty(sysURL)) {
-      sysURL = sysConfig.getList(SYSTEM_KEY_BOTH);
-    }
-    if (CollectionUtils.isEmpty(envURL)) {
-      envURL = envConfig.getList(SYSTEM_KEY_BOTH);
+    if (!CollectionUtils.isEmpty(envURL)) {
+      return toStringList(envURL);
     }
 
-    List<String> res;
-    if (CollectionUtils.isEmpty(sysURL)) {
-      res = envURL.stream().map(obj -> Objects.toString(obj, null)).collect(Collectors.toList());
-    } else {
-      res = sysURL.stream().map(obj -> Objects.toString(obj, null)).collect(Collectors.toList());
+    sysURL = sysConfig.getList(SYSTEM_KEY_BOTH);
+    if (!CollectionUtils.isEmpty(sysURL)) {
+      return toStringList(sysURL);
     }
-    return res;
+
+    envURL = envConfig.getList(SYSTEM_KEY_BOTH);
+    if (!CollectionUtils.isEmpty(envURL)) {
+      return toStringList(envURL);
+    }
+
+    return null;
+  }
+
+  private static List<String> toStringList(List<Object> list) {
+    return list.stream().map(obj -> Objects.toString(obj, null)).collect(Collectors.toList());
   }
 }
