@@ -43,6 +43,30 @@ public class ServiceCombSSLProperties {
   //identity certificate password
   private String keyStoreValue;
 
+  private String sslCustomClass;
+
+  private String ciphers;
+
+  private String engine;
+
+  private String protocols;
+
+  private boolean authPeer;
+
+  private boolean checkCNHost;
+
+  private boolean checkCNWhite;
+
+  private String checkCNWhiteFile;
+
+  private boolean allowRenegociate;
+
+  private String storePath;
+
+  private String trustStoreType;
+
+  private String crl;
+
   public KeyStoreInstanceType getKeyStoreType() {
     return keyStoreType;
   }
@@ -81,6 +105,102 @@ public class ServiceCombSSLProperties {
 
   public void setKeyStoreValue(String keyStoreValue) {
     this.keyStoreValue = keyStoreValue;
+  }
+
+  public String getSslCustomClass() {
+    return sslCustomClass;
+  }
+
+  public void setSslCustomClass(String sslCustomClass) {
+    this.sslCustomClass = sslCustomClass;
+  }
+
+  public String getCiphers() {
+    return ciphers;
+  }
+
+  public void setCiphers(String ciphers) {
+    this.ciphers = ciphers;
+  }
+
+  public String getEngine() {
+    return engine;
+  }
+
+  public void setEngine(String engine) {
+    this.engine = engine;
+  }
+
+  public String getProtocols() {
+    return protocols;
+  }
+
+  public void setProtocols(String protocols) {
+    this.protocols = protocols;
+  }
+
+  public boolean isAuthPeer() {
+    return authPeer;
+  }
+
+  public void setAuthPeer(boolean authPeer) {
+    this.authPeer = authPeer;
+  }
+
+  public boolean isCheckCNHost() {
+    return checkCNHost;
+  }
+
+  public void setCheckCNHost(boolean checkCNHost) {
+    this.checkCNHost = checkCNHost;
+  }
+
+  public boolean isCheckCNWhite() {
+    return checkCNWhite;
+  }
+
+  public void setCheckCNWhite(boolean checkCNWhite) {
+    this.checkCNWhite = checkCNWhite;
+  }
+
+  public String getCheckCNWhiteFile() {
+    return checkCNWhiteFile;
+  }
+
+  public void setCheckCNWhiteFile(String checkCNWhiteFile) {
+    this.checkCNWhiteFile = checkCNWhiteFile;
+  }
+
+  public boolean isAllowRenegociate() {
+    return allowRenegociate;
+  }
+
+  public void setAllowRenegociate(boolean allowRenegociate) {
+    this.allowRenegociate = allowRenegociate;
+  }
+
+  public String getStorePath() {
+    return storePath;
+  }
+
+  public void setStorePath(String storePath) {
+    this.storePath = storePath;
+  }
+
+  public String getTrustStoreType() {
+    return trustStoreType;
+  }
+
+  public void setTrustStoreType(String trustStoreType) {
+    this.trustStoreType = trustStoreType;
+  }
+
+  public String getCrl() {
+    return crl;
+  }
+
+  public void setCrl(String crl) {
+    this.crl = crl;
   }
 
   public boolean isEmpty() {
