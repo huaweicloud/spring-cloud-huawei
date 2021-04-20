@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.configuration.EnvironmentConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -152,14 +153,19 @@ public class URLUtil {
   private static List<String> getEnvURL(String systemServer) {
     SystemConfiguration sysConfig = new SystemConfiguration();
     EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
+
     List<Object> sysURL = sysConfig.getList(systemServer);
     List<Object> envURL = envConfig.getList(systemServer);
-    if (StringUtils.isEmpty(sysURL) && StringUtils.isEmpty(envURL)) {
+
+    if (CollectionUtils.isEmpty(sysURL)) {
       sysURL = sysConfig.getList(SYSTEM_KEY_BOTH);
+    }
+    if (CollectionUtils.isEmpty(envURL)) {
       envURL = envConfig.getList(SYSTEM_KEY_BOTH);
     }
+
     List<String> res;
-    if (sysURL.size() == 0) {
+    if (CollectionUtils.isEmpty(sysURL)) {
       res = envURL.stream().map(obj -> Objects.toString(obj, null)).collect(Collectors.toList());
     } else {
       res = sysURL.stream().map(obj -> Objects.toString(obj, null)).collect(Collectors.toList());
