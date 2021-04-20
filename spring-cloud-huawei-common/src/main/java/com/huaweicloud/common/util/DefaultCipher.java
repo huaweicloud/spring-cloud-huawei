@@ -17,6 +17,8 @@
 
 package com.huaweicloud.common.util;
 
+import java.util.List;
+
 public final class DefaultCipher implements Cipher {
   public static final String CIPHER_NAME = "default";
 
@@ -37,6 +39,19 @@ public final class DefaultCipher implements Cipher {
   @Override
   public char[] decrypt(char[] encrypted) {
     return encrypted;
+  }
+
+  public static Cipher findCipher(List<Cipher> ciphers, String akskCustomCipher) {
+    if (CIPHER_NAME.equals(akskCustomCipher)) {
+      return DefaultCipher.getInstance();
+    }
+
+    if (ciphers == null) {
+      throw new IllegalArgumentException("failed to find cipher named " + akskCustomCipher);
+    }
+
+    return ciphers.stream().filter(c -> c.name().equals(akskCustomCipher)).findFirst()
+        .orElseThrow(() -> new IllegalArgumentException("failed to find cipher named " + akskCustomCipher));
   }
 }
 
