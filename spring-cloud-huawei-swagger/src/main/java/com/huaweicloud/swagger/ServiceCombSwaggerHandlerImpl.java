@@ -38,11 +38,15 @@ import io.swagger.util.Yaml;
 import springfox.documentation.service.Documentation;
 import springfox.documentation.spring.web.DocumentationCache;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.spring.web.plugins.DocumentationPluginsBootstrapper;
 import springfox.documentation.swagger2.mappers.ServiceModelToSwagger2Mapper;
 
 public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombSwaggerHandlerImpl.class);
+
+  @Autowired
+  protected DocumentationPluginsBootstrapper documentationPluginsBootstrapper;
 
   @Autowired
   protected DocumentationCache documentationCache;
@@ -61,6 +65,8 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
 
   @Override
   public void init(String appName, String serviceName) {
+    documentationPluginsBootstrapper.start();
+
     Documentation documentation = documentationCache
         .documentationByGroup(Docket.DEFAULT_GROUP_NAME);
 
@@ -75,6 +81,8 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
     this.swaggerContent = calcSchemaContent();
 
     this.swaggerSummary = calcSchemaSummary();
+
+    documentationPluginsBootstrapper.stop();
   }
 
   private Map<String, String> calcSchemaContent() {
