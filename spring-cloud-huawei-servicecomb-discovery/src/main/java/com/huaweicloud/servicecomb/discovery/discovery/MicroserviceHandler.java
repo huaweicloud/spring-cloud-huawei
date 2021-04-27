@@ -75,6 +75,7 @@ public class MicroserviceHandler {
     } else {
       microservice.setVersion(serviceCombDiscoveryProperties.getVersion());
     }
+    microservice.setEnvironment(serviceCombDiscoveryProperties.getEnvironment());
 
     Framework framework = createFramework();
     microservice.setFramework(framework);
