@@ -81,8 +81,6 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
     this.swaggerContent = calcSchemaContent();
 
     this.swaggerSummary = calcSchemaSummary();
-
-    documentationPluginsBootstrapper.stop();
   }
 
   private Map<String, String> calcSchemaContent() {
