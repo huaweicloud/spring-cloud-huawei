@@ -66,7 +66,7 @@ public class GovernanceControllerIT {
               }
             } catch (Exception e) {
               if (!"429 : [circuitBreaker is open.]".equals(e.getMessage())
-                  && !e.getMessage().contains("test error")) {
+                  && !e.getMessage().contains("test error")  && !e.getMessage().startsWith("500")) {
                 notExpectedFailed.set(true);
               }
               if ("429 : [circuitBreaker is open.]".equals(e.getMessage())) {
