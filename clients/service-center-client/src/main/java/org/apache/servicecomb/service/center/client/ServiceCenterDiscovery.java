@@ -27,6 +27,7 @@ import org.apache.servicecomb.http.client.task.Task;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.InstanceChangedEvent;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.PullInstanceEvent;
 import org.apache.servicecomb.service.center.client.model.FindMicroserviceInstancesResponse;
+import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +87,8 @@ public class ServiceCenterDiscovery extends AbstractTask {
 
   private final Map<SubscriptionKey, SubscriptionValue> instancesCache = new ConcurrentHashMap<>();
 
+  private final Map<String, Microservice> microserviceCache = new ConcurrentHashMap<>();
+
   public ServiceCenterDiscovery(ServiceCenterClient serviceCenterClient, EventBus eventBus) {
     super("service-center-discovery-task");
     this.serviceCenterClient = serviceCenterClient;
@@ -128,6 +131,7 @@ public class ServiceCenterDiscovery extends AbstractTask {
           .findMicroserviceInstance(myselfServiceId, k.appId, k.serviceName, ALL_VERSION, v.revision);
       if (instancesResponse.isModified()) {
         // java chassis 实现了空实例保护，这里暂时不实现。
+        setMicroserviceInfo(instancesResponse.getMicroserviceInstancesResponse().getInstances());
         LOGGER.info("Instance changed event, "
                 + "current: revision={}, instances={}; "
                 + "origin: revision={}, instances={}; "
@@ -147,6 +151,14 @@ public class ServiceCenterDiscovery extends AbstractTask {
     } catch (Exception e) {
       LOGGER.error("find service instance failed.", e);
     }
+  }
+
+  private void setMicroserviceInfo(List<MicroserviceInstance> instances) {
+    instances.forEach(instance -> {
+      Microservice microservice = microserviceCache
+          .computeIfAbsent(instance.getServiceId(), id -> serviceCenterClient.getMicroserviceByServiceId(id));
+      instance.setMicroservice(microservice);
+    });
   }
 
   class PullInstanceTask implements Task {
@@ -175,6 +187,8 @@ public class ServiceCenterDiscovery extends AbstractTask {
         sb.append(endpoint.length() > 64 ? endpoint.substring(0, 64) : endpoint);
         sb.append("|");
       }
+      sb.append(instance.getServiceName());
+      sb.append("|");
     }
     sb.append("#");
     return sb.toString();
