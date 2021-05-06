@@ -27,9 +27,9 @@ import org.junit.Test;
 import org.springframework.web.client.RestTemplate;
 
 public class OrderControllerIT {
-  String url = "http://127.0.0.1:8088";
+  String url = "http://127.0.0.1:9098";
 
-  int pricePort = 8080;
+  int pricePort = 9090;
 
   RestTemplate template = new RestTemplate();
 
