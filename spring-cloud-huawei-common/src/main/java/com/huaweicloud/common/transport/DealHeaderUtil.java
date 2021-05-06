@@ -17,6 +17,7 @@
 
 package com.huaweicloud.common.transport;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,9 +58,7 @@ public class DealHeaderUtil {
   public static void addAKSKHeader(HttpUriRequest httpRequest,
       ServiceCombAkSkProperties serviceCombAkSkProperties) {
 
-    if (serviceCombAkSkProperties == null ||
-        serviceCombAkSkProperties.isEmpty() ||
-        !serviceCombAkSkProperties.isEnabled()) {
+    if (isAKSKNotEnabled(serviceCombAkSkProperties)) {
       return;
     }
     httpRequest.addHeader(X_SERVICE_AK, serviceCombAkSkProperties.getAccessKey());
@@ -67,7 +66,16 @@ public class DealHeaderUtil {
     httpRequest.addHeader(X_SERVICE_PROJECT, serviceCombAkSkProperties.getProject());
   }
 
+  private static boolean isAKSKNotEnabled(ServiceCombAkSkProperties serviceCombAkSkProperties) {
+    return serviceCombAkSkProperties == null ||
+        serviceCombAkSkProperties.isEmpty() ||
+        !serviceCombAkSkProperties.isEnabled();
+  }
+
   public static Map<String, String> readAkSkHeader(ServiceCombAkSkProperties serviceCombAkSkProperties) {
+    if (isAKSKNotEnabled(serviceCombAkSkProperties)) {
+      return Collections.emptyMap();
+    }
     Map<String, String> headers = new HashMap<>();
     headers.put(X_SERVICE_AK, serviceCombAkSkProperties.getAccessKey());
     headers.put(X_SERVICE_SHA_AKSK, serviceCombAkSkProperties.getSecretKey());
@@ -75,7 +83,7 @@ public class DealHeaderUtil {
     return headers;
   }
 
-  public static void addDefautHeader(HttpUriRequest httpRequest) {
+  public static void addDefaultHeader(HttpUriRequest httpRequest) {
     httpRequest.addHeader(X_DOMAIN_NAME, DEFAULT_X_DOMAIN_NAME);
     httpRequest.addHeader(CONTENT_TYPE, CONTENT_TYPE_APPLICATION_JSON);
   }

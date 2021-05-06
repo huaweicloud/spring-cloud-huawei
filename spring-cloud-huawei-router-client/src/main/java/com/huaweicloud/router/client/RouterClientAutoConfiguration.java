@@ -20,8 +20,8 @@ import com.huaweicloud.router.client.track.RouterHandlerInterceptor;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import com.huaweicloud.router.client.feign.RouterFeignConfiguration;
-import com.huaweicloud.router.client.ribbon.RouterClientConfiguration;
+import com.huaweicloud.router.client.feign.RouterFeignClientsConfiguration;
+import com.huaweicloud.router.client.ribbon.RouterRibbonClientsConfiguration;
 import org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration;
 import org.springframework.cloud.netflix.ribbon.RibbonClients;
 import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
@@ -38,8 +38,8 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties
 @ConditionalOnBean(SpringClientFactory.class)
 @AutoConfigureAfter(RibbonAutoConfiguration.class)
-@RibbonClients(defaultConfiguration = RouterClientConfiguration.class)
-@EnableFeignClients(defaultConfiguration = {RouterFeignConfiguration.class})
+@RibbonClients(defaultConfiguration = RouterRibbonClientsConfiguration.class)
+@EnableFeignClients(defaultConfiguration = {RouterFeignClientsConfiguration.class})
 public class RouterClientAutoConfiguration {
 
   @Bean

@@ -80,16 +80,16 @@
                       <link>service-center:sc.servicecomb.io</link>
                     </links>
                     <wait>
-                      <log>watching microservice successfully</log>
+                      <log>register microservice successfully</log>
                       <tcp>
                         <ports>
-                          <port>8080</port>
+                          <port>9090</port>
                         </ports>
                       </tcp>
                       <time>120000</time>
                     </wait>
                     <ports>
-                      <port>8080:8080</port>
+                      <port>9090:9090</port>
                     </ports>
                     <dependsOn>
                       <container>service-center</container>
@@ -111,16 +111,16 @@
                       <link>service-center:sc.servicecomb.io</link>
                     </links>
                     <wait>
-                      <log>watching microservice successfully</log>
+                      <log>register microservice successfully</log>
                       <tcp>
                         <ports>
-                          <port>8088</port>
+                          <port>9098</port>
                         </ports>
                       </tcp>
                       <time>120000</time>
                     </wait>
                     <ports>
-                      <port>8088:8088</port>
+                      <port>9098:9098</port>
                     </ports>
                     <dependsOn>
                       <container>service-center</container>

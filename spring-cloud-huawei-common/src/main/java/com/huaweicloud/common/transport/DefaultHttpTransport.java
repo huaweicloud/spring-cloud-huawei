@@ -179,7 +179,7 @@ public class DefaultHttpTransport implements HttpTransport {
   public Response execute(HttpUriRequest httpRequest) throws RemoteServerUnavailableException {
     Response resp = new Response();
     try {
-      DealHeaderUtil.addDefautHeader(httpRequest);
+      DealHeaderUtil.addDefaultHeader(httpRequest);
       DealHeaderUtil.addAKSKHeader(httpRequest, serviceCombAkSkProperties);
       addToken(httpRequest);
       HttpResponse httpResponse = httpClient.execute(httpRequest);

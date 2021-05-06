@@ -52,9 +52,8 @@
         <spring-cloud-huawei.version>1.3.5</spring-cloud-huawei.version>
 
 3. 启动并运行相关示例项目， 详细参考项目的 README。
-
-
-
+  * 使用本地微服务引擎进行验证
+  * 使用微服务引擎专业版进行验证
 
 [osstype guide]: https://www.cnblogs.com/softidea/p/6743108.html
 [spring-cloud-huawei-samples]: https://github.com/huaweicloud/spring-cloud-huawei-samples
