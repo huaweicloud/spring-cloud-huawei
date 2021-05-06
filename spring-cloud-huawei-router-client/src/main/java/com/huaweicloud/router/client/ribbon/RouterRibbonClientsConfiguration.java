@@ -14,20 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.huaweicloud.router.client.ribbon;
 
-package com.huaweicloud.common.cache;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-import com.netflix.loadbalancer.Server;
+import com.huaweicloud.common.ribbon.ServiceCombLoadBalanceRule;
+import com.netflix.client.config.IClientConfig;
+import com.netflix.loadbalancer.IRule;
+import com.netflix.loadbalancer.ZoneAvoidanceRule;
 
-public class LastInvokeServerCache {
+@Configuration
+public class RouterRibbonClientsConfiguration {
 
-  private static ThreadLocal<Server> serverThreadLocal = new ThreadLocal<>();
-
-  public static Server getServer() {
-    return serverThreadLocal.get();
+  @Bean
+  public IRule ribbonRule(@Autowired(required = false) IClientConfig config) {
+    ZoneAvoidanceRule rule = new ServiceCombLoadBalanceRule();
+    rule.initWithNiwsConfig(config);
+    return rule;
   }
 
-  public static void setServer(Server server) {
-    serverThreadLocal.set(server);
+  @Bean
+  public RouterRibbonServerFilter routerRibbonServerFilter() {
+    return new RouterRibbonServerFilter();
   }
 }

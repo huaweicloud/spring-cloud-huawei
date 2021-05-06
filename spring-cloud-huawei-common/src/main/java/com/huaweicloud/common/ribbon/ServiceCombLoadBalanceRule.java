@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.huaweicloud.common.cache.LastInvokeServerCache;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ZoneAvoidanceRule;
 
@@ -40,7 +39,6 @@ public class ServiceCombLoadBalanceRule extends ZoneAvoidanceRule {
       serverList = filter.filter(serverList);
     }
     Server lastInvoke = super.getPredicate().chooseRoundRobinAfterFiltering(serverList, key).orNull();
-    LastInvokeServerCache.setServer(lastInvoke);
     return lastInvoke;
   }
 }

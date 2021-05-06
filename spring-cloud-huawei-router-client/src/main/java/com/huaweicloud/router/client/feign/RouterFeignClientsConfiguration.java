@@ -14,29 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.router.client.ribbon;
+package com.huaweicloud.router.client.feign;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.huaweicloud.common.ribbon.ServiceCombLoadBalanceRule;
-import com.netflix.client.config.IClientConfig;
-import com.netflix.loadbalancer.IRule;
-import com.netflix.loadbalancer.ZoneAvoidanceRule;
+import feign.Client;
+import feign.RequestInterceptor;
 
 @Configuration
-public class RouterClientConfiguration {
+public class RouterFeignClientsConfiguration {
 
   @Bean
-  public IRule ribbonRule(@Autowired(required = false) IClientConfig config) {
-    ZoneAvoidanceRule rule = new ServiceCombLoadBalanceRule();
-    rule.initWithNiwsConfig(config);
-    return rule;
+  public Client getFeignClient(Client feignClient) {
+    return new RouterFeignClient(feignClient);
   }
 
   @Bean
-  public RouterRibbonServerFilter routerRibbonServerFilter() {
-    return new RouterRibbonServerFilter();
+  public RequestInterceptor requestInterceptor() {
+    return new RouterRequestInterceptor();
   }
 }
