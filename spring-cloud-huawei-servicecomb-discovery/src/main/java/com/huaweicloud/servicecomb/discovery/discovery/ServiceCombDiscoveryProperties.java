@@ -57,7 +57,8 @@ public class ServiceCombDiscoveryProperties {
 
   private boolean autoDiscovery = false;
 
-  private boolean allowCrossApp = false;
+  @Value("${spring.cloud.servicecomb.discovery.allowCrossApp:false}")
+  private boolean allowCrossApp;
 
   @Value("${server.publishAddress:}")
   private String serverAddress;

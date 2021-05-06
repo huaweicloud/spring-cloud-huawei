@@ -94,9 +94,17 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
     return "SerivceComb Discovery";
   }
 
+  private SubscriptionKey parseMicroserviceName(String serviceId) {
+    int idxAt = serviceId.indexOf("-");
+    if (idxAt == -1) {
+      return new SubscriptionKey(discoveryProperties.getAppName(),serviceId);
+    }
+    return new SubscriptionKey(serviceId.substring(0, idxAt), serviceId.substring(idxAt + 1));
+  }
+
   @Override
   public List<ServiceInstance> getInstances(String serviceId) {
-    SubscriptionKey subscriptionKey = new SubscriptionKey(discoveryProperties.getAppName(), serviceId);
+    SubscriptionKey subscriptionKey = parseMicroserviceName(serviceId);
     if (!serviceCenterDiscovery.isRegistered(subscriptionKey)) {
       serviceCenterDiscovery.register(subscriptionKey);
     }
@@ -136,7 +144,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
     }
 
     if (microservice.getAppId().equals(discoveryProperties.getAppName()) ||
-        Boolean.parseBoolean(microservice.getProperties().get(DiscoveryConstants.CONFIG_ALLOW_CROSS_APP_KEY))) {
+        discoveryProperties.isAllowCrossApp()) {
       return true;
     }
     return false;
