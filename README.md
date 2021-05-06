@@ -11,14 +11,14 @@ Including [Apache ServiceComb](http://servicecomb.apache.org) and [ServiceStage]
 
 | Branch | Latest Version | Spring Cloud Base Version | Spring Boot Base Version | Supported Spring Cloud Version | Supported Spring Boot Version|
 | ---------- | ------------ | ----------- | ----------- | ----------- | ----------- |
-| master | 1.5.2-Hoxton | Hoxton.SR4 | 2.2.5.RELEASE | Hoxton | 2.2.x |
+| master | 1.5.6-Hoxton | Hoxton.SR8 | 2.3.5.RELEASE | Hoxton | 2.3.x |
 | Greenwich | 1.5.1-Greenwich | Greenwich.SR6 | 2.1.6-RELEASE | Greenwich | 2.1.x |
 | Finchley | 1.5.1-Finchley | 2.0.4.RELEASE | 2.0.9.RELEASE     | Finchley     | 2.0.x       |
 | Edgware | 1.2.0-Edgware | 1.3.6.RELEASE  | 1.5.22.RELEASE    | Edgware      | 1.5.x       |
 
 ***Notice：***
 * Check [Spring Cloud Release Train](https://spring.io/projects/spring-cloud), and find a proper version to use.
-* Spring Cloud Edgeware, Finchley have all reached end of life status and are no longer supported.
+* Spring Cloud Edgeware, Finchley, Greenwich have all reached end of life status and are no longer supported.
 
 ## Why use
 
