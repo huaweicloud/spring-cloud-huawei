@@ -94,8 +94,11 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
     return "SerivceComb Discovery";
   }
 
+  /**
+   * assert that app name and service name do not contain "."
+   */
   private SubscriptionKey parseMicroserviceName(String serviceId) {
-    int idxAt = serviceId.indexOf("-");
+    int idxAt = serviceId.indexOf(DiscoveryConstants.APP_SERVICE_SEPRATOR);
     if (idxAt == -1) {
       return new SubscriptionKey(discoveryProperties.getAppName(),serviceId);
     }
@@ -144,7 +147,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
     }
 
     if (microservice.getAppId().equals(discoveryProperties.getAppName()) ||
-        discoveryProperties.isAllowCrossApp()) {
+        Boolean.parseBoolean(microservice.getProperties().get(DiscoveryConstants.CONFIG_ALLOW_CROSS_APP_KEY))) {
       return true;
     }
     return false;

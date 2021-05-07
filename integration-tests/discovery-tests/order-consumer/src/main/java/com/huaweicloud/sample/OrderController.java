@@ -53,4 +53,14 @@ public class OrderController {
   public Object services() {
     return discoveryClient.getServices();
   }
+
+  @RequestMapping("/crossappinstances")
+  public Object crossAppInstances() {
+    return discoveryClient.getInstances("price-app.price");
+  }
+
+  @RequestMapping("/crossapporder")
+  public String getCrossAppOrder(@RequestParam("id") String id) {
+    return restTemplate.getForObject("http://price-app.price/price?id=" + id, String.class);
+  }
 }
