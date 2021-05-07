@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
 import com.huaweicloud.common.util.Cipher;
@@ -33,7 +32,6 @@ import com.huaweicloud.common.util.DefaultCipher;
 import com.huaweicloud.common.util.SecretUtil;
 import com.huaweicloud.common.util.ShaAKSKCipher;
 
-@Configuration
 @ConfigurationProperties("spring.cloud.servicecomb.credentials")
 public class ServiceCombAkSkProperties {
 
@@ -42,7 +40,6 @@ public class ServiceCombAkSkProperties {
   @Autowired(required = false)
   private List<Cipher> ciphers;
 
-  //dummy value for throw exception and notice
   private String enable;
 
   private boolean enabled = false;

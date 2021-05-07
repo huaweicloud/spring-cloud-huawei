@@ -42,7 +42,6 @@
     <snakeyaml.version>1.26</snakeyaml.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <websocket.version>1.5.0</websocket.version>
-    <reactor.version>3.3.3.RELEASE</reactor.version>
   </properties>
 
   <dependencyManagement>
@@ -129,11 +128,6 @@
         <groupId>org.java-websocket</groupId>
         <artifactId>Java-WebSocket</artifactId>
         <version>${websocket.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.projectreactor</groupId>
-        <artifactId>reactor-core</artifactId>
-        <version>${reactor.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

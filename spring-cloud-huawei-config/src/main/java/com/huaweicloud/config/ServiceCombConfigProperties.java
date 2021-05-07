@@ -19,16 +19,10 @@ package com.huaweicloud.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 
-/**
- * @Author wangqijun
- * @Date 11:05 2019-10-17
- **/
-@Component
 @ConfigurationProperties("spring.cloud.servicecomb.config")
 public class ServiceCombConfigProperties {
 

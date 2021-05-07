@@ -17,8 +17,8 @@
 
 package com.huaweicloud.config;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -30,32 +30,10 @@ import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.config.client.ServiceCombConfigClient;
 import com.huaweicloud.config.client.ServiceCombConfigClientBuilder;
 
-/**
- * @Author wangqijun
- * @Date 11:00 2019-10-17
- **/
 @Configuration
+@EnableConfigurationProperties(ServiceCombConfigProperties.class)
 @ConditionalOnProperty(name = "spring.cloud.servicecomb.config.enabled", matchIfMissing = true)
 public class ServiceCombConfigBootstrapConfiguration {
-
-  @Bean
-  @ConditionalOnMissingBean
-  public ServiceCombConfigProperties serviceCombConfigProperties() {
-    return new ServiceCombConfigProperties();
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
-  public ServiceCombRBACProperties serviceCombRBACProperties() {
-    return new ServiceCombRBACProperties();
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
-  public ServiceCombSSLProperties serviceCombSSLProperties() {
-    return new ServiceCombSSLProperties();
-  }
-
   @Bean
   public ServiceCombConfigClient serviceCombConfigClient(
       ServiceCombConfigProperties serviceCombConfigProperties, ServiceCombRBACProperties serviceCombRBACProperties,

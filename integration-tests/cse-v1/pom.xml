@@ -15,35 +15,25 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
+    <artifactId>integration-tests</artifactId>
     <groupId>com.huaweicloud</groupId>
-    <artifactId>spring-cloud-huawei-parents</artifactId>
     <version>1.6.0-Hoxton-SNAPSHOT</version>
-    <relativePath>../spring-cloud-huawei-parents</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>integration-tests</artifactId>
+  <name>Integration Tests::CSE V1</name>
+
+  <artifactId>cse-v1-test</artifactId>
   <packaging>pom</packaging>
 
   <modules>
-    <module>docker-build-config</module>
-    <module>docker-run-config</module>
-    <module>discovery-tests</module>
-    <module>cse-v1</module>
+    <module>provider</module>
+    <module>consumer</module>
+    <module>gateway</module>
+    <module>tests-client</module>
   </modules>
-
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-    </dependency>
-  </dependencies>
 </project>

@@ -17,18 +17,16 @@
 
 package com.huaweicloud.common.transport;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.huaweicloud.common.util.Cipher;
-import com.huaweicloud.common.util.DefaultCipher;
-import com.huaweicloud.common.util.ShaAKSKCipher;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.huaweicloud.common.util.Cipher;
+import com.huaweicloud.common.util.DefaultCipher;
 
-@Component
 @ConfigurationProperties("spring.cloud.servicecomb.credentials.account")
 public class ServiceCombRBACProperties {
 

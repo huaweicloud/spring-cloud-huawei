@@ -18,15 +18,20 @@
 package com.huaweicloud.common;
 
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.common.transport.AkSkRequestAuthHeaderProvider;
 import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
+import com.huaweicloud.common.transport.ServiceCombRBACProperties;
+import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.common.util.Cipher;
 import com.huaweicloud.common.util.ShaAKSKCipher;
 
 @Configuration
+@EnableConfigurationProperties({ServiceCombAkSkProperties.class, ServiceCombRBACProperties.class,
+    ServiceCombSSLProperties.class})
 public class CommonConfiguration {
   @Bean
   public Cipher shaAKSKCipher() {
