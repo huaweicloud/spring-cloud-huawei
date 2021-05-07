@@ -31,7 +31,7 @@
     <module>price-provider</module>
     <module>order-consumer</module>
     <module>discovery-tests-client</module>
-    <module>price-provider-crossapp</module>
+    <module>account-provider</module>
   </modules>
 
 </project>

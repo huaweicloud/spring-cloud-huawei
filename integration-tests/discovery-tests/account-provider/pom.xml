@@ -25,7 +25,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>price-provider-cross-app-test</artifactId>
+  <artifactId>account-provider</artifactId>
 
   <dependencies>
     <dependency>
@@ -54,7 +54,7 @@
     <profile>
       <id>docker</id>
       <properties>
-        <server.port>8080</server.port>
+        <server.port>9092</server.port>
       </properties>
       <build>
         <plugins>

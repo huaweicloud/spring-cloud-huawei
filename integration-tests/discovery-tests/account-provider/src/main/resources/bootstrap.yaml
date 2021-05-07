@@ -19,14 +19,14 @@ server:
 
 spring:
   application:
-    name: price
+    name: account
   cloud:
     servicecomb:
       discovery:
         enabled: true
         address: http://127.0.0.1:30100
-        serviceName: price
-        appName: price-app
+        serviceName: account
+        appName: account-app
         version: 0.0.1
         healthCheckInterval: 30
         allowCrossApp: true

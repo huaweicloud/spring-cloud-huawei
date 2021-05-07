@@ -54,7 +54,7 @@
     <profile>
       <id>docker</id>
       <properties>
-        <server.port>8080</server.port>
+        <server.port>9090</server.port>
       </properties>
       <build>
         <plugins>
