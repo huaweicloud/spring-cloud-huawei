@@ -29,7 +29,7 @@
   <artifactId>spring-cloud-huawei-swagger</artifactId>
 
   <properties>
-    <spring-fox.version>2.9.2</spring-fox.version>
+    <spring-fox.version>3.0.0</spring-fox.version>
   </properties>
 
   <dependencies>
