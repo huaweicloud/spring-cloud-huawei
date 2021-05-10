@@ -25,16 +25,12 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>price-provider-test</artifactId>
+  <artifactId>account-provider</artifactId>
 
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
@@ -54,7 +50,7 @@
     <profile>
       <id>docker</id>
       <properties>
-        <server.port>9090</server.port>
+        <server.port>9092</server.port>
       </properties>
       <build>
         <plugins>

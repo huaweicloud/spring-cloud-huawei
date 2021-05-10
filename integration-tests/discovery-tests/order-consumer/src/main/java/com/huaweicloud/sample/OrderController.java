@@ -53,4 +53,14 @@ public class OrderController {
   public Object services() {
     return discoveryClient.getServices();
   }
+
+  @RequestMapping("/crossappinstances")
+  public Object crossAppInstances() {
+    return discoveryClient.getInstances("account-app.account");
+  }
+
+  @RequestMapping("/crossapporder")
+  public String getCrossAppOrder(@RequestParam("id") String id) {
+    return restTemplate.getForObject("http://account-app.account/account?id=" + id, String.class);
+  }
 }

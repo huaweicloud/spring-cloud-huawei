@@ -22,6 +22,8 @@ public final class DiscoveryConstants {
 
   public static final String CONFIG_ALLOW_CROSS_APP_KEY = "allowCrossApp";
 
+  public static final String APP_SERVICE_SEPRATOR = ".";
+
   public static final String INSTANCE_STATUS = "status";
 
   public static final String INSTANCE_ZONE = "zone";

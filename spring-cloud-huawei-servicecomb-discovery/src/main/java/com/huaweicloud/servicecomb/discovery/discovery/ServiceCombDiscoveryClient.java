@@ -94,9 +94,20 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
     return "SerivceComb Discovery";
   }
 
+  /**
+   * assert that app name and service name do not contain "."
+   */
+  private SubscriptionKey parseMicroserviceName(String serviceId) {
+    int idxAt = serviceId.indexOf(DiscoveryConstants.APP_SERVICE_SEPRATOR);
+    if (idxAt == -1) {
+      return new SubscriptionKey(discoveryProperties.getAppName(),serviceId);
+    }
+    return new SubscriptionKey(serviceId.substring(0, idxAt), serviceId.substring(idxAt + 1));
+  }
+
   @Override
   public List<ServiceInstance> getInstances(String serviceId) {
-    SubscriptionKey subscriptionKey = new SubscriptionKey(discoveryProperties.getAppName(), serviceId);
+    SubscriptionKey subscriptionKey = parseMicroserviceName(serviceId);
     if (!serviceCenterDiscovery.isRegistered(subscriptionKey)) {
       serviceCenterDiscovery.register(subscriptionKey);
     }
