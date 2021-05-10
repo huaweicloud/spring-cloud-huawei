@@ -16,31 +16,34 @@
  */
 package com.huaweicloud.router.client.feign;
 
-import java.io.IOException;
+import com.huaweicloud.router.client.track.RouterTrackContext;
+import feign.Request;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URI;
 
-import com.huaweicloud.router.client.track.RouterTrackContext;
+@Aspect
+public class RouterFeignClientFilter {
+  private static final Logger LOGGER = LoggerFactory.getLogger(RouterFeignClientFilter.class);
 
-import feign.Client;
-import feign.Request;
-import feign.Response;
-
-/**
- * @Author GuoYl123
- * @Date 2019/10/22
- **/
-public class RouterFeignClient implements Client {
-
-  private Client client;
-
-  public RouterFeignClient(Client client) {
-    this.client = client;
+  @Pointcut("execution(* org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient.execute(..))")
+  public void pointFeignClient() {
   }
 
-  @Override
-  public Response execute(Request request, Request.Options options) throws IOException {
+  @Before("pointFeignClient()")
+  private void invokeServiceName(JoinPoint joinPoint) {
+    Request request = (Request) joinPoint.getArgs()[0];
     URI uri = URI.create(request.url());
-    RouterTrackContext.setServiceName(uri.getHost());
-    return client.execute(request, options);
+
+    try {
+      RouterTrackContext.setServiceName(uri.getHost());
+    } catch (Throwable throwable) {
+      LOGGER.error("fail to add service name into RouterTrackContext.");
+    }
   }
 }
