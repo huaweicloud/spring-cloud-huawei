@@ -22,7 +22,7 @@ spring:
   cloud:
     servicecomb:
       discovery:
-        appName: cse-v1-test-application
+        appName: cse-v2-test-application
         serviceName: ${spring.application.name}
         watch: false
         address: https://cse.cn-south-1.myhuaweicloud.com
@@ -30,16 +30,15 @@ spring:
         healthCheckInterval: 30
       config:
         serverAddr: https://cse.cn-south-1.myhuaweicloud.com
+        serverType: kie
         fileSource: gateway.yaml
         watch:
           delay: 10000
 
       credentials:
-        enabled: true
-        accessKey: ${CREDENTIALS_AK}
-        secretKey: ${CREDENTIALS_SK}
-        akskCustomCipher: default
-        project: cn-south-1
+        account:
+          name: your account name
+          password: your password
 
 ## rate limiting configuration
 servicecomb:
