@@ -81,7 +81,7 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
   public Map<String, Swagger> documentationToSwaggers(Documentation documentation) {
     Map<String, Swagger> result = new HashMap<>();
 
-    documentation.getApiListings().entries().forEach(entry ->
+    documentation.getApiListings().entrySet().forEach(entry ->
     {
       Swagger swagger = mapper.mapDocumentation(new Documentation(
           documentation.getGroupName(),
@@ -93,6 +93,8 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
           toSet(documentation.getConsumes()),
           documentation.getHost(),
           toSet(documentation.getSchemes()),
+          documentation.getServers(),
+          documentation.getExternalDocumentation(),
           documentation.getVendorExtensions()
       ));
 
@@ -127,38 +129,45 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
   }
 
   // 02: filtering ApiListings, there are sub tasks
-  private Multimap<String, ApiListing> filteringApiListings(Map.Entry<String, ApiListing> entry) {
-    Multimap map = HashMultimap.create();
-    ApiListing apiListing = entry.getValue();
-    ApiListingBuilder apiListingBuilder = new ApiListingBuilder(Ordering.from(Orderings.apiPathCompatator()));
-    apiListingBuilder.apiVersion(apiListing.getApiVersion())
-        .basePath(apiListing.getBasePath())
-        .resourcePath(apiListing.getResourcePath())
-        .produces(validateContentType(apiListing.getProduces()
-            , MediaType.APPLICATION_JSON)) // 02-02 only keep one produces
-        .consumes(validateContentType(apiListing.getConsumes()
-            , MediaType.APPLICATION_JSON))// 02-03 only keep one consumers
-        .host(apiListing.getHost())
-        .protocols(apiListing.getProtocols())
-        .securityReferences(apiListing.getSecurityReferences())
-        .models(apiListing.getModels())
-        .description(apiListing.getDescription())
-        .position(apiListing.getPosition())
-        .tags(apiListing.getTags());
+  private Map<String, List<ApiListing>> filteringApiListings(Map.Entry<String, List<ApiListing>> entry) {
+    Map<String, List<ApiListing>> map = new HashMap<>();
 
-    List<ApiDescription> apiDescriptions = apiListing.getApis();
-    List<ApiDescription> newApiDescriptions = new ArrayList<>(apiDescriptions.size());
-    apiDescriptions.forEach(apiDescription -> newApiDescriptions.add(
-        new ApiDescriptionBuilder(Ordering.from(Orderings.positionComparator()))
-            .path(validatePath(apiDescription.getPath()))
-            .description(apiDescription.getDescription())
-            // 02-01 only keep the first operation and convert operation.
-            .operations(Arrays.asList(validateOperation(apiDescription.getOperations().get(0))))
-            .hidden(apiDescription.isHidden()).build())
-    );
+    List<ApiListing> apiListings = entry.getValue();
+    List<ApiListing> filteredApiListing = new ArrayList<>();
 
-    apiListingBuilder.apis(newApiDescriptions);
-    map.put(entry.getKey(), apiListingBuilder.build());
+    for (ApiListing apiListing : apiListings) {
+      ApiListingBuilder apiListingBuilder = new ApiListingBuilder(Ordering.from(Orderings.apiPathCompatator()));
+      apiListingBuilder.apiVersion(apiListing.getApiVersion())
+          .basePath(apiListing.getBasePath())
+          .resourcePath(apiListing.getResourcePath())
+          .produces(validateContentType(apiListing.getProduces()
+              , MediaType.APPLICATION_JSON)) // 02-02 only keep one produces
+          .consumes(validateContentType(apiListing.getConsumes()
+              , MediaType.APPLICATION_JSON))// 02-03 only keep one consumers
+          .host(apiListing.getHost())
+          .protocols(apiListing.getProtocols())
+          .securityReferences(apiListing.getSecurityReferences())
+          .models(apiListing.getModels())
+          .description(apiListing.getDescription())
+          .position(apiListing.getPosition())
+          .tags(apiListing.getTags());
+
+      List<ApiDescription> apiDescriptions = apiListing.getApis();
+      List<ApiDescription> newApiDescriptions = new ArrayList<>(apiDescriptions.size());
+      apiDescriptions.forEach(apiDescription -> newApiDescriptions.add(
+          new ApiDescriptionBuilder(Ordering.from(Orderings.positionComparator()))
+              .path(validatePath(apiDescription.getPath()))
+              .description(apiDescription.getDescription())
+              // 02-01 only keep the first operation and convert operation.
+              .operations(Arrays.asList(validateOperation(apiDescription.getOperations().get(0))))
+              .hidden(apiDescription.isHidden()).build())
+      );
+
+      apiListingBuilder.apis(newApiDescriptions);
+      filteredApiListing.add(apiListingBuilder.build());
+    }
+
+    map.put(entry.getKey(), filteredApiListing);
     return map;
   }
 
@@ -173,6 +182,7 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
     Operation result = new Operation(operation.getMethod(),
         operation.getSummary(),
         operation.getNotes(),
+        operation.getExternalDocumentation(),
         operation.getResponseModel(),
         validateOpererationId(operation.getMethod(), operation.getUniqueId()),
         operation.getPosition(),
@@ -185,7 +195,10 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
         operation.getResponseMessages(),
         operation.getDeprecated(),
         operation.isHidden(),
-        operation.getVendorExtensions()
+        operation.getVendorExtensions(),
+        operation.getRequestParameters(),
+        operation.getBody(),
+        operation.getResponses()
     );
     return result;
   }
