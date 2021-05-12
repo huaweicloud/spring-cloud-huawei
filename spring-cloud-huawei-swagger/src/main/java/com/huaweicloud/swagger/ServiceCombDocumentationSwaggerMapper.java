@@ -150,7 +150,9 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
           .models(apiListing.getModels())
           .description(apiListing.getDescription())
           .position(apiListing.getPosition())
-          .tags(apiListing.getTags());
+          .tags(apiListing.getTags())
+          .modelSpecifications(apiListing.getModelSpecifications())
+          .modelNamesRegistry(apiListing.getModelNamesRegistry());
 
       List<ApiDescription> apiDescriptions = apiListing.getApis();
       List<ApiDescription> newApiDescriptions = new ArrayList<>(apiDescriptions.size());
