@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
@@ -33,8 +34,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.springframework.http.HttpMethod;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Ordering;
 
 import io.swagger.models.AbstractModel;
@@ -44,9 +43,11 @@ import springfox.documentation.builders.ApiDescriptionBuilder;
 import springfox.documentation.builders.ApiListingBuilder;
 import springfox.documentation.service.ApiDescription;
 import springfox.documentation.service.ApiListing;
+import springfox.documentation.service.ContentSpecification;
 import springfox.documentation.service.Documentation;
 import springfox.documentation.service.Operation;
-import springfox.documentation.service.Parameter;
+import springfox.documentation.service.Representation;
+import springfox.documentation.service.RequestParameter;
 import springfox.documentation.service.StringVendorExtension;
 import springfox.documentation.spi.service.contexts.Orderings;
 import springfox.documentation.swagger2.mappers.ServiceModelToSwagger2Mapper;
@@ -186,26 +187,26 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
         operation.getNotes(),
         operation.getExternalDocumentation(),
         operation.getResponseModel(),
-        validateOpererationId(operation.getMethod(), operation.getUniqueId()),
+        validateOperationId(operation.getMethod(), operation.getUniqueId()),
         operation.getPosition(),
         operation.getTags(),
         validateResponseContentType(operation),
         validateContentType(operation.getConsumes(), MediaType.APPLICATION_JSON),
         operation.getProtocol(),
         Collections.EMPTY_LIST,
-        validateParameter(operation.getParameters()),
+        operation.getParameters(),
         operation.getResponseMessages(),
         operation.getDeprecated(),
         operation.isHidden(),
         operation.getVendorExtensions(),
-        operation.getRequestParameters(),
+        validateRequestParameter(operation.getRequestParameters()),
         operation.getBody(),
         operation.getResponses()
     );
     return result;
   }
 
-  private String validateOpererationId(HttpMethod method, String uniqueId) {
+  private String validateOperationId(HttpMethod method, String uniqueId) {
     String suffix = String.format("Using%s", method);
     if (uniqueId.endsWith(suffix)) {
       return uniqueId.substring(0, uniqueId.length() - suffix.length());
@@ -213,17 +214,20 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
     return uniqueId;
   }
 
-  private List<Parameter> validateParameter(List<Parameter> parameters) {
-    for (Parameter parameter : parameters) {
-      if ("body".equals(parameter.getParamType()) &&
-          "string".equals(parameter.getModelRef().getType())) {
-        // TODO: springfox do not support boolean type and can not add a customization
-        // springfox has long time no release version since 2018.9 and version 2.9.2
-        // use string type instead
-        parameter.getVendorExtentions().add(new StringVendorExtension(X_RAW_JSON_TYPE, "true"));
+  private Set<RequestParameter> validateRequestParameter(Set<RequestParameter> requestParameters) {
+    for (RequestParameter req : requestParameters) {
+      if ("body".equals(req.getIn().getIn())) {
+        Optional<ContentSpecification> content = req.getParameterSpecification().getContent();
+        if (content.isPresent()) {
+          for (Representation rep : content.get().getRepresentations()) {
+            if (rep.getModel().getScalar().isPresent() && rep.getModel().getScalar().get().getType().getType().equals("string")) {
+              req.getExtensions().add(new StringVendorExtension(X_RAW_JSON_TYPE, "true"));
+            }
+          }
+        }
       }
     }
-    return parameters;
+    return requestParameters;
   }
 
   private Set<String> validateResponseContentType(Operation operation) {

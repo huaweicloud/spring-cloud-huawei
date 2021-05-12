@@ -55,6 +55,7 @@ paths:
         schema:
           type: string
           format: ""
+        x-raw-json: "true"
       responses:
         "200":
           description: OK
@@ -184,6 +185,7 @@ paths:
         schema:
           type: string
           format: ""
+        x-raw-json: "true"
       responses:
         "200":
           description: OK
