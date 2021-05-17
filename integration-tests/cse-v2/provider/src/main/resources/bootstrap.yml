@@ -38,5 +38,5 @@ spring:
 
       credentials:
         account:
-          name: your account name
-          password: your password
+          name: ${rbac_account_name}
+          password: ${rbac_password}
