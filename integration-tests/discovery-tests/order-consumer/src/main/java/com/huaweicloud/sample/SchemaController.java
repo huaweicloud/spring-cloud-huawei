@@ -58,7 +58,7 @@ public class SchemaController {
 
     String a1 = schemaContents.get("SchemaContentController").replaceAll("\\s", "");
     String fileContent =  readFile("SchemaContentController.yaml");
-    fileContent = fileContent.substring(fileContent.indexOf("---"));
+    fileContent = fileContent.substring(fileContent.indexOf("---") + 3);
     String a2 = fileContent.replaceAll("\\s", "");
     assertThat(a1).isEqualTo(a2);
     return "success";
