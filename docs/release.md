@@ -8,6 +8,11 @@
   移动到下一个 milestone。 参考 [github issue][issues]。 
 3. 配置好编译环境， maven, gpg等。
 
+## 发布版本前验证
+
+1. clone Spring Cloud Huawei 代码
+2. 手工执行 Integration Tests 下面的测试用例：cse-v1等， 详细步骤参考项目下面的README.md文件。
+
 ## 发布版本
 
 1. 修改 pom 为目标版本号，并提交 PR 合入。
@@ -38,10 +43,10 @@
 
         mvn versions:set -DgenerateBackupPoms=false -DnewVersion=1.3.1-SNAPSHOT
 
-## 版本验证
+## 发布版本后验证
 
-发布到中央仓库后，需要几个小时可以完成同步。仓库同步后，使用 [spring-cloud-huawei-samples][spring-cloud-huawei-samples]
-项目进行验证。 并更新相关示例项目到最新版本。 
+发布Staging中央仓库后，使用 [spring-cloud-huawei-samples][spring-cloud-huawei-samples]
+项目进行验证，验证通过后在正式推送到中央仓库。 并更新相关示例项目到最新版本。 
 
 1. 下载 spring-cloud-huawei-samples 项目
 
