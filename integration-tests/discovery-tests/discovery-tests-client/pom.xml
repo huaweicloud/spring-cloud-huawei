@@ -65,7 +65,6 @@
                   </run>
                 </image>
 
-
                 <image>
                   <name>price-provider-test:${project.version}</name>
                   <alias>price-provider-test</alias>

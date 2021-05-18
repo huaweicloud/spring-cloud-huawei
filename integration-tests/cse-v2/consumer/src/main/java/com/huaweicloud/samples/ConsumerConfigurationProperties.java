@@ -19,7 +19,7 @@ package com.huaweicloud.samples;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties("cse.v1.test")
+@ConfigurationProperties("cse.v2.test")
 public class ConsumerConfigurationProperties {
   private String foo;
 

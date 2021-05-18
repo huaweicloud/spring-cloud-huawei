@@ -27,17 +27,17 @@ public class ConsumerConfigIT {
 
   @Test
   public void testConfig() {
-    String result = template.getForObject(Config.GATEWAY_URL + "/config?key=cse.v1.test.foo", String.class);
+    String result = template.getForObject(Config.GATEWAY_URL + "/config?key=cse.v2.test.foo", String.class);
     assertThat(result).isEqualTo("foo");
-    result = template.getForObject(Config.GATEWAY_URL + "/config?key=cse.v1.test.bar", String.class);
+    result = template.getForObject(Config.GATEWAY_URL + "/config?key=cse.v2.test.bar", String.class);
     assertThat(result).isEqualTo("bar");
   }
 
   @Test
   public void testFooBar() {
-    String result = template.getForObject(Config.GATEWAY_URL + "/foo", String.class);
-    assertThat(result).isEqualTo("foo");
-    result = template.getForObject(Config.GATEWAY_URL + "/bar", String.class);
+    String result = template.getForObject(Config.GATEWAY_URL + "/bar", String.class);
     assertThat(result).isEqualTo("bar");
+    result = template.getForObject(Config.GATEWAY_URL + "/foo", String.class);
+    assertThat(result).isEqualTo("foo");
   }
 }
