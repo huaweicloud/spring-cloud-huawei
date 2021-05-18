@@ -15,7 +15,8 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
-
+server:
+  env: production
 spring:
   application:
     name: basic-consumer
@@ -24,19 +25,18 @@ spring:
       discovery:
         enabled: true
         watch: false
-        address: https://cse.cn-south-1.myhuaweicloud.com
+        address: ${CSE_V2_SC}
         appName: cse-v2-test-application
         serviceName: ${spring.application.name}
         version: 0.0.1
         healthCheckInterval: 30
       config:
-        serverAddr: https://cse.cn-south-1.myhuaweicloud.com
+        serverAddr: ${CSE_V2_CC}
         serverType: kie
-        fileSource: consumer.yaml
         watch:
           delay: 10000
 
-      credentials:
-        account:
-          name: ${rbac_account_name}
-          password: ${rbac_password}
+#      credentials:
+#        account:
+#          name: ${CSE_V2_ACCOUNT_NAME}
+#          password: ${CSE_V2_ACCOUNT_PASSWORD}
