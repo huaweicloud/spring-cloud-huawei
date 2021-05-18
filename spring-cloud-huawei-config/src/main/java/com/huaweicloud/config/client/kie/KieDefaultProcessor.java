@@ -51,10 +51,10 @@ public class KieDefaultProcessor extends ConfigValueProcessor<KVDoc> {
         case yaml:
           YamlPropertiesFactoryBean yamlFactory = new YamlPropertiesFactoryBean();
           yamlFactory.setResources(new ByteArrayResource(kvDoc.getValue().getBytes()));
-          return toMap(kvDoc.getKey(), yamlFactory.getObject());
+          return toMap("", yamlFactory.getObject());
         case properties:
           properties.load(new StringReader(kvDoc.getValue()));
-          return toMap(kvDoc.getKey(), properties);
+          return toMap("", properties);
         case text:
         case string:
         default:

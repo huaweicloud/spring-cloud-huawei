@@ -69,6 +69,8 @@ public class KieClient extends ServiceCombConfigClient {
           + project
           + "/kie/kv?label=app:"
           + serviceCombConfigProperties.getAppName()
+          + "&label=environment:"
+          + serviceCombConfigProperties.getEnv()
           + "&revision="
           + revision;
       if (isWatch && !isFirst.get()) {
@@ -115,26 +117,19 @@ public class KieClient extends ServiceCombConfigClient {
         continue;
       }
       Map<String, String> labelsMap = kvDoc.getLabels();
-      if (labelsMap.containsKey(ConfigConstants.LABEL_APP) && labelsMap
-          .get(ConfigConstants.LABEL_APP)
-          .equals(serviceCombConfigProperties.getAppName())
-          && labelsMap.containsKey(ConfigConstants.LABEL_ENV) && labelsMap
-          .get(ConfigConstants.LABEL_ENV)
-          .equals(serviceCombConfigProperties.getEnv())) {
-        if (!labelsMap.containsKey(ConfigConstants.LABEL_SERVICE)) {
-          appList.add(kvDoc);
+      if (!labelsMap.containsKey(ConfigConstants.LABEL_SERVICE)) {
+        appList.add(kvDoc);
+      }
+      if (labelsMap.containsKey(ConfigConstants.LABEL_SERVICE) && labelsMap
+          .get(ConfigConstants.LABEL_SERVICE)
+          .equals(serviceCombConfigProperties.getServiceName())) {
+        if (!kvDoc.getLabels().containsKey(ConfigConstants.LABEL_VERSION)) {
+          serviceList.add(kvDoc);
         }
-        if (labelsMap.containsKey(ConfigConstants.LABEL_SERVICE) && labelsMap
-            .get(ConfigConstants.LABEL_SERVICE)
-            .equals(serviceCombConfigProperties.getServiceName())) {
-          if (!kvDoc.getLabels().containsKey(ConfigConstants.LABEL_VERSION)) {
-            serviceList.add(kvDoc);
-          }
-          if (labelsMap.containsKey(ConfigConstants.LABEL_VERSION) && labelsMap
-              .get(ConfigConstants.LABEL_VERSION)
-              .equals(serviceCombConfigProperties.getVersion())) {
-            versionList.add(kvDoc);
-          }
+        if (labelsMap.containsKey(ConfigConstants.LABEL_VERSION) && labelsMap
+            .get(ConfigConstants.LABEL_VERSION)
+            .equals(serviceCombConfigProperties.getVersion())) {
+          versionList.add(kvDoc);
         }
       }
     }
