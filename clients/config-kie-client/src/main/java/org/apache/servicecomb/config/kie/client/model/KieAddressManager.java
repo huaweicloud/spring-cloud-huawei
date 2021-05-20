@@ -64,4 +64,8 @@ public class KieAddressManager {
   public Map<String, String> getConfigKey() {
     return configKey;
   }
+
+  public boolean sslEnabled() {
+    return address().startsWith("https://");
+  }
 }

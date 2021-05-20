@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
-import org.apache.servicecomb.foundation.ssl.SSLCustom;
-import org.apache.servicecomb.foundation.ssl.SSLOption;
 import org.apache.servicecomb.http.client.auth.RequestAuthHeaderProvider;
 import org.apache.servicecomb.http.client.common.HttpConfiguration.SSLProperties;
 import org.apache.servicecomb.service.center.client.AddressManager;
@@ -35,6 +33,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
+import com.huaweicloud.common.transport.TransportUtils;
 import com.huaweicloud.common.util.URLUtil;
 import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
 
@@ -47,7 +46,8 @@ public class DiscoveryAutoConfiguration {
       ServiceCombSSLProperties serviceCombSSLProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
     AddressManager addressManager = createAddressManager(discoveryProperties);
-    SSLProperties sslProperties = createSSLProperties(addressManager, serviceCombSSLProperties);
+    SSLProperties sslProperties = TransportUtils
+        .createSSLProperties(addressManager.sslEnabled(), serviceCombSSLProperties);
     return new ServiceCenterClient(addressManager, sslProperties,
         getRequestAuthHeaderProvider(authHeaderProviders),
         // TODO: add other headers needed for registration
@@ -68,51 +68,11 @@ public class DiscoveryAutoConfiguration {
       ServiceCombSSLProperties serviceCombSSLProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
     AddressManager addressManager = createAddressManager(discoveryProperties);
-    SSLProperties sslProperties = createSSLProperties(addressManager, serviceCombSSLProperties);
+    SSLProperties sslProperties = TransportUtils
+        .createSSLProperties(addressManager.sslEnabled(), serviceCombSSLProperties);
     return new ServiceCenterWatch(addressManager, sslProperties, getRequestAuthHeaderProvider(authHeaderProviders),
         // TODO: add other headers needed for registration
         "default", new HashMap<>(), EventManager.getEventBus());
-  }
-
-  private SSLProperties createSSLProperties(AddressManager addressManager,
-      ServiceCombSSLProperties serviceCombSSLProperties) {
-    SSLProperties sslProperties = new SSLProperties();
-    sslProperties.setEnabled(addressManager.sslEnabled());
-    SSLOption sslOption = new SSLOption();
-    sslOption.setKeyStoreType(serviceCombSSLProperties.getKeyStoreType() == null ?
-        SSLOption.DEFAULT_OPTION.getKeyStoreType() : serviceCombSSLProperties.getKeyStoreType().name());
-    sslOption.setKeyStore(serviceCombSSLProperties.getKeyStore() == null?
-        SSLOption.DEFAULT_OPTION.getKeyStore() : serviceCombSSLProperties.getKeyStore());
-    sslOption.setKeyStoreValue(serviceCombSSLProperties.getKeyStoreValue() == null?
-        SSLOption.DEFAULT_OPTION.getKeyStoreValue() : serviceCombSSLProperties.getKeyStoreValue());
-    sslOption.setTrustStoreType(serviceCombSSLProperties.getTrustStoreType() == null?
-        SSLOption.DEFAULT_OPTION.getTrustStoreType() : serviceCombSSLProperties.getTrustStoreType());
-    sslOption.setTrustStore(serviceCombSSLProperties.getTrustStore() == null?
-        SSLOption.DEFAULT_OPTION.getTrustStore() : serviceCombSSLProperties.getTrustStore());
-    sslOption.setTrustStoreValue(serviceCombSSLProperties.getTrustStoreValue() == null?
-        SSLOption.DEFAULT_OPTION.getTrustStoreValue() : serviceCombSSLProperties.getTrustStoreValue());
-    sslOption.setCiphers(serviceCombSSLProperties.getCiphers() == null?
-        SSLOption.DEFAULT_OPTION.getCiphers() : serviceCombSSLProperties.getCiphers());
-    sslOption.setProtocols(serviceCombSSLProperties.getProtocols() == null?
-        SSLOption.DEFAULT_OPTION.getProtocols() : serviceCombSSLProperties.getProtocols());
-    sslOption.setEngine(serviceCombSSLProperties.getEngine() == null?
-        SSLOption.DEFAULT_OPTION.getEngine() : serviceCombSSLProperties.getEngine());
-    sslOption.setCrl(serviceCombSSLProperties.getCrl() == null? SSLOption.DEFAULT_OPTION.getCrl() :
-        serviceCombSSLProperties.getCrl());
-    sslOption.setCheckCNWhiteFile(serviceCombSSLProperties.getCheckCNWhiteFile() == null?
-        SSLOption.DEFAULT_OPTION.getCheckCNWhiteFile() : serviceCombSSLProperties.getCheckCNWhiteFile());
-    sslOption.setStorePath(serviceCombSSLProperties.getStorePath() == null?
-        SSLOption.DEFAULT_OPTION.getStorePath() : serviceCombSSLProperties.getStorePath());
-    sslOption.setSslCustomClass(serviceCombSSLProperties.getSslCustomClass() == null?
-        SSLOption.DEFAULT_OPTION.getSslCustomClass() : serviceCombSSLProperties.getSslCustomClass());
-    sslOption.setAuthPeer(serviceCombSSLProperties.isAuthPeer());
-    sslOption.setCheckCNHost(serviceCombSSLProperties.isCheckCNHost());
-    sslOption.setAllowRenegociate(serviceCombSSLProperties.isAllowRenegociate());
-    sslOption.setCheckCNWhite(serviceCombSSLProperties.isCheckCNWhite());
-
-    sslProperties.setSslOption(sslOption);
-    sslProperties.setSslCustom(SSLCustom.createSSLCustom(serviceCombSSLProperties.getSslCustomClass()));
-    return sslProperties;
   }
 
   private AddressManager createAddressManager(ServiceCombDiscoveryProperties discoveryProperties) {
