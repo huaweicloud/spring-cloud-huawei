@@ -17,6 +17,7 @@
 
 package com.huaweicloud.config;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.servicecomb.config.common.ConfigurationChangedEvent;
@@ -55,9 +56,11 @@ public class ConfigWatch implements ApplicationEventPublisherAware {
         event.getUpdated().keySet(),
         event.getDeleted().keySet());
 
-    Set<String> refreshed = this.contextRefresher.refresh();
-    LOGGER.info("refreshed configurations [{}]", refreshed);
+    this.contextRefresher.refresh();
 
-    applicationEventPublisher.publishEvent(new ConfigRefreshEvent(this, refreshed));
+    Set<String> updatedKey = new HashSet<>();
+    updatedKey.addAll(event.getComplete().keySet());
+    updatedKey.addAll(event.getDeleted().keySet());
+    applicationEventPublisher.publishEvent(new ConfigRefreshEvent(this, updatedKey));
   }
 }

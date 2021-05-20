@@ -20,6 +20,7 @@ package com.huaweicloud.config.client;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.servicecomb.config.common.ConfigConverter;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -36,8 +37,11 @@ public class ServiceCombConfigPropertySourceTest extends MockUp<ServiceCombConfi
     Map<String, Object> sources = new HashMap<>();
     sources.put("test", "tt");
     sources.put("test2", "tt");
+    ConfigConverter configConverter = new ConfigConverter(null);
+    configConverter.updateData(sources);
 
-    ServiceCombConfigPropertySource serviceCombConfigPropertySource = new ServiceCombConfigPropertySource(sources);
+    ServiceCombConfigPropertySource serviceCombConfigPropertySource = new ServiceCombConfigPropertySource(
+        configConverter);
 
     String[] result = serviceCombConfigPropertySource.getPropertyNames();
     Assert.assertEquals(result.length, 2);
@@ -48,8 +52,11 @@ public class ServiceCombConfigPropertySourceTest extends MockUp<ServiceCombConfi
     Map<String, Object> sources = new HashMap<>();
     sources.put("test", "tt");
     sources.put("test2", "tt");
+    ConfigConverter configConverter = new ConfigConverter(null);
+    configConverter.updateData(sources);
 
-    ServiceCombConfigPropertySource serviceCombConfigPropertySource = new ServiceCombConfigPropertySource(sources);
+    ServiceCombConfigPropertySource serviceCombConfigPropertySource = new ServiceCombConfigPropertySource(
+        configConverter);
 
     Object result = serviceCombConfigPropertySource.getProperty("test");
     Assert.assertEquals(result, "tt");

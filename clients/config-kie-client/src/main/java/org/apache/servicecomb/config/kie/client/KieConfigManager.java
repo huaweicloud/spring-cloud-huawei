@@ -17,9 +17,7 @@
 
 package org.apache.servicecomb.config.kie.client;
 
-import java.util.Collections;
-import java.util.Map;
-
+import org.apache.servicecomb.config.common.ConfigConverter;
 import org.apache.servicecomb.config.common.ConfigurationChangedEvent;
 import org.apache.servicecomb.config.kie.client.model.ConfigurationsRequest;
 import org.apache.servicecomb.config.kie.client.model.ConfigurationsResponse;
@@ -42,18 +40,14 @@ public class KieConfigManager extends AbstractTask {
 
   private ConfigurationsRequest configurationsRequest;
 
-  private Map<String, Object> lastConfiguration;
-
-  public KieConfigManager(KieConfigOperation configKieClient, EventBus eventBus) {
-    this(configKieClient, eventBus, Collections.emptyMap());
-  }
+  private ConfigConverter configConverter;
 
   public KieConfigManager(KieConfigOperation configKieClient, EventBus eventBus,
-      Map<String, Object> lastConfiguration) {
+      ConfigConverter configConverter) {
     super("config-center-configuration-task");
     this.configKieClient = configKieClient;
     this.eventBus = eventBus;
-    this.lastConfiguration = lastConfiguration;
+    this.configConverter = configConverter;
   }
 
   public void setConfigurationsRequest(ConfigurationsRequest configurationsRequest) {
@@ -76,10 +70,12 @@ public class KieConfigManager extends AbstractTask {
       try {
         ConfigurationsResponse response = configKieClient.queryConfigurations(configurationsRequest);
         if (response.isChanged()) {
-          LOGGER.info("The configurations are change, will refresh local configurations.");
           configurationsRequest.setRevision(response.getRevision());
-          eventBus.post(ConfigurationChangedEvent.createIncremental(response.getConfigurations(), lastConfiguration));
-          lastConfiguration = response.getConfigurations();
+
+          ConfigurationChangedEvent event = ConfigurationChangedEvent
+              .createIncremental(response.getConfigurations(), configConverter.getLastRawData());
+          configConverter.updateData(response.getConfigurations());
+          eventBus.post(event);
         }
         startTask(new BackOffSleepTask(POLL_INTERVAL, new PollConfigurationTask(0)));
       } catch (Exception e) {

@@ -21,6 +21,7 @@ package com.huaweicloud.config.client;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.servicecomb.config.common.ConfigConverter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,10 +36,6 @@ import com.huaweicloud.config.ServiceCombPropertySourceLocator;
 import mockit.Injectable;
 import mockit.integration.junit4.JMockit;
 
-/**
- * @Author wangqijun
- * @Date 17:38 2019-10-26
- **/
 @RunWith(JMockit.class)
 public class ServiceCombPropertySourceLocatorTest {
 
@@ -58,8 +55,11 @@ public class ServiceCombPropertySourceLocatorTest {
     Map<String, Object> sources = new HashMap<>();
     sources.put("test", "tt");
     sources.put("test2", "tt");
+    ConfigConverter configConverter = new ConfigConverter(null);
+    configConverter.updateData(sources);
 
-    ServiceCombPropertySourceLocator serviceCombPropertySourceLocator = new ServiceCombPropertySourceLocator(sources);
+    ServiceCombPropertySourceLocator serviceCombPropertySourceLocator = new ServiceCombPropertySourceLocator(
+        configConverter);
     PropertySource<?> result = serviceCombPropertySourceLocator.locate(environment);
     Assert.assertEquals(result.getName(), ServiceCombConfigPropertySource.NAME);
   }

@@ -17,29 +17,16 @@
 
 package com.huaweicloud.config;
 
-import java.util.Set;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cloud.context.refresh.ContextRefresher;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-import org.apache.servicecomb.config.common.ConfigConverter;
-import org.springframework.core.env.EnumerablePropertySource;
-
-public class ServiceCombConfigPropertySource extends EnumerablePropertySource<ConfigConverter> {
-  public static final String NAME = "servicecomb";
-
-  private final ConfigConverter configConverter;
-
-  public ServiceCombConfigPropertySource(ConfigConverter configConverter) {
-    super(NAME, configConverter);
-    this.configConverter = configConverter;
-  }
-
-  @Override
-  public String[] getPropertyNames() {
-    Set<String> strings = this.configConverter.getCurrentData().keySet();
-    return strings.toArray(new String[strings.size()]);
-  }
-
-  @Override
-  public Object getProperty(String name) {
-    return this.configConverter.getCurrentData().get(name);
+@Configuration
+@ConditionalOnProperty(name = "spring.cloud.servicecomb.config.enabled", matchIfMissing = true)
+public class ServiceCombConfigAutoConfiguration {
+  @Bean
+  public ConfigWatch configWatch(ContextRefresher contextRefresher) {
+    return new ConfigWatch(contextRefresher);
   }
 }
