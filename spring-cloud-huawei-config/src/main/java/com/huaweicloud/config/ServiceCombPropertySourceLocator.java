@@ -17,8 +17,7 @@
 
 package com.huaweicloud.config;
 
-import java.util.Map;
-
+import org.apache.servicecomb.config.common.ConfigConverter;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.CompositePropertySource;
@@ -27,16 +26,15 @@ import org.springframework.core.env.PropertySource;
 
 @Order(0)
 public class ServiceCombPropertySourceLocator implements PropertySourceLocator {
-  private Map<String, Object> configurations;
+  private ConfigConverter configConverter;
 
-  public ServiceCombPropertySourceLocator(Map<String, Object> configurations) {
-    this.configurations = configurations;
+  public ServiceCombPropertySourceLocator(ConfigConverter configConverter) {
+    this.configConverter = configConverter;
   }
 
   @Override
   public PropertySource<?> locate(Environment environment) {
-    ServiceCombConfigPropertySource serviceCombConfigPropertySource = new ServiceCombConfigPropertySource(
-        configurations);
+    ServiceCombConfigPropertySource serviceCombConfigPropertySource = new ServiceCombConfigPropertySource(configConverter);
     CompositePropertySource composite = new CompositePropertySource(ServiceCombConfigPropertySource.NAME);
     composite.addPropertySource(serviceCombConfigPropertySource);
     return composite;
