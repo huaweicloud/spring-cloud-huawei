@@ -48,11 +48,14 @@ public class SchemaController {
     assertThat(schemaContents.size()).isGreaterThan(2);
 
     String a1 = schemaContents.get("SchemaContentController").replaceAll("\\s", "");
-    String fileContent =  readFile("SchemaContentController.yaml");
+    String fileContent = readFile("SchemaContentController.yaml");
     fileContent = fileContent.substring(fileContent.indexOf("---") + 3);
     String a2 = fileContent.replaceAll("\\s", "");
-    assertThat(a1).isEqualTo(a2);
-    return "success";
+    if (a1.equals(a2)) {
+      return "success";
+    } else {
+      return a1;
+    }
   }
 
   private String readFile(String restController) {
