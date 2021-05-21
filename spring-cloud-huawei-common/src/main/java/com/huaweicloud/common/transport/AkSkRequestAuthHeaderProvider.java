@@ -17,11 +17,21 @@
 
 package com.huaweicloud.common.transport;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
+import org.apache.servicecomb.http.client.common.HttpUtils;
 
 public class AkSkRequestAuthHeaderProvider implements AuthHeaderProvider {
+  public static final String X_SERVICE_AK = "X-Service-AK";
+
+  public static final String X_SERVICE_SHA_AKSK = "X-Service-ShaAKSK";
+
+  public static final String X_SERVICE_PROJECT = "X-Service-Project";
+
   private ServiceCombAkSkProperties serviceCombAkSkProperties;
 
   public AkSkRequestAuthHeaderProvider(ServiceCombAkSkProperties serviceCombAkSkProperties) {
@@ -30,6 +40,27 @@ public class AkSkRequestAuthHeaderProvider implements AuthHeaderProvider {
 
   @Override
   public Map<String, String> authHeaders() {
-    return DealHeaderUtil.readAkSkHeader(serviceCombAkSkProperties);
+    if (isAKSKNotEnabled(serviceCombAkSkProperties)) {
+      return Collections.emptyMap();
+    }
+    Map<String, String> headers = new HashMap<>();
+    headers.put(X_SERVICE_AK, serviceCombAkSkProperties.getAccessKey());
+    headers.put(X_SERVICE_SHA_AKSK, serviceCombAkSkProperties.getSecretKey());
+    headers.put(X_SERVICE_PROJECT, encode(serviceCombAkSkProperties.getProject()));
+    return headers;
+  }
+
+  private String encode(String content) {
+    try {
+      return HttpUtils.encodeURLParam(content);
+    } catch (IOException e) {
+      return content;
+    }
+  }
+
+  private static boolean isAKSKNotEnabled(ServiceCombAkSkProperties serviceCombAkSkProperties) {
+    return serviceCombAkSkProperties == null ||
+        serviceCombAkSkProperties.isEmpty() ||
+        !serviceCombAkSkProperties.isEnabled();
   }
 }

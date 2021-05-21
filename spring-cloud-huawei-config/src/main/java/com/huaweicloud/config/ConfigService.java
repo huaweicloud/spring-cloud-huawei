@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.http.client.config.RequestConfig;
 import org.apache.servicecomb.config.center.client.AddressManager;
@@ -32,10 +31,8 @@ import org.apache.servicecomb.config.center.client.model.QueryConfigurationsResp
 import org.apache.servicecomb.config.common.ConfigConverter;
 import org.apache.servicecomb.config.kie.client.KieClient;
 import org.apache.servicecomb.config.kie.client.KieConfigManager;
-import org.apache.servicecomb.config.kie.client.model.ConfigConstants;
-import org.apache.servicecomb.config.kie.client.model.ConfigurationsRequest;
-import org.apache.servicecomb.config.kie.client.model.ConfigurationsResponse;
 import org.apache.servicecomb.config.kie.client.model.KieAddressManager;
+import org.apache.servicecomb.config.kie.client.model.KieConfiguration;
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.apache.servicecomb.http.client.auth.RequestAuthHeaderProvider;
 import org.apache.servicecomb.http.client.common.HttpTransport;
@@ -49,13 +46,11 @@ import com.huaweicloud.common.transport.TransportUtils;
 import com.huaweicloud.common.util.URLUtil;
 
 public class ConfigService {
-  private static final String DEFAULT_PROJECT = "default";
-
   private boolean initialized = false;
 
   private ConfigConverter configConverter;
 
-  private static ConfigService INSTANCE = new ConfigService();
+  private static final ConfigService INSTANCE = new ConfigService();
 
   private ConfigService() {
 
@@ -152,69 +147,52 @@ public class ConfigService {
     configCenterManager.startConfigCenterManager();
   }
 
-  private KieAddressManager createKieAddressManager(List<String> addresses,
-      ServiceCombConfigProperties configProperties,
-      ServiceCombAkSkProperties serviceCombAkSkProperties) {
-    Properties properties = new Properties();
-    Map<String, String> configKey = new HashMap<>();
-    properties.setProperty(ConfigConstants.KEY_PROJECT,
-        StringUtils.isEmpty(serviceCombAkSkProperties.getProject()) ? DEFAULT_PROJECT
-            : serviceCombAkSkProperties.getProject());
-    properties
-        .setProperty(ConfigConstants.KEY_ENABLELONGPOLLING,
-            Boolean.toString(configProperties.getEnableLongPolling()));
-    properties.setProperty(ConfigConstants.KEY_POLLINGWAITSEC,
-        Integer.toString(configProperties.getWatch().getPollingWaitTimeInSeconds()));
-
-    configKey.put(ConfigConstants.KEY_PROJECT, ConfigConstants.KEY_PROJECT);
-    configKey.put(ConfigConstants.KEY_ENABLELONGPOLLING, ConfigConstants.KEY_ENABLELONGPOLLING);
-    configKey.put(ConfigConstants.KEY_POLLINGWAITSEC, ConfigConstants.KEY_POLLINGWAITSEC);
-
-    return new KieAddressManager(properties, addresses, configKey);
+  private KieAddressManager createKieAddressManager(List<String> addresses) {
+    return new KieAddressManager(addresses);
   }
 
-  private KieAddressManager configKieAddressManager(ServiceCombConfigProperties configProperties,
-      ServiceCombAkSkProperties serviceCombAkSkProperties) {
+  private KieAddressManager configKieAddressManager(ServiceCombConfigProperties configProperties) {
     List<String> addresses = URLUtil.getEnvConfigUrl();
     if (addresses.isEmpty()) {
       addresses = URLUtil.dealMultiUrl(configProperties.getServerAddr());
     }
-    return createKieAddressManager(addresses, configProperties, serviceCombAkSkProperties);
+    return createKieAddressManager(addresses);
   }
 
-  private ConfigurationsRequest createConfigurationsRequest(ServiceCombConfigProperties configProperties) {
-    ConfigurationsRequest request = new ConfigurationsRequest();
-    request.setApplication(configProperties.getAppName());
-    request.setServiceName(configProperties.getServiceName());
-    request.setVersion(configProperties.getVersion());
-    request.setEnvironment(configProperties.getEnv());
-    // 需要设置为 null， 并且 query 参数为 revision=null 才会返回 revision 信息。 revision = 是不行的。
-    request.setRevision(null);
-    return request;
+  private KieConfiguration createKieConfiguration(ServiceCombConfigProperties configProperties,
+      ServiceCombAkSkProperties serviceCombAkSkProperties) {
+    return new KieConfiguration().setAppName(configProperties.getAppName())
+        .setFirstPullRequired(configProperties.isFirstPullRequired())
+        .setCustomLabel(configProperties.getKie().getCustomLabel())
+        .setCustomLabelValue(configProperties.getKie().getCustomLabelValue())
+        .setEnableAppConfig(configProperties.getKie().isEnableAppConfig())
+        .setEnableCustomConfig(configProperties.getKie().isEnableCustomConfig())
+        .setEnableLongPolling(configProperties.getKie().isEnableLongPolling())
+        .setEnableServiceConfig(configProperties.getKie().isEnableServiceConfig())
+        .setEnvironment(configProperties.getEnv())
+        .setPollingWaitInSeconds(configProperties.getKie().getPollingWaitTimeInSeconds())
+        .setProject(serviceCombAkSkProperties.getProject())
+        .setServiceName(configProperties.getServiceName());
   }
 
   private void initKieConfig(ServiceCombConfigProperties configProperties,
       ServiceCombAkSkProperties serviceCombAkSkProperties, ServiceCombSSLProperties serviceCombSSLProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
-    KieAddressManager kieAddressManager = configKieAddressManager(configProperties,
-        serviceCombAkSkProperties);
+    KieAddressManager kieAddressManager = configKieAddressManager(configProperties);
 
     RequestConfig.Builder requestBuilder = HttpTransportFactory.defaultRequestConfig();
-    if (configProperties.getEnableLongPolling() && configProperties.getWatch().getPollingWaitTimeInSeconds() >= 0) {
-      requestBuilder.setConnectionRequestTimeout(configProperties.getWatch().getPollingWaitTimeInSeconds() * 2 * 1000);
-      requestBuilder.setSocketTimeout(configProperties.getWatch().getPollingWaitTimeInSeconds() * 2 * 1000);
+    if (configProperties.getKie().isEnableLongPolling()
+        && configProperties.getKie().getPollingWaitTimeInSeconds() >= 0) {
+      requestBuilder.setConnectionRequestTimeout(configProperties.getKie().getPollingWaitTimeInSeconds() * 2 * 1000);
+      requestBuilder.setSocketTimeout(configProperties.getKie().getPollingWaitTimeInSeconds() * 2 * 1000);
     }
     HttpTransport httpTransport = createHttpTransport(kieAddressManager.sslEnabled(), serviceCombSSLProperties,
         authHeaderProviders, requestBuilder.build());
-
-    KieClient kieClient = new KieClient(kieAddressManager, httpTransport);
-
-    ConfigurationsRequest configurationsRequest = createConfigurationsRequest(configProperties);
-    ConfigurationsResponse response = kieClient.queryConfigurations(configurationsRequest);
-    configConverter.updateData(response.getConfigurations());
-    configurationsRequest.setRevision(response.getRevision());
-    KieConfigManager kieConfigManager = new KieConfigManager(kieClient, EventManager.getEventBus(), configConverter);
-    kieConfigManager.setConfigurationsRequest(configurationsRequest);
+    KieConfiguration kieConfiguration = createKieConfiguration(configProperties, serviceCombAkSkProperties);
+    KieClient kieClient = new KieClient(kieAddressManager, httpTransport, kieConfiguration);
+    KieConfigManager kieConfigManager = new KieConfigManager(kieClient, EventManager.getEventBus(), kieConfiguration,
+        configConverter);
+    kieConfigManager.firstPull();
     kieConfigManager.startConfigKieManager();
   }
 }

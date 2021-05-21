@@ -32,8 +32,6 @@ spring:
       config:
         serverAddr: ${CSE_V2_CC}
         serverType: kie
-        watch:
-          delay: 10000
 
 #      credentials:
 #        account:

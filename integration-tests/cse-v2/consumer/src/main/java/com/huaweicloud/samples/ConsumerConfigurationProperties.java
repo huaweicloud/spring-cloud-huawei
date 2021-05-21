@@ -25,6 +25,8 @@ public class ConsumerConfigurationProperties {
 
   private String bar;
 
+  private String priority;
+
   public String getFoo() {
     return foo;
   }
@@ -39,5 +41,13 @@ public class ConsumerConfigurationProperties {
 
   public void setBar(String bar) {
     this.bar = bar;
+  }
+
+  public String getPriority() {
+    return priority;
+  }
+
+  public void setPriority(String priority) {
+    this.priority = priority;
   }
 }
