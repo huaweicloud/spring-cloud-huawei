@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.http.client.config.RequestConfig;
 import org.apache.servicecomb.config.center.client.AddressManager;
 import org.apache.servicecomb.config.center.client.ConfigCenterClient;
 import org.apache.servicecomb.config.center.client.ConfigCenterManager;
@@ -76,7 +77,7 @@ public class ConfigService {
 
       initConfigConverter(configProperties);
 
-      if ("kie".equalsIgnoreCase(configProperties.getServerAddr())) {
+      if ("kie".equalsIgnoreCase(configProperties.getServerType())) {
         initKieConfig(configProperties, serviceCombAkSkProperties, serviceCombSSLProperties,
             authHeaderProviders);
       } else {
@@ -104,11 +105,11 @@ public class ConfigService {
 
   private HttpTransport createHttpTransport(boolean sslEnabled,
       ServiceCombSSLProperties serviceCombSSLProperties,
-      List<AuthHeaderProvider> authHeaderProviders) {
+      List<AuthHeaderProvider> authHeaderProviders, RequestConfig requestConfig) {
     return HttpTransportFactory
         .createHttpTransport(
             TransportUtils.createSSLProperties(sslEnabled, serviceCombSSLProperties),
-            getRequestAuthHeaderProvider(authHeaderProviders));
+            getRequestAuthHeaderProvider(authHeaderProviders), requestConfig);
   }
 
   private static RequestAuthHeaderProvider getRequestAuthHeaderProvider(List<AuthHeaderProvider> authHeaderProviders) {
@@ -137,7 +138,7 @@ public class ConfigService {
 
     AddressManager addressManager = configCenterAddressManager(configProperties, serviceCombAkSkProperties);
     HttpTransport httpTransport = createHttpTransport(addressManager.sslEnabled(), serviceCombSSLProperties,
-        authHeaderProviders);
+        authHeaderProviders, HttpTransportFactory.defaultRequestConfig().build());
     ConfigCenterClient configCenterClient = new ConfigCenterClient(addressManager, httpTransport);
 
     queryConfigurationsRequest = createQueryConfigurationsRequest(configProperties);
@@ -198,8 +199,13 @@ public class ConfigService {
     KieAddressManager kieAddressManager = configKieAddressManager(configProperties,
         serviceCombAkSkProperties);
 
+    RequestConfig.Builder requestBuilder = HttpTransportFactory.defaultRequestConfig();
+    if (configProperties.getEnableLongPolling() && configProperties.getWatch().getPollingWaitTimeInSeconds() >= 0) {
+      requestBuilder.setConnectionRequestTimeout(configProperties.getWatch().getPollingWaitTimeInSeconds() * 2 * 1000);
+      requestBuilder.setSocketTimeout(configProperties.getWatch().getPollingWaitTimeInSeconds() * 2 * 1000);
+    }
     HttpTransport httpTransport = createHttpTransport(kieAddressManager.sslEnabled(), serviceCombSSLProperties,
-        authHeaderProviders);
+        authHeaderProviders, requestBuilder.build());
 
     KieClient kieClient = new KieClient(kieAddressManager, httpTransport);
 

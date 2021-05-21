@@ -17,6 +17,16 @@
 
 package org.apache.servicecomb.config.kie.client;
 
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.servicecomb.config.kie.client.exception.OperationException;
@@ -35,16 +45,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.io.ByteArrayResource;
-
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class KieClient implements KieConfigOperation {
 
@@ -121,7 +121,6 @@ public class KieClient implements KieConfigOperation {
       throw new OperationException(
           "read response failed. status:" + httpResponse.getStatusCode() + "; message:" +
               httpResponse.getMessage() + "; content:" + httpResponse.getContent());
-
     } catch (Exception e) {
       addressManager.nextAddress();
       throw new OperationException("read response failed. ", e);
@@ -144,9 +143,10 @@ public class KieClient implements KieConfigOperation {
       boolean checkServer = checkValue(ConfigConstants.LABEL_SERVICE, request.getServiceName());
       boolean checkVersion = checkValue(ConfigConstants.LABEL_VERSION, request.getVersion());
       if (checkApplication && checkEnvironment && !labelsMap.containsKey(ConfigConstants.LABEL_SERVICE)) {
-          appList.add(kvDoc);
+        appList.add(kvDoc);
       }
-      if (checkApplication && checkEnvironment && checkServer && !kvDoc.getLabels().containsKey(ConfigConstants.LABEL_VERSION)) {
+      if (checkApplication && checkEnvironment && checkServer && !kvDoc.getLabels()
+          .containsKey(ConfigConstants.LABEL_VERSION)) {
         serviceList.add(kvDoc);
       }
       if (checkApplication && checkEnvironment && checkServer && checkVersion) {
@@ -177,24 +177,24 @@ public class KieClient implements KieConfigOperation {
   }
 
   private Map<String, Object> processValueType(KVDoc kvDoc) {
-    ValueType vtype;
+    ValueType valueType;
     try {
-      vtype = ValueType.valueOf(kvDoc.getValueType());
+      valueType = ValueType.valueOf(kvDoc.getValueType());
     } catch (IllegalArgumentException e) {
       throw new OperationException("value type not support");
     }
     Properties properties = new Properties();
     Map<String, Object> kvMap = new HashMap<>();
     try {
-      switch (vtype) {
+      switch (valueType) {
         case yml:
         case yaml:
           YamlPropertiesFactoryBean yamlFactory = new YamlPropertiesFactoryBean();
           yamlFactory.setResources(new ByteArrayResource(kvDoc.getValue().getBytes()));
-          return toMap(kvDoc.getKey(), yamlFactory.getObject());
+          return toMap(yamlFactory.getObject());
         case properties:
           properties.load(new StringReader(kvDoc.getValue()));
-          return toMap(kvDoc.getKey(), properties);
+          return toMap(properties);
         case text:
         case string:
         default:
@@ -208,7 +208,7 @@ public class KieClient implements KieConfigOperation {
   }
 
   @SuppressWarnings("unchecked")
-  private Map<String, Object> toMap(String prefix, Properties properties) {
+  private Map<String, Object> toMap(Properties properties) {
     if (properties == null) {
       return Collections.emptyMap();
     }
@@ -217,9 +217,6 @@ public class KieClient implements KieConfigOperation {
     while (keys.hasMoreElements()) {
       String key = keys.nextElement();
       Object value = properties.getProperty(key);
-      if (!StringUtils.isEmpty(prefix)) {
-        key = prefix + "." + key;
-      }
       if (value != null) {
         result.put(key, value);
       } else {
