@@ -59,19 +59,23 @@ public class AbstractTask {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTask.class);
 
-  private final ExecutorService taskPool;
+  protected ExecutorService taskPool;
 
   private volatile boolean running = true;
 
   protected AbstractTask(String taskName) {
-    this.taskPool = Executors.newSingleThreadExecutor((task) ->
-        new Thread(task, taskName));
+    initTaskPool(taskName);
     Runtime.getRuntime().addShutdownHook(new Thread(taskName + "-shutdown-hook") {
       @Override
       public void run() {
         AbstractTask.this.stop();
       }
     });
+  }
+
+  protected void initTaskPool(String taskName) {
+    this.taskPool = Executors.newSingleThreadExecutor((task) ->
+        new Thread(task, taskName));
   }
 
   protected void startTask(Task task) {

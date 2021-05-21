@@ -31,6 +31,8 @@ public class ConsumerConfigIT {
     assertThat(result).isEqualTo("foo");
     result = template.getForObject(Config.GATEWAY_URL + "/config?key=cse.v2.test.bar", String.class);
     assertThat(result).isEqualTo("bar");
+    result = template.getForObject(Config.GATEWAY_URL + "/config?key=cse.v2.test.priority", String.class);
+    assertThat(result).isEqualTo("v3");
   }
 
   @Test
@@ -39,5 +41,7 @@ public class ConsumerConfigIT {
     assertThat(result).isEqualTo("bar");
     result = template.getForObject(Config.GATEWAY_URL + "/foo", String.class);
     assertThat(result).isEqualTo("foo");
+    result = template.getForObject(Config.GATEWAY_URL + "/priority", String.class);
+    assertThat(result).isEqualTo("v3");
   }
 }

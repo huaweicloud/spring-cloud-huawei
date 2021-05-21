@@ -28,6 +28,8 @@ public class ServiceCombConfigProperties {
 
   private boolean enabled = true;
 
+  private boolean firstPullRequired = true;
+
   @Value("${spring.cloud.servicecomb.discovery.address:}")
   private String discoveryAddress;
 
@@ -48,13 +50,12 @@ public class ServiceCombConfigProperties {
 
   private String serverAddr;
 
-  @Value("${spring.cloud.servicecomb.config.enableLongPolling:true}")
-  private boolean enableLongPolling;
-
   @Value("${spring.cloud.servicecomb.config.fileSource:}")
   private String fileSource;
 
   private Watch watch = new Watch();
+
+  private Kie kie = new Kie();
 
   public String getFileSource() {
     return fileSource;
@@ -70,18 +71,6 @@ public class ServiceCombConfigProperties {
 
   public void setDiscoveryAddress(String discoveryAddress) {
     this.discoveryAddress = discoveryAddress;
-  }
-
-  public boolean isEnableLongPolling() {
-    return enableLongPolling;
-  }
-
-  public boolean getEnableLongPolling() {
-    return enableLongPolling;
-  }
-
-  public void setEnableLongPolling(boolean enableLongPolling) {
-    this.enableLongPolling = enableLongPolling;
   }
 
   public boolean isEnabled() {
@@ -106,6 +95,14 @@ public class ServiceCombConfigProperties {
 
   public void setWatch(Watch watch) {
     this.watch = watch;
+  }
+
+  public void setKie(Kie kie) {
+    this.kie = kie;
+  }
+
+  public Kie getKie() {
+    return this.kie;
   }
 
   public String getServiceName() {
@@ -151,23 +148,20 @@ public class ServiceCombConfigProperties {
     this.serverType = serverType;
   }
 
+  public boolean isFirstPullRequired() {
+    return firstPullRequired;
+  }
+
+  public void setFirstPullRequired(boolean firstPullRequired) {
+    this.firstPullRequired = firstPullRequired;
+  }
+
   public static class Watch {
     private boolean enable;
 
     private int delay = 10 * 1000;
 
     private int waitTime = 10 * 1000;
-
-    @Value("${spring.cloud.servicecomb.config.pollingWaitSec:30}")
-    private int pollingWaitTimeInSeconds = 30;
-
-    public int getPollingWaitTimeInSeconds() {
-      return pollingWaitTimeInSeconds;
-    }
-
-    public void setPollingWaitTimeInSeconds(int pollingWaitTimeInSeconds) {
-      this.pollingWaitTimeInSeconds = pollingWaitTimeInSeconds;
-    }
 
     public boolean isEnable() {
       return enable;
@@ -191,6 +185,80 @@ public class ServiceCombConfigProperties {
 
     public void setWaitTime(int waitTime) {
       this.waitTime = waitTime;
+    }
+  }
+
+  public static class Kie {
+    private boolean enableAppConfig = true;
+
+    private boolean enableServiceConfig = true;
+
+    private boolean enableCustomConfig = true;
+
+    private String customLabelValue = "";
+
+    private String customLabel = "public";
+
+    @Value("${spring.cloud.servicecomb.config.enableLongPolling:true}")
+    private boolean enableLongPolling;
+
+    @Value("${spring.cloud.servicecomb.config.pollingWaitSec:10}")
+    private int pollingWaitTimeInSeconds = 10;
+
+    public int getPollingWaitTimeInSeconds() {
+      return pollingWaitTimeInSeconds;
+    }
+
+    public void setPollingWaitTimeInSeconds(int pollingWaitTimeInSeconds) {
+      this.pollingWaitTimeInSeconds = pollingWaitTimeInSeconds;
+    }
+
+    public boolean isEnableLongPolling() {
+      return enableLongPolling;
+    }
+
+    public void setEnableLongPolling(boolean enableLongPolling) {
+      this.enableLongPolling = enableLongPolling;
+    }
+
+    public boolean isEnableAppConfig() {
+      return enableAppConfig;
+    }
+
+    public void setEnableAppConfig(boolean enableAppConfig) {
+      this.enableAppConfig = enableAppConfig;
+    }
+
+    public boolean isEnableServiceConfig() {
+      return enableServiceConfig;
+    }
+
+    public void setEnableServiceConfig(boolean enableServiceConfig) {
+      this.enableServiceConfig = enableServiceConfig;
+    }
+
+    public boolean isEnableCustomConfig() {
+      return enableCustomConfig;
+    }
+
+    public void setEnableCustomConfig(boolean enableCustomConfig) {
+      this.enableCustomConfig = enableCustomConfig;
+    }
+
+    public String getCustomLabelValue() {
+      return customLabelValue;
+    }
+
+    public void setCustomLabelValue(String customLabelValue) {
+      this.customLabelValue = customLabelValue;
+    }
+
+    public String getCustomLabel() {
+      return customLabel;
+    }
+
+    public void setCustomLabel(String customLabel) {
+      this.customLabel = customLabel;
     }
   }
 }

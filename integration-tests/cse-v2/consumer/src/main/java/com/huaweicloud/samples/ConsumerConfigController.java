@@ -45,4 +45,9 @@ public class ConsumerConfigController {
   public String bar() {
     return consumerConfigurationProperties.getBar();
   }
+
+  @GetMapping("/priority")
+  public String priority() {
+    return consumerConfigurationProperties.getPriority();
+  }
 }
