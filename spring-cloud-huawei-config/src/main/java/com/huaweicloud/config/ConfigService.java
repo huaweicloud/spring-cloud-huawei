@@ -67,18 +67,20 @@ public class ConfigService {
   public void init(ServiceCombConfigProperties configProperties,
       ServiceCombAkSkProperties serviceCombAkSkProperties, ServiceCombSSLProperties serviceCombSSLProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
-    if (!initialized) {
-      initialized = true;
+    if (initialized) {
+      return;
+    }
 
-      initConfigConverter(configProperties);
+    initialized = true;
 
-      if ("kie".equalsIgnoreCase(configProperties.getServerType())) {
-        initKieConfig(configProperties, serviceCombAkSkProperties, serviceCombSSLProperties,
-            authHeaderProviders);
-      } else {
-        initServiceCenterConfig(configProperties, serviceCombAkSkProperties, serviceCombSSLProperties,
-            authHeaderProviders);
-      }
+    initConfigConverter(configProperties);
+
+    if ("kie".equalsIgnoreCase(configProperties.getServerType())) {
+      initKieConfig(configProperties, serviceCombAkSkProperties, serviceCombSSLProperties,
+          authHeaderProviders);
+    } else {
+      initServiceCenterConfig(configProperties, serviceCombAkSkProperties, serviceCombSSLProperties,
+          authHeaderProviders);
     }
   }
 
