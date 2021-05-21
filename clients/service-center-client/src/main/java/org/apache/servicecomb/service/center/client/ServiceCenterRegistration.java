@@ -89,20 +89,16 @@ public class ServiceCenterRegistration extends AbstractTask {
             LOGGER.error("register microservice failed, and will try again.");
             eventBus.post(new MicroserviceRegistrationEvent(false));
             startTask(new BackOffSleepTask(failedCount + 1, new RegisterMicroserviceTask(failedCount + 1)));
-          } else {
-            microservice.setServiceId(response.getServiceId());
-            microserviceInstance.setServiceId(response.getServiceId());
-            microserviceInstance.setMicroservice(microservice);
-            eventBus.post(new MicroserviceRegistrationEvent(true));
-            startTask(new RegisterSchemaTask(0));
+            return;
           }
-          return;
+          microservice.setServiceId(response.getServiceId());
+          microserviceInstance.setServiceId(response.getServiceId());
+          microserviceInstance.setMicroservice(microservice);
+          eventBus.post(new MicroserviceRegistrationEvent(true));
+          startTask(new RegisterSchemaTask(0));
         } else {
           Microservice newMicroservice = serviceCenterClient.getMicroserviceByServiceId(serviceResponse.getServiceId());
-          if (!isListEquals(newMicroservice.getSchemas(), microservice.getSchemas())) {
-            throw new IllegalStateException("Service has already registered, but schema ids not equal, stop register. "
-                + "Change the microservice version or delete the old microservice info and try again.");
-          }
+          dealIsSwaggerDifferent(newMicroservice);
           microservice.setServiceId(serviceResponse.getServiceId());
           microserviceInstance.setServiceId(serviceResponse.getServiceId());
           microserviceInstance.setMicroservice(microservice);
@@ -118,6 +114,19 @@ public class ServiceCenterRegistration extends AbstractTask {
         startTask(new BackOffSleepTask(failedCount + 1, new RegisterMicroserviceTask(failedCount + 1)));
       }
     }
+  }
+
+  private void dealIsSwaggerDifferent(Microservice newMicroservice) {
+    if (isListEquals(newMicroservice.getSchemas(), microservice.getSchemas())) {
+      return;
+    }
+    if (!microservice.isIgnoreSwaggerDifferent()) {
+      throw new IllegalStateException("Service has already registered, but schema ids not equal, stop register. "
+          + "Change the microservice version or delete the old microservice info and try again.");
+    }
+    LOGGER.warn("Service has already registered, but schema ids not equal. However, it will continue to register. "
+        + "If you want to eliminate this warning. you can Change the microservice version or delete the old " +
+        "microservice info and try again. eg: version:1.0.0 -> 1.0.1");
   }
 
   private boolean isListEquals(List<String> one, List<String> two) {
