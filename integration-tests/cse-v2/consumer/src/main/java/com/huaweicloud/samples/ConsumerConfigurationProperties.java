@@ -27,6 +27,8 @@ public class ConsumerConfigurationProperties {
 
   private String priority;
 
+  private String common;
+
   public String getFoo() {
     return foo;
   }
@@ -49,5 +51,13 @@ public class ConsumerConfigurationProperties {
 
   public void setPriority(String priority) {
     this.priority = priority;
+  }
+
+  public String getCommon() {
+    return common;
+  }
+
+  public void setCommon(String common) {
+    this.common = common;
   }
 }
