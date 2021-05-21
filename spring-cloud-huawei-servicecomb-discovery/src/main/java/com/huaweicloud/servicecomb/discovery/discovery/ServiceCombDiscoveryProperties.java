@@ -60,11 +60,11 @@ public class ServiceCombDiscoveryProperties {
   @Value("${spring.cloud.servicecomb.discovery.allowCrossApp:false}")
   private boolean allowCrossApp;
 
-  @Value("${spring.cloud.servicecomb.discovery.ignoreSwaggerDifferent:false}")
-  private boolean ignoreSwaggerDifferent;
-
   @Value("${server.publishAddress:}")
   private String serverAddress;
+
+  @Value("${spring.cloud.servicecomb.discovery.ignoreSwaggerDifferent:false}")
+  private boolean ignoreSwaggerDifferent;
 
   @Value("${server.port}")
   private String port;
