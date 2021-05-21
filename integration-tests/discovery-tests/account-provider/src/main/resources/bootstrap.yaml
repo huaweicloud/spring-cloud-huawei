@@ -34,3 +34,6 @@ spring:
       # testing spring cloud swagger generation
       swagger:
         enableJavaChassisAdapter: false
+
+      config:
+        enabled: false

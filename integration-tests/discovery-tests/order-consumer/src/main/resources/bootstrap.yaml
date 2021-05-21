@@ -32,6 +32,9 @@ spring:
       swagger:
         enableJavaChassisAdapter: true
 
+      config:
+        enabled: false
+
 servicecomb:
   matchGroup:
     demo-rateLimiting: |

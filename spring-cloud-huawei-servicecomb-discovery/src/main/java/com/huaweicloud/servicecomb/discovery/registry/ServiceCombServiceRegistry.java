@@ -139,7 +139,7 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
       MicroserviceInstance instance = serviceCenterClient
           .getMicroserviceInstance(registration.getMicroserviceInstance().getServiceId(),
               registration.getMicroserviceInstance().getInstanceId());
-      return instance.getStatus().name();
+      return instance.getStatus() != null ? instance.getStatus().name() : null;
     } catch (OperationException e) {
       LOGGER.error("getStatus failed", e);
     }

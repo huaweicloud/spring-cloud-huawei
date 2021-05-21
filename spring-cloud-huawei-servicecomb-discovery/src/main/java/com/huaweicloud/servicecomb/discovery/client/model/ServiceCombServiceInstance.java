@@ -101,11 +101,13 @@ public class ServiceCombServiceInstance implements ServiceInstance {
   public Map<String, String> getMetadata() {
     Map<String, String> map = new HashMap<>();
     map.putAll(this.microserviceInstance.getProperties());
-    map.put(DiscoveryConstants.INSTANCE_STATUS, this.microserviceInstance.getStatus().name());
+    if (this.microserviceInstance.getStatus() != null) {
+      map.put(DiscoveryConstants.INSTANCE_STATUS, this.microserviceInstance.getStatus().name());
+    }
     if (this.microserviceInstance.getDataCenterInfo() != null) {
       map.put(DiscoveryConstants.INSTANCE_ZONE, this.microserviceInstance.getDataCenterInfo().getAvailableZone());
     }
-    return this.microserviceInstance.getProperties();
+    return map;
   }
 
   @Override
