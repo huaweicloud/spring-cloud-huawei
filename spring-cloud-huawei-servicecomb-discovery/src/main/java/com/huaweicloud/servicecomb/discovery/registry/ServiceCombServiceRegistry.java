@@ -65,6 +65,7 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     this.serviceCenterClient = serviceCenterClient;
     this.watch = watch;
     this.serviceCombDiscoveryProperties = serviceCombDiscoveryProperties;
+    this.serviceCenterConfiguration = new ServiceCenterConfiguration();
   }
 
   @Subscribe
