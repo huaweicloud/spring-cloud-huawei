@@ -127,6 +127,10 @@ public class ServiceCenterDiscovery extends AbstractTask {
   }
 
   private void pullInstance(SubscriptionKey k, SubscriptionValue v) {
+    if (myselfServiceId == null) {
+      // registration not ready
+      return;
+    }
     try {
       FindMicroserviceInstancesResponse instancesResponse = serviceCenterClient
           .findMicroserviceInstance(myselfServiceId, k.appId, k.serviceName, ALL_VERSION, v.revision);

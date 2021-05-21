@@ -50,4 +50,9 @@ public class ConsumerConfigController {
   public String priority() {
     return consumerConfigurationProperties.getPriority();
   }
+
+  @GetMapping("/common")
+  public String common() {
+    return consumerConfigurationProperties.getCommon();
+  }
 }

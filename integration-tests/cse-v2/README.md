@@ -17,7 +17,8 @@ cse:
 cse:
   v2:
     test:
-      priority: v1
+      priority: v2
+      common: common
 ```
 
   * priority2.yaml。label信息： app=cse-v2-test-application,environment=production 。类型为 yaml。 
