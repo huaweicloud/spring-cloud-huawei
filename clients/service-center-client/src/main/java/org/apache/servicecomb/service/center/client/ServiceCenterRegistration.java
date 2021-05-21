@@ -32,6 +32,7 @@ import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.apache.servicecomb.service.center.client.model.RegisteredMicroserviceInstanceResponse;
 import org.apache.servicecomb.service.center.client.model.RegisteredMicroserviceResponse;
 import org.apache.servicecomb.service.center.client.model.SchemaInfo;
+import org.apache.servicecomb.service.center.client.model.ServiceCenterConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,9 +51,13 @@ public class ServiceCenterRegistration extends AbstractTask {
 
   private List<SchemaInfo> schemaInfos;
 
-  public ServiceCenterRegistration(ServiceCenterClient serviceCenterClient, EventBus eventBus) {
+  private ServiceCenterConfiguration serviceCenterConfiguration;
+
+  public ServiceCenterRegistration(ServiceCenterClient serviceCenterClient, ServiceCenterConfiguration
+      serviceCenterConfiguration, EventBus eventBus) {
     super("service-center-registration-task");
     this.serviceCenterClient = serviceCenterClient;
+    this.serviceCenterConfiguration = serviceCenterConfiguration;
     this.eventBus = eventBus;
   }
 
@@ -120,7 +125,7 @@ public class ServiceCenterRegistration extends AbstractTask {
     if (isListEquals(newMicroservice.getSchemas(), microservice.getSchemas())) {
       return;
     }
-    if (!microservice.isIgnoreSwaggerDifferent()) {
+    if (!serviceCenterConfiguration.isIgnoreSwaggerDifferent()) {
       throw new IllegalStateException("Service has already registered, but schema ids not equal, stop register. "
           + "Change the microservice version or delete the old microservice info and try again.");
     }

@@ -30,6 +30,7 @@ import org.apache.servicecomb.service.center.client.exception.OperationException
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.apache.servicecomb.service.center.client.model.SchemaInfo;
+import org.apache.servicecomb.service.center.client.model.ServiceCenterConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   private ServiceCombRegistration serviceCombRegistration;
 
+  private ServiceCenterConfiguration serviceCenterConfiguration;
+
   public ServiceCombServiceRegistry(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
       ServiceCenterClient serviceCenterClient, @Autowired(required = false) ServiceCenterWatch watch) {
     this.serviceCenterClient = serviceCenterClient;
@@ -74,7 +77,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
   @Override
   public void register(ServiceCombRegistration registration) {
     serviceCombRegistration = registration;
-    serviceCenterRegistration = new ServiceCenterRegistration(serviceCenterClient,
+    serviceCenterConfiguration.setIgnoreSwaggerDifferent(serviceCombDiscoveryProperties.isIgnoreSwaggerDifferent());
+    serviceCenterRegistration = new ServiceCenterRegistration(serviceCenterClient, serviceCenterConfiguration,
         EventManager.getEventBus());
     EventManager.getEventBus().register(this);
     serviceCenterRegistration.setMicroservice(registration.getMicroservice());

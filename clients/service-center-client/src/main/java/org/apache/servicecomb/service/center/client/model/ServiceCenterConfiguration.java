@@ -15,18 +15,22 @@
  * limitations under the License.
  */
 
-package org.apache.servicecomb.service.center.client;
+package org.apache.servicecomb.service.center.client.model;
 
-public interface ServiceCenterConfiguration {
-  class AddressProperties {
-    private boolean address;
+public class ServiceCenterConfiguration {
 
-    public boolean isAddress() {
-      return address;
-    }
+  /**
+   * for registration service
+   * when swagger is different between local with remote serviceCenter. if ignoreSwaggerDifferent is true.
+   * it will ignore the different and continue the program. otherwise, the program will be stop.
+   */
+  private Boolean ignoreSwaggerDifferent;
 
-    public void setAddress(boolean address) {
-      this.address = address;
-    }
+  public Boolean isIgnoreSwaggerDifferent() {
+    return ignoreSwaggerDifferent;
+  }
+
+  public void setIgnoreSwaggerDifferent(Boolean ignoreSwaggerDifferent) {
+    this.ignoreSwaggerDifferent = ignoreSwaggerDifferent;
   }
 }

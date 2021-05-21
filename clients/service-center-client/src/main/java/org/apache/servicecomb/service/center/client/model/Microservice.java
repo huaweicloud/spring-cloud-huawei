@@ -51,13 +51,6 @@ public class Microservice {
 
   private String level;
 
-  /**
-   * for registration service
-   * when swagger is different between local with remote serviceCenter. if ignoreSwaggerDifferent is true.
-   * it will ignore the different and continue the program. otherwise, the program will be stop.
-   */
-  private Boolean ignoreSwaggerDifferent;
-
   private List<String> schemas = new ArrayList<String>();
 
   private List<BasePath> paths = new ArrayList<>();
@@ -166,14 +159,6 @@ public class Microservice {
 
   public void setLevel(String level) {
     this.level = level;
-  }
-
-  public Boolean isIgnoreSwaggerDifferent() {
-    return ignoreSwaggerDifferent;
-  }
-
-  public void setIgnoreSwaggerDifferent(Boolean ignoreSwaggerDifferent) {
-    this.ignoreSwaggerDifferent = ignoreSwaggerDifferent;
   }
 
   public List<String> getSchemas() {

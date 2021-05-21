@@ -60,9 +60,6 @@ public class MicroserviceHandler {
       microservice.setAlias(serviceCombDiscoveryProperties.getAppName() +
           DiscoveryConstants.APP_SERVICE_SEPRATOR + serviceCombDiscoveryProperties.getServiceName());
     }
-    if (serviceCombDiscoveryProperties.isIgnoreSwaggerDifferent()) {
-      microservice.setIgnoreSwaggerDifferent(true);
-    }
     EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
     if (!StringUtils.isEmpty(envConfig.getString(APP_MAPPING)) &&
         !StringUtils.isEmpty(envConfig.getString(envConfig.getString(APP_MAPPING)))) {
