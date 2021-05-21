@@ -30,7 +30,8 @@ public class ServiceCenterConfiguration {
     return ignoreSwaggerDifferent;
   }
 
-  public void setIgnoreSwaggerDifferent(Boolean ignoreSwaggerDifferent) {
+  public ServiceCenterConfiguration setIgnoreSwaggerDifferent(Boolean ignoreSwaggerDifferent) {
     this.ignoreSwaggerDifferent = ignoreSwaggerDifferent;
+    return this;
   }
 }

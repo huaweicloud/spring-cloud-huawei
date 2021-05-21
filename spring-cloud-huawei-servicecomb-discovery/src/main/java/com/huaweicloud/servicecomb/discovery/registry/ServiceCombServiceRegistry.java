@@ -65,7 +65,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     this.serviceCenterClient = serviceCenterClient;
     this.watch = watch;
     this.serviceCombDiscoveryProperties = serviceCombDiscoveryProperties;
-    this.serviceCenterConfiguration = new ServiceCenterConfiguration();
+    this.serviceCenterConfiguration = new ServiceCenterConfiguration().setIgnoreSwaggerDifferent(
+        serviceCombDiscoveryProperties.isIgnoreSwaggerDifferent());
   }
 
   @Subscribe
@@ -78,7 +79,6 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
   @Override
   public void register(ServiceCombRegistration registration) {
     serviceCombRegistration = registration;
-    serviceCenterConfiguration.setIgnoreSwaggerDifferent(serviceCombDiscoveryProperties.isIgnoreSwaggerDifferent());
     serviceCenterRegistration = new ServiceCenterRegistration(serviceCenterClient, serviceCenterConfiguration,
         EventManager.getEventBus());
     EventManager.getEventBus().register(this);
