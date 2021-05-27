@@ -127,9 +127,6 @@ public abstract class AbstractRouterDistributor<T extends Server> implements
   }
 
   public void initLatestVersion(String serviceName, List<T> list) {
-    if (RouterRuleCache.getServiceInfoCacheMap().get(serviceName).getLatestVersionTag() != null) {
-      return;
-    }
     String latestVersion = null;
     for (T item : list) {
       ServiceCombServer server = (ServiceCombServer) item;
