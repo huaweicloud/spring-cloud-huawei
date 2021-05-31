@@ -27,6 +27,8 @@ import org.apache.servicecomb.http.client.common.HttpConfiguration.SSLProperties
 import org.apache.servicecomb.service.center.client.AddressManager;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.ServiceCenterWatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
@@ -35,11 +37,14 @@ import com.huaweicloud.common.transport.TransportUtils;
 import com.huaweicloud.common.util.URLUtil;
 
 public class ServiceCenterUtils {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCenterUtils.class);
+
   public static AddressManager createAddressManager(DiscoveryBootstrapProperties discoveryProperties) {
     List<String> addresses = URLUtil.getEnvServerURL();
     if (addresses.isEmpty()) {
       addresses = URLUtil.dealMultiUrl(discoveryProperties.getAddress());
     }
+    LOGGER.info("initialize discovery server={}", addresses.toString());
     return new AddressManager("default", addresses);
   }
 
