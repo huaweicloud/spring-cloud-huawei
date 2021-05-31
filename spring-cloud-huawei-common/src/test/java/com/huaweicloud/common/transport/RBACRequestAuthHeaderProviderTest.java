@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 public class RBACRequestAuthHeaderProviderTest {
-  private final ServiceCombDiscoveryProperties discoveryProperties = Mockito.mock(ServiceCombDiscoveryProperties.class);
+  private final DiscoveryBootstrapProperties discoveryProperties = Mockito.mock(DiscoveryBootstrapProperties.class);
 
   private final ServiceCombSSLProperties serviceCombSSLProperties = Mockito.mock(ServiceCombSSLProperties.class);
 
@@ -40,7 +40,7 @@ public class RBACRequestAuthHeaderProviderTest {
   }
 
   static class FirstTimeSuccessRBACRequestAuthHeaderProvider extends RBACRequestAuthHeaderProvider {
-    public FirstTimeSuccessRBACRequestAuthHeaderProvider(ServiceCombDiscoveryProperties discoveryProperties,
+    public FirstTimeSuccessRBACRequestAuthHeaderProvider(DiscoveryBootstrapProperties discoveryProperties,
         ServiceCombSSLProperties serviceCombSSLProperties,
         ServiceCombRBACProperties serviceCombRBACProperties) {
       super(discoveryProperties, serviceCombSSLProperties, serviceCombRBACProperties);
@@ -57,7 +57,7 @@ public class RBACRequestAuthHeaderProviderTest {
   static class SecondTimeSuccessRBACRequestAuthHeaderProvider extends RBACRequestAuthHeaderProvider {
     private boolean first = true;
 
-    public SecondTimeSuccessRBACRequestAuthHeaderProvider(ServiceCombDiscoveryProperties discoveryProperties,
+    public SecondTimeSuccessRBACRequestAuthHeaderProvider(DiscoveryBootstrapProperties discoveryProperties,
         ServiceCombSSLProperties serviceCombSSLProperties,
         ServiceCombRBACProperties serviceCombRBACProperties) {
       super(discoveryProperties, serviceCombSSLProperties, serviceCombRBACProperties);
@@ -78,7 +78,7 @@ public class RBACRequestAuthHeaderProviderTest {
   static class SecondTimeFirstNullSuccessRBACRequestAuthHeaderProvider extends RBACRequestAuthHeaderProvider {
     private int count = 0;
 
-    public SecondTimeFirstNullSuccessRBACRequestAuthHeaderProvider(ServiceCombDiscoveryProperties discoveryProperties,
+    public SecondTimeFirstNullSuccessRBACRequestAuthHeaderProvider(DiscoveryBootstrapProperties discoveryProperties,
         ServiceCombSSLProperties serviceCombSSLProperties,
         ServiceCombRBACProperties serviceCombRBACProperties) {
       super(discoveryProperties, serviceCombSSLProperties, serviceCombRBACProperties);

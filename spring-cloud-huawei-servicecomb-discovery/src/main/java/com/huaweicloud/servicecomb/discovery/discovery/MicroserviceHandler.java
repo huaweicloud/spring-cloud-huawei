@@ -32,7 +32,7 @@ import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.apache.servicecomb.service.center.client.model.MicroserviceStatus;
 import org.springframework.util.StringUtils;
 
-import com.huaweicloud.common.transport.ServiceCombDiscoveryProperties;
+import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
 import com.huaweicloud.common.util.NetUtil;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
 import com.huaweicloud.servicecomb.discovery.registry.TagsProperties;
@@ -54,37 +54,37 @@ public class MicroserviceHandler {
 
   private static final String CAS_ENVIRONMENT_ID = "CAS_ENVIRONMENT_ID";
 
-  public static Microservice createMicroservice(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties) {
+  public static Microservice createMicroservice(DiscoveryBootstrapProperties discoveryBootstrapProperties) {
     Microservice microservice = new Microservice();
 
-    if (serviceCombDiscoveryProperties.isAllowCrossApp()) {
-      microservice.setAlias(serviceCombDiscoveryProperties.getAppName() +
-          DiscoveryConstants.APP_SERVICE_SEPRATOR + serviceCombDiscoveryProperties.getServiceName());
+    if (discoveryBootstrapProperties.isAllowCrossApp()) {
+      microservice.setAlias(discoveryBootstrapProperties.getAppName() +
+          DiscoveryConstants.APP_SERVICE_SEPRATOR + discoveryBootstrapProperties.getServiceName());
     }
     EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
     if (!StringUtils.isEmpty(envConfig.getString(APP_MAPPING)) &&
         !StringUtils.isEmpty(envConfig.getString(envConfig.getString(APP_MAPPING)))) {
       microservice.setAppId(envConfig.getString(envConfig.getString(APP_MAPPING)));
     } else {
-      microservice.setAppId(serviceCombDiscoveryProperties.getAppName());
+      microservice.setAppId(discoveryBootstrapProperties.getAppName());
     }
     if (!StringUtils.isEmpty(envConfig.getString(SERVICE_MAPPING)) &&
         !StringUtils.isEmpty(envConfig.getString(envConfig.getString(SERVICE_MAPPING)))) {
       microservice.setServiceName(envConfig.getString(envConfig.getString(SERVICE_MAPPING)));
     } else {
-      microservice.setServiceName(serviceCombDiscoveryProperties.getServiceName());
+      microservice.setServiceName(discoveryBootstrapProperties.getServiceName());
     }
     if (!StringUtils.isEmpty(envConfig.getString(VERSION_MAPPING)) &&
         !StringUtils.isEmpty(envConfig.getString(envConfig.getString(VERSION_MAPPING)))) {
       microservice.setVersion(envConfig.getString(envConfig.getString(VERSION_MAPPING)));
     } else {
-      microservice.setVersion(serviceCombDiscoveryProperties.getVersion());
+      microservice.setVersion(discoveryBootstrapProperties.getVersion());
     }
-    microservice.setEnvironment(serviceCombDiscoveryProperties.getEnvironment());
+    microservice.setEnvironment(discoveryBootstrapProperties.getEnvironment());
 
     Framework framework = createFramework();
     microservice.setFramework(framework);
-    if (serviceCombDiscoveryProperties.isAllowCrossApp()) {
+    if (discoveryBootstrapProperties.isAllowCrossApp()) {
       microservice.getProperties().put(DiscoveryConstants.CONFIG_ALLOW_CROSS_APP_KEY, "true");
     }
     microservice.setStatus(MicroserviceStatus.UP);
@@ -99,25 +99,26 @@ public class MicroserviceHandler {
   }
 
   public static MicroserviceInstance createMicroserviceInstance(
-      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
+      DiscoveryProperties discoveryProperties,
+      DiscoveryBootstrapProperties discoveryBootstrapProperties,
       TagsProperties tagsProperties) {
     MicroserviceInstance microserviceInstance = new MicroserviceInstance();
     microserviceInstance.setHostName(NetUtil.getLocalHost());
-    if (null != serviceCombDiscoveryProperties.getDatacenter()) {
-      microserviceInstance.setDataCenterInfo(serviceCombDiscoveryProperties.getDatacenter());
+    if (null != discoveryBootstrapProperties.getDatacenter()) {
+      microserviceInstance.setDataCenterInfo(discoveryBootstrapProperties.getDatacenter());
     }
     List<String> endPoints = new ArrayList<>();
     String address;
-    if (StringUtils.isEmpty(serviceCombDiscoveryProperties.getServerAddress())) {
+    if (StringUtils.isEmpty(discoveryBootstrapProperties.getServerAddress())) {
       address = NetUtils.getHostAddress();
     } else {
-      address = serviceCombDiscoveryProperties.getServerAddress();
+      address = discoveryBootstrapProperties.getServerAddress();
     }
-    endPoints.add("rest://" + address + ":" + serviceCombDiscoveryProperties.getPort());
+    endPoints.add("rest://" + address + ":" + discoveryProperties.getPort());
     microserviceInstance.setEndpoints(endPoints);
     HealthCheck healthCheck = new HealthCheck();
     healthCheck.setMode(HealthCheckMode.pull);
-    healthCheck.setInterval(serviceCombDiscoveryProperties.getHealthCheckInterval());
+    healthCheck.setInterval(discoveryBootstrapProperties.getHealthCheckInterval());
     healthCheck.setTimes(3);
     microserviceInstance.setHealthCheck(healthCheck);
     String currTime = String.valueOf(System.currentTimeMillis());
@@ -129,7 +130,7 @@ public class MicroserviceHandler {
         !StringUtils.isEmpty(envConfig.getString(envConfig.getString(VERSION_MAPPING)))) {
       microserviceInstance.setVersion(envConfig.getString(VERSION_MAPPING));
     } else {
-      microserviceInstance.setVersion(serviceCombDiscoveryProperties.getVersion());
+      microserviceInstance.setVersion(discoveryBootstrapProperties.getVersion());
     }
 
     Map<String, String> properties = new HashMap<>();

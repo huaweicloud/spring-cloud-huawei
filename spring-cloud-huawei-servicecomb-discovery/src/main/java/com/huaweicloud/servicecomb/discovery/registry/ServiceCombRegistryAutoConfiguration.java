@@ -32,9 +32,10 @@ import org.springframework.cloud.client.serviceregistry.ServiceRegistryAutoConfi
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
 import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombEnabled;
 import com.huaweicloud.servicecomb.discovery.DiscoveryAutoConfiguration;
-import com.huaweicloud.common.transport.ServiceCombDiscoveryProperties;
+import com.huaweicloud.servicecomb.discovery.discovery.DiscoveryProperties;
 
 /**
  * @Author wangqijun
@@ -51,18 +52,18 @@ import com.huaweicloud.common.transport.ServiceCombDiscoveryProperties;
 public class ServiceCombRegistryAutoConfiguration {
   @Bean
   public ServiceCombServiceRegistry serviceCombServiceRegistry(
-      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
+      DiscoveryBootstrapProperties discoveryBootstrapProperties,
       ServiceCenterClient serviceCenterClient,
       ServiceCenterWatch serviceCenterWatch) {
     return new ServiceCombServiceRegistry(
-        serviceCombDiscoveryProperties, serviceCenterClient, serviceCenterWatch);
+        discoveryBootstrapProperties, serviceCenterClient, serviceCenterWatch);
   }
 
   @Bean
   @ConditionalOnBean(AutoServiceRegistrationProperties.class)
-  public ServiceCombRegistration serviceCombRegistration(
-      ServiceCombDiscoveryProperties serviceCombDiscoveryProperties, TagsProperties tagsProperties) {
-    return new ServiceCombRegistration(serviceCombDiscoveryProperties, tagsProperties);
+  public ServiceCombRegistration serviceCombRegistration(DiscoveryProperties discoveryProperties,
+      DiscoveryBootstrapProperties discoveryBootstrapProperties, TagsProperties tagsProperties) {
+    return new ServiceCombRegistration(discoveryBootstrapProperties, discoveryProperties, tagsProperties);
   }
 
   @Bean

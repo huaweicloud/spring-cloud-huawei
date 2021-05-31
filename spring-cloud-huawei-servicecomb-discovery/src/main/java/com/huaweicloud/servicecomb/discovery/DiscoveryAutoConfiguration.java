@@ -23,19 +23,22 @@ import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.ServiceCenterWatch;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.common.disovery.ServiceCenterUtils;
-import com.huaweicloud.common.transport.ServiceCombDiscoveryProperties;
+import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
+import com.huaweicloud.servicecomb.discovery.discovery.DiscoveryProperties;
 
 @Configuration
 @ConditionalOnServiceCombDiscoveryEnabled
+@EnableConfigurationProperties(DiscoveryProperties.class)
 public class DiscoveryAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
-  public ServiceCenterClient serviceCenterClient(ServiceCombDiscoveryProperties discoveryProperties,
+  public ServiceCenterClient serviceCenterClient(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCombSSLProperties serviceCombSSLProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
     return ServiceCenterUtils.serviceCenterClient(discoveryProperties, serviceCombSSLProperties, authHeaderProviders);
@@ -43,7 +46,7 @@ public class DiscoveryAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public ServiceCenterWatch serviceCenterWatch(ServiceCombDiscoveryProperties discoveryProperties,
+  public ServiceCenterWatch serviceCenterWatch(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCombSSLProperties serviceCombSSLProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
     return ServiceCenterUtils.serviceCenterWatch(discoveryProperties, serviceCombSSLProperties, authHeaderProviders);

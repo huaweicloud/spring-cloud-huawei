@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("spring.cloud.servicecomb.discovery")
-public class ServiceCombDiscoveryProperties {
+public class DiscoveryBootstrapProperties {
 
   private boolean enabled = true;
 
@@ -60,9 +60,6 @@ public class ServiceCombDiscoveryProperties {
 
   @Value("${spring.cloud.servicecomb.discovery.ignoreSwaggerDifferent:false}")
   private boolean ignoreSwaggerDifferent;
-
-  @Value("${server.port}")
-  private String port;
 
   private DataCenterInfo datacenter;
 
@@ -178,14 +175,6 @@ public class ServiceCombDiscoveryProperties {
     this.autoDiscovery = autoDiscovery;
   }
 
-  public String getPort() {
-    return port;
-  }
-
-  public void setPort(String port) {
-    this.port = port;
-  }
-
   public boolean isAllowCrossApp() {
     return allowCrossApp;
   }
@@ -226,7 +215,6 @@ public class ServiceCombDiscoveryProperties {
         ", healthCheckInterval=" + healthCheckInterval +
         ", autoDiscovery=" + autoDiscovery +
         ", allowCrossApp=" + allowCrossApp +
-        ", port='" + port + '\'' +
         ", dataCenter=" + datacenter +
         '}';
   }

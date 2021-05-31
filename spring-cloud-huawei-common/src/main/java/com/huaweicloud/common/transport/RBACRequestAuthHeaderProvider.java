@@ -49,7 +49,7 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
 
   private static final long TOKEN_REFRESH_TIME_IN_SECONDS = 20 * 60 * 1000;
 
-  private ServiceCombDiscoveryProperties discoveryProperties;
+  private DiscoveryBootstrapProperties discoveryProperties;
 
   private ServiceCombSSLProperties serviceCombSSLProperties;
 
@@ -59,7 +59,7 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
 
   private LoadingCache<String, String> cache;
 
-  public RBACRequestAuthHeaderProvider(ServiceCombDiscoveryProperties discoveryProperties,
+  public RBACRequestAuthHeaderProvider(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCombSSLProperties serviceCombSSLProperties,
       ServiceCombRBACProperties serviceCombRBACProperties) {
     this.discoveryProperties = discoveryProperties;
