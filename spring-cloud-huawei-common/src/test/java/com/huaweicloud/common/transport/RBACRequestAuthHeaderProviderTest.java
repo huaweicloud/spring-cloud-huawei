@@ -139,7 +139,13 @@ public class RBACRequestAuthHeaderProviderTest {
     Assert.assertEquals("Bearer test_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
     result = provider.authHeaders();
     Assert.assertEquals("Bearer test_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
-    Thread.sleep(200);
+    for (int i = 0; i < 20; i++) {
+      Thread.sleep(100);
+      result = provider.authHeaders();// wait a while
+      if ("Bearer test_token_2".equals(result)) {
+        break;
+      }
+    }
     result = provider.authHeaders();
     Assert.assertEquals("Bearer test_token_2", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
   }
