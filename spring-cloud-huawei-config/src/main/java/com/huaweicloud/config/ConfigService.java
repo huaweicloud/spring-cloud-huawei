@@ -79,7 +79,6 @@ public class ConfigService {
 
     initConfigConverter(configProperties);
 
-    LOGGER.info("initialize config server {}={}.", configProperties.getServerType(), configProperties.getServerAddr());
     if ("kie".equalsIgnoreCase(configProperties.getServerType())) {
       initKieConfig(configProperties, serviceCombAkSkProperties, serviceCombSSLProperties,
           authHeaderProviders);
@@ -87,8 +86,6 @@ public class ConfigService {
       initServiceCenterConfig(configProperties, serviceCombAkSkProperties, serviceCombSSLProperties,
           authHeaderProviders);
     }
-    LOGGER.info("initialize config server successful.", configProperties.getServerType(),
-        configProperties.getServerAddr());
   }
 
   private void initConfigConverter(ServiceCombConfigProperties configProperties) {
@@ -104,6 +101,8 @@ public class ConfigService {
     if (addresses.isEmpty()) {
       addresses = URLUtil.dealMultiUrl(configProperties.getServerAddr());
     }
+    LOGGER
+        .info("initialize config server type={}, address={}.", configProperties.getServerType(), addresses.toString());
     return new AddressManager(serviceCombAkSkProperties.getProject(), addresses);
   }
 
@@ -165,6 +164,8 @@ public class ConfigService {
     if (addresses.isEmpty()) {
       addresses = URLUtil.dealMultiUrl(configProperties.getServerAddr());
     }
+    LOGGER
+        .info("initialize config server type={}, address={}.", configProperties.getServerType(), addresses.toString());
     return createKieAddressManager(addresses);
   }
 
