@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.InstanceChangedEvent;
 import org.apache.servicecomb.service.center.client.RegistrationEvents.HeartBeatEvent;
-import org.apache.servicecomb.service.center.client.RegistrationEvents.MicroserviceInstanceRegistrationEvent;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery;
 import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery.SubscriptionKey;
@@ -43,6 +42,7 @@ import org.springframework.context.ApplicationEventPublisherAware;
 
 import com.google.common.eventbus.Subscribe;
 import com.huaweicloud.common.event.EventManager;
+import com.huaweicloud.common.transport.ServiceCombDiscoveryProperties;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;

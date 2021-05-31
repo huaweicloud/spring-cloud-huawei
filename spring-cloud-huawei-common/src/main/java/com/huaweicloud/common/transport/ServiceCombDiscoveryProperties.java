@@ -15,17 +15,12 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.servicecomb.discovery.discovery;
+package com.huaweicloud.common.transport;
 
 import org.apache.servicecomb.service.center.client.model.DataCenterInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
-/**
- * @Author wangqijun
- **/
-@Component
 @ConfigurationProperties("spring.cloud.servicecomb.discovery")
 public class ServiceCombDiscoveryProperties {
 

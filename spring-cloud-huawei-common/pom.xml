@@ -92,6 +92,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.huaweicloud</groupId>
+      <artifactId>service-center-client</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>failureaccess</artifactId>
       <version>1.0.1</version>

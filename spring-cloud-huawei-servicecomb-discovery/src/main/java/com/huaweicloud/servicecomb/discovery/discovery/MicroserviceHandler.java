@@ -32,6 +32,7 @@ import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.apache.servicecomb.service.center.client.model.MicroserviceStatus;
 import org.springframework.util.StringUtils;
 
+import com.huaweicloud.common.transport.ServiceCombDiscoveryProperties;
 import com.huaweicloud.common.util.NetUtil;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
 import com.huaweicloud.servicecomb.discovery.registry.TagsProperties;
