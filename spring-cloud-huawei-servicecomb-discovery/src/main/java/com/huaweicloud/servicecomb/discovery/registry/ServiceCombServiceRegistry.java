@@ -40,7 +40,7 @@ import com.google.common.eventbus.Subscribe;
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
-import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
+import com.huaweicloud.common.transport.ServiceCombDiscoveryProperties;
 
 public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRegistration> {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombServiceRegistry.class);

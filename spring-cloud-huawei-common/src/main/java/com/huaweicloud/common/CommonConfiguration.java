@@ -23,7 +23,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.common.transport.AkSkRequestAuthHeaderProvider;
+import com.huaweicloud.common.transport.RBACRequestAuthHeaderProvider;
 import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
+import com.huaweicloud.common.transport.ServiceCombDiscoveryProperties;
 import com.huaweicloud.common.transport.ServiceCombRBACProperties;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.common.util.Cipher;
@@ -31,7 +33,7 @@ import com.huaweicloud.common.util.ShaAKSKCipher;
 
 @Configuration
 @EnableConfigurationProperties({ServiceCombAkSkProperties.class, ServiceCombRBACProperties.class,
-    ServiceCombSSLProperties.class})
+    ServiceCombSSLProperties.class, ServiceCombDiscoveryProperties.class})
 public class CommonConfiguration {
   @Bean
   public Cipher shaAKSKCipher() {
@@ -41,5 +43,12 @@ public class CommonConfiguration {
   @Bean
   public AuthHeaderProvider akSkRequestAuthHeaderProvider(ServiceCombAkSkProperties serviceCombAkSkProperties) {
     return new AkSkRequestAuthHeaderProvider(serviceCombAkSkProperties);
+  }
+
+  @Bean
+  public AuthHeaderProvider rbacRequestAuthHeaderProvider(ServiceCombDiscoveryProperties discoveryProperties,
+      ServiceCombSSLProperties serviceCombSSLProperties,
+      ServiceCombRBACProperties serviceCombRBACProperties) {
+    return new RBACRequestAuthHeaderProvider(discoveryProperties, serviceCombSSLProperties, serviceCombRBACProperties);
   }
 }

@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombEnabled;
 import com.huaweicloud.servicecomb.discovery.DiscoveryAutoConfiguration;
-import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
+import com.huaweicloud.common.transport.ServiceCombDiscoveryProperties;
 
 /**
  * @Author wangqijun

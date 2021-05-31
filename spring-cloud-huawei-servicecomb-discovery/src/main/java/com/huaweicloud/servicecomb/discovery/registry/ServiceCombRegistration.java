@@ -25,7 +25,7 @@ import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.cloud.client.serviceregistry.Registration;
 
 import com.huaweicloud.servicecomb.discovery.discovery.MicroserviceHandler;
-import com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryProperties;
+import com.huaweicloud.common.transport.ServiceCombDiscoveryProperties;
 
 /**
  * Spring Cloud Registration 实现。
