@@ -37,6 +37,8 @@ import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.apache.servicecomb.http.client.auth.RequestAuthHeaderProvider;
 import org.apache.servicecomb.http.client.common.HttpTransport;
 import org.apache.servicecomb.http.client.common.HttpTransportFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import com.huaweicloud.common.event.EventManager;
@@ -46,6 +48,8 @@ import com.huaweicloud.common.transport.TransportUtils;
 import com.huaweicloud.common.util.URLUtil;
 
 public class ConfigService {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ConfigService.class);
+
   private boolean initialized = false;
 
   private ConfigConverter configConverter;
@@ -75,6 +79,7 @@ public class ConfigService {
 
     initConfigConverter(configProperties);
 
+    LOGGER.info("initialize config server {}={}.", configProperties.getServerType(), configProperties.getServerAddr());
     if ("kie".equalsIgnoreCase(configProperties.getServerType())) {
       initKieConfig(configProperties, serviceCombAkSkProperties, serviceCombSSLProperties,
           authHeaderProviders);
@@ -82,6 +87,8 @@ public class ConfigService {
       initServiceCenterConfig(configProperties, serviceCombAkSkProperties, serviceCombSSLProperties,
           authHeaderProviders);
     }
+    LOGGER.info("initialize config server successful.", configProperties.getServerType(),
+        configProperties.getServerAddr());
   }
 
   private void initConfigConverter(ServiceCombConfigProperties configProperties) {

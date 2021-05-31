@@ -33,20 +33,23 @@ import org.apache.servicecomb.service.center.client.model.SchemaInfo;
 import org.apache.servicecomb.service.center.client.model.ServiceCenterConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import com.google.common.eventbus.Subscribe;
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
-import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
 import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
+import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
 
-public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRegistration> {
+public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRegistration>, ApplicationContextAware {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombServiceRegistry.class);
 
-  @Autowired(required = false)
-  private ServiceCombSwaggerHandler serviceCombSwaggerHandler;
+  // use bean name to avoid cyclic dependencies for swagger
+  private static final String SWAGGER_BEAN_NAME = "serviceCombSwaggerHandler";
 
   private DiscoveryBootstrapProperties discoveryBootstrapProperties;
 
@@ -59,6 +62,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
   private ServiceCombRegistration serviceCombRegistration;
 
   private ServiceCenterConfiguration serviceCenterConfiguration;
+
+  private ApplicationContext applicationContext;
 
   public ServiceCombServiceRegistry(DiscoveryBootstrapProperties discoveryBootstrapProperties,
       ServiceCenterClient serviceCenterClient, @Autowired(required = false) ServiceCenterWatch watch) {
@@ -91,7 +96,10 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
   }
 
   private void addSchemaInfo(ServiceCombRegistration registration) {
-    if (serviceCombSwaggerHandler != null) {
+
+    if (this.applicationContext.containsBean(SWAGGER_BEAN_NAME)) {
+      ServiceCombSwaggerHandler serviceCombSwaggerHandler = this.applicationContext
+          .getBean(SWAGGER_BEAN_NAME, ServiceCombSwaggerHandler.class);
       serviceCombSwaggerHandler
           .init(registration.getMicroservice().getAppId(), registration.getMicroservice().getServiceName());
       registration.getMicroservice().setSchemas(serviceCombSwaggerHandler.getSchemaIds());
@@ -149,5 +157,10 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
       LOGGER.error("getStatus failed", e);
     }
     return null;
+  }
+
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
   }
 }
