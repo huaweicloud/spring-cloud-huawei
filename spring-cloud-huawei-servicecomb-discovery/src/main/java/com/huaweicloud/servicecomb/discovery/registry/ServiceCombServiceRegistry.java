@@ -40,7 +40,7 @@ import com.google.common.eventbus.Subscribe;
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
-import com.huaweicloud.common.transport.ServiceCombDiscoveryProperties;
+import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
 
 public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRegistration> {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombServiceRegistry.class);
@@ -48,7 +48,7 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
   @Autowired(required = false)
   private ServiceCombSwaggerHandler serviceCombSwaggerHandler;
 
-  private ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
+  private DiscoveryBootstrapProperties discoveryBootstrapProperties;
 
   private ServiceCenterClient serviceCenterClient;
 
@@ -60,18 +60,18 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   private ServiceCenterConfiguration serviceCenterConfiguration;
 
-  public ServiceCombServiceRegistry(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
+  public ServiceCombServiceRegistry(DiscoveryBootstrapProperties discoveryBootstrapProperties,
       ServiceCenterClient serviceCenterClient, @Autowired(required = false) ServiceCenterWatch watch) {
     this.serviceCenterClient = serviceCenterClient;
     this.watch = watch;
-    this.serviceCombDiscoveryProperties = serviceCombDiscoveryProperties;
+    this.discoveryBootstrapProperties = discoveryBootstrapProperties;
     this.serviceCenterConfiguration = new ServiceCenterConfiguration().setIgnoreSwaggerDifferent(
-        serviceCombDiscoveryProperties.isIgnoreSwaggerDifferent());
+        discoveryBootstrapProperties.isIgnoreSwaggerDifferent());
   }
 
   @Subscribe
   public void onMicroserviceInstanceRegistrationEvent(MicroserviceInstanceRegistrationEvent event) {
-    if (event.isSuccess() && serviceCombDiscoveryProperties.isWatch()) {
+    if (event.isSuccess() && discoveryBootstrapProperties.isWatch()) {
       watch.startWatch(DiscoveryConstants.DEFAULT_PROJECT, serviceCombRegistration.getMicroservice().getServiceId());
     }
   }

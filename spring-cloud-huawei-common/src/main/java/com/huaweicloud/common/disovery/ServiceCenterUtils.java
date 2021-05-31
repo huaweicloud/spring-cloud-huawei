@@ -29,13 +29,13 @@ import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.ServiceCenterWatch;
 
 import com.huaweicloud.common.event.EventManager;
-import com.huaweicloud.common.transport.ServiceCombDiscoveryProperties;
+import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.common.transport.TransportUtils;
 import com.huaweicloud.common.util.URLUtil;
 
 public class ServiceCenterUtils {
-  public static AddressManager createAddressManager(ServiceCombDiscoveryProperties discoveryProperties) {
+  public static AddressManager createAddressManager(DiscoveryBootstrapProperties discoveryProperties) {
     List<String> addresses = URLUtil.getEnvServerURL();
     if (addresses.isEmpty()) {
       addresses = URLUtil.dealMultiUrl(discoveryProperties.getAddress());
@@ -43,7 +43,7 @@ public class ServiceCenterUtils {
     return new AddressManager("default", addresses);
   }
 
-  public static ServiceCenterClient serviceCenterClient(ServiceCombDiscoveryProperties discoveryProperties,
+  public static ServiceCenterClient serviceCenterClient(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCombSSLProperties serviceCombSSLProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
     AddressManager addressManager = createAddressManager(discoveryProperties);
@@ -55,7 +55,7 @@ public class ServiceCenterUtils {
         "default", new HashMap<>());
   }
 
-  public static ServiceCenterWatch serviceCenterWatch(ServiceCombDiscoveryProperties discoveryProperties,
+  public static ServiceCenterWatch serviceCenterWatch(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCombSSLProperties serviceCombSSLProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
     AddressManager addressManager = createAddressManager(discoveryProperties);

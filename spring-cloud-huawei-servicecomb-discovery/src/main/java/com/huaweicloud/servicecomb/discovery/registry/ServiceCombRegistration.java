@@ -24,8 +24,9 @@ import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.cloud.client.serviceregistry.Registration;
 
+import com.huaweicloud.servicecomb.discovery.discovery.DiscoveryProperties;
 import com.huaweicloud.servicecomb.discovery.discovery.MicroserviceHandler;
-import com.huaweicloud.common.transport.ServiceCombDiscoveryProperties;
+import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
 
 /**
  * Spring Cloud Registration 实现。
@@ -39,18 +40,19 @@ public class ServiceCombRegistration implements Registration {
 
   private MicroserviceInstance microserviceInstance;
 
-  private ServiceCombDiscoveryProperties serviceCombDiscoveryProperties;
+  private DiscoveryBootstrapProperties discoveryBootstrapProperties;
 
-  public ServiceCombRegistration(ServiceCombDiscoveryProperties serviceCombDiscoveryProperties,
+  public ServiceCombRegistration(DiscoveryBootstrapProperties discoveryBootstrapProperties,
+      DiscoveryProperties discoveryProperties,
       TagsProperties tagsProperties) {
-    this.serviceCombDiscoveryProperties = serviceCombDiscoveryProperties;
-    this.microservice = MicroserviceHandler.createMicroservice(serviceCombDiscoveryProperties);
+    this.discoveryBootstrapProperties = discoveryBootstrapProperties;
+    this.microservice = MicroserviceHandler.createMicroservice(discoveryBootstrapProperties);
     this.microserviceInstance = MicroserviceHandler
-        .createMicroserviceInstance(serviceCombDiscoveryProperties, tagsProperties);
+        .createMicroserviceInstance(discoveryProperties, discoveryBootstrapProperties, tagsProperties);
   }
 
-  public ServiceCombDiscoveryProperties getServiceCombDiscoveryProperties() {
-    return this.serviceCombDiscoveryProperties;
+  public DiscoveryBootstrapProperties getDiscoveryBootstrapProperties() {
+    return this.discoveryBootstrapProperties;
   }
 
   public MicroserviceInstance getMicroserviceInstance() {

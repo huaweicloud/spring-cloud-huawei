@@ -42,7 +42,7 @@ import org.springframework.context.ApplicationEventPublisherAware;
 
 import com.google.common.eventbus.Subscribe;
 import com.huaweicloud.common.event.EventManager;
-import com.huaweicloud.common.transport.ServiceCombDiscoveryProperties;
+import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
@@ -52,7 +52,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
 
   private ServiceCenterClient serviceCenterClient;
 
-  private ServiceCombDiscoveryProperties discoveryProperties;
+  private DiscoveryBootstrapProperties discoveryProperties;
 
   private ServiceCenterDiscovery serviceCenterDiscovery;
 
@@ -62,7 +62,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
 
   private final AtomicLong changeId = new AtomicLong(0);
 
-  public ServiceCombDiscoveryClient(ServiceCombDiscoveryProperties discoveryProperties,
+  public ServiceCombDiscoveryClient(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCenterClient serviceCenterClient, ServiceCombRegistration serviceCombRegistration) {
     this.discoveryProperties = discoveryProperties;
     this.serviceCenterClient = serviceCenterClient;

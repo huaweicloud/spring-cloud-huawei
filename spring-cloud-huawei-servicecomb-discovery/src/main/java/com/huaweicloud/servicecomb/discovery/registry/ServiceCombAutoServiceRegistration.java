@@ -46,12 +46,12 @@ public class ServiceCombAutoServiceRegistration extends AbstractAutoServiceRegis
 
   @Override
   protected Object getConfiguration() {
-    return this.serviceCombRegistration.getServiceCombDiscoveryProperties();
+    return this.serviceCombRegistration.getDiscoveryBootstrapProperties();
   }
 
   @Override
   protected boolean isEnabled() {
-    return this.serviceCombRegistration.getServiceCombDiscoveryProperties().isEnabled();
+    return this.serviceCombRegistration.getDiscoveryBootstrapProperties().isEnabled();
   }
 
   @Override
