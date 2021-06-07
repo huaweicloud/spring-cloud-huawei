@@ -46,7 +46,7 @@ public class ServiceCombAkSkProperties {
 
   private String secretKey;
 
-  private String akskCustomCipher = "default";
+  private String cipher = "default";
 
   private String project = "default";
 
@@ -67,10 +67,10 @@ public class ServiceCombAkSkProperties {
   }
 
   public String getSecretKey() {
-    String decodedSecretKey = new String(DefaultCipher.findCipher(ciphers, this.akskCustomCipher).
+    String decodedSecretKey = new String(DefaultCipher.findCipher(ciphers, this.cipher).
         decrypt(this.secretKey.toCharArray()));
 
-    if (ShaAKSKCipher.CIPHER_NAME.equalsIgnoreCase(this.akskCustomCipher)) {
+    if (ShaAKSKCipher.CIPHER_NAME.equalsIgnoreCase(this.cipher)) {
       return decodedSecretKey;
     }
 
@@ -81,12 +81,12 @@ public class ServiceCombAkSkProperties {
     this.secretKey = secretKey;
   }
 
-  public String getAkskCustomCipher() {
-    return akskCustomCipher;
+  public String getCipher() {
+    return cipher;
   }
 
-  public void setAkskCustomCipher(String akskCustomCipher) {
-    this.akskCustomCipher = akskCustomCipher;
+  public void setCipher(String cipher) {
+    this.cipher = cipher;
   }
 
   public String getProject() {

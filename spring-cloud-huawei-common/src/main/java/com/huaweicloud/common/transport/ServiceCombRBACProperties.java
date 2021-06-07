@@ -34,9 +34,9 @@ public class ServiceCombRBACProperties {
   @JsonIgnore
   private List<Cipher> ciphers;
 
-  @Value("${spring.cloud.servicecomb.credentials.akskCustomCipher:default}")
+  @Value("${spring.cloud.servicecomb.credentials.cipher:default}")
   @JsonIgnore
-  private String akskCustomCipher;
+  private String cipher;
 
   private String name;
 
@@ -51,7 +51,7 @@ public class ServiceCombRBACProperties {
   }
 
   public String getPassword() {
-    String decodedPassWord = new String(DefaultCipher.findCipher(ciphers, this.akskCustomCipher).
+    String decodedPassWord = new String(DefaultCipher.findCipher(ciphers, this.cipher).
         decrypt(this.password.toCharArray()));
     return decodedPassWord;
   }
@@ -60,11 +60,11 @@ public class ServiceCombRBACProperties {
     this.password = password;
   }
 
-  public String getAkskCustomCipher() {
-    return akskCustomCipher;
+  public String getCipher() {
+    return cipher;
   }
 
-  public void setAkskCustomCipher(String akskCustomCipher) {
-    this.akskCustomCipher = akskCustomCipher;
+  public void setCipher(String cipher) {
+    this.cipher = cipher;
   }
 }
