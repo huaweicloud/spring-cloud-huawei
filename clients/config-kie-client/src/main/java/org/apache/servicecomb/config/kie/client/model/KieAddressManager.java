@@ -29,26 +29,19 @@ public class KieAddressManager {
   public KieAddressManager(List<String> addresses) {
     this.addresses = new ArrayList<>(addresses.size());
     addresses.forEach((address -> this.addresses.add(address)));
-    this.index = new Random().nextInt(addresses.size());
   }
 
-  public String nextAddress() {
+  public String address() {
     synchronized (this) {
       this.index++;
       if (this.index >= addresses.size()) {
         this.index = 0;
       }
     }
-    return address();
-  }
-
-  public String address() {
-    synchronized (this) {
-      return addresses.get(index);
-    }
+    return addresses.get(index);
   }
 
   public boolean sslEnabled() {
-    return address().startsWith("https://");
+    return addresses.get(index).startsWith("https://");
   }
 }

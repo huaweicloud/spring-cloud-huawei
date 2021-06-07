@@ -67,6 +67,8 @@ public class ServiceCenterWatch implements WebSocketListener {
 
   private String serviceId;
 
+  private String address;
+
   private int continuousError = 0;
 
   private AtomicBoolean reconnecting = new AtomicBoolean(false);
@@ -101,12 +103,13 @@ public class ServiceCenterWatch implements WebSocketListener {
     connector.submit(() -> {
       backOff();
 
+      address = addressManager.address();
       try {
         Map<String, String> headers = new HashMap<>();
         headers.put("x-domain-name", this.tenantName);
         headers.putAll(this.extraGlobalHeaders);
         headers.putAll(this.requestAuthHeaderProvider.loadAuthHeader(null));
-        LOGGER.info("start watch to address {}", addressManager.address());
+        LOGGER.info("start watch to address {}", address);
         webSocketTransport = new WebSocketTransport(convertAddress(), sslProperties,
             headers, this);
         webSocketTransport.connectBlocking();
@@ -117,7 +120,6 @@ public class ServiceCenterWatch implements WebSocketListener {
   }
 
   private String convertAddress() {
-    String address = addressManager.address();
     String url = String.format(WATCH, project, serviceId);
     if (address.startsWith(HTTP)) {
       return WS + address.substring(HTTP.length()) + url;
@@ -144,7 +146,6 @@ public class ServiceCenterWatch implements WebSocketListener {
     if (webSocketTransport != null) {
       webSocketTransport.close();
     }
-    addressManager.changeAddress();
     startWatch();
   }
 
@@ -178,7 +179,7 @@ public class ServiceCenterWatch implements WebSocketListener {
 
   @Override
   public void onOpen(ServerHandshake serverHandshake) {
-    LOGGER.info("web socket connected to server {}, status={}, message={}", addressManager.address(),
+    LOGGER.info("web socket connected to server {}, status={}, message={}", address,
         serverHandshake.getHttpStatus(),
         serverHandshake.getHttpStatusMessage());
     continuousError = 0;

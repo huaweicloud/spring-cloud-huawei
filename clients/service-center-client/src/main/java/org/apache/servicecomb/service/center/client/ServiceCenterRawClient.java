@@ -67,8 +67,7 @@ public class ServiceCenterRawClient {
   }
 
   private HttpResponse doHttpRequest(String url, boolean absoluteUrl, Map<String, String> headers, String content,
-      String method)
-      throws IOException {
+      String method) throws IOException {
 
     String address = addressManager.formatUrl(url, absoluteUrl);
     if (headers == null) {
@@ -80,7 +79,6 @@ public class ServiceCenterRawClient {
     try {
       return httpTransport.doRequest(httpRequest);
     } catch (IOException e) {
-      addressManager.changeAddress();
       String retryAddress = addressManager.formatUrl(url, absoluteUrl);
       LOGGER.warn("send request to {} failed and retry to {} once. ", address,
           retryAddress, e);
@@ -88,7 +86,6 @@ public class ServiceCenterRawClient {
       try {
         return httpTransport.doRequest(httpRequest);
       } catch (IOException ioException) {
-        addressManager.changeAddress();
         LOGGER.warn("retry to {} failed again. ", retryAddress, e);
         throw ioException;
       }

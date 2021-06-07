@@ -37,7 +37,6 @@ public class AddressManager {
     this.projectName = StringUtils.isEmpty(projectName) ? DEFAULT_PROJECT : projectName;
     this.addresses = new ArrayList<>(addresses.size());
     addresses.forEach((address -> this.addresses.add(formatAddress(address))));
-    this.index = new Random().nextInt(addresses.size());
   }
 
   private String formatAddress(String address) {
@@ -48,23 +47,17 @@ public class AddressManager {
     }
   }
 
-  public String nextAddress() {
+  public String address() {
     synchronized (this) {
       this.index++;
       if (this.index >= addresses.size()) {
         this.index = 0;
       }
     }
-    return address();
-  }
-
-  public String address() {
-    synchronized (this) {
-      return addresses.get(index);
-    }
+    return addresses.get(index);
   }
 
   public boolean sslEnabled() {
-    return address().startsWith("https://");
+    return addresses.get(index).startsWith("https://");
   }
 }

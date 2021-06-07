@@ -32,8 +32,12 @@ import org.apache.servicecomb.http.client.common.HttpTransport;
 import org.apache.servicecomb.http.client.common.HttpUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfigCenterClient implements ConfigCenterOperation {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ConfigCenterClient.class);
+
   public static final String DEFAULT_APP_SEPARATOR = "@";
 
   public static final String DEFAULT_SERVICE_SEPARATOR = "#";
@@ -57,12 +61,13 @@ public class ConfigCenterClient implements ConfigCenterOperation {
     QueryConfigurationsResponse queryConfigurationsResponse = new QueryConfigurationsResponse();
 
     Map<String, Object> configurations = new HashMap<>();
+    String url = null;
     try {
+      url = addressManager.address() + "/configuration/items?dimensionsInfo="
+          + HttpUtils.encodeURLParam(dimensionsInfo) + "&revision=" + request.getRevision();
       Map<String, String> headers = new HashMap<>();
       headers.put("x-environment", request.getEnvironment());
-      HttpRequest httpRequest = new HttpRequest(addressManager.address() + "/configuration/items?dimensionsInfo="
-          + HttpUtils.encodeURLParam(dimensionsInfo) + "&revision=" + request.getRevision(), headers, null,
-          HttpRequest.GET);
+      HttpRequest httpRequest = new HttpRequest(url, headers, null, HttpRequest.GET);
 
       HttpResponse httpResponse = httpTransport.doRequest(httpRequest);
       if (httpResponse.getStatusCode() == HttpStatus.SC_OK) {
@@ -104,7 +109,7 @@ public class ConfigCenterClient implements ConfigCenterOperation {
                 + httpResponse.getContent());
       }
     } catch (IOException e) {
-      addressManager.nextAddress();
+      LOGGER.error("query configuration from {} failed, message={}", url, e.getMessage());
       throw new OperationException("", e);
     }
   }
