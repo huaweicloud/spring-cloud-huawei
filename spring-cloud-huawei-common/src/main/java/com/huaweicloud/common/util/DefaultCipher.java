@@ -41,17 +41,17 @@ public final class DefaultCipher implements Cipher {
     return encrypted;
   }
 
-  public static Cipher findCipher(List<Cipher> ciphers, String akskCustomCipher) {
-    if (CIPHER_NAME.equals(akskCustomCipher)) {
+  public static Cipher findCipher(List<Cipher> ciphers, String cipher) {
+    if (CIPHER_NAME.equals(cipher)) {
       return DefaultCipher.getInstance();
     }
 
     if (ciphers == null) {
-      throw new IllegalArgumentException("failed to find cipher named " + akskCustomCipher);
+      throw new IllegalArgumentException("failed to find cipher named " + cipher);
     }
 
-    return ciphers.stream().filter(c -> c.name().equals(akskCustomCipher)).findFirst()
-        .orElseThrow(() -> new IllegalArgumentException("failed to find cipher named " + akskCustomCipher));
+    return ciphers.stream().filter(c -> c.name().equals(cipher)).findFirst()
+        .orElseThrow(() -> new IllegalArgumentException("failed to find cipher named " + cipher));
   }
 }
 

@@ -38,7 +38,7 @@ spring:
         enabled: true
         accessKey: ${CREDENTIALS_AK}
         secretKey: ${CREDENTIALS_SK}
-        akskCustomCipher: default
+        cipher: default
         project: cn-south-1
 
 ## rate limiting configuration
