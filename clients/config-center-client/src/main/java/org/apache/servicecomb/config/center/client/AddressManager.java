@@ -58,6 +58,6 @@ public class AddressManager {
   }
 
   public boolean sslEnabled() {
-    return addresses.get(index).startsWith("https://");
+    return address().startsWith("https://");
   }
 }

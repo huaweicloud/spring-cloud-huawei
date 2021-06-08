@@ -42,6 +42,6 @@ public class KieAddressManager {
   }
 
   public boolean sslEnabled() {
-    return addresses.get(index).startsWith("https://");
+    return address().startsWith("https://");
   }
 }
