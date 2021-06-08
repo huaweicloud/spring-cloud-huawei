@@ -34,7 +34,7 @@ public class ServiceCombRBACProperties {
   @JsonIgnore
   private List<Cipher> ciphers;
 
-  @Value("#{'${spring.cloud.servicecomb.credentials.cipher:${spring.cloud.servicecomb.credentials.akskCustomCipher:default}}'}")
+  @Value("#{'${spring.cloud.servicecomb.credentials.account.cipher:${spring.cloud.servicecomb.credentials.account.akskCustomCipher:default}}'}")
   @JsonIgnore
   private String cipher;
 
