@@ -17,49 +17,24 @@
 
 package com.huaweicloud.samples;
 
-import java.util.List;
+public class ConfigModel {
+  private String name;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+  private int index;
 
-@ConfigurationProperties("cse.v1.test")
-public class ConsumerConfigurationProperties {
-  private String foo;
-
-  private String bar;
-
-  private List<String> sequences;
-
-  private List<ConfigModel> configModels;
-
-  public String getFoo() {
-    return foo;
+  public String getName() {
+    return name;
   }
 
-  public void setFoo(String foo) {
-    this.foo = foo;
+  public void setName(String name) {
+    this.name = name;
   }
 
-  public String getBar() {
-    return bar;
+  public int getIndex() {
+    return index;
   }
 
-  public void setBar(String bar) {
-    this.bar = bar;
-  }
-
-  public List<String> getSequences() {
-    return sequences;
-  }
-
-  public void setSequences(List<String> sequences) {
-    this.sequences = sequences;
-  }
-
-  public List<ConfigModel> getConfigModels() {
-    return configModels;
-  }
-
-  public void setConfigModels(List<ConfigModel> configModels) {
-    this.configModels = configModels;
+  public void setIndex(int index) {
+    this.index = index;
   }
 }

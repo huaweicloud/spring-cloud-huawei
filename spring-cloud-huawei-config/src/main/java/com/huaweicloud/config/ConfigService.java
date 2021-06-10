@@ -147,7 +147,9 @@ public class ConfigService {
     queryConfigurationsRequest = createQueryConfigurationsRequest(configProperties);
     QueryConfigurationsResponse response = configCenterClient
         .queryConfigurations(queryConfigurationsRequest);
-    configConverter.updateData(response.getConfigurations());
+    if (response.isChanged()) {
+      configConverter.updateData(response.getConfigurations());
+    }
     queryConfigurationsRequest.setRevision(response.getRevision());
     ConfigCenterManager configCenterManager = new ConfigCenterManager(configCenterClient, EventManager.getEventBus(),
         configConverter);
