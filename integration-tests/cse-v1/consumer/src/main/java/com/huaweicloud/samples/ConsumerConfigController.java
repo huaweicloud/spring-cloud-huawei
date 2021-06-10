@@ -17,6 +17,8 @@
 
 package com.huaweicloud.samples;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,5 +46,15 @@ public class ConsumerConfigController {
   @GetMapping("/bar")
   public String bar() {
     return consumerConfigurationProperties.getBar();
+  }
+
+  @GetMapping("/sequences")
+  public List<String> sequences() {
+    return consumerConfigurationProperties.getSequences();
+  }
+
+  @GetMapping("/models")
+  public List<ConfigModel> models() {
+    return consumerConfigurationProperties.getConfigModels();
   }
 }

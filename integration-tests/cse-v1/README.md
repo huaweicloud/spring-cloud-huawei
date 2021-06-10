@@ -5,10 +5,13 @@
   * consumer.yaml
 
 ```yaml
-cse:
-  v1:
-    test:
-      foo: foo
+cse.v1.test.foo: foo
+cse.v1.test.sequences[0]: s0
+cse.v1.test.sequences[1]: s1
+cse.v1.test.configModels[0].name: s1
+cse.v1.test.configModels[0].index: 2
+cse.v1.test.configModels[1].name: s2
+cse.v1.test.configModels[1].index: 3
 ```
 
 * 依次启动 provider、consumer、gateway
