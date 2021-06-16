@@ -48,12 +48,14 @@ public class ConfigConverter {
     return this.currentData;
   }
 
-  public void updateData(Map<String, Object> rawData) {
+  public Map<String, Object> updateData(Map<String, Object> rawData) {
+    Map<String, Object> lastData = this.currentData;
+
     this.lastRawData = rawData;
 
     if (CollectionUtils.isEmpty(fileSources)) {
       this.currentData = rawData;
-      return;
+      return lastData;
     }
 
     Map<String, Object> fileProperties = new HashMap<>();
@@ -67,6 +69,7 @@ public class ConfigConverter {
     result.putAll(rawData);
     fileProperties.forEach((k, v) -> result.putAll(createFileSource(v)));
     this.currentData = result;
+    return lastData;
   }
 
   private Map<String, Object> createFileSource(Object v) {
@@ -75,6 +78,7 @@ public class ConfigConverter {
     return propertiesToMap(yamlFactory.getObject());
   }
 
+  @SuppressWarnings("unchecked")
   private Map<String, Object> propertiesToMap(Properties properties) {
     if (properties == null) {
       return Collections.emptyMap();

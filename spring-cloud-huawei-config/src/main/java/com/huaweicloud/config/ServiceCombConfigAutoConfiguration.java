@@ -18,7 +18,6 @@
 package com.huaweicloud.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(name = "spring.cloud.servicecomb.config.enabled", matchIfMissing = true)
 public class ServiceCombConfigAutoConfiguration {
   @Bean
-  public ConfigWatch configWatch(ContextRefresher contextRefresher) {
-    return new ConfigWatch(contextRefresher);
+  public ConfigWatch configWatch() {
+    return new ConfigWatch();
   }
 }
