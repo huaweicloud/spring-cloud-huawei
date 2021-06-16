@@ -24,7 +24,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.HttpStatus;
+import javax.ws.rs.core.Response.Status;
+
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.model.RbacTokenRequest;
@@ -43,6 +44,11 @@ import com.huaweicloud.common.disovery.ServiceCenterUtils;
 public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(RBACRequestAuthHeaderProvider.class);
 
+  // special token used for special conditions
+  // e.g. un-authorized: will query token after token expired period
+  // e.g. not found:  will query token after token expired period
+  public static final String INVALID_TOKEN = "invalid";
+
   public static final String CACHE_KEY = "token";
 
   public static final String AUTH_HEADER = "Authorization";
@@ -55,7 +61,7 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
 
   private ServiceCombRBACProperties serviceCombRBACProperties;
 
-  private ExecutorService executorService = Executors.newFixedThreadPool(1, t -> new Thread(t, "rbac-executor"));
+  private ExecutorService executorService;
 
   private LoadingCache<String, String> cache;
 
@@ -86,13 +92,23 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
   }
 
   protected String createHeaders() {
-    LOGGER.info("start to create rbac headers");
-    RbacTokenResponse response = callCreateHeaders();
-    if (response.getStatusCode() == HttpStatus.SC_OK) {
-      return response.getToken();
+    LOGGER.info("start to create RBAC headers");
+
+    RbacTokenResponse rbacTokenResponse = callCreateHeaders();
+
+    if (Status.UNAUTHORIZED.getStatusCode() == rbacTokenResponse.getStatusCode()
+        || Status.FORBIDDEN.getStatusCode() == rbacTokenResponse.getStatusCode()) {
+      // password wrong, do not try anymore
+      LOGGER.warn("username or password may be wrong, stop trying to query tokens.");
+      return INVALID_TOKEN;
+    } else if (Status.NOT_FOUND.getStatusCode() == rbacTokenResponse.getStatusCode()) {
+      // service center not support, do not try
+      LOGGER.warn("service center do not support RBAC token, you should not config account info");
+      return INVALID_TOKEN;
     }
-    LOGGER.warn("create rbac headers failed, status code=" + response.getStatusCode());
-    return null;
+
+    LOGGER.info("refresh token successfully {}", rbacTokenResponse.getStatusCode());
+    return rbacTokenResponse.getToken();
   }
 
   protected RbacTokenResponse callCreateHeaders() {

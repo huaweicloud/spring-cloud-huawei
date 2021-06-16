@@ -23,7 +23,7 @@ import java.util.Set;
 import org.apache.servicecomb.config.common.ConfigurationChangedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.context.refresh.ContextRefresher;
+import org.springframework.cloud.endpoint.event.RefreshEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 
@@ -37,10 +37,7 @@ public class ConfigWatch implements ApplicationEventPublisherAware {
 
   private ApplicationEventPublisher applicationEventPublisher;
 
-  private ContextRefresher contextRefresher;
-
-  public ConfigWatch(ContextRefresher contextRefresher) {
-    this.contextRefresher = contextRefresher;
+  public ConfigWatch() {
     EventManager.register(this);
   }
 
@@ -56,11 +53,12 @@ public class ConfigWatch implements ApplicationEventPublisherAware {
         event.getUpdated().keySet(),
         event.getDeleted().keySet());
 
-    this.contextRefresher.refresh();
-
     Set<String> updatedKey = new HashSet<>();
-    updatedKey.addAll(event.getComplete().keySet());
+    updatedKey.addAll(event.getAdded().keySet());
+    updatedKey.addAll(event.getUpdated().keySet());
     updatedKey.addAll(event.getDeleted().keySet());
+    ConfigRefreshEvent configRefreshEvent = new ConfigRefreshEvent(this, updatedKey);
     applicationEventPublisher.publishEvent(new ConfigRefreshEvent(this, updatedKey));
+    applicationEventPublisher.publishEvent(new RefreshEvent(this, configRefreshEvent, "Config refreshed"));
   }
 }
