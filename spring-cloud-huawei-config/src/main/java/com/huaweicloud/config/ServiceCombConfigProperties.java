@@ -17,6 +17,7 @@
 
 package com.huaweicloud.config;
 
+import com.huaweicloud.common.util.URLUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -71,7 +72,8 @@ public class ServiceCombConfigProperties {
   }
 
   public String getDiscoveryAddress() {
-    return discoveryAddress;
+    String url = org.apache.commons.lang3.StringUtils.join(URLUtil.getEnvServerURL(), ",");
+    return url.isEmpty() ? discoveryAddress : url;
   }
 
   public void setDiscoveryAddress(String discoveryAddress) {
@@ -99,7 +101,8 @@ public class ServiceCombConfigProperties {
   }
 
   public String getServerAddr() {
-    return serverAddr;
+    String url = org.apache.commons.lang3.StringUtils.join(URLUtil.getEnvConfigUrl(), ",");
+    return url.isEmpty() ? serverAddr : url;
   }
 
   public void setServerAddr(String serverAddr) {

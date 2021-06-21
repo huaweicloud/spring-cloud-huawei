@@ -17,8 +17,10 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
+import com.huaweicloud.common.util.URLUtil;
 import com.huaweicloud.servicecomb.discovery.client.model.DataCenter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -109,7 +111,8 @@ public class ServiceCombDiscoveryProperties {
   }
 
   public String getAddress() {
-    return address;
+    String url = StringUtils.join(URLUtil.getEnvServerURL(), ",");
+    return url.isEmpty() ? address : url;
   }
 
   public void setAddress(String address) {

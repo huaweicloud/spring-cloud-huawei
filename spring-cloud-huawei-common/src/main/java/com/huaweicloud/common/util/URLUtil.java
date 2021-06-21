@@ -19,9 +19,14 @@ package com.huaweicloud.common.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.apache.commons.configuration.EnvironmentConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -148,13 +153,32 @@ public class URLUtil {
 
   private static List<String> getEnvURL(String systemServer) {
     SystemConfiguration sysConfig = new SystemConfiguration();
-    EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
-    String sysURL = sysConfig.getString(systemServer);
-    String envURL = envConfig.getString(systemServer);
-    if (StringUtils.isEmpty(sysURL) && StringUtils.isEmpty(envURL)) {
-      sysURL = sysConfig.getString(SYSTEM_KEY_BOTH);
-      envURL = envConfig.getString(SYSTEM_KEY_BOTH);
+    List<Object> result = sysConfig.getList(systemServer);
+
+    if (!CollectionUtils.isEmpty(result)) {
+      return toStringList(result);
     }
-    return StringUtils.isEmpty(sysURL) ? dealMultiUrl(envURL) : dealMultiUrl(sysURL);
+
+    EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
+    result = envConfig.getList(systemServer);
+    if (!CollectionUtils.isEmpty(result)) {
+      return toStringList(result);
+    }
+
+    result = sysConfig.getList(SYSTEM_KEY_BOTH);
+    if (!CollectionUtils.isEmpty(result)) {
+      return toStringList(result);
+    }
+
+    result = envConfig.getList(SYSTEM_KEY_BOTH);
+    if (!CollectionUtils.isEmpty(result)) {
+      return toStringList(result);
+    }
+
+    return Collections.emptyList();
+  }
+
+  private static List<String> toStringList(List<Object> list) {
+    return list.stream().map(obj -> Objects.toString(obj, null)).collect(Collectors.toList());
   }
 }
