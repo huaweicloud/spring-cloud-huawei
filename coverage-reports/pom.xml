@@ -42,10 +42,6 @@
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-huawei-dtm</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-huawei-router-client</artifactId>
     </dependency>
     <dependency>
