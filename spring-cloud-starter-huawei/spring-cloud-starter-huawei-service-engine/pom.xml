@@ -21,7 +21,7 @@
   <parent>
     <artifactId>spring-cloud-starter-huawei</artifactId>
     <groupId>com.huaweicloud</groupId>
-    <version>1.6.0-Hoxton-SNAPSHOT</version>
+    <version>1.7.0-SHAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -31,10 +31,6 @@
     <dependency>
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-config</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-dtm</artifactId>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>

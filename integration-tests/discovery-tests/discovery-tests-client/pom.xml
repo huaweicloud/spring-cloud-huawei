@@ -21,7 +21,7 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>discovery-tests</artifactId>
-    <version>1.6.0-Hoxton-SNAPSHOT</version>
+    <version>1.7.0-SHAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -65,7 +65,6 @@
                   </run>
                 </image>
 
-
                 <image>
                   <name>price-provider-test:${project.version}</name>
                   <alias>price-provider-test</alias>
@@ -80,16 +79,16 @@
                       <link>service-center:sc.servicecomb.io</link>
                     </links>
                     <wait>
-                      <log>watching microservice successfully</log>
+                      <log>register microservice successfully</log>
                       <tcp>
                         <ports>
-                          <port>8080</port>
+                          <port>9090</port>
                         </ports>
                       </tcp>
                       <time>120000</time>
                     </wait>
                     <ports>
-                      <port>8080:8080</port>
+                      <port>9090:9090</port>
                     </ports>
                     <dependsOn>
                       <container>service-center</container>
@@ -111,16 +110,47 @@
                       <link>service-center:sc.servicecomb.io</link>
                     </links>
                     <wait>
-                      <log>watching microservice successfully</log>
+                      <log>register microservice successfully</log>
                       <tcp>
                         <ports>
-                          <port>8088</port>
+                          <port>9098</port>
                         </ports>
                       </tcp>
                       <time>120000</time>
                     </wait>
                     <ports>
-                      <port>8088:8088</port>
+                      <port>9098:9098</port>
+                    </ports>
+                    <dependsOn>
+                      <container>service-center</container>
+                    </dependsOn>
+                  </run>
+                </image>
+
+                <image>
+                  <name>account-provider:${project.version}</name>
+                  <alias>account-provider</alias>
+                  <run>
+                    <env>
+                      <JAVA_OPTS>
+                        -Dspring.cloud.servicecomb.discovery.address=http://sc.servicecomb.io:30100
+                      </JAVA_OPTS>
+                      <JAR_PATH>/maven/account-provider-${project.version}.jar</JAR_PATH>
+                    </env>
+                    <links>
+                      <link>service-center:sc.servicecomb.io</link>
+                    </links>
+                    <wait>
+                      <log>register microservice successfully</log>
+                      <tcp>
+                        <ports>
+                          <port>9092</port>
+                        </ports>
+                      </tcp>
+                      <time>120000</time>
+                    </wait>
+                    <ports>
+                      <port>9092:9092</port>
                     </ports>
                     <dependsOn>
                       <container>service-center</container>

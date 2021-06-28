@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.springframework.web.client.RestTemplate;
 
 public class GovernanceControllerIT {
-  String url = "http://127.0.0.1:8088";
+  String url = "http://127.0.0.1:9098";
 
   RestTemplate template = new RestTemplate();
 
@@ -65,11 +65,11 @@ public class GovernanceControllerIT {
                 notExpectedFailed.set(true);
               }
             } catch (Exception e) {
-              if (!e.getMessage().startsWith("429")
-                  && !e.getMessage().startsWith("500")) {
+              if (!"429 : [circuitBreaker is open.]".equals(e.getMessage())
+                  && !e.getMessage().contains("test error")  && !e.getMessage().startsWith("500")) {
                 notExpectedFailed.set(true);
               }
-              if (e.getMessage().startsWith("429")) {
+              if ("429 : [circuitBreaker is open.]".equals(e.getMessage())) {
                 expectedFailed.set(true);
               }
             }
@@ -102,7 +102,7 @@ public class GovernanceControllerIT {
                 notExpectedFailed.set(true);
               }
             } catch (Exception e) {
-              if (!e.getMessage().startsWith("429")) {
+              if (!"429 : [bulkhead is full and does not permit further calls.]".equals(e.getMessage())) {
                 notExpectedFailed.set(true);
               }
               expectedFailed.set(true);
@@ -136,7 +136,7 @@ public class GovernanceControllerIT {
                 notExpectedFailed.set(true);
               }
             } catch (Exception e) {
-              if (!e.getMessage().startsWith("429")) {
+              if (!"429 : [rate limited.]".equals(e.getMessage())) {
                 notExpectedFailed.set(true);
               }
               expectedFailed.set(true);

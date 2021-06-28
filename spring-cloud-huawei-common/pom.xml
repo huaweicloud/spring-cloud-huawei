@@ -22,16 +22,12 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-huawei-parents</artifactId>
-    <version>1.6.0-Hoxton-SNAPSHOT</version>
+    <version>1.7.0-SHAPSHOT</version>
     <relativePath>../spring-cloud-huawei-parents</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>spring-cloud-huawei-common</artifactId>
-
-  <properties>
-    <servicecomb.version>1.2.1</servicecomb.version>
-  </properties>
 
   <dependencies>
     <dependency>
@@ -85,6 +81,18 @@
           <artifactId>spring-context</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.servicecomb</groupId>
+      <artifactId>foundation-spi</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.servicecomb</groupId>
+      <artifactId>http-client-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.servicecomb</groupId>
+      <artifactId>service-center-client</artifactId>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>

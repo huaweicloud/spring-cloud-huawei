@@ -22,26 +22,29 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-huawei</artifactId>
-    <version>1.6.0-Hoxton-SNAPSHOT</version>
+    <version>1.7.0-SHAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>spring-cloud-huawei-dependencies</artifactId>
   <packaging>pom</packaging>
-  <version>1.6.0-Hoxton-SNAPSHOT</version>
+  <version>1.7.0-SHAPSHOT</version>
   <name>Spring Cloud Huawei Dependencies</name>
   <properties>
+    <feign-core.version>11.0</feign-core.version>
     <httpclient.version>4.5.9</httpclient.version>
-    <jackson-databind.version>2.9.10.5</jackson-databind.version>
+    <jackson-databind.version>2.11.3</jackson-databind.version>
     <jmockit.version>1.36</jmockit.version>
     <junit.version>4.12</junit.version>
     <dtm-client.version>1.0.2</dtm-client.version>
-    <guava.version>27.0.1-jre</guava.version>
+    <guava.version>30.0-jre</guava.version>
     <snakeyaml.version>1.26</snakeyaml.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <websocket.version>1.5.0</websocket.version>
-    <reactor.version>3.3.3.RELEASE</reactor.version>
+    <spring-fox.version>3.0.0</spring-fox.version>
+    <swagger-core.version>2.1.9</swagger-core.version>
+    <swagger-core-v2.version>1.6.2</swagger-core-v2.version>
   </properties>
 
   <dependencyManagement>
@@ -56,21 +59,7 @@
       </dependency>
       <dependency>
         <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-commons-dependencies</artifactId>
-        <version>${spring-cloud.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-netflix-dependencies</artifactId>
-        <version>${spring-cloud.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-openfeign-dependencies</artifactId>
+        <artifactId>spring-cloud-dependencies</artifactId>
         <version>${spring-cloud.version}</version>
         <type>pom</type>
         <scope>import</scope>
@@ -79,84 +68,47 @@
       <!-- this project -->
       <dependency>
         <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-huawei-servicecomb-discovery</artifactId>
+        <artifactId>spring-cloud-huawei-bom</artifactId>
         <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- swagger -->
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-boot-starter</artifactId>
+        <version>${spring-fox.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-starter-huawei-servicecomb-discovery</artifactId>
-        <version>${project.version}</version>
+        <groupId>io.swagger.core.v3</groupId>
+        <artifactId>swagger-core</artifactId>
+        <version>${swagger-core.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-huawei-dtm</artifactId>
-        <version>${project.version}</version>
+        <groupId>io.swagger</groupId>
+        <artifactId>swagger-core</artifactId>
+        <version>${swagger-core-v2.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-starter-huawei-dtm</artifactId>
-        <version>${project.version}</version>
+        <groupId>io.swagger</groupId>
+        <artifactId>swagger-models</artifactId>
+        <version>${swagger-core-v2.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-huawei-config</artifactId>
-        <version>${project.version}</version>
+        <groupId>io.swagger</groupId>
+        <artifactId>swagger-annotations</artifactId>
+        <version>${swagger-core-v2.version}</version>
       </dependency>
+      <!-- servicecomb -->
       <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-starter-huawei-config</artifactId>
-        <version>${project.version}</version>
+        <groupId>org.apache.servicecomb</groupId>
+        <artifactId>java-chassis-bom</artifactId>
+        <version>${servicecomb.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
-      <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-huawei-common</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-huawei-router-core</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-huawei-router-client</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-starter-huawei-router</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-starter-huawei-swagger</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-huawei-swagger</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-starter-huawei-governance</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-huawei-governance</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-starter-huawei-service-engine</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-starter-huawei-service-engine-gateway</artifactId>
-        <version>${project.version}</version>
-      </dependency>
+
       <!-- huawei parts -->
       <dependency>
         <groupId>com.huawei.paas.dtm</groupId>
@@ -169,13 +121,13 @@
           </exclusion>
         </exclusions>
       </dependency>
-      <dependency>
-        <groupId>org.apache.servicecomb</groupId>
-        <artifactId>foundation-common</artifactId>
-        <version>${servicecomb.version}</version>
-      </dependency>
 
       <!-- other 3rd parties -->
+      <dependency>
+        <groupId>io.github.openfeign</groupId>
+        <artifactId>feign-core</artifactId>
+        <version>${feign-core.version}</version>
+      </dependency>
       <dependency>
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
@@ -205,11 +157,6 @@
         <groupId>org.java-websocket</groupId>
         <artifactId>Java-WebSocket</artifactId>
         <version>${websocket.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.projectreactor</groupId>
-        <artifactId>reactor-core</artifactId>
-        <version>${reactor.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

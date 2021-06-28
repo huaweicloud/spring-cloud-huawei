@@ -17,19 +17,19 @@
 ---
 swagger: "2.0"
 info:
-  description: "Api Documentation"
+  description: Api Documentation
   version: "1.0"
-  title: "Api Documentation"
-  termsOfService: "urn:tos"
+  title: Api Documentation
+  termsOfService: urn:tos
   contact:
     name: ""
     url: ""
     email: ""
   license:
-    name: "Apache 2.0"
-    url: "http://www.apache.org/licenses/LICENSE-2.0"
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
 host: ""
-basePath: "/"
+basePath: /
 tags: []
 schemes: []
 consumes: []
@@ -38,396 +38,419 @@ paths:
   /danglingPattern/**:
     post:
       tags:
-        - "schema-content-controller"
-      summary: "danglingPattern"
-      operationId: "danglingPatternUsingPOST"
+      - schema-content-controller
+      summary: danglingPattern
+      operationId: danglingPatternUsingPOST
       schemes: []
       consumes:
-        - "application/json"
+      - application/json
       produces:
-        - "*/*"
+      - '*/*'
       parameters:
-        - in: "body"
-          name: "id"
-          description: "id"
-          required: true
-          schema:
-            type: "string"
+      - in: body
+        name: id
+        description: id
+        required: true
+        schema:
+          type: string
+          format: ""
       responses:
-        200:
-          description: "OK"
+        "200":
+          description: OK
           examples: {}
           headers: {}
           schema:
-            type: "string"
-        201:
-          description: "Created"
+            type: string
+          responseSchema:
+            type: string
+            format: ""
+        "201":
+          description: Created
           examples: {}
           headers: {}
-        401:
-          description: "Unauthorized"
+        "401":
+          description: Unauthorized
           examples: {}
           headers: {}
-        403:
-          description: "Forbidden"
+        "403":
+          description: Forbidden
           examples: {}
           headers: {}
-        404:
-          description: "Not Found"
+        "404":
+          description: Not Found
           examples: {}
           headers: {}
       security: []
-      deprecated: false
   /sayHelloGet:
     get:
       tags:
-        - "schema-content-controller"
-      summary: "sayHelloGet"
-      operationId: "sayHelloGetUsingGET"
+      - schema-content-controller
+      summary: sayHelloGet
+      operationId: sayHelloGetUsingGET
       schemes: []
       consumes: []
       produces:
-        - "*/*"
+      - '*/*'
       parameters:
-        - name: "id"
-          in: "query"
-          description: "id"
-          required: true
-          type: "string"
+      - name: id
+        in: query
+        description: id
+        required: true
+        type: string
       responses:
-        200:
-          description: "OK"
+        "200":
+          description: OK
           examples: {}
           headers: {}
           schema:
-            type: "string"
-        401:
-          description: "Unauthorized"
+            type: string
+          responseSchema:
+            type: string
+            format: ""
+        "401":
+          description: Unauthorized
           examples: {}
           headers: {}
-        403:
-          description: "Forbidden"
+        "403":
+          description: Forbidden
           examples: {}
           headers: {}
-        404:
-          description: "Not Found"
+        "404":
+          description: Not Found
           examples: {}
           headers: {}
       security: []
-      deprecated: false
     head:
       tags:
-        - "schema-content-controller"
-      summary: "sayHelloGet"
-      operationId: "sayHelloGetUsingHEAD"
+      - schema-content-controller
+      summary: sayHelloGet
+      operationId: sayHelloGetUsingHEAD
       schemes: []
       consumes:
-        - "application/json"
+      - application/json
       produces:
-        - "*/*"
+      - '*/*'
       parameters:
-        - name: "id"
-          in: "query"
-          description: "id"
-          required: true
-          type: "string"
+      - name: id
+        in: query
+        description: id
+        required: true
+        type: string
       responses:
-        200:
-          description: "OK"
+        "200":
+          description: OK
           examples: {}
           headers: {}
           schema:
-            type: "string"
-        204:
-          description: "No Content"
+            type: string
+          responseSchema:
+            type: string
+            format: ""
+        "204":
+          description: No Content
           examples: {}
           headers: {}
-        401:
-          description: "Unauthorized"
+        "401":
+          description: Unauthorized
           examples: {}
           headers: {}
-        403:
-          description: "Forbidden"
+        "403":
+          description: Forbidden
           examples: {}
           headers: {}
       security: []
-      deprecated: false
     post:
       tags:
-        - "schema-content-controller"
-      summary: "sayHelloGet"
-      operationId: "sayHelloGetUsingPOST"
+      - schema-content-controller
+      summary: sayHelloGet
+      operationId: sayHelloGetUsingPOST
       schemes: []
       consumes:
-        - "application/json"
+      - application/json
       produces:
-        - "*/*"
+      - '*/*'
       parameters:
-        - name: "id"
-          in: "query"
-          description: "id"
-          required: true
-          type: "string"
+      - name: id
+        in: query
+        description: id
+        required: true
+        type: string
       responses:
-        200:
-          description: "OK"
+        "200":
+          description: OK
           examples: {}
           headers: {}
           schema:
-            type: "string"
-        201:
-          description: "Created"
+            type: string
+          responseSchema:
+            type: string
+            format: ""
+        "201":
+          description: Created
           examples: {}
           headers: {}
-        401:
-          description: "Unauthorized"
+        "401":
+          description: Unauthorized
           examples: {}
           headers: {}
-        403:
-          description: "Forbidden"
+        "403":
+          description: Forbidden
           examples: {}
           headers: {}
-        404:
-          description: "Not Found"
+        "404":
+          description: Not Found
           examples: {}
           headers: {}
       security: []
-      deprecated: false
     put:
       tags:
-        - "schema-content-controller"
-      summary: "sayHelloGet"
-      operationId: "sayHelloGetUsingPUT"
+      - schema-content-controller
+      summary: sayHelloGet
+      operationId: sayHelloGetUsingPUT
       schemes: []
       consumes:
-        - "application/json"
+      - application/json
       produces:
-        - "*/*"
+      - '*/*'
       parameters:
-        - name: "id"
-          in: "query"
-          description: "id"
-          required: true
-          type: "string"
+      - name: id
+        in: query
+        description: id
+        required: true
+        type: string
       responses:
-        200:
-          description: "OK"
+        "200":
+          description: OK
           examples: {}
           headers: {}
           schema:
-            type: "string"
-        201:
-          description: "Created"
+            type: string
+          responseSchema:
+            type: string
+            format: ""
+        "201":
+          description: Created
           examples: {}
           headers: {}
-        401:
-          description: "Unauthorized"
+        "401":
+          description: Unauthorized
           examples: {}
           headers: {}
-        403:
-          description: "Forbidden"
+        "403":
+          description: Forbidden
           examples: {}
           headers: {}
-        404:
-          description: "Not Found"
+        "404":
+          description: Not Found
           examples: {}
           headers: {}
       security: []
-      deprecated: false
     delete:
       tags:
-        - "schema-content-controller"
-      summary: "sayHelloGet"
-      operationId: "sayHelloGetUsingDELETE"
+      - schema-content-controller
+      summary: sayHelloGet
+      operationId: sayHelloGetUsingDELETE
       schemes: []
       consumes: []
       produces:
-        - "*/*"
+      - '*/*'
       parameters:
-        - name: "id"
-          in: "query"
-          description: "id"
-          required: true
-          type: "string"
+      - name: id
+        in: query
+        description: id
+        required: true
+        type: string
       responses:
-        200:
-          description: "OK"
+        "200":
+          description: OK
           examples: {}
           headers: {}
           schema:
-            type: "string"
-        204:
-          description: "No Content"
+            type: string
+          responseSchema:
+            type: string
+            format: ""
+        "204":
+          description: No Content
           examples: {}
           headers: {}
-        401:
-          description: "Unauthorized"
+        "401":
+          description: Unauthorized
           examples: {}
           headers: {}
-        403:
-          description: "Forbidden"
+        "403":
+          description: Forbidden
           examples: {}
           headers: {}
       security: []
-      deprecated: false
     options:
       tags:
-        - "schema-content-controller"
-      summary: "sayHelloGet"
-      operationId: "sayHelloGetUsingOPTIONS"
+      - schema-content-controller
+      summary: sayHelloGet
+      operationId: sayHelloGetUsingOPTIONS
       schemes: []
       consumes:
-        - "application/json"
+      - application/json
       produces:
-        - "*/*"
+      - '*/*'
       parameters:
-        - name: "id"
-          in: "query"
-          description: "id"
-          required: true
-          type: "string"
+      - name: id
+        in: query
+        description: id
+        required: true
+        type: string
       responses:
-        200:
-          description: "OK"
+        "200":
+          description: OK
           examples: {}
           headers: {}
           schema:
-            type: "string"
-        204:
-          description: "No Content"
+            type: string
+          responseSchema:
+            type: string
+            format: ""
+        "204":
+          description: No Content
           examples: {}
           headers: {}
-        401:
-          description: "Unauthorized"
+        "401":
+          description: Unauthorized
           examples: {}
           headers: {}
-        403:
-          description: "Forbidden"
+        "403":
+          description: Forbidden
           examples: {}
           headers: {}
       security: []
-      deprecated: false
     patch:
       tags:
-        - "schema-content-controller"
-      summary: "sayHelloGet"
-      operationId: "sayHelloGetUsingPATCH"
+      - schema-content-controller
+      summary: sayHelloGet
+      operationId: sayHelloGetUsingPATCH
       schemes: []
       consumes:
-        - "application/json"
+      - application/json
       produces:
-        - "*/*"
+      - '*/*'
       parameters:
-        - name: "id"
-          in: "query"
-          description: "id"
-          required: true
-          type: "string"
+      - name: id
+        in: query
+        description: id
+        required: true
+        type: string
       responses:
-        200:
-          description: "OK"
+        "200":
+          description: OK
           examples: {}
           headers: {}
           schema:
-            type: "string"
-        204:
-          description: "No Content"
+            type: string
+          responseSchema:
+            type: string
+            format: ""
+        "204":
+          description: No Content
           examples: {}
           headers: {}
-        401:
-          description: "Unauthorized"
+        "401":
+          description: Unauthorized
           examples: {}
           headers: {}
-        403:
-          description: "Forbidden"
+        "403":
+          description: Forbidden
           examples: {}
           headers: {}
       security: []
-      deprecated: false
   /sayHelloPost:
     post:
       tags:
-        - "schema-content-controller"
-      summary: "sayHelloPost"
-      operationId: "sayHelloPostUsingPOST"
+      - schema-content-controller
+      summary: sayHelloPost
+      operationId: sayHelloPostUsingPOST
       schemes: []
       consumes:
-        - "application/json"
+      - application/json
       produces:
-        - "*/*"
+      - '*/*'
       parameters:
-        - name: "id"
-          in: "query"
-          description: "id"
-          required: true
-          type: "string"
+      - name: id
+        in: query
+        description: id
+        required: true
+        type: string
       responses:
-        200:
-          description: "OK"
+        "200":
+          description: OK
           examples: {}
           headers: {}
           schema:
-            type: "string"
-        201:
-          description: "Created"
+            type: string
+          responseSchema:
+            type: string
+            format: ""
+        "201":
+          description: Created
           examples: {}
           headers: {}
-        401:
-          description: "Unauthorized"
+        "401":
+          description: Unauthorized
           examples: {}
           headers: {}
-        403:
-          description: "Forbidden"
+        "403":
+          description: Forbidden
           examples: {}
           headers: {}
-        404:
-          description: "Not Found"
+        "404":
+          description: Not Found
           examples: {}
           headers: {}
       security: []
-      deprecated: false
   /stringRequestBody:
     post:
       tags:
-        - "schema-content-controller"
-      summary: "stringRequestBody"
-      operationId: "stringRequestBodyUsingPOST"
+      - schema-content-controller
+      summary: stringRequestBody
+      operationId: stringRequestBodyUsingPOST
       schemes: []
       consumes:
-        - "application/json"
+      - application/json
       produces:
-        - "*/*"
+      - '*/*'
       parameters:
-        - in: "body"
-          name: "id"
-          description: "id"
-          required: true
-          schema:
-            type: "string"
+      - in: body
+        name: id
+        description: id
+        required: true
+        schema:
+          type: string
+          format: ""
       responses:
-        200:
-          description: "OK"
+        "200":
+          description: OK
           examples: {}
           headers: {}
           schema:
-            type: "string"
-        201:
-          description: "Created"
+            type: string
+          responseSchema:
+            type: string
+            format: ""
+        "201":
+          description: Created
           examples: {}
           headers: {}
-        401:
-          description: "Unauthorized"
+        "401":
+          description: Unauthorized
           examples: {}
           headers: {}
-        403:
-          description: "Forbidden"
+        "403":
+          description: Forbidden
           examples: {}
           headers: {}
-        404:
-          description: "Not Found"
+        "404":
+          description: Not Found
           examples: {}
           headers: {}
       security: []
-      deprecated: false
 securityDefinitions: {}
 definitions: {}
+

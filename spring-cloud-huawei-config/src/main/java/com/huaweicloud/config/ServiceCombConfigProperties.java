@@ -17,23 +17,18 @@
 
 package com.huaweicloud.config;
 
-import com.huaweicloud.common.util.URLUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 
-/**
- * @Author wangqijun
- * @Date 11:05 2019-10-17
- **/
-@Component
 @ConfigurationProperties("spring.cloud.servicecomb.config")
 public class ServiceCombConfigProperties {
 
   private boolean enabled = true;
+
+  private boolean firstPullRequired = true;
 
   @Value("${spring.cloud.servicecomb.discovery.address:}")
   private String discoveryAddress;
@@ -55,13 +50,12 @@ public class ServiceCombConfigProperties {
 
   private String serverAddr;
 
-  @Value("${spring.cloud.servicecomb.config.enableLongPolling:true}")
-  private boolean enableLongPolling;
-
   @Value("${spring.cloud.servicecomb.config.fileSource:}")
   private String fileSource;
 
   private Watch watch = new Watch();
+
+  private Kie kie = new Kie();
 
   public String getFileSource() {
     return fileSource;
@@ -72,24 +66,11 @@ public class ServiceCombConfigProperties {
   }
 
   public String getDiscoveryAddress() {
-    String url = org.apache.commons.lang3.StringUtils.join(URLUtil.getEnvServerURL(), ",");
-    return url.isEmpty() ? discoveryAddress : url;
+    return discoveryAddress;
   }
 
   public void setDiscoveryAddress(String discoveryAddress) {
     this.discoveryAddress = discoveryAddress;
-  }
-
-  public boolean isEnableLongPolling() {
-    return enableLongPolling;
-  }
-
-  public boolean getEnableLongPolling() {
-    return enableLongPolling;
-  }
-
-  public void setEnableLongPolling(boolean enableLongPolling) {
-    this.enableLongPolling = enableLongPolling;
   }
 
   public boolean isEnabled() {
@@ -101,8 +82,7 @@ public class ServiceCombConfigProperties {
   }
 
   public String getServerAddr() {
-    String url = org.apache.commons.lang3.StringUtils.join(URLUtil.getEnvConfigUrl(), ",");
-    return url.isEmpty() ? serverAddr : url;
+    return serverAddr;
   }
 
   public void setServerAddr(String serverAddr) {
@@ -115,6 +95,14 @@ public class ServiceCombConfigProperties {
 
   public void setWatch(Watch watch) {
     this.watch = watch;
+  }
+
+  public void setKie(Kie kie) {
+    this.kie = kie;
+  }
+
+  public Kie getKie() {
+    return this.kie;
   }
 
   public String getServiceName() {
@@ -160,23 +148,20 @@ public class ServiceCombConfigProperties {
     this.serverType = serverType;
   }
 
+  public boolean isFirstPullRequired() {
+    return firstPullRequired;
+  }
+
+  public void setFirstPullRequired(boolean firstPullRequired) {
+    this.firstPullRequired = firstPullRequired;
+  }
+
   public static class Watch {
     private boolean enable;
 
     private int delay = 10 * 1000;
 
     private int waitTime = 10 * 1000;
-
-    @Value("${spring.cloud.servicecomb.config.pollingWaitSec:30}")
-    private int pollingWaitTimeInSeconds = 30;
-
-    public int getPollingWaitTimeInSeconds() {
-      return pollingWaitTimeInSeconds;
-    }
-
-    public void setPollingWaitTimeInSeconds(int pollingWaitTimeInSeconds) {
-      this.pollingWaitTimeInSeconds = pollingWaitTimeInSeconds;
-    }
 
     public boolean isEnable() {
       return enable;
@@ -200,6 +185,80 @@ public class ServiceCombConfigProperties {
 
     public void setWaitTime(int waitTime) {
       this.waitTime = waitTime;
+    }
+  }
+
+  public static class Kie {
+    private boolean enableAppConfig = true;
+
+    private boolean enableServiceConfig = true;
+
+    private boolean enableCustomConfig = true;
+
+    private String customLabelValue = "";
+
+    private String customLabel = "public";
+
+    @Value("${spring.cloud.servicecomb.config.enableLongPolling:true}")
+    private boolean enableLongPolling;
+
+    @Value("${spring.cloud.servicecomb.config.pollingWaitSec:10}")
+    private int pollingWaitTimeInSeconds = 10;
+
+    public int getPollingWaitTimeInSeconds() {
+      return pollingWaitTimeInSeconds;
+    }
+
+    public void setPollingWaitTimeInSeconds(int pollingWaitTimeInSeconds) {
+      this.pollingWaitTimeInSeconds = pollingWaitTimeInSeconds;
+    }
+
+    public boolean isEnableLongPolling() {
+      return enableLongPolling;
+    }
+
+    public void setEnableLongPolling(boolean enableLongPolling) {
+      this.enableLongPolling = enableLongPolling;
+    }
+
+    public boolean isEnableAppConfig() {
+      return enableAppConfig;
+    }
+
+    public void setEnableAppConfig(boolean enableAppConfig) {
+      this.enableAppConfig = enableAppConfig;
+    }
+
+    public boolean isEnableServiceConfig() {
+      return enableServiceConfig;
+    }
+
+    public void setEnableServiceConfig(boolean enableServiceConfig) {
+      this.enableServiceConfig = enableServiceConfig;
+    }
+
+    public boolean isEnableCustomConfig() {
+      return enableCustomConfig;
+    }
+
+    public void setEnableCustomConfig(boolean enableCustomConfig) {
+      this.enableCustomConfig = enableCustomConfig;
+    }
+
+    public String getCustomLabelValue() {
+      return customLabelValue;
+    }
+
+    public void setCustomLabelValue(String customLabelValue) {
+      this.customLabelValue = customLabelValue;
+    }
+
+    public String getCustomLabel() {
+      return customLabel;
+    }
+
+    public void setCustomLabel(String customLabel) {
+      this.customLabel = customLabel;
     }
   }
 }

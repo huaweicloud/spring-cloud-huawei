@@ -21,7 +21,7 @@
   <parent>
     <artifactId>spring-cloud-huawei-parents</artifactId>
     <groupId>com.huaweicloud</groupId>
-    <version>1.6.0-Hoxton-SNAPSHOT</version>
+    <version>1.7.0-SHAPSHOT</version>
     <relativePath>../spring-cloud-huawei-parents</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -59,9 +59,8 @@
       <artifactId>spring-cloud-huawei-common</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.huaweicloud</groupId>
+      <groupId>org.apache.servicecomb</groupId>
       <artifactId>servicecomb-governance</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.yaml</groupId>

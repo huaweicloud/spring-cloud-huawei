@@ -21,7 +21,7 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-huawei-parents</artifactId>
-    <version>1.6.0-Hoxton-SNAPSHOT</version>
+    <version>1.7.0-SHAPSHOT</version>
     <relativePath>../spring-cloud-huawei-parents</relativePath>
   </parent>
 
@@ -33,6 +33,8 @@
     <module>docker-build-config</module>
     <module>docker-run-config</module>
     <module>discovery-tests</module>
+    <module>cse-v1</module>
+    <module>cse-v2</module>
   </modules>
 
   <dependencies>

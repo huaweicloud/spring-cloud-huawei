@@ -17,53 +17,29 @@
 
 package com.huaweicloud.config;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 
+import org.apache.servicecomb.config.common.ConfigConverter;
 import org.springframework.core.env.EnumerablePropertySource;
 
-import com.huaweicloud.common.exception.RemoteOperationException;
-import com.huaweicloud.config.client.ServiceCombConfigClient;
+public class ServiceCombConfigPropertySource extends EnumerablePropertySource<ConfigConverter> {
+  public static final String NAME = "servicecomb";
 
-/**
- * @Author wangqijun
- * @Date 12:44 2019-10-19
- **/
-public class ServiceCombConfigPropertySource extends EnumerablePropertySource<ServiceCombConfigClient> {
+  private final ConfigConverter configConverter;
 
-  private final Map<String, Object> properties = new LinkedHashMap<>();
-
-  private ServiceCombConfigClient serviceCombConfigClient;
-
-
-  public ServiceCombConfigPropertySource(String name,
-      ServiceCombConfigClient source) {
-    super(name, source);
-    this.serviceCombConfigClient = source;
-  }
-
-  public Map<String, Object> loadAllRemoteConfig(ServiceCombConfigProperties serviceCombConfigProperties,
-      String project)
-      throws RemoteOperationException {
-    Map<String, Object> remoteConfig = serviceCombConfigClient
-        .loadAll(serviceCombConfigProperties, project);
-    if (remoteConfig == null) {
-      return Collections.emptyMap();
-    }
-    properties.putAll(remoteConfig);
-    return remoteConfig;
+  public ServiceCombConfigPropertySource(ConfigConverter configConverter) {
+    super(NAME, configConverter);
+    this.configConverter = configConverter;
   }
 
   @Override
   public String[] getPropertyNames() {
-    Set<String> strings = this.properties.keySet();
+    Set<String> strings = this.configConverter.getCurrentData().keySet();
     return strings.toArray(new String[strings.size()]);
   }
 
   @Override
   public Object getProperty(String name) {
-    return properties.get(name);
+    return this.configConverter.getCurrentData().get(name);
   }
 }

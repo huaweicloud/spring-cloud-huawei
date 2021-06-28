@@ -6,83 +6,65 @@
 # Spring Cloud Huawei [English document](README.md)
 
 此框架的目的是为了让spring cloud 和华为的框架更好的融合在一起。
-包括[Apache ServiceComb](http://servicecomb.apache.org) 和 [ServiceStage](https://www.huaweicloud.com/product/servicestage.html) 。
+包括[Apache ServiceComb](http://servicecomb.apache.org) 和 [ServiceStage][ServiceStage] 。
 
 ## 支持的版本列表
 
 | 分支 | 最新版本 | Spring Cloud基线版本 | Spring Boot基线版本 | 支持的Spring Cloud版本 | 支持的Spring Boot版本|
 | ---------- | ------------ | ----------- | ----------- | ----------- | ----------- |
-| master | 1.5.0-Hoxton | Hoxton.SR4 | 2.2.5.RELEASE | Hoxton | 2.2.x |
-| Greenwich | 1.5.0-Greenwich | Greenwich.SR6 | 2.1.6-RELEASE | Greenwich | 2.1.x |
-| Finchley | 1.2.0-Finchley | 2.0.4.RELEASE | 2.0.9.RELEASE     | Finchley     | 2.0.x       |
+| master | 1.5.6-Hoxton | Hoxton.SR8 | 2.3.5.RELEASE | Hoxton | 2.3.x |
+| Greenwich | 1.5.1-Greenwich | Greenwich.SR6 | 2.1.6-RELEASE | Greenwich | 2.1.x |
+| Finchley | 1.5.1-Finchley | 2.0.4.RELEASE | 2.0.9.RELEASE     | Finchley     | 2.0.x       |
 | Edgware | 1.2.0-Edgware | 1.3.6.RELEASE  | 1.5.22.RELEASE    | Edgware      | 1.5.x       |
 
 ***注意：***
 * 查询 [Spring Cloud Release Train](https://spring.io/projects/spring-cloud) 选择一个适合业务的版本使用。
-* Spring Cloud Edgeware, Finchley 已经停止维护，不建议在生产环境使用。 
+* Spring Cloud Edgeware, Finchley, Greenwich 已经停止维护，不建议在生产环境使用。 
 
 ## 为什么使用
- 1. 提供路由管理功能，对应用进行蓝绿部署、灰度发布。
- 2. 自动生成open-api规范的swagger契约文档，并注册到注册中心，以便统一查看、下载API文档。
- 3. 与Apache ServiceComb的生态体系结合：
-     - 使用reactive线程模型的高性能网关edge-service，表现优于spring cloud gateway和netflix zuul。
-     - 利用[ServiceComb-Mesher](https://github.com/apache/servicecomb-mesher)实现多语言构建的微服务系统，mesher是service mesh的一种实现。
-     - go语言微服务框架 [go-chassis](https://github.com/go-chassis/go-chassis)。
- 4. 完全代码无侵入的核心思想，力求做到所有能力全部做在配置中，用户业务无感知，无迁移成本。
 
+1. Spring Cloud 使用 ServiceComb 提供的服务， 包括 servicecomb-service-center, servicecomb-kie等.
+2. Spring Cloud 使用 ServiceStage 提供的服务. ServiceStage 是一个微服务的运行与托管平台，包括高可用的注册中心、配置中心、服务治理和分布式事务等服务。 
+3. 给Spring Cloud应用提供契约生成和注册，灰度发布等功能。
 
 ## 功能模块
 
  * **spring-cloud-starter-huawei-servicecomb-discovery:**
-     * 对接华为云微服务引擎/[ServiceComb-Service-Center](https://github.com/apache/servicecomb-service-center)
- :一个基于Restful的提供微服务发现和微服务治理的服务注册中心，它基于Open API规范并提供服务发现、容错、动态路由、订阅和可扩展设计等功能。
- 支持多环境、多维度管理，多注册中心配置。
+     * 支持使用 [servicecomb-service-center](https://github.com/apache/servicecomb-service-center)
+     * 支持使用 [CSE][CSE] 的 [服务中心][Service Registry]
+     * 实现 DiscoveryClient, ReactiveDiscoveryClient
+     * 实现 ServiceRegistry
+     * 实现 ServerList, IPing, ServerListUpdater
 
  * **spring-cloud-starter-huawei-config:**
-     * 对接华为云微服务引擎，进行配置管理，支持多环境、动态配置、全局配置、优先级多维度配置下发。
-     * 对接[ServiceComb-Kie](https://github.com/apache/servicecomb-kie)，Kie是一个基于key-value的配置中心，支持历史版本、标签管理。
-
- * **spring-cloud-starter-huawei-dtm:**
-     * 对接华为云分布式事务引擎DTM，解决分布式环境下事务一致性问题。
-
- * **spring-cloud-starter-huawei-router:**
-     * 路由管理模块，通过配置实现灰度发布、金丝雀发布、流量分配管理，支持匹配http header、比例分配流量。
-
- * **spring-cloud-starter-huawei-swagger:**
-     * 基于代码零配置自动生成swagger接口契约(基于[spring-fox](https://github.com/springfox/springfox)的能力)，自动注册到Service-Center注册中心进行接口文档化管理。
-     * 基于契约与微服务框架[ServiceComb-Java-Chassis](https://github.com/apache/servicecomb-java-chassis)组网。
-     * 使用[Edge-Service](https://docs.servicecomb.io/java-chassis/zh_CN/edge/by-servicecomb-sdk/)网关，
- [表现](https://github.com/AngLi2/api-gateway-benchmark/blob/master/Spring%20Cloud%20Gateway%2C%20Zuul%2C%20Edge%20Service%20%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94.md)
- 优于spring cloud gateway和netflix zuul，体验reactive带来的性能提升。
+     * 支持使用 [servicecomb-kie](https://github.com/apache/servicecomb-kie)
+     * 支持使用 [CSE][CSE] 的 [配置中心][Configuration Center]
+     * 实现 PropertySource
+     * 实现 @RefreshScope
 
  * **spring-cloud-starter-huawei-governance:**
-     * 服务治理模块，提供基于动态配置的熔断、限流、隔离、重试功能特性，核心能力基于[resilience4j](https://github.com/resilience4j/resilience4j)。
-     * 流量粒度的治理管控，可以针对请求Path、请求Method、请求Header进行相应的算子匹配来进行流量标记，进行精确的流量治理。
-     * 利用动态配置，做到零等待下发治理规则生效。无代码侵入，用户无需学习繁琐的sdk使用，只需下发配置。
-     * [更多信息](https://github.com/huaweicloud/spring-cloud-huawei/tree/master/spring-cloud-huawei-governance)
+     * 支持使用  [CSE][CSE] [基于动态配置的流量特征治理][Request Marker-based Governance]
+     * 实现 FeignClient and RestTemplate 的重试
+     * 实现 Servlet Web MVC 的限流、熔断器和隔离仓
+
+ * **spring-cloud-starter-huawei-router:**
+     * 支持使用  [ServiceStage][ServiceStage] [灰度发布][Canary release features].
+ 
+ * **spring-cloud-starter-huawei-dtm:**
+     * 支持使用 [ServiceStage][ServiceStage] [分布式事务][DTM]
+
+ * **spring-cloud-starter-huawei-swagger:**
+     * 自动契约生成和注册. 
      
 ## 如何使用
-spring-cloud-huawei已发布在maven中央仓库。
 
-使用dependencyManagement引入依赖。
+1. [开发指南](https://support.huaweicloud.com/devg-servicestage/ss-devg-0010.html)
+2. [例子和快速入门](https://github.com/huaweicloud/spring-cloud-huawei-samples)
 
-    <dependencyManagement>
-      <dependencies>
-        <dependency>
-          <groupId>com.huaweicloud</groupId>
-          <artifactId>spring-cloud-huawei-dependencies</artifactId>
-          <version>${project.version}</version>
-          <type>pom</type>
-          <scope>import</scope>
-        </dependency>
-      </dependencies>
-    </dependencyManagement>
-    
-引入相应starter。
-
-    <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-starter-huawei-servicecomb-discovery</artifactId>
-    </dependency>
-    
-[更多文档](https://support.huaweicloud.com/devg-servicestage/cse_java_0054.html)
+[ServiceStage]: https://support.huaweicloud.com/usermanual-servicestage/servicestage_user_0400.html
+[CSE]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0002.html
+[DTM]: https://support.huaweicloud.com/devg-servicestage/dtm_devg_0002.html
+[Service Registry]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0017.html
+[Configuration Center]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0018.html
+[Request Marker-based Governance]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0020.html
+[Canary release features]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0023.html
