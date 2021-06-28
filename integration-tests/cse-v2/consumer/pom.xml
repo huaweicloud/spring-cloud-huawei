@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>cse-v2-test</artifactId>
-    <version>1.6.0-Hoxton</version>
+    <version>1.7.0-SHAPSHOT</version>
   </parent>
 
   <name>Integration Tests::CSE V2::Consumer</name>
