@@ -39,7 +39,7 @@
      import spring-framework-bom. No need configure spring version. -->
     <spring-cloud.version>Hoxton.SR8</spring-cloud.version>
     <spring-boot.version>2.3.5.RELEASE</spring-boot.version>
-    <servicecomb.version>2.2.0</servicecomb.version>
+    <servicecomb.version>2.3.0</servicecomb.version>
   </properties>
 
   <modules>
@@ -47,7 +47,6 @@
     <module>spring-cloud-huawei-bom</module>
     <module>spring-cloud-huawei-parents</module>
     <module>spring-cloud-huawei-common</module>
-    <module>clients</module>
     <module>spring-cloud-huawei-discovery</module>
     <module>spring-cloud-starter-huawei</module>
     <module>spring-cloud-huawei-dtm</module>
@@ -55,7 +54,6 @@
     <module>spring-cloud-huawei-router-core</module>
     <module>spring-cloud-huawei-router-client</module>
     <module>spring-cloud-huawei-swagger</module>
-    <module>governance</module>
     <module>spring-cloud-huawei-governance</module>
   </modules>
 
