@@ -27,9 +27,9 @@ import org.junit.Test;
 import org.springframework.web.client.RestTemplate;
 
 public class OrderControllerIT {
-  String url = "http://127.0.0.1:8088";
+  String url = "http://127.0.0.1:9098";
 
-  int pricePort = 8080;
+  int pricePort = 9090;
 
   RestTemplate template = new RestTemplate();
 
@@ -38,6 +38,13 @@ public class OrderControllerIT {
     String result = template.getForObject(url + "/order?id=hello", String.class);
     assertThat(result).isEqualTo("hello");
   }
+
+  // tests can be enabled when dynamic configuration is enabled
+//  @Test
+//  public void testGetConfiguration() {
+//    String result = template.getForObject(url + "/configuration", String.class);
+//    assertThat(result).isEqualTo("[FIRST, SECOND]:name");
+//  }
 
   @Test
   @SuppressWarnings({"rawTypes", "unckecked"})

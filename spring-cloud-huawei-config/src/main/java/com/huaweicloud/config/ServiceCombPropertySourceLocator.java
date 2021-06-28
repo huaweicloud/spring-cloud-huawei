@@ -17,51 +17,25 @@
 
 package com.huaweicloud.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.servicecomb.config.common.ConfigConverter;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
-import com.huaweicloud.common.exception.RemoteOperationException;
-import com.huaweicloud.config.client.ConfigConstants;
-import com.huaweicloud.config.client.ServiceCombConfigClient;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 
-/**
- * @Author wangqijun
- * @Date 11:06 2019-10-17
- **/
 @Order(0)
 public class ServiceCombPropertySourceLocator implements PropertySourceLocator {
+  private ConfigConverter configConverter;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombPropertySourceLocator.class);
-
-  private String project;
-
-  private ServiceCombConfigProperties serviceCombConfigProperties;
-
-  private ServiceCombConfigClient serviceCombConfigClient;
-
-  public ServiceCombPropertySourceLocator(ServiceCombConfigProperties serviceCombConfigProperties,
-      ServiceCombConfigClient serviceCombConfigClient, String project) {
-    this.serviceCombConfigClient = serviceCombConfigClient;
-    this.serviceCombConfigProperties = serviceCombConfigProperties;
-    this.project = project;
+  public ServiceCombPropertySourceLocator(ConfigConverter configConverter) {
+    this.configConverter = configConverter;
   }
 
   @Override
   public PropertySource<?> locate(Environment environment) {
-    ServiceCombConfigPropertySource serviceCombConfigPropertySource = new ServiceCombConfigPropertySource(
-        ConfigConstants.PROPERTYSOURCE_NAME,
-        serviceCombConfigClient);
-    try {
-      serviceCombConfigPropertySource
-          .loadAllRemoteConfig(serviceCombConfigProperties, project);
-    } catch (RemoteOperationException e) {
-      LOGGER.error(e.getMessage(), e);
-    }
-    CompositePropertySource composite = new CompositePropertySource(ConfigConstants.PROPERTYSOURCE_NAME);
+    ServiceCombConfigPropertySource serviceCombConfigPropertySource = new ServiceCombConfigPropertySource(configConverter);
+    CompositePropertySource composite = new CompositePropertySource(ServiceCombConfigPropertySource.NAME);
     composite.addPropertySource(serviceCombConfigPropertySource);
     return composite;
   }

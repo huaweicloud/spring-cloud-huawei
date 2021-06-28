@@ -32,6 +32,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 
+import io.swagger.models.Swagger;
+import io.swagger.util.Yaml;
+
 /**
  * Class for testing schema generator
  */
@@ -41,18 +44,21 @@ public class SchemaController {
   ServiceCombSwaggerHandler serviceCombSwaggerHandler;
 
   @RequestMapping("/testSchemaGenerator")
-  public String testSchemaGenerator() {
+  public String testSchemaGenerator() throws Exception {
     List<String> schemas = serviceCombSwaggerHandler.getSchemaIds();
     assertThat(schemas.size()).isGreaterThan(2);
     Map<String, String> schemaContents = serviceCombSwaggerHandler.getSchemasMap();
     assertThat(schemaContents.size()).isGreaterThan(2);
 
-    String a1 = schemaContents.get("SchemaContentController").replaceAll("\\s", "");
-    String fileContent =  readFile("SchemaContentController.yaml");
-    fileContent = fileContent.substring(fileContent.indexOf("---"));
-    String a2 = fileContent.replaceAll("\\s", "");
-    assertThat(a1).isEqualTo(a2);
-    return "success";
+    String a1 = schemaContents.get("SchemaContentController");
+    String a2 = readFile("SchemaContentController.yaml");
+    Swagger swagger2 = Yaml.mapper().readValue(a2, Swagger.class);
+    Swagger swagger1 = Yaml.mapper().readValue(a1, Swagger.class);
+    if (swagger1.equals(swagger2)) {
+      return "success";
+    } else {
+      return a1;
+    }
   }
 
   private String readFile(String restController) {

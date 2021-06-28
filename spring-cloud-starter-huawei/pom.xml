@@ -21,7 +21,7 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-huawei-parents</artifactId>
-    <version>1.6.0-Hoxton-SNAPSHOT</version>
+    <version>1.7.0-SHAPSHOT</version>
     <relativePath>../spring-cloud-huawei-parents</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -35,7 +35,6 @@
     <module>spring-cloud-starter-huawei-swagger</module>
     <module>spring-cloud-starter-huawei-governance</module>
     <module>spring-cloud-starter-huawei-service-engine</module>
-    <module>spring-cloud-starter-huawei-service-engine-gateway</module>
   </modules>
 
 </project>

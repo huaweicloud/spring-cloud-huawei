@@ -18,6 +18,9 @@
 #bin/sh
 
 ## whenever commit to the repository, do Compilation and Installation
+echo "system info"
+docker version
+docker-compose version
 
 if [ "$1" == "install" ]; then
     mvn apache-rat:check -Pit -Psample

@@ -17,12 +17,26 @@
 
 package com.huaweicloud.common.transport;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import java.util.List;
 
-@Component
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.huaweicloud.common.util.Cipher;
+import com.huaweicloud.common.util.DefaultCipher;
+
 @ConfigurationProperties("spring.cloud.servicecomb.credentials.account")
 public class ServiceCombRBACProperties {
+
+  @Autowired(required = false)
+  @JsonIgnore
+  private List<Cipher> ciphers;
+
+  @Value("#{'${spring.cloud.servicecomb.credentials.account.cipher:${spring.cloud.servicecomb.credentials.account.akskCustomCipher:default}}'}")
+  @JsonIgnore
+  private String cipher;
 
   private String name;
 
@@ -37,10 +51,20 @@ public class ServiceCombRBACProperties {
   }
 
   public String getPassword() {
-    return password;
+    String decodedPassWord = new String(DefaultCipher.findCipher(ciphers, this.cipher).
+        decrypt(this.password.toCharArray()));
+    return decodedPassWord;
   }
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public String getCipher() {
+    return cipher;
+  }
+
+  public void setCipher(String cipher) {
+    this.cipher = cipher;
   }
 }

@@ -14,22 +14,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-server:
-  port: 8080
-
-spring:
-  application:
-    name: price
-  cloud:
-    servicecomb:
-      discovery:
-        enabled: true
-        # testing multiple registries
-        address: http://127.0.0.2:30100,http://127.0.0.1:30100
-        serviceName: price
-        version: 0.0.1
-        healthCheckInterval: 30
-
-      # testing spring cloud swagger generation
-      swagger:
-        enableJavaChassisAdapter: false

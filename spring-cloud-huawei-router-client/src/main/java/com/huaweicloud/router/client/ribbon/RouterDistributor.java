@@ -17,21 +17,15 @@
 package com.huaweicloud.router.client.ribbon;
 
 import com.huaweicloud.router.core.distribute.AbstractRouterDistributor;
-import com.huaweicloud.servicecomb.discovery.client.model.MicroserviceInstance;
-import com.huaweicloud.servicecomb.discovery.discovery.MicroserviceCache;
-
 import com.netflix.loadbalancer.Server;
 
 /**
  * @Author GuoYl123
  * @Date 2019/10/17
  **/
-public class RouterDistributor extends AbstractRouterDistributor<Server, MicroserviceInstance> {
+public class RouterDistributor extends AbstractRouterDistributor<Server> {
 
   public RouterDistributor() {
-    init(server -> MicroserviceCache.getMicroserviceIns(server.getMetaInfo().getInstanceId()),
-        MicroserviceInstance::getVersion,
-        MicroserviceInstance::getServiceName,
-        MicroserviceInstance::getProperties);
+    init();
   }
 }

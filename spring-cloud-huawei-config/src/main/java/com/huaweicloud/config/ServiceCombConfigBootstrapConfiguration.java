@@ -17,68 +17,31 @@
 
 package com.huaweicloud.config;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import java.util.List;
+
+import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
 
-import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
-import com.huaweicloud.common.transport.ServiceCombRBACProperties;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
-import com.huaweicloud.config.client.ServiceCombConfigClient;
-import com.huaweicloud.config.client.ServiceCombConfigClientBuilder;
 
 /**
- * @Author wangqijun
- * @Date 11:00 2019-10-17
- **/
+ * bootstrap 配置信息。 由于使用 ContextRefresher 刷新配置， 会重新加载所有 bootstrap 的 bean， 因此配置中心的
+ * 连接实例采用单例，保证只加载一次。
+ */
 @Configuration
+@EnableConfigurationProperties(ServiceCombConfigProperties.class)
 @ConditionalOnProperty(name = "spring.cloud.servicecomb.config.enabled", matchIfMissing = true)
 public class ServiceCombConfigBootstrapConfiguration {
-
   @Bean
-  @ConditionalOnMissingBean
-  public ServiceCombConfigProperties serviceCombConfigProperties() {
-    return new ServiceCombConfigProperties();
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
-  public ServiceCombRBACProperties serviceCombRBACProperties() {
-    return new ServiceCombRBACProperties();
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
-  public ServiceCombSSLProperties serviceCombSSLProperties() {
-    return new ServiceCombSSLProperties();
-  }
-
-  @Bean
-  public ServiceCombConfigClient serviceCombConfigClient(
-      ServiceCombConfigProperties serviceCombConfigProperties, ServiceCombRBACProperties serviceCombRBACProperties,
-      ServiceCombAkSkProperties serviceCombAkSkProperties, ServiceCombSSLProperties serviceCombSSLProperties) {
-    ServiceCombConfigClientBuilder builder = new ServiceCombConfigClientBuilder();
-    if (!StringUtils.isEmpty(serviceCombAkSkProperties.getEnable())) {
-      throw new ServiceCombRuntimeException(
-          "config credentials.enable has change to credentials.enabled ,old names are no longer supported, please change it.");
-    }
-    builder.setServiceCombSSLProperties(serviceCombSSLProperties)
-        .setServiceCombRBACProperties(serviceCombRBACProperties)
-        .setServiceCombConfigProperties(serviceCombConfigProperties)
-        .setServiceCombAkSkProperties(serviceCombAkSkProperties);
-    return builder.createServiceCombConfigClient();
-  }
-
-  @Bean
-  public ServiceCombPropertySourceLocator serviceCombPropertySourceLocator(
-      ServiceCombConfigProperties serviceCombConfigProperties,
-      ServiceCombConfigClient serviceCombConfigClient,
-      ServiceCombAkSkProperties serviceCombAkSkProperties) {
-    return new ServiceCombPropertySourceLocator(serviceCombConfigProperties,
-        serviceCombConfigClient,
-        serviceCombAkSkProperties.getProject());
+  public ServiceCombPropertySourceLocator serviceCombPropertySourceLocator(ServiceCombConfigProperties configProperties,
+      ServiceCombAkSkProperties serviceCombAkSkProperties, ServiceCombSSLProperties serviceCombSSLProperties,
+      List<AuthHeaderProvider> authHeaderProviders) {
+    ConfigService.getInstance()
+        .init(configProperties, serviceCombAkSkProperties, serviceCombSSLProperties, authHeaderProviders);
+    return new ServiceCombPropertySourceLocator(ConfigService.getInstance().getConfigConverter());
   }
 }

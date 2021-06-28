@@ -22,14 +22,14 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-huawei</artifactId>
-    <version>1.6.0-Hoxton-SNAPSHOT</version>
+    <version>1.7.0-SHAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>spring-cloud-huawei-bom</artifactId>
   <packaging>pom</packaging>
-  <version>1.6.0-Hoxton-SNAPSHOT</version>
+  <version>1.7.0-SHAPSHOT</version>
   <name>Spring Cloud Huawei BOM</name>
 
   <dependencyManagement>
@@ -108,11 +108,6 @@
       <dependency>
         <groupId>com.huaweicloud</groupId>
         <artifactId>spring-cloud-starter-huawei-service-engine</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-starter-huawei-service-engine-gateway</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>

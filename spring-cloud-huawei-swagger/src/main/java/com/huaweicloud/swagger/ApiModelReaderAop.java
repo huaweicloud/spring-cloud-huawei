@@ -16,13 +16,14 @@
  */
 package com.huaweicloud.swagger;
 
+import java.util.Map;
+
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+
 import springfox.documentation.schema.Model;
 import springfox.documentation.spring.web.scanners.ApiListingScanningContext;
-
-import java.util.Map;
 
 /**
  * @Author GuoYl123
@@ -41,6 +42,5 @@ public class ApiModelReaderAop {
   public void beforeParseSchema(ApiListingScanningContext args) {
     args.getRequestMappingsByResourceGroup().keySet().forEach(k ->
         DefinitionCache.setSchemaClassName(k.getGroupName(), k.getControllerClass().get().getName()));
-
   }
 }
