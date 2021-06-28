@@ -18,6 +18,5 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 com.huaweicloud.servicecomb.discovery.DiscoveryAutoConfiguration,\
 com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryClientConfiguration,\
 com.huaweicloud.servicecomb.discovery.ribbon.ServiceCombRibbonAutoConfiguration,\
-com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistryAutoConfiguration, \
-com.huaweicloud.servicecomb.discovery.discovery.ServiceCombReactiveDiscoveryClientConfiguration
+com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistryAutoConfiguration
 

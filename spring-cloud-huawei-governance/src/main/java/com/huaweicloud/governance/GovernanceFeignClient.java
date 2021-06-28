@@ -82,7 +82,7 @@ public class GovernanceFeignClient {
     try {
       URL url = new URL(request.url());
       governanceRequest.setUri(url.getPath());
-      governanceRequest.setMethod(request.httpMethod().name());
+      governanceRequest.setMethod(request.method());
       Map<String, String> headers = new HashMap<>(request.headers().size());
       request.headers().forEach((k, v) -> headers.put(k, v.iterator().next()));
       governanceRequest.setHeaders(headers);

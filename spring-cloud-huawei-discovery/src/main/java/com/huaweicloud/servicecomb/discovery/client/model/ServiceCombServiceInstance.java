@@ -42,11 +42,6 @@ public class ServiceCombServiceInstance implements ServiceInstance {
   }
 
   @Override
-  public String getInstanceId() {
-    return this.microserviceInstance.getInstanceId();
-  }
-
-  @Override
   public String getServiceId() {
     return this.microserviceInstance.getServiceName();
   }

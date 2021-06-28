@@ -34,7 +34,7 @@ import com.google.common.hash.Hashing;
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 
 import io.swagger.models.Swagger;
-import io.swagger.v3.core.util.Yaml;
+import io.swagger.util.Yaml;
 import springfox.documentation.service.Documentation;
 import springfox.documentation.spring.web.DocumentationCache;
 import springfox.documentation.spring.web.plugins.Docket;

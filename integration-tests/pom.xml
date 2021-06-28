@@ -33,8 +33,6 @@
     <module>docker-build-config</module>
     <module>docker-run-config</module>
     <module>discovery-tests</module>
-    <module>cse-v1</module>
-    <module>cse-v2</module>
   </modules>
 
   <dependencies>

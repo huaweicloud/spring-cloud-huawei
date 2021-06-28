@@ -43,18 +43,16 @@ public class SpringCloudDocumentationSwaggerMapper implements DocumentationSwagg
   public Map<String, Swagger> documentationToSwaggers(Documentation documentation) {
     Map<String, Swagger> result = new HashMap<>();
 
-    documentation.getApiListings().entrySet().forEach(entry -> result.put(mapSchemaId(entry.getKey()),
+    documentation.getApiListings().entries().forEach(entry -> result.put(mapSchemaId(entry.getKey()),
         mapper.mapDocumentation(new Documentation(documentation.getGroupName(),
             documentation.getBasePath(),
             Collections.emptySet(), // ignore all tags
-            toMap(entry),
+            toMultiMap(entry),
             documentation.getResourceListing(),
             toSet(documentation.getProduces()),
             toSet(documentation.getConsumes()),
             documentation.getHost(),
             toSet(documentation.getSchemes()),
-            documentation.getServers(),
-            documentation.getExternalDocumentation(),
             documentation.getVendorExtensions()
         ))));
     return result;
@@ -64,8 +62,8 @@ public class SpringCloudDocumentationSwaggerMapper implements DocumentationSwagg
     return lists.stream().collect(Collectors.toSet());
   }
 
-  private Map<String, List<ApiListing>> toMap(Map.Entry<String, List<ApiListing>> entry) {
-    Map<String, List<ApiListing>> map = new HashMap<>();
+  private Multimap<String, ApiListing> toMultiMap(Map.Entry<String, ApiListing> entry) {
+    Multimap map = HashMultimap.create();
     map.put(entry.getKey(), entry.getValue());
     return map;
   }
