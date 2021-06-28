@@ -59,9 +59,8 @@
       <artifactId>spring-cloud-huawei-common</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.huaweicloud</groupId>
+      <groupId>org.apache.servicecomb</groupId>
       <artifactId>servicecomb-governance</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.yaml</groupId>
