@@ -30,7 +30,7 @@
   <dependencies>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-config</artifactId>
+      <artifactId>spring-cloud-starter-huawei-service-engine-core</artifactId>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
@@ -39,10 +39,6 @@
     <dependency>
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-router</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-servicecomb-discovery</artifactId>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>

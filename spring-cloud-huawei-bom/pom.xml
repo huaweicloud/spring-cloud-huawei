@@ -37,12 +37,12 @@
       <!-- this project -->
       <dependency>
         <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-huawei-servicecomb-discovery</artifactId>
+        <artifactId>spring-cloud-huawei-discovery</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-starter-huawei-servicecomb-discovery</artifactId>
+        <artifactId>spring-cloud-starter-huawei-discovery</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -103,6 +103,11 @@
       <dependency>
         <groupId>com.huaweicloud</groupId>
         <artifactId>spring-cloud-huawei-governance</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.huaweicloud</groupId>
+        <artifactId>spring-cloud-starter-huawei-service-engine-core</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

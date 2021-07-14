@@ -12,9 +12,9 @@
 
 | 分支 | 最新版本 | Spring Cloud基线版本 | Spring Boot基线版本 | 支持的Spring Cloud版本 | 支持的Spring Boot版本|
 | ---------- | ------------ | ----------- | ----------- | ----------- | ----------- |
-| master | 1.5.6-Hoxton | Hoxton.SR8 | 2.3.5.RELEASE | Hoxton | 2.3.x |
+| master | 1.6.0-Hoxton | Hoxton.SR8 | 2.3.5.RELEASE | Hoxton | 2.3.x |
 | Greenwich | 1.5.1-Greenwich | Greenwich.SR6 | 2.1.6-RELEASE | Greenwich | 2.1.x |
-| Finchley | 1.5.1-Finchley | 2.0.4.RELEASE | 2.0.9.RELEASE     | Finchley     | 2.0.x       |
+| Finchley | 1.6.0-Finchley | 2.0.4.RELEASE | 2.0.9.RELEASE     | Finchley     | 2.0.x       |
 | Edgware | 1.2.0-Edgware | 1.3.6.RELEASE  | 1.5.22.RELEASE    | Edgware      | 1.5.x       |
 
 ***注意：***
@@ -29,7 +29,7 @@
 
 ## 功能模块
 
- * **spring-cloud-starter-huawei-servicecomb-discovery:**
+ * **spring-cloud-starter-huawei-discovery:**
      * 支持使用 [servicecomb-service-center](https://github.com/apache/servicecomb-service-center)
      * 支持使用 [CSE][CSE] 的 [服务中心][Service Registry]
      * 实现 DiscoveryClient, ReactiveDiscoveryClient
