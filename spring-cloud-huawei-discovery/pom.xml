@@ -26,8 +26,8 @@
     <relativePath>../spring-cloud-huawei-parents</relativePath>
   </parent>
 
-  <artifactId>spring-cloud-huawei-servicecomb-discovery</artifactId>
-  <name>Spring Cloud Huawei servicecomb Discovery</name>
+  <artifactId>spring-cloud-huawei-discovery</artifactId>
+  <name>Spring Cloud Huawei Discovery</name>
 
 
   <dependencies>

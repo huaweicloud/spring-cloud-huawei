@@ -11,9 +11,9 @@ Including [Apache ServiceComb](http://servicecomb.apache.org) and [ServiceStage]
 
 | Branch | Latest Version | Spring Cloud Base Version | Spring Boot Base Version | Supported Spring Cloud Version | Supported Spring Boot Version|
 | ---------- | ------------ | ----------- | ----------- | ----------- | ----------- |
-| master | 1.5.6-Hoxton | Hoxton.SR8 | 2.3.5.RELEASE | Hoxton | 2.3.x |
+| master | 1.6.0-Hoxton | Hoxton.SR8 | 2.3.5.RELEASE | Hoxton | 2.3.x |
 | Greenwich | 1.5.1-Greenwich | Greenwich.SR6 | 2.1.6-RELEASE | Greenwich | 2.1.x |
-| Finchley | 1.5.1-Finchley | 2.0.4.RELEASE | 2.0.9.RELEASE     | Finchley     | 2.0.x       |
+| Finchley | 1.6.0-Finchley | 2.0.4.RELEASE | 2.0.9.RELEASE     | Finchley     | 2.0.x       |
 | Edgware | 1.2.0-Edgware | 1.3.6.RELEASE  | 1.5.22.RELEASE    | Edgware      | 1.5.x       |
 
 ***Notice：***
@@ -30,7 +30,7 @@ Including [Apache ServiceComb](http://servicecomb.apache.org) and [ServiceStage]
 
 ## Modules
 
- * **spring-cloud-starter-huawei-servicecomb-discovery:**
+ * **spring-cloud-starter-huawei-discovery:**
      * Support for use [servicecomb-service-center](https://github.com/apache/servicecomb-service-center)
      * Support for use [CSE][CSE] as [Service Registry][Service Registry]
      * Implements DiscoveryClient, ReactiveDiscoveryClient
