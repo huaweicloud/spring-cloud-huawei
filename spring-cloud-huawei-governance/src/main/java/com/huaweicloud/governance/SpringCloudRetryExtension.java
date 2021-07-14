@@ -32,7 +32,7 @@ public class SpringCloudRetryExtension implements RetryExtension {
   private static final Logger LOGGER = LoggerFactory.getLogger(SpringCloudRetryExtension.class);
 
   @Override
-  public boolean isRetry(List<Integer> statusList, Object response) {
+  public boolean isRetry(List<String> statusList, Object response) {
     int status = 0;
     if (response instanceof ClientHttpResponse) {
       try {
@@ -44,11 +44,11 @@ public class SpringCloudRetryExtension implements RetryExtension {
     if (response instanceof Response) {
       status = ((Response) response).status();
     }
-    return statusList.contains(status);
+    return isContain(statusList, String.valueOf(status));
   }
 
   @Override
   public Class<? extends Throwable>[] retryExceptions() {
-    return new Class[] {HttpServerErrorException.class};
+    return new Class[]{HttpServerErrorException.class};
   }
 }
