@@ -58,7 +58,7 @@ public class ServiceCombServerList extends AbstractServerList<Server> {
   public List<Server> getUpdatedListOfServers() {
     MicroserviceInstance mySelf = serviceCombRegistration.getMicroserviceInstance();
     List<ServiceInstance> instances = discoveryClient.getInstances(this.serviceId);
-    if (serviceCombRegistration.getDiscoveryBootstrapProperties().isCrossZone()) {
+    if (serviceCombRegistration.getDiscoveryBootstrapProperties().isAllowCrossZone()) {
       instances = ZoneAwareDiscoveryFilter(mySelf, instances);
     }
     return transform(instances);
