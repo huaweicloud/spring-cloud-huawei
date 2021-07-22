@@ -21,11 +21,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServer;
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
+import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.AbstractServerList;
 import com.netflix.loadbalancer.Server;
@@ -35,8 +37,11 @@ public class ServiceCombServerList extends AbstractServerList<Server> {
 
   private DiscoveryClient discoveryClient;
 
-  public ServiceCombServerList(DiscoveryClient discoveryClient) {
+  private ServiceCombRegistration serviceCombRegistration;
+
+  public ServiceCombServerList(DiscoveryClient discoveryClient, ServiceCombRegistration serviceCombRegistration) {
     this.discoveryClient = discoveryClient;
+    this.serviceCombRegistration = serviceCombRegistration;
   }
 
   @Override
@@ -51,7 +56,11 @@ public class ServiceCombServerList extends AbstractServerList<Server> {
 
   @Override
   public List<Server> getUpdatedListOfServers() {
+    MicroserviceInstance mySelf = serviceCombRegistration.getMicroserviceInstance();
     List<ServiceInstance> instances = discoveryClient.getInstances(this.serviceId);
+    if (serviceCombRegistration.getDiscoveryBootstrapProperties().isCrossZone()) {
+      instances = ZoneAwareDiscoveryFilter(mySelf, instances);
+    }
     return transform(instances);
   }
 
@@ -60,5 +69,40 @@ public class ServiceCombServerList extends AbstractServerList<Server> {
     instanceList.forEach(
         instance -> serverList.add(new ServiceCombServer((ServiceCombServiceInstance) instance)));
     return serverList;
+  }
+
+  private List<ServiceInstance> ZoneAwareDiscoveryFilter(MicroserviceInstance mySelf, List<ServiceInstance> instances) {
+    List<ServiceInstance> regionAndAZMatchList = new ArrayList<>();
+    List<ServiceInstance> regionMatchList = new ArrayList<>();
+    instances.forEach(serviceInstance -> {
+      ServiceCombServiceInstance instance = (ServiceCombServiceInstance) serviceInstance;
+      if (regionAndAZMatch(mySelf, instance.getMicroserviceInstance())) {
+        regionAndAZMatchList.add(serviceInstance);
+      } else if (regionMatch(mySelf, instance.getMicroserviceInstance())) {
+        regionMatchList.add(serviceInstance);
+      }
+    });
+    if (!regionAndAZMatchList.isEmpty()) {
+      return regionAndAZMatchList;
+    }
+    if (!regionMatchList.isEmpty()) {
+      return regionMatchList;
+    }
+    return instances;
+  }
+
+  private boolean regionAndAZMatch(MicroserviceInstance myself, MicroserviceInstance target) {
+    if (myself.getDataCenterInfo() != null && target.getDataCenterInfo() != null) {
+      return myself.getDataCenterInfo().getRegion().equals(target.getDataCenterInfo().getRegion()) &&
+          myself.getDataCenterInfo().getAvailableZone().equals(target.getDataCenterInfo().getAvailableZone());
+    }
+    return false;
+  }
+
+  private boolean regionMatch(MicroserviceInstance myself, MicroserviceInstance target) {
+    if (target.getDataCenterInfo() != null) {
+      return myself.getDataCenterInfo().getRegion().equals(target.getDataCenterInfo().getRegion());
+    }
+    return false;
   }
 }

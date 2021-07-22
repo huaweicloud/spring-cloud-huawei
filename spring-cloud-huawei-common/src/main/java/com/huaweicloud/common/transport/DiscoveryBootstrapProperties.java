@@ -28,6 +28,8 @@ public class DiscoveryBootstrapProperties {
 
   private boolean watch = false;
 
+  private boolean crossZone = false;
+
   private String address;
 
   private String appName = "default";
@@ -125,6 +127,14 @@ public class DiscoveryBootstrapProperties {
 
   public void setEnabled(boolean enabled) {
     this.enabled = enabled;
+  }
+
+  public boolean isCrossZone() {
+    return crossZone;
+  }
+
+  public void setCrossZone(boolean crossZone) {
+    this.crossZone = crossZone;
   }
 
   public String getHostname() {
