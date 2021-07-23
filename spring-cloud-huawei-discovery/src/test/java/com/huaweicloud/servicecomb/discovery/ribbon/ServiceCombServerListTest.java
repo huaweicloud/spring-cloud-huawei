@@ -95,7 +95,7 @@ public class ServiceCombServerListTest {
     microserviceInstance.setDataCenterInfo(dataCenterInfo);
 
     DiscoveryBootstrapProperties discoveryBootstrapProperties = new DiscoveryBootstrapProperties();
-    discoveryBootstrapProperties.setAllowCrossZone(true);
+    discoveryBootstrapProperties.setEnableZoneAware(true);
 
     new Expectations() {
       {
@@ -156,7 +156,7 @@ public class ServiceCombServerListTest {
     microserviceInstance.setDataCenterInfo(dataCenterInfo);
 
     DiscoveryBootstrapProperties discoveryBootstrapProperties = new DiscoveryBootstrapProperties();
-    discoveryBootstrapProperties.setAllowCrossZone(true);
+    discoveryBootstrapProperties.setEnableZoneAware(true);
 
     new Expectations() {
       {
@@ -216,7 +216,7 @@ public class ServiceCombServerListTest {
     microserviceInstance.setDataCenterInfo(dataCenterInfo);
 
     DiscoveryBootstrapProperties discoveryBootstrapProperties = new DiscoveryBootstrapProperties();
-    discoveryBootstrapProperties.setAllowCrossZone(true);
+    discoveryBootstrapProperties.setEnableZoneAware(true);
 
     new Expectations() {
       {

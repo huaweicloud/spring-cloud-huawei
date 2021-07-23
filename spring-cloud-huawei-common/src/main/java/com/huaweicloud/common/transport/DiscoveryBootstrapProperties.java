@@ -28,7 +28,7 @@ public class DiscoveryBootstrapProperties {
 
   private boolean watch = false;
 
-  private boolean allowCrossZone = false;
+  private boolean enableZoneAware = false;
 
   private String address;
 
@@ -129,12 +129,12 @@ public class DiscoveryBootstrapProperties {
     this.enabled = enabled;
   }
 
-  public boolean isAllowCrossZone() {
-    return allowCrossZone;
+  public boolean isEnableZoneAware() {
+    return enableZoneAware;
   }
 
-  public void setAllowCrossZone(boolean allowCrossZone) {
-    this.allowCrossZone = allowCrossZone;
+  public void setEnableZoneAware(boolean enableZoneAware) {
+    this.enableZoneAware = enableZoneAware;
   }
 
   public String getHostname() {
