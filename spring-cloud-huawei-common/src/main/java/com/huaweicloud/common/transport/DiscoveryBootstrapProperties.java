@@ -28,6 +28,8 @@ public class DiscoveryBootstrapProperties {
 
   private boolean watch = false;
 
+  private boolean enableZoneAware = false;
+
   private String address;
 
   private String appName = "default";
@@ -125,6 +127,14 @@ public class DiscoveryBootstrapProperties {
 
   public void setEnabled(boolean enabled) {
     this.enabled = enabled;
+  }
+
+  public boolean isEnableZoneAware() {
+    return enableZoneAware;
+  }
+
+  public void setEnableZoneAware(boolean enableZoneAware) {
+    this.enableZoneAware = enableZoneAware;
   }
 
   public String getHostname() {
