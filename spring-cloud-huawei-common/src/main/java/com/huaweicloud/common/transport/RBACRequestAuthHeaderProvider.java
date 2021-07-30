@@ -103,12 +103,7 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
 
   @Subscribe
   public void onNotPermittedEvent(OperationEvents.UnAuthorizedOperationEvent event) {
-    this.executorService.submit(() -> {
-      if (Status.UNAUTHORIZED.getStatusCode() == lastStatusCode && UN_AUTHORIZED_CODE_HALF_OPEN.equals(lastErrorCode)) {
-        cache.refresh(discoveryProperties.getServiceName()
-        );
-      }
-    });
+    this.executorService.submit(this::retryRefresh);
   }
 
   protected String createHeaders() {
@@ -170,5 +165,11 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
   private boolean enabled() {
     return !StringUtils.isEmpty(serviceCombRBACProperties.getName()) && !StringUtils
         .isEmpty(serviceCombRBACProperties.getPassword());
+  }
+
+  private void retryRefresh() {
+    if (Status.UNAUTHORIZED.getStatusCode() == lastStatusCode && UN_AUTHORIZED_CODE_HALF_OPEN.equals(lastErrorCode)) {
+      cache.refresh(discoveryProperties.getServiceName());
+    }
   }
 }
