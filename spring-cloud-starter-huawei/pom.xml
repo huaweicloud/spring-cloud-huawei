@@ -34,7 +34,7 @@
     <module>spring-cloud-starter-huawei-config</module>
     <module>spring-cloud-starter-huawei-swagger</module>
     <module>spring-cloud-starter-huawei-governance</module>
-    <module>spring-cloud-starter-huawei-service-engine-core</module>
+    <module>spring-cloud-starter-huawei-core</module>
     <module>spring-cloud-starter-huawei-service-engine</module>
     <module>spring-cloud-starter-huawei-service-engine-gateway</module>
   </modules>

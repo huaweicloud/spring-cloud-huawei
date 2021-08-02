@@ -30,7 +30,7 @@
   <dependencies>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-service-engine-core</artifactId>
+      <artifactId>spring-cloud-starter-huawei-core</artifactId>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
