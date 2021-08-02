@@ -17,17 +17,24 @@
 
 package com.huaweicloud.router.core;
 
-import com.netflix.config.DynamicPropertyFactory;
-import com.netflix.config.DynamicStringProperty;
-import com.netflix.loadbalancer.Server;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.servicecomb.service.center.client.model.Microservice;
+import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
+import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.junit.Assert;
 import org.junit.Test;
+
 import com.huaweicloud.router.core.cache.RouterRuleCache;
 import com.huaweicloud.router.core.distribute.AbstractRouterDistributor;
+import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServer;
+import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
+import com.netflix.config.DynamicPropertyFactory;
+import com.netflix.config.DynamicStringProperty;
+
 import mockit.Expectations;
 
 /**
@@ -64,111 +71,103 @@ public class RouterDistributorTest {
       + "            tags:\n"
       + "              version: 1\n"
       + "              app: a";
+
   String targetServiceName = "test_server";
 
   @Test
   public void testVersionNotMatch() {
-    Map headermap = new HashMap();
-    headermap.put("xxx", "xx");
-    headermap.put("xx", "xx");
-    headermap.put("formate", "json");
-    List<ServiceIns> list = getMockList();
+    Map<String, String> headerMap = new HashMap();
+    headerMap.put("xxx", "xx");
+    headerMap.put("xx", "xx");
+    headerMap.put("formate", "json");
+    List<ServiceCombServer> list = getMockList();
     list.remove(1);
-    List<ServiceIns> serverList = mainFilter(list, headermap);
+    List<ServiceCombServer> serverList = mainFilter(list, headerMap);
     serverList.get(0).getHost().equals("01");
     Assert.assertEquals(1, serverList.size());
-    Assert.assertEquals("01", serverList.get(0).getHost());
+    Assert.assertEquals("service-01", serverList.get(0).getHost());
   }
 
   @Test
   public void testLowCase() {
-    Map headermap = new HashMap();
-    headermap.put("xxx", "xx");
-    headermap.put("xx", "xx");
-    headermap.put("FoRmaTe", "json");
-    List<ServiceIns> serverList = mainFilter(getMockList(), headermap);
+    Map<String, String> headerMap = new HashMap();
+    headerMap.put("xxx", "xx");
+    headerMap.put("xx", "xx");
+    headerMap.put("FoRmaTe", "json");
+    List<ServiceCombServer> serverList = mainFilter(getMockList(), headerMap);
     Assert.assertEquals(1, serverList.size());
-    Assert.assertEquals("02", serverList.get(0).getHost());
+    Assert.assertEquals("service-02", serverList.get(0).getHost());
   }
 
 
   @Test
   public void testVersionMatch() {
-    Map headermap = new HashMap();
-    headermap.put("xxx", "xx");
-    headermap.put("xx", "xx");
-    headermap.put("formate", "json");
-    List<ServiceIns> serverList = mainFilter(getMockList(), headermap);
+    Map<String, String> headerMap = new HashMap();
+    headerMap.put("xxx", "xx");
+    headerMap.put("xx", "xx");
+    headerMap.put("formate", "json");
+    List<ServiceCombServer> serverList = mainFilter(getMockList(), headerMap);
     Assert.assertEquals(1, serverList.size());
-    Assert.assertEquals("02", serverList.get(0).getHost());
+    Assert.assertEquals("service-02", serverList.get(0).getHost());
   }
 
-  private List<ServiceIns> getMockList() {
-    List<ServiceIns> serverlist = new ArrayList<>();
-    ServiceIns ins1 = new ServiceIns("01");
-    ins1.setVersion("2.0");
-    ServiceIns ins2 = new ServiceIns("02");
-    ins2.addTags("app", "a");
-    serverlist.add(ins1);
-    serverlist.add(ins2);
-    return serverlist;
+  private List<ServiceCombServer> getMockList() {
+    List<ServiceCombServer> serverList = new ArrayList<>();
+
+    MicroserviceInstance microserviceInstance1 = new MicroserviceInstance();
+    Microservice microservice1 = new Microservice();
+    microservice1.setServiceName(targetServiceName);
+    microserviceInstance1.setMicroservice(microservice1);
+    microserviceInstance1.setServiceId(microservice1.getServiceId());
+    microserviceInstance1.setInstanceId("01");
+    microserviceInstance1.setVersion("2.0");
+    List<String> endpoints1 = new ArrayList<>();
+    endpoints1.add("rest://service-01:8080");
+    microserviceInstance1.setEndpoints(endpoints1);
+    microserviceInstance1.setStatus(MicroserviceInstanceStatus.UP);
+    ServiceCombServiceInstance serviceCombServiceInstance1 = new ServiceCombServiceInstance(microserviceInstance1);
+    ServiceCombServer ins1 = new ServiceCombServer(serviceCombServiceInstance1);
+
+    MicroserviceInstance microserviceInstance2 = new MicroserviceInstance();
+    Microservice microservice2 = new Microservice();
+    microservice2.setServiceName(targetServiceName);
+    microserviceInstance2.setMicroservice(microservice2);
+    microserviceInstance2.setServiceId(microservice2.getServiceId());
+    microserviceInstance2.setInstanceId("02");
+    microserviceInstance2.setVersion("1.1");
+    List<String> endpoints2 = new ArrayList<>();
+    endpoints2.add("rest://service-02:8080");
+    microserviceInstance2.setEndpoints(endpoints2);
+    microserviceInstance2.setStatus(MicroserviceInstanceStatus.UP);
+    microserviceInstance2.getProperties().put("app", "a");
+    ServiceCombServiceInstance serviceCombServiceInstance2 = new ServiceCombServiceInstance(microserviceInstance2);
+    ServiceCombServer ins2 = new ServiceCombServer(serviceCombServiceInstance2);
+
+    serverList.add(ins1);
+    serverList.add(ins2);
+    return serverList;
   }
 
-  private List<ServiceIns> mainFilter(List<ServiceIns> serverlist, Map<String, String> headermap) {
-    TestDistributer TestDistributer = new TestDistributer();
+  private List<ServiceCombServer> mainFilter(List<ServiceCombServer> serverList, Map<String, String> headerMap) {
+    TestDistributor TestDistributor = new TestDistributor();
     DynamicPropertyFactory dpf = DynamicPropertyFactory.getInstance();
-    DynamicStringProperty strp = new DynamicStringProperty("", ruleStr);
+    DynamicStringProperty stringProperty = new DynamicStringProperty("", ruleStr);
     new Expectations(dpf) {
       {
         dpf.getStringProperty(anyString, null, (Runnable) any);
-        result = strp;
+        result = stringProperty;
       }
     };
     RouterRuleCache.refresh();
     return RouterFilter
-        .getFilteredListOfServers(serverlist, targetServiceName, headermap,
-            TestDistributer);
+        .getFilteredListOfServers(serverList, targetServiceName, headerMap,
+            TestDistributor);
   }
 
-  class ServiceIns extends Server {
+  class TestDistributor extends AbstractRouterDistributor<ServiceCombServer> {
 
-    String version = "1.1";
-    String serverName = targetServiceName;
-    Map<String, String> tags = new HashMap();
-
-    public ServiceIns(String id) {
-      super(id);
-    }
-
-    public String getVersion() {
-      return version;
-    }
-
-    public String getServerName() {
-      return serverName;
-    }
-
-    public Map<String, String> getTags() {
-      return tags;
-    }
-
-    public void setVersion(String version) {
-      this.version = version;
-    }
-
-    public void setServerName(String serverName) {
-      this.serverName = serverName;
-    }
-
-    public void addTags(String key, String v) {
-      tags.put(key, v);
-    }
-  }
-
-  class TestDistributer extends AbstractRouterDistributor<ServiceIns, ServiceIns> {
-
-    public TestDistributer() {
-      init(a -> a, ServiceIns::getVersion, ServiceIns::getServerName, ServiceIns::getTags);
+    public TestDistributor() {
+      init();
     }
   }
 }

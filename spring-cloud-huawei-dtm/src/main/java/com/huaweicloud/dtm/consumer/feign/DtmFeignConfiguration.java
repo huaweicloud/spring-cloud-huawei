@@ -29,7 +29,7 @@ import feign.RequestInterceptor;
 public class DtmFeignConfiguration {
 
   @Bean
-  public RequestInterceptor requestInterceptor() {
+  public RequestInterceptor dtmRequestInterceptor() {
     return new DtmRequestInterceptor();
   }
 }

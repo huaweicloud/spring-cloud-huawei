@@ -21,7 +21,7 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>discovery-tests</artifactId>
-    <version>1.5.0-Greenwich</version>
+    <version>1.7.0-SHAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -38,11 +38,11 @@
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-servicecomb-discovery</artifactId>
+      <artifactId>spring-cloud-starter-huawei-service-engine</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-swagger</artifactId>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-core</artifactId>
     </dependency>
   </dependencies>
 
@@ -58,7 +58,7 @@
     <profile>
       <id>docker</id>
       <properties>
-        <server.port>8080</server.port>
+        <server.port>9090</server.port>
       </properties>
       <build>
         <plugins>

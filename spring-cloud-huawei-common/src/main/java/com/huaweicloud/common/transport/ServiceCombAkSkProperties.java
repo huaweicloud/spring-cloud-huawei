@@ -22,8 +22,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
 import com.huaweicloud.common.util.Cipher;
@@ -31,7 +31,6 @@ import com.huaweicloud.common.util.DefaultCipher;
 import com.huaweicloud.common.util.SecretUtil;
 import com.huaweicloud.common.util.ShaAKSKCipher;
 
-@Configuration
 @ConfigurationProperties("spring.cloud.servicecomb.credentials")
 public class ServiceCombAkSkProperties {
 
@@ -40,7 +39,6 @@ public class ServiceCombAkSkProperties {
   @Autowired(required = false)
   private List<Cipher> ciphers;
 
-  //dummy value for throw exception and notice
   private String enable;
 
   private boolean enabled = false;
@@ -49,9 +47,10 @@ public class ServiceCombAkSkProperties {
 
   private String secretKey;
 
-  private String akskCustomCipher = "default";
+  @Value("#{'${spring.cloud.servicecomb.credentials.cipher:${spring.cloud.servicecomb.credentials.akskCustomCipher:default}}'}")
+  private String cipher;
 
-  private String project;
+  private String project = "default";
 
   public String getEnable() {
     return enable;
@@ -70,25 +69,26 @@ public class ServiceCombAkSkProperties {
   }
 
   public String getSecretKey() {
-    String decodedSecretKey = new String(findCipher().decrypt(this.secretKey.toCharArray()));
+    String decodedSecretKey = new String(DefaultCipher.findCipher(ciphers, this.cipher).
+        decrypt(this.secretKey.toCharArray()));
 
-    if (ShaAKSKCipher.CIPHER_NAME.equalsIgnoreCase(this.akskCustomCipher)) {
+    if (ShaAKSKCipher.CIPHER_NAME.equalsIgnoreCase(this.cipher)) {
       return decodedSecretKey;
     }
 
-    return SecretUtil.sha256Encode(this.secretKey, this.accessKey);
+    return SecretUtil.sha256Encode(decodedSecretKey, this.accessKey);
   }
 
   public void setSecretKey(String secretKey) {
     this.secretKey = secretKey;
   }
 
-  public String getAkskCustomCipher() {
-    return akskCustomCipher;
+  public String getCipher() {
+    return cipher;
   }
 
-  public void setAkskCustomCipher(String akskCustomCipher) {
-    this.akskCustomCipher = akskCustomCipher;
+  public void setCipher(String cipher) {
+    this.cipher = cipher;
   }
 
   public String getProject() {
@@ -117,18 +117,5 @@ public class ServiceCombAkSkProperties {
 
   public boolean isEmpty() {
     return getAccessKey() == null || getSecretKey() == null;
-  }
-
-  private Cipher findCipher() {
-    if (DefaultCipher.CIPHER_NAME.equals(this.akskCustomCipher)) {
-      return DefaultCipher.getInstance();
-    }
-
-    if (ciphers == null) {
-      throw new IllegalArgumentException("failed to find cipher named " + this.akskCustomCipher);
-    }
-
-    return ciphers.stream().filter(c -> c.name().equals(this.akskCustomCipher)).findFirst()
-        .orElseThrow(() -> new IllegalArgumentException("failed to find cipher named " + this.akskCustomCipher));
   }
 }

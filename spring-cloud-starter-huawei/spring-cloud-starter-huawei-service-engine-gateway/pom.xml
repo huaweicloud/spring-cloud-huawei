@@ -21,7 +21,7 @@
   <parent>
     <artifactId>spring-cloud-starter-huawei</artifactId>
     <groupId>com.huaweicloud</groupId>
-    <version>1.5.0-Greenwich</version>
+    <version>1.7.0-SHAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -30,15 +30,11 @@
   <dependencies>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-config</artifactId>
+      <artifactId>spring-cloud-starter-huawei-core</artifactId>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-governance</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-servicecomb-discovery</artifactId>
     </dependency>
   </dependencies>
 </project>

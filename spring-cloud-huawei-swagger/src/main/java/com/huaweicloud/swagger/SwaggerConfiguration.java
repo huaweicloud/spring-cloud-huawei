@@ -16,10 +16,12 @@
  */
 package com.huaweicloud.swagger;
 
-import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+
+import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
+
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
@@ -32,7 +34,7 @@ public class SwaggerConfiguration {
 
   @Bean
   @Lazy
-  public ServiceCombSwaggerHandler swaggerHandler() {
+  public ServiceCombSwaggerHandler serviceCombSwaggerHandler() {
     return new ServiceCombSwaggerHandlerImpl();
   }
 

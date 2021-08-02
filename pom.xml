@@ -29,7 +29,7 @@
 
   <groupId>com.huaweicloud</groupId>
   <artifactId>spring-cloud-huawei</artifactId>
-  <version>1.5.0-Greenwich</version>
+  <version>1.7.0-SHAPSHOT</version>
   <packaging>pom</packaging>
   <name>Spring Cloud Huawei</name>
 
@@ -39,7 +39,7 @@
      import spring-framework-bom. No need configure spring version. -->
     <spring-cloud.version>Greenwich.SR6</spring-cloud.version>
     <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
-    <servicecomb.version>2.0.2</servicecomb.version>
+    <servicecomb.version>2.3.5</servicecomb.version>
   </properties>
 
   <modules>
@@ -47,14 +47,13 @@
     <module>spring-cloud-huawei-bom</module>
     <module>spring-cloud-huawei-parents</module>
     <module>spring-cloud-huawei-common</module>
-    <module>spring-cloud-huawei-servicecomb-discovery</module>
+    <module>spring-cloud-huawei-discovery</module>
     <module>spring-cloud-starter-huawei</module>
     <module>spring-cloud-huawei-dtm</module>
     <module>spring-cloud-huawei-config</module>
     <module>spring-cloud-huawei-router-core</module>
     <module>spring-cloud-huawei-router-client</module>
     <module>spring-cloud-huawei-swagger</module>
-    <module>governance</module>
     <module>spring-cloud-huawei-governance</module>
   </modules>
 
@@ -111,12 +110,6 @@
       <modules>
         <module>integration-tests</module>
         <module>coverage-reports</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>sample</id>
-      <modules>
-        <module>spring-cloud-huawei-sample</module>
       </modules>
     </profile>
   </profiles>

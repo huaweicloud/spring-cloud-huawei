@@ -31,24 +31,22 @@ import org.springframework.beans.factory.annotation.Value;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
-import com.huaweicloud.common.exception.RemoteOperationException;
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
-import com.huaweicloud.servicecomb.discovery.client.ServiceCombClient;
 
 import io.swagger.models.Swagger;
-import io.swagger.util.Yaml;
+import io.swagger.v3.core.util.Yaml;
 import springfox.documentation.service.Documentation;
 import springfox.documentation.spring.web.DocumentationCache;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.spring.web.plugins.DocumentationPluginsBootstrapper;
 import springfox.documentation.swagger2.mappers.ServiceModelToSwagger2Mapper;
 
-/**
- * @Author GuoYl123
- * @Date 2019/12/17
- **/
 public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombSwaggerHandlerImpl.class);
+
+  @Autowired
+  protected DocumentationPluginsBootstrapper documentationPluginsBootstrapper;
 
   @Autowired
   protected DocumentationCache documentationCache;
@@ -56,42 +54,44 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   @Autowired
   protected ServiceModelToSwagger2Mapper mapper;
 
-  @Autowired
-  protected ServiceCombClient serviceCombClient;
-
   private Map<String, Swagger> swaggerMap = new HashMap<>();
+
+  private Map<String, String> swaggerContent = new HashMap<>();
+
+  private Map<String, String> swaggerSummary = new HashMap<>();
 
   @Value("${spring.cloud.servicecomb.swagger.enableJavaChassisAdapter:true}")
   protected boolean withJavaChassis;
 
   @Override
   public void init(String appName, String serviceName) {
+    documentationPluginsBootstrapper.start();
+
     Documentation documentation = documentationCache
         .documentationByGroup(Docket.DEFAULT_GROUP_NAME);
 
+    DocumentationSwaggerMapper documentationSwaggerMapper;
     if (withJavaChassis) {
-      DocumentationSwaggerMapper documentationSwaggerMapper =
-          new ServiceCombDocumentationSwaggerMapper(appName, serviceName, mapper);
-      this.swaggerMap = documentationSwaggerMapper.documentationToSwaggers(documentation);
+      documentationSwaggerMapper = new ServiceCombDocumentationSwaggerMapper(appName, serviceName, mapper);
     } else {
-      DocumentationSwaggerMapper documentationSwaggerMapper = new SpringCloudDocumentationSwaggerMapper(mapper);
-      this.swaggerMap = documentationSwaggerMapper.documentationToSwaggers(documentation);
+      documentationSwaggerMapper = new SpringCloudDocumentationSwaggerMapper(mapper);
     }
+    this.swaggerMap = documentationSwaggerMapper.documentationToSwaggers(documentation);
+
+    this.swaggerContent = calcSchemaContent();
+
+    this.swaggerSummary = calcSchemaSummary();
   }
 
-  @Override
-  public void registerSwagger(String microserviceId, List<String> schemaIds) {
-    schemaIds.forEach(schemaId -> {
+  private Map<String, String> calcSchemaContent() {
+    return swaggerMap.entrySet().stream().collect(Collectors.toMap(Entry::getKey, entry -> {
       try {
-        String str = Yaml.mapper().writeValueAsString(swaggerMap.get(schemaId));
-        LOGGER.info("register swagger {}, content: {}{}", schemaId, System.lineSeparator(), str);
-        serviceCombClient.registerSchema(microserviceId, schemaId, str);
-      } catch (RemoteOperationException e) {
-        LOGGER.error("register swagger to server-center failed : {}", e.getMessage());
+        return Yaml.mapper().writeValueAsString(entry.getValue());
       } catch (JsonProcessingException e) {
-        LOGGER.error("swagger parse failed : {}", e.getMessage());
+        LOGGER.error("error when calcSchemaSummary.", e);
       }
-    });
+      return null;
+    }));
   }
 
   @Override
@@ -101,24 +101,21 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
 
   @Override
   public Map<String, String> getSchemasMap() {
-    return swaggerMap.entrySet().stream().collect(Collectors.toMap(Entry::getKey, entry -> {
-      try {
-        return Yaml.mapper().writeValueAsString(entry.getValue());
-      } catch (JsonProcessingException e) {
-        LOGGER.error("error when calcSchemaSummary.");
-      }
-      return null;
-    }));
+    return this.swaggerContent;
   }
 
   @Override
   public Map<String, String> getSchemasSummaryMap() {
+    return this.swaggerSummary;
+  }
+
+  private Map<String, String> calcSchemaSummary() {
     return swaggerMap.entrySet().stream()
         .collect(Collectors.toMap(Entry::getKey, entry -> {
           try {
             return calcSchemaSummary(Yaml.mapper().writeValueAsString(entry.getValue()));
           } catch (JsonProcessingException e) {
-            LOGGER.error("error when calcSchemaSummary.");
+            LOGGER.error("error when calcSchemaSummary.", e);
           }
           return null;
         }));

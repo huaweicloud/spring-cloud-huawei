@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.springframework.web.client.RestTemplate;
 
 public class ProductControllerIT {
-  String url = "http://127.0.0.1:8088";
+  String url = "http://127.0.0.1:9098";
 
   RestTemplate template = new RestTemplate();
 

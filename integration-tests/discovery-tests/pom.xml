@@ -21,7 +21,7 @@
   <parent>
     <artifactId>integration-tests</artifactId>
     <groupId>com.huaweicloud</groupId>
-    <version>1.5.0-Greenwich</version>
+    <version>1.7.0-SHAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>discovery-tests</artifactId>
@@ -30,6 +30,7 @@
   <modules>
     <module>price-provider</module>
     <module>order-consumer</module>
+    <module>account-provider</module>
     <module>discovery-tests-client</module>
   </modules>
 

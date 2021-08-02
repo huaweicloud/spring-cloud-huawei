@@ -21,7 +21,7 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-huawei-parents</artifactId>
-    <version>1.5.0-Greenwich</version>
+    <version>1.7.0-SHAPSHOT</version>
     <relativePath>../spring-cloud-huawei-parents</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -50,22 +50,25 @@
       <optional>true</optional>
     </dependency>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aop</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-huawei-common</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jmockit</groupId>
-      <artifactId>jmockit</artifactId>
-      <scope>test</scope>
+      <groupId>org.apache.servicecomb</groupId>
+      <artifactId>config-center-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.servicecomb</groupId>
+      <artifactId>config-kie-client</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-aop</artifactId>
     </dependency>
   </dependencies>
 

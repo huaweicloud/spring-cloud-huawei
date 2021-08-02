@@ -16,21 +16,19 @@
  */
 package com.huaweicloud.router.core.distribute;
 
-import com.huaweicloud.router.core.model.PolicyRuleItem;
-
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+
+import com.huaweicloud.router.core.model.PolicyRuleItem;
+import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServer;
+import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
 
 /**
  * @Author GuoYl123
  * @Date 2019/10/17
  **/
-public interface RouterDistributor<T, E> {
+public interface RouterDistributor<T> {
 
-  void init(Function<T, E> getIns, Function<E, String> getVersion,
-      Function<E, String> getServerName,
-      Function<E, Map<String, String>> getProperties);
+  void init();
 
   List<T> distribute(String targetServiceName, List<T> list, PolicyRuleItem invokeRule);
 }

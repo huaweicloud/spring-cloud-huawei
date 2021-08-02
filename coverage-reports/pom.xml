@@ -21,7 +21,7 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-huawei-parents</artifactId>
-    <version>1.5.0-Greenwich</version>
+    <version>1.7.0-SHAPSHOT</version>
     <relativePath>../spring-cloud-huawei-parents</relativePath>
   </parent>
 
@@ -54,7 +54,7 @@
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-huawei-servicecomb-discovery</artifactId>
+      <artifactId>spring-cloud-huawei-discovery</artifactId>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
@@ -65,13 +65,13 @@
     <!-- discovery-tests -->
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>order-consumer</artifactId>
+      <artifactId>order-consumer-test</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>price-provider</artifactId>
+      <artifactId>price-provider-test</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

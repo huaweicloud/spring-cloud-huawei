@@ -21,19 +21,20 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-huawei-parents</artifactId>
-    <version>1.5.0-Greenwich</version>
+    <version>1.7.0-SHAPSHOT</version>
     <relativePath>../spring-cloud-huawei-parents</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <packaging>pom</packaging>
   <artifactId>spring-cloud-starter-huawei</artifactId>
   <modules>
-    <module>spring-cloud-starter-huawei-servicecomb-discovery</module>
+    <module>spring-cloud-starter-huawei-discovery</module>
     <module>spring-cloud-starter-huawei-dtm</module>
     <module>spring-cloud-starter-huawei-router</module>
     <module>spring-cloud-starter-huawei-config</module>
     <module>spring-cloud-starter-huawei-swagger</module>
     <module>spring-cloud-starter-huawei-governance</module>
+    <module>spring-cloud-starter-huawei-core</module>
     <module>spring-cloud-starter-huawei-service-engine</module>
     <module>spring-cloud-starter-huawei-service-engine-gateway</module>
   </modules>

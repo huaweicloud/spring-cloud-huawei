@@ -17,16 +17,38 @@
 
 package com.huaweicloud.common;
 
+import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.common.transport.AkSkRequestAuthHeaderProvider;
+import com.huaweicloud.common.transport.RBACRequestAuthHeaderProvider;
+import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
+import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
+import com.huaweicloud.common.transport.ServiceCombRBACProperties;
+import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.common.util.Cipher;
 import com.huaweicloud.common.util.ShaAKSKCipher;
 
 @Configuration
+@EnableConfigurationProperties({ServiceCombAkSkProperties.class, ServiceCombRBACProperties.class,
+    ServiceCombSSLProperties.class, DiscoveryBootstrapProperties.class})
 public class CommonConfiguration {
   @Bean
   public Cipher shaAKSKCipher() {
     return new ShaAKSKCipher();
+  }
+
+  @Bean
+  public AuthHeaderProvider akSkRequestAuthHeaderProvider(ServiceCombAkSkProperties serviceCombAkSkProperties) {
+    return new AkSkRequestAuthHeaderProvider(serviceCombAkSkProperties);
+  }
+
+  @Bean
+  public AuthHeaderProvider rbacRequestAuthHeaderProvider(DiscoveryBootstrapProperties discoveryProperties,
+      ServiceCombSSLProperties serviceCombSSLProperties,
+      ServiceCombRBACProperties serviceCombRBACProperties) {
+    return new RBACRequestAuthHeaderProvider(discoveryProperties, serviceCombSSLProperties, serviceCombRBACProperties);
   }
 }

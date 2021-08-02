@@ -15,5 +15,4 @@
 # limitations under the License.
 #
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
-com.huaweicloud.common.CommonConfiguration,\
-com.huaweicloud.common.transport.ServiceCombAkSkProperties
+com.huaweicloud.common.CommonConfiguration

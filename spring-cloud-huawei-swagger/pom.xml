@@ -21,32 +21,21 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-huawei-parents</artifactId>
-    <version>1.5.0-Greenwich</version>
+    <version>1.7.0-SHAPSHOT</version>
     <relativePath>../spring-cloud-huawei-parents</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>spring-cloud-huawei-swagger</artifactId>
 
-  <properties>
-    <spring-fox.version>2.9.2</spring-fox.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>io.springfox</groupId>
-      <artifactId>springfox-swagger2</artifactId>
-      <version>${spring-fox.version}</version>
+      <artifactId>springfox-boot-starter</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.springfox</groupId>
-      <artifactId>springfox-swagger-ui</artifactId>
-      <version>${spring-fox.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.swagger</groupId>
+      <groupId>io.swagger.core.v3</groupId>
       <artifactId>swagger-core</artifactId>
-      <version>1.5.22</version>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
@@ -54,7 +43,7 @@
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-huawei-servicecomb-discovery</artifactId>
+      <artifactId>spring-cloud-huawei-discovery</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>

@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.springframework.web.client.RestTemplate;
 
 public class GovernanceControllerIT {
-  String url = "http://127.0.0.1:8088";
+  String url = "http://127.0.0.1:9098";
 
   RestTemplate template = new RestTemplate();
 
@@ -66,7 +66,7 @@ public class GovernanceControllerIT {
               }
             } catch (Exception e) {
               if (!"429 : [circuitBreaker is open.]".equals(e.getMessage())
-                  && !e.getMessage().contains("test error")) {
+                  && !e.getMessage().contains("test error")  && !e.getMessage().startsWith("500")) {
                 notExpectedFailed.set(true);
               }
               if ("429 : [circuitBreaker is open.]".equals(e.getMessage())) {

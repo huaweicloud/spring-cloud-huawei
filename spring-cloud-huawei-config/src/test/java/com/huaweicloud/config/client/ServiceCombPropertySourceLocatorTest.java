@@ -18,31 +18,29 @@
 package com.huaweicloud.config.client;
 
 
-import com.huaweicloud.config.ServiceCombConfigProperties;
-import com.huaweicloud.config.ServiceCombPropertySourceLocator;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.servicecomb.config.common.ConfigConverter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import com.huaweicloud.config.ServiceCombConfigProperties.Watch;
-import com.huaweicloud.config.client.ConfigConstants;
-import com.huaweicloud.config.client.ServiceCombConfigClient;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
+
+import com.huaweicloud.config.ServiceCombConfigProperties;
+import com.huaweicloud.config.ServiceCombConfigProperties.Watch;
+import com.huaweicloud.config.ServiceCombConfigPropertySource;
+import com.huaweicloud.config.ServiceCombPropertySourceLocator;
 
 import mockit.Injectable;
 import mockit.integration.junit4.JMockit;
 
-/**
- * @Author wangqijun
- * @Date 17:38 2019-10-26
- **/
 @RunWith(JMockit.class)
 public class ServiceCombPropertySourceLocatorTest {
 
   @Test
-  public void locate(
-      @Injectable ServiceCombConfigClient serviceCombConfigClient,
-      @Injectable Environment environment) {
+  public void locate(@Injectable Environment environment) {
     ServiceCombConfigProperties serviceCombConfigProperties = new ServiceCombConfigProperties();
     serviceCombConfigProperties.setEnabled(true);
     serviceCombConfigProperties.setServerAddr("http://ddd");
@@ -53,9 +51,16 @@ public class ServiceCombPropertySourceLocatorTest {
     watch.setDelay(10);
     Assert.assertEquals(watch.getDelay(), 10);
     serviceCombConfigProperties.setWatch(watch);
+
+    Map<String, Object> sources = new HashMap<>();
+    sources.put("test", "tt");
+    sources.put("test2", "tt");
+    ConfigConverter configConverter = new ConfigConverter(null);
+    configConverter.updateData(sources);
+
     ServiceCombPropertySourceLocator serviceCombPropertySourceLocator = new ServiceCombPropertySourceLocator(
-        serviceCombConfigProperties, serviceCombConfigClient, "default");
+        configConverter);
     PropertySource<?> result = serviceCombPropertySourceLocator.locate(environment);
-    Assert.assertEquals(result.getName(), ConfigConstants.PROPERTYSOURCE_NAME);
+    Assert.assertEquals(result.getName(), ServiceCombConfigPropertySource.NAME);
   }
 }
