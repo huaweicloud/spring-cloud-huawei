@@ -24,7 +24,6 @@ import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
-import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.ApplicationContext;
@@ -49,11 +48,6 @@ public class RouteConfiguration {
             .path("/**")
             .uri("lb://basic-consumer"))
         .build();
-  }
-
-  @Bean
-  public GlobalFilter globalFilter() {
-    return new RateLimitFilter();
   }
 
   @Bean

@@ -34,7 +34,7 @@
   <properties>
     <feign-core.version>11.0</feign-core.version>
     <httpclient.version>4.5.9</httpclient.version>
-    <jackson-databind.version>2.11.3</jackson-databind.version>
+    <jackson.version>2.12.1</jackson.version>
     <jmockit.version>1.36</jmockit.version>
     <junit.version>4.12</junit.version>
     <dtm-client.version>1.0.2</dtm-client.version>
@@ -42,9 +42,9 @@
     <snakeyaml.version>1.26</snakeyaml.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <websocket.version>1.5.0</websocket.version>
-    <spring-fox.version>3.0.0</spring-fox.version>
-    <swagger-core.version>2.1.9</swagger-core.version>
-    <swagger-core-v2.version>1.6.2</swagger-core-v2.version>
+    <spring-fox.version>2.9.2</spring-fox.version>
+    <swagger-core.version>1.5.22</swagger-core.version>
+
     <resilience4j.version>1.7.0</resilience4j.version>
   </properties>
 
@@ -78,29 +78,20 @@
       <!-- swagger -->
       <dependency>
         <groupId>io.springfox</groupId>
-        <artifactId>springfox-boot-starter</artifactId>
+        <artifactId>springfox-swagger2</artifactId>
         <version>${spring-fox.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.swagger.core.v3</groupId>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger-ui</artifactId>
+        <version>${spring-fox.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.swagger</groupId>
         <artifactId>swagger-core</artifactId>
         <version>${swagger-core.version}</version>
       </dependency>
-      <dependency>
-        <groupId>io.swagger</groupId>
-        <artifactId>swagger-core</artifactId>
-        <version>${swagger-core-v2.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.swagger</groupId>
-        <artifactId>swagger-models</artifactId>
-        <version>${swagger-core-v2.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.swagger</groupId>
-        <artifactId>swagger-annotations</artifactId>
-        <version>${swagger-core-v2.version}</version>
-      </dependency>
+
       <!-- servicecomb -->
       <dependency>
         <groupId>org.apache.servicecomb</groupId>
@@ -145,11 +136,6 @@
         <version>${jmockit.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>${jackson-databind.version}</version>
-      </dependency>
-      <dependency>
         <groupId>commons-configuration</groupId>
         <artifactId>commons-configuration</artifactId>
         <version>${commons-configuration.version}</version>
@@ -165,6 +151,13 @@
         <version>${resilience4j.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>${jackson.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
       </dependency>
     </dependencies>
   </dependencyManagement>
