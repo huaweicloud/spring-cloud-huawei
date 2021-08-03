@@ -32,7 +32,6 @@
   <version>1.7.0-SHAPSHOT</version>
   <name>Spring Cloud Huawei Dependencies</name>
   <properties>
-    <feign-core.version>11.0</feign-core.version>
     <httpclient.version>4.5.9</httpclient.version>
     <jackson.version>2.12.1</jackson.version>
     <jmockit.version>1.36</jmockit.version>
@@ -115,11 +114,6 @@
       </dependency>
 
       <!-- other 3rd parties -->
-      <dependency>
-        <groupId>io.github.openfeign</groupId>
-        <artifactId>feign-core</artifactId>
-        <version>${feign-core.version}</version>
-      </dependency>
       <dependency>
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
