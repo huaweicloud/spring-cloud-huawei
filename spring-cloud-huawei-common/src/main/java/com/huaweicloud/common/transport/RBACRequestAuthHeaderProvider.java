@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
+import org.apache.servicecomb.service.center.client.OperationEvents;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.model.RbacTokenRequest;
 import org.apache.servicecomb.service.center.client.model.RbacTokenResponse;
@@ -37,9 +38,11 @@ import org.springframework.util.StringUtils;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.huaweicloud.common.disovery.ServiceCenterUtils;
+import com.huaweicloud.common.event.EventManager;
 
 public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
   private static final Logger LOGGER = LoggerFactory.getLogger(RBACRequestAuthHeaderProvider.class);
@@ -48,6 +51,8 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
   // e.g. un-authorized: will query token after token expired period
   // e.g. not found:  will query token after token expired period
   public static final String INVALID_TOKEN = "invalid";
+
+  private static final String UN_AUTHORIZED_CODE_HALF_OPEN = "401302";
 
   public static final String CACHE_KEY = "token";
 
@@ -65,12 +70,17 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
 
   private LoadingCache<String, String> cache;
 
+  private String lastErrorCode = "401302";
+
+  private int lastStatusCode = 401;
+
   public RBACRequestAuthHeaderProvider(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCombSSLProperties serviceCombSSLProperties,
       ServiceCombRBACProperties serviceCombRBACProperties) {
     this.discoveryProperties = discoveryProperties;
     this.serviceCombSSLProperties = serviceCombSSLProperties;
     this.serviceCombRBACProperties = serviceCombRBACProperties;
+    EventManager.getEventBus().register(this);
 
     if (enabled()) {
       executorService = Executors.newFixedThreadPool(1, t -> new Thread(t, "rbac-executor"));
@@ -91,10 +101,17 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
     }
   }
 
+  @Subscribe
+  public void onNotPermittedEvent(OperationEvents.UnAuthorizedOperationEvent event) {
+    this.executorService.submit(this::retryRefresh);
+  }
+
   protected String createHeaders() {
     LOGGER.info("start to create RBAC headers");
 
     RbacTokenResponse rbacTokenResponse = callCreateHeaders();
+    lastErrorCode = rbacTokenResponse.getErrorCode();
+    lastStatusCode = rbacTokenResponse.getStatusCode();
 
     if (Status.UNAUTHORIZED.getStatusCode() == rbacTokenResponse.getStatusCode()
         || Status.FORBIDDEN.getStatusCode() == rbacTokenResponse.getStatusCode()) {
@@ -148,5 +165,11 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
   private boolean enabled() {
     return !StringUtils.isEmpty(serviceCombRBACProperties.getName()) && !StringUtils
         .isEmpty(serviceCombRBACProperties.getPassword());
+  }
+
+  private void retryRefresh() {
+    if (Status.UNAUTHORIZED.getStatusCode() == lastStatusCode && UN_AUTHORIZED_CODE_HALF_OPEN.equals(lastErrorCode)) {
+      cache.refresh(discoveryProperties.getServiceName());
+    }
   }
 }
