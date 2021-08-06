@@ -33,7 +33,6 @@
   <modules>
     <module>provider</module>
     <module>consumer</module>
-    <module>gateway</module>
     <module>tests-client</module>
   </modules>
 </project>

@@ -6,7 +6,7 @@
   * CSE_V2_SC: 注册中心的地址
   * CSE_V2_CC: 配置中心的地址
 
-* 依次启动 provider、consumer、gateway
+* 依次启动 provider、consumer
 
 * 在配置中心增加如下配置：
   * 应用级配置：consumer.yaml。类型为 yaml。 

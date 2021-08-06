@@ -14,7 +14,7 @@ cse.v1.test.configModels[1].name: s2
 cse.v1.test.configModels[1].index: 3
 ```
 
-* 依次启动 provider、consumer、gateway
+* 依次启动 provider、consumer
 * 在配置中心增加如下配置：
   * cse.v1.test.bar: bar
 
