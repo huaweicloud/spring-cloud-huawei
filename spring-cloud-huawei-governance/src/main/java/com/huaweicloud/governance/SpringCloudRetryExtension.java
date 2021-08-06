@@ -18,9 +18,8 @@
 package com.huaweicloud.governance;
 
 import java.io.IOException;
-import java.util.List;
 
-import org.apache.servicecomb.governance.handler.ext.RetryExtension;
+import org.apache.servicecomb.governance.handler.ext.AbstractRetryExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.client.ClientHttpResponse;
@@ -28,11 +27,11 @@ import org.springframework.web.client.HttpServerErrorException;
 
 import feign.Response;
 
-public class SpringCloudRetryExtension implements RetryExtension {
+public class SpringCloudRetryExtension extends AbstractRetryExtension {
   private static final Logger LOGGER = LoggerFactory.getLogger(SpringCloudRetryExtension.class);
 
   @Override
-  public boolean isRetry(List<Integer> statusList, Object response) {
+  protected String extractStatusCode(Object response) {
     int status = 0;
     if (response instanceof ClientHttpResponse) {
       try {
@@ -44,11 +43,13 @@ public class SpringCloudRetryExtension implements RetryExtension {
     if (response instanceof Response) {
       status = ((Response) response).status();
     }
-    return statusList.contains(status);
+    return String.valueOf(status);
   }
 
   @Override
   public Class<? extends Throwable>[] retryExceptions() {
-    return new Class[] {HttpServerErrorException.class};
+    return new Class[] {
+        HttpServerErrorException.class
+    };
   }
 }
