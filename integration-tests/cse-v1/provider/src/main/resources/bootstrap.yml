@@ -25,21 +25,20 @@ spring:
       discovery:
         enabled: true
         watch: false
-        address: http://127.0.0.1:30100
+        address: https://cse.cn-south-1.myhuaweicloud.com
         appName: cse-v1-test-application
         serviceName: ${spring.application.name}
         version: 0.0.1
         healthCheckInterval: 30
-        heartBeatInterval: 1000
       config:
-        serverAddr: http://127.0.0.1:30113
+        serverAddr: https://cse.cn-south-1.myhuaweicloud.com
         fileSource: provider.yaml
         watch:
           delay: 10000
 
-#      credentials:
-#        enabled: true
-#        accessKey: ${CREDENTIALS_AK}
-#        secretKey: ${CREDENTIALS_SK}
-#        cipher: default
-#        project: cn-south-1
+      credentials:
+        enabled: true
+        accessKey: ${CREDENTIALS_AK}
+        secretKey: ${CREDENTIALS_SK}
+        cipher: default
+        project: cn-south-1
