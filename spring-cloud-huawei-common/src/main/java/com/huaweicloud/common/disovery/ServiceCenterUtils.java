@@ -48,6 +48,7 @@ public class ServiceCenterUtils {
     return new AddressManager("default", addresses);
   }
 
+  // add other headers needed for registration by new ServiceCenterClient(...)
   public static ServiceCenterClient serviceCenterClient(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCombSSLProperties serviceCombSSLProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
@@ -56,8 +57,7 @@ public class ServiceCenterUtils {
         .createSSLProperties(addressManager.sslEnabled(), serviceCombSSLProperties);
     return new ServiceCenterClient(addressManager, sslProperties,
         getRequestAuthHeaderProvider(authHeaderProviders),
-        // TODO: add other headers needed for registration
-        "default", new HashMap<>());
+        "default", new HashMap<>()).setEventBus(EventManager.getEventBus());
   }
 
   public static ServiceCenterWatch serviceCenterWatch(DiscoveryBootstrapProperties discoveryProperties,

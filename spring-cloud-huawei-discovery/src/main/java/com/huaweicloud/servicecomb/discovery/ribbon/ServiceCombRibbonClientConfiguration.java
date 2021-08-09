@@ -23,6 +23,7 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.IPing;
 import com.netflix.loadbalancer.ServerList;
@@ -36,8 +37,9 @@ import com.netflix.loadbalancer.ServerListUpdater;
 public class ServiceCombRibbonClientConfiguration {
   @Bean
   @ConditionalOnMissingBean
-  public ServerList<?> ribbonServerList(IClientConfig config, DiscoveryClient discoveryClient) {
-    ServiceCombServerList serverList = new ServiceCombServerList(discoveryClient);
+  public ServerList<?> ribbonServerList(IClientConfig config, DiscoveryClient discoveryClient,
+      ServiceCombRegistration serviceCombRegistration) {
+    ServiceCombServerList serverList = new ServiceCombServerList(discoveryClient, serviceCombRegistration);
     serverList.initWithNiwsConfig(config);
     return serverList;
   }
