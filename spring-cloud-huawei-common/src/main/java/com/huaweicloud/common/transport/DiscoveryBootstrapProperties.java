@@ -48,11 +48,10 @@ public class DiscoveryBootstrapProperties {
 
   private boolean healthCheck = true;
 
-  @Value("#{'${spring.cloud.servicecomb.discovery.healthCheckInterval:${spring.cloud.servicecomb.discovery.heartBeatInterval:15000}}'}")
-  private int healthCheckInterval;
 
-  @Value("#{'${spring.cloud.servicecomb.discovery.healthCheckRequestTimeout:${spring.cloud.servicecomb.discovery.heartBeatRequestTimeout:5000}}'}")
-  private int healthCheckRequestTimeout;
+  private int healthCheckInterval = 15000;
+
+  private int healthCheckRequestTimeout = 5000;
 
   private int pollInterval = 15000;
 
