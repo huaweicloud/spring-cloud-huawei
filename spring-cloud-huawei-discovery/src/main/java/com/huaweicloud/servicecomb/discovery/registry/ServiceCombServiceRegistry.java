@@ -89,6 +89,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     EventManager.getEventBus().register(this);
     serviceCenterRegistration.setMicroservice(registration.getMicroservice());
     serviceCenterRegistration.setMicroserviceInstance(registration.getMicroserviceInstance());
+    serviceCenterRegistration.setHeartBeatInterval(discoveryBootstrapProperties.getHealthCheckInterval());
+    serviceCenterRegistration.setHeartBeatRequestTimeout(discoveryBootstrapProperties.getHealthCheckRequestTimeout());
 
     addSchemaInfo(registration);
 
