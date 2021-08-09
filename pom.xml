@@ -39,7 +39,7 @@
      import spring-framework-bom. No need configure spring version. -->
     <spring-cloud.version>Hoxton.SR8</spring-cloud.version>
     <spring-boot.version>2.3.5.RELEASE</spring-boot.version>
-    <servicecomb.version>2.3.5</servicecomb.version>
+    <servicecomb.version>2.3.6</servicecomb.version>
   </properties>
 
   <modules>
