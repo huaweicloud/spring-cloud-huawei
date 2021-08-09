@@ -48,7 +48,11 @@ public class DiscoveryBootstrapProperties {
 
   private boolean healthCheck = true;
 
-  private int healthCheckInterval = 10;
+  private int healthCheckInterval = 15000;
+
+  private int healthCheckRequestTimeout = 5000;
+
+  private int pollInterval = 15000;
 
   private int refreshInterval = 30000;
 
@@ -167,6 +171,22 @@ public class DiscoveryBootstrapProperties {
 
   public void setHealthCheckInterval(int healthCheckInterval) {
     this.healthCheckInterval = healthCheckInterval;
+  }
+
+  public int getHealthCheckRequestTimeout() {
+    return healthCheckRequestTimeout;
+  }
+
+  public void setHealthCheckRequestTimeout(int healthCheckRequestTimeout) {
+    this.healthCheckRequestTimeout = healthCheckRequestTimeout;
+  }
+
+  public int getPollInterval() {
+    return pollInterval;
+  }
+
+  public void setPollInterval(int pollInterval) {
+    this.pollInterval = pollInterval;
   }
 
   public int getRefreshInterval() {
