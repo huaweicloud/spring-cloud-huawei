@@ -17,13 +17,12 @@
 package com.huaweicloud.router.client.ribbon;
 
 import com.huaweicloud.router.core.distribute.AbstractRouterDistributor;
-import com.netflix.loadbalancer.Server;
 
 /**
  * @Author GuoYl123
  * @Date 2019/10/17
  **/
-public class RouterDistributor extends AbstractRouterDistributor<Server> {
+public class RouterDistributor<T> extends AbstractRouterDistributor<T> {
 
   public RouterDistributor() {
     init();

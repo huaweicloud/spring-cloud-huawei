@@ -35,18 +35,12 @@
       <artifactId>spring-boot-autoconfigure</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-commons</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jmockit</groupId>
-      <artifactId>jmockit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -61,26 +55,8 @@
       <artifactId>commons-configuration</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.netflix.ribbon</groupId>
-      <artifactId>ribbon-loadbalancer</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.servicecomb</groupId>
       <artifactId>foundation-common</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>com.fasterxml.jackson.dataformat</groupId>
-          <artifactId>jackson-dataformat-xml</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-context</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.servicecomb</groupId>
@@ -93,6 +69,17 @@
     <dependency>
       <groupId>org.apache.servicecomb</groupId>
       <artifactId>service-center-client</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jmockit</groupId>
+      <artifactId>jmockit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
