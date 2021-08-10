@@ -68,8 +68,8 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
     this.serviceCenterClient = serviceCenterClient;
     this.serviceCombRegistration = serviceCombRegistration;
 
-    serviceCenterDiscovery = new ServiceCenterDiscovery(serviceCenterClient,
-        EventManager.getEventBus());
+    serviceCenterDiscovery = new ServiceCenterDiscovery(serviceCenterClient, EventManager.getEventBus());
+    serviceCenterDiscovery.setPollInterval(discoveryProperties.getPollInterval());
     EventManager.getEventBus().register(this);
   }
 
@@ -100,7 +100,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
   private SubscriptionKey parseMicroserviceName(String serviceId) {
     int idxAt = serviceId.indexOf(DiscoveryConstants.APP_SERVICE_SEPRATOR);
     if (idxAt == -1) {
-      return new SubscriptionKey(discoveryProperties.getAppName(),serviceId);
+      return new SubscriptionKey(discoveryProperties.getAppName(), serviceId);
     }
     return new SubscriptionKey(serviceId.substring(0, idxAt), serviceId.substring(idxAt + 1));
   }
