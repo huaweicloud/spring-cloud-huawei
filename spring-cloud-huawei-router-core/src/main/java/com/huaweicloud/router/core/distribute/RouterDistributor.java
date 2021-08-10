@@ -19,8 +19,6 @@ package com.huaweicloud.router.core.distribute;
 import java.util.List;
 
 import com.huaweicloud.router.core.model.PolicyRuleItem;
-import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServer;
-import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
 
 /**
  * @Author GuoYl123

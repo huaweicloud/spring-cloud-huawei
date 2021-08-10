@@ -21,7 +21,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
@@ -31,7 +31,7 @@ import com.huaweicloud.common.CommonConfiguration;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {CommonConfiguration.class, AkSkTestConfiguration.class})
-@ContextConfiguration(initializers = ConfigFileApplicationContextInitializer.class)
+@ContextConfiguration(initializers = ConfigDataApplicationContextInitializer.class)
 public class ServiceCombAkSkPropertiesTest {
   @Autowired
   private ServiceCombAkSkProperties akSkProperties;

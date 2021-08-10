@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.slf4j.Logger;
@@ -32,14 +31,12 @@ import com.huaweicloud.router.core.cache.RouterRuleCache;
 import com.huaweicloud.router.core.model.PolicyRuleItem;
 import com.huaweicloud.router.core.model.RouteItem;
 import com.huaweicloud.router.core.model.TagItem;
-import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServer;
-import com.netflix.loadbalancer.Server;
 
 /**
  * @Author GuoYl123
  * @Date 2019/10/17
  **/
-public abstract class AbstractRouterDistributor<T extends Server> implements
+public abstract class AbstractRouterDistributor<T> implements
     RouterDistributor<T> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRouterDistributor.class);
@@ -93,8 +90,9 @@ public abstract class AbstractRouterDistributor<T extends Server> implements
         .getVersion();
     Map<TagItem, List<T>> versionServerMap = new HashMap<>();
     for (T item : list) {
-      ServiceCombServer server = (ServiceCombServer) item;
-      MicroserviceInstance instance = server.getServiceCombServiceInstance().getMicroserviceInstance();
+//      ServiceCombServer server = (ServiceCombServer) item;
+      // TODO implement router should add server information
+      MicroserviceInstance instance = null;
       if (instance.getServiceName().equals(serviceName)) {
         //最多匹配原则
         TagItem tagItem = new TagItem(instance.getVersion(), instance.getProperties());
@@ -113,13 +111,13 @@ public abstract class AbstractRouterDistributor<T extends Server> implements
           if (!versionServerMap.containsKey(latestVTag)) {
             versionServerMap.put(latestVTag, new ArrayList<>());
           }
-          versionServerMap.get(latestVTag).add((T) server);
+          versionServerMap.get(latestVTag).add(item);
         }
         if (targetTag != null) {
           if (!versionServerMap.containsKey(targetTag)) {
             versionServerMap.put(targetTag, new ArrayList<>());
           }
-          versionServerMap.get(targetTag).add((T) server);
+          versionServerMap.get(targetTag).add(item);
         }
       }
     }
@@ -129,8 +127,8 @@ public abstract class AbstractRouterDistributor<T extends Server> implements
   public void initLatestVersion(String serviceName, List<T> list) {
     String latestVersion = null;
     for (T item : list) {
-      ServiceCombServer server = (ServiceCombServer) item;
-      MicroserviceInstance instance = server.getServiceCombServiceInstance().getMicroserviceInstance();
+      // TODO implement router should add server information
+      MicroserviceInstance instance = null;
       if (instance.getServiceName().equals(serviceName)) {
         if (latestVersion == null || VersionCompareUtil
             .compareVersion(latestVersion, instance.getVersion()) == -1) {
@@ -143,10 +141,13 @@ public abstract class AbstractRouterDistributor<T extends Server> implements
   }
 
   public List<T> getLatestVersionList(List<T> list, String targetServiceName) {
-    String latestV = RouterRuleCache.getServiceInfoCacheMap().get(targetServiceName)
-        .getLatestVersionTag().getVersion();
-    return list.stream().map(item -> (ServiceCombServer) item).filter(server ->
-        server.getServiceCombServiceInstance().getMicroserviceInstance().getVersion().equals(latestV)
-    ).map(item -> (T) item).collect(Collectors.toList());
+    // TODO implement router should add server information
+    return null;
+//
+//    String latestV = RouterRuleCache.getServiceInfoCacheMap().get(targetServiceName)
+//        .getLatestVersionTag().getVersion();
+//    return list.stream().map(item -> (ServiceCombServer) item).filter(server ->
+//        server.getServiceCombServiceInstance().getMicroserviceInstance().getVersion().equals(latestV)
+//    ).map(item -> (T) item).collect(Collectors.toList());
   }
 }
