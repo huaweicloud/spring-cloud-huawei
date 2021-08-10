@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.InstanceChangedEvent;
 import org.apache.servicecomb.service.center.client.RegistrationEvents.HeartBeatEvent;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
@@ -117,7 +118,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
       return Collections.emptyList();
     }
 
-    return instances.stream().map(item -> new ServiceCombServiceInstance(item)).collect(Collectors.toList());
+    return instances.stream().map(ServiceCombServiceInstance::new).collect(Collectors.toList());
   }
 
   @Override
@@ -128,11 +129,9 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
       if (microServiceResponse == null || microServiceResponse.getServices() == null) {
         return serviceList;
       }
-      for (Microservice microservice : microServiceResponse.getServices()) {
-        if (isAllowedMicroservice(microservice)) {
-          serviceList.add(microservice.getServiceName());
-        }
-      }
+      serviceList = microServiceResponse.getServices().stream()
+          .filter(microservice -> !StringUtils.isEmpty(getAllowedMicroservice(microservice)))
+          .map(this::getAllowedMicroservice).collect(Collectors.toList());
       return serviceList;
     } catch (OperationException e) {
       LOGGER.error("getServices failed", e);
@@ -140,17 +139,14 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
     return serviceList;
   }
 
-  private boolean isAllowedMicroservice(Microservice microservice) {
-    if (microservice.getAppId().equals(DiscoveryConstants.DEFAULT_APPID) && microservice.getServiceName()
-        .equals(DiscoveryConstants.SERVICE_CENTER)) {
-      return false;
+  private String getAllowedMicroservice(Microservice microservice) {
+    if (Boolean.parseBoolean(microservice.getProperties().get(DiscoveryConstants.CONFIG_ALLOW_CROSS_APP_KEY))) {
+      return microservice.getAppId() + DiscoveryConstants.APP_SERVICE_SEPRATOR + microservice.getServiceName();
     }
-
-    if (microservice.getAppId().equals(discoveryProperties.getAppName()) ||
-        Boolean.parseBoolean(microservice.getProperties().get(DiscoveryConstants.CONFIG_ALLOW_CROSS_APP_KEY))) {
-      return true;
+    if (microservice.getAppId().equals(discoveryProperties.getAppName())) {
+      return microservice.getServiceName();
     }
-    return false;
+    return null;
   }
 
   @Override
