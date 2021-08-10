@@ -40,62 +40,63 @@ import feign.Response;
 
 @Aspect
 public class GovernanceFeignClient {
-  @Autowired
-  private RetryHandler retryHandler;
-
-  @Autowired(required = false)
-  private ClientRecoverPolicy<Object> clientRecoverPolicy;
-
-  @Pointcut("execution(* org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient.execute(..))")
-  public void pointCut() {
-  }
-
-  @Around("pointCut()")
-  public Object aroundInvoke(ProceedingJoinPoint pjp) throws Throwable {
-
-    Request request = (Request) pjp.getArgs()[0];
-
-    GovernanceRequest governanceRequest = convert(request);
-
-    CheckedFunction0<Object> next = pjp::proceed;
-
-    DecorateCheckedSupplier<Object> dcs = Decorators.ofCheckedSupplier(next);
-
-    try {
-      SpringCloudInvocationContext.setInvocationContext();
-
-      addRetry(dcs, governanceRequest);
-
-      return dcs.get();
-    } catch (Throwable e) {
-      if (clientRecoverPolicy != null) {
-        return (Response) clientRecoverPolicy.apply(e);
-      }
-      throw new RuntimeException(e);
-    } finally {
-      SpringCloudInvocationContext.removeInvocationContext();
-    }
-  }
-
-  private GovernanceRequest convert(Request request) {
-    GovernanceRequest governanceRequest = new GovernanceRequest();
-    try {
-      URL url = new URL(request.url());
-      governanceRequest.setUri(url.getPath());
-      governanceRequest.setMethod(request.httpMethod().name());
-      Map<String, String> headers = new HashMap<>(request.headers().size());
-      request.headers().forEach((k, v) -> headers.put(k, v.iterator().next()));
-      governanceRequest.setHeaders(headers);
-      return governanceRequest;
-    } catch (MalformedURLException e) {
-      return governanceRequest;
-    }
-  }
-
-  private void addRetry(DecorateCheckedSupplier<Object> dcs, GovernanceRequest request) {
-    Retry retry = retryHandler.getActuator(request);
-    if (retry != null) {
-      dcs.withRetry(retry);
-    }
-  }
+  // TODO: feign retry #480
+//  @Autowired
+//  private RetryHandler retryHandler;
+//
+//  @Autowired(required = false)
+//  private ClientRecoverPolicy<Object> clientRecoverPolicy;
+//
+//  @Pointcut("execution(* org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient.execute(..))")
+//  public void pointCut() {
+//  }
+//
+//  @Around("pointCut()")
+//  public Object aroundInvoke(ProceedingJoinPoint pjp) throws Throwable {
+//
+//    Request request = (Request) pjp.getArgs()[0];
+//
+//    GovernanceRequest governanceRequest = convert(request);
+//
+//    CheckedFunction0<Object> next = pjp::proceed;
+//
+//    DecorateCheckedSupplier<Object> dcs = Decorators.ofCheckedSupplier(next);
+//
+//    try {
+//      SpringCloudInvocationContext.setInvocationContext();
+//
+//      addRetry(dcs, governanceRequest);
+//
+//      return dcs.get();
+//    } catch (Throwable e) {
+//      if (clientRecoverPolicy != null) {
+//        return (Response) clientRecoverPolicy.apply(e);
+//      }
+//      throw new RuntimeException(e);
+//    } finally {
+//      SpringCloudInvocationContext.removeInvocationContext();
+//    }
+//  }
+//
+//  private GovernanceRequest convert(Request request) {
+//    GovernanceRequest governanceRequest = new GovernanceRequest();
+//    try {
+//      URL url = new URL(request.url());
+//      governanceRequest.setUri(url.getPath());
+//      governanceRequest.setMethod(request.httpMethod().name());
+//      Map<String, String> headers = new HashMap<>(request.headers().size());
+//      request.headers().forEach((k, v) -> headers.put(k, v.iterator().next()));
+//      governanceRequest.setHeaders(headers);
+//      return governanceRequest;
+//    } catch (MalformedURLException e) {
+//      return governanceRequest;
+//    }
+//  }
+//
+//  private void addRetry(DecorateCheckedSupplier<Object> dcs, GovernanceRequest request) {
+//    Retry retry = retryHandler.getActuator(request);
+//    if (retry != null) {
+//      dcs.withRetry(retry);
+//    }
+//  }
 }

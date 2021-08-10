@@ -29,21 +29,22 @@ import java.net.URI;
 
 @Aspect
 public class RouterFeignClientFilter {
-  private static final Logger LOGGER = LoggerFactory.getLogger(RouterFeignClientFilter.class);
-
-  @Pointcut("execution(* org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient.execute(..))")
-  public void pointFeignClient() {
-  }
-
-  @Before("pointFeignClient()")
-  private void invokeServiceName(JoinPoint joinPoint) {
-    Request request = (Request) joinPoint.getArgs()[0];
-    URI uri = URI.create(request.url());
-
-    try {
-      RouterTrackContext.setServiceName(uri.getHost());
-    } catch (Throwable throwable) {
-      LOGGER.error("fail to add service name into RouterTrackContext.");
-    }
-  }
+  // TODO: dark launch with feign #476
+//  private static final Logger LOGGER = LoggerFactory.getLogger(RouterFeignClientFilter.class);
+//
+//  @Pointcut("execution(* org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient.execute(..))")
+//  public void pointFeignClient() {
+//  }
+//
+//  @Before("pointFeignClient()")
+//  private void invokeServiceName(JoinPoint joinPoint) {
+//    Request request = (Request) joinPoint.getArgs()[0];
+//    URI uri = URI.create(request.url());
+//
+//    try {
+//      RouterTrackContext.setServiceName(uri.getHost());
+//    } catch (Throwable throwable) {
+//      LOGGER.error("fail to add service name into RouterTrackContext.");
+//    }
+//  }
 }
