@@ -17,26 +17,24 @@
 
 package com.huaweicloud.router.client.header;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.servicecomb.foundation.common.utils.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
+import org.yaml.snakeyaml.Yaml;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.huaweicloud.router.client.track.RouterTrackContext;
 import com.huaweicloud.router.core.cache.RouterRuleCache;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringProperty;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.apache.servicecomb.foundation.common.utils.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-import org.yaml.snakeyaml.Yaml;
 
-/**
- * @Author GuoYl123
- * @Date 2019/12/12
- **/
 public class HeaderPassUtil {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(HeaderPassUtil.class);
@@ -64,12 +62,8 @@ public class HeaderPassUtil {
   }
 
   private static boolean isHaveHeadersRule() {
-    DynamicStringProperty headerStr = DynamicPropertyFactory.getInstance()
-        .getStringProperty(SERVICECOMB_ROUTER_HEADER, null);
-    if (StringUtils.isEmpty(headerStr)) {
-      return false;
-    }
-    return true;
+    // TODO : #476 implement dark launch
+    return false;
   }
 
   private static boolean loadHeaders() {

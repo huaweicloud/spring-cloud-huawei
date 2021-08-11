@@ -47,6 +47,7 @@ public class SpringCloudRetryExtension extends AbstractRetryExtension {
   }
 
   @Override
+  @SuppressWarnings({"unchecked", "rawtypes"})
   public Class<? extends Throwable>[] retryExceptions() {
     return new Class[] {
         HttpServerErrorException.class

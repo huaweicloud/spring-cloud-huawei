@@ -17,11 +17,9 @@
 
 package com.huaweicloud.common.exception;
 
-/**
- * @Author wangqijun
- * @Date 15:25 2019-07-17
- **/
 public class RemoteServerUnavailableException extends ServiceCombException {
+  private static final long serialVersionUID = -1L;
+
   public RemoteServerUnavailableException(String message) {
     super(message);
   }

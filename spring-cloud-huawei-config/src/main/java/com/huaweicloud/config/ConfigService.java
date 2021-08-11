@@ -39,7 +39,7 @@ import org.apache.servicecomb.http.client.common.HttpTransport;
 import org.apache.servicecomb.http.client.common.HttpTransportFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.common.transport.ServiceCombAkSkProperties;

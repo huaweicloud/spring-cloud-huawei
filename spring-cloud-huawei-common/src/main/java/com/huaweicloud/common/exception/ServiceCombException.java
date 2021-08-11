@@ -17,11 +17,9 @@
 
 package com.huaweicloud.common.exception;
 
-/**
- * @Author wangqijun
- * @Date 17:19 2019-07-15
- **/
 public class ServiceCombException extends Exception {
+  private static final long serialVersionUID = -1L;
+
   public ServiceCombException() {
     super();
   }

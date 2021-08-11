@@ -19,12 +19,10 @@ package com.huaweicloud.common.transport;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.util.StringUtils;
 
 import com.huaweicloud.common.util.Cipher;
 import com.huaweicloud.common.util.DefaultCipher;
@@ -33,8 +31,6 @@ import com.huaweicloud.common.util.ShaAKSKCipher;
 
 @ConfigurationProperties("spring.cloud.servicecomb.credentials")
 public class ServiceCombAkSkProperties {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombAkSkProperties.class);
 
   @Autowired(required = false)
   private List<Cipher> ciphers;

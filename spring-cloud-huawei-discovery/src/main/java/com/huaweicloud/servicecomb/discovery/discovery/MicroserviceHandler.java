@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.configuration.EnvironmentConfiguration;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.foundation.common.net.NetUtils;
 import org.apache.servicecomb.service.center.client.model.Framework;
 import org.apache.servicecomb.service.center.client.model.HealthCheck;
@@ -30,7 +31,6 @@ import org.apache.servicecomb.service.center.client.model.HealthCheckMode;
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.apache.servicecomb.service.center.client.model.MicroserviceStatus;
-import org.springframework.util.StringUtils;
 
 import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
 import com.huaweicloud.common.util.NetUtil;

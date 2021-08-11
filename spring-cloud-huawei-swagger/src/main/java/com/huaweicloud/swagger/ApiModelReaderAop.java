@@ -16,25 +16,23 @@
  */
 package com.huaweicloud.swagger;
 
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import springfox.documentation.schema.Model;
-import springfox.documentation.spring.web.scanners.ApiListingScanningContext;
-
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @Author GuoYl123
- * @Date 2019/12/27
- **/
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+
+import springfox.documentation.spring.web.scanners.ApiListingScanningContext;
+
 @Aspect
 public class ApiModelReaderAop {
 
+  // TODO: fix deprecation problems.
+  @SuppressWarnings({"deprecation", "unchecked"})
   @AfterReturning(value = "execution(* springfox.documentation.spring.web.scanners.ApiModelReader.read(..))", returning = "result")
   public void afterDefReturning(Object result) {
-    ((Map<String, Set<Model>>) result).forEach(
+    ((Map<String, Set<springfox.documentation.schema.Model>>) result).forEach(
         (key, values) -> {
           values.forEach(value -> {
             DefinitionCache.setDefinition(key, value.getQualifiedType());
@@ -47,6 +45,5 @@ public class ApiModelReaderAop {
   public void beforeParseSchema(ApiListingScanningContext args) {
     args.getRequestMappingsByResourceGroup().keySet().forEach(k ->
         DefinitionCache.setSchemaClassName(k.getGroupName(), k.getControllerClass().get().getName()));
-
   }
 }
