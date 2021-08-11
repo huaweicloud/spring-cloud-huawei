@@ -20,8 +20,8 @@ package com.huaweicloud.samples;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.autoconfigure.web.WebProperties.Resources;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -58,7 +58,7 @@ public class RouteConfiguration {
 
   @Bean
   public ErrorWebExceptionHandler errorWebExceptionHandler(ErrorAttributes errorAttributes,
-      ResourceProperties resourceProperties, ObjectProvider<ViewResolver> viewResolvers,
+      Resources resourceProperties, ObjectProvider<ViewResolver> viewResolvers,
       ServerCodecConfigurer serverCodecConfigurer, ApplicationContext applicationContext) {
     RateLimitWebExceptionHandler exceptionHandler = new RateLimitWebExceptionHandler(errorAttributes,
         resourceProperties, this.serverProperties.getError(), applicationContext);

@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.apache.servicecomb.service.center.client.OperationEvents;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
@@ -33,7 +34,6 @@ import org.apache.servicecomb.service.center.client.model.RbacTokenRequest;
 import org.apache.servicecomb.service.center.client.model.RbacTokenResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -60,11 +60,11 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
 
   private static final long TOKEN_REFRESH_TIME_IN_SECONDS = 20 * 60 * 1000;
 
-  private DiscoveryBootstrapProperties discoveryProperties;
+  private final DiscoveryBootstrapProperties discoveryProperties;
 
-  private ServiceCombSSLProperties serviceCombSSLProperties;
+  private final ServiceCombSSLProperties serviceCombSSLProperties;
 
-  private ServiceCombRBACProperties serviceCombRBACProperties;
+  private final ServiceCombRBACProperties serviceCombRBACProperties;
 
   private ExecutorService executorService;
 
@@ -89,12 +89,12 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
           .refreshAfterWrite(refreshTime(), TimeUnit.MILLISECONDS)
           .build(new CacheLoader<String, String>() {
             @Override
-            public String load(String key) throws Exception {
+            public String load(String key) {
               return createHeaders();
             }
 
             @Override
-            public ListenableFuture<String> reload(String key, String oldValue) throws Exception {
+            public ListenableFuture<String> reload(String key, String oldValue) {
               return Futures.submit(() -> createHeaders(), executorService);
             }
           });

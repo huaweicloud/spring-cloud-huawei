@@ -45,12 +45,14 @@ public class ConsumerConfigIT {
   }
 
   @Test
+  @SuppressWarnings({"rawtypes", "unchecked"})
   public void testSequences() {
     List<String> result = template.getForObject(Config.GATEWAY_URL + "/sequences", List.class);
     assertThat(result.toString()).isEqualTo("[s0, s1]");
   }
 
   @Test
+  @SuppressWarnings({"rawtypes", "unchecked"})
   public void testModels() {
     List<Map<?, ?>> result = template.getForObject(Config.GATEWAY_URL + "/models", List.class);
     assertThat(result.toString()).isEqualTo("[{name=s1, index=2}, {name=s2, index=3}]");

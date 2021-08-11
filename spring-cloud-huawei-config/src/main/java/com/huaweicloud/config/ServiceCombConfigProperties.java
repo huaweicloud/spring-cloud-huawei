@@ -19,7 +19,7 @@ package com.huaweicloud.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 

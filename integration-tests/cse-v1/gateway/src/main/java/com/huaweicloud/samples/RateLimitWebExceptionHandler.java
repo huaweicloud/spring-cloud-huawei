@@ -18,7 +18,7 @@
 package com.huaweicloud.samples;
 
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
-import org.springframework.boot.autoconfigure.web.ResourceProperties;
+import org.springframework.boot.autoconfigure.web.WebProperties.Resources;
 import org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
@@ -31,7 +31,7 @@ import reactor.core.publisher.Mono;
 
 public class RateLimitWebExceptionHandler extends DefaultErrorWebExceptionHandler {
 
-  public RateLimitWebExceptionHandler(ErrorAttributes errorAttributes, ResourceProperties resourceProperties,
+  public RateLimitWebExceptionHandler(ErrorAttributes errorAttributes, Resources resourceProperties,
       ErrorProperties errorProperties, ApplicationContext applicationContext) {
     super(errorAttributes, resourceProperties, errorProperties, applicationContext);
   }

@@ -47,11 +47,6 @@
       </dependency>
       <dependency>
         <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-huawei-dtm</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.huaweicloud</groupId>
         <artifactId>spring-cloud-starter-huawei-dtm</artifactId>
         <version>${project.version}</version>
       </dependency>

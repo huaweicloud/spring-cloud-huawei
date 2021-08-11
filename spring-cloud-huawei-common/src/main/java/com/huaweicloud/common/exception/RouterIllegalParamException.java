@@ -17,11 +17,8 @@
 
 package com.huaweicloud.common.exception;
 
-/**
- * @Author GuoYl123
- * @Date 2019/11/4
- **/
 public class RouterIllegalParamException extends ServiceCombRuntimeException {
+  private static final long serialVersionUID = -1L;
 
   public RouterIllegalParamException(String message) {
     super(message);
