@@ -82,12 +82,11 @@ public class GovernanceConfiguration {
     };
   }
 
-  // TODO: feign retry #480
-//  @Bean
-//  @ConditionalOnClass(name = "org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient")
-//  public GovernanceFeignClient governanceFeignClient() {
-//    return new GovernanceFeignClient();
-//  }
+  @Bean
+  @ConditionalOnClass(name = "org.springframework.cloud.openfeign.loadbalancer.FeignBlockingLoadBalancerClient")
+  public GovernanceFeignClient governanceFeignClient() {
+    return new GovernanceFeignClient();
+  }
 
   @Bean
   public MicroserviceMeta governanceMicroserviceMeta() {
