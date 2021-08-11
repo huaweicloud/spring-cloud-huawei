@@ -19,7 +19,6 @@ package com.huaweicloud.swagger;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,7 +27,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
 
 import javax.ws.rs.core.MediaType;
 
@@ -65,11 +63,11 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
 
   private static final String INTF_SUFFIX = "Intf";
 
-  private ServiceModelToSwagger2Mapper mapper;
+  private final ServiceModelToSwagger2Mapper mapper;
 
-  private String appName;
+  private final String appName;
 
-  private String serviceName;
+  private final String serviceName;
 
   public ServiceCombDocumentationSwaggerMapper(
       String appName, String serviceName, ServiceModelToSwagger2Mapper mapper) {
@@ -126,7 +124,7 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
   }
 
   private Set<String> toSet(List<String> lists) {
-    return lists.stream().collect(Collectors.toSet());
+    return new HashSet<>(lists);
   }
 
   // 02: filtering ApiListings, there are sub tasks
@@ -162,7 +160,7 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
               .path(validatePath(apiDescription.getPath()))
               .description(apiDescription.getDescription())
               // 02-01 only keep the first operation and convert operation.
-              .operations(Arrays.asList(validateOperation(apiDescription.getOperations().get(0))))
+              .operations(Collections.singletonList(validateOperation(apiDescription.getOperations().get(0))))
               .hidden(apiDescription.isHidden()).build())
       );
 
@@ -181,8 +179,9 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
     return path;
   }
 
+  @SuppressWarnings({"deprecation", "unchecked"})
   private Operation validateOperation(Operation operation) {
-    Operation result = new Operation(operation.getMethod(),
+    return new Operation(operation.getMethod(),
         operation.getSummary(),
         operation.getNotes(),
         operation.getExternalDocumentation(),
@@ -203,7 +202,6 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
         operation.getBody(),
         operation.getResponses()
     );
-    return result;
   }
 
   private String validateOperationId(HttpMethod method, String uniqueId) {
@@ -220,7 +218,8 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
         Optional<ContentSpecification> content = req.getParameterSpecification().getContent();
         if (content.isPresent()) {
           for (Representation rep : content.get().getRepresentations()) {
-            if (rep.getModel().getScalar().isPresent() && rep.getModel().getScalar().get().getType().getType().equals("string")) {
+            if (rep.getModel().getScalar().isPresent() && rep.getModel().getScalar().get().getType().getType()
+                .equals("string")) {
               req.getExtensions().add(new StringVendorExtension(X_RAW_JSON_TYPE, "true"));
             }
           }
@@ -230,6 +229,8 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
     return requestParameters;
   }
 
+  @SuppressWarnings("deprecation")
+  // TODO: fix deprecation problem
   private Set<String> validateResponseContentType(Operation operation) {
     if ("string".equals(operation.getResponseModel().getType())) {
       return validateContentType(operation.getProduces(), MediaType.TEXT_PLAIN);

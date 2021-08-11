@@ -134,10 +134,21 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.6.1</version>
+          <version>3.1</version>
           <configuration>
+            <compilerArgument>-parameters</compilerArgument>
             <source>1.8</source>
             <target>1.8</target>
+            <showDeprecation>true</showDeprecation>
+            <showWarnings>true</showWarnings>
+            <compilerArgs>
+              <arg>-Werror</arg>
+              <arg>-Xlint:all</arg>
+              <!--not care for jdk8/jdk7 compatible problem-->
+              <arg>-Xlint:-classfile</arg>
+              <!--not care for annotations not processed-->
+              <arg>-Xlint:-processing</arg>
+            </compilerArgs>
           </configuration>
         </plugin>
         <plugin>

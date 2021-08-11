@@ -26,13 +26,9 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.configuration.EnvironmentConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
-/**
- * @Author wangqijun
- * @Date 17:26 2019-08-07
- **/
 public class URLUtil {
 
   private static final String SCHEMA_SEPRATOR = "://";
@@ -45,10 +41,6 @@ public class URLUtil {
 
   private static final String SYSTEM_KEY_CONFIG_CENTER = "PAAS_CSE_CC_ENDPOINT";
 
-  /**
-   * @param url
-   * @return
-   */
   public static String[] splitIpPort(String url) {
     String[] res = new String[2];
     res[0] = url
@@ -65,9 +57,6 @@ public class URLUtil {
 
   /**
    * Convert url to http or https
-   *
-   * @param restUrl
-   * @return
    */
   public static String transform(String restUrl) {
     if (restUrl == null) {
@@ -104,10 +93,6 @@ public class URLUtil {
 
   /**
    * Compare two urls, if the domain and port are the same, they are considered equal
-   *
-   * @param url1
-   * @param url2
-   * @return
    */
   public static boolean isEquals(String url1, String url2) {
     if (StringUtils.isEmpty(url1) || StringUtils.isEmpty(url2)) {
@@ -122,8 +107,7 @@ public class URLUtil {
 
   private static String removeSlash(String url) {
     if (url.endsWith("/")) {
-      String result = url.substring(0, url.length() - 1);
-      return result;
+      return url.substring(0, url.length() - 1);
     }
     return url;
   }
@@ -133,7 +117,7 @@ public class URLUtil {
     if (StringUtils.isEmpty(urls)) {
       return urlList;
     }
-    if (urls != null && urls.indexOf(",") > 0) {
+    if (urls.indexOf(",") > 0) {
       Arrays.stream(urls.split(","))
           .filter(url -> !StringUtils.isEmpty(url))
           .forEach(urlList::add);

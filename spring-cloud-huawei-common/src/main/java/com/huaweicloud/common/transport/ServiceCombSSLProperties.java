@@ -17,8 +17,8 @@
 
 package com.huaweicloud.common.transport;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.util.StringUtils;
 
 @ConfigurationProperties("spring.cloud.servicecomb.ssl")
 public class ServiceCombSSLProperties {

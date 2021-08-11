@@ -16,26 +16,23 @@
  */
 package com.huaweicloud.router.core.cache;
 
-import com.google.common.collect.Interner;
-import com.google.common.collect.Interners;
-import com.netflix.config.DynamicPropertyFactory;
-import com.netflix.config.DynamicStringProperty;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.huaweicloud.router.core.model.PolicyRuleItem;
-import com.huaweicloud.router.core.model.ServiceInfoCache;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-import org.yaml.snakeyaml.Yaml;
-
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @Author GuoYl123
- * @Date 2019/10/17
- **/
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
+import org.yaml.snakeyaml.Yaml;
+
+import com.google.common.collect.Interner;
+import com.google.common.collect.Interners;
+import com.huaweicloud.router.core.model.PolicyRuleItem;
+import com.huaweicloud.router.core.model.ServiceInfoCache;
+import com.netflix.config.DynamicPropertyFactory;
+import com.netflix.config.DynamicStringProperty;
+
 public class RouterRuleCache {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RouterRuleCache.class);
@@ -48,9 +45,6 @@ public class RouterRuleCache {
 
   /**
    * 每次序列化额外缓存，配置更新时触发回调函数 返回false即初始化规则失败： 1. 规则解析错误 2. 规则为空
-   *
-   * @param targetServiceName
-   * @return
    */
   public static boolean doInit(String targetServiceName) {
     if (!isServerContainRule(targetServiceName)) {
@@ -102,9 +96,6 @@ public class RouterRuleCache {
 
   /**
    * if a server don't have rule , avoid registered too many callback , it may cause memory leak
-   *
-   * @param targetServiceName
-   * @return
    */
   public static boolean isServerContainRule(String targetServiceName) {
     DynamicStringProperty lookFor = DynamicPropertyFactory.getInstance()
