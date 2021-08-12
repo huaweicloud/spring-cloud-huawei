@@ -132,7 +132,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
       serviceList = microServiceResponse.getServices().stream()
           .filter(microservice -> !StringUtils.isEmpty(getAllowedMicroservice(microservice)))
           .map(this::getAllowedMicroservice).collect(Collectors.toList());
-      return serviceList;
+      return null;
     } catch (OperationException e) {
       LOGGER.error("getServices failed", e);
     }
