@@ -130,16 +130,6 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
     return new ArrayList<>(serviceIds);
   }
 
-  private String getAllowedMicroservice(Microservice microservice) {
-    if (Boolean.parseBoolean(microservice.getProperties().get(DiscoveryConstants.CONFIG_ALLOW_CROSS_APP_KEY))) {
-      return microservice.getAppId() + DiscoveryConstants.APP_SERVICE_SEPRATOR + microservice.getServiceName();
-    }
-    if (microservice.getAppId().equals(discoveryProperties.getAppName())) {
-      return microservice.getServiceName();
-    }
-    return null;
-  }
-
   @Override
   public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
     this.applicationEventPublisher = applicationEventPublisher;
