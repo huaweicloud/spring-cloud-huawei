@@ -19,7 +19,9 @@ package com.huaweicloud.servicecomb.discovery.discovery;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -62,6 +64,8 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
   private ApplicationEventPublisher applicationEventPublisher;
 
   private final AtomicLong changeId = new AtomicLong(0);
+
+  private Set<String> serviceIds = new HashSet<>();
 
   public ServiceCombDiscoveryClient(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCenterClient serviceCenterClient, ServiceCombRegistration serviceCombRegistration) {
@@ -117,26 +121,13 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
     if (instances == null) {
       return Collections.emptyList();
     }
-
+    serviceIds.add(serviceId);
     return instances.stream().map(ServiceCombServiceInstance::new).collect(Collectors.toList());
   }
 
   @Override
   public List<String> getServices() {
-    List<String> serviceList = new ArrayList<>();
-    try {
-      MicroservicesResponse microServiceResponse = serviceCenterClient.getMicroserviceList();
-      if (microServiceResponse == null || microServiceResponse.getServices() == null) {
-        return serviceList;
-      }
-      serviceList = microServiceResponse.getServices().stream()
-          .filter(microservice -> !StringUtils.isEmpty(getAllowedMicroservice(microservice)))
-          .map(this::getAllowedMicroservice).collect(Collectors.toList());
-      return null;
-    } catch (OperationException e) {
-      LOGGER.error("getServices failed", e);
-    }
-    return serviceList;
+    return new ArrayList<>(serviceIds);
   }
 
   private String getAllowedMicroservice(Microservice microservice) {
