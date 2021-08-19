@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.DefaultRequestContext;
 import org.springframework.cloud.client.loadbalancer.Request;
+import org.springframework.cloud.client.loadbalancer.RequestData;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.http.HttpHeaders;
 
@@ -77,8 +78,15 @@ public class CanaryServiceInstanceListSupplier implements ServiceInstanceListSup
     String targetServiceName = getServiceId();
     DefaultRequestContext context = (DefaultRequestContext) request.getContext();
 
-    CanaryLoadBalancerRequest canaryLoadBalancerRequest = (CanaryLoadBalancerRequest) context.getClientRequest();
-    HttpHeaders httpHeaders = canaryLoadBalancerRequest.getRequest().getHeaders();
+    Object clientRequest = context.getClientRequest();
+    HttpHeaders httpHeaders;
+    if (clientRequest instanceof CanaryLoadBalancerRequest) {
+      // rest template
+      httpHeaders = ((CanaryLoadBalancerRequest) clientRequest).getRequest().getHeaders();
+    } else {
+      // feign
+      httpHeaders = ((RequestData) clientRequest).getHeaders();
+    }
 
     Map<String, String> canaryHeaders = new HashMap<>();
     try {
