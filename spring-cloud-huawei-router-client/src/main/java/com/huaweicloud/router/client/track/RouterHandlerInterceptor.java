@@ -22,18 +22,22 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.servicecomb.foundation.common.utils.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.huaweicloud.common.util.HeaderUtil;
 
 /**
- * @Author GuoYl123
- * @Date 2019/10/17
+ * 将服务端收到的HTTP请求头设置到线程上下文中， 供Client发送请求的时候使用。
  **/
 public class RouterHandlerInterceptor implements HandlerInterceptor {
+  private static final Logger LOGGER = LoggerFactory.getLogger(RouterHandlerInterceptor.class);
 
   @Autowired(required = false)
   private List<RouterHeaderFilterExt> filters;
@@ -41,6 +45,11 @@ public class RouterHandlerInterceptor implements HandlerInterceptor {
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
       Object handler) {
+    if (request.getHeader(RouterTrackContext.ROUTER_TRACK_HEADER) != null) {
+      RouterTrackContext.setRequestHeader(request.getHeader(RouterTrackContext.ROUTER_TRACK_HEADER));
+      return true;
+    }
+
     Map<String, String> headers = HeaderUtil.getHeaders(request);
     if (!CollectionUtils.isEmpty(filters)) {
       for (RouterHeaderFilterExt filterExt : filters) {
@@ -49,7 +58,12 @@ public class RouterHandlerInterceptor implements HandlerInterceptor {
         }
       }
     }
-    RouterTrackContext.setRequestHeader(headers);
+    try {
+      RouterTrackContext.setRequestHeader(JsonUtils.writeValueAsString(headers));
+    } catch (JsonProcessingException e) {
+      LOGGER.warn("encode headers failed for {}", e.getMessage());
+    }
+
     return true;
   }
 

@@ -14,17 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.router.client.ribbon;
+package com.huaweicloud.router.client;
 
-import com.huaweicloud.router.core.distribute.AbstractRouterDistributor;
+import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
+import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
+import org.springframework.cloud.client.ServiceInstance;
 
-/**
- * @Author GuoYl123
- * @Date 2019/10/17
- **/
-public class RouterDistributor<T> extends AbstractRouterDistributor<T> {
+import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
 
-  public RouterDistributor() {
-    init();
+public class SpringCloudRouterDistributor extends
+    AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> {
+  public SpringCloudRouterDistributor() {
+    init(server -> ((ServiceCombServiceInstance) server).getMicroserviceInstance(),
+        MicroserviceInstance::getVersion,
+        MicroserviceInstance::getServiceName,
+        MicroserviceInstance::getProperties);
   }
 }

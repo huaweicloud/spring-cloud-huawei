@@ -39,7 +39,7 @@
      import spring-framework-bom. No need configure spring version. -->
     <spring-cloud.version>2020.0.3</spring-cloud.version>
     <spring-boot.version>2.5.3</spring-boot.version>
-    <servicecomb.version>2.3.6</servicecomb.version>
+    <servicecomb.version>2.5.0</servicecomb.version>
   </properties>
 
   <modules>
@@ -50,7 +50,6 @@
     <module>spring-cloud-huawei-discovery</module>
     <module>spring-cloud-starter-huawei</module>
     <module>spring-cloud-huawei-config</module>
-    <module>spring-cloud-huawei-router-core</module>
     <module>spring-cloud-huawei-router-client</module>
     <module>spring-cloud-huawei-swagger</module>
     <module>spring-cloud-huawei-governance</module>
