@@ -50,7 +50,7 @@ public class OrderControllerIT {
   @SuppressWarnings({"rawtypes", "unchecked"})
   public void testGetServices() {
     List result = template.getForObject(url + "/services", List.class);
-    assertThat(result.size()).isEqualTo(1);
+    assertThat(result.size()).isGreaterThanOrEqualTo(1);
   }
 
   @Test
