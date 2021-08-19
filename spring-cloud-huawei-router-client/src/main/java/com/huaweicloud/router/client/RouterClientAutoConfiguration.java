@@ -16,34 +16,23 @@
  */
 package com.huaweicloud.router.client;
 
+import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
+import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClientConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-
-import com.huaweicloud.router.client.feign.RouterFeignClientFilter;
-import com.huaweicloud.router.client.feign.RouterRequestInterceptor;
-import com.huaweicloud.router.client.track.RouterHandlerInterceptor;
-
-import feign.RequestInterceptor;
 
 @Configuration
 @EnableConfigurationProperties
-@EnableFeignClients
+@ComponentScan(basePackages = {"org.apache.servicecomb.router"})
+@AutoConfigureAfter(LoadBalancerClientConfiguration.class)
 public class RouterClientAutoConfiguration {
-
   @Bean
-  public RouterHandlerInterceptor routerHandlerInterceptor() {
-    return new RouterHandlerInterceptor();
-  }
-
-  @Bean
-  public RouterFeignClientFilter routerFeignClientFilter() {
-    return new RouterFeignClientFilter();
-  }
-
-  @Bean
-  public RequestInterceptor requestInterceptor() {
-    return new RouterRequestInterceptor();
+  public AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor() {
+    return new SpringCloudRouterDistributor();
   }
 }

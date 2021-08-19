@@ -14,19 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.router.core.distribute;
 
-import java.util.List;
+package com.huaweicloud.samples;
 
-import com.huaweicloud.router.core.model.PolicyRuleItem;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-/**
- * @Author GuoYl123
- * @Date 2019/10/17
- **/
-public interface RouterDistributor<T> {
+@RestController
+public class ProviderController {
+  // a very simple service to echo the request parameter
+  @GetMapping("/sayHello")
+  public String sayHello(@RequestParam("name") String name) {
+    return "Hello " + name;
+  }
 
-  void init();
-
-  List<T> distribute(String targetServiceName, List<T> list, PolicyRuleItem invokeRule);
+  @GetMapping("/sayHelloCanary")
+  public String sayHelloCanary(@RequestParam("name") String name) {
+    return "Hello Canary in canary " + name;
+  }
 }

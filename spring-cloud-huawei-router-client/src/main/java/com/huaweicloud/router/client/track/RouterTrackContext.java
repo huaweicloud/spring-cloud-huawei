@@ -19,32 +19,22 @@ package com.huaweicloud.router.client.track;
 import java.util.Map;
 
 /**
- * @Author GuoYl123
- * @Date 2019/10/12
+ * 当前使用线程上下文获取服务端请求的header， 不适用于Reactive模式。
  **/
 public class RouterTrackContext {
-    private static ThreadLocal<String> serviceNameThreadLocal = new ThreadLocal<>();
+  public static final String ROUTER_TRACK_HEADER = "X-RouterContext";
 
-    private static ThreadLocal<Map<String, String>> requestHeaderThreadLocal = new ThreadLocal<>();
+  private static ThreadLocal<String> requestHeaderThreadLocal = new ThreadLocal<>();
 
-    public static void remove() {
-        serviceNameThreadLocal.remove();
-        requestHeaderThreadLocal.remove();
-    }
+  public static void remove() {
+    requestHeaderThreadLocal.remove();
+  }
 
-    public static String getServiceName() {
-        return serviceNameThreadLocal.get();
-    }
+  public static String getRequestHeader() {
+    return requestHeaderThreadLocal.get();
+  }
 
-    public static void setServiceName(String serviceName) {
-        serviceNameThreadLocal.set(serviceName);
-    }
-
-    public static Map<String, String> getRequestHeader() {
-        return requestHeaderThreadLocal.get();
-    }
-
-    public static void setRequestHeader(Map<String, String> requestHeader) {
-        requestHeaderThreadLocal.set(requestHeader);
-    }
+  public static void setRequestHeader(String requestHeader) {
+    requestHeaderThreadLocal.set(requestHeader);
+  }
 }

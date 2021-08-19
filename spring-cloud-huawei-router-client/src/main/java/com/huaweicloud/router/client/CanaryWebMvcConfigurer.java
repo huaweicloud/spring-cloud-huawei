@@ -26,31 +26,34 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.huaweicloud.router.client.rest.RouterRestTemplateInterceptor;
 import com.huaweicloud.router.client.track.RouterHandlerInterceptor;
+import com.huaweicloud.router.client.track.RouterRequestInterceptor;
+import com.huaweicloud.router.client.track.RouterRestTemplateInterceptor;
+
+import feign.RequestInterceptor;
 
 /**
- * @Author GuoYl123
- * @Date 2019/10/17
+ * 将服务端收到的HTTP请求头设置到线程上下文中， 供Client发送请求的时候使用。
  **/
 @Configuration
-public class RouterWebMvcConfigurer implements WebMvcConfigurer {
-
-  @Autowired
-  RouterHandlerInterceptor routerHandlerInterceptor;
-
-  @Bean
-  public RouterRestTemplateInterceptor routerClientHttpRequestIntercptor(
-      @Autowired(required = false) @LoadBalanced List<RestTemplate> restTemplates) {
-    RouterRestTemplateInterceptor intercptor = new RouterRestTemplateInterceptor();
-    if (restTemplates != null) {
-      restTemplates.forEach(restTemplate -> restTemplate.getInterceptors().add(intercptor));
-    }
-    return intercptor;
-  }
-
+public class CanaryWebMvcConfigurer implements WebMvcConfigurer {
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(routerHandlerInterceptor).addPathPatterns("/**");
+    registry.addInterceptor(new RouterHandlerInterceptor()).addPathPatterns("/**");
+  }
+
+  @Bean
+  public RequestInterceptor requestInterceptor() {
+    return new RouterRequestInterceptor();
+  }
+
+  @Bean
+  public RouterRestTemplateInterceptor restTemplateInterceptor(@Autowired(required = false) @LoadBalanced
+      List<RestTemplate> restTemplates) {
+    RouterRestTemplateInterceptor interceptor = new RouterRestTemplateInterceptor();
+    if (restTemplates != null) {
+      restTemplates.forEach(restTemplate -> restTemplate.getInterceptors().add(interceptor));
+    }
+    return interceptor;
   }
 }

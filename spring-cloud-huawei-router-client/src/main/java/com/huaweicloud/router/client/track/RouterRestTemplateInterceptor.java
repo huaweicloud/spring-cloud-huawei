@@ -14,41 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.router.client.rest;
+package com.huaweicloud.router.client.track;
 
-import com.huaweicloud.router.client.header.HeaderPassUtil;
 import java.io.IOException;
 
-import com.huaweicloud.router.client.track.RouterTrackContext;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
+import com.huaweicloud.router.client.track.RouterTrackContext;
+
 /**
- * @Author GuoYl123
- * @Date 2019/10/11
+ * 从线程上下文读取服务端收到的HTTP header信息。
  **/
 public class RouterRestTemplateInterceptor implements ClientHttpRequestInterceptor {
 
-  private static final String ROUTER_HEADER = "X-RouterContext";
+  public static final String ROUTER_HEADER = "X-RouterContext";
 
-  /**
-   * header pass
-   *
-   * @param httpRequest
-   * @param bytes
-   * @param clientHttpRequestExecution
-   * @return
-   * @throws IOException
-   */
   @Override
   public ClientHttpResponse intercept(HttpRequest httpRequest, byte[] bytes,
       ClientHttpRequestExecution clientHttpRequestExecution) throws IOException {
-    RouterTrackContext.setServiceName(httpRequest.getURI().getHost());
-    HttpHeaders headers = httpRequest.getHeaders();
-    headers.add(ROUTER_HEADER, HeaderPassUtil.getPassHeaderString(headers.toSingleValueMap()));
+
+    if (RouterTrackContext.getRequestHeader() != null) {
+      httpRequest.getHeaders().add(RouterTrackContext.ROUTER_TRACK_HEADER, RouterTrackContext.getRequestHeader());
+    }
+
     return clientHttpRequestExecution.execute(httpRequest, bytes);
   }
 }

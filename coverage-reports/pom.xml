@@ -46,10 +46,6 @@
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-huawei-router-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-huawei-discovery</artifactId>
     </dependency>
     <dependency>
