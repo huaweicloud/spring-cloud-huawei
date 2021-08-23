@@ -21,7 +21,7 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>discovery-tests</artifactId>
-    <version>1.7.0-SHAPSHOT</version>
+    <version>1.7.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
