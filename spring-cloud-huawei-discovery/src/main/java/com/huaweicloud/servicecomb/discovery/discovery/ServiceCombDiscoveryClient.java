@@ -25,18 +25,12 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.InstanceChangedEvent;
 import org.apache.servicecomb.service.center.client.RegistrationEvents.HeartBeatEvent;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery;
 import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery.SubscriptionKey;
-import org.apache.servicecomb.service.center.client.exception.OperationException;
-import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
-import org.apache.servicecomb.service.center.client.model.MicroservicesResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.event.HeartbeatEvent;
@@ -51,7 +45,6 @@ import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInst
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationEventPublisherAware {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombDiscoveryClient.class);
 
   private ServiceCenterClient serviceCenterClient;
 
@@ -128,16 +121,6 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
   @Override
   public List<String> getServices() {
     return new ArrayList<>(serviceIds);
-  }
-
-  private String getAllowedMicroservice(Microservice microservice) {
-    if (Boolean.parseBoolean(microservice.getProperties().get(DiscoveryConstants.CONFIG_ALLOW_CROSS_APP_KEY))) {
-      return microservice.getAppId() + DiscoveryConstants.APP_SERVICE_SEPRATOR + microservice.getServiceName();
-    }
-    if (microservice.getAppId().equals(discoveryProperties.getAppName())) {
-      return microservice.getServiceName();
-    }
-    return null;
   }
 
   @Override
