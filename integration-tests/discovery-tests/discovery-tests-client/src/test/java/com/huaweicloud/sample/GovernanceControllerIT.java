@@ -161,27 +161,27 @@ public class GovernanceControllerIT {
     for (int i = 0; i < 10; i++) {
       for (int j = 0; j < 10; j++) {
         String name = "t-" + i + "-" + j;
-        new Thread(() -> {
-          try {
-            String result = template.getForObject("http://127.0.0.1:9092/govern/gateway/hello", String.class);
-            if (!"Hello world!".equals(result)) {
-              notExpectedFailed.set(true);
+        new Thread(name) {
+          public void run() {
+            try {
+              String result = template.getForObject("http://127.0.0.1:9092/govern/gateway/hello", String.class);
+              if (!"Hello world!".equals(result)) {
+                notExpectedFailed.set(true);
+              }
+            } catch (Exception e) {
+              if (!"429 Too Many Requests: [rate limited]".equals(e.getMessage())) {
+                notExpectedFailed.set(true);
+              }
+              expectedFailed.set(true);
             }
-          } catch (Exception e) {
-            if (!"429 Too Many Requests: [rate limited]".equals(e.getMessage())) {
-              notExpectedFailed.set(true);
-            }
-            expectedFailed.set(true);
+            latch.countDown();
           }
-          latch.countDown();
-        }, name).start();
+        }.start();
+      }
         Thread.sleep(100);
       }
-
       latch.await(20, TimeUnit.SECONDS);
       Assert.assertEquals(true, expectedFailed.get());
       Assert.assertEquals(false, notExpectedFailed.get());
     }
-  }
-
 }
