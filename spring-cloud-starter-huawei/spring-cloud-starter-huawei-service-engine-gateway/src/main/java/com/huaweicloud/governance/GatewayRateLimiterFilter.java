@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.samples;
+package com.huaweicloud.governance;
 
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
@@ -24,38 +24,35 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.huaweicloud.governance.SpringCloudInvocationContext;
-
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.reactor.ratelimiter.operator.RateLimiterOperator;
 import reactor.core.publisher.Mono;
 
-public class RateLimitFilter implements GlobalFilter {
+public class GatewayRateLimiterFilter implements GlobalFilter {
+
   @Autowired
   private RateLimitingHandler rateLimitingHandler;
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-    GovernanceRequest governanceRequest = createGovernanceRequest(exchange);
-
     try {
       SpringCloudInvocationContext.setInvocationContext();
-      RateLimiter rateLimiter = rateLimitingHandler.getActuator(governanceRequest);
+      RateLimiter rateLimiter = rateLimitingHandler.getActuator(getGovernanceRequest(exchange));
       if (rateLimiter != null) {
-        return Mono.<Void>empty().transformDeferred(RateLimiterOperator.of(rateLimiter)).then(chain.filter(exchange));
-      } else {
-        return chain.filter(exchange);
+        return Mono.empty().transformDeferred(RateLimiterOperator.of(rateLimiter)).then(chain.filter(exchange));
       }
+      return chain.filter(exchange);
     } finally {
       SpringCloudInvocationContext.removeInvocationContext();
     }
   }
 
-  private GovernanceRequest createGovernanceRequest(ServerWebExchange exchange) {
-    GovernanceRequest request = new GovernanceRequest();
-    request.setHeaders(exchange.getRequest().getHeaders().toSingleValueMap());
-    request.setMethod(exchange.getRequest().getMethodValue());
-    request.setUri(exchange.getRequest().getURI().getPath());
-    return request;
+  private static GovernanceRequest getGovernanceRequest(ServerWebExchange exchange) {
+    GovernanceRequest governanceRequest = new GovernanceRequest();
+    governanceRequest.setHeaders(exchange.getRequest().getHeaders().toSingleValueMap());
+    governanceRequest.setMethod(exchange.getRequest().getMethodValue());
+    governanceRequest.setUri(exchange.getRequest().getURI().getPath());
+    return governanceRequest;
   }
+
 }

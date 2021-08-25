@@ -32,6 +32,7 @@
     <module>order-consumer</module>
     <module>account-provider</module>
     <module>discovery-tests-client</module>
+    <module>gateway-test</module>
   </modules>
 
 </project>
