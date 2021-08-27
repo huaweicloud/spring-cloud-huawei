@@ -45,10 +45,10 @@ spring:
 ## rate limiting configuration
 servicecomb:
   matchGroup:
-    allOperation: |
+    demo-rateLimiting: |
       matches:
         - apiPath:
-            prefix: "/"
+            exact: "/gateway/sayHello"
   rateLimiting:
-    allOperation: |
-      rate: 100
+    demo-rateLimiting: |
+      rate: 10

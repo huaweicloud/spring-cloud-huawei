@@ -39,11 +39,6 @@ public class GovernanceController {
     return restTemplate.getForObject("http://price/hello", String.class);
   }
 
-  @RequestMapping("/gateway/hello")
-  public String gatewayHello() {
-    return "Hello world!";
-  }
-
   @RequestMapping("/retry")
   public String retry(@RequestParam(name = "invocationID") String invocationID) {
     return restTemplate.getForObject("http://price/retry?invocationID={1}", String.class, invocationID);
