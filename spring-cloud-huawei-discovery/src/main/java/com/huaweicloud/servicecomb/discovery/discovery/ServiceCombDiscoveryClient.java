@@ -17,11 +17,8 @@
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -30,6 +27,7 @@ import org.apache.servicecomb.service.center.client.RegistrationEvents.HeartBeat
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery;
 import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery.SubscriptionKey;
+import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -57,8 +55,6 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
   private ApplicationEventPublisher applicationEventPublisher;
 
   private final AtomicLong changeId = new AtomicLong(0);
-
-  private Set<String> serviceIds = new HashSet<>();
 
   public ServiceCombDiscoveryClient(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCenterClient serviceCenterClient, ServiceCombRegistration serviceCombRegistration) {
@@ -114,13 +110,17 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
     if (instances == null) {
       return Collections.emptyList();
     }
-    serviceIds.add(serviceId);
     return instances.stream().map(ServiceCombServiceInstance::new).collect(Collectors.toList());
   }
 
   @Override
   public List<String> getServices() {
-    return new ArrayList<>(serviceIds);
+    return serviceCenterClient.getMicroserviceList()
+            .getServices()
+            .stream()
+            .map(Microservice::getServiceName)
+            .distinct()
+            .collect(Collectors.toList());
   }
 
   @Override
