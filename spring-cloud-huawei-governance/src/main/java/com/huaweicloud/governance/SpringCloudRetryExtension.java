@@ -43,6 +43,10 @@ public class SpringCloudRetryExtension extends AbstractRetryExtension {
     if (response instanceof Response) {
       status = ((Response) response).status();
     }
+    if (response instanceof Integer) {
+      status = (int) response;
+    }
+
     return String.valueOf(status);
   }
 
