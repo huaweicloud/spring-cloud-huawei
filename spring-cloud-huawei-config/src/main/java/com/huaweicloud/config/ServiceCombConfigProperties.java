@@ -199,10 +199,8 @@ public class ServiceCombConfigProperties {
 
     private String customLabel = "public";
 
-    @Value("${spring.cloud.servicecomb.config.enableLongPolling:true}")
-    private boolean enableLongPolling;
+    private boolean enableLongPolling = true;
 
-    @Value("${spring.cloud.servicecomb.config.pollingWaitSec:10}")
     private int pollingWaitTimeInSeconds = 10;
 
     public int getPollingWaitTimeInSeconds() {
