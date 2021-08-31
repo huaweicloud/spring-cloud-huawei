@@ -80,9 +80,9 @@ public class GovernanceRequestMappingHandlerAdapter {
     try {
       SpringCloudInvocationContext.setInvocationContext();
 
-      addRateLimiting(dcs, governanceRequest);
-      addBulkhead(dcs, governanceRequest);
       addCircuitBreaker(dcs, governanceRequest);
+      addBulkhead(dcs, governanceRequest);
+      addRateLimiting(dcs, governanceRequest);
 
       return dcs.get();
     } catch (Throwable th) {
