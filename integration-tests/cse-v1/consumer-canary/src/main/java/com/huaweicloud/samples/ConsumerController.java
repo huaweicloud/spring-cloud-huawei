@@ -41,6 +41,6 @@ public class ConsumerController {
 
   @GetMapping("/gateway/sayHelloCanary")
   public String gatewaySayHelloCanary(@RequestParam("name") String name) {
-    return "Hello Canary " + name;
+    return "Hello Canary in canary " + name;
   }
 }
