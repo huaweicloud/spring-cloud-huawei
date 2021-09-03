@@ -17,56 +17,11 @@
 ## ---------------------------------------------------------------------------
 
 server:
-  port: 9090
+  port: 8085
 
-spring:
-  main:
-    web-application-type: reactive
-  cloud:
-    gateway:
-      routes:
-        - id: consumer
-          uri: lb://basic-consumer
-          filters:
-            - name: governance
-          predicates:
-            - Path=/**
 servicecomb:
-  matchGroup:
-    demo-rateLimiting: |
-      matches:
-        - apiPath:
-            exact: "/govern/rateLimiting"
-    demo-retry: |
-      matches:
-        - apiPath:
-            prefix: "/govern/retry"
-    demo-circuitBreaker: |
-      matches:
-        - apiPath:
-            exact: "/govern/circuitBreaker"
-    demo-bulkhead: |
-      matches:
-        - apiPath:
-            exact: "/govern/bulkhead"
-  rateLimiting:
-    demo-rateLimiting: |
-      rate: 10
-  retry:
-    demo-retry: |
-      maxAttempts: 3
-  circuitBreaker:
-    demo-circuitBreaker: |
-      minimumNumberOfCalls: 10
-      slidingWindowSize: 10
-      failureRateThreshold: 20
-  bulkhead:
-    demo-bulkhead: |
-      maxConcurrentCalls: 5
-
-  # 灰度发布配置
   routeRule:
-    basic-consumer: |
+    basic-provider: |
       - precedence: 1
         match:
           headers:

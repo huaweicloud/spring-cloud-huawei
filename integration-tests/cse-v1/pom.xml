@@ -36,5 +36,6 @@
     <module>consumer</module>
     <module>gateway</module>
     <module>tests-client</module>
+    <module>consumer-canary</module>
   </modules>
 </project>
