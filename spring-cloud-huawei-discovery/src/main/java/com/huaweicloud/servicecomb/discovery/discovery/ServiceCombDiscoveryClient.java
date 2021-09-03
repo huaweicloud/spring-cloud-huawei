@@ -19,9 +19,7 @@ package com.huaweicloud.servicecomb.discovery.discovery;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -30,7 +28,12 @@ import org.apache.servicecomb.service.center.client.RegistrationEvents.HeartBeat
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery;
 import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery.SubscriptionKey;
+import org.apache.servicecomb.service.center.client.exception.OperationException;
+import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
+import org.apache.servicecomb.service.center.client.model.MicroservicesResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.event.HeartbeatEvent;
@@ -45,6 +48,7 @@ import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInst
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationEventPublisherAware {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombDiscoveryClient.class);
 
   private ServiceCenterClient serviceCenterClient;
 
@@ -57,8 +61,6 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
   private ApplicationEventPublisher applicationEventPublisher;
 
   private final AtomicLong changeId = new AtomicLong(0);
-
-  private Set<String> serviceIds = new HashSet<>();
 
   public ServiceCombDiscoveryClient(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCenterClient serviceCenterClient, ServiceCombRegistration serviceCombRegistration) {
@@ -106,21 +108,46 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
   @Override
   public List<ServiceInstance> getInstances(String serviceId) {
     SubscriptionKey subscriptionKey = parseMicroserviceName(serviceId);
-    if (!serviceCenterDiscovery.isRegistered(subscriptionKey)) {
-      serviceCenterDiscovery.register(subscriptionKey);
-    }
+    serviceCenterDiscovery.registerIfNotPresent(subscriptionKey);
     List<MicroserviceInstance> instances = serviceCenterDiscovery.getInstanceCache(subscriptionKey);
 
     if (instances == null) {
       return Collections.emptyList();
     }
-    serviceIds.add(serviceId);
     return instances.stream().map(ServiceCombServiceInstance::new).collect(Collectors.toList());
   }
 
   @Override
   public List<String> getServices() {
-    return new ArrayList<>(serviceIds);
+    List<String> serviceList = new ArrayList<>();
+    try {
+      MicroservicesResponse microServiceResponse = serviceCenterClient.getMicroserviceList();
+      if (microServiceResponse == null || microServiceResponse.getServices() == null) {
+        return serviceList;
+      }
+      for (Microservice microservice : microServiceResponse.getServices()) {
+        if (validMicroserviceName(microservice) != null) {
+          serviceList.add(microservice.getServiceName());
+        }
+      }
+    } catch (OperationException e) {
+      LOGGER.error("getServices failed", e);
+    }
+    return serviceList;
+  }
+
+  private String validMicroserviceName(Microservice microservice) {
+    if (microservice.getAppId().equals(DiscoveryConstants.DEFAULT_APPID) && microservice.getServiceName()
+        .equals(DiscoveryConstants.SERVICE_CENTER)) {
+      return null;
+    }
+
+    if (microservice.getAppId().equals(discoveryProperties.getAppName())) {
+      return microservice.getServiceName();
+    } else if (Boolean.parseBoolean(microservice.getProperties().get(DiscoveryConstants.CONFIG_ALLOW_CROSS_APP_KEY))) {
+      return microservice.getAppId() + DiscoveryConstants.APP_SERVICE_SEPRATOR + microservice.getServiceName();
+    }
+    return null;
   }
 
   @Override

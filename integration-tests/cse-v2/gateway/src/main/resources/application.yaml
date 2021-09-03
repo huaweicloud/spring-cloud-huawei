@@ -26,3 +26,11 @@ spring:
         locator:
           enabled: true
           lowerCaseServiceId: true
+management:
+  endpoint:
+    gateway:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: gateway

@@ -37,14 +37,3 @@ spring:
 #        account:
 #          name: ${CSE_V2_ACCOUNT_NAME}
 #          password: ${CSE_V2_ACCOUNT_PASSWORD}
-
-## rate limiting configuration
-servicecomb:
-  matchGroup:
-    allOperation: |
-      matches:
-        - apiPath:
-            prefix: "/"
-  rateLimiting:
-    allOperation: |
-      rate: 100
