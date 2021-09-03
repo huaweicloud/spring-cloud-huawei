@@ -33,4 +33,9 @@ public class ProviderController {
   public String sayHelloCanary(@RequestParam("name") String name) {
     return "Hello Canary " + name;
   }
+
+  @GetMapping("/gateway/sayHelloCanary")
+  public String gatewaySayHelloCanary(@RequestParam("name") String name) {
+    return "Hello Gateway Canary " + name;
+  }
 }
