@@ -17,6 +17,8 @@
 
 package com.huaweicloud.router.client.loabalancer;
 
+import com.huaweicloud.router.client.loabalancer.zoneaware.ZoneAwareServiceInstanceListSupplier;
+import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -72,6 +74,7 @@ public class CanaryLoadBalancerClientConfiguration {
 
   @Configuration(proxyBeanMethods = false)
   @ConditionalOnReactiveDiscoveryEnabled
+  @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.enabledZoneAware", havingValue = "false", matchIfMissing = true)
   @Order(REACTIVE_SERVICE_INSTANCE_SUPPLIER_ORDER)
   public static class ReactiveSupportConfiguration {
 
@@ -133,7 +136,78 @@ public class CanaryLoadBalancerClientConfiguration {
   }
 
   @Configuration(proxyBeanMethods = false)
+  @ConditionalOnReactiveDiscoveryEnabled
+  @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.enabledZoneAware", havingValue = "true")
+  @Order(REACTIVE_SERVICE_INSTANCE_SUPPLIER_ORDER)
+  public static class ZoneAwareReactiveSupportConfiguration {
+
+    @Bean
+    @ConditionalOnBean(ReactiveDiscoveryClient.class)
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(value = "spring.cloud.loadbalancer.configurations", havingValue = "default",
+            matchIfMissing = true)
+    public ServiceInstanceListSupplier discoveryClientServiceInstanceListSupplier(
+            ConfigurableApplicationContext context, ServiceCombRegistration serviceCombRegistration) {
+      return new CanaryServiceInstanceListSupplier(
+              new ZoneAwareServiceInstanceListSupplier(
+                      ServiceInstanceListSupplier.builder().withDiscoveryClient().withCaching().build(context),
+                      serviceCombRegistration));
+    }
+
+    @Bean
+    @ConditionalOnBean(ReactiveDiscoveryClient.class)
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(value = "spring.cloud.loadbalancer.configurations", havingValue = "zone-preference")
+    public ServiceInstanceListSupplier zonePreferenceDiscoveryClientServiceInstanceListSupplier(
+            ConfigurableApplicationContext context, ServiceCombRegistration  serviceCombRegistration) {
+      return new CanaryServiceInstanceListSupplier(
+              new ZoneAwareServiceInstanceListSupplier(
+                      ServiceInstanceListSupplier.builder().withDiscoveryClient().withZonePreference().withCaching()
+                              .build(context), serviceCombRegistration));
+    }
+
+    @Bean
+    @ConditionalOnBean({ReactiveDiscoveryClient.class, WebClient.Builder.class})
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(value = "spring.cloud.loadbalancer.configurations", havingValue = "health-check")
+    public ServiceInstanceListSupplier healthCheckDiscoveryClientServiceInstanceListSupplier(
+            ConfigurableApplicationContext context, ServiceCombRegistration  serviceCombRegistration) {
+      return new CanaryServiceInstanceListSupplier(
+              new ZoneAwareServiceInstanceListSupplier(
+                      ServiceInstanceListSupplier.builder().withDiscoveryClient().withHealthChecks().build(context),
+                      serviceCombRegistration));
+    }
+
+    @Bean
+    @ConditionalOnBean(ReactiveDiscoveryClient.class)
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(value = "spring.cloud.loadbalancer.configurations",
+            havingValue = "request-based-sticky-session")
+    public ServiceInstanceListSupplier requestBasedStickySessionDiscoveryClientServiceInstanceListSupplier(
+            ConfigurableApplicationContext context, ServiceCombRegistration  serviceCombRegistration) {
+      return new CanaryServiceInstanceListSupplier(
+              new ZoneAwareServiceInstanceListSupplier(
+                      ServiceInstanceListSupplier.builder().withDiscoveryClient().withRequestBasedStickySession()
+                              .build(context), serviceCombRegistration));
+    }
+
+    @Bean
+    @ConditionalOnBean(ReactiveDiscoveryClient.class)
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(value = "spring.cloud.loadbalancer.configurations",
+            havingValue = "same-instance-preference")
+    public ServiceInstanceListSupplier sameInstancePreferenceServiceInstanceListSupplier(
+            ConfigurableApplicationContext context, ServiceCombRegistration  serviceCombRegistration) {
+      return new CanaryServiceInstanceListSupplier(
+              new ZoneAwareServiceInstanceListSupplier(
+                      ServiceInstanceListSupplier.builder().withDiscoveryClient().withSameInstancePreference()
+                              .build(context), serviceCombRegistration));
+    }
+  }
+
+  @Configuration(proxyBeanMethods = false)
   @ConditionalOnBlockingDiscoveryEnabled
+  @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.enabledZoneAware", havingValue = "false", matchIfMissing = true)
   @Order(REACTIVE_SERVICE_INSTANCE_SUPPLIER_ORDER + 1)
   public static class BlockingSupportConfiguration {
 
@@ -192,6 +266,76 @@ public class CanaryLoadBalancerClientConfiguration {
       return new CanaryServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withBlockingDiscoveryClient().withSameInstancePreference()
               .build(context));
+    }
+  }
+
+  @Configuration(proxyBeanMethods = false)
+  @ConditionalOnBlockingDiscoveryEnabled
+  @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.enabledZoneAware", havingValue = "true")
+  @Order(REACTIVE_SERVICE_INSTANCE_SUPPLIER_ORDER + 1)
+  public static class ZoneAwareBlockingSupportConfiguration {
+
+    @Bean
+    @ConditionalOnBean(DiscoveryClient.class)
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(value = "spring.cloud.loadbalancer.configurations", havingValue = "default",
+            matchIfMissing = true)
+    public ServiceInstanceListSupplier discoveryClientServiceInstanceListSupplier(
+            ConfigurableApplicationContext context, ServiceCombRegistration  serviceCombRegistration) {
+      return new CanaryServiceInstanceListSupplier(
+              new ZoneAwareServiceInstanceListSupplier(
+                      ServiceInstanceListSupplier.builder().withBlockingDiscoveryClient().withCaching().build(context),
+                      serviceCombRegistration));
+    }
+
+    @Bean
+    @ConditionalOnBean(DiscoveryClient.class)
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(value = "spring.cloud.loadbalancer.configurations", havingValue = "zone-preference")
+    public ServiceInstanceListSupplier zonePreferenceDiscoveryClientServiceInstanceListSupplier(
+            ConfigurableApplicationContext context, ServiceCombRegistration  serviceCombRegistration) {
+      return new CanaryServiceInstanceListSupplier(
+              new ZoneAwareServiceInstanceListSupplier(
+                      ServiceInstanceListSupplier.builder().withBlockingDiscoveryClient().withZonePreference()
+                              .withCaching().build(context), serviceCombRegistration));
+    }
+
+    @Bean
+    @ConditionalOnBean({DiscoveryClient.class, RestTemplate.class})
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(value = "spring.cloud.loadbalancer.configurations", havingValue = "health-check")
+    public ServiceInstanceListSupplier healthCheckDiscoveryClientServiceInstanceListSupplier(
+            ConfigurableApplicationContext context, ServiceCombRegistration  serviceCombRegistration) {
+      return new CanaryServiceInstanceListSupplier(
+              new ZoneAwareServiceInstanceListSupplier(
+                      ServiceInstanceListSupplier.builder().withBlockingDiscoveryClient().withBlockingHealthChecks()
+                              .build(context), serviceCombRegistration));
+    }
+
+    @Bean
+    @ConditionalOnBean(DiscoveryClient.class)
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(value = "spring.cloud.loadbalancer.configurations",
+            havingValue = "request-based-sticky-session")
+    public ServiceInstanceListSupplier requestBasedStickySessionDiscoveryClientServiceInstanceListSupplier(
+            ConfigurableApplicationContext context, ServiceCombRegistration  serviceCombRegistration) {
+      return new CanaryServiceInstanceListSupplier(
+              new ZoneAwareServiceInstanceListSupplier(
+                      ServiceInstanceListSupplier.builder().withBlockingDiscoveryClient().withRequestBasedStickySession()
+                              .build(context), serviceCombRegistration));
+    }
+
+    @Bean
+    @ConditionalOnBean(DiscoveryClient.class)
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(value = "spring.cloud.loadbalancer.configurations",
+            havingValue = "same-instance-preference")
+    public ServiceInstanceListSupplier sameInstancePreferenceServiceInstanceListSupplier(
+            ConfigurableApplicationContext context, ServiceCombRegistration  serviceCombRegistration) {
+      return new CanaryServiceInstanceListSupplier(
+              new ZoneAwareServiceInstanceListSupplier(
+                      ServiceInstanceListSupplier.builder().withBlockingDiscoveryClient().withSameInstancePreference()
+                              .build(context), serviceCombRegistration));
     }
   }
 
