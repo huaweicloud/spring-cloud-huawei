@@ -22,12 +22,12 @@ import org.springframework.cloud.client.loadbalancer.LoadBalancerRequest;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
 
-public class CanaryLoadBalancerRequest implements LoadBalancerRequest<ClientHttpResponse> {
+public class RouterLoadBalancerRequest implements LoadBalancerRequest<ClientHttpResponse> {
   private LoadBalancerRequest<ClientHttpResponse> delegate;
 
   private HttpRequest request;
 
-  public CanaryLoadBalancerRequest(LoadBalancerRequest<ClientHttpResponse> delegate) {
+  public RouterLoadBalancerRequest(LoadBalancerRequest<ClientHttpResponse> delegate) {
     this.delegate = delegate;
   }
 

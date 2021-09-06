@@ -41,8 +41,8 @@ import com.huaweicloud.router.client.track.RouterTrackContext;
 import reactor.core.publisher.Flux;
 
 @SuppressWarnings({"rawtype", "unchecked"})
-public class CanaryServiceInstanceListSupplier implements ServiceInstanceListSupplier {
-  private static final Logger LOGGER = LoggerFactory.getLogger(CanaryServiceInstanceListSupplier.class);
+public class RouterServiceInstanceListSupplier implements ServiceInstanceListSupplier {
+  private static final Logger LOGGER = LoggerFactory.getLogger(RouterServiceInstanceListSupplier.class);
 
   @Autowired
   private AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor;
@@ -52,7 +52,7 @@ public class CanaryServiceInstanceListSupplier implements ServiceInstanceListSup
 
   private ServiceInstanceListSupplier delegate;
 
-  public CanaryServiceInstanceListSupplier(ServiceInstanceListSupplier delegate) {
+  public RouterServiceInstanceListSupplier(ServiceInstanceListSupplier delegate) {
     this.delegate = delegate;
   }
 
@@ -80,9 +80,9 @@ public class CanaryServiceInstanceListSupplier implements ServiceInstanceListSup
 
     Object clientRequest = context.getClientRequest();
     HttpHeaders httpHeaders;
-    if (clientRequest instanceof CanaryLoadBalancerRequest) {
+    if (clientRequest instanceof RouterLoadBalancerRequest) {
       // rest template
-      httpHeaders = ((CanaryLoadBalancerRequest) clientRequest).getRequest().getHeaders();
+      httpHeaders = ((RouterLoadBalancerRequest) clientRequest).getRequest().getHeaders();
     } else {
       // feign
       httpHeaders = ((RequestData) clientRequest).getHeaders();
