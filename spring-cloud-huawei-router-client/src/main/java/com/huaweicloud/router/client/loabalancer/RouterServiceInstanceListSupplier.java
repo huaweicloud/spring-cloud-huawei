@@ -17,38 +17,20 @@
 
 package com.huaweicloud.router.client.loabalancer;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.servicecomb.foundation.common.utils.JsonUtils;
-import org.apache.servicecomb.router.RouterFilter;
-import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
-import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.loadbalancer.DefaultRequestContext;
 import org.springframework.cloud.client.loadbalancer.Request;
-import org.springframework.cloud.client.loadbalancer.RequestData;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
-import org.springframework.http.HttpHeaders;
-
-import com.huaweicloud.router.client.track.RouterTrackContext;
-
 import reactor.core.publisher.Flux;
+
+import java.util.Collections;
+import java.util.List;
 
 @SuppressWarnings({"rawtype", "unchecked"})
 public class RouterServiceInstanceListSupplier implements ServiceInstanceListSupplier {
-  private static final Logger LOGGER = LoggerFactory.getLogger(RouterServiceInstanceListSupplier.class);
 
   @Autowired
-  private AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor;
-
-  @Autowired
-  private RouterFilter routerFilter;
+  private List<ServiceInstanceFilter> filters;
 
   private ServiceInstanceListSupplier delegate;
 
@@ -75,32 +57,15 @@ public class RouterServiceInstanceListSupplier implements ServiceInstanceListSup
 
   @SuppressWarnings({"all"})
   private List<ServiceInstance> filter(List<ServiceInstance> instances, @SuppressWarnings({"all"}) Request<?> request) {
-    String targetServiceName = getServiceId();
-    DefaultRequestContext context = (DefaultRequestContext) request.getContext();
-
-    Object clientRequest = context.getClientRequest();
-    HttpHeaders httpHeaders;
-    if (clientRequest instanceof RouterLoadBalancerRequest) {
-      // rest template
-      httpHeaders = ((RouterLoadBalancerRequest) clientRequest).getRequest().getHeaders();
-    } else {
-      // feign
-      httpHeaders = ((RequestData) clientRequest).getHeaders();
+    if (filters == null) {
+      return instances;
     }
 
-    Map<String, String> canaryHeaders = new HashMap<>();
-    try {
-      if (httpHeaders.getFirst(RouterTrackContext.ROUTER_TRACK_HEADER) != null) {
-        canaryHeaders.putAll(
-            JsonUtils.readValue(httpHeaders.getFirst(RouterTrackContext.ROUTER_TRACK_HEADER).getBytes(), Map.class));
-      }
-      canaryHeaders.putAll(httpHeaders.toSingleValueMap());
-    } catch (IOException e) {
-      LOGGER.warn("decode headers failed for {}", e.getMessage());
+    Collections.sort(filters, (a, b) -> a.order() - b.order());
+    List<ServiceInstance> filteredInstances = instances;
+    for (ServiceInstanceFilter instanceFilter : filters) {
+      filteredInstances = instanceFilter.filter(this, filteredInstances, request);
     }
-
-    return routerFilter
-        .getFilteredListOfServers(instances, targetServiceName, canaryHeaders,
-            routerDistributor);
+    return filteredInstances;
   }
 }

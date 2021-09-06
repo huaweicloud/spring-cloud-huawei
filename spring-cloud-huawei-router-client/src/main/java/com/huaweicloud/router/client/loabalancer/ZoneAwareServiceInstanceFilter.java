@@ -15,48 +15,41 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.router.client.loabalancer.zoneaware;
+package com.huaweicloud.router.client.loabalancer;
 
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.Request;
-import org.springframework.cloud.loadbalancer.core.DelegatingServiceInstanceListSupplier;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
-import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class ZoneAwareServiceInstanceListSupplier extends DelegatingServiceInstanceListSupplier {
+public class ZoneAwareServiceInstanceFilter implements ServiceInstanceFilter {
 
-    private ServiceCombRegistration  serviceCombRegistration;
+    @Autowired
+    private ServiceCombRegistration serviceCombRegistration;
 
-    public ZoneAwareServiceInstanceListSupplier(ServiceInstanceListSupplier delegate, ServiceCombRegistration serviceCombRegistration) {
-        super(delegate);
-        this.serviceCombRegistration = serviceCombRegistration;
-    }
-
-    @Override
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public Flux<List<ServiceInstance>> get(Request request) {
-        Flux<List<ServiceInstance>> result = getDelegate().get(request);
-        return result.map(this::filter);
-    }
+    @Value("spring.cloud.servicecomb.discovery.crossZoneLoadBalancing:false")
+    private boolean crossZoneLoadBalancing;
 
     @Override
-    public Flux<List<ServiceInstance>> get() {
-        return getDelegate().get();
-    }
-
-    private List<ServiceInstance> filter(List<ServiceInstance> instances) {
+    public List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances, Request<?> request) {
         MicroserviceInstance mySelf = serviceCombRegistration.getMicroserviceInstance();
         List<ServiceInstance> filterInstances =  zoneAwareDiscoveryFilter(mySelf, instances);
         return filterInstances;
     }
 
-    @SuppressWarnings({"all"})
+    @Override
+    public int order() {
+        return -2;
+    }
+
     private List<ServiceInstance> zoneAwareDiscoveryFilter(MicroserviceInstance mySelf, List<ServiceInstance> instances) {
         List<ServiceInstance> regionAndAZMatchList = new ArrayList<>();
         List<ServiceInstance> regionMatchList = new ArrayList<>();
@@ -74,7 +67,11 @@ public class ZoneAwareServiceInstanceListSupplier extends DelegatingServiceInsta
         if (!regionMatchList.isEmpty()) {
             return regionMatchList;
         }
-        return instances;
+        if (crossZoneLoadBalancing) {
+            return instances;
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     private boolean regionAndAZMatch(MicroserviceInstance myself, MicroserviceInstance target) {
