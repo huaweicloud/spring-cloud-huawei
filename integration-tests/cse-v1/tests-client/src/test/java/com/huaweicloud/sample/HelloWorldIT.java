@@ -43,7 +43,7 @@ public class HelloWorldIT {
   }
 
   @Test
-  public void testHelloWorldCanary() {
+  public void testConsumerHelloWorldCanary() {
     int oldCount = 0;
     int newCount = 0;
 
@@ -56,6 +56,32 @@ public class HelloWorldIT {
       if (result.equals("Hello Canary World")) {
         oldCount++;
       } else if (result.equals("Hello Canary in canary World")) {
+        newCount++;
+      } else {
+        Assert.fail("not expected result testHelloWorldCanary");
+        return;
+      }
+    }
+
+    double ratio = oldCount / (float) (oldCount + newCount);
+    assertThat(ratio).isBetween(0.1, 0.3);
+  }
+
+
+  @Test
+  public void testGatewayHelloWorldCanary() {
+    int oldCount = 0;
+    int newCount = 0;
+
+    for (int i = 0; i < 20; i++) {
+      MultiValueMap<String, String> headers = new HttpHeaders();
+      headers.add("canary", "new");
+      HttpEntity<Object> entity = new HttpEntity<>(headers);
+      String result = template
+          .exchange(Config.GATEWAY_URL + "/gateway/sayHelloCanary?name=World", HttpMethod.GET, entity, String.class).getBody();
+      if (result.equals("Hello Gateway Canary World")) {
+        oldCount++;
+      } else if (result.equals("Hello Gateway Canary in canary World")) {
         newCount++;
       } else {
         Assert.fail("not expected result testHelloWorldCanary");
