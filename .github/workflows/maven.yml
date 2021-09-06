@@ -5,9 +5,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ master ]
+    branches: [ Hoxton ]
   pull_request:
-    branches: [ master ]
+    branches: [ Hoxton ]
 
 jobs:
   build:
