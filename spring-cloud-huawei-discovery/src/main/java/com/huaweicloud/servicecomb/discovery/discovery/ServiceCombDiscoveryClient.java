@@ -25,16 +25,12 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.InstanceChangedEvent;
 import org.apache.servicecomb.service.center.client.RegistrationEvents.HeartBeatEvent;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery;
 import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery.SubscriptionKey;
-import org.apache.servicecomb.service.center.client.exception.OperationException;
-import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
-import org.apache.servicecomb.service.center.client.model.MicroservicesResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
@@ -113,9 +109,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
   @Override
   public List<ServiceInstance> getInstances(String serviceId) {
     SubscriptionKey subscriptionKey = parseMicroserviceName(serviceId);
-    if (!serviceCenterDiscovery.isRegistered(subscriptionKey)) {
-      serviceCenterDiscovery.register(subscriptionKey);
-    }
+    serviceCenterDiscovery.registerIfNotPresent(subscriptionKey);
     List<MicroserviceInstance> instances = serviceCenterDiscovery.getInstanceCache(subscriptionKey);
 
     if (instances == null) {
