@@ -41,14 +41,3 @@ spring:
         secretKey: ${CREDENTIALS_SK}
         cipher: default
         project: cn-south-1
-
-## rate limiting configuration
-servicecomb:
-  matchGroup:
-    allOperation: |
-      matches:
-        - apiPath:
-            prefix: "/"
-  rateLimiting:
-    allOperation: |
-      rate: 100
