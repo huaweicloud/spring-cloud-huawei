@@ -36,8 +36,8 @@ public class ZoneAwareServiceInstanceFilter implements ServiceInstanceFilter {
   @Autowired
   private ServiceCombRegistration serviceCombRegistration;
 
-  @Value("spring.cloud.servicecomb.discovery.crossZoneLoadBalancing:false")
-  private boolean crossZoneLoadBalancing;
+  @Value("spring.cloud.servicecomb.discovery.denyCrossZoneLoadBalancing:false")
+  private boolean denyCrossZoneLoadBalancing;
 
   @Override
   public List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances,
@@ -48,7 +48,7 @@ public class ZoneAwareServiceInstanceFilter implements ServiceInstanceFilter {
   }
 
   @Override
-  public int order() {
+  public int getOrder() {
     return -2;
   }
 
@@ -69,7 +69,7 @@ public class ZoneAwareServiceInstanceFilter implements ServiceInstanceFilter {
     if (!regionMatchList.isEmpty()) {
       return regionMatchList;
     }
-    if (crossZoneLoadBalancing) {
+    if (!denyCrossZoneLoadBalancing) {
       return instances;
     } else {
       return Collections.emptyList();

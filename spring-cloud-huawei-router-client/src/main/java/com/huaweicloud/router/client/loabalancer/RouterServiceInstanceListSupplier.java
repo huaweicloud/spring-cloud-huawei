@@ -17,14 +17,19 @@
 
 package com.huaweicloud.router.client.loabalancer;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
-import reactor.core.publisher.Flux;
+import org.springframework.core.Ordered;
 
-import java.util.Collections;
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 @SuppressWarnings({"rawtype", "unchecked"})
 public class RouterServiceInstanceListSupplier implements ServiceInstanceListSupplier {
@@ -36,6 +41,13 @@ public class RouterServiceInstanceListSupplier implements ServiceInstanceListSup
 
   public RouterServiceInstanceListSupplier(ServiceInstanceListSupplier delegate) {
     this.delegate = delegate;
+  }
+
+  @PostConstruct
+  private void init() {
+    if (filters != null) {
+      Collections.sort(filters, Comparator.comparingInt(Ordered::getOrder));
+    }
   }
 
   @Override
@@ -61,7 +73,6 @@ public class RouterServiceInstanceListSupplier implements ServiceInstanceListSup
       return instances;
     }
 
-    Collections.sort(filters, (a, b) -> a.order() - b.order());
     List<ServiceInstance> filteredInstances = instances;
     for (ServiceInstanceFilter instanceFilter : filters) {
       filteredInstances = instanceFilter.filter(this, filteredInstances, request);
