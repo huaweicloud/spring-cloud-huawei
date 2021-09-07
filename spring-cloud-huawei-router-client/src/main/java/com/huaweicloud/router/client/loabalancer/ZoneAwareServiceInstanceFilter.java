@@ -19,6 +19,7 @@ package com.huaweicloud.router.client.loabalancer;
 
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
+
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,60 +33,61 @@ import java.util.List;
 
 public class ZoneAwareServiceInstanceFilter implements ServiceInstanceFilter {
 
-    @Autowired
-    private ServiceCombRegistration serviceCombRegistration;
+  @Autowired
+  private ServiceCombRegistration serviceCombRegistration;
 
-    @Value("spring.cloud.servicecomb.discovery.crossZoneLoadBalancing:false")
-    private boolean crossZoneLoadBalancing;
+  @Value("spring.cloud.servicecomb.discovery.crossZoneLoadBalancing:false")
+  private boolean crossZoneLoadBalancing;
 
-    @Override
-    public List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances, Request<?> request) {
-        MicroserviceInstance mySelf = serviceCombRegistration.getMicroserviceInstance();
-        List<ServiceInstance> filterInstances =  zoneAwareDiscoveryFilter(mySelf, instances);
-        return filterInstances;
+  @Override
+  public List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances,
+      Request<?> request) {
+    MicroserviceInstance mySelf = serviceCombRegistration.getMicroserviceInstance();
+    List<ServiceInstance> filterInstances = zoneAwareDiscoveryFilter(mySelf, instances);
+    return filterInstances;
+  }
+
+  @Override
+  public int order() {
+    return -2;
+  }
+
+  private List<ServiceInstance> zoneAwareDiscoveryFilter(MicroserviceInstance mySelf, List<ServiceInstance> instances) {
+    List<ServiceInstance> regionAndAZMatchList = new ArrayList<>();
+    List<ServiceInstance> regionMatchList = new ArrayList<>();
+    instances.forEach(serviceInstance -> {
+      ServiceCombServiceInstance instance = (ServiceCombServiceInstance) serviceInstance;
+      if (regionAndAZMatch(mySelf, instance.getMicroserviceInstance())) {
+        regionAndAZMatchList.add(serviceInstance);
+      } else if (regionMatch(mySelf, instance.getMicroserviceInstance())) {
+        regionMatchList.add(serviceInstance);
+      }
+    });
+    if (!regionAndAZMatchList.isEmpty()) {
+      return regionAndAZMatchList;
     }
-
-    @Override
-    public int order() {
-        return -2;
+    if (!regionMatchList.isEmpty()) {
+      return regionMatchList;
     }
-
-    private List<ServiceInstance> zoneAwareDiscoveryFilter(MicroserviceInstance mySelf, List<ServiceInstance> instances) {
-        List<ServiceInstance> regionAndAZMatchList = new ArrayList<>();
-        List<ServiceInstance> regionMatchList = new ArrayList<>();
-        instances.forEach(serviceInstance -> {
-            ServiceCombServiceInstance instance = (ServiceCombServiceInstance) serviceInstance;
-            if (regionAndAZMatch(mySelf, instance.getMicroserviceInstance())) {
-                regionAndAZMatchList.add(serviceInstance);
-            } else if (regionMatch(mySelf, instance.getMicroserviceInstance())) {
-                regionMatchList.add(serviceInstance);
-            }
-        });
-        if (!regionAndAZMatchList.isEmpty()) {
-            return regionAndAZMatchList;
-        }
-        if (!regionMatchList.isEmpty()) {
-            return regionMatchList;
-        }
-        if (crossZoneLoadBalancing) {
-            return instances;
-        } else {
-            return Collections.emptyList();
-        }
+    if (crossZoneLoadBalancing) {
+      return instances;
+    } else {
+      return Collections.emptyList();
     }
+  }
 
-    private boolean regionAndAZMatch(MicroserviceInstance myself, MicroserviceInstance target) {
-        if (myself.getDataCenterInfo() != null && target.getDataCenterInfo() != null) {
-            return myself.getDataCenterInfo().getRegion().equals(target.getDataCenterInfo().getRegion()) &&
-                    myself.getDataCenterInfo().getAvailableZone().equals(target.getDataCenterInfo().getAvailableZone());
-        }
-        return false;
+  private boolean regionAndAZMatch(MicroserviceInstance myself, MicroserviceInstance target) {
+    if (myself.getDataCenterInfo() != null && target.getDataCenterInfo() != null) {
+      return myself.getDataCenterInfo().getRegion().equals(target.getDataCenterInfo().getRegion()) &&
+          myself.getDataCenterInfo().getAvailableZone().equals(target.getDataCenterInfo().getAvailableZone());
     }
+    return false;
+  }
 
-    private boolean regionMatch(MicroserviceInstance myself, MicroserviceInstance target) {
-        if (target.getDataCenterInfo() != null) {
-            return myself.getDataCenterInfo().getRegion().equals(target.getDataCenterInfo().getRegion());
-        }
-        return false;
+  private boolean regionMatch(MicroserviceInstance myself, MicroserviceInstance target) {
+    if (target.getDataCenterInfo() != null) {
+      return myself.getDataCenterInfo().getRegion().equals(target.getDataCenterInfo().getRegion());
     }
+    return false;
+  }
 }

@@ -18,6 +18,7 @@
 package com.huaweicloud.router.client.loabalancer;
 
 import com.huaweicloud.router.client.track.RouterTrackContext;
+
 import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.apache.servicecomb.router.RouterFilter;
 import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
@@ -39,48 +40,49 @@ import java.util.Map;
 
 public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CanaryServiceInstanceFilter.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(CanaryServiceInstanceFilter.class);
 
-    @Autowired
-    private AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor;
+  @Autowired
+  private AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor;
 
-    @Autowired
-    private RouterFilter routerFilter;
+  @Autowired
+  private RouterFilter routerFilter;
 
-    @Override
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances, Request<?> request) {
-        String targetServiceName = supplier.getServiceId();
-        DefaultRequestContext context = (DefaultRequestContext) request.getContext();
+  @Override
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances,
+      Request<?> request) {
+    String targetServiceName = supplier.getServiceId();
+    DefaultRequestContext context = (DefaultRequestContext) request.getContext();
 
-        Object clientRequest = context.getClientRequest();
-        HttpHeaders httpHeaders;
-        if (clientRequest instanceof RouterLoadBalancerRequest) {
-            // rest template
-            httpHeaders = ((RouterLoadBalancerRequest) clientRequest).getRequest().getHeaders();
-        } else {
-            // feign
-            httpHeaders = ((RequestData) clientRequest).getHeaders();
-        }
-
-        Map<String, String> canaryHeaders = new HashMap<>();
-        try {
-            if (httpHeaders.getFirst(RouterTrackContext.ROUTER_TRACK_HEADER) != null) {
-                canaryHeaders.putAll(
-                        JsonUtils.readValue(httpHeaders.getFirst(RouterTrackContext.ROUTER_TRACK_HEADER).getBytes(), Map.class));
-            }
-            canaryHeaders.putAll(httpHeaders.toSingleValueMap());
-        } catch (IOException e) {
-            LOGGER.warn("decode headers failed for {}", e.getMessage());
-        }
-
-        return routerFilter
-                .getFilteredListOfServers(instances, targetServiceName, canaryHeaders,
-                        routerDistributor);
+    Object clientRequest = context.getClientRequest();
+    HttpHeaders httpHeaders;
+    if (clientRequest instanceof RouterLoadBalancerRequest) {
+      // rest template
+      httpHeaders = ((RouterLoadBalancerRequest) clientRequest).getRequest().getHeaders();
+    } else {
+      // feign
+      httpHeaders = ((RequestData) clientRequest).getHeaders();
     }
 
-    @Override
-    public int order() {
-        return -1;
+    Map<String, String> canaryHeaders = new HashMap<>();
+    try {
+      if (httpHeaders.getFirst(RouterTrackContext.ROUTER_TRACK_HEADER) != null) {
+        canaryHeaders.putAll(
+            JsonUtils.readValue(httpHeaders.getFirst(RouterTrackContext.ROUTER_TRACK_HEADER).getBytes(), Map.class));
+      }
+      canaryHeaders.putAll(httpHeaders.toSingleValueMap());
+    } catch (IOException e) {
+      LOGGER.warn("decode headers failed for {}", e.getMessage());
     }
+
+    return routerFilter
+        .getFilteredListOfServers(instances, targetServiceName, canaryHeaders,
+            routerDistributor);
+  }
+
+  @Override
+  public int order() {
+    return -1;
+  }
 }
