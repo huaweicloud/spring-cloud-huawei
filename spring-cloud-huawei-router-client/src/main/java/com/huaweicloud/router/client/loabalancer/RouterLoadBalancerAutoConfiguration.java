@@ -17,33 +17,33 @@
 
 package com.huaweicloud.router.client.loabalancer;
 
+import java.util.Collections;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerRequest;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerRequestFactory;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerRequestTransformer;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.client.ClientHttpRequestExecution;
-import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClients;
+import org.springframework.context.annotation.Bean;
 
-public class CanaryLoadBalancerRequestFactory extends LoadBalancerRequestFactory {
+/**
+ * This class is adapted from LoadBalancerAutoConfiguration. When upgrading spring cloud, this may need change.
+ *
+ * Intentions:
+ *
+ * 1. set up LoadBalancerClients defaultConfiguration
+ * 2. custom LoadBalancerRequestFactory to get HttpRequest object
+ */
+@LoadBalancerClients(defaultConfiguration = RouterLoadBalancerClientConfiguration.class)
+public class RouterLoadBalancerAutoConfiguration {
+  @Autowired(required = false)
+  private List<LoadBalancerRequestTransformer> transformers = Collections.emptyList();
 
-  public CanaryLoadBalancerRequestFactory(LoadBalancerClient loadBalancer,
-      List<LoadBalancerRequestTransformer> transformers) {
-    super(loadBalancer, transformers);
-  }
-
-  public CanaryLoadBalancerRequestFactory(LoadBalancerClient loadBalancer) {
-    super(loadBalancer);
-  }
-
-  @Override
-  public LoadBalancerRequest<ClientHttpResponse> createRequest(final HttpRequest request, final byte[] body,
-      final ClientHttpRequestExecution execution) {
-    LoadBalancerRequest<ClientHttpResponse> loadBalancerRequest = super.createRequest(request, body, execution);
-    CanaryLoadBalancerRequest canaryLoadBalancerRequest = new CanaryLoadBalancerRequest(loadBalancerRequest);
-    canaryLoadBalancerRequest.setRequest(request);
-    return canaryLoadBalancerRequest;
+  @Bean
+  @ConditionalOnMissingBean
+  public LoadBalancerRequestFactory loadBalancerRequestFactory(LoadBalancerClient loadBalancerClient) {
+    return new RouterLoadBalancerRequestFactory(loadBalancerClient, this.transformers);
   }
 }

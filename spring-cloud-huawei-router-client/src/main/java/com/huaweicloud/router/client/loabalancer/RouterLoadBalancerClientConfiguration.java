@@ -57,9 +57,23 @@ import reactor.util.retry.RetrySpec;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnDiscoveryEnabled
-public class CanaryLoadBalancerClientConfiguration {
+public class RouterLoadBalancerClientConfiguration {
 
   private static final int REACTIVE_SERVICE_INSTANCE_SUPPLIER_ORDER = 193827465;
+
+
+  @Bean
+  @ConditionalOnMissingBean(CanaryServiceInstanceFilter.class)
+  public CanaryServiceInstanceFilter canaryServiceInstanceFilter() {
+    return new CanaryServiceInstanceFilter();
+  }
+
+  @Bean
+  @ConditionalOnMissingBean(ZoneAwareServiceInstanceFilter.class)
+  @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.enabledZoneAware", havingValue = "true")
+  public ZoneAwareServiceInstanceFilter zoneAwareServiceInstanceFilter() {
+    return new ZoneAwareServiceInstanceFilter();
+  }
 
   @Bean
   @ConditionalOnMissingBean
@@ -82,7 +96,7 @@ public class CanaryLoadBalancerClientConfiguration {
         matchIfMissing = true)
     public ServiceInstanceListSupplier discoveryClientServiceInstanceListSupplier(
         ConfigurableApplicationContext context) {
-      return new CanaryServiceInstanceListSupplier(
+      return new RouterServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withDiscoveryClient().withCaching().build(context));
     }
 
@@ -92,7 +106,7 @@ public class CanaryLoadBalancerClientConfiguration {
     @ConditionalOnProperty(value = "spring.cloud.loadbalancer.configurations", havingValue = "zone-preference")
     public ServiceInstanceListSupplier zonePreferenceDiscoveryClientServiceInstanceListSupplier(
         ConfigurableApplicationContext context) {
-      return new CanaryServiceInstanceListSupplier(
+      return new RouterServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withDiscoveryClient().withZonePreference().withCaching()
               .build(context));
     }
@@ -103,7 +117,7 @@ public class CanaryLoadBalancerClientConfiguration {
     @ConditionalOnProperty(value = "spring.cloud.loadbalancer.configurations", havingValue = "health-check")
     public ServiceInstanceListSupplier healthCheckDiscoveryClientServiceInstanceListSupplier(
         ConfigurableApplicationContext context) {
-      return new CanaryServiceInstanceListSupplier(
+      return new RouterServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withDiscoveryClient().withHealthChecks().build(context));
     }
 
@@ -114,7 +128,7 @@ public class CanaryLoadBalancerClientConfiguration {
         havingValue = "request-based-sticky-session")
     public ServiceInstanceListSupplier requestBasedStickySessionDiscoveryClientServiceInstanceListSupplier(
         ConfigurableApplicationContext context) {
-      return new CanaryServiceInstanceListSupplier(
+      return new RouterServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withDiscoveryClient().withRequestBasedStickySession()
               .build(context));
     }
@@ -126,7 +140,7 @@ public class CanaryLoadBalancerClientConfiguration {
         havingValue = "same-instance-preference")
     public ServiceInstanceListSupplier sameInstancePreferenceServiceInstanceListSupplier(
         ConfigurableApplicationContext context) {
-      return new CanaryServiceInstanceListSupplier(
+      return new RouterServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withDiscoveryClient().withSameInstancePreference()
               .build(context));
     }
@@ -144,7 +158,7 @@ public class CanaryLoadBalancerClientConfiguration {
         matchIfMissing = true)
     public ServiceInstanceListSupplier discoveryClientServiceInstanceListSupplier(
         ConfigurableApplicationContext context) {
-      return new CanaryServiceInstanceListSupplier(
+      return new RouterServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withBlockingDiscoveryClient().withCaching().build(context));
     }
 
@@ -154,7 +168,7 @@ public class CanaryLoadBalancerClientConfiguration {
     @ConditionalOnProperty(value = "spring.cloud.loadbalancer.configurations", havingValue = "zone-preference")
     public ServiceInstanceListSupplier zonePreferenceDiscoveryClientServiceInstanceListSupplier(
         ConfigurableApplicationContext context) {
-      return new CanaryServiceInstanceListSupplier(
+      return new RouterServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withBlockingDiscoveryClient().withZonePreference()
               .withCaching().build(context));
     }
@@ -165,7 +179,7 @@ public class CanaryLoadBalancerClientConfiguration {
     @ConditionalOnProperty(value = "spring.cloud.loadbalancer.configurations", havingValue = "health-check")
     public ServiceInstanceListSupplier healthCheckDiscoveryClientServiceInstanceListSupplier(
         ConfigurableApplicationContext context) {
-      return new CanaryServiceInstanceListSupplier(
+      return new RouterServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withBlockingDiscoveryClient().withBlockingHealthChecks()
               .build(context));
     }
@@ -177,7 +191,7 @@ public class CanaryLoadBalancerClientConfiguration {
         havingValue = "request-based-sticky-session")
     public ServiceInstanceListSupplier requestBasedStickySessionDiscoveryClientServiceInstanceListSupplier(
         ConfigurableApplicationContext context) {
-      return new CanaryServiceInstanceListSupplier(
+      return new RouterServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withBlockingDiscoveryClient().withRequestBasedStickySession()
               .build(context));
     }
@@ -189,7 +203,7 @@ public class CanaryLoadBalancerClientConfiguration {
         havingValue = "same-instance-preference")
     public ServiceInstanceListSupplier sameInstancePreferenceServiceInstanceListSupplier(
         ConfigurableApplicationContext context) {
-      return new CanaryServiceInstanceListSupplier(
+      return new RouterServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withBlockingDiscoveryClient().withSameInstancePreference()
               .build(context));
     }
@@ -198,7 +212,7 @@ public class CanaryLoadBalancerClientConfiguration {
   @Configuration(proxyBeanMethods = false)
   @ConditionalOnBlockingDiscoveryEnabled
   @ConditionalOnClass(RetryTemplate.class)
-  @Conditional(CanaryLoadBalancerClientConfiguration.BlockingOnAvoidPreviousInstanceAndRetryEnabledCondition.class)
+  @Conditional(RouterLoadBalancerClientConfiguration.BlockingOnAvoidPreviousInstanceAndRetryEnabledCondition.class)
   @AutoConfigureAfter(LoadBalancerClientConfiguration.BlockingSupportConfiguration.class)
   @ConditionalOnBean(ServiceInstanceListSupplier.class)
   public static class BlockingRetryConfiguration {
@@ -214,7 +228,7 @@ public class CanaryLoadBalancerClientConfiguration {
 
   @Configuration(proxyBeanMethods = false)
   @ConditionalOnBlockingDiscoveryEnabled
-  @Conditional(CanaryLoadBalancerClientConfiguration.ReactiveOnAvoidPreviousInstanceAndRetryEnabledCondition.class)
+  @Conditional(RouterLoadBalancerClientConfiguration.ReactiveOnAvoidPreviousInstanceAndRetryEnabledCondition.class)
   @AutoConfigureAfter(LoadBalancerClientConfiguration.ReactiveSupportConfiguration.class)
   @ConditionalOnBean(ServiceInstanceListSupplier.class)
   @ConditionalOnClass(RetrySpec.class)

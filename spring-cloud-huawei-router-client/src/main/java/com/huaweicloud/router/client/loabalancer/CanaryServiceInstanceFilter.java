@@ -17,10 +17,7 @@
 
 package com.huaweicloud.router.client.loabalancer;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.huaweicloud.router.client.track.RouterTrackContext;
 
 import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.apache.servicecomb.router.RouterFilter;
@@ -36,13 +33,14 @@ import org.springframework.cloud.client.loadbalancer.RequestData;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.http.HttpHeaders;
 
-import com.huaweicloud.router.client.track.RouterTrackContext;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import reactor.core.publisher.Flux;
+public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
 
-@SuppressWarnings({"rawtype", "unchecked"})
-public class CanaryServiceInstanceListSupplier implements ServiceInstanceListSupplier {
-  private static final Logger LOGGER = LoggerFactory.getLogger(CanaryServiceInstanceListSupplier.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(CanaryServiceInstanceFilter.class);
 
   @Autowired
   private AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor;
@@ -50,39 +48,18 @@ public class CanaryServiceInstanceListSupplier implements ServiceInstanceListSup
   @Autowired
   private RouterFilter routerFilter;
 
-  private ServiceInstanceListSupplier delegate;
-
-  public CanaryServiceInstanceListSupplier(ServiceInstanceListSupplier delegate) {
-    this.delegate = delegate;
-  }
-
-  @Override
-  public String getServiceId() {
-    return this.delegate.getServiceId();
-  }
-
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
-  public Flux<List<ServiceInstance>> get(Request request) {
-    Flux<List<ServiceInstance>> result = delegate.get(request);
-    return result.map(instances -> filter(instances, request));
-  }
-
-  @Override
-  public Flux<List<ServiceInstance>> get() {
-    return this.delegate.get();
-  }
-
-  @SuppressWarnings({"all"})
-  private List<ServiceInstance> filter(List<ServiceInstance> instances, @SuppressWarnings({"all"}) Request<?> request) {
-    String targetServiceName = getServiceId();
+  public List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances,
+      Request<?> request) {
+    String targetServiceName = supplier.getServiceId();
     DefaultRequestContext context = (DefaultRequestContext) request.getContext();
 
     Object clientRequest = context.getClientRequest();
     HttpHeaders httpHeaders;
-    if (clientRequest instanceof CanaryLoadBalancerRequest) {
+    if (clientRequest instanceof RouterLoadBalancerRequest) {
       // rest template
-      httpHeaders = ((CanaryLoadBalancerRequest) clientRequest).getRequest().getHeaders();
+      httpHeaders = ((RouterLoadBalancerRequest) clientRequest).getRequest().getHeaders();
     } else {
       // feign
       httpHeaders = ((RequestData) clientRequest).getHeaders();
@@ -102,5 +79,10 @@ public class CanaryServiceInstanceListSupplier implements ServiceInstanceListSup
     return routerFilter
         .getFilteredListOfServers(instances, targetServiceName, canaryHeaders,
             routerDistributor);
+  }
+
+  @Override
+  public int getOrder() {
+    return -1;
   }
 }

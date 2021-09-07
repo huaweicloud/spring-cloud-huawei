@@ -17,4 +17,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.huaweicloud.router.client.RouterClientAutoConfiguration,\
   com.huaweicloud.router.client.CanaryWebMvcConfigurer,\
-  com.huaweicloud.router.client.loabalancer.CanaryLoadBalancerAutoConfiguration
+  com.huaweicloud.router.client.loabalancer.RouterLoadBalancerAutoConfiguration
