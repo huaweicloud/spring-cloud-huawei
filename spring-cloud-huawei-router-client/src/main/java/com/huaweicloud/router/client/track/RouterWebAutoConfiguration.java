@@ -14,21 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.router.client;
+package com.huaweicloud.router.client.track;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import com.huaweicloud.router.client.track.RouterHandlerInterceptor;
-import com.huaweicloud.router.client.track.RouterRequestInterceptor;
-import com.huaweicloud.router.client.track.RouterRestTemplateInterceptor;
 
 import feign.RequestInterceptor;
 
@@ -36,10 +34,19 @@ import feign.RequestInterceptor;
  * 将服务端收到的HTTP请求头设置到线程上下文中， 供Client发送请求的时候使用。
  **/
 @Configuration
-public class CanaryWebMvcConfigurer implements WebMvcConfigurer {
-  @Override
-  public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(new RouterHandlerInterceptor()).addPathPatterns("/**");
+public class RouterWebAutoConfiguration {
+  @Configuration
+  @ConditionalOnClass(WebMvcConfigurer.class)
+  class WebMvcConfigurerEnable {
+    @Bean
+    public WebMvcConfigurer canaryWebMvcConfigurer() {
+      return new WebMvcConfigurer() {
+        @Override
+        public void addInterceptors(InterceptorRegistry registry) {
+          registry.addInterceptor(new RouterHandlerInterceptor()).addPathPatterns("/**");
+        }
+      };
+    }
   }
 
   @Bean
@@ -48,7 +55,7 @@ public class CanaryWebMvcConfigurer implements WebMvcConfigurer {
   }
 
   @Bean
-  public RouterRestTemplateInterceptor restTemplateInterceptor(@Autowired(required = false) @LoadBalanced
+  public ClientHttpRequestInterceptor restTemplateInterceptor(@Autowired(required = false) @LoadBalanced
       List<RestTemplate> restTemplates) {
     RouterRestTemplateInterceptor interceptor = new RouterRestTemplateInterceptor();
     if (restTemplates != null) {
