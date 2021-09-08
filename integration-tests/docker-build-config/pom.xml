@@ -48,7 +48,7 @@
                   </ports>
                   <assembly>
                     <mode>tar</mode>
-                    <descriptor>${root.basedir}/integration-tests/assembly/assembly.xml</descriptor>
+                    <descriptor>${root.basedir}/assembly/assembly.xml</descriptor>
                   </assembly>
                   <entryPoint>
                     <shell>java -Xmx128m $JAVA_OPTS -jar $JAR_PATH</shell>
@@ -74,11 +74,15 @@
             <execution>
               <id>directories</id>
               <goals>
-                <goal>highest-basedir</goal>
+                <goal>directory-of</goal>
               </goals>
               <phase>initialize</phase>
               <configuration>
                 <property>root.basedir</property>
+                <project>
+                  <groupId>com.huaweicloud</groupId>
+                  <artifactId>integration-tests</artifactId>
+                </project>
               </configuration>
             </execution>
           </executions>
