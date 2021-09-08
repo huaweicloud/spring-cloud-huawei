@@ -2,7 +2,7 @@
 
 * 首先登陆华为云华南区，获取 AK/SK。 测试机器设置环境变量： CREDENTIALS_AK、CREDENTIALS_SK。
 * 在配置中心增加如下配置：
-  * consumer.yaml
+  * finchley-consumer.yaml
 
 ```yaml
 cse.v1.test.foo: foo
