@@ -110,9 +110,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
   @Override
   public List<ServiceInstance> getInstances(String serviceId) {
     SubscriptionKey subscriptionKey = parseMicroserviceName(serviceId);
-    if (!serviceCenterDiscovery.isRegistered(subscriptionKey)) {
-      serviceCenterDiscovery.register(subscriptionKey);
-    }
+    serviceCenterDiscovery.registerIfNotPresent(subscriptionKey);
     List<MicroserviceInstance> instances = serviceCenterDiscovery.getInstanceCache(subscriptionKey);
 
     if (instances == null) {
