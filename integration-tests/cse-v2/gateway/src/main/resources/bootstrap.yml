@@ -23,7 +23,7 @@ spring:
   cloud:
     servicecomb:
       discovery:
-        appName: cse-v2-test-application
+        appName: greenwich-v2-test-application
         serviceName: ${spring.application.name}
         watch: false
         address: ${CSE_V2_SC}

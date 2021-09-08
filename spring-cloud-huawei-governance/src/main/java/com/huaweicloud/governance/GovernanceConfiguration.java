@@ -22,8 +22,8 @@ import java.util.List;
 
 import org.apache.servicecomb.governance.InvocationContext;
 import org.apache.servicecomb.governance.MicroserviceMeta;
-import org.apache.servicecomb.governance.event.ConfigurationChangedEvent;
-import org.apache.servicecomb.governance.event.EventManager;
+import org.apache.servicecomb.governance.event.GovernanceConfigurationChangedEvent;
+import org.apache.servicecomb.governance.event.GovernanceEventManager;
 import org.apache.servicecomb.governance.handler.ext.RetryExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -53,8 +53,8 @@ public class GovernanceConfiguration {
 
   @Bean
   public ApplicationListener<ConfigRefreshEvent> governanceApplicationListener() {
-    return configRefreshEvent -> EventManager
-        .post(new ConfigurationChangedEvent(new HashSet<>(configRefreshEvent.getChange())));
+    return configRefreshEvent -> GovernanceEventManager
+        .post(new GovernanceConfigurationChangedEvent(new HashSet<>(configRefreshEvent.getChange())));
   }
 
   @Bean
