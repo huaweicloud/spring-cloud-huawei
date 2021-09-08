@@ -26,7 +26,7 @@ spring:
         enabled: true
         watch: false
         address: ${CSE_V2_SC}
-        appName: cse-v2-test-application
+        appName: greenwich-v2-test-application
         serviceName: ${spring.application.name}
         version: 0.0.1
         healthCheckInterval: 30

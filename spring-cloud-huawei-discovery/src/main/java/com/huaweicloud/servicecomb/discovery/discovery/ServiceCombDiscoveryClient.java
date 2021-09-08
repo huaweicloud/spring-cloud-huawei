@@ -64,16 +64,14 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
 
   private final AtomicLong changeId = new AtomicLong(0);
 
-  private Set<String> instanceIds = new HashSet<>();
-
   public ServiceCombDiscoveryClient(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCenterClient serviceCenterClient, ServiceCombRegistration serviceCombRegistration) {
     this.discoveryProperties = discoveryProperties;
     this.serviceCenterClient = serviceCenterClient;
     this.serviceCombRegistration = serviceCombRegistration;
 
-    serviceCenterDiscovery = new ServiceCenterDiscovery(serviceCenterClient,
-        EventManager.getEventBus());
+    serviceCenterDiscovery = new ServiceCenterDiscovery(serviceCenterClient, EventManager.getEventBus());
+    serviceCenterDiscovery.setPollInterval(discoveryProperties.getPollInterval());
     EventManager.getEventBus().register(this);
   }
 
@@ -112,22 +110,46 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
   @Override
   public List<ServiceInstance> getInstances(String serviceId) {
     SubscriptionKey subscriptionKey = parseMicroserviceName(serviceId);
-    if (!serviceCenterDiscovery.isRegistered(subscriptionKey)) {
-      serviceCenterDiscovery.register(subscriptionKey);
-    }
+    serviceCenterDiscovery.registerIfNotPresent(subscriptionKey);
     List<MicroserviceInstance> instances = serviceCenterDiscovery.getInstanceCache(subscriptionKey);
 
     if (instances == null) {
       return Collections.emptyList();
     }
-    instanceIds.add(serviceId);
-
-    return instances.stream().map(item -> new ServiceCombServiceInstance(item)).collect(Collectors.toList());
+    return instances.stream().map(ServiceCombServiceInstance::new).collect(Collectors.toList());
   }
 
   @Override
   public List<String> getServices() {
-    return new ArrayList<>(instanceIds);
+    List<String> serviceList = new ArrayList<>();
+    try {
+      MicroservicesResponse microServiceResponse = serviceCenterClient.getMicroserviceList();
+      if (microServiceResponse == null || microServiceResponse.getServices() == null) {
+        return serviceList;
+      }
+      for (Microservice microservice : microServiceResponse.getServices()) {
+        if (validMicroserviceName(microservice) != null) {
+          serviceList.add(microservice.getServiceName());
+        }
+      }
+    } catch (OperationException e) {
+      LOGGER.error("getServices failed", e);
+    }
+    return serviceList;
+  }
+
+  private String validMicroserviceName(Microservice microservice) {
+    if (microservice.getAppId().equals(DiscoveryConstants.DEFAULT_APPID) && microservice.getServiceName()
+        .equals(DiscoveryConstants.SERVICE_CENTER)) {
+      return null;
+    }
+
+    if (microservice.getAppId().equals(discoveryProperties.getAppName())) {
+      return microservice.getServiceName();
+    } else if (Boolean.parseBoolean(microservice.getProperties().get(DiscoveryConstants.CONFIG_ALLOW_CROSS_APP_KEY))) {
+      return microservice.getAppId() + DiscoveryConstants.APP_SERVICE_SEPRATOR + microservice.getServiceName();
+    }
+    return null;
   }
 
   @Override

@@ -26,7 +26,7 @@ spring:
         enabled: true
         watch: false
         address: https://cse.cn-south-1.myhuaweicloud.com
-        appName: cse-v1-test-application
+        appName: greenwich-v1-test-application
         serviceName: ${spring.application.name}
         version: 0.0.1
         healthCheckInterval: 30
