@@ -49,9 +49,6 @@
 
  * **spring-cloud-starter-huawei-router:**
      * 支持使用  [ServiceStage][ServiceStage] [灰度发布][Canary release features].
- 
- * **spring-cloud-starter-huawei-dtm:**
-     * 支持使用 [ServiceStage][ServiceStage] [分布式事务][DTM]
 
  * **spring-cloud-starter-huawei-swagger:**
      * 自动契约生成和注册. 
@@ -63,7 +60,6 @@
 
 [ServiceStage]: https://support.huaweicloud.com/usermanual-servicestage/servicestage_user_0400.html
 [CSE]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0002.html
-[DTM]: https://support.huaweicloud.com/devg-servicestage/dtm_devg_0002.html
 [Service Registry]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0017.html
 [Configuration Center]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0018.html
 [Request Marker-based Governance]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0020.html

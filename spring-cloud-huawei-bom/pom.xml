@@ -47,16 +47,6 @@
       </dependency>
       <dependency>
         <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-huawei-dtm</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-starter-huawei-dtm</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.huaweicloud</groupId>
         <artifactId>spring-cloud-huawei-config</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -68,11 +58,6 @@
       <dependency>
         <groupId>com.huaweicloud</groupId>
         <artifactId>spring-cloud-huawei-common</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-huawei-router-core</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
