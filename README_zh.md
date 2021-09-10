@@ -12,8 +12,8 @@
 
 | 分支 | 最新版本 | Spring Cloud基线版本 | Spring Boot基线版本 | 支持的Spring Cloud版本 | 支持的Spring Boot版本|
 | ---------- | ------------ | ----------- | ----------- | ----------- | ----------- |
-| master | 1.6.1-2020.0.x | 2020.0.3 | 2.5.3 | 2020.0.x | 2.5.x |
-| Hoxton | 1.6.1-Hoxton | Hoxton.SR8 | 2.3.5.RELEASE | Hoxton | 2.3.x |
+| master | 1.7.0-2020.0.x | 2020.0.3 | 2.5.3 | 2020.0.x | 2.5.x |
+| Hoxton | 1.7.0-Hoxton | Hoxton.SR9 | 2.3.5.RELEASE | Hoxton | 2.3.x |
 | Greenwich | 1.6.0-Greenwich | Greenwich.SR6 | 2.1.6-RELEASE | Greenwich | 2.1.x |
 | Finchley | 1.6.0-Finchley | 2.0.4.RELEASE | 2.0.9.RELEASE     | Finchley     | 2.0.x       |
 | Edgware | 1.2.0-Edgware | 1.3.6.RELEASE  | 1.5.22.RELEASE    | Edgware      | 1.5.x       |
@@ -21,11 +21,14 @@
 ***注意：***
 * 查询 [Spring Cloud Release Train](https://spring.io/projects/spring-cloud) 选择一个适合业务的版本使用。
 * Spring Cloud Edgeware, Finchley, Greenwich 已经停止维护，不建议在生产环境使用。 
+* Spring Cloud Huawei Hoxton分支只提供Spring Cloud Gateway基于Ribbon的负载均衡，及其配套的基于流量治理和灰度发布功能。
+  Spring Cloud Huawei master（2020.0.x版本）分支只提供Spring Cloud Gateway基于Spring Cloud LoadBalance的负载均衡，
+  及其配套的基于流量治理和灰度发布功能。建议Spring Cloud Gateway升级到2020.0.x版本。
 
 ## 为什么使用
 
-1. Spring Cloud 使用 ServiceComb 提供的服务， 包括 servicecomb-service-center, servicecomb-kie等.
-2. Spring Cloud 使用 ServiceStage 提供的服务. ServiceStage 是一个微服务的运行与托管平台，包括高可用的注册中心、配置中心、服务治理和分布式事务等服务。 
+1. Spring Cloud 使用 ServiceStage 提供的服务. ServiceStage 是一个微服务的运行与托管平台，包括高可用的注册中心、配置中心、服务治理和分布式事务等服务。
+2. Spring Cloud 使用开源项目 [Apache ServiceComb][ServiceComb] 提供的服务， 包括 servicecomb-service-center, servicecomb-kie等 。
 3. 给Spring Cloud应用提供契约生成和注册，灰度发布等功能。
 
 ## 功能模块
@@ -50,9 +53,6 @@
 
  * **spring-cloud-starter-huawei-router:**
      * 支持使用  [ServiceStage][ServiceStage] [灰度发布][Canary release features].
- 
- * **spring-cloud-starter-huawei-dtm:**
-     * 支持使用 [ServiceStage][ServiceStage] [分布式事务][DTM]
 
  * **spring-cloud-starter-huawei-swagger:**
      * 自动契约生成和注册. 
@@ -64,8 +64,8 @@
 
 [ServiceStage]: https://support.huaweicloud.com/usermanual-servicestage/servicestage_user_0400.html
 [CSE]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0002.html
-[DTM]: https://support.huaweicloud.com/devg-servicestage/dtm_devg_0002.html
 [Service Registry]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0017.html
 [Configuration Center]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0018.html
 [Request Marker-based Governance]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0020.html
 [Canary release features]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0023.html
+[ServiceComb]: http://servicecomb.apache.org/cn/developers/
