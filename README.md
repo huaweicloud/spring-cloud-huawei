@@ -2,7 +2,7 @@
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.huaweicloud/spring-cloud-huawei/badge.svg)](https://search.maven.org/search?q=g:com.huaweicloud%20AND%20a:spring-cloud-huawei-dependencies) 
 
-# Spring Cloud Huawei [查看中文文档](README_zh.md)
+# Spring Cloud Huawei [查看中文文档](README_CN.md)
 
 Spring Cloud Huawei is a framework that makes it easier to integrate Spring Cloud and Huawei frameworks.
 Including [Apache ServiceComb](http://servicecomb.apache.org) and [ServiceStage][ServiceStage].
@@ -13,8 +13,8 @@ Including [Apache ServiceComb](http://servicecomb.apache.org) and [ServiceStage]
 | ---------- | ------------ | ----------- | ----------- | ----------- | ----------- |
 | master | 1.7.0-2020.0.x | 2020.0.3 | 2.5.3 | 2020.0.x | 2.5.x |
 | Hoxton | 1.7.0-Hoxton | Hoxton.SR9 | 2.3.5.RELEASE | Hoxton | 2.3.x |
-| Greenwich | 1.6.0-Greenwich | Greenwich.SR6 | 2.1.6-RELEASE | Greenwich | 2.1.x |
-| Finchley | 1.6.0-Finchley | 2.0.4.RELEASE | 2.0.9.RELEASE     | Finchley     | 2.0.x       |
+| Greenwich | 1.6.1-Greenwich | Greenwich.SR6 | 2.1.6-RELEASE | Greenwich | 2.1.x |
+| Finchley | 1.6.1-Finchley | 2.0.4.RELEASE | 2.0.9.RELEASE     | Finchley     | 2.0.x       |
 | Edgware | 1.2.0-Edgware | 1.3.6.RELEASE  | 1.5.22.RELEASE    | Edgware      | 1.5.x       |
 
 ***Notice：***
