@@ -11,8 +11,8 @@ Including [Apache ServiceComb](http://servicecomb.apache.org) and [ServiceStage]
 
 | Branch | Latest Version | Spring Cloud Base Version | Spring Boot Base Version | Supported Spring Cloud Version | Supported Spring Boot Version|
 | ---------- | ------------ | ----------- | ----------- | ----------- | ----------- |
-| master | 1.6.1-2020.0.x | 2020.0.3 | 2.5.3 | 2020.0.x | 2.5.x |
-| Hoxton | 1.6.1-Hoxton | Hoxton.SR8 | 2.3.5.RELEASE | Hoxton | 2.3.x |
+| master | 1.7.0-2020.0.x | 2020.0.3 | 2.5.3 | 2020.0.x | 2.5.x |
+| Hoxton | 1.7.0-Hoxton | Hoxton.SR9 | 2.3.5.RELEASE | Hoxton | 2.3.x |
 | Greenwich | 1.6.0-Greenwich | Greenwich.SR6 | 2.1.6-RELEASE | Greenwich | 2.1.x |
 | Finchley | 1.6.0-Finchley | 2.0.4.RELEASE | 2.0.9.RELEASE     | Finchley     | 2.0.x       |
 | Edgware | 1.2.0-Edgware | 1.3.6.RELEASE  | 1.5.22.RELEASE    | Edgware      | 1.5.x       |
@@ -20,13 +20,15 @@ Including [Apache ServiceComb](http://servicecomb.apache.org) and [ServiceStage]
 ***Notice：***
 * Check [Spring Cloud Release Train](https://spring.io/projects/spring-cloud), and find a proper version to use.
 * Spring Cloud Edgeware, Finchley, Greenwich have all reached end of life status and are no longer supported.
+* Spring Cloud Huawei Hoxton branch only implements Spring Cloud Gateway loadbalance with Ribbon, and master branch (for 2020.0.x) only implements
+  Spring Cloud Gateway loadbance with Spring Cloud LoadBalance. Recommend update Spring Cloud Gateway support for 2020.0.x.
 
 ## Why use
 
-1. Integrate Spring Cloud applications to Apache ServiceComb services, like servicecomb-service-center, servicecomb-kie.
-2. Integrate Spring Cloud applications to use ServiceStage. ServiceStage is a service deployment environment for microservices,
-   includs high available discovery and registration service, configuration service, governance service, transaction management
+1. Integrate Spring Cloud applications to use ServiceStage. ServiceStage is a service deployment environment for microservices,
+   includes high available discovery and registration service, configuration service, governance service, transaction management
    service and so on. 
+2. Integrate Spring Cloud applications to use open source [Apache ServiceComb][ServiceComb] services, like servicecomb-service-center, servicecomb-kie.
 3. Other enhancements like swagger generation and registration, canary release and so on.
 
 ## Modules
@@ -51,9 +53,6 @@ Including [Apache ServiceComb](http://servicecomb.apache.org) and [ServiceStage]
 
  * **spring-cloud-starter-huawei-router:**
      * Support for use [ServiceStage][ServiceStage] [Canary release features][Canary release features].
- 
- * **spring-cloud-starter-huawei-dtm:**
-     * Support for use [ServiceStage][ServiceStage] [DTM][DTM]
 
  * **spring-cloud-starter-huawei-swagger:**
      * Automatically swagger document generation and registration. 
@@ -65,8 +64,8 @@ Including [Apache ServiceComb](http://servicecomb.apache.org) and [ServiceStage]
 
 [ServiceStage]: https://support.huaweicloud.com/intl/en-us/productdesc-servicestage/ss_productdesc_0001.html
 [CSE]: https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0002.html
-[DTM]: https://support.huaweicloud.com/devg-servicestage/dtm_devg_0002.html
 [Service Registry]: https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0017.html
 [Configuration Center]: https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0018.html
 [Request Marker-based Governance]: https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0020.html
 [Canary release features]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0023.html
+[ServiceComb]: http://servicecomb.apache.org/developers/
