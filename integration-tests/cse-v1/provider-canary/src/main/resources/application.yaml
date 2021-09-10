@@ -17,29 +17,4 @@
 ## ---------------------------------------------------------------------------
 
 server:
-  port: 8082
-
-servicecomb:
-  routeRule:
-    basic-provider: |
-      - precedence: 1
-        match:
-          headers:
-            canary:
-              exact: new
-        route:
-          - weight: 20
-            tags:
-              version: 0.0.1
-          - weight: 80
-            tags:
-              version: 0.0.2
-      - precedence: 2
-        match:
-          headers:
-            canary:
-              exact: old
-        route:
-          - weight: 100
-            tags:
-              version: 0.0.1
+  port: 8081

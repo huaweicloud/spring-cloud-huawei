@@ -47,7 +47,9 @@ public class ConsumerGovernanceController {
   public String retry(HttpServletResponse response, @RequestParam(name = "invocationID") String invocationID) {
     retryTimes.putIfAbsent(invocationID, 0);
     retryTimes.put(invocationID, retryTimes.get(invocationID) + 1);
+
     int retry = retryTimes.get(invocationID);
+
     if (retry == 3) {
       return "try times: " + retry;
     }

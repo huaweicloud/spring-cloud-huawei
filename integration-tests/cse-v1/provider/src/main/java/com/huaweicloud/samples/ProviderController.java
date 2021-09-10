@@ -28,4 +28,14 @@ public class ProviderController {
   public String sayHello(@RequestParam("name") String name) {
     return "Hello " + name;
   }
+
+  @GetMapping("/sayHelloCanary")
+  public String sayHelloCanary(@RequestParam("name") String name) {
+    return "Hello Canary " + name;
+  }
+
+  @GetMapping("/gateway/sayHelloCanary")
+  public String gatewaySayHelloCanary(@RequestParam("name") String name) {
+    return "Hello Gateway Canary " + name;
+  }
 }

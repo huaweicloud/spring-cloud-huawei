@@ -16,22 +16,17 @@
  */
 package com.huaweicloud.router.client.hytrix;
 
-import com.netflix.hystrix.strategy.eventnotifier.HystrixEventNotifier;
-import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
-import com.netflix.hystrix.strategy.metrics.HystrixMetricsPublisher;
-import com.netflix.hystrix.strategy.properties.HystrixPropertiesStrategy;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
 import com.huaweicloud.router.client.track.RouterTrackContext;
-
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
+import com.netflix.hystrix.strategy.eventnotifier.HystrixEventNotifier;
+import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
+import com.netflix.hystrix.strategy.metrics.HystrixMetricsPublisher;
+import com.netflix.hystrix.strategy.properties.HystrixPropertiesStrategy;
 
-/**
- * @Author GuoYl123
- * @Date 2019/10/24
- **/
 public class RouterHystrixConcurrencyStrategy extends HystrixConcurrencyStrategy {
 
   public RouterHystrixConcurrencyStrategy() {
@@ -55,23 +50,18 @@ public class RouterHystrixConcurrencyStrategy extends HystrixConcurrencyStrategy
 
   @Override
   public <T> Callable<T> wrapCallable(Callable<T> callable) {
-    return new RouterAttributeAwareCallable<>(callable, RouterTrackContext.getServiceName(),
-        RouterTrackContext
-            .getRequestHeader());
+    return new RouterAttributeAwareCallable<>(callable, RouterTrackContext
+        .getRequestHeader());
   }
 
   static class RouterAttributeAwareCallable<T> implements Callable<T> {
 
     private final Callable<T> delegate;
 
-    private final String serviceName;
-
     private final Map<String, String> requestHeader;
 
-    public RouterAttributeAwareCallable(Callable<T> delegate, String serviceName,
-        Map<String, String> requestHeader) {
+    public RouterAttributeAwareCallable(Callable<T> delegate, Map<String, String> requestHeader) {
       this.delegate = delegate;
-      this.serviceName = serviceName;
       this.requestHeader = requestHeader;
     }
 
@@ -79,7 +69,6 @@ public class RouterHystrixConcurrencyStrategy extends HystrixConcurrencyStrategy
     public T call() throws Exception {
       try {
         RouterTrackContext.setRequestHeader(requestHeader);
-        RouterTrackContext.setServiceName(serviceName);
         return delegate.call();
       } finally {
         RouterTrackContext.remove();

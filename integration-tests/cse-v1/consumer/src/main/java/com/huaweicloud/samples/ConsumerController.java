@@ -33,4 +33,9 @@ public class ConsumerController {
   public String sayHello(@RequestParam("name") String name) {
     return restTemplate.getForObject("http://basic-provider/sayHello?name={1}", String.class, name);
   }
+
+  @GetMapping("/sayHelloCanary")
+  public String sayHelloCanary(@RequestParam("name") String name) {
+    return restTemplate.getForObject("http://basic-provider/sayHelloCanary?name={1}", String.class, name);
+  }
 }

@@ -14,25 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.router.client.track;
 
-import java.util.Map;
+package com.huaweicloud.samples;
 
-public class RouterTrackContext {
-  private static ThreadLocal<String> serviceNameThreadLocal = new ThreadLocal<>();
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-  private static ThreadLocal<Map<String, String>> requestHeaderThreadLocal = new ThreadLocal<>();
-
-  public static void remove() {
-    serviceNameThreadLocal.remove();
-    requestHeaderThreadLocal.remove();
-  }
-
-  public static Map<String, String> getRequestHeader() {
-    return requestHeaderThreadLocal.get();
-  }
-
-  public static void setRequestHeader(Map<String, String> requestHeader) {
-    requestHeaderThreadLocal.set(requestHeader);
+@SpringBootApplication
+@EnableDiscoveryClient
+public class ProviderApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(ProviderApplication.class, args);
   }
 }

@@ -19,7 +19,12 @@ package com.huaweicloud.sample;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 public class HelloWorldIT {
@@ -29,5 +34,81 @@ public class HelloWorldIT {
   public void testHelloWorld() {
     String result = template.getForObject(Config.GATEWAY_URL + "/sayHello?name=World", String.class);
     assertThat(result).isEqualTo("Hello World");
+  }
+
+  @Test
+  public void testConsumerHelloWorldCanaryOld() {
+    for (int i = 0; i < 10; i++) {
+      MultiValueMap<String, String> headers = new HttpHeaders();
+      headers.add("canary", "old");
+      HttpEntity<Object> entity = new HttpEntity<>(headers);
+      String result = template
+          .exchange(Config.GATEWAY_URL + "/sayHelloCanary?name=World", HttpMethod.GET, entity, String.class).getBody();
+      assertThat(result).isEqualTo("Hello Canary World");
+    }
+  }
+
+  @Test
+  public void testConsumerHelloWorldCanaryNew() {
+    int oldCount = 0;
+    int newCount = 0;
+
+    for (int i = 0; i < 20; i++) {
+      MultiValueMap<String, String> headers = new HttpHeaders();
+      headers.add("canary", "new");
+      HttpEntity<Object> entity = new HttpEntity<>(headers);
+      String result = template
+          .exchange(Config.GATEWAY_URL + "/sayHelloCanary?name=World", HttpMethod.GET, entity, String.class).getBody();
+      if (result.equals("Hello Canary World")) {
+        oldCount++;
+      } else if (result.equals("Hello Canary in canary World")) {
+        newCount++;
+      } else {
+        Assert.fail("not expected result testHelloWorldCanary");
+        return;
+      }
+    }
+
+    double ratio = oldCount / (float) (oldCount + newCount);
+    assertThat(ratio).isBetween(0.1, 0.3);
+  }
+
+  @Test
+  public void testGatewayHelloWorldCanaryOld() {
+    for (int i = 0; i < 10; i++) {
+      MultiValueMap<String, String> headers = new HttpHeaders();
+      headers.add("canary", "old");
+      HttpEntity<Object> entity = new HttpEntity<>(headers);
+      String result = template
+          .exchange(Config.GATEWAY_URL + "/gateway/sayHelloCanary?name=World", HttpMethod.GET, entity, String.class)
+          .getBody();
+      assertThat(result).isEqualTo("Hello Gateway Canary World");
+    }
+  }
+
+  @Test
+  public void testGatewayHelloWorldCanaryNew() {
+    int oldCount = 0;
+    int newCount = 0;
+
+    for (int i = 0; i < 20; i++) {
+      MultiValueMap<String, String> headers = new HttpHeaders();
+      headers.add("canary", "new");
+      HttpEntity<Object> entity = new HttpEntity<>(headers);
+      String result = template
+          .exchange(Config.GATEWAY_URL + "/gateway/sayHelloCanary?name=World", HttpMethod.GET, entity, String.class)
+          .getBody();
+      if (result.equals("Hello Gateway Canary World")) {
+        oldCount++;
+      } else if (result.equals("Hello Gateway Canary in canary World")) {
+        newCount++;
+      } else {
+        Assert.fail("not expected result testHelloWorldCanary");
+        return;
+      }
+    }
+
+    double ratio = oldCount / (float) (oldCount + newCount);
+    assertThat(ratio).isBetween(0.1, 0.3);
   }
 }

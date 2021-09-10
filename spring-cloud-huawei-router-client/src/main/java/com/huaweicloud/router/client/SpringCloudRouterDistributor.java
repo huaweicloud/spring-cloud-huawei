@@ -14,42 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.router.client.ribbon;
+package com.huaweicloud.router.client;
 
-import java.util.List;
-
-import org.apache.servicecomb.router.RouterFilter;
 import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.ServiceInstance;
 
-import com.huaweicloud.common.ribbon.RibbonServerFilter;
-import com.huaweicloud.router.client.track.RouterTrackContext;
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServer;
+import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
 import com.netflix.loadbalancer.Server;
 
-public class RouterRibbonServerFilter implements RibbonServerFilter {
-  @Autowired
-  private AbstractRouterDistributor<Server, MicroserviceInstance> routerDistributor;
-
-  @Autowired
-  private RouterFilter routerFilter;
-
-  @Override
-  public List<Server> filter(List<Server> instances) {
-    if (instances.isEmpty()) {
-      return instances;
-    }
-
-    return routerFilter
-        .getFilteredListOfServers(instances,
-            ((ServiceCombServer) instances.get(0)).getServiceCombServiceInstance().getServiceId(),
-            RouterTrackContext.getRequestHeader(),
-            routerDistributor);
-  }
-
-  @Override
-  public int getOrder() {
-    return 1;
+public class SpringCloudRouterDistributor extends
+    AbstractRouterDistributor<Server, MicroserviceInstance> {
+  public SpringCloudRouterDistributor() {
+    init(server -> ((ServiceCombServer) server).getServiceCombServiceInstance().getMicroserviceInstance(),
+        MicroserviceInstance::getVersion,
+        MicroserviceInstance::getServiceName,
+        MicroserviceInstance::getProperties);
   }
 }
