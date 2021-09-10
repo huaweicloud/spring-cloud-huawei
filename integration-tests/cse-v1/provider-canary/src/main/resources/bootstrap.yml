@@ -15,31 +15,30 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
-
 server:
-  port: 8082
+  env: development
+spring:
+  application:
+    name: basic-provider
+  cloud:
+    servicecomb:
+      discovery:
+        enabled: true
+        watch: false
+        address: https://cse.cn-south-1.myhuaweicloud.com
+        appName: hoxton-v1-test-application
+        serviceName: ${spring.application.name}
+        version: 0.0.2
+        healthCheckInterval: 30
+      config:
+        serverAddr: https://cse.cn-south-1.myhuaweicloud.com
+        fileSource: provider.yaml
+        watch:
+          delay: 10000
 
-servicecomb:
-  routeRule:
-    basic-provider: |
-      - precedence: 1
-        match:
-          headers:
-            canary:
-              exact: new
-        route:
-          - weight: 20
-            tags:
-              version: 0.0.1
-          - weight: 80
-            tags:
-              version: 0.0.2
-      - precedence: 2
-        match:
-          headers:
-            canary:
-              exact: old
-        route:
-          - weight: 100
-            tags:
-              version: 0.0.1
+      credentials:
+        enabled: true
+        accessKey: ${CREDENTIALS_AK}
+        secretKey: ${CREDENTIALS_SK}
+        cipher: default
+        project: cn-south-1

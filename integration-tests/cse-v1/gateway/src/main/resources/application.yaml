@@ -23,10 +23,14 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: provider
+          uri: lb://basic-provider
+          predicates:
+            - Path=/gateway/**
         - id: consumer
           uri: lb://basic-consumer
           filters:
-            - name: gatewayGovernance
+            - name: governance
           predicates:
             - Path=/**
 
@@ -63,4 +67,30 @@ servicecomb:
   bulkhead:
     demo-bulkhead: |
       maxConcurrentCalls: 5
+
+  # 灰度发布配置
+  routeRule:
+    basic-provider: |
+      - precedence: 1
+        match:
+          headers:
+            canary:
+              exact: new
+        route:
+          - weight: 20
+            tags:
+              version: 0.0.1
+          - weight: 80
+            tags:
+              version: 0.0.2
+      - precedence: 2
+        match:
+          headers:
+            canary:
+              exact: old
+        route:
+          - weight: 100
+            tags:
+              version: 0.0.1
+
 

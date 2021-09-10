@@ -15,26 +15,19 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.gateway.governance;
+package com.huaweicloud.router.client.hytrix;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.cloud.gateway.config.conditional.ConditionalOnEnabledFilter;
-import org.springframework.cloud.gateway.filter.LoadBalancerClientFilter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@SuppressWarnings("deprecation")
-public class GovernanceConfiguration {
+@ConditionalOnClass(RouterHystrixConcurrencyStrategy.class)
+public class HystrixAutoConfiguration {
   @Bean
-  @ConditionalOnEnabledFilter
-  public GovernanceGatewayFilterFactory governanceGatewayFilterFactory() {
-    return new GovernanceGatewayFilterFactory();
-  }
-
-  @Bean
-  @ConditionalOnBean(LoadBalancerClientFilter.class)
-  public LoadBalanceClientFilterAspect loadBalanceClientFilterAspect() {
-    return new LoadBalanceClientFilterAspect();
+  @ConditionalOnProperty(value = "servicecomb.router.hystrix.enabled", matchIfMissing = true)
+  public RouterHystrixConcurrencyStrategy routerHystrixConcurrencyStrategy() {
+    return new RouterHystrixConcurrencyStrategy();
   }
 }

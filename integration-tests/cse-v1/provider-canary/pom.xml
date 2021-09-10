@@ -15,27 +15,42 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://maven.apache.org/POM/4.0.0"
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>com.huaweicloud</groupId>
-    <artifactId>spring-cloud-huawei-parents</artifactId>
+    <artifactId>cse-v1-test</artifactId>
     <version>1.7.0-SHAPSHOT</version>
-    <relativePath>../spring-cloud-huawei-parents</relativePath>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <packaging>pom</packaging>
-  <artifactId>spring-cloud-starter-huawei</artifactId>
-  <modules>
-    <module>spring-cloud-starter-huawei-discovery</module>
-    <module>spring-cloud-starter-huawei-router</module>
-    <module>spring-cloud-starter-huawei-config</module>
-    <module>spring-cloud-starter-huawei-swagger</module>
-    <module>spring-cloud-starter-huawei-governance</module>
-    <module>spring-cloud-starter-huawei-core</module>
-    <module>spring-cloud-starter-huawei-service-engine</module>
-    <module>spring-cloud-starter-huawei-service-engine-gateway</module>
-  </modules>
 
+  <name>Integration Tests::CSE V1::Provider Canary</name>
+  <artifactId>cse-v1-test-provider-canary</artifactId>
+  <packaging>jar</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.huaweicloud</groupId>
+      <artifactId>spring-cloud-starter-huawei-service-engine</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 </project>

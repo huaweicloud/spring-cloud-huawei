@@ -49,9 +49,7 @@
     <module>spring-cloud-huawei-common</module>
     <module>spring-cloud-huawei-discovery</module>
     <module>spring-cloud-starter-huawei</module>
-    <module>spring-cloud-huawei-dtm</module>
     <module>spring-cloud-huawei-config</module>
-    <module>spring-cloud-huawei-router-core</module>
     <module>spring-cloud-huawei-router-client</module>
     <module>spring-cloud-huawei-swagger</module>
     <module>spring-cloud-huawei-governance</module>

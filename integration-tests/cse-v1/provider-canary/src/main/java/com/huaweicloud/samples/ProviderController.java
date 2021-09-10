@@ -14,25 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.router.client.track;
 
-import java.util.Map;
+package com.huaweicloud.samples;
 
-public class RouterTrackContext {
-  private static ThreadLocal<String> serviceNameThreadLocal = new ThreadLocal<>();
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-  private static ThreadLocal<Map<String, String>> requestHeaderThreadLocal = new ThreadLocal<>();
-
-  public static void remove() {
-    serviceNameThreadLocal.remove();
-    requestHeaderThreadLocal.remove();
+@RestController
+public class ProviderController {
+  // a very simple service to echo the request parameter
+  @GetMapping("/sayHello")
+  public String sayHello(@RequestParam("name") String name) {
+    return "Hello " + name;
   }
 
-  public static Map<String, String> getRequestHeader() {
-    return requestHeaderThreadLocal.get();
+  @GetMapping("/sayHelloCanary")
+  public String sayHelloCanary(@RequestParam("name") String name) {
+    return "Hello Canary in canary " + name;
   }
 
-  public static void setRequestHeader(Map<String, String> requestHeader) {
-    requestHeaderThreadLocal.set(requestHeader);
+  @GetMapping("/gateway/sayHelloCanary")
+  public String gatewaySayHelloCanary(@RequestParam("name") String name) {
+    return "Hello Gateway Canary in canary " + name;
   }
 }

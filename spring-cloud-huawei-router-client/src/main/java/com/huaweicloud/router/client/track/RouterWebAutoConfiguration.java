@@ -14,27 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.huaweicloud.router.client.track;
 
-package com.huaweicloud.gateway.governance;
-
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.cloud.gateway.config.conditional.ConditionalOnEnabledFilter;
-import org.springframework.cloud.gateway.filter.LoadBalancerClientFilter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@SuppressWarnings("deprecation")
-public class GovernanceConfiguration {
-  @Bean
-  @ConditionalOnEnabledFilter
-  public GovernanceGatewayFilterFactory governanceGatewayFilterFactory() {
-    return new GovernanceGatewayFilterFactory();
-  }
-
-  @Bean
-  @ConditionalOnBean(LoadBalancerClientFilter.class)
-  public LoadBalanceClientFilterAspect loadBalanceClientFilterAspect() {
-    return new LoadBalanceClientFilterAspect();
+public class RouterWebAutoConfiguration {
+  @Configuration
+  @ConditionalOnClass(WebMvcConfigurer.class)
+  class WebMvcConfigurerEnable {
+    @Bean
+    public WebMvcConfigurer canaryWebMvcConfigurer() {
+      return new WebMvcConfigurer() {
+        @Override
+        public void addInterceptors(InterceptorRegistry registry) {
+          registry.addInterceptor(new RouterHandlerInterceptor()).addPathPatterns("/**");
+        }
+      };
+    }
   }
 }

@@ -23,7 +23,7 @@ spring:
   cloud:
     servicecomb:
       discovery:
-        appName: cse-v1-test-application
+        appName: hoxton-v1-test-application
         serviceName: ${spring.application.name}
         watch: false
         address: https://cse.cn-south-1.myhuaweicloud.com

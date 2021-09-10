@@ -78,7 +78,7 @@ public class GovernanceGatewayFilterFactory extends
 
   @Override
   public String name() {
-    return "gatewayGovernance";
+    return "governance";
   }
 
   class GovernanceGatewayFilter implements GatewayFilter {

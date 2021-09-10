@@ -50,9 +50,6 @@ Including [Apache ServiceComb](http://servicecomb.apache.org) and [ServiceStage]
 
  * **spring-cloud-starter-huawei-router:**
      * Support for use [ServiceStage][ServiceStage] [Canary release features][Canary release features].
- 
- * **spring-cloud-starter-huawei-dtm:**
-     * Support for use [ServiceStage][ServiceStage] [DTM][DTM]
 
  * **spring-cloud-starter-huawei-swagger:**
      * Automatically swagger document generation and registration. 
@@ -64,7 +61,6 @@ Including [Apache ServiceComb](http://servicecomb.apache.org) and [ServiceStage]
 
 [ServiceStage]: https://support.huaweicloud.com/intl/en-us/productdesc-servicestage/ss_productdesc_0001.html
 [CSE]: https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0002.html
-[DTM]: https://support.huaweicloud.com/devg-servicestage/dtm_devg_0002.html
 [Service Registry]: https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0017.html
 [Configuration Center]: https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0018.html
 [Request Marker-based Governance]: https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0020.html
