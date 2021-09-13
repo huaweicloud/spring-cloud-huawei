@@ -53,6 +53,9 @@
     <module>spring-cloud-huawei-router-client</module>
     <module>spring-cloud-huawei-swagger</module>
     <module>spring-cloud-huawei-governance</module>
+    <module>spring-boot-huawei-dependencies</module>
+    <module>spring-boot-huawei-parent</module>
+    <module>spring-boot-starter-huawei</module>
   </modules>
 
   <licenses>

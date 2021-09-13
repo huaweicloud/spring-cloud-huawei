@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <groupId>com.huaweicloud.devspore</groupId>
+    <artifactId>spring-boot-huawei-parent</artifactId>
+    <version>0.2.1-SNAPSHOT</version>
+    <relativePath>../spring-boot-huawei-parent</relativePath>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <packaging>jar</packaging>
+  <groupId>com.huaweicloud.devspore</groupId>
+  <artifactId>spring-boot-starter-huawei</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-expression</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aop</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-beans</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-beans</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-aop</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-expression</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aspects</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-context</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- spring boot web依赖 -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-beans</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-beans</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-expression</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-apo</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-context</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-web</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-core</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-annotations</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-lang3</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.validation</groupId>
+          <artifactId>validation-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-core</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-annotations</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-lang3</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-ui</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-web</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-webmvc</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-autoconfigure</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-lang3</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.swagger.core.v3</groupId>
+          <artifactId>swagger-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.swagger.core.v3</groupId>
+          <artifactId>swagger-models</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.swagger.core.v3</groupId>
+          <artifactId>swagger-annotations</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- 日志依赖 -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <version>2.13.2</version>
+    </dependency>
+
+    <!-- test -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-test</artifactId>
+    </dependency>
+  </dependencies>
+
+</project>
