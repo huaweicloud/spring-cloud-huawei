@@ -32,8 +32,6 @@
   <version>0.2.1-SNAPSHOT</version>
 
   <properties>
-    <!-- spring-boot -->
-    <springboot.version>2.5.2</springboot.version>
     <!-- common dependencies -->
     <google.guava.version>30.1.1-jre</google.guava.version>
     <commons.langv3.version>3.12.0</commons.langv3.version>
@@ -88,7 +86,7 @@
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>${springboot.version}</version>
+        <version>${spring-boot.version}</version>
       </dependency>
 
       <!-- swagger -->
