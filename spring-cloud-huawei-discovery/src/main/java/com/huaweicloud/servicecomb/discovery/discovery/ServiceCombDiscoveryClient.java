@@ -19,12 +19,11 @@ package com.huaweicloud.servicecomb.discovery.discovery;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.InstanceChangedEvent;
 import org.apache.servicecomb.service.center.client.RegistrationEvents.HeartBeatEvent;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
@@ -128,17 +127,22 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
         return serviceList;
       }
       for (Microservice microservice : microServiceResponse.getServices()) {
-        if (validMicroserviceName(microservice) != null) {
-          serviceList.add(microservice.getServiceName());
+        String validServiceName = validMicroserviceName(microservice);
+        if (validServiceName != null) {
+          serviceList.add(validServiceName);
         }
       }
     } catch (OperationException e) {
-      LOGGER.error("getServices failed", e);
+      LOGGER.error("Get services failed", e);
     }
     return serviceList;
   }
 
   private String validMicroserviceName(Microservice microservice) {
+    if (!environmentEqual(microservice)) {
+      return null;
+    }
+
     if (microservice.getAppId().equals(DiscoveryConstants.DEFAULT_APPID) && microservice.getServiceName()
         .equals(DiscoveryConstants.SERVICE_CENTER)) {
       return null;
@@ -150,6 +154,15 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
       return microservice.getAppId() + DiscoveryConstants.APP_SERVICE_SEPRATOR + microservice.getServiceName();
     }
     return null;
+  }
+
+  private boolean environmentEqual(Microservice microservice) {
+    // empty is equal.
+    if (StringUtils.isEmpty(microservice.getEnvironment()) && StringUtils
+        .isEmpty(discoveryProperties.getEnvironment())) {
+      return true;
+    }
+    return StringUtils.equals(microservice.getEnvironment(), discoveryProperties.getEnvironment());
   }
 
   @Override
