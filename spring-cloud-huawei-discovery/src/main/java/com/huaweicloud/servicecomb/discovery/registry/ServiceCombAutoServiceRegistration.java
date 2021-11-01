@@ -57,6 +57,6 @@ public class ServiceCombAutoServiceRegistration extends AbstractAutoServiceRegis
 
   @Override
   protected ServiceCombRegistration getManagementRegistration() {
-    throw new IllegalStateException("not implemented");
+    return null;
   }
 }
