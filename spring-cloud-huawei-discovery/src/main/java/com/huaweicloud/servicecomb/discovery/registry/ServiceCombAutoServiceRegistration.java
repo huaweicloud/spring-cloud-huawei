@@ -57,9 +57,6 @@ public class ServiceCombAutoServiceRegistration extends AbstractAutoServiceRegis
 
   @Override
   protected ServiceCombRegistration getManagementRegistration() {
-    if (super.shouldRegisterManagement()){
-      return null;
-    }
-    throw new IllegalStateException("not implemented");
+    return null;
   }
 }
