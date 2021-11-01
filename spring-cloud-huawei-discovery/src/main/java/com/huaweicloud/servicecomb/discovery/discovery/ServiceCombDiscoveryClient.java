@@ -32,6 +32,7 @@ import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery.Subsc
 import org.apache.servicecomb.service.center.client.exception.OperationException;
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
+import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.apache.servicecomb.service.center.client.model.MicroservicesResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,7 +116,8 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
     if (instances == null) {
       return Collections.emptyList();
     }
-    return instances.stream().map(ServiceCombServiceInstance::new).collect(Collectors.toList());
+    return instances.stream().filter(instance -> !MicroserviceInstanceStatus.DOWN.equals(instance.getStatus()))
+        .map(ServiceCombServiceInstance::new).collect(Collectors.toList());
   }
 
   @Override
