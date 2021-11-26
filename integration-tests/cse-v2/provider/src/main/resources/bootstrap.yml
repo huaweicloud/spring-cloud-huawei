@@ -17,7 +17,7 @@
 ## ---------------------------------------------------------------------------
 jasypt:
   encryptor:
-    password: ${SALT}
+    password: GXXX6
 server:
   env: production
 spring:
