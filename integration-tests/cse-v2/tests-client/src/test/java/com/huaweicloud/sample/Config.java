@@ -20,5 +20,5 @@ package com.huaweicloud.sample;
 public interface Config {
   String GATEWAY_URL = "http://localhost:9090/basic-consumer";
 
-  String  JASYPT_TEST= "http://localhost:8082";
+  String JASYPT_TEST = "http://localhost:8082";
 }
