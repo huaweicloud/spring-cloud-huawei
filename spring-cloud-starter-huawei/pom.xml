@@ -36,6 +36,7 @@
     <module>spring-cloud-starter-huawei-core</module>
     <module>spring-cloud-starter-huawei-service-engine</module>
     <module>spring-cloud-starter-huawei-service-engine-gateway</module>
+    <module>spring-cloud-starter-huawei-jasypt</module>
   </modules>
 
 </project>

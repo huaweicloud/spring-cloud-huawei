@@ -33,4 +33,12 @@ public class ConsumerController {
   public String sayHello(@RequestParam("name") String name) {
     return restTemplate.getForObject("http://basic-provider/sayHello?name={1}", String.class, name);
   }
+  @GetMapping("/jasypt1")
+  public String jasypt1() {
+    return restTemplate.getForObject("http://basic-provider/jasypt1", String.class);
+  }
+  @GetMapping("/jasypt2")
+  public String jasypt2() {
+    return restTemplate.getForObject("http://basic-provider/jasypt2", String.class);
+  }
 }

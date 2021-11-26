@@ -44,5 +44,9 @@
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-swagger</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.huaweicloud</groupId>
+      <artifactId>spring-cloud-starter-huawei-jasypt</artifactId>
+    </dependency>
   </dependencies>
 </project>

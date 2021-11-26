@@ -110,6 +110,11 @@
         <artifactId>spring-cloud-starter-huawei-service-engine-gateway</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.huaweicloud</groupId>
+        <artifactId>spring-cloud-starter-huawei-jasypt</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 </project>

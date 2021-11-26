@@ -15,12 +15,19 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
+jasypt:
+  encryptor:
+    password: ${SALT}
 server:
   env: production
 spring:
   application:
     name: basic-provider
   cloud:
+    huawei:
+      test:
+        username: root
+        password: ENC(YuOl0awTR3T24tDj0oR1aivaUjgBubxA)
     servicecomb:
       discovery:
         enabled: true

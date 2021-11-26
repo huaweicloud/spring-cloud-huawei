@@ -14,11 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.huaweicloud.sample;
 
-public interface Config {
-  String GATEWAY_URL = "http://localhost:9090/basic-consumer";
+import org.jasypt.util.text.BasicTextEncryptor;
 
-  String  JASYPT_TEST= "http://localhost:8082";
+public class JasyptUtil {
+  //此处设置为配置项jasypt.encryptor.password的密码
+  public static String salt = "GXXX6";
+
+  //加密方法
+  public static String demoEncrypt(String value) {
+    BasicTextEncryptor textEncryptor = new BasicTextEncryptor();
+    textEncryptor.setPassword(salt);
+    return textEncryptor.encrypt(value);
+  }
+
+  //测试解密是否正常
+  public static String demoDecrypt(String value) {
+    BasicTextEncryptor textEncryptor = new BasicTextEncryptor();
+    textEncryptor.setPassword(salt);
+    return textEncryptor.decrypt(value);
+  }
+
+  public static void main(String[] args) {
+    String username = demoEncrypt("123456Lbc@");
+    System.out.println(username);
+    username = demoDecrypt(username);
+    System.out.println(username);
+  }
 }
