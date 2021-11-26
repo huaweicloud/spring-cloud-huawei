@@ -53,7 +53,7 @@ public class ConsumerConfigIT {
   public void jasyptTest() {
     String result = template.getForObject(Config.JASYPT_TEST + "/jasypt1", String.class);
     assertThat(result).isEqualTo("root");
-     result = template.getForObject(Config.JASYPT_TEST + "/jasypt2", String.class);
+    result = template.getForObject(Config.JASYPT_TEST + "/jasypt2", String.class);
     assertThat(result).isEqualTo("123456Lbc@");
   }
 }
