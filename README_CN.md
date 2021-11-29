@@ -5,8 +5,8 @@
 
 # Spring Cloud Huawei [English document](README.md)
 
-此框架的目的是为了让spring cloud 和华为的框架更好的融合在一起。 包括[Apache ServiceComb](http://servicecomb.apache.org)
-和 [ServiceStage][ServiceStage] 。
+此框架的目的是为了让spring cloud 和华为的框架更好的融合在一起。 
+包括[Apache ServiceComb](http://servicecomb.apache.org)和 [ServiceStage][ServiceStage] 。
 
 ## 支持的版本列表
 
@@ -19,12 +19,10 @@
 | Edgware | 1.2.0-Edgware | 1.3.6.RELEASE  | 1.5.22.RELEASE    | Edgware      | 1.5.x       |
 
 ***注意：***
-
 * 查询 [Spring Cloud Release Train](https://spring.io/projects/spring-cloud) 选择一个适合业务的版本使用。
 * Spring Cloud Edgeware, Finchley, Greenwich 已经停止维护，不建议在生产环境使用。
-* Spring Cloud Huawei Hoxton分支只提供Spring Cloud Gateway基于Ribbon的负载均衡，及其配套的基于流量治理和灰度发布功能。 Spring Cloud Huawei
-  master（2020.0.x版本）分支只提供Spring Cloud Gateway基于Spring Cloud LoadBalance的负载均衡， 及其配套的基于流量治理和灰度发布功能。建议Spring Cloud
-  Gateway升级到2020.0.x版本。
+* Spring Cloud Huawei Hoxton分支只提供Spring Cloud Gateway基于Ribbon的负载均衡，及其配套的基于流量治理和灰度发布功能。 
+  Spring Cloud Huawei master（2020.0.x版本）分支只提供Spring Cloud Gateway基于Spring Cloud LoadBalance的负载均衡， 及其配套的基于流量治理和灰度发布功能。建议Spring Cloud Gateway升级到2020.0.x版本。
 
 ## 为什么使用
 
