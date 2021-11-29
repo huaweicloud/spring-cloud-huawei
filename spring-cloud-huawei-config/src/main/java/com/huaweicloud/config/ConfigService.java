@@ -79,6 +79,10 @@ public class ConfigService {
 
     initConfigConverter(configProperties);
 
+    if (!loadConfigCenter(configProperties)) {
+      return;
+    }
+
     if ("kie".equalsIgnoreCase(configProperties.getServerType())) {
       initKieConfig(configProperties, serviceCombAkSkProperties, serviceCombSSLProperties,
           authHeaderProviders);
@@ -86,6 +90,14 @@ public class ConfigService {
       initServiceCenterConfig(configProperties, serviceCombAkSkProperties, serviceCombSSLProperties,
           authHeaderProviders);
     }
+  }
+
+  private boolean loadConfigCenter(ServiceCombConfigProperties configProperties) {
+    if (!configProperties.isEnabled() || (URLUtil.getEnvConfigUrl().isEmpty() && StringUtils
+        .isEmpty(configProperties.getServerAddr()))) {
+      return false;
+    }
+    return true;
   }
 
   private void initConfigConverter(ServiceCombConfigProperties configProperties) {
