@@ -71,6 +71,17 @@ public class ConfigService {
   public void init(ServiceCombConfigProperties configProperties,
       ServiceCombAkSkProperties serviceCombAkSkProperties, ServiceCombSSLProperties serviceCombSSLProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
+
+    if (!configProperties.isEnabled()) {
+      LOGGER.info("config center closed status");
+      return;
+    }
+
+    if (URLUtil.getEnvConfigUrl().isEmpty() && StringUtils.isEmpty(configProperties.getServerAddr())) {
+      throw new IllegalArgumentException(
+          "failed to open config center, please set configuration center to off or configure configCenter serverAddr");
+    }
+
     if (initialized) {
       return;
     }
@@ -79,10 +90,6 @@ public class ConfigService {
 
     initConfigConverter(configProperties);
 
-    if (!loadConfigCenter(configProperties)) {
-      return;
-    }
-
     if ("kie".equalsIgnoreCase(configProperties.getServerType())) {
       initKieConfig(configProperties, serviceCombAkSkProperties, serviceCombSSLProperties,
           authHeaderProviders);
@@ -90,14 +97,6 @@ public class ConfigService {
       initServiceCenterConfig(configProperties, serviceCombAkSkProperties, serviceCombSSLProperties,
           authHeaderProviders);
     }
-  }
-
-  private boolean loadConfigCenter(ServiceCombConfigProperties configProperties) {
-    if (!configProperties.isEnabled() || (URLUtil.getEnvConfigUrl().isEmpty() && StringUtils
-        .isEmpty(configProperties.getServerAddr()))) {
-      return false;
-    }
-    return true;
   }
 
   private void initConfigConverter(ServiceCombConfigProperties configProperties) {
