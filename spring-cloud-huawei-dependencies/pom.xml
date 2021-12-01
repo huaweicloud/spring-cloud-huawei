@@ -46,6 +46,7 @@
     <swagger-core.version>2.1.9</swagger-core.version>
     <swagger-core-v2.version>1.6.2</swagger-core-v2.version>
     <resilience4j.version>1.7.0</resilience4j.version>
+    <jasypt.version>2.1.2</jasypt.version>
   </properties>
 
   <dependencyManagement>
@@ -167,6 +168,11 @@
         <version>${jackson.version}</version>
         <scope>import</scope>
         <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>com.github.ulisesbocchio</groupId>
+        <artifactId>jasypt-spring-boot-starter</artifactId>
+        <version>${jasypt.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

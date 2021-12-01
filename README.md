@@ -57,6 +57,10 @@ Including [Apache ServiceComb](http://servicecomb.apache.org) and [ServiceStage]
  * **spring-cloud-starter-huawei-swagger:**
      * Automatically swagger document generation and registration. 
 
+* **spring-cloud-starter-huawei-jasypt:**
+     * Support for use [Profile encryption scheme][Profile encryption scheme].
+     * Implements the function of identifying encryption mark in service configuration file
+
 ## How to use
 
 1. [Developer Guide](https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0010.html)
@@ -69,3 +73,4 @@ Including [Apache ServiceComb](http://servicecomb.apache.org) and [ServiceStage]
 [Request Marker-based Governance]: https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0020.html
 [Canary release features]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0023.html
 [ServiceComb]: http://servicecomb.apache.org/developers/
+[Profile encryption scheme]: https://support.huaweicloud.com/bestpractice-cse/cse_bestpractice_0007.html
