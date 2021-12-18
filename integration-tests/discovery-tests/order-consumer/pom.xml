@@ -29,6 +29,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.huaweicloud</groupId>
+      <artifactId>discovery-tests-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
