@@ -46,10 +46,12 @@ public class SpringCloudRetryExtension extends AbstractRetryExtension {
     if (response instanceof Integer) {
       status = (int) response;
     }
+
     return String.valueOf(status);
   }
 
   @Override
+  @SuppressWarnings({"unchecked", "rawtypes"})
   public Class<? extends Throwable>[] retryExceptions() {
     return new Class[] {
         HttpServerErrorException.class

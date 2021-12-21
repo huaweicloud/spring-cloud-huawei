@@ -39,7 +39,7 @@ import org.apache.servicecomb.http.client.common.HttpTransport;
 import org.apache.servicecomb.http.client.common.HttpTransportFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
@@ -71,6 +71,13 @@ public class ConfigService {
   public void init(ServiceCombConfigProperties configProperties,
       ServiceCombAkSkProperties serviceCombAkSkProperties, ServiceCombSSLProperties serviceCombSSLProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
+
+    if (URLUtil.getEnvConfigUrl().isEmpty() && StringUtils.isEmpty(configProperties.getServerAddr())) {
+      throw new IllegalArgumentException(
+          "Config server address is not configured. "
+              + "Please configure config server address or set spring.cloud.servicecomb.config.enabled to false");
+    }
+
     if (initialized) {
       return;
     }
