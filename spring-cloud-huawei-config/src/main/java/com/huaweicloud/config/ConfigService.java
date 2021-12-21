@@ -71,6 +71,13 @@ public class ConfigService {
   public void init(ServiceCombConfigProperties configProperties,
       ServiceCombAkSkProperties serviceCombAkSkProperties, ServiceCombSSLProperties serviceCombSSLProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
+
+    if (URLUtil.getEnvConfigUrl().isEmpty() && StringUtils.isEmpty(configProperties.getServerAddr())) {
+      throw new IllegalArgumentException(
+          "Config server address is not configured. "
+              + "Please configure config server address or set spring.cloud.servicecomb.config.enabled to false");
+    }
+
     if (initialized) {
       return;
     }
