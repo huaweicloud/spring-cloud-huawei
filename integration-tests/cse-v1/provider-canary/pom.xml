@@ -23,7 +23,7 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>cse-v1-test</artifactId>
-    <version>1.8.0-SNAPSHOT</version>
+    <version>1.9.0-Hoxton-SNAPSHOT</version>
   </parent>
 
   <name>Integration Tests::CSE V1::Provider Canary</name>

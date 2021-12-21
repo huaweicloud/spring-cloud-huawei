@@ -17,10 +17,6 @@
 
 package com.huaweicloud.hessian;
 
-import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
 import org.apache.dubbo.common.serialize.hessian2.Hessian2ObjectInput;
 import org.apache.dubbo.common.serialize.hessian2.Hessian2ObjectOutput;
 import org.springframework.http.HttpInputMessage;
@@ -30,16 +26,32 @@ import org.springframework.http.converter.AbstractGenericHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
+import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
 public class HessianHttpMessageConverter extends AbstractGenericHttpMessageConverter<Object> {
-  public static final String HESSIAN_MEDIA_TYPE = "x-application/hessian2";
+  public static final String HESSIAN_MEDIA_TYPE_VALUE = "x-application/hessian2";
+
+  public static final MediaType HESSIAN_MEDIA_TYPE = MediaType.valueOf(HESSIAN_MEDIA_TYPE_VALUE);
 
   public HessianHttpMessageConverter() {
-    super(MediaType.valueOf(HESSIAN_MEDIA_TYPE));
+    super(HESSIAN_MEDIA_TYPE);
   }
 
   @Override
   protected boolean supports(Class<?> clazz) {
     return true;
+  }
+
+  @Override
+  protected boolean canWrite(MediaType mediaType) {
+    return HESSIAN_MEDIA_TYPE.equalsTypeAndSubtype(mediaType);
+  }
+
+  @Override
+  protected boolean canRead(MediaType mediaType) {
+    return HESSIAN_MEDIA_TYPE.equalsTypeAndSubtype(mediaType);
   }
 
   @Override
