@@ -17,12 +17,8 @@
 
 package com.huaweicloud.common.exception;
 
-
-/**
- * @Author wangqijun
- * @Date 09:07 2019-07-17
- **/
 public class RemoteOperationException extends ServiceCombException {
+  private static final long serialVersionUID = -1L;
 
   public RemoteOperationException(String message) {
     super(message);

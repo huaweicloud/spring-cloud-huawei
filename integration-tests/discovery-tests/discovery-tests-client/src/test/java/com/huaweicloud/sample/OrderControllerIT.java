@@ -47,14 +47,14 @@ public class OrderControllerIT {
 //  }
 
   @Test
-  @SuppressWarnings({"rawTypes", "unckecked"})
+  @SuppressWarnings({"rawtypes", "unchecked"})
   public void testGetServices() {
     List result = template.getForObject(url + "/services", List.class);
     assertThat(result.size()).isGreaterThanOrEqualTo(1);
   }
 
   @Test
-  @SuppressWarnings({"rawTypes", "unckecked"})
+  @SuppressWarnings({"rawtypes", "unchecked"})
   public void testGetInstances() {
     List result = template.getForObject(url + "/instances", List.class);
     assertThat(result.size()).isEqualTo(1);

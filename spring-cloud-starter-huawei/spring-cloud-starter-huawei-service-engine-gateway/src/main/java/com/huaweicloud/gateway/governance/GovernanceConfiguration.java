@@ -19,7 +19,6 @@ package com.huaweicloud.gateway.governance;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.cloud.gateway.config.conditional.ConditionalOnEnabledFilter;
-import org.springframework.cloud.gateway.filter.LoadBalancerClientFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -33,7 +32,7 @@ public class GovernanceConfiguration {
   }
 
   @Bean
-  @ConditionalOnBean(LoadBalancerClientFilter.class)
+  @ConditionalOnBean(org.springframework.cloud.gateway.filter.LoadBalancerClientFilter.class)
   public LoadBalanceClientFilterAspect loadBalanceClientFilterAspect() {
     return new LoadBalanceClientFilterAspect();
   }

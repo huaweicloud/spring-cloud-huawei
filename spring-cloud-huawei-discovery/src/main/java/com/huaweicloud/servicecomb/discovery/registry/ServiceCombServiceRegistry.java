@@ -51,17 +51,17 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
   // use bean name to avoid cyclic dependencies for swagger
   private static final String SWAGGER_BEAN_NAME = "serviceCombSwaggerHandler";
 
-  private DiscoveryBootstrapProperties discoveryBootstrapProperties;
+  private final DiscoveryBootstrapProperties discoveryBootstrapProperties;
 
-  private ServiceCenterClient serviceCenterClient;
+  private final ServiceCenterClient serviceCenterClient;
 
   private ServiceCenterRegistration serviceCenterRegistration;
 
-  private ServiceCenterWatch watch;
+  private final ServiceCenterWatch watch;
 
   private ServiceCombRegistration serviceCombRegistration;
 
-  private ServiceCenterConfiguration serviceCenterConfiguration;
+  private final ServiceCenterConfiguration serviceCenterConfiguration;
 
   private ApplicationContext applicationContext;
 
@@ -149,12 +149,13 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
   }
 
   @Override
-  public String getStatus(ServiceCombRegistration registration) {
+  @SuppressWarnings("unchecked")
+  public <T> T getStatus(ServiceCombRegistration registration) {
     try {
       MicroserviceInstance instance = serviceCenterClient
           .getMicroserviceInstance(registration.getMicroserviceInstance().getServiceId(),
               registration.getMicroserviceInstance().getInstanceId());
-      return instance.getStatus() != null ? instance.getStatus().name() : null;
+      return (T) (instance.getStatus() != null ? instance.getStatus().name() : null);
     } catch (OperationException e) {
       LOGGER.error("getStatus failed", e);
     }

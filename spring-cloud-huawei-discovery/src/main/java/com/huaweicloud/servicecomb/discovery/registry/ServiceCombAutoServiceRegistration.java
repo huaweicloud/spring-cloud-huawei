@@ -20,13 +20,8 @@ package com.huaweicloud.servicecomb.discovery.registry;
 import org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationProperties;
 
-/**
- * @Author wangqijun
- * @Date 10:49 2019-07-08
- **/
-
 public class ServiceCombAutoServiceRegistration extends AbstractAutoServiceRegistration<ServiceCombRegistration> {
-  private ServiceCombRegistration serviceCombRegistration;
+  private final ServiceCombRegistration serviceCombRegistration;
 
   public ServiceCombAutoServiceRegistration(ServiceCombServiceRegistry registry,
       AutoServiceRegistrationProperties autoServiceRegistrationProperties, ServiceCombRegistration registration) {
@@ -45,6 +40,7 @@ public class ServiceCombAutoServiceRegistration extends AbstractAutoServiceRegis
   }
 
   @Override
+  @Deprecated
   protected Object getConfiguration() {
     return this.serviceCombRegistration.getDiscoveryBootstrapProperties();
   }
@@ -61,6 +57,6 @@ public class ServiceCombAutoServiceRegistration extends AbstractAutoServiceRegis
 
   @Override
   protected ServiceCombRegistration getManagementRegistration() {
-    throw new IllegalStateException("not implemented");
+    return null;
   }
 }

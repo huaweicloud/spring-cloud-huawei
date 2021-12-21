@@ -21,11 +21,9 @@ import java.util.Set;
 
 import org.springframework.context.ApplicationEvent;
 
-/**
- * @Author wangqijun
- * @Date 10:08 2019-10-24
- **/
 public class ConfigRefreshEvent extends ApplicationEvent {
+  private static final long serialVersionUID = -1L;
+
   private Set<String> change;
 
   /**

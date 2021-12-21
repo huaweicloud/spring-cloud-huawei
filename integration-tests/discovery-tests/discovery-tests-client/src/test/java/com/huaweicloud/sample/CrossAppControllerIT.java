@@ -39,7 +39,7 @@ public class CrossAppControllerIT {
   }
 
   @Test
-  @SuppressWarnings({"rawTypes", "unckecked"})
+  @SuppressWarnings({"rawtypes", "unchecked"})
   public void testGetInstances() {
     List result = template.getForObject(url + "/crossappinstances", List.class);
     assertThat(result.size()).isEqualTo(1);

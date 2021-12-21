@@ -2,7 +2,7 @@
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.huaweicloud/spring-cloud-huawei/badge.svg)](https://search.maven.org/search?q=g:com.huaweicloud%20AND%20a:spring-cloud-huawei-dependencies) 
 
-# Spring Cloud Huawei [查看中文文档](README_zh.md)
+# Spring Cloud Huawei [查看中文文档](README_CN.md)
 
 Spring Cloud Huawei is a framework that makes it easier to integrate Spring Cloud and Huawei frameworks.
 Including [Apache ServiceComb](http://servicecomb.apache.org) and [ServiceStage][ServiceStage].
@@ -11,21 +11,24 @@ Including [Apache ServiceComb](http://servicecomb.apache.org) and [ServiceStage]
 
 | Branch | Latest Version | Spring Cloud Base Version | Spring Boot Base Version | Supported Spring Cloud Version | Supported Spring Boot Version|
 | ---------- | ------------ | ----------- | ----------- | ----------- | ----------- |
-| master | 1.6.1-Hoxton | Hoxton.SR8 | 2.3.5.RELEASE | Hoxton | 2.3.x |
-| Greenwich | 1.6.0-Greenwich | Greenwich.SR6 | 2.1.6-RELEASE | Greenwich | 2.1.x |
-| Finchley | 1.6.0-Finchley | 2.0.4.RELEASE | 2.0.9.RELEASE     | Finchley     | 2.0.x       |
+| master | 1.7.0-2020.0.x | 2020.0.3 | 2.5.3 | 2020.0.x | 2.5.x |
+| Hoxton | 1.7.0-Hoxton | Hoxton.SR9 | 2.3.5.RELEASE | Hoxton | 2.3.x |
+| Greenwich | 1.6.1-Greenwich | Greenwich.SR6 | 2.1.6-RELEASE | Greenwich | 2.1.x |
+| Finchley | 1.6.1-Finchley | 2.0.4.RELEASE | 2.0.9.RELEASE     | Finchley     | 2.0.x       |
 | Edgware | 1.2.0-Edgware | 1.3.6.RELEASE  | 1.5.22.RELEASE    | Edgware      | 1.5.x       |
 
 ***Notice：***
 * Check [Spring Cloud Release Train](https://spring.io/projects/spring-cloud), and find a proper version to use.
 * Spring Cloud Edgeware, Finchley, Greenwich have all reached end of life status and are no longer supported.
+* Spring Cloud Huawei Hoxton branch only implements Spring Cloud Gateway loadbalance with Ribbon, and master branch (for 2020.0.x) only implements
+  Spring Cloud Gateway loadbance with Spring Cloud LoadBalance. Recommend update Spring Cloud Gateway support for 2020.0.x.
 
 ## Why use
 
-1. Integrate Spring Cloud applications to Apache ServiceComb services, like servicecomb-service-center, servicecomb-kie.
-2. Integrate Spring Cloud applications to use ServiceStage. ServiceStage is a service deployment environment for microservices,
-   includs high available discovery and registration service, configuration service, governance service, transaction management
+1. Integrate Spring Cloud applications to use ServiceStage. ServiceStage is a service deployment environment for microservices,
+   includes high available discovery and registration service, configuration service, governance service, transaction management
    service and so on. 
+2. Integrate Spring Cloud applications to use open source [Apache ServiceComb][ServiceComb] services, like servicecomb-service-center, servicecomb-kie.
 3. Other enhancements like swagger generation and registration, canary release and so on.
 
 ## Modules
@@ -54,6 +57,10 @@ Including [Apache ServiceComb](http://servicecomb.apache.org) and [ServiceStage]
  * **spring-cloud-starter-huawei-swagger:**
      * Automatically swagger document generation and registration. 
 
+* **spring-cloud-starter-huawei-jasypt:**
+     * Support for use [Profile encryption scheme][Profile encryption scheme].
+     * Implements the function of identifying encryption mark in service configuration file
+
 ## How to use
 
 1. [Developer Guide](https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0010.html)
@@ -65,3 +72,5 @@ Including [Apache ServiceComb](http://servicecomb.apache.org) and [ServiceStage]
 [Configuration Center]: https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0018.html
 [Request Marker-based Governance]: https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0020.html
 [Canary release features]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0023.html
+[ServiceComb]: http://servicecomb.apache.org/developers/
+[Profile encryption scheme]: https://support.huaweicloud.com/bestpractice-cse/cse_bestpractice_0007.html
