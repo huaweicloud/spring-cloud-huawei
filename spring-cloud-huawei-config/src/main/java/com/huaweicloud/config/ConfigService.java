@@ -72,14 +72,10 @@ public class ConfigService {
       ServiceCombAkSkProperties serviceCombAkSkProperties, ServiceCombSSLProperties serviceCombSSLProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
 
-    if (!configProperties.isEnabled()) {
-      LOGGER.info("config center closed status");
-      return;
-    }
-
     if (URLUtil.getEnvConfigUrl().isEmpty() && StringUtils.isEmpty(configProperties.getServerAddr())) {
       throw new IllegalArgumentException(
-          "failed to open config center, please set configuration center to off or configure configCenter serverAddr");
+          "Config server address is not configured. "
+              + "Please configure config server address or set spring.cloud.servicecomb.config.enabled to false");
     }
 
     if (initialized) {
