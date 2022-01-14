@@ -47,7 +47,7 @@
     <swagger-core-v2.version>1.6.2</swagger-core-v2.version>
     <resilience4j.version>1.7.0</resilience4j.version>
     <jasypt.version>2.1.2</jasypt.version>
-    <dubbo.hessian.version>2.7.8</dubbo.hessian.version>
+    <dubbo.hessian.version>2.7.15</dubbo.hessian.version>
   </properties>
 
   <dependencyManagement>
