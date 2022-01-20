@@ -30,6 +30,7 @@ import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 
 import com.google.common.eventbus.Subscribe;
+import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
@@ -41,7 +42,11 @@ public class IpPointManger {
 
   private MicroserviceInstance microserviceInstance;
 
-  public IpPointManger(ServiceCenterClient serviceCenterClient, ServiceCombRegistration serviceCombRegistration) {
+  private DiscoveryBootstrapProperties discoveryProperties;
+
+  public IpPointManger(DiscoveryBootstrapProperties discoveryProperties, ServiceCenterClient serviceCenterClient,
+      ServiceCombRegistration serviceCombRegistration) {
+    this.discoveryProperties = discoveryProperties;
     this.serviceCenterDiscovery = new ServiceCenterDiscovery(serviceCenterClient,
         com.huaweicloud.common.event.EventManager.getEventBus());
     this.microserviceInstance = serviceCombRegistration.getMicroserviceInstance();
@@ -53,7 +58,7 @@ public class IpPointManger {
     if (isInit) {
       return;
     }
-    if (event.isSuccess()) {
+    if (event.isSuccess() && discoveryProperties.isAutoDiscovery()) {
       initAutoDiscovery();
     }
   }
