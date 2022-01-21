@@ -59,4 +59,9 @@ public class ServiceCombAutoServiceRegistration extends AbstractAutoServiceRegis
   protected ServiceCombRegistration getManagementRegistration() {
     return null;
   }
+
+  @Deprecated
+  public void setPort(int port) {
+    getPort().set(port);
+  }
 }
