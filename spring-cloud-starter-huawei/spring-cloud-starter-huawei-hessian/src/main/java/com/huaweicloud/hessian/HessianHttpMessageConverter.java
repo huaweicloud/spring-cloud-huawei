@@ -1,25 +1,21 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
+  * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *     http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
 
 package com.huaweicloud.hessian;
-
-import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 
 import org.apache.dubbo.common.serialize.hessian2.Hessian2ObjectInput;
 import org.apache.dubbo.common.serialize.hessian2.Hessian2ObjectOutput;
@@ -30,16 +26,32 @@ import org.springframework.http.converter.AbstractGenericHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
+import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
 public class HessianHttpMessageConverter extends AbstractGenericHttpMessageConverter<Object> {
-  public static final String HESSIAN_MEDIA_TYPE = "x-application/hessian2";
+  public static final String HESSIAN_MEDIA_TYPE_VALUE = "x-application/hessian2";
+
+  public static final MediaType HESSIAN_MEDIA_TYPE = MediaType.valueOf(HESSIAN_MEDIA_TYPE_VALUE);
 
   public HessianHttpMessageConverter() {
-    super(MediaType.valueOf(HESSIAN_MEDIA_TYPE));
+    super(HESSIAN_MEDIA_TYPE);
   }
 
   @Override
   protected boolean supports(Class<?> clazz) {
     return true;
+  }
+
+  @Override
+  protected boolean canWrite(MediaType mediaType) {
+    return HESSIAN_MEDIA_TYPE.equalsTypeAndSubtype(mediaType);
+  }
+
+  @Override
+  protected boolean canRead(MediaType mediaType) {
+    return HESSIAN_MEDIA_TYPE.equalsTypeAndSubtype(mediaType);
   }
 
   @Override
