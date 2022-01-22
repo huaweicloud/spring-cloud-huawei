@@ -18,128 +18,139 @@
 package com.huaweicloud.servicecomb.discovery.discovery;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.servicecomb.http.client.event.ConfigCenterEndpointChangedEvent;
-import org.apache.servicecomb.http.client.event.EventManager;
-import org.apache.servicecomb.http.client.event.KieEndpointEndPointChangeEvent;
-import org.apache.servicecomb.http.client.event.ServiceCenterEndpointChangeEvent;
+import org.apache.servicecomb.http.client.event.RefreshEndpointEvent;
 import org.apache.servicecomb.service.center.client.RegistrationEvents.HeartBeatEvent;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
-import org.apache.servicecomb.service.center.client.ServiceCenterDiscovery;
+import org.apache.servicecomb.service.center.client.exception.OperationException;
+import org.apache.servicecomb.service.center.client.model.DataCenterInfo;
+import org.apache.servicecomb.service.center.client.model.FindMicroserviceInstancesResponse;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.Subscribe;
+import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
+import com.huaweicloud.common.util.Type;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 public class IpPointManger {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(IpPointManger.class);
+
   private boolean isInit = false;
 
-  private ServiceCenterDiscovery serviceCenterDiscovery;
+  private ServiceCenterClient serviceCenterClient;
 
-  private MicroserviceInstance microserviceInstance;
+  private MicroserviceInstance myselfInstance;
 
   private DiscoveryBootstrapProperties discoveryProperties;
 
+  private ServiceCombRegistration serviceCombRegistration;
+
+  private DataCenterInfo dataCenterInfo;
+
+  ;
+
+  private String myselfServiceId;
+
   public IpPointManger(DiscoveryBootstrapProperties discoveryProperties, ServiceCenterClient serviceCenterClient,
       ServiceCombRegistration serviceCombRegistration) {
+    this.serviceCombRegistration = serviceCombRegistration;
     this.discoveryProperties = discoveryProperties;
-    this.serviceCenterDiscovery = new ServiceCenterDiscovery(serviceCenterClient,
-        com.huaweicloud.common.event.EventManager.getEventBus());
-    this.microserviceInstance = serviceCombRegistration.getMicroserviceInstance();
-    com.huaweicloud.common.event.EventManager.getEventBus().register(this);
+    this.serviceCenterClient = serviceCenterClient;
+    this.myselfInstance = serviceCombRegistration.getMicroserviceInstance();
+    this.myselfServiceId = serviceCombRegistration.getMicroservice().getServiceId();
+    EventManager.getEventBus().register(this);
   }
 
   @Subscribe
   public void onHeartBeatEvent(HeartBeatEvent event) {
+    this.myselfServiceId = serviceCombRegistration.getMicroservice().getServiceId();
     if (isInit) {
       return;
     }
     if (event.isSuccess() && discoveryProperties.isAutoDiscovery()) {
-      initAutoDiscovery();
-    }
-  }
-
-  public void initAutoDiscovery() {
-    isInit = true;
-    InitSCEndPointNew();
-    InitKieEndPointNew();
-    InitCCEndPointNew();
-  }
-
-  private void InitSCEndPointNew() {
-    List<MicroserviceInstance> instances = findServiceInstance(DiscoveryConstants.DEFAULT_APPID,
-        DiscoveryConstants.SERVICE_CENTER, DiscoveryConstants.VERSION_RULE_LATEST);
-    if (instances.size() <= 0) {
-      isInit = false;
-      return;
-    }
-
-    List<String> sameAvailableZone = new ArrayList<>();
-    List<String> sameAvailableRegion = new ArrayList<>();
-    for (MicroserviceInstance instance : instances) {
-      if (regionAndAZMatch(this.microserviceInstance, instance)) {
-        sameAvailableZone.addAll(instance.getEndpoints());
-      } else {
-        sameAvailableRegion.addAll(instance.getEndpoints());
+      for (Type type : Type.values()) {
+        InitEndPoint(type.name());
       }
     }
-    EventManager.post(new ServiceCenterEndpointChangeEvent(sameAvailableZone, sameAvailableRegion));
   }
 
-  private void InitKieEndPointNew() {
+  private void InitEndPoint(String key) {
     List<MicroserviceInstance> instances = findServiceInstance(DiscoveryConstants.DEFAULT_APPID,
-        DiscoveryConstants.KIE_NAME, DiscoveryConstants.VERSION_RULE_LATEST);
-    if (instances.size() <= 0) {
+        key, DiscoveryConstants.VERSION_RULE_LATEST);
+    if (DiscoveryConstants.SERVICE_CENTER.equals(key) && instances.size() > 0) {
+      isInit = true;
+    }
+    Map<String, List<String>> zoneAndRegion = generateZoneAndRegionAddress(instances);
+    if (zoneAndRegion == null) {
       return;
     }
-
-    List<String> sameAvailableZone = new ArrayList<>();
-    List<String> sameAvailableRegion = new ArrayList<>();
-    for (MicroserviceInstance instance : instances) {
-      if (regionAndAZMatch(this.microserviceInstance, instance)) {
-        sameAvailableZone.addAll(instance.getEndpoints());
-      } else {
-        sameAvailableRegion.addAll(instance.getEndpoints());
-      }
-    }
-    EventManager.post(new KieEndpointEndPointChangeEvent(sameAvailableZone, sameAvailableRegion));
+    EventManager.post(new RefreshEndpointEvent(zoneAndRegion, key));
   }
 
-  private void InitCCEndPointNew() {
-    List<MicroserviceInstance> instances = findServiceInstance(DiscoveryConstants.DEFAULT_APPID,
-        DiscoveryConstants.CONFIG_CENTER_NAME, DiscoveryConstants.VERSION_RULE_LATEST);
-    if (instances.size() <= 0) {
-      return;
+  private Map<String, List<String>> generateZoneAndRegionAddress(List<MicroserviceInstance> instances) {
+    if (instances.size() == 0) {
+      return null;
     }
 
-    List<String> sameAvailableZone = new ArrayList<>();
-    List<String> sameAvailableRegion = new ArrayList<>();
-    for (MicroserviceInstance instance : instances) {
-      if (regionAndAZMatch(this.microserviceInstance, instance)) {
-        sameAvailableZone.addAll(instance.getEndpoints());
+    Map<String, List<String>> zoneAndRegion = new HashMap<>();
+    dataCenterInfo = findRegion(instances);
+
+    List<String> sameZone = new ArrayList<>();
+    List<String> sameRegion = new ArrayList<>();
+    for (MicroserviceInstance microserviceInstance : instances) {
+      if (regionAndAZMatch(dataCenterInfo, microserviceInstance)) {
+        sameZone.addAll(microserviceInstance.getEndpoints());
       } else {
-        sameAvailableRegion.addAll(instance.getEndpoints());
+        sameRegion.addAll(microserviceInstance.getEndpoints());
       }
     }
-    EventManager.post(new ConfigCenterEndpointChangedEvent(sameAvailableZone, sameAvailableRegion));
+    zoneAndRegion.put("sameZone", sameZone);
+    zoneAndRegion.put("sameRegion", sameRegion);
+    return zoneAndRegion;
+  }
+
+  private DataCenterInfo findRegion(List<MicroserviceInstance> microserviceInstances) {
+    if (myselfInstance.getDataCenterInfo() == null) {
+      return null;
+    }
+    for (MicroserviceInstance microserviceInstance : microserviceInstances) {
+      boolean isMatch = microserviceInstance.getEndpoints().get(0).contains(myselfInstance.getEndpoints().get(0));
+      if (isMatch && microserviceInstance.getDataCenterInfo() != null) {
+        return microserviceInstance.getDataCenterInfo();
+      }
+    }
+    return null;
   }
 
   public List<MicroserviceInstance> findServiceInstance(String appId, String serviceName, String versionRule) {
-    return serviceCenterDiscovery.findServiceInstance(appId, serviceName, versionRule);
+    try {
+      FindMicroserviceInstancesResponse instancesResponse = serviceCenterClient
+          .findMicroserviceInstance(this.myselfServiceId, appId, serviceName, versionRule, null);
+      return instancesResponse.getMicroserviceInstancesResponse().getInstances();
+    } catch (
+
+        OperationException operationException) {
+      LOGGER.warn("not find the Microservice instance of {}", serviceName);
+      return new ArrayList<>();
+    }
   }
 
-  private boolean regionAndAZMatch(MicroserviceInstance myself, MicroserviceInstance target) {
-    if (myself.getDataCenterInfo() == null) {
+  private boolean regionAndAZMatch(DataCenterInfo myself, MicroserviceInstance target) {
+    if (myself == null) {
       // when instance have no datacenter info, it will match all other datacenters
       return true;
     }
     if (target.getDataCenterInfo() != null) {
-      return myself.getDataCenterInfo().getRegion().equals(target.getDataCenterInfo().getRegion()) &&
-          myself.getDataCenterInfo().getAvailableZone().equals(target.getDataCenterInfo().getAvailableZone());
+      return myself.getRegion().equals(target.getDataCenterInfo().getRegion()) &&
+          myself.getAvailableZone().equals(target.getDataCenterInfo().getAvailableZone());
     }
     return false;
   }
