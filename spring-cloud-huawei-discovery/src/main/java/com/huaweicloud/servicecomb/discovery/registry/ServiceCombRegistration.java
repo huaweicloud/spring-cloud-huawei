@@ -65,7 +65,8 @@ public class ServiceCombRegistration implements Registration {
 
   @Override
   public String getServiceId() {
-    throw new IllegalStateException("not supported");
+    //在使用zuul作为网关时需要调用getServiceId方法
+    return this.microservice.getServiceName();
   }
 
   @Override
