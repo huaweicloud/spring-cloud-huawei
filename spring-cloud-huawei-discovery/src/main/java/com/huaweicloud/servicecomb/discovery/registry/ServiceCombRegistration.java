@@ -65,7 +65,7 @@ public class ServiceCombRegistration implements Registration {
 
   @Override
   public String getServiceId() {
-    return this.microservice.getServiceId();
+    return this.microservice.getServiceName();
 //    throw new IllegalStateException("not supported");
   }
 
