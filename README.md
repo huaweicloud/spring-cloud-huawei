@@ -9,7 +9,7 @@ Including [Apache ServiceComb](http://servicecomb.apache.org) and [ServiceStage]
 
 ## Supported version
 
-| Branch | Latest Version | Spring Cloud Base Version | Spring Boot Base Version | Supported Spring Cloud Version | Supported Spring Boot Version|
+| Branch | Spring Cloud Huawei Latest Version | Spring Cloud Base Version | Spring Boot Base Version | Supported Spring Cloud Version | Supported Spring Boot Version|
 | ---------- | ------------ | ----------- | ----------- | ----------- | ----------- |
 | master | 1.8.0-2020.0.x | 2020.0.3 | 2.5.3 | 2020.0.x | 2.5.x |
 | Hoxton | 1.8.0-Hoxton | Hoxton.SR9 | 2.3.5.RELEASE | Hoxton | 2.3.x |
