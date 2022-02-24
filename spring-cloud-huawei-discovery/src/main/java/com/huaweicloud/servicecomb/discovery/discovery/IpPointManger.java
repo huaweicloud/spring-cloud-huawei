@@ -19,8 +19,10 @@ package com.huaweicloud.servicecomb.discovery.discovery;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.servicecomb.http.client.event.RefreshEndpointEvent;
 import org.apache.servicecomb.service.center.client.RegistrationEvents.HeartBeatEvent;
@@ -103,8 +105,8 @@ public class IpPointManger {
     Map<String, List<String>> zoneAndRegion = new HashMap<>();
     dataCenterInfo = findRegion(instances);
 
-    List<String> sameZone = new ArrayList<>();
-    List<String> sameRegion = new ArrayList<>();
+    Set<String> sameZone = new HashSet<>();
+    Set<String> sameRegion = new HashSet<>();
     for (MicroserviceInstance microserviceInstance : instances) {
       if (regionAndAZMatch(dataCenterInfo, microserviceInstance)) {
         sameZone.addAll(microserviceInstance.getEndpoints());
@@ -112,8 +114,8 @@ public class IpPointManger {
         sameRegion.addAll(microserviceInstance.getEndpoints());
       }
     }
-    zoneAndRegion.put("sameZone", sameZone);
-    zoneAndRegion.put("sameRegion", sameRegion);
+    zoneAndRegion.put("sameZone", new ArrayList<>(sameZone));
+    zoneAndRegion.put("sameRegion", new ArrayList<>(sameRegion));
     return zoneAndRegion;
   }
 
