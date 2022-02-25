@@ -33,6 +33,8 @@ import org.apache.servicecomb.service.center.client.model.FindMicroserviceInstan
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
 import com.google.common.eventbus.Subscribe;
 import com.huaweicloud.common.event.EventManager;
@@ -41,11 +43,11 @@ import com.huaweicloud.common.util.Type;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
-public class IpPointManger {
+public class ServiceAddressManager {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(IpPointManger.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ServiceAddressManager.class);
 
-  private boolean isInit = false;
+  private boolean initialized = false;
 
   private ServiceCenterClient serviceCenterClient;
 
@@ -57,11 +59,10 @@ public class IpPointManger {
 
   private DataCenterInfo dataCenterInfo;
 
-  ;
-
   private String myselfServiceId;
 
-  public IpPointManger(DiscoveryBootstrapProperties discoveryProperties, ServiceCenterClient serviceCenterClient,
+  public ServiceAddressManager(DiscoveryBootstrapProperties discoveryProperties,
+      ServiceCenterClient serviceCenterClient,
       ServiceCombRegistration serviceCombRegistration) {
     this.serviceCombRegistration = serviceCombRegistration;
     this.discoveryProperties = discoveryProperties;
@@ -73,8 +74,7 @@ public class IpPointManger {
 
   @Subscribe
   public void onHeartBeatEvent(HeartBeatEvent event) {
-    this.myselfServiceId = serviceCombRegistration.getMicroservice().getServiceId();
-    if (isInit) {
+    if (initialized) {
       return;
     }
     if (event.isSuccess() && discoveryProperties.isAutoDiscovery()) {
@@ -88,7 +88,7 @@ public class IpPointManger {
     List<MicroserviceInstance> instances = findServiceInstance(DiscoveryConstants.DEFAULT_APPID,
         key, DiscoveryConstants.VERSION_RULE_LATEST);
     if (DiscoveryConstants.SERVICE_CENTER.equals(key) && instances.size() > 0) {
-      isInit = true;
+      initialized = true;
     }
     Map<String, List<String>> zoneAndRegion = generateZoneAndRegionAddress(instances);
     if (zoneAndRegion == null) {
