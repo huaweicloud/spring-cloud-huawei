@@ -33,8 +33,6 @@ import org.apache.servicecomb.service.center.client.model.FindMicroserviceInstan
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 
 import com.google.common.eventbus.Subscribe;
 import com.huaweicloud.common.event.EventManager;
@@ -79,12 +77,12 @@ public class ServiceAddressManager {
     }
     if (event.isSuccess() && discoveryProperties.isAutoDiscovery()) {
       for (Type type : Type.values()) {
-        InitEndPoint(type.name());
+        InitEndPort(type.name());
       }
     }
   }
 
-  private void InitEndPoint(String key) {
+  private void InitEndPort(String key) {
     List<MicroserviceInstance> instances = findServiceInstance(DiscoveryConstants.DEFAULT_APPID,
         key, DiscoveryConstants.VERSION_RULE_LATEST);
     if (DiscoveryConstants.SERVICE_CENTER.equals(key) && instances.size() > 0) {
@@ -137,9 +135,7 @@ public class ServiceAddressManager {
       FindMicroserviceInstancesResponse instancesResponse = serviceCenterClient
           .findMicroserviceInstance(this.myselfServiceId, appId, serviceName, versionRule, null);
       return instancesResponse.getMicroserviceInstancesResponse().getInstances();
-    } catch (
-
-        OperationException operationException) {
+    } catch (OperationException operationException) {
       LOGGER.warn("not find the Microservice instance of {}", serviceName);
       return new ArrayList<>();
     }

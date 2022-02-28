@@ -49,9 +49,4 @@ public class SpringCloudRetryExtension extends AbstractRetryExtension {
 
     return String.valueOf(status);
   }
-
-  @Override
-  public boolean isRetry(Throwable e) {
-    return false;
-  }
 }

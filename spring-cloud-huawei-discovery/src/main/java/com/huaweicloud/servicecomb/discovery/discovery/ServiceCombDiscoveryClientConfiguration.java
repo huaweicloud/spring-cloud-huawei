@@ -61,7 +61,7 @@ public class ServiceCombDiscoveryClientConfiguration {
 
   @Bean
   @Order(100)
-  public ServiceAddressManager ipPointManger(DiscoveryBootstrapProperties discoveryProperties,
+  public ServiceAddressManager serviceAddressManager(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCenterClient serviceCenterClient, ServiceCombRegistration serviceCombRegistration) {
     return new ServiceAddressManager(discoveryProperties, serviceCenterClient, serviceCombRegistration);
   }
