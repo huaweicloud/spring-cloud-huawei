@@ -30,3 +30,6 @@ jobs:
       run: bash scripts/build.sh install
     - name: publish coverage report
       run: bash <(curl -s https://codecov.io/bash)
+    - uses: jwgmeligmeyling/pmd-github-action@master
+      with:
+        path: '/home/runner/work/spring-cloud-huawei/spring-cloud-huawei/spring-cloud-huawei-common/target/pmd.xml'
