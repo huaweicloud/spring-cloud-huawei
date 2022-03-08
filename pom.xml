@@ -169,7 +169,7 @@
           <excludeFromFailureFile>pmd/violationExclusions/exclude-pmd.properties</excludeFromFailureFile>
           <excludes>
 <!--            <exclude>**/RouterServiceInstanceListSupplier.java</exclude>-->
-            <exclude>**/com/huaweicloud/router/client/loabalancer/**</exclude>
+<!--            <exclude>**/com/huaweicloud/router/client/loabalancer/**</exclude>-->
           </excludes>
         </configuration>
         <executions>
@@ -212,7 +212,7 @@
           <excludeFromFailureFile>pmd/violationExclusions/exclude-pmd.properties</excludeFromFailureFile>
           <excludes>
             <!--            <exclude>**/RouterServiceInstanceListSupplier.java</exclude>-->
-            <exclude>**/com/huaweicloud/router/client/loabalancer/**</exclude>
+<!--            <exclude>**/com/huaweicloud/router/client/loabalancer/**</exclude>-->
           </excludes>
         </configuration>
         <reportSets>
