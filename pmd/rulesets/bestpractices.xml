@@ -617,38 +617,38 @@ for (int i = 0, j = 0; i < 10; i++, j += 2) {
         </example>
     </rule>
 
-    <rule name="GuardLogStatement"
-          language="java"
-          since="5.1.0"
-          message="Logger calls should be surrounded by log level guards."
-          class="net.sourceforge.pmd.lang.java.rule.bestpractices.GuardLogStatementRule"
-          externalInfoUrl="${pmd.website.baseurl}/pmd_rules_java_bestpractices.html#guardlogstatement">
-        <description>
-            Whenever using a log level, one should check if the loglevel is actually enabled, or
-            otherwise skip the associate String creation and manipulation.
+<!--    <rule name="GuardLogStatement"-->
+<!--          language="java"-->
+<!--          since="5.1.0"-->
+<!--          message="Logger calls should be surrounded by log level guards."-->
+<!--          class="net.sourceforge.pmd.lang.java.rule.bestpractices.GuardLogStatementRule"-->
+<!--          externalInfoUrl="${pmd.website.baseurl}/pmd_rules_java_bestpractices.html#guardlogstatement">-->
+<!--        <description>-->
+<!--            Whenever using a log level, one should check if the loglevel is actually enabled, or-->
+<!--            otherwise skip the associate String creation and manipulation.-->
 
-            An alternative to checking the log level are substituting parameters, formatters or lazy logging
-            with lambdas. The available alternatives depend on the actual logging framework.
-        </description>
-        <priority>2</priority>
-        <example>
-            <![CDATA[
-// Add this for performance
-if (log.isDebugEnabled()) {
-    log.debug("log something" + param1 + " and " + param2 + "concat strings");
-}
+<!--            An alternative to checking the log level are substituting parameters, formatters or lazy logging-->
+<!--            with lambdas. The available alternatives depend on the actual logging framework.-->
+<!--        </description>-->
+<!--        <priority>2</priority>-->
+<!--        <example>-->
+<!--            <![CDATA[-->
+<!--// Add this for performance-->
+<!--if (log.isDebugEnabled()) {-->
+<!--    log.debug("log something" + param1 + " and " + param2 + "concat strings");-->
+<!--}-->
 
-// Avoid the guarding if statement with substituting parameters
-log.debug("log something {} and {}", param1, param2);
+<!--// Avoid the guarding if statement with substituting parameters-->
+<!--log.debug("log something {} and {}", param1, param2);-->
 
-// Avoid the guarding if statement with formatters
-log.debug("log something %s and %s", param1, param2);
+<!--// Avoid the guarding if statement with formatters-->
+<!--log.debug("log something %s and %s", param1, param2);-->
 
-// Avoid the guarding if statement with lazy logging and lambdas
-log.debug("log something expensive: {}", () -> calculateExpensiveLoggingText());
-]]>
-        </example>
-    </rule>
+<!--// Avoid the guarding if statement with lazy logging and lambdas-->
+<!--log.debug("log something expensive: {}", () -> calculateExpensiveLoggingText());-->
+<!--]]>-->
+<!--        </example>-->
+<!--    </rule>-->
 
     <rule name="JUnit4SuitesShouldUseSuiteAnnotation"
           language="java"
@@ -1034,40 +1034,40 @@ public class MyTest {
         </example>
     </rule>
 
-    <rule name="LiteralsFirstInComparisons"
-          language="java"
-          since="6.24.0"
-          message="Position literals first in String comparisons"
-          class="net.sourceforge.pmd.lang.java.rule.bestpractices.LiteralsFirstInComparisonsRule"
-          externalInfoUrl="${pmd.website.baseurl}/pmd_rules_java_bestpractices.html#literalsfirstincomparisons">
-        <description>
-            Position literals first in all String comparisons, if the second argument is null then NullPointerExceptions
-            can be avoided, they will just return false. Note that switching literal positions for compareTo and
-            compareToIgnoreCase may change the result, see examples.
-        </description>
-        <priority>3</priority>
-        <example>
-            <![CDATA[
-class Foo {
-    boolean bar(String x) {
-        return x.equals("2"); // should be "2".equals(x)
-    }
-    boolean bar(String x) {
-        return x.equalsIgnoreCase("2"); // should be "2".equalsIgnoreCase(x)
-    }
-    boolean bar(String x) {
-        return (x.compareTo("bar") > 0); // should be: "bar".compareTo(x) < 0
-    }
-    boolean bar(String x) {
-        return (x.compareToIgnoreCase("bar") > 0); // should be: "bar".compareToIgnoreCase(x) < 0
-    }
-    boolean bar(String x) {
-        return x.contentEquals("bar"); // should be "bar".contentEquals(x)
-    }
-}
-]]>
-        </example>
-    </rule>
+<!--    <rule name="LiteralsFirstInComparisons"-->
+<!--          language="java"-->
+<!--          since="6.24.0"-->
+<!--          message="Position literals first in String comparisons"-->
+<!--          class="net.sourceforge.pmd.lang.java.rule.bestpractices.LiteralsFirstInComparisonsRule"-->
+<!--          externalInfoUrl="${pmd.website.baseurl}/pmd_rules_java_bestpractices.html#literalsfirstincomparisons">-->
+<!--        <description>-->
+<!--            Position literals first in all String comparisons, if the second argument is null then NullPointerExceptions-->
+<!--            can be avoided, they will just return false. Note that switching literal positions for compareTo and-->
+<!--            compareToIgnoreCase may change the result, see examples.-->
+<!--        </description>-->
+<!--        <priority>3</priority>-->
+<!--        <example>-->
+<!--            <![CDATA[-->
+<!--class Foo {-->
+<!--    boolean bar(String x) {-->
+<!--        return x.equals("2"); // should be "2".equals(x)-->
+<!--    }-->
+<!--    boolean bar(String x) {-->
+<!--        return x.equalsIgnoreCase("2"); // should be "2".equalsIgnoreCase(x)-->
+<!--    }-->
+<!--    boolean bar(String x) {-->
+<!--        return (x.compareTo("bar") > 0); // should be: "bar".compareTo(x) < 0-->
+<!--    }-->
+<!--    boolean bar(String x) {-->
+<!--        return (x.compareToIgnoreCase("bar") > 0); // should be: "bar".compareToIgnoreCase(x) < 0-->
+<!--    }-->
+<!--    boolean bar(String x) {-->
+<!--        return x.contentEquals("bar"); // should be "bar".contentEquals(x)-->
+<!--    }-->
+<!--}-->
+<!--]]>-->
+<!--        </example>-->
+<!--    </rule>-->
 
     <rule name="LooseCoupling"
           language="java"
@@ -1681,32 +1681,32 @@ public class Foo {
         </example>
     </rule>
 
-    <rule name="UnusedImports"
-          language="java"
-          since="1.0"
-          message="Unused import ''{0}''"
-          class="net.sourceforge.pmd.lang.java.rule.bestpractices.UnusedImportsRule"
-          typeResolution="true"
-          deprecated="true"
-          externalInfoUrl="${pmd.website.baseurl}/pmd_rules_java_bestpractices.html#unusedimports">
-        <description>
-            Reports import statements that are not used within the file. This also reports
-            duplicate imports, and imports from the same package. The simplest fix is just
-            to delete those imports.
+<!--    <rule name="UnusedImports"-->
+<!--          language="java"-->
+<!--          since="1.0"-->
+<!--          message="Unused import ''{0}''"-->
+<!--          class="net.sourceforge.pmd.lang.java.rule.bestpractices.UnusedImportsRule"-->
+<!--          typeResolution="true"-->
+<!--          deprecated="true"-->
+<!--          externalInfoUrl="${pmd.website.baseurl}/pmd_rules_java_bestpractices.html#unusedimports">-->
+<!--        <description>-->
+<!--            Reports import statements that are not used within the file. This also reports-->
+<!--            duplicate imports, and imports from the same package. The simplest fix is just-->
+<!--            to delete those imports.-->
 
-            This rule is deprecated since PMD 6.34.0. Use the rule {% rule "java/codestyle/UnnecessaryImport" %}
-            from category codestyle instead.
-        </description>
-        <priority>4</priority>
-        <example>
-            <![CDATA[
-import java.io.File;  // not referenced or required
-import java.util.*;   // not referenced or required
+<!--            This rule is deprecated since PMD 6.34.0. Use the rule {% rule "java/codestyle/UnnecessaryImport" %}-->
+<!--            from category codestyle instead.-->
+<!--        </description>-->
+<!--        <priority>4</priority>-->
+<!--        <example>-->
+<!--            <![CDATA[-->
+<!--import java.io.File;  // not referenced or required-->
+<!--import java.util.*;   // not referenced or required-->
 
-public class Foo {}
-]]>
-        </example>
-    </rule>
+<!--public class Foo {}-->
+<!--]]>-->
+<!--        </example>-->
+<!--    </rule>-->
 
     <rule name="UnusedLocalVariable"
           language="java"
