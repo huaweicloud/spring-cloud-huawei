@@ -170,17 +170,7 @@
           <excludes>
 <!--            <exclude>**/RouterServiceInstanceListSupplier.java</exclude>-->
 <!--            <exclude>**/com/huaweicloud/router/client/loabalancer/**</exclude>-->
-            <exclude>**/*route*/**</exclude>
-            <exclude>**/discovery*/**</exclude>
-            <exclude>**/discovery*/price*/**</exclude>
-            <exclude>**/order*/**</exclude>
           </excludes>
-          <excludeRoots>
-            <excludeRoot>**/integration*/**</excludeRoot>
-            <excludeRoot>**/order*/**</excludeRoot>
-            <excludeRoot>order*/**</excludeRoot>
-            <excludeRoot>order*</excludeRoot>
-          </excludeRoots>
         </configuration>
         <executions>
           <execution>
