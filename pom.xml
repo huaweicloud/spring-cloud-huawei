@@ -173,7 +173,7 @@
             <exclude>**/*route*/**</exclude>
             <exclude>**/discovery*/**</exclude>
             <exclude>**/discovery*/price*/**</exclude>
-            <exclude>**/discovery*/order*/**</exclude>
+            <exclude>**/order*/**</exclude>
           </excludes>
           <excludeRoots>
             <excludeRoot>**/integration*/**</excludeRoot>
