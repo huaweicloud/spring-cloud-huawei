@@ -48,21 +48,109 @@
     </dependency>
   </dependencies>
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-pmd-plugin</artifactId>
+          <version>3.16.0</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
         <version>3.16.0</version>
         <configuration>
+          <rulesets>
+            <ruleset>pmd/rulesets/bestpractices.xml</ruleset>
+          </rulesets>
+          <!-- failOnViolation is actually true by default, but can be disabled -->
+          <failOnViolation>true</failOnViolation>
+          <!-- printFailingErrors is pretty useful -->
+          <printFailingErrors>true</printFailingErrors>
+          <!-- enable incremental analysis -->
+          <analysisCache>false</analysisCache>
+          <excludeFromFailureFile>pmd/violationExclusions/exclude-pmd.properties</excludeFromFailureFile>
           <excludes>
+            <!--            <exclude>**/RouterServiceInstanceListSupplier.java</exclude>-->
+            <!--            <exclude>**/com/huaweicloud/router/client/loabalancer/**</exclude>-->
+            <exclude>**/*route*/**</exclude>
             <exclude>**/discovery*/**</exclude>
-            <exclude>discovery*/**</exclude>
+            <exclude>**/discovery*/price*/**</exclude>
+            <exclude>**/order*/**</exclude>
           </excludes>
           <excludeRoots>
-            <excludeRoot>discovery*</excludeRoot>
+            <excludeRoot>**/integration*/**</excludeRoot>
+            <excludeRoot>**/order*/**</excludeRoot>
+            <excludeRoot>order*/**</excludeRoot>
+            <excludeRoot>order*</excludeRoot>
           </excludeRoots>
         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>aggregate</id>
+            <goals>
+              <goal>aggregate-pmd</goal>
+              <goal>aggregate-cpd</goal>
+            </goals>
+            <configuration>
+              <excludeFromFailureFile>pmd/violationExclusions/exclude-pmd.properties</excludeFromFailureFile>
+            </configuration>
+            <phase>site</phase>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>3.16.0</version>
+        <configuration>
+          <rulesets>
+            <ruleset>pmd/rulesets/bestpractices.xml</ruleset>
+          </rulesets>
+          <!-- failOnViolation is actually true by default, but can be disabled -->
+          <failOnViolation>true</failOnViolation>
+          <!-- printFailingErrors is pretty useful -->
+          <printFailingErrors>true</printFailingErrors>
+          <!-- enable incremental analysis -->
+          <analysisCache>false</analysisCache>
+          <excludeFromFailureFile>pmd/violationExclusions/exclude-pmd.properties</excludeFromFailureFile>
+          <excludes>
+            <!--            <exclude>**/RouterServiceInstanceListSupplier.java</exclude>-->
+            <!--            <exclude>**/com/huaweicloud/router/client/loabalancer/**</exclude>-->
+            <exclude>**/discovery*/price*/**</exclude>
+            <exclude>**/*route*/**</exclude>
+          </excludes>
+        </configuration>
+        <reportSets>
+          <reportSet><!-- by default, id = "default" -->
+            <reports><!-- select non-aggregate reports -->
+              <report>pmd</report>
+              <report>cpd</report>
+            </reports>
+          </reportSet>
+          <reportSet><!-- aggregate reportSet, to define in poms having modules -->
+            <id>aggregate</id>
+            <inherited>false</inherited> <!-- don't run aggregate in child modules -->
+            <reports>
+              <report>aggregate-pmd</report>
+              <report>aggregate-cpd</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+
 </project>
