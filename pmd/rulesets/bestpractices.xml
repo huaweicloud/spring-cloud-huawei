@@ -1754,24 +1754,24 @@ public class Something {
         </example>
     </rule>
 
-<!--    <rule name="UnusedPrivateMethod"-->
-<!--          language="java"-->
-<!--          since="0.7"-->
-<!--          message="Avoid unused private methods such as ''{0}''."-->
-<!--          class="net.sourceforge.pmd.lang.java.rule.bestpractices.UnusedPrivateMethodRule"-->
-<!--          externalInfoUrl="${pmd.website.baseurl}/pmd_rules_java_bestpractices.html#unusedprivatemethod">-->
-<!--        <description>-->
-<!--            Unused Private Method detects when a private method is declared but is unused.-->
-<!--        </description>-->
-<!--        <priority>3</priority>-->
-<!--        <example>-->
-<!--            <![CDATA[-->
-<!--public class Something {-->
-<!--    private void foo() {} // unused-->
-<!--}-->
-<!--]]>-->
-<!--        </example>-->
-<!--    </rule>-->
+    <rule name="UnusedPrivateMethod"
+          language="java"
+          since="0.7"
+          message="Avoid unused private methods such as ''{0}''."
+          class="net.sourceforge.pmd.lang.java.rule.bestpractices.UnusedPrivateMethodRule"
+          externalInfoUrl="${pmd.website.baseurl}/pmd_rules_java_bestpractices.html#unusedprivatemethod">
+        <description>
+            Unused Private Method detects when a private method is declared but is unused.
+        </description>
+        <priority>3</priority>
+        <example>
+            <![CDATA[
+public class Something {
+    private void foo() {} // unused
+}
+]]>
+        </example>
+    </rule>
 
     <rule name="UseAssertEqualsInsteadOfAssertTrue"
           language="java"
