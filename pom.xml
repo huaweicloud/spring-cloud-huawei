@@ -177,6 +177,9 @@
           </excludes>
           <excludeRoots>
             <excludeRoot>**/integration*/**</excludeRoot>
+            <excludeRoot>**/order*/**</excludeRoot>
+            <excludeRoot>order*/**</excludeRoot>
+            <excludeRoot>order*</excludeRoot>
           </excludeRoots>
         </configuration>
         <executions>
