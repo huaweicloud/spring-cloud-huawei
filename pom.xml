@@ -168,7 +168,6 @@
           <analysisCache>false</analysisCache>
           <excludeFromFailureFile>pmd/violationExclusions/exclude-pmd.properties</excludeFromFailureFile>
           <excludes>
-<!--            路径中不允许包含‘-’-->
 <!--            <exclude>**/RouterServiceInstanceListSupplier.java</exclude>-->
 <!--            <exclude>**/com/huaweicloud/router/client/loabalancer/**</exclude>-->
             <exclude>**/*route*/**</exclude>
