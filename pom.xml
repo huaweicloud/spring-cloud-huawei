@@ -170,6 +170,8 @@
           <excludes>
 <!--            <exclude>**/RouterServiceInstanceListSupplier.java</exclude>-->
 <!--            <exclude>**/com/huaweicloud/router/client/loabalancer/**</exclude>-->
+            <exclude>**/integration-tests/**</exclude>
+            <exclude>**/discovery-tests/**</exclude>
           </excludes>
         </configuration>
         <executions>
@@ -214,6 +216,7 @@
             <!--            <exclude>**/RouterServiceInstanceListSupplier.java</exclude>-->
 <!--            <exclude>**/com/huaweicloud/router/client/loabalancer/**</exclude>-->
             <exclude>**/integration-tests/**</exclude>
+            <exclude>**/discovery-tests/**</exclude>
           </excludes>
         </configuration>
         <reportSets>
