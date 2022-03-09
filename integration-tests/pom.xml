@@ -58,6 +58,9 @@
             <exclude>**/discovery*/**</exclude>
             <exclude>discovery*/**</exclude>
           </excludes>
+          <excludeRoots>
+            <excludeRoot>discovery*</excludeRoot>
+          </excludeRoots>
         </configuration>
       </plugin>
     </plugins>
