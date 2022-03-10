@@ -171,8 +171,8 @@
           <excludeFromFailureFile>pmd/violationExclusions/exclude-pmd.properties</excludeFromFailureFile>
           <excludes>
             <!--Exclude the directories you don't want to check, but it only works for sub modules. Please refer to the following example-->
-            <!--<exclude>**/RouterServiceInstanceListSupplier.java</exclude>-->
-            <!--<exclude>**/com/huaweicloud/router/client/loabalancer/**</exclude>-->
+            <exclude>**/com/huaweicloud/sample/**</exclude>
+            <exclude>**/com/huaweicloud/samples/**</exclude>
           </excludes>
         </configuration>
         <executions>

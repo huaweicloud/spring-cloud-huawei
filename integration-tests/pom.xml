@@ -47,19 +47,4 @@
       <artifactId>assertj-core</artifactId>
     </dependency>
   </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.16.0</version>
-        <configuration>
-          <excludes>
-            <!--Because this module is not included in the parent POM, it can only be configured here. All directories of this module can be ignored-->
-            <exclude>**/**</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>
