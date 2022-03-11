@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Licensed to the Apache Software Foundation (ASF) under one or more
-  ~ contributor license agreements.  See the NOTICE file distributed with
-  ~ this work for additional information regarding copyright ownership.
-  ~ The ASF licenses this file to You under the Apache License, Version 2.0
-  ~ (the "License"); you may not use this file except in compliance with
-  ~ the License.  You may obtain a copy of the License at
+
+  ~ Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
   ~
   ~     http://www.apache.org/licenses/LICENSE-2.0
   ~
@@ -29,7 +29,7 @@
 
   <groupId>com.huaweicloud</groupId>
   <artifactId>spring-cloud-huawei</artifactId>
-  <version>1.8.0-SNAPSHOT</version>
+  <version>1.9.0-2020.0.x-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Spring Cloud Huawei</name>
 
@@ -113,6 +113,15 @@
   </profiles>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-pmd-plugin</artifactId>
+          <version>3.16.0</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.rat</groupId>
@@ -143,29 +152,28 @@
           </excludes>
         </configuration>
       </plugin>
-      <!--SpotBugs-->
       <plugin>
-        <groupId>com.github.spotbugs</groupId>
-        <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>4.5.2.0</version>
-        <dependencies>
-          <!-- overwrite dependency on spotbugs if you want to specify the version of spotbugs -->
-          <dependency>
-            <groupId>com.github.spotbugs</groupId>
-            <artifactId>spotbugs</artifactId>
-            <version>4.5.3</version>
-          </dependency>
-        </dependencies>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>3.16.0</version>
         <configuration>
-          <!--Analysis Effort-->
-          <effort>Max</effort>
-          <!--Minimun Condidence-->
-          <threshold>Medium</threshold>
-          <!--Minimum Rank-->
-          <maxRank>20</maxRank>
-          <!--          <includeFilterFile>spotbugs-security/spotbugs-security-include.xml</includeFilterFile>-->
-          <excludeFilterFile>spotbugs-security/spotbugs-security-exclude.xml</excludeFilterFile>
-          <includeTests>false</includeTests>
+          <rulesets>
+            <!-- A rule set, that comes bundled with PMD -->
+            <ruleset>pmd/rulesets/bestpractices.xml</ruleset>
+          </rulesets>
+          <!-- failOnViolation is actually true by default, but can be disabled -->
+          <failOnViolation>true</failOnViolation>
+          <!-- printFailingErrors is pretty useful -->
+          <printFailingErrors>true</printFailingErrors>
+          <!-- enable incremental analysis -->
+          <analysisCache>false</analysisCache>
+          <!--It is possible to exclude some sources from PMD check to prevent failures.-->
+          <excludeFromFailureFile>pmd/violationExclusions/exclude-pmd.properties</excludeFromFailureFile>
+          <excludes>
+            <!--Exclude the directories you don't want to check, but it only works for sub modules. Please refer to the following example-->
+            <exclude>**/com/huaweicloud/sample/**</exclude>
+            <exclude>**/com/huaweicloud/samples/**</exclude>
+          </excludes>
         </configuration>
         <executions>
           <execution>
@@ -173,8 +181,56 @@
               <goal>check</goal>
             </goals>
           </execution>
+          <execution>
+            <id>aggregate</id>
+            <goals>
+              <goal>aggregate-pmd</goal>
+              <goal>aggregate-cpd</goal>
+            </goals>
+            <configuration>
+              <excludeFromFailureFile>pmd/violationExclusions/exclude-pmd.properties</excludeFromFailureFile>
+            </configuration>
+            <phase>site</phase>
+          </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>3.16.0</version>
+        <configuration>
+          <rulesets>
+            <ruleset>pmd/rulesets/bestpractices.xml</ruleset>
+          </rulesets>
+          <!-- failOnViolation is actually true by default, but can be disabled -->
+          <failOnViolation>true</failOnViolation>
+          <!-- printFailingErrors is pretty useful -->
+          <printFailingErrors>true</printFailingErrors>
+          <!-- enable incremental analysis -->
+          <analysisCache>false</analysisCache>
+          <excludeFromFailureFile>pmd/violationExclusions/exclude-pmd.properties</excludeFromFailureFile>
+        </configuration>
+        <reportSets>
+          <reportSet><!-- by default, id = "default" -->
+            <reports><!-- select non-aggregate reports -->
+              <report>pmd</report>
+              <report>cpd</report>
+            </reports>
+          </reportSet>
+          <reportSet><!-- aggregate reportSet, to define in poms having modules -->
+            <id>aggregate</id>
+            <inherited>false</inherited> <!-- don't run aggregate in child modules -->
+            <reports>
+              <report>aggregate-pmd</report>
+              <report>aggregate-cpd</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>
