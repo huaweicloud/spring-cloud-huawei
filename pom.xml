@@ -111,7 +111,6 @@
       </modules>
     </profile>
   </profiles>
-
   <build>
     <pluginManagement>
       <plugins>
@@ -184,6 +183,7 @@
           </execution>
         </executions>
       </plugin>
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
@@ -205,7 +205,14 @@
             <!--Exclude the directories you don't want to check, but it only works for sub modules. Please refer to the following example-->
             <exclude>**/com/huaweicloud/sample/**</exclude>
             <exclude>**/com/huaweicloud/samples/**</exclude>
-          </excludes>
+          </excludes>            
+         </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
           <execution>
             <id>aggregate</id>
             <goals>
@@ -217,6 +224,9 @@
             </configuration>
             <phase>site</phase>
           </execution>
+         </execution>
+        </executions>
+      </plugin>                 
     </plugins>
   </build>
   <reporting>
