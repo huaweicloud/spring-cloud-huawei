@@ -175,7 +175,6 @@
           <!--          <includeFilterFile>spotbugs-security/spotbugs-security-include.xml</includeFilterFile>-->
           <excludeFilterFile>spotbugs-security/spotbugs-security-exclude.xml</excludeFilterFile>
           <includeTests>false</includeTests>
-          >>>>>>> master
         </configuration>
         <executions>
           <execution>
