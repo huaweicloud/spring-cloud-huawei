@@ -23,10 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 import io.swagger.models.Swagger;
 import springfox.documentation.service.ApiListing;
 import springfox.documentation.service.Documentation;

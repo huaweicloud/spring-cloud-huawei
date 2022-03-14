@@ -16,8 +16,6 @@
   */
 package com.huaweicloud.router.client.track;
 
-import java.util.Map;
-
 /**
  * 当前使用线程上下文获取服务端请求的header， 不适用于Reactive模式。
  **/
