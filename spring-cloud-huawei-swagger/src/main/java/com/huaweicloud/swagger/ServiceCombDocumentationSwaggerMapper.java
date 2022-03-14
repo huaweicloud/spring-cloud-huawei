@@ -218,8 +218,8 @@ public class ServiceCombDocumentationSwaggerMapper implements DocumentationSwagg
         Optional<ContentSpecification> content = req.getParameterSpecification().getContent();
         if (content.isPresent()) {
           for (Representation rep : content.get().getRepresentations()) {
-            if (rep.getModel().getScalar().isPresent() && rep.getModel().getScalar().get().getType().getType()
-                .equals("string")) {
+            if (rep.getModel().getScalar().isPresent()
+                    && "string".equals(rep.getModel().getScalar().get().getType().getType())) {
               req.getExtensions().add(new StringVendorExtension(X_RAW_JSON_TYPE, "true"));
             }
           }
