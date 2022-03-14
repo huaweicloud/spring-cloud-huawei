@@ -145,8 +145,8 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
       return null;
     }
 
-    if (microservice.getAppId().equals(DiscoveryConstants.DEFAULT_APPID) && microservice.getServiceName()
-        .equals(DiscoveryConstants.SERVICE_CENTER)) {
+    if (DiscoveryConstants.DEFAULT_APPID.equals(microservice.getAppId()) && DiscoveryConstants.SERVICE_CENTER
+        .equals(microservice.getServiceName())) {
       return null;
     }
 
