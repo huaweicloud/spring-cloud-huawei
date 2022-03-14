@@ -1938,4 +1938,29 @@ public class Foo {}
         </example>
     </rule>
 
+    <rule name="MissingOverride"
+          language="java"
+          since="6.2.0"
+          minimumLanguageVersion="1.5"
+          message="The method ''{0}'' is missing an @Override annotation."
+          typeResolution="true"
+          class="net.sourceforge.pmd.lang.java.rule.bestpractices.MissingOverrideRule"
+          externalInfoUrl="${pmd.website.baseurl}/pmd_rules_java_bestpractices.html#missingoverride">
+        <description>
+            Annotating overridden methods with @Override ensures at compile time that
+            the method really overrides one, which helps refactoring and clarifies intent.
+        </description>
+        <priority>3</priority>
+        <example>
+            <![CDATA[
+            public class Foo implements Runnable {
+                // This method is overridden, and should have an @Override annotation
+                public void run() {
+                }
+            }
+            ]]>
+        </example>
+    </rule>
+
+
 </ruleset>
