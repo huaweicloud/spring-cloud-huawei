@@ -1912,4 +1912,10 @@ class Foo {
         </example>
     </rule>
 
+    <rule ref="category/java/bestpractices.xml/GuardLogStatement">
+        <properties>
+            <property name="logLevels" value="trace,debug,info,warn,error,log,finest,finer,fine,info,warning,severe" />
+            <property name="guardsMethods" value="isTraceEnabled,isDebugEnabled,isInfoEnabled,isWarnEnabled,isErrorEnabled,isLoggable" />
+        </properties>
+    </rule>
 </ruleset>
