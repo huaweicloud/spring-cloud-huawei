@@ -37,7 +37,7 @@ import feign.RequestInterceptor;
 public class RouterWebAutoConfiguration {
   @Configuration
   @ConditionalOnClass(WebMvcConfigurer.class)
-  class WebMvcConfigurerEnable {
+  static class WebMvcConfigurerEnable {
     @Bean
     public WebMvcConfigurer canaryWebMvcConfigurer() {
       return new WebMvcConfigurer() {
