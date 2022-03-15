@@ -108,8 +108,11 @@ public class ConfigService {
     if (addresses.isEmpty()) {
       addresses = URLUtil.dealMultiUrl(configProperties.getServerAddr());
     }
-    LOGGER
-        .info("initialize config server type={}, address={}.", configProperties.getServerType(), addresses.toString());
+    if (LOGGER.isInfoEnabled()){
+      LOGGER
+              .info("LOGGER initialize config server" + configProperties.getServerType() + "and" + addresses.toString() + "concat strings");
+    }
+
     return new AddressManager(serviceCombAkSkProperties.getProject(), addresses);
   }
 
@@ -173,8 +176,11 @@ public class ConfigService {
     if (addresses.isEmpty()) {
       addresses = URLUtil.dealMultiUrl(configProperties.getServerAddr());
     }
-    LOGGER
-        .info("initialize config server type={}, address={}.", configProperties.getServerType(), addresses.toString());
+    if (LOGGER.isInfoEnabled()){
+      LOGGER
+              .info("LOGGER initialize config server" + configProperties.getServerType() +"and" + addresses.toString() + "concat strings");
+    }
+
     return createKieAddressManager(addresses);
   }
 

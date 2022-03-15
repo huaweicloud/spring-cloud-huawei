@@ -89,18 +89,23 @@ public class GovernanceRequestMappingHandlerAdapter {
       if (th instanceof RequestNotPermitted) {
         response.setStatus(429);
         response.getWriter().print("rate limited.");
-        LOGGER.warn("the request is rate limit by policy : {}",
-            th.getMessage());
+        if (LOGGER.isWarnEnabled()){
+          LOGGER.warn("LOGGER the request is rate limit by policy" + th.getMessage());
+        }
+
       } else if (th instanceof CallNotPermittedException) {
         response.setStatus(429);
         response.getWriter().print("circuitBreaker is open.");
-        LOGGER.warn("circuitBreaker is open by policy : {}",
-            th.getMessage());
+        if (LOGGER.isWarnEnabled()){
+          LOGGER.warn("LOGGER circuitBreaker is open by policy" + th.getMessage());
+        }
+
       } else if (th instanceof BulkheadFullException) {
         response.setStatus(429);
         response.getWriter().print("bulkhead is full and does not permit further calls.");
-        LOGGER.warn("bulkhead is full and does not permit further calls by policy : {}",
-            th.getMessage());
+        if (LOGGER.isWarnEnabled()){
+          LOGGER.warn("LOGGER bulkhead is full and does not permit further calls by policy" + th.getMessage());
+        }
       } else {
         if (serverRecoverPolicy != null) {
           return serverRecoverPolicy.apply(th);

@@ -61,7 +61,9 @@ public class RouterHandlerInterceptor implements HandlerInterceptor {
     try {
       RouterTrackContext.setRequestHeader(JsonUtils.writeValueAsString(headers));
     } catch (JsonProcessingException e) {
-      LOGGER.warn("encode headers failed for {}", e.getMessage());
+      if (LOGGER.isWarnEnabled()){
+        LOGGER.warn("LOGGER encode headers failed for" + e.getMessage());
+      }
     }
 
     return true;

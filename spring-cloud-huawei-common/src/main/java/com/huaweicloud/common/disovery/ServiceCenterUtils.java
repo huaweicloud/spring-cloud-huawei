@@ -44,7 +44,9 @@ public class ServiceCenterUtils {
     if (addresses.isEmpty()) {
       addresses = URLUtil.dealMultiUrl(discoveryProperties.getAddress());
     }
-    LOGGER.info("initialize discovery server={}", addresses.toString());
+    if (LOGGER.isInfoEnabled()){
+      LOGGER.info("LOGGER initialize discovery server" + addresses.toString());
+    }
     return new AddressManager("default", addresses);
   }
 

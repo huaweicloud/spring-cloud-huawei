@@ -125,8 +125,10 @@ public class GovernanceGatewayFilterFactory
       if (bulkhead != null) {
         toRun = toRun.transform(BulkheadOperator.of(bulkhead))
             .onErrorResume(BulkheadFullException.class, (t) -> {
-              LOGGER.warn("bulkhead is full and does not permit further calls by policy : {}",
-                  t.getMessage());
+              if (LOGGER.isWarnEnabled()){
+                LOGGER.warn("LOGGER bulkhead is full and does not permit further calls by policy" + t.getMessage());
+              }
+
               return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
                   "bulkhead is full and does not permit further calls.", t));
             });
@@ -148,8 +150,10 @@ public class GovernanceGatewayFilterFactory
               }
             })
             .onErrorResume(CallNotPermittedException.class, (t) -> {
-              LOGGER.warn("circuitBreaker is open by policy : {}",
-                  t.getMessage());
+              if (LOGGER.isWarnEnabled()){
+                LOGGER.warn("LOGGER circuitBreaker is open by policy" + t.getMessage());
+              }
+
               return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
                   "bulkhead is full and does not permit further calls.", t));
             });
@@ -162,8 +166,9 @@ public class GovernanceGatewayFilterFactory
       if (rateLimiter != null) {
         toRun = toRun.transform(RateLimiterOperator.of(rateLimiter))
             .onErrorResume(RequestNotPermitted.class, (t) -> {
-              LOGGER.warn("the request is rate limit by policy : {}",
-                  t.getMessage());
+              if (LOGGER.isWarnEnabled()){
+                LOGGER.warn("LOGGER the request is rate limit by policy" + t.getMessage());
+              }
               return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "rate limited.", t));
             });
       }

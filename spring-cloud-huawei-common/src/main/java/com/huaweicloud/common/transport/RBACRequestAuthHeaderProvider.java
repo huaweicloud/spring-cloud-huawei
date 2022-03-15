@@ -123,8 +123,9 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
       LOGGER.warn("service center do not support RBAC token, you should not config account info");
       return INVALID_TOKEN;
     }
-
-    LOGGER.info("refresh token successfully {}", rbacTokenResponse.getStatusCode());
+    if (LOGGER.isInfoEnabled()){
+      LOGGER.info("LOGGER refresh token successfully" + rbacTokenResponse.getStatusCode());
+    }
     return rbacTokenResponse.getToken();
   }
 

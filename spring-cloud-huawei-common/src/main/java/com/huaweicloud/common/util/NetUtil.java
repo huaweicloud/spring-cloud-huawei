@@ -47,7 +47,9 @@ public class NetUtil {
       port = endpointURIBuilder.build().getPort();
       return port;
     } catch (URISyntaxException e) {
-      LOGGER.error(e.getMessage(), e);
+      if (LOGGER.isErrorEnabled()){
+        LOGGER.error(e.getMessage() + e);
+      }
     }
     return null;
   }
@@ -60,7 +62,9 @@ public class NetUtil {
       host = endpointURIBuilder.build().getHost();
       return host;
     } catch (URISyntaxException e) {
-      LOGGER.error(e.getMessage(), e);
+      if (LOGGER.isErrorEnabled()){
+        LOGGER.error(e.getMessage() + e);
+      }
     }
     return host;
   }

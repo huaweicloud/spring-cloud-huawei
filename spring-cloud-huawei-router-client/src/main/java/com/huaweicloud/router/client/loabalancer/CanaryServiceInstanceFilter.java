@@ -73,7 +73,9 @@ public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
       }
       canaryHeaders.putAll(httpHeaders.toSingleValueMap());
     } catch (IOException e) {
-      LOGGER.warn("decode headers failed for {}", e.getMessage());
+      if (LOGGER.isWarnEnabled()){
+        LOGGER.warn("LOGGER decode headers failed for" + e.getMessage());
+      }
     }
 
     return routerFilter

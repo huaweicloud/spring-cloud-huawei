@@ -48,10 +48,9 @@ public class ConfigWatch implements ApplicationEventPublisherAware {
 
   @Subscribe
   public void onConfigurationChangedEvent(ConfigurationChangedEvent event) {
-    LOGGER.info("receive new configurations, added=[{}], updated=[{}], deleted=[{}]",
-        event.getAdded().keySet(),
-        event.getUpdated().keySet(),
-        event.getDeleted().keySet());
+    if (LOGGER.isInfoEnabled()){
+      LOGGER.info("LOGGER receive new configurations" + event.getAdded().keySet() + "and" + event.getUpdated().keySet() + "and" + event.getDeleted().keySet() + "concat strings");
+    }
 
     Set<String> updatedKey = new HashSet<>();
     updatedKey.addAll(event.getAdded().keySet());
