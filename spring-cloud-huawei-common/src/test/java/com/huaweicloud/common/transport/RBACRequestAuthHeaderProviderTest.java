@@ -45,7 +45,7 @@ public class RBACRequestAuthHeaderProviderTest {
         ServiceCombRBACProperties serviceCombRBACProperties) {
       super(discoveryProperties, serviceCombSSLProperties, serviceCombRBACProperties);
     }
-
+    @Override
     protected RbacTokenResponse callCreateHeaders() {
       RbacTokenResponse response = new RbacTokenResponse();
       response.setStatusCode(200);
@@ -62,7 +62,7 @@ public class RBACRequestAuthHeaderProviderTest {
         ServiceCombRBACProperties serviceCombRBACProperties) {
       super(discoveryProperties, serviceCombSSLProperties, serviceCombRBACProperties);
     }
-
+    @Override
     protected RbacTokenResponse callCreateHeaders() {
       if (first) {
         first = false;
@@ -83,11 +83,11 @@ public class RBACRequestAuthHeaderProviderTest {
         ServiceCombRBACProperties serviceCombRBACProperties) {
       super(discoveryProperties, serviceCombSSLProperties, serviceCombRBACProperties);
     }
-
+    @Override
     protected long refreshTime() {
       return 100;
     }
-
+    @Override
     protected RbacTokenResponse callCreateHeaders() {
       RbacTokenResponse response = new RbacTokenResponse();
       count++;

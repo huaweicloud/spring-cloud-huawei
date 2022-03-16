@@ -17,7 +17,6 @@
 
 package com.huaweicloud.common.util;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
