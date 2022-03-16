@@ -17,6 +17,7 @@
 
 package com.huaweicloud.common.transport;
 
+import com.huaweicloud.common.CommonConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,17 +28,19 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.huaweicloud.common.CommonConfiguration;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {CommonConfiguration.class, AkSkTestConfiguration.class})
 @ContextConfiguration(initializers = ConfigDataApplicationContextInitializer.class)
 public class ServiceCombAkSkPropertiesTest {
-  @Autowired
+
   private ServiceCombAkSkProperties akSkProperties;
 
-  @Autowired
   private Environment environment;
+  @Autowired
+  public ServiceCombAkSkPropertiesTest(ServiceCombAkSkProperties akSkProperties, Environment environment) {
+    this.akSkProperties = akSkProperties;
+    this.environment = environment;
+  }
 
   @Test
   public void testConfigurationCorrect() {

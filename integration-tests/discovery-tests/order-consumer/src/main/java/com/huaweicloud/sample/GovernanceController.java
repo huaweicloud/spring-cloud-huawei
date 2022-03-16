@@ -26,13 +26,17 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 @RequestMapping(path = "govern")
 public class GovernanceController {
-  @Autowired
+
   private RestTemplate restTemplate;
 
-  @Autowired
   private FeignService feignService;
 
   private int count = 0;
+  @Autowired
+  public GovernanceController(RestTemplate restTemplate, FeignService feignService) {
+    this.restTemplate = restTemplate;
+    this.feignService = feignService;
+  }
 
   @RequestMapping("/hello")
   public String hello() {

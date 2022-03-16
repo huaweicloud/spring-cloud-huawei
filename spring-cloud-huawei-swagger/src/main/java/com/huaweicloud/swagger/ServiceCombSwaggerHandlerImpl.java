@@ -16,6 +16,22 @@
   */
 package com.huaweicloud.swagger;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
+import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
+import io.swagger.models.Swagger;
+import io.swagger.v3.core.util.Yaml;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import springfox.documentation.service.Documentation;
+import springfox.documentation.spring.web.DocumentationCache;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.spring.web.plugins.DocumentationPluginsBootstrapper;
+import springfox.documentation.swagger2.mappers.ServiceModelToSwagger2Mapper;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,35 +39,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.common.base.Charsets;
-import com.google.common.hash.Hashing;
-import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
-
-import io.swagger.models.Swagger;
-import io.swagger.v3.core.util.Yaml;
-import springfox.documentation.service.Documentation;
-import springfox.documentation.spring.web.DocumentationCache;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.spring.web.plugins.DocumentationPluginsBootstrapper;
-import springfox.documentation.swagger2.mappers.ServiceModelToSwagger2Mapper;
-
 public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombSwaggerHandlerImpl.class);
 
-  @Autowired
   protected DocumentationPluginsBootstrapper documentationPluginsBootstrapper;
 
-  @Autowired
   protected DocumentationCache documentationCache;
 
-  @Autowired
   protected ServiceModelToSwagger2Mapper mapper;
 
   private Map<String, Swagger> swaggerMap = new HashMap<>();
@@ -59,6 +54,12 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   private Map<String, String> swaggerContent = new HashMap<>();
 
   private Map<String, String> swaggerSummary = new HashMap<>();
+  @Autowired
+  public ServiceCombSwaggerHandlerImpl(DocumentationPluginsBootstrapper documentationPluginsBootstrapper, DocumentationCache documentationCache, ServiceModelToSwagger2Mapper mapper) {
+    this.documentationPluginsBootstrapper = documentationPluginsBootstrapper;
+    this.documentationCache = documentationCache;
+    this.mapper = mapper;
+  }
 
   @Value("${spring.cloud.servicecomb.swagger.enableJavaChassisAdapter:true}")
   protected boolean withJavaChassis;

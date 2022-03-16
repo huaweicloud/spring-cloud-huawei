@@ -17,9 +17,6 @@
 
 package com.huaweicloud.router.client.loabalancer;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
@@ -27,6 +24,9 @@ import org.springframework.cloud.client.loadbalancer.LoadBalancerRequestFactory;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerRequestTransformer;
 import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClients;
 import org.springframework.context.annotation.Bean;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This class is adapted from LoadBalancerAutoConfiguration. When upgrading spring cloud, this may need change.
@@ -38,8 +38,12 @@ import org.springframework.context.annotation.Bean;
  */
 @LoadBalancerClients(defaultConfiguration = RouterLoadBalancerClientConfiguration.class)
 public class RouterLoadBalancerAutoConfiguration {
-  @Autowired(required = false)
+
   private List<LoadBalancerRequestTransformer> transformers = Collections.emptyList();
+  @Autowired
+  public void setTransformers(List<LoadBalancerRequestTransformer> transformers) {
+    this.transformers = transformers;
+  }
 
   @Bean
   @ConditionalOnMissingBean

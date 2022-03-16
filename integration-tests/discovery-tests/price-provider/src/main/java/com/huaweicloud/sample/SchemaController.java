@@ -17,7 +17,13 @@
 
 package com.huaweicloud.sample;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
+import io.swagger.models.Swagger;
+import io.swagger.util.Yaml;
+import org.assertj.core.api.Assertions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,23 +31,19 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
-import org.assertj.core.api.Assertions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
-
-import io.swagger.models.Swagger;
-import io.swagger.util.Yaml;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Class for testing schema generator
  */
 @RestController
 public class SchemaController {
-  @Autowired
+
   ServiceCombSwaggerHandler serviceCombSwaggerHandler;
+  @Autowired
+  public SchemaController(ServiceCombSwaggerHandler serviceCombSwaggerHandler) {
+    this.serviceCombSwaggerHandler = serviceCombSwaggerHandler;
+  }
 
   @RequestMapping("/testSchemaGenerator")
   public String testSchemaGenerator() throws Exception {

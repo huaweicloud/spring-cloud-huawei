@@ -17,26 +17,28 @@
 
 package com.huaweicloud.samples;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping(path = "govern")
 public class ConsumerGovernanceController {
   private Map<String, Integer> retryTimes = new HashMap<>();
 
-  @Autowired
   private RestTemplate restTemplate;
 
   private int count = 0;
+  @Autowired
+  public ConsumerGovernanceController(RestTemplate restTemplate) {
+    this.restTemplate = restTemplate;
+  }
 
   @RequestMapping("/rateLimiting")
   public String rateLimiting() {

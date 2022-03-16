@@ -17,8 +17,10 @@
 
 package com.huaweicloud.governance;
 
-import java.io.IOException;
-
+import io.github.resilience4j.decorators.Decorators;
+import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
+import io.github.resilience4j.retry.Retry;
+import io.vavr.CheckedFunction0;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
@@ -28,18 +30,21 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
-import io.github.resilience4j.decorators.Decorators;
-import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
-import io.github.resilience4j.retry.Retry;
-import io.vavr.CheckedFunction0;
+import java.io.IOException;
 
 public class GovernanceClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
-  @Autowired
   private RetryHandler retryHandler;
 
-  @Autowired(required = false)
   private ClientRecoverPolicy<Object> clientRecoverPolicy;
+  @Autowired
+  public GovernanceClientHttpRequestInterceptor(RetryHandler retryHandler) {
+    this.retryHandler = retryHandler;
+  }
+  @Autowired
+  public void setClientRecoverPolicy(ClientRecoverPolicy<Object> clientRecoverPolicy) {
+    this.clientRecoverPolicy = clientRecoverPolicy;
+  }
 
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)

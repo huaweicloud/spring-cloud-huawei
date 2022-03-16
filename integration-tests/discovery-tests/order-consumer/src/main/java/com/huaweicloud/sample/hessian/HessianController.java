@@ -20,15 +20,18 @@ package com.huaweicloud.sample.hessian;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/hessian")
 public class HessianController {
-  @Autowired
+
   private HessianService hessianService;
+
+  public HessianController(HessianService hessianService) {
+    this.hessianService = hessianService;
+  }
 
   @RequestMapping("/testHessian")
   public String testHessian() {

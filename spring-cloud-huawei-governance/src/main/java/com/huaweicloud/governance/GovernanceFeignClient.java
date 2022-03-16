@@ -17,11 +17,12 @@
 
 package com.huaweicloud.governance;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-
+import feign.Request;
+import feign.Response;
+import io.github.resilience4j.decorators.Decorators;
+import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
+import io.github.resilience4j.retry.Retry;
+import io.vavr.CheckedFunction0;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
@@ -31,20 +32,25 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import io.github.resilience4j.decorators.Decorators;
-import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
-import io.github.resilience4j.retry.Retry;
-import io.vavr.CheckedFunction0;
-import feign.Request;
-import feign.Response;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 @Aspect
 public class GovernanceFeignClient {
-  @Autowired
+
   private RetryHandler retryHandler;
 
-  @Autowired(required = false)
   private ClientRecoverPolicy<Object> clientRecoverPolicy;
+  @Autowired
+  public GovernanceFeignClient(RetryHandler retryHandler) {
+    this.retryHandler = retryHandler;
+  }
+  @Autowired
+  public void setClientRecoverPolicy(ClientRecoverPolicy<Object> clientRecoverPolicy) {
+    this.clientRecoverPolicy = clientRecoverPolicy;
+  }
 
   @Pointcut("execution(* org.springframework.cloud.openfeign.loadbalancer.FeignBlockingLoadBalancerClient.execute(..))")
   public void pointCut() {

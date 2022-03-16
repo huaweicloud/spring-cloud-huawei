@@ -23,8 +23,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ProductController {
-  @Autowired
+
   private FeignService feignService;
+  @Autowired
+  public ProductController(FeignService feignService) {
+    this.feignService = feignService;
+  }
 
   @RequestMapping("/product")
   public String getProduct(@RequestParam("id") long id) {

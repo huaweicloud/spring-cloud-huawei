@@ -16,12 +16,8 @@
   */
 package com.huaweicloud.router.client.track;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.huaweicloud.common.util.HeaderUtil;
 import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +26,10 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.huaweicloud.common.util.HeaderUtil;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 将服务端收到的HTTP请求头设置到线程上下文中， 供Client发送请求的时候使用。
@@ -39,8 +37,11 @@ import com.huaweicloud.common.util.HeaderUtil;
 public class RouterHandlerInterceptor implements HandlerInterceptor {
   private static final Logger LOGGER = LoggerFactory.getLogger(RouterHandlerInterceptor.class);
 
-  @Autowired(required = false)
   private List<RouterHeaderFilterExt> filters;
+  @Autowired
+  public void setFilters(List<RouterHeaderFilterExt> filters) {
+    this.filters = filters;
+  }
 
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
