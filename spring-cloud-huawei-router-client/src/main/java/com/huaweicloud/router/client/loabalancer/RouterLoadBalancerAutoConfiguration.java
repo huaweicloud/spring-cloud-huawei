@@ -38,8 +38,12 @@ import org.springframework.context.annotation.Bean;
  */
 @LoadBalancerClients(defaultConfiguration = RouterLoadBalancerClientConfiguration.class)
 public class RouterLoadBalancerAutoConfiguration {
-  @Autowired(required = false)
+
   private List<LoadBalancerRequestTransformer> transformers = Collections.emptyList();
+  @Autowired(required = false)
+  public void setTransformers(List<LoadBalancerRequestTransformer> transformers) {
+    this.transformers = transformers;
+  }
 
   @Bean
   @ConditionalOnMissingBean

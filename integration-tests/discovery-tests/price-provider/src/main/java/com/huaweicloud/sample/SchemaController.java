@@ -40,8 +40,12 @@ import io.swagger.util.Yaml;
  */
 @RestController
 public class SchemaController {
-  @Autowired
+
   ServiceCombSwaggerHandler serviceCombSwaggerHandler;
+  @Autowired
+  public SchemaController(ServiceCombSwaggerHandler serviceCombSwaggerHandler) {
+    this.serviceCombSwaggerHandler = serviceCombSwaggerHandler;
+  }
 
   @RequestMapping("/testSchemaGenerator")
   public String testSchemaGenerator() throws Exception {

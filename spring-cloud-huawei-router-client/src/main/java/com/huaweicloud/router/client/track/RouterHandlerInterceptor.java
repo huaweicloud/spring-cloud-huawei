@@ -39,8 +39,11 @@ import com.huaweicloud.common.util.HeaderUtil;
 public class RouterHandlerInterceptor implements HandlerInterceptor {
   private static final Logger LOGGER = LoggerFactory.getLogger(RouterHandlerInterceptor.class);
 
-  @Autowired(required = false)
   private List<RouterHeaderFilterExt> filters;
+  @Autowired
+  public void setFilters(List<RouterHeaderFilterExt> filters) {
+    this.filters = filters;
+  }
 
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response,

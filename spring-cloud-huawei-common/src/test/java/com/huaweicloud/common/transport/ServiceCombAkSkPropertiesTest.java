@@ -33,11 +33,15 @@ import com.huaweicloud.common.CommonConfiguration;
 @SpringBootTest(classes = {CommonConfiguration.class, AkSkTestConfiguration.class})
 @ContextConfiguration(initializers = ConfigDataApplicationContextInitializer.class)
 public class ServiceCombAkSkPropertiesTest {
-  @Autowired
+
   private ServiceCombAkSkProperties akSkProperties;
 
-  @Autowired
   private Environment environment;
+  @Autowired
+  public ServiceCombAkSkPropertiesTest(ServiceCombAkSkProperties akSkProperties, Environment environment) {
+    this.akSkProperties = akSkProperties;
+    this.environment = environment;
+  }
 
   @Test
   public void testConfigurationCorrect() {

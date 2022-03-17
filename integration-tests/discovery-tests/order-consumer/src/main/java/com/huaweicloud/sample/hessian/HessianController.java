@@ -27,8 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/hessian")
 public class HessianController {
-  @Autowired
+
   private HessianService hessianService;
+  @Autowired
+  public HessianController(HessianService hessianService) {
+    this.hessianService = hessianService;
+  }
 
   @RequestMapping("/testHessian")
   public String testHessian() {

@@ -25,8 +25,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class PriceController {
-  @Autowired
+
   private Configuration configuration;
+  @Autowired
+  public PriceController(Configuration configuration) {
+    this.configuration = configuration;
+  }
 
   @RequestMapping("/price")
   public String sayHello(@RequestParam("id") String id) {

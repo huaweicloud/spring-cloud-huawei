@@ -40,11 +40,23 @@ import feign.Response;
 
 @Aspect
 public class GovernanceFeignClient {
-  @Autowired
+
   private RetryHandler retryHandler;
 
-  @Autowired(required = false)
   private ClientRecoverPolicy<Object> clientRecoverPolicy;
+  @Autowired
+  public GovernanceFeignClient(RetryHandler retryHandler) {
+    this.retryHandler = retryHandler;
+  }
+  @Autowired
+  public GovernanceFeignClient() {
+
+  }
+
+  @Autowired(required = false)
+  public void setClientRecoverPolicy(ClientRecoverPolicy<Object> clientRecoverPolicy) {
+    this.clientRecoverPolicy = clientRecoverPolicy;
+  }
 
   @Pointcut("execution(* org.springframework.cloud.openfeign.loadbalancer.FeignBlockingLoadBalancerClient.execute(..))")
   public void pointCut() {

@@ -22,7 +22,10 @@ import org.springframework.context.annotation.Lazy;
 
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 
+import springfox.documentation.spring.web.DocumentationCache;
+import springfox.documentation.spring.web.plugins.DocumentationPluginsBootstrapper;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import springfox.documentation.swagger2.mappers.ServiceModelToSwagger2Mapper;
 
 /**
  * @Author GuoYl123
@@ -34,8 +37,8 @@ public class SwaggerConfiguration {
 
   @Bean
   @Lazy
-  public ServiceCombSwaggerHandler serviceCombSwaggerHandler() {
-    return new ServiceCombSwaggerHandlerImpl();
+  public ServiceCombSwaggerHandler serviceCombSwaggerHandler(DocumentationPluginsBootstrapper documentationPluginsBootstrapper, DocumentationCache documentationCache, ServiceModelToSwagger2Mapper mapper) {
+    return new ServiceCombSwaggerHandlerImpl( documentationPluginsBootstrapper,  documentationCache,  mapper);
   }
 
   @Bean

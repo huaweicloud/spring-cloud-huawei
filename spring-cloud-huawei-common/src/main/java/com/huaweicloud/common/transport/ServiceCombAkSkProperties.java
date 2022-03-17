@@ -32,7 +32,6 @@ import com.huaweicloud.common.util.ShaAKSKCipher;
 @ConfigurationProperties("spring.cloud.servicecomb.credentials")
 public class ServiceCombAkSkProperties {
 
-  @Autowired(required = false)
   private List<Cipher> ciphers;
 
   private String enable;
@@ -47,6 +46,10 @@ public class ServiceCombAkSkProperties {
   private String cipher;
 
   private String project = "default";
+  @Autowired
+  public void setCiphers(List<Cipher> ciphers) {
+    this.ciphers = ciphers;
+  }
 
   public String getEnable() {
     return enable;
