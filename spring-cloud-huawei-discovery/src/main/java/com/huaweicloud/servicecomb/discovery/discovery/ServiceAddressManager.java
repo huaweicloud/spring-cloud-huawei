@@ -143,7 +143,6 @@ public class ServiceAddressManager {
 
   private boolean regionAndAZMatch(DataCenterInfo myself, MicroserviceInstance target) {
     if (myself == null) {
-      // when instance have no datacenter info, it will match all other datacenters
       return true;
     }
     if (target.getDataCenterInfo() != null) {
