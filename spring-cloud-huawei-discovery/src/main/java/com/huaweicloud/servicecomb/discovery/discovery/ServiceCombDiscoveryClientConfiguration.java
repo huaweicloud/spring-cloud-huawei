@@ -58,4 +58,11 @@ public class ServiceCombDiscoveryClientConfiguration {
       ServiceCombRegistration serviceCombRegistration) {
     return new ServiceCombDiscoveryClient(discoveryProperties, serviceCenterClient, serviceCombRegistration);
   }
+
+  @Bean
+  @Order(100)
+  public ServiceAddressManager serviceAddressManager(DiscoveryBootstrapProperties discoveryProperties,
+      ServiceCenterClient serviceCenterClient, ServiceCombRegistration serviceCombRegistration) {
+    return new ServiceAddressManager(discoveryProperties, serviceCenterClient, serviceCombRegistration);
+  }
 }
