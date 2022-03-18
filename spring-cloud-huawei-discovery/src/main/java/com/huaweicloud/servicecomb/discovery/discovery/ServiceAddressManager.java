@@ -74,12 +74,12 @@ public class ServiceAddressManager {
     }
     if (event.isSuccess() && discoveryProperties.isAutoDiscovery()) {
       for (Type type : Type.values()) {
-        InitEndPort(type.name());
+        initEndPort(type.name());
       }
     }
   }
 
-  private void InitEndPort(String key) {
+  private void initEndPort(String key) {
     List<MicroserviceInstance> instances = findServiceInstance(DiscoveryConstants.DEFAULT_APPID,
         key, DiscoveryConstants.VERSION_RULE_LATEST);
     if (DiscoveryConstants.SERVICE_CENTER.equals(key) && !instances.isEmpty()) {
