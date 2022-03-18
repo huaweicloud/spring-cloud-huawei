@@ -53,8 +53,6 @@ public class ServiceAddressManager {
 
   private DiscoveryBootstrapProperties discoveryProperties;
 
-  private ServiceCombRegistration serviceCombRegistration;
-
   private DataCenterInfo dataCenterInfo;
 
   private String myselfServiceId;
@@ -62,7 +60,6 @@ public class ServiceAddressManager {
   public ServiceAddressManager(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCenterClient serviceCenterClient,
       ServiceCombRegistration serviceCombRegistration) {
-    this.serviceCombRegistration = serviceCombRegistration;
     this.discoveryProperties = discoveryProperties;
     this.serviceCenterClient = serviceCenterClient;
     this.myselfInstance = serviceCombRegistration.getMicroserviceInstance();
@@ -85,7 +82,7 @@ public class ServiceAddressManager {
   private void InitEndPort(String key) {
     List<MicroserviceInstance> instances = findServiceInstance(DiscoveryConstants.DEFAULT_APPID,
         key, DiscoveryConstants.VERSION_RULE_LATEST);
-    if (DiscoveryConstants.SERVICE_CENTER.equals(key) && instances.size() > 0) {
+    if (DiscoveryConstants.SERVICE_CENTER.equals(key) && !instances.isEmpty()) {
       initialized = true;
     }
     Map<String, List<String>> zoneAndRegion = generateZoneAndRegionAddress(instances);
@@ -96,7 +93,7 @@ public class ServiceAddressManager {
   }
 
   private Map<String, List<String>> generateZoneAndRegionAddress(List<MicroserviceInstance> instances) {
-    if (instances.size() == 0) {
+    if (instances.isEmpty()) {
       return null;
     }
 

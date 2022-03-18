@@ -23,7 +23,6 @@ import org.apache.servicecomb.governance.handler.ext.AbstractRetryExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.web.client.HttpServerErrorException;
 
 import feign.Response;
 
