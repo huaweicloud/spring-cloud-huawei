@@ -114,9 +114,8 @@ public class MicroserviceHandler {
     } else {
       address = discoveryBootstrapProperties.getServerAddress();
     }
-    boolean sslEnabled = Boolean.parseBoolean(discoveryProperties.getSslEnabled());
-    if (sslEnabled) {
-        endPoints.add("rest://" + address + ":" + discoveryProperties.getPort() + "?sslEnabled=" + sslEnabled);
+    if (discoveryProperties.getSslEnabled()) {
+        endPoints.add("rest://" + address + ":" + discoveryProperties.getPort() + "?sslEnabled=" + discoveryProperties.getSslEnabled());
     } else {
         endPoints.add("rest://" + address + ":" + discoveryProperties.getPort());
     }
