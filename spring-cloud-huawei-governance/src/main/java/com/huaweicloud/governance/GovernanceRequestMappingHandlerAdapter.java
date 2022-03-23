@@ -52,17 +52,25 @@ public class GovernanceRequestMappingHandlerAdapter {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(GovernanceRequestMappingHandlerAdapter.class);
 
-  @Autowired
   private RateLimitingHandler rateLimitingHandler;
 
-  @Autowired
   private CircuitBreakerHandler circuitBreakerHandler;
 
-  @Autowired
   private BulkheadHandler bulkheadHandler;
 
-  @Autowired(required = false)
   private ServerRecoverPolicy<Object> serverRecoverPolicy;
+
+  @Autowired
+  public GovernanceRequestMappingHandlerAdapter(RateLimitingHandler rateLimitingHandler, CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler) {
+    this.rateLimitingHandler = rateLimitingHandler;
+    this.circuitBreakerHandler = circuitBreakerHandler;
+    this.bulkheadHandler = bulkheadHandler;
+  }
+
+  @Autowired(required = false)
+  public void setServerRecoverPolicy(ServerRecoverPolicy<Object> serverRecoverPolicy) {
+    this.serverRecoverPolicy = serverRecoverPolicy;
+  }
 
   @Pointcut("execution(* org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(..))")
   public void pointCut() {

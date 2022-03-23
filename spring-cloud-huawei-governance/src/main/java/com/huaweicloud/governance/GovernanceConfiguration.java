@@ -24,6 +24,10 @@ import org.apache.servicecomb.governance.InvocationContext;
 import org.apache.servicecomb.governance.MicroserviceMeta;
 import org.apache.servicecomb.governance.event.GovernanceConfigurationChangedEvent;
 import org.apache.servicecomb.governance.event.GovernanceEventManager;
+import org.apache.servicecomb.governance.handler.BulkheadHandler;
+import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
+import org.apache.servicecomb.governance.handler.RateLimitingHandler;
+import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.RetryExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -47,8 +51,9 @@ public class GovernanceConfiguration {
 
   @Bean
   @ConditionalOnClass(name = "org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter")
-  public GovernanceRequestMappingHandlerAdapter governanceRequestMappingHandlerAdapter() {
-    return new GovernanceRequestMappingHandlerAdapter();
+  public GovernanceRequestMappingHandlerAdapter governanceRequestMappingHandlerAdapter(RateLimitingHandler rateLimitingHandler, CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler
+) {
+    return new GovernanceRequestMappingHandlerAdapter(rateLimitingHandler,circuitBreakerHandler,bulkheadHandler);
   }
 
   @Bean
@@ -60,8 +65,8 @@ public class GovernanceConfiguration {
   @Bean
   @ConditionalOnClass(value = RestTemplate.class)
   public GovernanceClientHttpRequestInterceptor governanceClientHttpRequestInterceptor(
-      @Autowired(required = false) @LoadBalanced List<RestTemplate> restTemplates) {
-    return new GovernanceClientHttpRequestInterceptor();
+          @Autowired(required = false) @LoadBalanced List<RestTemplate> restTemplates, RetryHandler retryHandler) {
+    return new GovernanceClientHttpRequestInterceptor(retryHandler);
   }
 
   // 使用 RestTemplateCustomizer 保证在 restTemplateCustomizer 后面执行。 如果项目出现冲突，
@@ -84,8 +89,8 @@ public class GovernanceConfiguration {
 
   @Bean
   @ConditionalOnClass(name = "org.springframework.cloud.openfeign.loadbalancer.FeignBlockingLoadBalancerClient")
-  public GovernanceFeignClient governanceFeignClient() {
-    return new GovernanceFeignClient();
+  public GovernanceFeignClient governanceFeignClient(RetryHandler retryHandler) {
+    return new GovernanceFeignClient(retryHandler);
   }
 
   @Bean

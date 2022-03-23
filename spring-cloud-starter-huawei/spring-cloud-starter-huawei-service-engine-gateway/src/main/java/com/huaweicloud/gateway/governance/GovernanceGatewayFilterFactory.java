@@ -60,17 +60,20 @@ public class GovernanceGatewayFilterFactory
     super(Config.class);
   }
 
-  @Autowired
   private RateLimitingHandler rateLimitingHandler;
 
-  @Autowired
   private CircuitBreakerHandler circuitBreakerHandler;
 
-  @Autowired
   private BulkheadHandler bulkheadHandler;
 
-  @Autowired
   private RetryHandler retryHandler;
+  @Autowired
+  public GovernanceGatewayFilterFactory(RateLimitingHandler rateLimitingHandler, CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler, RetryHandler retryHandler) {
+    this.rateLimitingHandler = rateLimitingHandler;
+    this.circuitBreakerHandler = circuitBreakerHandler;
+    this.bulkheadHandler = bulkheadHandler;
+    this.retryHandler = retryHandler;
+  }
 
   @Override
   public GatewayFilter apply(Config config) {

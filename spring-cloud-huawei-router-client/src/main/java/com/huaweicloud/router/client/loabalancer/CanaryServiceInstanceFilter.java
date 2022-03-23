@@ -42,11 +42,18 @@ public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CanaryServiceInstanceFilter.class);
 
-  @Autowired
   private AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor;
 
-  @Autowired
   private RouterFilter routerFilter;
+  @Autowired
+  public CanaryServiceInstanceFilter(AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor, RouterFilter routerFilter) {
+    this.routerDistributor = routerDistributor;
+    this.routerFilter = routerFilter;
+  }
+  @Autowired
+  public CanaryServiceInstanceFilter() {
+
+  }
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})

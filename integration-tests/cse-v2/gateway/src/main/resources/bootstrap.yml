@@ -26,11 +26,11 @@ spring:
         appName: cse-v2-test-application
         serviceName: ${spring.application.name}
         watch: false
-        address: ${CSE_V2_SC}
+        address: http://127.0.0.1:30100
         version: 0.0.1
         healthCheckInterval: 30
       config:
-        serverAddr: ${CSE_V2_CC}
+        serverAddr: http://127.0.0.1:30110
         serverType: kie
 
 #      credentials:
