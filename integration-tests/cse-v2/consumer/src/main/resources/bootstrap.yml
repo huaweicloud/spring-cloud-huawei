@@ -25,13 +25,13 @@ spring:
       discovery:
         enabled: true
         watch: false
-        address: http://127.0.0.1:30100
+        address: ${CSE_V2_SC}
         appName: cse-v2-test-application
         serviceName: ${spring.application.name}
         version: 0.0.1
         healthCheckInterval: 30
       config:
-        serverAddr: http://127.0.0.1:30110
+        serverAddr: ${CSE_V2_CC}
         serverType: kie
         kie:
           customLabel: public
