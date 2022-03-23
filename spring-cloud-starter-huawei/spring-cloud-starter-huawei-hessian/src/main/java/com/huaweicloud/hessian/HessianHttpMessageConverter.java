@@ -85,16 +85,17 @@ public class HessianHttpMessageConverter extends AbstractGenericHttpMessageConve
   public Object read(Type type, Class<?> contextClass, HttpInputMessage inputMessage)
       throws IOException, HttpMessageNotReadableException {
     Hessian2ObjectInput input = new Hessian2ObjectInput(inputMessage.getBody());
+    Type updatedType = type;
     try {
-      while (type instanceof ParameterizedType) {
-        type = ((ParameterizedType) type).getRawType();
+      while (updatedType instanceof ParameterizedType) {
+        updatedType = ((ParameterizedType) updatedType).getRawType();
       }
 
-      if (type instanceof Class<?>) {
-        return input.readObject((Class<?>) type);
+      if (updatedType instanceof Class<?>) {
+        return input.readObject((Class<?>) updatedType);
       }
 
-      throw new IOException("not supported type " + type.getTypeName());
+      throw new IOException("not supported type " + updatedType.getTypeName());
     } catch (ClassNotFoundException e) {
       throw new IOException(e);
     }

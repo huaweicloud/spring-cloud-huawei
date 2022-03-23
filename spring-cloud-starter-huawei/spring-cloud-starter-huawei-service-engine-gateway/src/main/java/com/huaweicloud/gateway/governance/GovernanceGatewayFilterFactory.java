@@ -105,25 +105,27 @@ public class GovernanceGatewayFilterFactory
 
     private Mono<Void> addRetry(ServerWebExchange exchange, GovernanceRequest governanceRequest, Mono<Void> toRun) {
       Retry retry = retryHandler.getActuator(governanceRequest);
+      Mono<Void> mono = toRun;
       if (retry != null) {
-        toRun = toRun.transform(RetryOperator.of(retry))
-            .doOnSuccess(v -> {
-              if (exchange.getResponse().getRawStatusCode() != null) {
-                if (retry.context().onResult(exchange.getResponse().getRawStatusCode())) {
-                  exchange.getResponse().setStatusCode(null);
-                  reset(exchange);
-                  throw new RetryException();
-                }
-              }
-            }).retryWhen(reactor.util.retry.Retry.withThrowable(reactor.retry.Retry.anyOf(RetryException.class)));
+        mono = toRun.transform(RetryOperator.of(retry))
+                .doOnSuccess(v -> {
+                  if (exchange.getResponse().getRawStatusCode() != null) {
+                    if (retry.context().onResult(exchange.getResponse().getRawStatusCode())) {
+                      exchange.getResponse().setStatusCode(null);
+                      reset(exchange);
+                      throw new RetryException();
+                    }
+                  }
+                }).retryWhen(reactor.util.retry.Retry.withThrowable(reactor.retry.Retry.anyOf(RetryException.class)));
       }
-      return toRun;
+      return mono;
     }
 
     private Mono<Void> addBulkhead(GovernanceRequest governanceRequest, Mono<Void> toRun) {
       Bulkhead bulkhead = bulkheadHandler.getActuator(governanceRequest);
+      Mono<Void> mono = toRun;
       if (bulkhead != null) {
-        toRun = toRun.transform(BulkheadOperator.of(bulkhead))
+        mono = toRun.transform(BulkheadOperator.of(bulkhead))
             .onErrorResume(BulkheadFullException.class, (t) -> {
               LOGGER.warn("bulkhead is full and does not permit further calls by policy : {}",
                   t.getMessage());
@@ -131,14 +133,15 @@ public class GovernanceGatewayFilterFactory
                   "bulkhead is full and does not permit further calls.", t));
             });
       }
-      return toRun;
+      return mono;
     }
 
     private Mono<Void> addCircuitBreaker(ServerWebExchange exchange, GovernanceRequest governanceRequest,
         Mono<Void> toRun) {
       CircuitBreaker circuitBreaker = circuitBreakerHandler.getActuator(governanceRequest);
+      Mono<Void> mono = toRun;
       if (circuitBreaker != null) {
-        toRun = toRun.transform(CircuitBreakerOperator.of(circuitBreaker))
+        mono = toRun.transform(CircuitBreakerOperator.of(circuitBreaker))
             .doOnSuccess(v -> {
               if (exchange.getResponse().getStatusCode() != null
                   && Family.familyOf(exchange.getResponse().getStatusCode().value()) == Family.SERVER_ERROR) {
@@ -154,20 +157,21 @@ public class GovernanceGatewayFilterFactory
                   "bulkhead is full and does not permit further calls.", t));
             });
       }
-      return toRun;
+      return mono;
     }
 
     private Mono<Void> addRateLimiter(GovernanceRequest governanceRequest, Mono<Void> toRun) {
       RateLimiter rateLimiter = rateLimitingHandler.getActuator(governanceRequest);
+      Mono<Void> mono = toRun;
       if (rateLimiter != null) {
-        toRun = toRun.transform(RateLimiterOperator.of(rateLimiter))
+        mono = toRun.transform(RateLimiterOperator.of(rateLimiter))
             .onErrorResume(RequestNotPermitted.class, (t) -> {
               LOGGER.warn("the request is rate limit by policy : {}",
                   t.getMessage());
               return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "rate limited.", t));
             });
       }
-      return toRun;
+      return mono;
     }
 
     private GovernanceRequest createGovernanceRequest(ServerWebExchange exchange) {
