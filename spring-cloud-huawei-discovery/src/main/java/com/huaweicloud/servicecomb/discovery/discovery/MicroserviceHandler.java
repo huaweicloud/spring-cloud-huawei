@@ -114,7 +114,12 @@ public class MicroserviceHandler {
     } else {
       address = discoveryBootstrapProperties.getServerAddress();
     }
-    endPoints.add("rest://" + address + ":" + discoveryProperties.getPort()+"?sslEnabled="+discoveryProperties.getSslEnabled());
+    boolean sslEnabled = Boolean.parseBoolean(discoveryProperties.getSslEnabled());
+    if (sslEnabled) {
+        endPoints.add("rest://" + address + ":" + discoveryProperties.getPort() + "?sslEnabled=" + sslEnabled);
+    } else {
+        endPoints.add("rest://" + address + ":" + discoveryProperties.getPort());
+    }
     microserviceInstance.setEndpoints(endPoints);
     HealthCheck healthCheck = new HealthCheck();
     healthCheck.setMode(HealthCheckMode.pull);
