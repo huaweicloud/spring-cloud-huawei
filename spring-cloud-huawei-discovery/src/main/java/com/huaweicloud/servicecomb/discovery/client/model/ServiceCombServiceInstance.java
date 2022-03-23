@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.servicecomb.foundation.common.net.URIEndpointObject;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,8 +89,8 @@ public class ServiceCombServiceInstance implements ServiceInstance {
 
   @Override
   public boolean isSecure() {
-    // TODO: add secure implementation
-    return false;
+    URIEndpointObject uriEndpointObject = new URIEndpointObject(this.microserviceInstance.getEndpoints().get(0));
+    return uriEndpointObject.isSslEnabled();
   }
 
   @Override
