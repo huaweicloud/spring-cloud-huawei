@@ -32,10 +32,13 @@ import org.springframework.cloud.client.ServiceInstance;
 public class ServiceCombServiceInstance implements ServiceInstance {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombServiceInstance.class);
 
+  private final URIEndpointObject uriEndpointObject;
+
   private final MicroserviceInstance microserviceInstance;
 
   public ServiceCombServiceInstance(MicroserviceInstance microserviceInstance) {
     this.microserviceInstance = microserviceInstance;
+    this.uriEndpointObject = new URIEndpointObject(this.microserviceInstance.getEndpoints().get(0));
   }
 
   public MicroserviceInstance getMicroserviceInstance() {
@@ -54,11 +57,7 @@ public class ServiceCombServiceInstance implements ServiceInstance {
 
   @Override
   public String getHost() {
-    URI uri = parseEndpoint();
-    if (uri == null) {
-      return this.microserviceInstance.getInstanceId(); // compatible to ribbon default host name
-    }
-    return uri.getHost();
+    return uriEndpointObject.getHostOrIp();
   }
 
   private URI parseEndpoint() {
@@ -80,16 +79,11 @@ public class ServiceCombServiceInstance implements ServiceInstance {
 
   @Override
   public int getPort() {
-    URI uri = parseEndpoint();
-    if (uri == null) {
-      return 0;
-    }
-    return uri.getPort();
+    return uriEndpointObject.getPort();
   }
 
   @Override
   public boolean isSecure() {
-    URIEndpointObject uriEndpointObject = new URIEndpointObject(this.microserviceInstance.getEndpoints().get(0));
     return uriEndpointObject.isSslEnabled();
   }
 
@@ -113,7 +107,6 @@ public class ServiceCombServiceInstance implements ServiceInstance {
 
   @Override
   public String getScheme() {
-    // TODO: add schema implementation
-    return null;
+    return uriEndpointObject.isSslEnabled() ? "https" : "http";
   }
 }
