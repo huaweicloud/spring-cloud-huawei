@@ -17,6 +17,10 @@
 
 package com.huaweicloud.gateway.governance;
 
+import org.apache.servicecomb.governance.handler.BulkheadHandler;
+import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
+import org.apache.servicecomb.governance.handler.RateLimitingHandler;
+import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.springframework.cloud.gateway.config.conditional.ConditionalOnEnabledFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +29,7 @@ import org.springframework.context.annotation.Configuration;
 public class GovernanceConfiguration {
   @Bean
   @ConditionalOnEnabledFilter
-  public GovernanceGatewayFilterFactory governanceGatewayFilterFactory() {
-    return new GovernanceGatewayFilterFactory();
+  public GovernanceGatewayFilterFactory governanceGatewayFilterFactory(RateLimitingHandler rateLimitingHandler, CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler, RetryHandler retryHandler) {
+    return new GovernanceGatewayFilterFactory( rateLimitingHandler,  circuitBreakerHandler,  bulkheadHandler,  retryHandler);
   }
 }

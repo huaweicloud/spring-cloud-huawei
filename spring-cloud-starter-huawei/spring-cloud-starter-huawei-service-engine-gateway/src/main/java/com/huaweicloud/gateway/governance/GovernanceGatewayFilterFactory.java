@@ -56,10 +56,6 @@ public class GovernanceGatewayFilterFactory
     extends AbstractGatewayFilterFactory<GovernanceGatewayFilterFactory.Config> {
   private static final Logger LOGGER = LoggerFactory.getLogger(GovernanceGatewayFilterFactory.class);
 
-  public GovernanceGatewayFilterFactory() {
-    super(Config.class);
-  }
-
   private RateLimitingHandler rateLimitingHandler;
 
   private CircuitBreakerHandler circuitBreakerHandler;
@@ -69,6 +65,7 @@ public class GovernanceGatewayFilterFactory
   private RetryHandler retryHandler;
   @Autowired
   public GovernanceGatewayFilterFactory(RateLimitingHandler rateLimitingHandler, CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler, RetryHandler retryHandler) {
+    super(Config.class);
     this.rateLimitingHandler = rateLimitingHandler;
     this.circuitBreakerHandler = circuitBreakerHandler;
     this.bulkheadHandler = bulkheadHandler;

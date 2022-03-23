@@ -33,13 +33,7 @@ import org.springframework.web.client.RestTemplate;
 public class ConsumerGovernanceController {
   private Map<String, Integer> retryTimes = new HashMap<>();
 
-  private RestTemplate restTemplate;
-
   private int count = 0;
-  @Autowired
-  public ConsumerGovernanceController(RestTemplate restTemplate) {
-    this.restTemplate = restTemplate;
-  }
 
   @RequestMapping("/rateLimiting")
   public String rateLimiting() {
