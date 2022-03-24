@@ -36,7 +36,7 @@ public class DiscoveryProperties {
     this.port = port;
   }
 
-  public Boolean getSslEnabled() {
+  public Boolean isSslEnabled() {
     return sslEnabled;
   }
 
