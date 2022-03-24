@@ -115,14 +115,15 @@ public class ServiceAddressManager {
   }
 
   private DataCenterInfo findRegion(List<MicroserviceInstance> microserviceInstances) {
-    if (myselfInstance.getDataCenterInfo() == null) {
-      return null;
-    }
     for (MicroserviceInstance microserviceInstance : microserviceInstances) {
       boolean isMatch = microserviceInstance.getEndpoints().get(0).contains(myselfInstance.getEndpoints().get(0));
       if (isMatch && microserviceInstance.getDataCenterInfo() != null) {
         return microserviceInstance.getDataCenterInfo();
       }
+    }
+
+    if (myselfInstance.getDataCenterInfo() == null) {
+      return null;
     }
     return myselfInstance.getDataCenterInfo();
   }
