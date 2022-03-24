@@ -124,7 +124,7 @@ public class ServiceAddressManager {
         return microserviceInstance.getDataCenterInfo();
       }
     }
-    return null;
+    return myselfInstance.getDataCenterInfo();
   }
 
   public List<MicroserviceInstance> findServiceInstance(String appId, String serviceName, String versionRule) {
