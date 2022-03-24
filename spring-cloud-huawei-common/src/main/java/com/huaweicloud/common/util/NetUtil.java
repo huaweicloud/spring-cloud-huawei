@@ -40,25 +40,23 @@ public class NetUtil {
   }
 
   public static Integer getPort(String url) {
-    URIBuilder endpointURIBuilder = null;
-    Integer port;
+    URIBuilder endpointURIBuilder;
+    Integer port = null;
     try {
       endpointURIBuilder = new URIBuilder(url);
       port = endpointURIBuilder.build().getPort();
-      return port;
     } catch (URISyntaxException e) {
       LOGGER.error(e.getMessage(), e);
     }
-    return null;
+    return port;
   }
 
   public static String getHost(String url) {
-    URIBuilder endpointURIBuilder = null;
+    URIBuilder endpointURIBuilder;
     String host = null;
     try {
       endpointURIBuilder = new URIBuilder(url);
       host = endpointURIBuilder.build().getHost();
-      return host;
     } catch (URISyntaxException e) {
       LOGGER.error(e.getMessage(), e);
     }
