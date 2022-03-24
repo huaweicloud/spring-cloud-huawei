@@ -50,6 +50,7 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   protected DocumentationCache documentationCache;
 
   protected ServiceModelToSwagger2Mapper mapper;
+
   @Autowired
   public ServiceCombSwaggerHandlerImpl(DocumentationPluginsBootstrapper documentationPluginsBootstrapper, DocumentationCache documentationCache, ServiceModelToSwagger2Mapper mapper) {
     this.documentationPluginsBootstrapper = documentationPluginsBootstrapper;

@@ -37,10 +37,12 @@ public class ZoneAwareServiceInstanceFilter implements ServiceInstanceFilter {
 
   @Value("spring.cloud.servicecomb.discovery.denyCrossZoneLoadBalancing:false")
   private boolean denyCrossZoneLoadBalancing;
+
   @Autowired
   public ZoneAwareServiceInstanceFilter(ServiceCombRegistration serviceCombRegistration) {
     this.serviceCombRegistration = serviceCombRegistration;
   }
+
   @Autowired
   public ZoneAwareServiceInstanceFilter() {
 

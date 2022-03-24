@@ -32,6 +32,7 @@ public class GovernanceController {
   private FeignService feignService;
 
   private int count = 0;
+
   @Autowired
   public GovernanceController(RestTemplate restTemplate, FeignService feignService) {
     this.restTemplate = restTemplate;

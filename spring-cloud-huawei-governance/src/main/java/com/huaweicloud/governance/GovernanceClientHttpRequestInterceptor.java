@@ -38,6 +38,7 @@ public class GovernanceClientHttpRequestInterceptor implements ClientHttpRequest
   private RetryHandler retryHandler;
 
   private ClientRecoverPolicy<Object> clientRecoverPolicy;
+
   @Autowired
   public GovernanceClientHttpRequestInterceptor(RetryHandler retryHandler) {
     this.retryHandler = retryHandler;

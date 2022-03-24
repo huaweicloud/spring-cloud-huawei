@@ -39,7 +39,6 @@ public class ServiceCombAkSkPropertiesTest {
   @Autowired
   private Environment environment;
 
-
   @Test
   public void testConfigurationCorrect() {
     Assert.assertNotNull(akSkProperties);

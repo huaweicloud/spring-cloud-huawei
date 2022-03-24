@@ -46,6 +46,7 @@ public class SchemaController {
   ServiceCombSwaggerHandler serviceCombSwaggerHandler;
 
   private RestTemplate restTemplate;
+
   @Autowired
   public SchemaController(ServiceCombSwaggerHandler serviceCombSwaggerHandler, RestTemplate restTemplate) {
     this.serviceCombSwaggerHandler = serviceCombSwaggerHandler;

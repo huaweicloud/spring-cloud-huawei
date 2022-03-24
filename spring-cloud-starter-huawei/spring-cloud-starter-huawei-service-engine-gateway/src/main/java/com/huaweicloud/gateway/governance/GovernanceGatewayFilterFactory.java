@@ -63,6 +63,7 @@ public class GovernanceGatewayFilterFactory
   private BulkheadHandler bulkheadHandler;
 
   private RetryHandler retryHandler;
+
   @Autowired
   public GovernanceGatewayFilterFactory(RateLimitingHandler rateLimitingHandler, CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler, RetryHandler retryHandler) {
     super(Config.class);

@@ -41,6 +41,7 @@ public class RouterServiceInstanceListSupplier implements ServiceInstanceListSup
   public RouterServiceInstanceListSupplier(ServiceInstanceListSupplier delegate) {
     this.delegate = delegate;
   }
+
   @Autowired
   public RouterServiceInstanceListSupplier(List<ServiceInstanceFilter> filters) {
     this.filters = filters;

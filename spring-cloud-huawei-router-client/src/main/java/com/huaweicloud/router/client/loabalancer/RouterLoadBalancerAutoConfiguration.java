@@ -40,6 +40,7 @@ import org.springframework.context.annotation.Bean;
 public class RouterLoadBalancerAutoConfiguration {
 
   private List<LoadBalancerRequestTransformer> transformers = Collections.emptyList();
+
   @Autowired(required = false)
   public void setTransformers(List<LoadBalancerRequestTransformer> transformers) {
     this.transformers = transformers;

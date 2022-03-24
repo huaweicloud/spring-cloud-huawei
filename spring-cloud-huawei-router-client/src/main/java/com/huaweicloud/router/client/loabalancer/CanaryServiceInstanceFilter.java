@@ -45,11 +45,13 @@ public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
   private AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor;
 
   private RouterFilter routerFilter;
+
   @Autowired
   public CanaryServiceInstanceFilter(AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor, RouterFilter routerFilter) {
     this.routerDistributor = routerDistributor;
     this.routerFilter = routerFilter;
   }
+
   @Autowired
   public CanaryServiceInstanceFilter() {
 

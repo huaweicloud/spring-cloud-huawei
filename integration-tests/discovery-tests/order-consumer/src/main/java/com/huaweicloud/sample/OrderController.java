@@ -30,6 +30,7 @@ public class OrderController {
   private DiscoveryClient discoveryClient;
 
   private RestTemplate restTemplate;
+
   @Autowired
   public OrderController(DiscoveryClient discoveryClient, RestTemplate restTemplate) {
     this.discoveryClient = discoveryClient;

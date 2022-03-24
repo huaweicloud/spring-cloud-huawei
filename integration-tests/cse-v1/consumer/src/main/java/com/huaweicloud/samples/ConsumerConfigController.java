@@ -17,13 +17,13 @@
 
 package com.huaweicloud.samples;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 public class ConsumerConfigController {
@@ -31,6 +31,7 @@ public class ConsumerConfigController {
   private Environment environment;
 
   private ConsumerConfigurationProperties consumerConfigurationProperties;
+
   @Autowired
   public ConsumerConfigController(Environment environment, ConsumerConfigurationProperties consumerConfigurationProperties) {
     this.environment = environment;

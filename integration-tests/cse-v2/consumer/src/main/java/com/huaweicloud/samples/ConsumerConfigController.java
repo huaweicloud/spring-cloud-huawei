@@ -29,12 +29,12 @@ public class ConsumerConfigController {
   private Environment environment;
 
   private ConsumerConfigurationProperties consumerConfigurationProperties;
+
   @Autowired
   public ConsumerConfigController(Environment environment, ConsumerConfigurationProperties consumerConfigurationProperties) {
     this.environment = environment;
     this.consumerConfigurationProperties = consumerConfigurationProperties;
   }
-
   @GetMapping("/config")
   public String config(@RequestParam("key") String key) {
     return environment.getProperty(key);
