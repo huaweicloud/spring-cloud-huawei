@@ -38,7 +38,13 @@ public class ServiceCombServiceInstance implements ServiceInstance {
 
   public ServiceCombServiceInstance(MicroserviceInstance microserviceInstance) {
     this.microserviceInstance = microserviceInstance;
-    this.uriEndpointObject = new URIEndpointObject(this.microserviceInstance.getEndpoints().get(0));
+    String endpoint = this.microserviceInstance.getEndpoints().stream().filter(e -> e.startsWith("rest://"))
+            .findFirst().orElse(null);
+    if (endpoint != null) {
+      this.uriEndpointObject = new URIEndpointObject(endpoint);
+    } else {
+      this.uriEndpointObject = null;
+    }
   }
 
   public MicroserviceInstance getMicroserviceInstance() {
@@ -57,12 +63,32 @@ public class ServiceCombServiceInstance implements ServiceInstance {
 
   @Override
   public String getHost() {
+    if (uriEndpointObject == null) {
+      return this.microserviceInstance.getInstanceId(); // compatible to ribbon default host name
+    }
     return uriEndpointObject.getHostOrIp();
   }
 
-  private URI parseEndpoint() {
+  @Override
+  public int getPort() {
+    if (uriEndpointObject == null) {
+      return 0;
+    }
+    return uriEndpointObject.getPort();
+  }
+
+  @Override
+  public boolean isSecure() {
+    if (uriEndpointObject == null) {
+      return false;
+    }
+    return uriEndpointObject.isSslEnabled();
+  }
+
+  @Override
+  public URI getUri() {
     String endpoint = this.microserviceInstance.getEndpoints().stream().filter(e -> e.startsWith("rest://"))
-        .findFirst().orElse(null);
+            .findFirst().orElse(null);
 
     if (endpoint == null) {
       return null;
@@ -75,21 +101,6 @@ public class ServiceCombServiceInstance implements ServiceInstance {
       LOGGER.error("invalid instance endpoint [{}]", endpoint);
     }
     return uri;
-  }
-
-  @Override
-  public int getPort() {
-    return uriEndpointObject.getPort();
-  }
-
-  @Override
-  public boolean isSecure() {
-    return uriEndpointObject.isSslEnabled();
-  }
-
-  @Override
-  public URI getUri() {
-    return parseEndpoint();
   }
 
   @Override
