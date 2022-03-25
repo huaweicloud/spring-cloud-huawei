@@ -36,7 +36,7 @@ public class VersionCompareUtil {
         String[] versionArray1 = version1.split("\\.");
         String[] versionArray2 = version2.split("\\.");
         int idx = 0;
-        int diff = 0;
+        int diff;
         int minLength = Math.min(versionArray1.length, versionArray2.length);
         while (idx < minLength
                 && versionArray1[idx].length() - versionArray2[idx].length() == 0

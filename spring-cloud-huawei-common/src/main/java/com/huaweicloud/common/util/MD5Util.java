@@ -33,7 +33,7 @@ public class MD5Util {
   private static final Logger LOGGER = LoggerFactory.getLogger(NetUtil.class);
 
   public static String encrypt(String dataStr) {
-    MessageDigest messageDigest = null;
+    MessageDigest messageDigest;
     String result = "";
     try {
       messageDigest = MessageDigest.getInstance("MD5");
