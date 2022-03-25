@@ -87,20 +87,9 @@ public class ServiceCombServiceInstance implements ServiceInstance {
 
   @Override
   public URI getUri() {
-    String endpoint = this.microserviceInstance.getEndpoints().stream().filter(e -> e.startsWith("rest://"))
-            .findFirst().orElse(null);
-
-    if (endpoint == null) {
-      return null;
-    }
-
-    URI uri = null;
-    try {
-      uri = new URIBuilder(endpoint).build();
-    } catch (URISyntaxException e) {
-      LOGGER.error("invalid instance endpoint [{}]", endpoint);
-    }
-    return uri;
+    String scheme = this.getScheme();
+    String uri = String.format("%s://%s:%s", scheme, uriEndpointObject.getHostOrIp(), uriEndpointObject.getPort());
+    return URI.create(uri);
   }
 
   @Override
