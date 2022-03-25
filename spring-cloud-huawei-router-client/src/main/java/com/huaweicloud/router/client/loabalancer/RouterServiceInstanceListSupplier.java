@@ -34,13 +34,17 @@ import reactor.core.publisher.Flux;
 @SuppressWarnings({"rawtype", "unchecked"})
 public class RouterServiceInstanceListSupplier implements ServiceInstanceListSupplier {
 
-  @Autowired
   private List<ServiceInstanceFilter> filters;
 
   private ServiceInstanceListSupplier delegate;
 
   public RouterServiceInstanceListSupplier(ServiceInstanceListSupplier delegate) {
     this.delegate = delegate;
+  }
+
+  @Autowired
+  public void setFilters(List<ServiceInstanceFilter> filters) {
+    this.filters = filters;
   }
 
   @PostConstruct

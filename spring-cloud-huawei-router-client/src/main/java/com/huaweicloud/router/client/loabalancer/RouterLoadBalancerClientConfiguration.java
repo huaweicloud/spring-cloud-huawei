@@ -17,6 +17,9 @@
 
 package com.huaweicloud.router.client.loabalancer;
 
+import org.apache.servicecomb.router.RouterFilter;
+import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
+import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -64,8 +67,8 @@ public class RouterLoadBalancerClientConfiguration {
 
   @Bean
   @ConditionalOnMissingBean(CanaryServiceInstanceFilter.class)
-  public CanaryServiceInstanceFilter canaryServiceInstanceFilter() {
-    return new CanaryServiceInstanceFilter();
+  public CanaryServiceInstanceFilter canaryServiceInstanceFilter(AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor, RouterFilter routerFilter) {
+    return new CanaryServiceInstanceFilter(routerDistributor,routerFilter);
   }
 
   @Bean

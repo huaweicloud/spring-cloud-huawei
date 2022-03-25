@@ -25,8 +25,13 @@ import org.springframework.web.client.RestTemplate;
 
 @RestController
 public class ConsumerController {
-  @Autowired
+
   private RestTemplate restTemplate;
+
+  @Autowired
+  public ConsumerController(RestTemplate restTemplate) {
+    this.restTemplate = restTemplate;
+  }
 
   // consumer service which delegate the implementation to provider service.
   @GetMapping("/sayHello")

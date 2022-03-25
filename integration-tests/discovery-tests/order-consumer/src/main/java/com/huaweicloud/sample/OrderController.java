@@ -27,11 +27,15 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 public class OrderController {
 
-  @Autowired
   private DiscoveryClient discoveryClient;
 
-  @Autowired
   private RestTemplate restTemplate;
+
+  @Autowired
+  public OrderController(DiscoveryClient discoveryClient, RestTemplate restTemplate) {
+    this.discoveryClient = discoveryClient;
+    this.restTemplate = restTemplate;
+  }
 
   @RequestMapping("/instances")
   public Object instances() {

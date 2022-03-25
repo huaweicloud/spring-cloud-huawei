@@ -35,11 +35,19 @@ import io.vavr.CheckedFunction0;
 
 public class GovernanceClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
-  @Autowired
   private RetryHandler retryHandler;
 
-  @Autowired(required = false)
   private ClientRecoverPolicy<Object> clientRecoverPolicy;
+
+  @Autowired
+  public GovernanceClientHttpRequestInterceptor(RetryHandler retryHandler) {
+    this.retryHandler = retryHandler;
+  }
+
+  @Autowired(required = false)
+  public void setClientRecoverPolicy(ClientRecoverPolicy<Object> clientRecoverPolicy) {
+    this.clientRecoverPolicy = clientRecoverPolicy;
+  }
 
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)

@@ -42,11 +42,16 @@ import io.swagger.util.Yaml;
  */
 @RestController
 public class SchemaController {
-  @Autowired
+
   ServiceCombSwaggerHandler serviceCombSwaggerHandler;
 
-  @Autowired
   private RestTemplate restTemplate;
+
+  @Autowired
+  public SchemaController(ServiceCombSwaggerHandler serviceCombSwaggerHandler, RestTemplate restTemplate) {
+    this.serviceCombSwaggerHandler = serviceCombSwaggerHandler;
+    this.restTemplate = restTemplate;
+  }
 
   @RequestMapping("/testSchemaGeneratorSpringCloud")
   public String testSchemaGeneratorSpringCloud() {

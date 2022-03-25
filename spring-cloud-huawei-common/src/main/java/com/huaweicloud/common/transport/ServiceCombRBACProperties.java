@@ -30,7 +30,6 @@ import com.huaweicloud.common.util.DefaultCipher;
 @ConfigurationProperties("spring.cloud.servicecomb.credentials.account")
 public class ServiceCombRBACProperties {
 
-  @Autowired(required = false)
   @JsonIgnore
   private List<Cipher> ciphers;
 
@@ -41,6 +40,11 @@ public class ServiceCombRBACProperties {
   private String name;
 
   private String password;
+
+  @Autowired
+  public void setCiphers(List<Cipher> ciphers) {
+    this.ciphers = ciphers;
+  }
 
   public String getName() {
     return name;
