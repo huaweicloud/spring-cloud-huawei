@@ -65,7 +65,7 @@ public class GovernanceRequestMappingHandlerAdapter {
     this.rateLimitingHandler = rateLimitingHandler;
     this.circuitBreakerHandler = circuitBreakerHandler;
     this.bulkheadHandler = bulkheadHandler;
-  }
+}
 
   @Autowired(required = false)
   public void setServerRecoverPolicy(ServerRecoverPolicy<Object> serverRecoverPolicy) {

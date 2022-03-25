@@ -41,7 +41,7 @@ public class ServiceCombRBACProperties {
 
   private String password;
 
-  @Autowired(required = false)
+  @Autowired
   public void setCiphers(List<Cipher> ciphers) {
     this.ciphers = ciphers;
   }

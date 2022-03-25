@@ -39,13 +39,8 @@ public class ZoneAwareServiceInstanceFilter implements ServiceInstanceFilter {
   private boolean denyCrossZoneLoadBalancing;
 
   @Autowired
-  public ZoneAwareServiceInstanceFilter(ServiceCombRegistration serviceCombRegistration) {
+  public void setServiceCombRegistration(ServiceCombRegistration serviceCombRegistration) {
     this.serviceCombRegistration = serviceCombRegistration;
-  }
-
-  @Autowired
-  public ZoneAwareServiceInstanceFilter() {
-
   }
 
   @Override

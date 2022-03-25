@@ -41,7 +41,7 @@ public class RouterHandlerInterceptor implements HandlerInterceptor {
 
   private List<RouterHeaderFilterExt> filters;
 
-  @Autowired(required = false)
+  @Autowired
   public void setFilters(List<RouterHeaderFilterExt> filters) {
     this.filters = filters;
   }

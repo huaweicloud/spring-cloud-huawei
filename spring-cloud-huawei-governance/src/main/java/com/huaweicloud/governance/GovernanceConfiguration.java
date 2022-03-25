@@ -54,7 +54,7 @@ public class GovernanceConfiguration {
   public GovernanceRequestMappingHandlerAdapter governanceRequestMappingHandlerAdapter(RateLimitingHandler rateLimitingHandler, CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler
 ) {
     return new GovernanceRequestMappingHandlerAdapter(rateLimitingHandler,circuitBreakerHandler,bulkheadHandler);
-  }
+}
 
   @Bean
   public ApplicationListener<ConfigRefreshEvent> governanceApplicationListener() {

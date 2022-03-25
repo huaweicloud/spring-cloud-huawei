@@ -52,11 +52,6 @@ public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
     this.routerFilter = routerFilter;
   }
 
-  @Autowired
-  public CanaryServiceInstanceFilter() {
-
-  }
-
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
   public List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances,

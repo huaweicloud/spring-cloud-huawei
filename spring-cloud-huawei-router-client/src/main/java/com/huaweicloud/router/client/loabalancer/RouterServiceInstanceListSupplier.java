@@ -43,7 +43,7 @@ public class RouterServiceInstanceListSupplier implements ServiceInstanceListSup
   }
 
   @Autowired
-  public RouterServiceInstanceListSupplier(List<ServiceInstanceFilter> filters) {
+  public void setFilters(List<ServiceInstanceFilter> filters) {
     this.filters = filters;
   }
 

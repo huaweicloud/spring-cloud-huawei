@@ -47,7 +47,7 @@ public class ServiceCombAkSkProperties {
 
   private String project = "default";
 
-  @Autowired(required = false)
+  @Autowired
   public void setCiphers(List<Cipher> ciphers) {
     this.ciphers = ciphers;
   }
