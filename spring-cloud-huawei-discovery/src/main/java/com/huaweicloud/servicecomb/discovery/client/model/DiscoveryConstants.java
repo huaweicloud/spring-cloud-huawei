@@ -43,4 +43,10 @@ public final class DiscoveryConstants {
   public static final String DEFAULT_CALL_VERSION = "0.0.0+";
 
   public static final int DEFAULT_HEALTHCHECK_INTERVAL = 10;
+
+  public static final String KIE_NAME = "KIE";
+
+  public static final String CONFIG_CENTER_NAME = "CseConfigCenter";
+
+  public static final String VERSION_RULE_LATEST = "latest";
 }

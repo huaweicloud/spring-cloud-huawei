@@ -23,7 +23,6 @@ import org.apache.servicecomb.governance.handler.ext.AbstractRetryExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.web.client.HttpServerErrorException;
 
 import feign.Response;
 
@@ -48,13 +47,5 @@ public class SpringCloudRetryExtension extends AbstractRetryExtension {
     }
 
     return String.valueOf(status);
-  }
-
-  @Override
-  @SuppressWarnings({"unchecked", "rawtypes"})
-  public Class<? extends Throwable>[] retryExceptions() {
-    return new Class[] {
-        HttpServerErrorException.class
-    };
   }
 }
