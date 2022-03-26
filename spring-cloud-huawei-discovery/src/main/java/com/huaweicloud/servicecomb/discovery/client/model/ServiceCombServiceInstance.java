@@ -18,23 +18,26 @@
 package com.huaweicloud.servicecomb.discovery.client.model;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.servicecomb.foundation.common.net.URIEndpointObject;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
 
 public class ServiceCombServiceInstance implements ServiceInstance {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombServiceInstance.class);
+  private final URIEndpointObject uriEndpointObject;
 
   private final MicroserviceInstance microserviceInstance;
 
   public ServiceCombServiceInstance(MicroserviceInstance microserviceInstance) {
     this.microserviceInstance = microserviceInstance;
+    String endpoint = this.microserviceInstance.getEndpoints().stream().filter(e -> e.startsWith("rest://"))
+            .findFirst().orElse(null);
+    if (endpoint != null) {
+      this.uriEndpointObject = new URIEndpointObject(endpoint);
+    } else {
+      this.uriEndpointObject = null;
+    }
   }
 
   public MicroserviceInstance getMicroserviceInstance() {
@@ -53,48 +56,33 @@ public class ServiceCombServiceInstance implements ServiceInstance {
 
   @Override
   public String getHost() {
-    URI uri = parseEndpoint();
-    if (uri == null) {
+    if (uriEndpointObject == null) {
       return this.microserviceInstance.getInstanceId(); // compatible to ribbon default host name
     }
-    return uri.getHost();
-  }
-
-  private URI parseEndpoint() {
-    String endpoint = this.microserviceInstance.getEndpoints().stream().filter(e -> e.startsWith("rest://"))
-        .findFirst().orElse(null);
-
-    if (endpoint == null) {
-      return null;
-    }
-
-    URI uri = null;
-    try {
-      uri = new URIBuilder(endpoint).build();
-    } catch (URISyntaxException e) {
-      LOGGER.error("invalid instance endpoint [{}]", endpoint);
-    }
-    return uri;
+    return uriEndpointObject.getHostOrIp();
   }
 
   @Override
   public int getPort() {
-    URI uri = parseEndpoint();
-    if (uri == null) {
+    if (uriEndpointObject == null) {
       return 0;
     }
-    return uri.getPort();
+    return uriEndpointObject.getPort();
   }
 
   @Override
   public boolean isSecure() {
-    // TODO: add secure implementation
-    return false;
+    if (uriEndpointObject == null) {
+      return false;
+    }
+    return uriEndpointObject.isSslEnabled();
   }
 
   @Override
   public URI getUri() {
-    return parseEndpoint();
+    String scheme = this.getScheme();
+    String uri = String.format("%s://%s:%s", scheme, uriEndpointObject.getHostOrIp(), uriEndpointObject.getPort());
+    return URI.create(uri);
   }
 
   @Override
@@ -112,7 +100,6 @@ public class ServiceCombServiceInstance implements ServiceInstance {
 
   @Override
   public String getScheme() {
-    // TODO: add schema implementation
-    return null;
+    return uriEndpointObject.isSslEnabled() ? "https" : "http";
   }
 }

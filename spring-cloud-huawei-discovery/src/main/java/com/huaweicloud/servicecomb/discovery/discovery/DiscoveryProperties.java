@@ -25,11 +25,22 @@ public class DiscoveryProperties {
   @Value("${server.port}")
   private String port;
 
+  @Value("${server.ssl.enabled:false}")
+  private Boolean sslEnabled;
+
   public String getPort() {
     return port;
   }
 
   public void setPort(String port) {
     this.port = port;
+  }
+
+  public Boolean isSslEnabled() {
+    return sslEnabled;
+  }
+
+  public void setSslEnabled(Boolean sslEnabled) {
+    this.sslEnabled = sslEnabled;
   }
 }
