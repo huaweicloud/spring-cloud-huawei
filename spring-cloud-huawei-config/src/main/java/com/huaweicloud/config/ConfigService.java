@@ -109,7 +109,7 @@ public class ConfigService {
       addresses = URLUtil.dealMultiUrl(configProperties.getServerAddr());
     }
     LOGGER
-        .info("initialize config server type={}, address={}.", configProperties.getServerType(), addresses.toString());
+        .info("initialize config server type={}, address={}.", configProperties.getServerType(), addresses);
     return new AddressManager(serviceCombAkSkProperties.getProject(), addresses, EventManager.getEventBus());
   }
 
