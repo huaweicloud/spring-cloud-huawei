@@ -100,6 +100,9 @@ public class ServiceCombServiceInstance implements ServiceInstance {
 
   @Override
   public String getScheme() {
+    if (uriEndpointObject == null) {
+      return "http";
+    }
     return uriEndpointObject.isSslEnabled() ? "https" : "http";
   }
 }
