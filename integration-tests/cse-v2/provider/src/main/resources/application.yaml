@@ -18,3 +18,25 @@
 
 server:
   port: 8080
+info:
+  app:
+    #    name: @project.name@
+    name: gateway
+    #    description: @project.description@
+    description: 123
+    #    version: @project.version@
+    version: 1.0
+    #    encoding: @project.build.sourceEncoding@
+    encoding: UTF-8
+    java:
+      #      version: @java.version@
+      version: 1.8
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+

@@ -29,9 +29,12 @@ spring:
         address: ${CSE_V2_SC}
         version: 0.0.1
         healthCheckInterval: 30
+        isSecure: true
       config:
         serverAddr: ${CSE_V2_CC}
         serverType: kie
+CSE_V2_SC: http://127.0.0.1:30101
+CSE_V2_CC: http://127.0.0.1:30110
 
 #      credentials:
 #        account:
