@@ -117,7 +117,7 @@ public class MicroserviceHandler {
     endPoints.add("rest://" + address + ":" + discoveryProperties.getPort());
     microserviceInstance.setEndpoints(endPoints);
     HealthCheck healthCheck = new HealthCheck();
-    healthCheck.setMode(HealthCheckMode.pull);
+    healthCheck.setMode(HealthCheckMode.push);
     healthCheck.setInterval(discoveryBootstrapProperties.getHealthCheckInterval());
     healthCheck.setTimes(3);
     microserviceInstance.setHealthCheck(healthCheck);
