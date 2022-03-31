@@ -37,12 +37,7 @@
       <!-- this project -->
       <dependency>
         <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-huawei-health-check</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-starter-huawei-health-check</artifactId>
+        <artifactId>spring-cloud-starter-huawei-actuator</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

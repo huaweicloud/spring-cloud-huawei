@@ -38,7 +38,7 @@
     <module>spring-cloud-starter-huawei-service-engine-gateway</module>
     <module>spring-cloud-starter-huawei-jasypt</module>
     <module>spring-cloud-starter-huawei-hessian</module>
-    <module>spring-cloud-starter-huawei-health-check</module>
+    <module>spring-cloud-starter-huawei-actuator</module>
   </modules>
 
 </project>

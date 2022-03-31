@@ -53,7 +53,6 @@
     <module>spring-cloud-huawei-router-client</module>
     <module>spring-cloud-huawei-swagger</module>
     <module>spring-cloud-huawei-governance</module>
-    <module>spring-cloud-huawei-health-check</module>
   </modules>
 
   <licenses>

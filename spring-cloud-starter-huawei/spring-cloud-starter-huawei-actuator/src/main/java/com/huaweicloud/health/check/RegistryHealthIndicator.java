@@ -18,12 +18,10 @@
 package com.huaweicloud.health.check;
 
 import com.google.common.eventbus.Subscribe;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.boot.actuate.health.*;
 import com.huaweicloud.common.event.EventManager;
 import org.apache.servicecomb.service.center.client.RegistrationEvents.MicroserviceRegistrationEvent;
 
-@Configuration
 public class RegistryHealthIndicator implements HealthIndicator {
 
     private boolean isSuccess = false;

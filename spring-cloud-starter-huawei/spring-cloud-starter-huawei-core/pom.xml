@@ -33,7 +33,7 @@
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-health-check</artifactId>
+      <artifactId>spring-cloud-starter-huawei-actuator</artifactId>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
