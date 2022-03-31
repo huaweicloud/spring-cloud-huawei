@@ -37,12 +37,10 @@ spring:
         serviceName: ${spring.application.name}
         version: 0.0.1
         healthCheckInterval: 30
-        isSecure: false
       config:
         serverAddr: ${CSE_V2_CC}
         serverType: kie
-CSE_V2_SC: http://127.0.0.1:30100
-CSE_V2_CC: http://127.0.0.1:30110
+
 #      credentials:
 #        account:
 #          name: ${CSE_V2_ACCOUNT_NAME}
