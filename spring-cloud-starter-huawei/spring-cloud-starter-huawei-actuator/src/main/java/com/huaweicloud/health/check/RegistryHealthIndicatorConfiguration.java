@@ -26,7 +26,7 @@ public class RegistryHealthIndicatorConfiguration {
 
     @Bean
     @Order(100)
-    public RegistryHealthIndicator RegistryHealthIndicator() {
+    public RegistryHealthIndicator registryHealthIndicator() {
          return new RegistryHealthIndicator();
     }
 }
