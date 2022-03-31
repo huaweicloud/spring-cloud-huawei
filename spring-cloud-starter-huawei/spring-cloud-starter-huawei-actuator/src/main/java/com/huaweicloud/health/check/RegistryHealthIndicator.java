@@ -18,15 +18,16 @@
 package com.huaweicloud.health.check;
 
 import com.google.common.eventbus.Subscribe;
-import org.springframework.boot.actuate.health.*;
 import com.huaweicloud.common.event.EventManager;
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthIndicator;
 import org.apache.servicecomb.service.center.client.RegistrationEvents.MicroserviceRegistrationEvent;
 
 public class RegistryHealthIndicator implements HealthIndicator {
 
     private boolean isSuccess = false;
 
-    private String Detail = null;
+    private static final String REGISTRATION_NOT_READY = "registration not ready";
 
     public RegistryHealthIndicator() {
         EventManager.register(this);
@@ -37,16 +38,11 @@ public class RegistryHealthIndicator implements HealthIndicator {
         if (isSuccess) {
             return Health.up().build();
         }
-        return Health.down().withDetail("Error Message", Detail).build();
+        return Health.down().withDetail("Error Message", REGISTRATION_NOT_READY).build();
     }
 
     @Subscribe
     public void registryListener(MicroserviceRegistrationEvent event) {
-        if (event.isSuccess()) {
-            this.isSuccess = true;
-            this.Detail = "registry was successful";
-        } else {
-            this.Detail = "registry has failed";
-        }
+            this.isSuccess = event.isSuccess();
     }
 }

@@ -33,10 +33,6 @@
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-actuator</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-config</artifactId>
     </dependency>
     <dependency>
