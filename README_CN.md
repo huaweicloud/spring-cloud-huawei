@@ -67,13 +67,13 @@
 
 [ServiceStage]: https://support.huaweicloud.com/usermanual-servicestage/servicestage_user_0400.html
 
-[CSE]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0002.html
+[CSE]: https://support.huaweicloud.com/cse/index.html
 
-[Service Registry]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0017.html
+[Service Registry]: https://support.huaweicloud.com/devg-cse/cse_devg_0018.html
 
-[Configuration Center]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0018.html
+[Configuration Center]: https://support.huaweicloud.com/devg-cse/cse_devg_0020.html
 
-[Request Marker-based Governance]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0020.html
+[Request Marker-based Governance]: https://support.huaweicloud.com/devg-cse/cse_devg_0025.html
 
 [Canary release features]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0023.html
 

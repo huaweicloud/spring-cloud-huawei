@@ -24,7 +24,7 @@
     <groupId>org.springframework.cloud</groupId>
     <artifactId>spring-cloud-build</artifactId>
     <!-- This version should match spring-cloud-dependencies 'spring-cloud-build.version' -->
-    <version>2.2.3.RELEASE</version>
+    <version>3.0.5</version>
   </parent>
 
   <groupId>com.huaweicloud</groupId>
@@ -40,7 +40,7 @@
     <spring.version>5.3.18</spring.version>
     <spring-cloud.version>2020.0.5</spring-cloud.version>
     <spring-boot.version>2.5.12</spring-boot.version>
-    <servicecomb.version>2.6.3</servicecomb.version>
+    <servicecomb.version>2.7.0</servicecomb.version>
   </properties>
 
   <modules>
