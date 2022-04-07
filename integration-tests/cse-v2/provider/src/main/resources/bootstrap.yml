@@ -25,13 +25,13 @@ spring:
       discovery:
         enabled: true
         watch: false
-        address: ${CSE_V2_SC}
+        address: ${PAAS_CSE_SC_ENDPOINT:http://127.0.0.1:30100}
         appName: cse-v2-test-application
         serviceName: ${spring.application.name}
         version: 0.0.1
         healthCheckInterval: 30
       config:
-        serverAddr: ${CSE_V2_CC}
+        serverAddr: ${PAAS_CSE_CC_ENDPOINT:http://127.0.0.1:30110}
         serverType: kie
 
 #      credentials:
