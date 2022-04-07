@@ -117,7 +117,7 @@ public class GovernanceGatewayFilterFactory
                       throw new RetryException();
                     }
                   }
-                }).retryWhen(reactor.util.retry.Retry.withThrowable(reactor.retry.Retry.anyOf(RetryException.class)));
+                }).retryWhen(reactor.util.retry.Retry.indefinitely().filter(e -> e instanceof RetryException));
       }
       return mono;
     }
