@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
  * @Author GuoYl123
  * @Date 2019/12/9
  **/
-@Component
 @ConfigurationProperties("instance-description.properties")
 public class TagsProperties {
   private Map<String, String> tag;

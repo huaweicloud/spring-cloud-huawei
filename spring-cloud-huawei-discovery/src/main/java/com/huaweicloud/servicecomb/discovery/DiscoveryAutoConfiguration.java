@@ -31,10 +31,11 @@ import com.huaweicloud.common.disovery.ServiceCenterUtils;
 import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.servicecomb.discovery.discovery.DiscoveryProperties;
+import com.huaweicloud.servicecomb.discovery.registry.TagsProperties;
 
 @Configuration
 @ConditionalOnServiceCombDiscoveryEnabled
-@EnableConfigurationProperties(DiscoveryProperties.class)
+@EnableConfigurationProperties({DiscoveryProperties.class, TagsProperties.class})
 public class DiscoveryAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
