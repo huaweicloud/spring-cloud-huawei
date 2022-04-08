@@ -10,13 +10,13 @@
 
 ## 支持的版本列表
 
-| 分支 | 最新版本 | Spring Cloud基线版本 | Spring Boot基线版本 | 支持的Spring Cloud版本 | 支持的Spring Boot版本|
-| ---------- | ------------ | ----------- | ----------- | ----------- | ----------- |
-| master | 1.8.0-2020.0.x | 2020.0.3 | 2.5.3 | 2020.0.x | 2.5.x |
-| Hoxton | 1.8.0-Hoxton | Hoxton.SR9 | 2.3.5.RELEASE | Hoxton | 2.3.x |
-| Greenwich | 1.6.1-Greenwich | Greenwich.SR6 | 2.1.6-RELEASE | Greenwich | 2.1.x |
-| Finchley | 1.6.1-Finchley | 2.0.4.RELEASE | 2.0.9.RELEASE     | Finchley     | 2.0.x       |
-| Edgware | 1.2.0-Edgware | 1.3.6.RELEASE  | 1.5.22.RELEASE    | Edgware      | 1.5.x       |
+| 分支 | 最新版本 | Spring Cloud版本 | Spring Boot版本 |
+| ---------- | ------------ | ----------- | ----------- |
+| master | 1.9.0-2020.0.x  | 2020.0.5               | 2.5.12                |
+| Hoxton | 1.9.0-Hoxton    | Hoxton.SR9             | 2.3.5.RELEASE         |
+| Greenwich | 1.6.1-Greenwich | Greenwich.SR6 | 2.1.6-RELEASE |
+| Finchley | 1.6.1-Finchley | 2.0.4.RELEASE | 2.0.9.RELEASE   |
+| Edgware | 1.2.0-Edgware | 1.3.6.RELEASE  | 1.5.22.RELEASE  |
 
 ***注意：***
 * 查询 [Spring Cloud Release Train](https://spring.io/projects/spring-cloud) 选择一个适合业务的版本使用。
