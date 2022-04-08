@@ -18,8 +18,6 @@
 1. 修改 pom 为目标版本号，并提交 PR 合入。
 
         mvn versions:set -DgenerateBackupPoms=false -DnewVersion=1.5.0
-        
-  部分 Dockerfile 里面也引用了版本号，需要排查一定修改。
 
 2. 下载项目代码。
 
