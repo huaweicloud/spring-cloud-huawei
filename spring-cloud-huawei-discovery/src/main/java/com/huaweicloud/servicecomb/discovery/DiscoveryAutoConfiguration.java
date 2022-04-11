@@ -1,6 +1,6 @@
 /*
 
-  * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
 
   * Licensed under the Apache License, Version 2.0 (the "License");
   * you may not use this file except in compliance with the License.
@@ -31,10 +31,11 @@ import com.huaweicloud.common.disovery.ServiceCenterUtils;
 import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
 import com.huaweicloud.common.transport.ServiceCombSSLProperties;
 import com.huaweicloud.servicecomb.discovery.discovery.DiscoveryProperties;
+import com.huaweicloud.servicecomb.discovery.registry.TagsProperties;
 
 @Configuration
 @ConditionalOnServiceCombDiscoveryEnabled
-@EnableConfigurationProperties(DiscoveryProperties.class)
+@EnableConfigurationProperties({DiscoveryProperties.class, TagsProperties.class})
 public class DiscoveryAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
