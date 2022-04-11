@@ -37,8 +37,9 @@
     <java.version>1.8</java.version>
     <!-- spring-cloud-dependencies do not import spring-boot-dependencies, spring-boot-dependencies
      import spring-framework-bom. No need configure spring version. -->
-    <spring-cloud.version>Hoxton.SR9</spring-cloud.version>
-    <spring-boot.version>2.3.5.RELEASE</spring-boot.version>
+    <spring.version>5.3.18</spring.version>
+    <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
+    <spring-boot.version>2.3.12.RELEASE</spring-boot.version>
     <servicecomb.version>2.7.0</servicecomb.version>
   </properties>
 
