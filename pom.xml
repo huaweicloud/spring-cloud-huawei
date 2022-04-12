@@ -24,7 +24,7 @@
     <groupId>org.springframework.cloud</groupId>
     <artifactId>spring-cloud-build</artifactId>
     <!-- This version should match spring-cloud-dependencies 'spring-cloud-build.version' -->
-    <version>3.0.5</version>
+    <version>3.1.1</version>
   </parent>
 
   <groupId>com.huaweicloud</groupId>
@@ -37,9 +37,8 @@
     <java.version>1.8</java.version>
     <!-- spring-cloud-dependencies do not import spring-boot-dependencies, spring-boot-dependencies
      import spring-framework-bom. No need configure spring version. -->
-    <spring.version>5.3.18</spring.version>
-    <spring-cloud.version>2020.0.5</spring-cloud.version>
-    <spring-boot.version>2.5.12</spring-boot.version>
+    <spring-cloud.version>2021.0.1</spring-cloud.version>
+    <spring-boot.version>2.6.6</spring-boot.version>
     <servicecomb.version>2.7.0</servicecomb.version>
   </properties>
 
