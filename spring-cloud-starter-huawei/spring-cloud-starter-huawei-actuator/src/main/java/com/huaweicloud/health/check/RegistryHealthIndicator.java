@@ -21,7 +21,7 @@ import com.google.common.eventbus.Subscribe;
 import com.huaweicloud.common.event.EventManager;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
-import org.apache.servicecomb.service.center.client.RegistrationEvents.MicroserviceRegistrationEvent;
+import org.apache.servicecomb.service.center.client.RegistrationEvents.MicroserviceInstanceRegistrationEvent;
 
 public class RegistryHealthIndicator implements HealthIndicator {
 
@@ -42,7 +42,7 @@ public class RegistryHealthIndicator implements HealthIndicator {
     }
 
     @Subscribe
-    public void registryListener(MicroserviceRegistrationEvent event) {
+    public void registryListener(MicroserviceInstanceRegistrationEvent event) {
             this.isSuccess = event.isSuccess();
     }
 }
