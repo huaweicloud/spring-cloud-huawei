@@ -108,10 +108,11 @@ public class GovernanceGatewayFilterFactory
       Retry retry = retryHandler.getActuator(governanceRequest);
       Mono<Void> mono = toRun;
       if (retry != null) {
+        Retry.Context<Object> context = retry.context();
         mono = toRun.transform(RetryOperator.of(retry))
                 .doOnSuccess(v -> {
                   if (exchange.getResponse().getRawStatusCode() != null) {
-                    if (retry.context().onResult(exchange.getResponse().getRawStatusCode())) {
+                    if (context.onResult(exchange.getResponse().getRawStatusCode())) {
                       exchange.getResponse().setStatusCode(null);
                       reset(exchange);
                       throw new RetryException();
