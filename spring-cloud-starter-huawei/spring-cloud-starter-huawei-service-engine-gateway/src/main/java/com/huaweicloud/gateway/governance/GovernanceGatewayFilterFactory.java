@@ -101,10 +101,11 @@ public class GovernanceGatewayFilterFactory extends
     private Mono<Void> addRetry(ServerWebExchange exchange, GovernanceRequest governanceRequest, Mono<Void> toRun) {
       Retry retry = retryHandler.getActuator(governanceRequest);
       if (retry != null) {
+        Retry.Context<Object> context = retry.context();
         toRun = toRun.transform(RetryOperator.of(retry))
             .doOnSuccess(v -> {
               if (exchange.getResponse().getRawStatusCode() != null) {
-                if (retry.context().onResult(exchange.getResponse().getRawStatusCode())) {
+                if (context.onResult(exchange.getResponse().getRawStatusCode())) {
                   exchange.getResponse().setStatusCode(null);
                   reset(exchange);
                   throw new RetryException();
