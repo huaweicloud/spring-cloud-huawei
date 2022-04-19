@@ -17,19 +17,19 @@
 
 package com.huaweicloud.common.transport;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.huaweicloud.common.CommonConfiguration;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {CommonConfiguration.class, AkSkTestConfiguration.class})
 @ContextConfiguration(initializers = ConfigDataApplicationContextInitializer.class)
 public class ServiceCombAkSkPropertiesTest {
@@ -41,12 +41,12 @@ public class ServiceCombAkSkPropertiesTest {
 
   @Test
   public void testConfigurationCorrect() {
-    Assert.assertNotNull(akSkProperties);
-    Assert.assertEquals(true, akSkProperties.isEnabled());
-    Assert.assertEquals("your ak", akSkProperties.getAccessKey());
-    Assert.assertEquals("1dabecbf115955223ea3b7348366c162678688b0fc70e282c0a33e6e4baeccb9",
+    Assertions.assertNotNull(akSkProperties);
+    Assertions.assertTrue(akSkProperties.isEnabled());
+    Assertions.assertEquals("your ak", akSkProperties.getAccessKey());
+    Assertions.assertEquals("1dabecbf115955223ea3b7348366c162678688b0fc70e282c0a33e6e4baeccb9",
         akSkProperties.getSecretKey());
-    Assert.assertEquals("cn-east-2", akSkProperties.getProject());
-    Assert.assertEquals("CustomCipher", akSkProperties.getCipher());
+    Assertions.assertEquals("cn-east-2", akSkProperties.getProject());
+    Assertions.assertEquals("CustomCipher", akSkProperties.getCipher());
   }
 }

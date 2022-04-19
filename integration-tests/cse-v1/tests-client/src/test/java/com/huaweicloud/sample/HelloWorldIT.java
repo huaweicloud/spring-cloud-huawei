@@ -19,8 +19,8 @@ package com.huaweicloud.sample;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -58,7 +58,7 @@ public class HelloWorldIT {
       } else if (result.equals("Hello Canary in canary World")) {
         newCount++;
       } else {
-        Assert.fail("not expected result testHelloWorldCanary");
+        Assertions.fail("not expected result testHelloWorldCanary");
         return;
       }
     }
@@ -84,7 +84,7 @@ public class HelloWorldIT {
       } else if (result.equals("Hello Gateway Canary in canary World")) {
         newCount++;
       } else {
-        Assert.fail("not expected result testHelloWorldCanary");
+        Assertions.fail("not expected result testHelloWorldCanary");
         return;
       }
     }

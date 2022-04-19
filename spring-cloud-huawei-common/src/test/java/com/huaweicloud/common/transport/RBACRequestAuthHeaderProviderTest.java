@@ -21,9 +21,9 @@ import java.util.Map;
 
 import org.apache.servicecomb.service.center.client.exception.OperationException;
 import org.apache.servicecomb.service.center.client.model.RbacTokenResponse;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class RBACRequestAuthHeaderProviderTest {
@@ -33,7 +33,7 @@ public class RBACRequestAuthHeaderProviderTest {
 
   private final ServiceCombRBACProperties serviceCombRBACProperties = Mockito.mock(ServiceCombRBACProperties.class);
 
-  @Before
+  @BeforeEach
   public void setUp() {
     Mockito.when(serviceCombRBACProperties.getName()).thenReturn("test_name");
     Mockito.when(serviceCombRBACProperties.getPassword()).thenReturn("test_password");
@@ -111,9 +111,9 @@ public class RBACRequestAuthHeaderProviderTest {
     RBACRequestAuthHeaderProvider provider = new FirstTimeSuccessRBACRequestAuthHeaderProvider(discoveryProperties,
         serviceCombSSLProperties, serviceCombRBACProperties);
     Map<String, String> result = provider.authHeaders();
-    Assert.assertEquals("Bearer test_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
+    Assertions.assertEquals("Bearer test_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
     result = provider.authHeaders();
-    Assert.assertEquals("Bearer test_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
+    Assertions.assertEquals("Bearer test_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
   }
 
   @Test
@@ -121,11 +121,11 @@ public class RBACRequestAuthHeaderProviderTest {
     RBACRequestAuthHeaderProvider provider = new SecondTimeSuccessRBACRequestAuthHeaderProvider(discoveryProperties,
         serviceCombSSLProperties, serviceCombRBACProperties);
     Map<String, String> result = provider.authHeaders();
-    Assert.assertTrue(result.isEmpty());
+    Assertions.assertTrue(result.isEmpty());
     result = provider.authHeaders();
-    Assert.assertEquals("Bearer test_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
+    Assertions.assertEquals("Bearer test_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
     result = provider.authHeaders();
-    Assert.assertEquals("Bearer test_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
+    Assertions.assertEquals("Bearer test_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
   }
 
   @Test
@@ -134,11 +134,11 @@ public class RBACRequestAuthHeaderProviderTest {
         discoveryProperties,
         serviceCombSSLProperties, serviceCombRBACProperties);
     Map<String, String> result = provider.authHeaders();
-    Assert.assertTrue(result.isEmpty());
+    Assertions.assertTrue(result.isEmpty());
     result = provider.authHeaders();
-    Assert.assertEquals("Bearer test_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
+    Assertions.assertEquals("Bearer test_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
     result = provider.authHeaders();
-    Assert.assertEquals("Bearer test_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
+    Assertions.assertEquals("Bearer test_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
     for (int i = 0; i < 20; i++) {
       Thread.sleep(100);
       result = provider.authHeaders();// wait a while
@@ -147,6 +147,6 @@ public class RBACRequestAuthHeaderProviderTest {
       }
     }
     result = provider.authHeaders();
-    Assert.assertEquals("Bearer test_token_2", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
+    Assertions.assertEquals("Bearer test_token_2", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
   }
 }

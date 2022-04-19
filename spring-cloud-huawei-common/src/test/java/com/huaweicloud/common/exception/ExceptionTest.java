@@ -17,7 +17,7 @@
 
 package com.huaweicloud.common.exception;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @Author GuoYl123
