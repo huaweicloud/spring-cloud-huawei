@@ -34,8 +34,6 @@ public class ServiceCombAkSkProperties {
 
   private List<Cipher> ciphers;
 
-  private String enable;
-
   private boolean enabled = false;
 
   private String accessKey;
@@ -50,14 +48,6 @@ public class ServiceCombAkSkProperties {
   @Autowired
   public void setCiphers(List<Cipher> ciphers) {
     this.ciphers = ciphers;
-  }
-
-  public String getEnable() {
-    return enable;
-  }
-
-  public void setEnable(String enable) {
-    this.enable = enable;
   }
 
   public String getAccessKey() {
