@@ -36,7 +36,6 @@
     <httpclient.version>4.5.9</httpclient.version>
     <jackson.version>2.12.1</jackson.version>
     <jmockit.version>1.36</jmockit.version>
-    <junit.version>4.12</junit.version>
     <guava.version>30.0-jre</guava.version>
     <snakeyaml.version>1.26</snakeyaml.version>
     <commons-configuration.version>1.10</commons-configuration.version>
