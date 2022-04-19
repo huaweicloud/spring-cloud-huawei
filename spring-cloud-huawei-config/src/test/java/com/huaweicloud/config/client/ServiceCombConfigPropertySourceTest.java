@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.servicecomb.config.common.ConfigConverter;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.huaweicloud.config.ServiceCombConfigPropertySource;
 
@@ -44,7 +44,7 @@ public class ServiceCombConfigPropertySourceTest extends MockUp<ServiceCombConfi
         configConverter);
 
     String[] result = serviceCombConfigPropertySource.getPropertyNames();
-    Assert.assertEquals(result.length, 2);
+    Assertions.assertEquals(result.length, 2);
   }
 
   @Test
@@ -59,6 +59,6 @@ public class ServiceCombConfigPropertySourceTest extends MockUp<ServiceCombConfi
         configConverter);
 
     Object result = serviceCombConfigPropertySource.getProperty("test");
-    Assert.assertEquals(result, "tt");
+    Assertions.assertEquals(result, "tt");
   }
 }

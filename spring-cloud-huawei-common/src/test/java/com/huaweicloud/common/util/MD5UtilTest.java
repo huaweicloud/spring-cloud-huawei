@@ -17,8 +17,8 @@
 
 package com.huaweicloud.common.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @Author wangqijun
@@ -29,8 +29,8 @@ public class MD5UtilTest {
   @Test
   public void encrypt() {
     String computeValue = "dasfjkl;sdjfkldsafjodsiu29-w0483290-48230-8idfsopafjdls;afkd;safkd;safdsaf";
-    Assert.assertEquals(MD5Util.encrypt(computeValue), MD5Util.encrypt(computeValue));
+    Assertions.assertEquals(MD5Util.encrypt(computeValue), MD5Util.encrypt(computeValue));
     String changeValue = "dasfjkl;sdjfkldsafjodsiu29-w0483290-48230-8idfsopafjdls;afkd;safkd;safdsa5";
-    Assert.assertNotEquals(MD5Util.encrypt(computeValue), MD5Util.encrypt(changeValue));
+    Assertions.assertNotEquals(MD5Util.encrypt(computeValue), MD5Util.encrypt(changeValue));
   }
 }

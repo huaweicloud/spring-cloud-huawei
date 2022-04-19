@@ -24,8 +24,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestTemplate;
 
 public class GovernanceControllerIT {
@@ -81,8 +81,8 @@ public class GovernanceControllerIT {
     }
 
     latch.await(20, TimeUnit.SECONDS);
-    Assert.assertEquals(true, expectedFailed.get());
-    Assert.assertEquals(false, notExpectedFailed.get());
+    Assertions.assertTrue(expectedFailed.get());
+    Assertions.assertFalse(notExpectedFailed.get());
   }
 
   @Test
@@ -115,8 +115,8 @@ public class GovernanceControllerIT {
     }
 
     latch.await(20, TimeUnit.SECONDS);
-    Assert.assertEquals(true, expectedFailed.get());
-    Assert.assertEquals(false, notExpectedFailed.get());
+    Assertions.assertTrue(expectedFailed.get());
+    Assertions.assertFalse(notExpectedFailed.get());
   }
 
   @Test
@@ -149,7 +149,7 @@ public class GovernanceControllerIT {
     }
 
     latch.await(20, TimeUnit.SECONDS);
-    Assert.assertEquals(true, expectedFailed.get());
-    Assert.assertEquals(false, notExpectedFailed.get());
+    Assertions.assertTrue(expectedFailed.get());
+    Assertions.assertFalse(notExpectedFailed.get());
   }
 }

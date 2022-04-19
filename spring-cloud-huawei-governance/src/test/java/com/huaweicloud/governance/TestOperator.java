@@ -24,8 +24,8 @@ import org.apache.servicecomb.governance.marker.operator.ContainsOperator;
 import org.apache.servicecomb.governance.marker.operator.ExactOperator;
 import org.apache.servicecomb.governance.marker.operator.MatchOperator;
 import org.apache.servicecomb.governance.marker.operator.PrefixOperator;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class TestOperator {
 
@@ -52,8 +52,8 @@ public class TestOperator {
     String patternStr = "/xx";
     String targetStr1 = "/xxxx/xxx1";
     String targetStr2 = "xxx";
-    Assert.assertTrue(operatorMap.get(PREFIX_KEY).match(targetStr1, patternStr));
-    Assert.assertFalse(operatorMap.get(PREFIX_KEY).match(targetStr2, patternStr));
+    Assertions.assertTrue(operatorMap.get(PREFIX_KEY).match(targetStr1, patternStr));
+    Assertions.assertFalse(operatorMap.get(PREFIX_KEY).match(targetStr2, patternStr));
   }
 
   @Test
@@ -61,8 +61,8 @@ public class TestOperator {
     String patternStr = "/xxx";
     String targetStr1 = "/xxxx/xxx1";
     String targetStr2 = "/12344";
-    Assert.assertTrue(operatorMap.get(CONTAINS_KEY).match(targetStr1, patternStr));
-    Assert.assertFalse(operatorMap.get(CONTAINS_KEY).match(targetStr2, patternStr));
+    Assertions.assertTrue(operatorMap.get(CONTAINS_KEY).match(targetStr1, patternStr));
+    Assertions.assertFalse(operatorMap.get(CONTAINS_KEY).match(targetStr2, patternStr));
   }
 
   @Test
@@ -70,26 +70,26 @@ public class TestOperator {
     String patternStr = ">123";
     String targetStr1 = "133";
     String targetStr2 = "90";
-    Assert.assertTrue(operatorMap.get(COMPARE_KEY).match(targetStr1, patternStr));
-    Assert.assertFalse(operatorMap.get(COMPARE_KEY).match(targetStr2, patternStr));
+    Assertions.assertTrue(operatorMap.get(COMPARE_KEY).match(targetStr1, patternStr));
+    Assertions.assertFalse(operatorMap.get(COMPARE_KEY).match(targetStr2, patternStr));
 
     String patternStr2 = ">=123";
     String targetStr3 = "123";
-    Assert.assertTrue(operatorMap.get(COMPARE_KEY).match(targetStr3, patternStr2));
-    Assert.assertFalse(operatorMap.get(COMPARE_KEY).match(targetStr2, patternStr2));
+    Assertions.assertTrue(operatorMap.get(COMPARE_KEY).match(targetStr3, patternStr2));
+    Assertions.assertFalse(operatorMap.get(COMPARE_KEY).match(targetStr2, patternStr2));
 
     String patternStr3 = "=123";
-    Assert.assertTrue(operatorMap.get(COMPARE_KEY).match(targetStr3, patternStr3));
-    Assert.assertFalse(operatorMap.get(COMPARE_KEY).match(targetStr2, patternStr3));
+    Assertions.assertTrue(operatorMap.get(COMPARE_KEY).match(targetStr3, patternStr3));
+    Assertions.assertFalse(operatorMap.get(COMPARE_KEY).match(targetStr2, patternStr3));
 
     String patternStr4 = "!123";
-    Assert.assertFalse(operatorMap.get(COMPARE_KEY).match(targetStr3, patternStr4));
-    Assert.assertTrue(operatorMap.get(COMPARE_KEY).match(targetStr2, patternStr4));
+    Assertions.assertFalse(operatorMap.get(COMPARE_KEY).match(targetStr3, patternStr4));
+    Assertions.assertTrue(operatorMap.get(COMPARE_KEY).match(targetStr2, patternStr4));
 
     String patternStr5 = "<=-123";
     String targetStr4 = "-123";
-    Assert.assertFalse(operatorMap.get(COMPARE_KEY).match(targetStr3, patternStr5));
-    Assert.assertTrue(operatorMap.get(COMPARE_KEY).match(targetStr4, patternStr5));
+    Assertions.assertFalse(operatorMap.get(COMPARE_KEY).match(targetStr3, patternStr5));
+    Assertions.assertTrue(operatorMap.get(COMPARE_KEY).match(targetStr4, patternStr5));
   }
 
   @Test
@@ -97,7 +97,7 @@ public class TestOperator {
     String patternStr = "/xxx";
     String targetStr1 = "/xxx";
     String targetStr2 = "/12344";
-    Assert.assertTrue(operatorMap.get(EXACT_KEY).match(targetStr1, patternStr));
-    Assert.assertFalse(operatorMap.get(EXACT_KEY).match(targetStr2, patternStr));
+    Assertions.assertTrue(operatorMap.get(EXACT_KEY).match(targetStr1, patternStr));
+    Assertions.assertFalse(operatorMap.get(EXACT_KEY).match(targetStr2, patternStr));
   }
 }

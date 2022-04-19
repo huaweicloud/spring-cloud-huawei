@@ -19,7 +19,7 @@ package com.huaweicloud.sample;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestTemplate;
 
 public class SchemaControllerIT {

@@ -17,8 +17,8 @@
 
 package com.huaweicloud.common.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @Author wangqijun
@@ -29,18 +29,18 @@ public class NetUtilTest {
 
   @Test
   public void getLocalHost() {
-    Assert.assertNotNull(NetUtil.getLocalHost());
+    Assertions.assertNotNull(NetUtil.getLocalHost());
   }
 
   @Test
   public void getPort() {
     Integer port = NetUtil.getPort("http://127.0.0.1:30103/#!/sc/f1532d0479261777281fe3d94b15c463f8b6fcf7/instance");
-    Assert.assertEquals(port, new Integer(30103));
+    Assertions.assertEquals(port, new Integer(30103));
   }
 
   @Test
   public void getHost() {
     String host = NetUtil.getHost("http://127.0.0.1:30103/#!/sc/f1532d0479261777281fe3d94b15c463f8b6fcf7/instance");
-    Assert.assertEquals(host, "127.0.0.1");
+    Assertions.assertEquals(host, "127.0.0.1");
   }
 }

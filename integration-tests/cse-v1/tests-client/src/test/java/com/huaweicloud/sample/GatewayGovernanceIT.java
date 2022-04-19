@@ -25,8 +25,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -67,9 +67,9 @@ public class GatewayGovernanceIT {
     }
 
     latch.await(20, TimeUnit.SECONDS);
-    Assert.assertEquals(true, expectedFailed.get());
-    Assert.assertEquals(false, notExpectedFailed.get());
-    Assert.assertTrue(successCount.get() >= 10);
+    Assertions.assertTrue(expectedFailed.get());
+    Assertions.assertFalse(notExpectedFailed.get());
+    Assertions.assertTrue(successCount.get() >= 10);
   }
 
   @Test
@@ -106,9 +106,9 @@ public class GatewayGovernanceIT {
     }
 
     latch.await(20, TimeUnit.SECONDS);
-    Assert.assertEquals(true, expectedFailed.get());
-    Assert.assertEquals(false, notExpectedFailed.get());
-    Assert.assertTrue(successCount.get() >= 8);
+    Assertions.assertTrue(expectedFailed.get());
+    Assertions.assertFalse(notExpectedFailed.get());
+    Assertions.assertTrue(successCount.get() >= 8);
   }
 
   @Test
@@ -145,9 +145,9 @@ public class GatewayGovernanceIT {
     }
 
     latch.await(20, TimeUnit.SECONDS);
-    Assert.assertEquals(true, expectedFailed.get());
-    Assert.assertEquals(false, notExpectedFailed.get());
-    Assert.assertTrue(successCount.get() >= 50);
+    Assertions.assertTrue(expectedFailed.get());
+    Assertions.assertFalse(notExpectedFailed.get());
+    Assertions.assertTrue(successCount.get() >= 50);
   }
 
   @Test

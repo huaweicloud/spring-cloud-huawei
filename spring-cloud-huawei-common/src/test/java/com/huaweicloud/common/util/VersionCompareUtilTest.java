@@ -17,8 +17,8 @@
 
 package com.huaweicloud.common.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @Author GuoYl123
@@ -28,11 +28,11 @@ public class VersionCompareUtilTest {
 
   @Test
   public void testVersion() {
-    Assert.assertTrue(VersionCompareUtil.compareVersion("0.0.1", "0.0.0") > 0);
-    Assert.assertEquals(0, VersionCompareUtil.compareVersion("0.0.0", "0.0.0"));
-    Assert.assertTrue(VersionCompareUtil.compareVersion("0.0.0", "0.0.1") < 0);
-    Assert.assertTrue(VersionCompareUtil.compareVersion("0.0.0", "0.0.0.0") < 0);
-    Assert.assertTrue(VersionCompareUtil.compareVersion("0.0.1", "0.0.0.0") > 0);
-    Assert.assertTrue(VersionCompareUtil.compareVersion("0.0.1", "0.0.0.0") > 0);
+    Assertions.assertTrue(VersionCompareUtil.compareVersion("0.0.1", "0.0.0") > 0);
+    Assertions.assertEquals(0, VersionCompareUtil.compareVersion("0.0.0", "0.0.0"));
+    Assertions.assertTrue(VersionCompareUtil.compareVersion("0.0.0", "0.0.1") < 0);
+    Assertions.assertTrue(VersionCompareUtil.compareVersion("0.0.0", "0.0.0.0") < 0);
+    Assertions.assertTrue(VersionCompareUtil.compareVersion("0.0.1", "0.0.0.0") > 0);
+    Assertions.assertTrue(VersionCompareUtil.compareVersion("0.0.1", "0.0.0.0") > 0);
   }
 }
