@@ -41,7 +41,7 @@ import feign.Response;
 @Aspect
 public class GovernanceFeignClient {
 
-  private RetryHandler retryHandler;
+  private final RetryHandler retryHandler;
 
   private ClientRecoverPolicy<Object> clientRecoverPolicy;
 

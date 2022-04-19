@@ -35,7 +35,7 @@ import io.vavr.CheckedFunction0;
 
 public class GovernanceClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
-  private RetryHandler retryHandler;
+  private final RetryHandler retryHandler;
 
   private ClientRecoverPolicy<Object> clientRecoverPolicy;
 

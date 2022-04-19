@@ -27,9 +27,9 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 public class OrderController {
 
-  private DiscoveryClient discoveryClient;
+  private final DiscoveryClient discoveryClient;
 
-  private RestTemplate restTemplate;
+  private final RestTemplate restTemplate;
 
   @Autowired
   public OrderController(DiscoveryClient discoveryClient, RestTemplate restTemplate) {

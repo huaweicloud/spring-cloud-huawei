@@ -42,9 +42,9 @@ public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CanaryServiceInstanceFilter.class);
 
-  private AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor;
+  private final AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor;
 
-  private RouterFilter routerFilter;
+  private final RouterFilter routerFilter;
 
   @Autowired
   public CanaryServiceInstanceFilter(AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor, RouterFilter routerFilter) {

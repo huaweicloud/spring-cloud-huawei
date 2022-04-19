@@ -27,9 +27,9 @@ import org.springframework.web.client.RestTemplate;
 @RequestMapping(path = "govern")
 public class GovernanceController {
 
-  private RestTemplate restTemplate;
+  private final RestTemplate restTemplate;
 
-  private FeignService feignService;
+  private final FeignService feignService;
 
   private int count = 0;
 

@@ -47,15 +47,15 @@ public class ServiceAddressManager {
 
   private boolean initialized = false;
 
-  private ServiceCenterClient serviceCenterClient;
+  private final ServiceCenterClient serviceCenterClient;
 
-  private MicroserviceInstance myselfInstance;
+  private final MicroserviceInstance myselfInstance;
 
-  private DiscoveryBootstrapProperties discoveryProperties;
+  private final DiscoveryBootstrapProperties discoveryProperties;
 
   private DataCenterInfo dataCenterInfo;
 
-  private String myselfServiceId;
+  private final String myselfServiceId;
 
   public ServiceAddressManager(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCenterClient serviceCenterClient,

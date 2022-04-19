@@ -26,7 +26,7 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 public class ConsumerController {
 
-  private RestTemplate restTemplate;
+  private final RestTemplate restTemplate;
 
   @Autowired
   public ConsumerController(RestTemplate restTemplate) {

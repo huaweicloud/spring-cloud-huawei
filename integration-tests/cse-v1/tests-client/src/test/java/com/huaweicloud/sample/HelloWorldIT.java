@@ -28,7 +28,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 public class HelloWorldIT {
-  RestTemplate template = new RestTemplate();
+  final RestTemplate template = new RestTemplate();
 
   @Test
   public void testHelloWorld() {

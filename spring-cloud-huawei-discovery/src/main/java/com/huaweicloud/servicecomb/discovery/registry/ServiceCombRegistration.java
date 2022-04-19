@@ -36,11 +36,11 @@ import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
  */
 public class ServiceCombRegistration implements Registration {
 
-  private Microservice microservice;
+  private final Microservice microservice;
 
-  private MicroserviceInstance microserviceInstance;
+  private final MicroserviceInstance microserviceInstance;
 
-  private DiscoveryBootstrapProperties discoveryBootstrapProperties;
+  private final DiscoveryBootstrapProperties discoveryBootstrapProperties;
 
   public ServiceCombRegistration(DiscoveryBootstrapProperties discoveryBootstrapProperties,
       DiscoveryProperties discoveryProperties,

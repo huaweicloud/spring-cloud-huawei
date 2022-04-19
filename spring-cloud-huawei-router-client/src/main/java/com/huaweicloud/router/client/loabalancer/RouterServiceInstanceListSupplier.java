@@ -36,7 +36,7 @@ public class RouterServiceInstanceListSupplier implements ServiceInstanceListSup
 
   private List<ServiceInstanceFilter> filters;
 
-  private ServiceInstanceListSupplier delegate;
+  private final ServiceInstanceListSupplier delegate;
 
   public RouterServiceInstanceListSupplier(ServiceInstanceListSupplier delegate) {
     this.delegate = delegate;

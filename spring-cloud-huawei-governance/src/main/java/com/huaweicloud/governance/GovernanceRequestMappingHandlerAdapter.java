@@ -52,11 +52,11 @@ public class GovernanceRequestMappingHandlerAdapter {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(GovernanceRequestMappingHandlerAdapter.class);
 
-  private RateLimitingHandler rateLimitingHandler;
+  private final RateLimitingHandler rateLimitingHandler;
 
-  private CircuitBreakerHandler circuitBreakerHandler;
+  private final CircuitBreakerHandler circuitBreakerHandler;
 
-  private BulkheadHandler bulkheadHandler;
+  private final BulkheadHandler bulkheadHandler;
 
   private ServerRecoverPolicy<Object> serverRecoverPolicy;
 

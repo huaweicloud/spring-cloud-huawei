@@ -45,11 +45,11 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombSwaggerHandlerImpl.class);
 
-  protected DocumentationPluginsBootstrapper documentationPluginsBootstrapper;
+  protected final DocumentationPluginsBootstrapper documentationPluginsBootstrapper;
 
-  protected DocumentationCache documentationCache;
+  protected final DocumentationCache documentationCache;
 
-  protected ServiceModelToSwagger2Mapper mapper;
+  protected final ServiceModelToSwagger2Mapper mapper;
 
   @Autowired
   public ServiceCombSwaggerHandlerImpl(DocumentationPluginsBootstrapper documentationPluginsBootstrapper, DocumentationCache documentationCache, ServiceModelToSwagger2Mapper mapper) {

@@ -25,7 +25,7 @@ import reactor.core.scheduler.Schedulers;
 
 public class ServiceCombReactiveDiscoveryClient implements ReactiveDiscoveryClient {
 
-  private DiscoveryClient discoveryClient;
+  private final DiscoveryClient discoveryClient;
 
   public ServiceCombReactiveDiscoveryClient(DiscoveryClient discoveryClient) {
     this.discoveryClient = discoveryClient;
