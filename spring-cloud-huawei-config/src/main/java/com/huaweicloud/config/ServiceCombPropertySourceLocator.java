@@ -26,7 +26,7 @@ import org.springframework.core.env.PropertySource;
 
 @Order(0)
 public class ServiceCombPropertySourceLocator implements PropertySourceLocator {
-  private ConfigConverter configConverter;
+  private final ConfigConverter configConverter;
 
   public ServiceCombPropertySourceLocator(ConfigConverter configConverter) {
     this.configConverter = configConverter;

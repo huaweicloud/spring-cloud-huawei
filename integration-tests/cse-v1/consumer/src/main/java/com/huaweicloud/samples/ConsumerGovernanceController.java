@@ -31,7 +31,7 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 @RequestMapping(path = "govern")
 public class ConsumerGovernanceController {
-  private Map<String, Integer> retryTimes = new HashMap<>();
+  private final Map<String, Integer> retryTimes = new HashMap<>();
 
   private int count = 0;
 

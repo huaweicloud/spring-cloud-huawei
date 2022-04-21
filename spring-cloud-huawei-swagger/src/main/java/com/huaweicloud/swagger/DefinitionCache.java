@@ -25,9 +25,9 @@ import java.util.Map;
  **/
 public class DefinitionCache {
 
-  private static Map<String, String> definitionMap = new HashMap<>();
+  private static final Map<String, String> definitionMap = new HashMap<>();
 
-  private static Map<String, String> schemaClassNameMap = new HashMap<>();
+  private static final Map<String, String> schemaClassNameMap = new HashMap<>();
 
   public static String getClassByDefName(String name) {
     return definitionMap.get(name);

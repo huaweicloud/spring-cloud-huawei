@@ -31,7 +31,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 public class GatewayGovernanceIT {
-  RestTemplate template = new RestTemplate();
+  final RestTemplate template = new RestTemplate();
 
   @Test
   public void testRateLimiting() throws Exception {

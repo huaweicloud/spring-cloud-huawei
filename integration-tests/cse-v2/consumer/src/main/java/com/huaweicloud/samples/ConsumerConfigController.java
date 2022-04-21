@@ -26,9 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ConsumerConfigController {
 
-  private Environment environment;
+  private final Environment environment;
 
-  private ConsumerConfigurationProperties consumerConfigurationProperties;
+  private final ConsumerConfigurationProperties consumerConfigurationProperties;
 
   @Autowired
   public ConsumerConfigController(Environment environment, ConsumerConfigurationProperties consumerConfigurationProperties) {

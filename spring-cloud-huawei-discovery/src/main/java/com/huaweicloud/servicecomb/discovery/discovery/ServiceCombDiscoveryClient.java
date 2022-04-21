@@ -52,13 +52,13 @@ import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationEventPublisherAware {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombDiscoveryClient.class);
 
-  private ServiceCenterClient serviceCenterClient;
+  private final ServiceCenterClient serviceCenterClient;
 
-  private DiscoveryBootstrapProperties discoveryProperties;
+  private final DiscoveryBootstrapProperties discoveryProperties;
 
-  private ServiceCenterDiscovery serviceCenterDiscovery;
+  private final ServiceCenterDiscovery serviceCenterDiscovery;
 
-  private ServiceCombRegistration serviceCombRegistration;
+  private final ServiceCombRegistration serviceCombRegistration;
 
   private ApplicationEventPublisher applicationEventPublisher;
 

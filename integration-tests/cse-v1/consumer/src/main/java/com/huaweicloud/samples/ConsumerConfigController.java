@@ -28,9 +28,9 @@ import java.util.List;
 @RestController
 public class ConsumerConfigController {
 
-  private Environment environment;
+  private final Environment environment;
 
-  private ConsumerConfigurationProperties consumerConfigurationProperties;
+  private final ConsumerConfigurationProperties consumerConfigurationProperties;
 
   @Autowired
   public ConsumerConfigController(Environment environment, ConsumerConfigurationProperties consumerConfigurationProperties) {

@@ -23,9 +23,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestTemplate;
 
 public class SchemaControllerIT {
-  String url = "http://127.0.0.1:9098";
+  final String url = "http://127.0.0.1:9098";
 
-  RestTemplate template = new RestTemplate();
+  final RestTemplate template = new RestTemplate();
 
   @Test
   public void testSchemaGeneratorSpringCloud() {

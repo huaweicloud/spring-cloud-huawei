@@ -29,7 +29,7 @@ import springfox.documentation.service.Documentation;
 import springfox.documentation.swagger2.mappers.ServiceModelToSwagger2Mapper;
 
 public class SpringCloudDocumentationSwaggerMapper implements DocumentationSwaggerMapper {
-  private ServiceModelToSwagger2Mapper mapper;
+  private final ServiceModelToSwagger2Mapper mapper;
 
   public SpringCloudDocumentationSwaggerMapper(ServiceModelToSwagger2Mapper mapper) {
     this.mapper = mapper;

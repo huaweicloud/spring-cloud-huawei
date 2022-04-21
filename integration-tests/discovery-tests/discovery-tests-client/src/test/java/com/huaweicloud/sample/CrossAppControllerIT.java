@@ -26,11 +26,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestTemplate;
 
 public class CrossAppControllerIT {
-  String url = "http://127.0.0.1:9098";
+  final String url = "http://127.0.0.1:9098";
 
-  int crossAppPricePort = 9092;
+  final int crossAppPricePort = 9092;
 
-  RestTemplate template = new RestTemplate();
+  final RestTemplate template = new RestTemplate();
 
   @Test
   public void testGetOrder() {

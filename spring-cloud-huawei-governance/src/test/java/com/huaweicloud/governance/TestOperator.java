@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestOperator {
 
-  private Map<String, MatchOperator> operatorMap;
+  private final Map<String, MatchOperator> operatorMap;
 
   private static final String PREFIX_KEY = "prefix";
 

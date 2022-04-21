@@ -32,7 +32,7 @@ public class AkSkRequestAuthHeaderProvider implements AuthHeaderProvider {
 
   public static final String X_SERVICE_PROJECT = "X-Service-Project";
 
-  private ServiceCombAkSkProperties serviceCombAkSkProperties;
+  private final ServiceCombAkSkProperties serviceCombAkSkProperties;
 
   public AkSkRequestAuthHeaderProvider(ServiceCombAkSkProperties serviceCombAkSkProperties) {
     this.serviceCombAkSkProperties = serviceCombAkSkProperties;

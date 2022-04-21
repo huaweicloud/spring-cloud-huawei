@@ -23,7 +23,7 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
 
 public class RouterLoadBalancerRequest implements LoadBalancerRequest<ClientHttpResponse> {
-  private LoadBalancerRequest<ClientHttpResponse> delegate;
+  private final LoadBalancerRequest<ClientHttpResponse> delegate;
 
   private HttpRequest request;
 

@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class GovernanceController {
-  private Map<String, Integer> retryTimes = new HashMap<>();
+  private final Map<String, Integer> retryTimes = new HashMap<>();
 
   @RequestMapping("/hello")
   public String sayHello() {

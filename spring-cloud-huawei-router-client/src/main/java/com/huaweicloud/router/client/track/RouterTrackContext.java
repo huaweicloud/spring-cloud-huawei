@@ -22,7 +22,7 @@ package com.huaweicloud.router.client.track;
 public class RouterTrackContext {
   public static final String ROUTER_TRACK_HEADER = "X-RouterContext";
 
-  private static ThreadLocal<String> requestHeaderThreadLocal = new ThreadLocal<>();
+  private static final ThreadLocal<String> requestHeaderThreadLocal = new ThreadLocal<>();
 
   public static void remove() {
     requestHeaderThreadLocal.remove();

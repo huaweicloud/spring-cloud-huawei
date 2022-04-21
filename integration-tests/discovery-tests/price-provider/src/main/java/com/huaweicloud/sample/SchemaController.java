@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -69,7 +70,7 @@ public class SchemaController {
       int len = inputStream.read(buffer);
       assertThat(len).isLessThan(2048 * 10);
       inputStream.close();
-      return new String(buffer, 0, len, Charset.forName("UTF-8"));
+      return new String(buffer, 0, len, StandardCharsets.UTF_8);
     } catch (IOException e) {
       Assertions.fail(e.getMessage());
       return null;

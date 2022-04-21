@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.servicecomb.governance.InvocationContext;
 
 public class SpringCloudInvocationContext implements InvocationContext {
-  private static ThreadLocal<Map<String, Boolean>> context = new ThreadLocal<>();
+  private static final ThreadLocal<Map<String, Boolean>> context = new ThreadLocal<>();
 
   public static void setInvocationContext() {
     context.set(new HashMap<>());

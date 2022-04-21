@@ -27,11 +27,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestTemplate;
 
 public class OrderControllerIT {
-  String url = "http://127.0.0.1:9098";
+  final String url = "http://127.0.0.1:9098";
 
-  int pricePort = 9090;
+  final int pricePort = 9090;
 
-  RestTemplate template = new RestTemplate();
+  final RestTemplate template = new RestTemplate();
 
   @Test
   public void testGetOrder() {
