@@ -19,6 +19,7 @@ package com.huaweicloud.servicecomb.discovery.registry;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -65,8 +66,6 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   private ApplicationContext applicationContext;
 
-  private int millisecond = 1000;
-
   public ServiceCombServiceRegistry(DiscoveryBootstrapProperties discoveryBootstrapProperties,
       ServiceCenterClient serviceCenterClient, @Autowired(required = false) ServiceCenterWatch watch) {
     this.serviceCenterClient = serviceCenterClient;
@@ -91,7 +90,7 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     EventManager.getEventBus().register(this);
     serviceCenterRegistration.setMicroservice(registration.getMicroservice());
     serviceCenterRegistration.setMicroserviceInstance(registration.getMicroserviceInstance());
-    serviceCenterRegistration.setHeartBeatInterval(discoveryBootstrapProperties.getHealthCheckInterval() * millisecond);
+    serviceCenterRegistration.setHeartBeatInterval(TimeUnit.SECONDS.toMillis(discoveryBootstrapProperties.getHealthCheckInterval()));
     serviceCenterRegistration.setHeartBeatRequestTimeout(discoveryBootstrapProperties.getHealthCheckRequestTimeout());
 
     addSchemaInfo(registration);
