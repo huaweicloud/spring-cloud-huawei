@@ -65,6 +65,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   private ApplicationContext applicationContext;
 
+  private int millisecond = 1000;
+
   public ServiceCombServiceRegistry(DiscoveryBootstrapProperties discoveryBootstrapProperties,
       ServiceCenterClient serviceCenterClient, @Autowired(required = false) ServiceCenterWatch watch) {
     this.serviceCenterClient = serviceCenterClient;
@@ -89,7 +91,7 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     EventManager.getEventBus().register(this);
     serviceCenterRegistration.setMicroservice(registration.getMicroservice());
     serviceCenterRegistration.setMicroserviceInstance(registration.getMicroserviceInstance());
-    serviceCenterRegistration.setHeartBeatInterval(discoveryBootstrapProperties.getHealthCheckInterval());
+    serviceCenterRegistration.setHeartBeatInterval(discoveryBootstrapProperties.getHealthCheckInterval() * millisecond);
     serviceCenterRegistration.setHeartBeatRequestTimeout(discoveryBootstrapProperties.getHealthCheckRequestTimeout());
 
     addSchemaInfo(registration);
