@@ -57,6 +57,12 @@ public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
   public List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances,
       Request<?> request) {
     String targetServiceName = supplier.getServiceId();
+    String[] tmpList = targetServiceName.split("\\"+DiscoveryConstants.APP_SERVICE_SEPRATOR);
+
+    if (tmpList.length >= 2) {
+      targetServiceName = tmpList[1];
+    }
+   
     DefaultRequestContext context = (DefaultRequestContext) request.getContext();
 
     Object clientRequest = context.getClientRequest();
