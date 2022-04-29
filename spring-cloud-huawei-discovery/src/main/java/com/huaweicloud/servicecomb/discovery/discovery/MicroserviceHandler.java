@@ -103,7 +103,9 @@ public class MicroserviceHandler {
       DiscoveryBootstrapProperties discoveryBootstrapProperties,
       TagsProperties tagsProperties) {
     MicroserviceInstance microserviceInstance = new MicroserviceInstance();
-    microserviceInstance.setHostName(NetUtil.getLocalHost());
+    String hostName = StringUtils.isEmpty(discoveryBootstrapProperties.getHostname()) ? NetUtil.getLocalHost()
+        : discoveryBootstrapProperties.getHostname();
+    microserviceInstance.setHostName(hostName);
     if (null != discoveryBootstrapProperties.getDatacenter()) {
       microserviceInstance.setDataCenterInfo(discoveryBootstrapProperties.getDatacenter());
     }
