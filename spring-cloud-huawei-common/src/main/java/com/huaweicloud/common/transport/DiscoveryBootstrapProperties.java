@@ -17,6 +17,9 @@
 
 package com.huaweicloud.common.transport;
 
+import java.util.concurrent.TimeUnit;
+
+import org.apache.servicecomb.service.center.client.ServiceCenterRegistration;
 import org.apache.servicecomb.service.center.client.model.DataCenterInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -171,7 +174,11 @@ public class DiscoveryBootstrapProperties {
   }
 
   public void setHealthCheckInterval(int healthCheckInterval) {
-    this.healthCheckInterval = healthCheckInterval;
+    int healthCheckIntervalMillis = (int) TimeUnit.SECONDS.toMillis(healthCheckInterval);
+    if (Math.min(healthCheckIntervalMillis, ServiceCenterRegistration.MAX_INTERVAL) ==
+        Math.max(healthCheckIntervalMillis, ServiceCenterRegistration.MIN_INTERVAL)) {
+        this.healthCheckInterval = healthCheckIntervalMillis;
+    }
   }
 
   public int getHealthCheckRequestTimeout() {
