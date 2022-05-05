@@ -32,6 +32,7 @@ import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.client.loadbalancer.RequestData;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.http.HttpHeaders;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -56,7 +57,7 @@ public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
   @SuppressWarnings({"rawtypes", "unchecked"})
   public List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances,
       Request<?> request) {
-    String targetServiceName = supplier.getServiceId();
+    String targetServiceName = StringUtils.unqualify(supplier.getServiceId());
     DefaultRequestContext context = (DefaultRequestContext) request.getContext();
 
     Object clientRequest = context.getClientRequest();
