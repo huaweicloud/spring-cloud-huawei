@@ -176,8 +176,7 @@ public class DiscoveryBootstrapProperties {
   }
 
   public void setHealthCheckInterval(int healthCheckInterval) {
-    if (Math.min(healthCheckInterval, HEALTH_CHECK_MAX_INTERVAL) ==
-        Math.max(healthCheckInterval, HEALTH_CHECK_MIN_INTERVAL)) {
+    if (healthCheckInterval <= HEALTH_CHECK_MAX_INTERVAL && healthCheckInterval >= HEALTH_CHECK_MIN_INTERVAL) {
       this.healthCheckInterval = healthCheckInterval;
     }
   }
