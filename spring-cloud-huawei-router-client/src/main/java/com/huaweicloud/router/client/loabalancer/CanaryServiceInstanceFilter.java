@@ -30,6 +30,7 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.DefaultRequestContext;
 import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.client.loadbalancer.RequestData;
+import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.CollectionUtils;
 
@@ -54,8 +55,8 @@ public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
-  public List<ServiceInstance> filter(List<ServiceInstance> instances,
-      Request<?> request) {
+  public List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances,
+                                      Request<?> request) {
     if (CollectionUtils.isEmpty(instances)) {
       return instances;
     }

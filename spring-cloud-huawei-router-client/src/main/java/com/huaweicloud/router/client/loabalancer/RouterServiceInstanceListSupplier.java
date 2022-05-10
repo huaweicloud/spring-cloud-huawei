@@ -79,7 +79,7 @@ public class RouterServiceInstanceListSupplier implements ServiceInstanceListSup
 
     List<ServiceInstance> filteredInstances = instances;
     for (ServiceInstanceFilter instanceFilter : filters) {
-      filteredInstances = instanceFilter.filter(filteredInstances, request);
+      filteredInstances = instanceFilter.filter(this, filteredInstances, request);
     }
     return filteredInstances;
   }

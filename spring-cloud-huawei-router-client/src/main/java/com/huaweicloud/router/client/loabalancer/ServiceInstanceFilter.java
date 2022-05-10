@@ -19,6 +19,7 @@ package com.huaweicloud.router.client.loabalancer;
 
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.Request;
+import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.core.Ordered;
 
 import java.util.List;
@@ -32,5 +33,5 @@ public interface ServiceInstanceFilter extends Ordered {
      * @param request request
      * @return filtered instance list
      */
-    List<ServiceInstance> filter(List<ServiceInstance> instances, Request<?> request);
+    List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances, Request<?> request);
 }
