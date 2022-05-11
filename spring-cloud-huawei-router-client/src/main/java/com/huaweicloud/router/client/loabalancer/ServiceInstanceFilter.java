@@ -29,6 +29,7 @@ public interface ServiceInstanceFilter extends Ordered {
     /**
      * filter service instance
      *
+     * @param supplier invoker of the filter
      * @param instances service instances
      * @param request request
      * @return filtered instance list

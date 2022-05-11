@@ -62,6 +62,7 @@ public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
     }
     String  targetServiceName = ((ServiceCombServiceInstance) instances.get(0)).getServiceId();
     DefaultRequestContext context = (DefaultRequestContext) request.getContext();
+
     Object clientRequest = context.getClientRequest();
     HttpHeaders httpHeaders;
     if (clientRequest instanceof RouterLoadBalancerRequest) {
@@ -82,6 +83,7 @@ public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
     } catch (IOException e) {
       LOGGER.warn("decode headers failed for {}", e.getMessage());
     }
+
     return routerFilter
         .getFilteredListOfServers(instances, targetServiceName, canaryHeaders,
             routerDistributor);

@@ -19,6 +19,7 @@ package com.huaweicloud.router.client.loabalancer;
 
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
+
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
