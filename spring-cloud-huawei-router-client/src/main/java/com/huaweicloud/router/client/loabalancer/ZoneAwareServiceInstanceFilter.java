@@ -44,7 +44,7 @@ public class ZoneAwareServiceInstanceFilter implements ServiceInstanceFilter {
 
   @Override
   public List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances,
-                                      Request<?> request) {
+      Request<?> request) {
     MicroserviceInstance mySelf = serviceCombRegistration.getMicroserviceInstance();
     return zoneAwareDiscoveryFilter(mySelf, instances);
   }
