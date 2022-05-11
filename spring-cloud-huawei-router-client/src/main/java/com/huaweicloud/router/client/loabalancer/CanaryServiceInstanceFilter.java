@@ -18,7 +18,7 @@
 package com.huaweicloud.router.client.loabalancer;
 
 import com.huaweicloud.router.client.track.RouterTrackContext;
-
+import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
 import org.apache.servicecomb.foundation.common.utils.JsonUtils;
 import org.apache.servicecomb.router.RouterFilter;
 import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
@@ -32,6 +32,7 @@ import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.client.loadbalancer.RequestData;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.http.HttpHeaders;
+import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -55,8 +56,11 @@ public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
   public List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances,
-      Request<?> request) {
-    String targetServiceName = supplier.getServiceId();
+                                      Request<?> request) {
+    if (CollectionUtils.isEmpty(instances)) {
+      return instances;
+    }
+    String  targetServiceName = ((ServiceCombServiceInstance) instances.get(0)).getServiceId();
     DefaultRequestContext context = (DefaultRequestContext) request.getContext();
 
     Object clientRequest = context.getClientRequest();
