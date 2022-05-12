@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * @Date 15:05 2019-11-06
  **/
 public class MD5Util {
-  private static final Logger LOGGER = LoggerFactory.getLogger(NetUtil.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MD5Util.class);
 
   public static String encrypt(String dataStr) {
     MessageDigest messageDigest;
