@@ -41,41 +41,41 @@ import io.swagger.v3.oas.models.OpenAPI;
 
 public class SpringMvcOpenApiResource extends OpenApiResource {
 
-    @Autowired
-    public SpringMvcOpenApiResource(ObjectFactory<OpenAPIService> openAPIBuilderObjectFactory,
-        AbstractRequestService requestBuilder, GenericResponseService responseBuilder, OperationService operationParser,
-        Optional<List<OperationCustomizer>> operationCustomizers, Optional<List<OpenApiCustomiser>> openApiCustomisers,
-        Optional<List<OpenApiMethodFilter>> methodFilters, SpringDocConfigProperties springDocConfigProperties,
-        SpringDocProviders springDocProviders) {
-        super(openAPIBuilderObjectFactory, requestBuilder, responseBuilder, operationParser, operationCustomizers,
-            openApiCustomisers, methodFilters, springDocConfigProperties, springDocProviders);
-    }
+  @Autowired
+  public SpringMvcOpenApiResource(ObjectFactory<OpenAPIService> openAPIBuilderObjectFactory,
+      AbstractRequestService requestBuilder, GenericResponseService responseBuilder, OperationService operationParser,
+      Optional<List<OperationCustomizer>> operationCustomizers, Optional<List<OpenApiCustomiser>> openApiCustomisers,
+      Optional<List<OpenApiMethodFilter>> methodFilters, SpringDocConfigProperties springDocConfigProperties,
+      SpringDocProviders springDocProviders) {
+    super(openAPIBuilderObjectFactory, requestBuilder, responseBuilder, operationParser, operationCustomizers,
+        openApiCustomisers, methodFilters, springDocConfigProperties, springDocProviders);
+  }
 
-    public OpenAPI getOpenAPI() {
-        super.initOpenAPIBuilder(Locale.getDefault());
-        openAPIService.setServerBaseUrl(getServerBaseUrl());
-        OpenAPI openAPI = this.getOpenApi(Locale.getDefault());
-        return openAPI;
-    }
+  public OpenAPI getOpenAPI() {
+    super.initOpenAPIBuilder(Locale.getDefault());
+    openAPIService.setServerBaseUrl(getServerBaseUrl());
+    OpenAPI openAPI = this.getOpenApi(Locale.getDefault());
+    return openAPI;
+  }
 
-    @Override
-    public String writeYamlValue(OpenAPI openAPI) throws JsonProcessingException {
-        return super.writeYamlValue(openAPI);
-    }
+  @Override
+  public String writeYamlValue(OpenAPI openAPI) throws JsonProcessingException {
+    return super.writeYamlValue(openAPI);
+  }
 
-    /**
-     * Implement an empty method,this method will not be used.
-     *
-     * @param request    the request
-     * @param apiDocsUrl the api docs url
-     * @return the server url
-     */
-    @Override
-    protected String getServerUrl(HttpServletRequest request, String apiDocsUrl) {
-        return null;
-    }
+  /**
+   * Implement an empty method,this method will not be used.
+   *
+   * @param request    the request
+   * @param apiDocsUrl the api docs url
+   * @return the server url
+   */
+  @Override
+  protected String getServerUrl(HttpServletRequest request, String apiDocsUrl) {
+    return null;
+  }
 
-    private String getServerBaseUrl() {
-        return "/";
-    }
+  private String getServerBaseUrl() {
+    return "/";
+  }
 }

@@ -35,40 +35,49 @@ import org.springframework.beans.factory.ObjectFactory;
  * if make SpringMvcOpenApiResource as a spring bean,it will effect springdoc
  */
 public class OpenApiResourceWrapper {
-    ObjectFactory<OpenAPIService> openAPIBuilderObjectFactory;
-    AbstractRequestService requestBuilder;
-    GenericResponseService responseBuilder;
-    OperationService operationParser;
-    Optional<List<OperationCustomizer>> operationCustomizers;
-    Optional<List<OpenApiCustomiser>> openApiCustomisers;
-    Optional<List<OpenApiMethodFilter>> methodFilters;
-    SpringDocConfigProperties springDocConfigProperties;
-    SpringDocProviders springDocProviders;
-    SpringMvcOpenApiResource openApiResource;
+  ObjectFactory<OpenAPIService> openAPIBuilderObjectFactory;
 
-    public OpenApiResourceWrapper(
-        ObjectFactory<OpenAPIService> openAPIBuilderObjectFactory, AbstractRequestService requestBuilder,
-        GenericResponseService responseBuilder, OperationService operationParser,
-        Optional<List<OperationCustomizer>> operationCustomizers,
-        Optional<List<OpenApiCustomiser>> openApiCustomisers,
-        Optional<List<OpenApiMethodFilter>> methodFilters,
-        SpringDocConfigProperties springDocConfigProperties, SpringDocProviders springDocProviders) {
-        this.openAPIBuilderObjectFactory = openAPIBuilderObjectFactory;
-        this.requestBuilder = requestBuilder;
-        this.responseBuilder = responseBuilder;
-        this.operationParser = operationParser;
-        this.operationCustomizers = operationCustomizers;
-        this.openApiCustomisers = openApiCustomisers;
-        this.methodFilters = methodFilters;
-        this.springDocConfigProperties = springDocConfigProperties;
-        this.springDocProviders = springDocProviders;
-        openApiResource = new SpringMvcOpenApiResource(openAPIBuilderObjectFactory, requestBuilder,
-            responseBuilder, operationParser, operationCustomizers,
-            openApiCustomisers, methodFilters, springDocConfigProperties, springDocProviders);
+  AbstractRequestService requestBuilder;
 
-    }
+  GenericResponseService responseBuilder;
 
-    public SpringMvcOpenApiResource getOpenApiResource() {
-        return openApiResource;
-    }
+  OperationService operationParser;
+
+  Optional<List<OperationCustomizer>> operationCustomizers;
+
+  Optional<List<OpenApiCustomiser>> openApiCustomisers;
+
+  Optional<List<OpenApiMethodFilter>> methodFilters;
+
+  SpringDocConfigProperties springDocConfigProperties;
+
+  SpringDocProviders springDocProviders;
+
+  SpringMvcOpenApiResource openApiResource;
+
+  public OpenApiResourceWrapper(
+      ObjectFactory<OpenAPIService> openAPIBuilderObjectFactory, AbstractRequestService requestBuilder,
+      GenericResponseService responseBuilder, OperationService operationParser,
+      Optional<List<OperationCustomizer>> operationCustomizers,
+      Optional<List<OpenApiCustomiser>> openApiCustomisers,
+      Optional<List<OpenApiMethodFilter>> methodFilters,
+      SpringDocConfigProperties springDocConfigProperties, SpringDocProviders springDocProviders) {
+    this.openAPIBuilderObjectFactory = openAPIBuilderObjectFactory;
+    this.requestBuilder = requestBuilder;
+    this.responseBuilder = responseBuilder;
+    this.operationParser = operationParser;
+    this.operationCustomizers = operationCustomizers;
+    this.openApiCustomisers = openApiCustomisers;
+    this.methodFilters = methodFilters;
+    this.springDocConfigProperties = springDocConfigProperties;
+    this.springDocProviders = springDocProviders;
+    openApiResource = new SpringMvcOpenApiResource(openAPIBuilderObjectFactory, requestBuilder,
+        responseBuilder, operationParser, operationCustomizers,
+        openApiCustomisers, methodFilters, springDocConfigProperties, springDocProviders);
+
+  }
+
+  public SpringMvcOpenApiResource getOpenApiResource() {
+    return openApiResource;
+  }
 }

@@ -49,7 +49,8 @@ public class SwaggerConfiguration {
   }
 
   @Bean
-  OpenApiResourceWrapper openApiResourceWrapper(ObjectFactory<OpenAPIService> openAPIBuilderObjectFactory, AbstractRequestService requestBuilder,
+  OpenApiResourceWrapper openApiResourceWrapper(ObjectFactory<OpenAPIService> openAPIBuilderObjectFactory,
+      AbstractRequestService requestBuilder,
       GenericResponseService responseBuilder, OperationService operationParser,
       SpringDocConfigProperties springDocConfigProperties,
       Optional<List<OperationCustomizer>> operationCustomizers,

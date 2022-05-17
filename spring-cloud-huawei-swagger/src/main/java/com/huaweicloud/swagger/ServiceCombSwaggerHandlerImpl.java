@@ -38,74 +38,75 @@ import io.swagger.v3.oas.models.OpenAPI;
 
 public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombSwaggerHandlerImpl.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombSwaggerHandlerImpl.class);
 
-    private Map<String, OpenAPI> swaggerMap = new HashMap<>();
+  private Map<String, OpenAPI> swaggerMap = new HashMap<>();
 
-    private Map<String, String> swaggerContent = new HashMap<>();
+  private Map<String, String> swaggerContent = new HashMap<>();
 
-    private Map<String, String> swaggerSummary = new HashMap<>();
+  private Map<String, String> swaggerSummary = new HashMap<>();
 
-    @Value("${spring.cloud.servicecomb.swagger.enableJavaChassisAdapter:true}")
-    protected boolean withJavaChassis;
+  @Value("${spring.cloud.servicecomb.swagger.enableJavaChassisAdapter:true}")
+  protected boolean withJavaChassis;
 
-    private OpenApiResourceWrapper openApiResource;
+  private OpenApiResourceWrapper openApiResource;
 
-    @Autowired
-    public void setOpenApiResource(OpenApiResourceWrapper openApiResource) {
-        this.openApiResource = openApiResource;
+  @Autowired
+  public void setOpenApiResource(OpenApiResourceWrapper openApiResource) {
+    this.openApiResource = openApiResource;
+  }
+
+  @Override
+  public void init(String appName, String serviceName) {
+    swaggerMap.put(Constants.DEFAULT_GROUP_NAME, openApiResource.getOpenApiResource().getOpenAPI());
+
+    if (withJavaChassis) {
+      swaggerMap = convertToJavaChassis(swaggerMap);
     }
 
-    @Override
-    public void init(String appName, String serviceName) {
-        swaggerMap.put(Constants.DEFAULT_GROUP_NAME, openApiResource.getOpenApiResource().getOpenAPI());
+    this.swaggerContent = calcSchemaContent();
 
-        if (withJavaChassis) {
-            swaggerMap = convertToJavaChassis(swaggerMap);
-        }
+    this.swaggerSummary = calcSchemaSummary();
+  }
 
-        this.swaggerContent = calcSchemaContent();
+  private Map<String, OpenAPI> convertToJavaChassis(Map<String, OpenAPI> swaggerMap) {
+    //TODO this should be done later to be compatible with java chassis
+    return swaggerMap;
+  }
 
-        this.swaggerSummary = calcSchemaSummary();
-    }
+  private Map<String, String> calcSchemaContent() {
+    return swaggerMap.entrySet().stream().collect(Collectors.toMap(Entry::getKey, entry -> {
+      try {
+        return openApiResource.getOpenApiResource().writeYamlValue(entry.getValue());
+      } catch (JsonProcessingException e) {
+        LOGGER.error("error when calcSchemaSummary.", e);
+      }
+      return null;
+    }));
+  }
 
-    private Map<String, OpenAPI> convertToJavaChassis(Map<String, OpenAPI> swaggerMap) {
-        //TODO this should be done later to be compatible with java chassis
-        return swaggerMap;
-    }
+  @Override
+  public List<String> getSchemaIds() {
+    return new ArrayList<>(swaggerMap.keySet());
+  }
 
-    private Map<String, String> calcSchemaContent() {
-        return swaggerMap.entrySet().stream().collect(Collectors.toMap(Entry::getKey, entry -> {
-            try {
-                return openApiResource.getOpenApiResource().writeYamlValue(entry.getValue());
-            } catch (JsonProcessingException e) {
-                LOGGER.error("error when calcSchemaSummary.", e);
-            }
-            return null;
-        }));
-    }
+  @Override
+  public Map<String, String> getSchemasMap() {
+    return this.swaggerContent;
+  }
 
-    @Override
-    public List<String> getSchemaIds() {
-        return new ArrayList<>(swaggerMap.keySet());
-    }
+  @Override
+  public Map<String, String> getSchemasSummaryMap() {
+    return this.swaggerSummary;
+  }
 
-    @Override
-    public Map<String, String> getSchemasMap() {
-        return this.swaggerContent;
-    }
+  private Map<String, String> calcSchemaSummary() {
+    return swaggerContent.entrySet()
+        .stream()
+        .collect(Collectors.toMap(Entry::getKey, entry -> calcSchemaSummary(entry.getValue())));
+  }
 
-    @Override
-    public Map<String, String> getSchemasSummaryMap() {
-        return this.swaggerSummary;
-    }
-
-    private Map<String, String> calcSchemaSummary() {
-        return swaggerContent.entrySet().stream()
-            .collect(Collectors.toMap(Entry::getKey, entry -> calcSchemaSummary(entry.getValue())));
-    }
-
-    private static String calcSchemaSummary(String schemaContent) {
-        return Hashing.sha256().newHasher().putString(schemaContent, Charsets.UTF_8).hash().toString();
-    }
+  private static String calcSchemaSummary(String schemaContent) {
+    return Hashing.sha256().newHasher().putString(schemaContent, Charsets.UTF_8).hash().toString();
+  }
 }
