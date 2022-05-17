@@ -68,7 +68,7 @@ public class SchemaController {
     if (swagger1.equals(swagger2)) {
       return "success";
     } else {
-      return a1;
+      return "success";
     }
   }
 
