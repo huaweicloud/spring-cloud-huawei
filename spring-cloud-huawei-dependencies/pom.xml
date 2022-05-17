@@ -45,6 +45,7 @@
     <swagger-core-v2.version>1.6.2</swagger-core-v2.version>
     <resilience4j.version>1.7.0</resilience4j.version>
     <jasypt.version>2.1.2</jasypt.version>
+    <annotations.version>3.0.1</annotations.version>
     <dubbo.hessian.version>2.7.15</dubbo.hessian.version>
   </properties>
 
@@ -137,6 +138,11 @@
         <groupId>org.jmockit</groupId>
         <artifactId>jmockit</artifactId>
         <version>${jmockit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.code.findbugs</groupId>
+        <artifactId>annotations</artifactId>
+        <version>${annotations.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-configuration</groupId>
