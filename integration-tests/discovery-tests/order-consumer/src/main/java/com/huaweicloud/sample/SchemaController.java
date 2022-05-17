@@ -17,16 +17,14 @@
 
 package com.huaweicloud.sample;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
+import org.springdoc.core.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,25 +32,21 @@ import org.springframework.web.client.RestTemplate;
 
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 
-import io.swagger.models.Swagger;
-import io.swagger.util.Yaml;
+import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.oas.models.OpenAPI;
 
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Class for testing schema generator
  */
 @RestController
 public class SchemaController {
-
-  final ServiceCombSwaggerHandler serviceCombSwaggerHandler;
-
-  private final RestTemplate restTemplate;
+  @Autowired
+  ServiceCombSwaggerHandler serviceCombSwaggerHandler;
 
   @Autowired
-  public SchemaController(ServiceCombSwaggerHandler serviceCombSwaggerHandler, RestTemplate restTemplate) {
-    this.serviceCombSwaggerHandler = serviceCombSwaggerHandler;
-    this.restTemplate = restTemplate;
-  }
+  private RestTemplate restTemplate;
 
   @RequestMapping("/testSchemaGeneratorSpringCloud")
   public String testSchemaGeneratorSpringCloud() {
@@ -62,15 +56,15 @@ public class SchemaController {
   @RequestMapping("/testSchemaGeneratorServiceComb")
   public String testSchemaGeneratorServiceComb() throws Exception {
     List<String> schemas = serviceCombSwaggerHandler.getSchemaIds();
-    assertThat(schemas.size()).isGreaterThan(3);
+    assertThat(schemas.size()).isEqualTo(1);
     Map<String, String> schemaContents = serviceCombSwaggerHandler.getSchemasMap();
-    assertThat(schemaContents.size()).isGreaterThan(3);
+    assertThat(schemaContents.size()).isEqualTo(1);
 
-    String a1 = schemaContents.get("SchemaContentController");
-    String a2 = readFile("SchemaContentController.yaml");
+    String a1 = schemaContents.get(Constants.DEFAULT_GROUP_NAME);
+    String a2 = readFile("springdocDefault.yaml");
 
-    Swagger swagger2 = Yaml.mapper().readValue(a2, Swagger.class);
-    Swagger swagger1 = Yaml.mapper().readValue(a1, Swagger.class);
+    OpenAPI swagger2 = Yaml.mapper().readValue(a2, OpenAPI.class);
+    OpenAPI swagger1 = Yaml.mapper().readValue(a1, OpenAPI.class);
     if (swagger1.equals(swagger2)) {
       return "success";
     } else {
@@ -82,11 +76,7 @@ public class SchemaController {
     // test code, make simple
     try {
       InputStream inputStream = this.getClass().getResource("/" + restController).openStream();
-      byte[] buffer = new byte[2048 * 10];
-      int len = inputStream.read(buffer);
-      assertThat(len).isLessThan(2048 * 10);
-      inputStream.close();
-      return new String(buffer, 0, len, StandardCharsets.UTF_8);
+      return IOUtils.toString(inputStream);
     } catch (IOException e) {
       Assertions.fail(e.getMessage());
       return null;
