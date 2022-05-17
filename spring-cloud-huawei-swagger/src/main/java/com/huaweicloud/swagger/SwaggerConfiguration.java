@@ -16,33 +16,48 @@
   */
 package com.huaweicloud.swagger;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springdoc.core.AbstractRequestService;
+import org.springdoc.core.GenericResponseService;
+import org.springdoc.core.OpenAPIService;
+import org.springdoc.core.OperationService;
+import org.springdoc.core.SpringDocConfigProperties;
+import org.springdoc.core.SpringDocProviders;
+import org.springdoc.core.customizers.OpenApiCustomiser;
+import org.springdoc.core.customizers.OperationCustomizer;
+import org.springdoc.core.filters.OpenApiMethodFilter;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 
-import springfox.documentation.spring.web.DocumentationCache;
-import springfox.documentation.spring.web.plugins.DocumentationPluginsBootstrapper;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
-import springfox.documentation.swagger2.mappers.ServiceModelToSwagger2Mapper;
-
 /**
  * @Author GuoYl123
  * @Date 2019/12/17
  **/
 @Configuration
-@EnableSwagger2
 public class SwaggerConfiguration {
 
   @Bean
   @Lazy
-  public ServiceCombSwaggerHandler serviceCombSwaggerHandler(DocumentationPluginsBootstrapper documentationPluginsBootstrapper, DocumentationCache documentationCache, ServiceModelToSwagger2Mapper mapper) {
-    return new ServiceCombSwaggerHandlerImpl( documentationPluginsBootstrapper, documentationCache, mapper);
+  public ServiceCombSwaggerHandler serviceCombSwaggerHandler() {
+    return new ServiceCombSwaggerHandlerImpl();
   }
 
   @Bean
-  public ApiModelReaderAop apiModelReaderAop() {
-    return new ApiModelReaderAop();
+  OpenApiResourceWrapper openApiResourceWrapper(ObjectFactory<OpenAPIService> openAPIBuilderObjectFactory, AbstractRequestService requestBuilder,
+      GenericResponseService responseBuilder, OperationService operationParser,
+      SpringDocConfigProperties springDocConfigProperties,
+      Optional<List<OperationCustomizer>> operationCustomizers,
+      Optional<List<OpenApiCustomiser>> openApiCustomisers,
+      Optional<List<OpenApiMethodFilter>> methodFilters,
+      SpringDocProviders springDocProviders) {
+    return new OpenApiResourceWrapper(openAPIBuilderObjectFactory, requestBuilder,
+        responseBuilder, operationParser, operationCustomizers,
+        openApiCustomisers, methodFilters, springDocConfigProperties, springDocProviders);
   }
 }

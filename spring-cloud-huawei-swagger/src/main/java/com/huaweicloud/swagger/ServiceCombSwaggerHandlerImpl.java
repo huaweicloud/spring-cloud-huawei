@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.core.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -33,99 +34,78 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 
-import io.swagger.models.Swagger;
-import io.swagger.v3.core.util.Yaml;
-import springfox.documentation.service.Documentation;
-import springfox.documentation.spring.web.DocumentationCache;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.spring.web.plugins.DocumentationPluginsBootstrapper;
-import springfox.documentation.swagger2.mappers.ServiceModelToSwagger2Mapper;
+import io.swagger.v3.oas.models.OpenAPI;
 
 public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombSwaggerHandlerImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombSwaggerHandlerImpl.class);
 
-  protected final DocumentationPluginsBootstrapper documentationPluginsBootstrapper;
+    private Map<String, OpenAPI> swaggerMap = new HashMap<>();
 
-  protected final DocumentationCache documentationCache;
+    private Map<String, String> swaggerContent = new HashMap<>();
 
-  protected final ServiceModelToSwagger2Mapper mapper;
+    private Map<String, String> swaggerSummary = new HashMap<>();
 
-  @Autowired
-  public ServiceCombSwaggerHandlerImpl(DocumentationPluginsBootstrapper documentationPluginsBootstrapper, DocumentationCache documentationCache, ServiceModelToSwagger2Mapper mapper) {
-    this.documentationPluginsBootstrapper = documentationPluginsBootstrapper;
-    this.documentationCache = documentationCache;
-    this.mapper = mapper;
-  }
+    @Value("${spring.cloud.servicecomb.swagger.enableJavaChassisAdapter:true}")
+    protected boolean withJavaChassis;
 
-  private Map<String, Swagger> swaggerMap = new HashMap<>();
+    private OpenApiResourceWrapper openApiResource;
 
-  private Map<String, String> swaggerContent = new HashMap<>();
-
-  private Map<String, String> swaggerSummary = new HashMap<>();
-
-  @Value("${spring.cloud.servicecomb.swagger.enableJavaChassisAdapter:true}")
-  protected boolean withJavaChassis;
-
-  @Override
-  public void init(String appName, String serviceName) {
-    documentationPluginsBootstrapper.start();
-
-    Documentation documentation = documentationCache
-        .documentationByGroup(Docket.DEFAULT_GROUP_NAME);
-
-    DocumentationSwaggerMapper documentationSwaggerMapper;
-    if (withJavaChassis) {
-      documentationSwaggerMapper = new ServiceCombDocumentationSwaggerMapper(appName, serviceName, mapper);
-    } else {
-      documentationSwaggerMapper = new SpringCloudDocumentationSwaggerMapper(mapper);
+    @Autowired
+    public void setOpenApiResource(OpenApiResourceWrapper openApiResource) {
+        this.openApiResource = openApiResource;
     }
-    this.swaggerMap = documentationSwaggerMapper.documentationToSwaggers(documentation);
 
-    this.swaggerContent = calcSchemaContent();
+    @Override
+    public void init(String appName, String serviceName) {
+        swaggerMap.put(Constants.DEFAULT_GROUP_NAME, openApiResource.getOpenApiResource().getOpenAPI());
 
-    this.swaggerSummary = calcSchemaSummary();
-  }
+        if (withJavaChassis) {
+            swaggerMap = convertToJavaChassis(swaggerMap);
+        }
 
-  private Map<String, String> calcSchemaContent() {
-    return swaggerMap.entrySet().stream().collect(Collectors.toMap(Entry::getKey, entry -> {
-      try {
-        return Yaml.mapper().writeValueAsString(entry.getValue());
-      } catch (JsonProcessingException e) {
-        LOGGER.error("error when calcSchemaSummary.", e);
-      }
-      return null;
-    }));
-  }
+        this.swaggerContent = calcSchemaContent();
 
-  @Override
-  public List<String> getSchemaIds() {
-    return new ArrayList<>(swaggerMap.keySet());
-  }
+        this.swaggerSummary = calcSchemaSummary();
+    }
 
-  @Override
-  public Map<String, String> getSchemasMap() {
-    return this.swaggerContent;
-  }
+    private Map<String, OpenAPI> convertToJavaChassis(Map<String, OpenAPI> swaggerMap) {
+        //TODO this should be done later to be compatible with java chassis
+        return swaggerMap;
+    }
 
-  @Override
-  public Map<String, String> getSchemasSummaryMap() {
-    return this.swaggerSummary;
-  }
-
-  private Map<String, String> calcSchemaSummary() {
-    return swaggerMap.entrySet().stream()
-        .collect(Collectors.toMap(Entry::getKey, entry -> {
-          try {
-            return calcSchemaSummary(Yaml.mapper().writeValueAsString(entry.getValue()));
-          } catch (JsonProcessingException e) {
-            LOGGER.error("error when calcSchemaSummary.", e);
-          }
-          return null;
+    private Map<String, String> calcSchemaContent() {
+        return swaggerMap.entrySet().stream().collect(Collectors.toMap(Entry::getKey, entry -> {
+            try {
+                return openApiResource.getOpenApiResource().writeYamlValue(entry.getValue());
+            } catch (JsonProcessingException e) {
+                LOGGER.error("error when calcSchemaSummary.", e);
+            }
+            return null;
         }));
-  }
+    }
 
-  private static String calcSchemaSummary(String schemaContent) {
-    return Hashing.sha256().newHasher().putString(schemaContent, Charsets.UTF_8).hash().toString();
-  }
+    @Override
+    public List<String> getSchemaIds() {
+        return new ArrayList<>(swaggerMap.keySet());
+    }
+
+    @Override
+    public Map<String, String> getSchemasMap() {
+        return this.swaggerContent;
+    }
+
+    @Override
+    public Map<String, String> getSchemasSummaryMap() {
+        return this.swaggerSummary;
+    }
+
+    private Map<String, String> calcSchemaSummary() {
+        return swaggerContent.entrySet().stream()
+            .collect(Collectors.toMap(Entry::getKey, entry -> calcSchemaSummary(entry.getValue())));
+    }
+
+    private static String calcSchemaSummary(String schemaContent) {
+        return Hashing.sha256().newHasher().putString(schemaContent, Charsets.UTF_8).hash().toString();
+    }
 }
