@@ -66,7 +66,7 @@ public class SchemaController {
     // test code, make simple
     try {
       InputStream inputStream = this.getClass().getResource("/" + restController).openStream();
-      IOUtils.toString(inputStream, Charset.forName("UTF-8"));
+      return IOUtils.toString(inputStream, Charset.forName("UTF-8"));
     } catch (IOException e) {
       Assertions.fail(e.getMessage());
       return null;
