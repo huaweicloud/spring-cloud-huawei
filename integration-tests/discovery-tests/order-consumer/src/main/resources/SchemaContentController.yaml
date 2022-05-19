@@ -14,188 +14,204 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 ---
-openapi: 3.0.1
+swagger: "2.0"
 info:
-  title: OpenAPI definition
-  version: v0
-servers:
-  - url: /
-    description: Generated server url
+  description: Api Documentation
+  version: "1.0"
+  title: swagger definition for com.huaweicloud.sample.SchemaContentController
+  termsOfService: urn:tos
+  contact:
+    name: ""
+    url: ""
+    email: ""
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+  x-java-interface: cse.gen.default.order.SchemaContentControllerIntf
+host: ""
+basePath: /
+tags: []
+schemes: []
+consumes: []
+produces: []
 paths:
-  /stringRequestBody:
+  /danglingPattern/(.*):
     post:
       tags:
         - schema-content-controller
-      operationId: /stringRequestBody
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: string
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
-  /sayHelloPost:
-    post:
-      tags:
-        - schema-content-controller
-      operationId: /sayHelloPost
+      summary: danglingPattern
+      operationId: danglingPattern
+      schemes: []
+      consumes:
+        - application/json
+      produces:
+        - text/plain
       parameters:
-        - name: id
-          in: query
+        - in: body
+          name: id
+          description: id
           required: true
           schema:
             type: string
+            format: ""
+          x-raw-json: "true"
       responses:
         "200":
           description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
-  /danglingPattern/**:
-    post:
-      tags:
-        - schema-content-controller
-      operationId: /danglingPattern/**
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: string
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
+          examples: {}
+          headers: {}
+          schema:
+            type: string
+          responseSchema:
+            type: string
+            format: ""
+        "201":
+          description: Created
+          examples: {}
+          headers: {}
+        "401":
+          description: Unauthorized
+          examples: {}
+          headers: {}
+        "403":
+          description: Forbidden
+          examples: {}
+          headers: {}
+        "404":
+          description: Not Found
+          examples: {}
+          headers: {}
+      security: []
   /sayHelloGet:
     get:
       tags:
         - schema-content-controller
-      operationId: /sayHelloGet
+      summary: sayHelloGet
+      operationId: sayHelloGet
+      schemes: []
+      consumes: []
+      produces:
+        - text/plain
       parameters:
         - name: id
           in: query
+          description: id
           required: true
-          schema:
-            type: string
+          type: string
       responses:
         "200":
           description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
-    put:
-      tags:
-        - schema-content-controller
-      operationId: /sayHelloGet_1
-      parameters:
-        - name: id
-          in: query
-          required: true
+          examples: {}
+          headers: {}
           schema:
             type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
+          responseSchema:
+            type: string
+            format: ""
+        "401":
+          description: Unauthorized
+          examples: {}
+          headers: {}
+        "403":
+          description: Forbidden
+          examples: {}
+          headers: {}
+        "404":
+          description: Not Found
+          examples: {}
+          headers: {}
+      security: []
+  /sayHelloPost:
     post:
       tags:
         - schema-content-controller
-      operationId: /sayHelloGet_2
+      summary: sayHelloPost
+      operationId: sayHelloPost
+      schemes: []
+      consumes:
+        - application/json
+      produces:
+        - text/plain
       parameters:
         - name: id
           in: query
+          description: id
           required: true
-          schema:
-            type: string
+          type: string
       responses:
         "200":
           description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
-    delete:
+          examples: {}
+          headers: {}
+          schema:
+            type: string
+          responseSchema:
+            type: string
+            format: ""
+        "201":
+          description: Created
+          examples: {}
+          headers: {}
+        "401":
+          description: Unauthorized
+          examples: {}
+          headers: {}
+        "403":
+          description: Forbidden
+          examples: {}
+          headers: {}
+        "404":
+          description: Not Found
+          examples: {}
+          headers: {}
+      security: []
+  /stringRequestBody:
+    post:
       tags:
         - schema-content-controller
-      operationId: /sayHelloGet_3
+      summary: stringRequestBody
+      operationId: stringRequestBody
+      schemes: []
+      consumes:
+        - application/json
+      produces:
+        - text/plain
       parameters:
-        - name: id
-          in: query
+        - in: body
+          name: id
+          description: id
           required: true
           schema:
             type: string
+            format: ""
+          x-raw-json: "true"
       responses:
         "200":
           description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
-    options:
-      tags:
-        - schema-content-controller
-      operationId: /sayHelloGet_4
-      parameters:
-        - name: id
-          in: query
-          required: true
+          examples: {}
+          headers: {}
           schema:
             type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
-    head:
-      tags:
-        - schema-content-controller
-      operationId: /sayHelloGet_5
-      parameters:
-        - name: id
-          in: query
-          required: true
-          schema:
+          responseSchema:
             type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
-    patch:
-      tags:
-        - schema-content-controller
-      operationId: /sayHelloGet_6
-      parameters:
-        - name: id
-          in: query
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
-components: {}
+            format: ""
+        "201":
+          description: Created
+          examples: {}
+          headers: {}
+        "401":
+          description: Unauthorized
+          examples: {}
+          headers: {}
+        "403":
+          description: Forbidden
+          examples: {}
+          headers: {}
+        "404":
+          description: Not Found
+          examples: {}
+          headers: {}
+      security: []
+securityDefinitions: {}
+definitions: {}
