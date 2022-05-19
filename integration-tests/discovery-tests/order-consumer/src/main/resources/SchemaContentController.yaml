@@ -39,23 +39,23 @@ paths:
   /danglingPattern/(.*):
     post:
       tags:
-        - schema-content-controller
+      - schema-content-controller
       summary: danglingPattern
       operationId: danglingPattern
       schemes: []
       consumes:
-        - application/json
+      - application/json
       produces:
-        - text/plain
+      - text/plain
       parameters:
-        - in: body
-          name: id
-          description: id
-          required: true
-          schema:
-            type: string
-            format: ""
-          x-raw-json: "true"
+      - in: body
+        name: id
+        description: id
+        required: true
+        schema:
+          type: string
+          format: ""
+        x-raw-json: "true"
       responses:
         "200":
           description: OK
@@ -86,19 +86,19 @@ paths:
   /sayHelloGet:
     get:
       tags:
-        - schema-content-controller
+      - schema-content-controller
       summary: sayHelloGet
       operationId: sayHelloGet
       schemes: []
       consumes: []
       produces:
-        - text/plain
+      - text/plain
       parameters:
-        - name: id
-          in: query
-          description: id
-          required: true
-          type: string
+      - name: id
+        in: query
+        description: id
+        required: true
+        type: string
       responses:
         "200":
           description: OK
@@ -125,20 +125,20 @@ paths:
   /sayHelloPost:
     post:
       tags:
-        - schema-content-controller
+      - schema-content-controller
       summary: sayHelloPost
       operationId: sayHelloPost
       schemes: []
       consumes:
-        - application/json
+      - application/json
       produces:
-        - text/plain
+      - text/plain
       parameters:
-        - name: id
-          in: query
-          description: id
-          required: true
-          type: string
+      - name: id
+        in: query
+        description: id
+        required: true
+        type: string
       responses:
         "200":
           description: OK
@@ -169,23 +169,23 @@ paths:
   /stringRequestBody:
     post:
       tags:
-        - schema-content-controller
+      - schema-content-controller
       summary: stringRequestBody
       operationId: stringRequestBody
       schemes: []
       consumes:
-        - application/json
+      - application/json
       produces:
-        - text/plain
+      - text/plain
       parameters:
-        - in: body
-          name: id
-          description: id
-          required: true
-          schema:
-            type: string
-            format: ""
-          x-raw-json: "true"
+      - in: body
+        name: id
+        description: id
+        required: true
+        schema:
+          type: string
+          format: ""
+        x-raw-json: "true"
       responses:
         "200":
           description: OK
