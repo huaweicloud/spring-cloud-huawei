@@ -25,7 +25,7 @@ import com.huaweicloud.common.context.InvocationContextHolder;
 public class DeserializeContextPreHandlerInterceptor implements PreHandlerInterceptor {
   @Override
   public boolean handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-    InvocationContextHolder.create(request.getHeader(InvocationContextHolder.SERIALIZE_KEY));
+    InvocationContextHolder.deserializeAndCreate(request.getHeader(InvocationContextHolder.SERIALIZE_KEY));
     return true;
   }
 
