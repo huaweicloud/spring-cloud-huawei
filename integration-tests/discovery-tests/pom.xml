@@ -29,6 +29,7 @@
 
   <modules>
     <module>common</module>
+    <module>gateway</module>
     <module>price-provider</module>
     <module>order-consumer</module>
     <module>account-provider</module>
