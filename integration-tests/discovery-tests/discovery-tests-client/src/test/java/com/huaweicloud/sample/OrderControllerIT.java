@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.codec.net.URLCodec;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -62,6 +63,16 @@ public class OrderControllerIT {
     headers.add("x-invocation-context", "{\"test01\":\"test01\"}");
     HttpEntity<Void> entity = new HttpEntity<>(headers);
     String result = template.exchange(url + "/invocationContext", HttpMethod.GET, entity, String.class).getBody();
+    assertThat(result).isEqualTo("success");
+  }
+
+  @Test
+  public void testInvocationContextFeign() throws Exception {
+    URLCodec codec = new URLCodec("UTF-8");
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("x-invocation-context", codec.encode("{\"test01\":\"test01\"}"));
+    HttpEntity<Void> entity = new HttpEntity<>(headers);
+    String result = template.exchange(url + "/invocationContextFeign", HttpMethod.GET, entity, String.class).getBody();
     assertThat(result).isEqualTo("success");
   }
 

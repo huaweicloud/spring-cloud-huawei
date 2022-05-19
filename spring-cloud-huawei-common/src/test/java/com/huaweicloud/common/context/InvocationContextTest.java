@@ -17,15 +17,20 @@
 
 package com.huaweicloud.common.context;
 
+import java.net.URL;
+
+import org.apache.commons.codec.net.URLCodec;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class InvocationContextTest {
-  @Test
-  public void test_context_lifecycle() {
-    String context = "{\"foo\":\"foo\"}";
+  URLCodec coded = new URLCodec("UTF-8");
 
-    InvocationContext invocationContext = InvocationContextHolder.create(context);
+  @Test
+  public void test_context_lifecycle() throws Exception {
+    String context = coded.encode("{\"foo\":\"foo\"}");
+
+    InvocationContext invocationContext = InvocationContextHolder.deserializeAndCreate(context);
     Assertions.assertEquals("foo", invocationContext.getContext("foo"));
 
     invocationContext = InvocationContextHolder.getInvocationContext();
@@ -36,7 +41,7 @@ public class InvocationContextTest {
     Assertions.assertEquals("bar", invocationContext.getLocalContext("bar"));
 
     String serialized = InvocationContextHolder.serialize(invocationContext);
-    invocationContext = InvocationContextHolder.create(serialized);
+    invocationContext = InvocationContextHolder.deserializeAndCreate(serialized);
     Assertions.assertEquals("foo", invocationContext.getContext("foo"));
     Assertions.assertEquals("foo2", invocationContext.getContext("foo2"));
     Assertions.assertNull(invocationContext.getLocalContext("bar"));
@@ -46,7 +51,7 @@ public class InvocationContextTest {
   public void test_context_lifecycleFromEmpty() {
     String context = "";
 
-    InvocationContext invocationContext = InvocationContextHolder.create(context);
+    InvocationContext invocationContext = InvocationContextHolder.deserializeAndCreate(context);
     Assertions.assertNull(invocationContext.getLocalContext("foo"));
 
     invocationContext = InvocationContextHolder.getInvocationContext();
@@ -56,7 +61,7 @@ public class InvocationContextTest {
     Assertions.assertEquals("bar", invocationContext.getLocalContext("bar"));
 
     String serialized = InvocationContextHolder.serialize(invocationContext);
-    invocationContext = InvocationContextHolder.create(serialized);
+    invocationContext = InvocationContextHolder.deserializeAndCreate(serialized);
     Assertions.assertNull(invocationContext.getLocalContext("foo"));
     Assertions.assertNull(invocationContext.getLocalContext("bar"));
   }

@@ -17,21 +17,10 @@
 
 package com.huaweicloud.common.context;
 
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.huaweicloud.common.util.HeaderUtil;
 
 public final class InvocationContextHolder {
   public static final String SERIALIZE_KEY = "x-invocation-context";
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(InvocationContextHolder.class);
-
-  private static final ObjectMapper MAPPER = new ObjectMapper();
 
   private static final ThreadLocal<InvocationContext> INVOCATION_CONTEXT = new ThreadLocal<>();
 
@@ -39,28 +28,14 @@ public final class InvocationContextHolder {
     return INVOCATION_CONTEXT.get();
   }
 
-  public static InvocationContext create(String context) {
+  public static InvocationContext deserializeAndCreate(String context) {
     InvocationContext result = new InvocationContext();
-
-    if (!StringUtils.isEmpty(context)) {
-      try {
-        Map<String, String> data = MAPPER.readValue(context, new TypeReference<Map<String, String>>() {
-        });
-        result.putContext(data);
-      } catch (Exception e) {
-        LOGGER.error("Create invocation context failed, build an empty one.");
-      }
-    }
+    result.putContext(HeaderUtil.deserialize(context));
     INVOCATION_CONTEXT.set(result);
     return result;
   }
 
   public static String serialize(InvocationContext context) {
-    try {
-      return MAPPER.writeValueAsString(context.getContext());
-    } catch (Exception e) {
-      LOGGER.error("Serialize invocation context failed, build an empty one.");
-    }
-    return "";
+    return HeaderUtil.serialize(context.getContext());
   }
 }

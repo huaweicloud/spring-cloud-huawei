@@ -34,10 +34,13 @@ public class OrderController {
 
   private final RestTemplate restTemplate;
 
+  private final FeignService feignService;
+
   @Autowired
-  public OrderController(DiscoveryClient discoveryClient, RestTemplate restTemplate) {
+  public OrderController(DiscoveryClient discoveryClient, RestTemplate restTemplate, FeignService feignService) {
     this.discoveryClient = discoveryClient;
     this.restTemplate = restTemplate;
+    this.feignService = feignService;
   }
 
   @RequestMapping("/instances")
@@ -64,6 +67,16 @@ public class OrderController {
     }
     invocationContext.putContext("test02", "test02");
     return restTemplate.getForObject("http://price/invocationContext", String.class);
+  }
+
+  @RequestMapping("/invocationContextFeign")
+  public String invocationContextFeign() {
+    InvocationContext invocationContext = InvocationContextHolder.getInvocationContext();
+    if (!"test01".equals(invocationContext.getContext("test01"))) {
+      return null;
+    }
+    invocationContext.putContext("test02", "test02");
+    return feignService.invocationContext();
   }
 
   @RequestMapping(value = "/services", method = RequestMethod.GET)
