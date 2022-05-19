@@ -37,7 +37,6 @@ import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.Paths;
 
 public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler {
 
@@ -48,8 +47,6 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   private Map<String, String> swaggerContent = new HashMap<>();
 
   private Map<String, String> swaggerSummary = new HashMap<>();
-
-  private Map<String, SpringMvcOpenApiResource> apiMap = new HashMap<>();
 
   @Value("${spring.cloud.servicecomb.swagger.enableJavaChassisAdapter:true}")
   protected boolean withJavaChassis;
@@ -64,15 +61,10 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   @Override
   public void init(String appName, String serviceName) {
     SpringMvcOpenApiResource mvcOpenApiResource = openApiResource.createOpenApiResource(Constants.DEFAULT_GROUP_NAME);
-    //mvcOpenApiResource.getOpenAPI();
-    //apiMap.put(Constants.DEFAULT_GROUP_NAME, mvcOpenApiResource);
-    //swaggerMap.put(Constants.DEFAULT_GROUP_NAME, mvcOpenApiResource.getOpenAPI());
-
     Set<String> set = mvcOpenApiResource.getControllers();
     set.forEach(key -> {
       SpringMvcOpenApiResource beanOpenApiResource = openApiResource.createOpenApiResource(key);
       beanOpenApiResource.clearCache();
-      apiMap.put(key, beanOpenApiResource);
       swaggerMap.put(key, beanOpenApiResource.getOpenAPI());
     });
 
