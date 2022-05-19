@@ -16,9 +16,6 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 
-server:
-  port: 10088
-
 spring:
   cloud:
     gateway:
