@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -34,7 +35,9 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Paths;
 
 public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler {
 
@@ -45,6 +48,8 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   private Map<String, String> swaggerContent = new HashMap<>();
 
   private Map<String, String> swaggerSummary = new HashMap<>();
+
+  private Map<String, SpringMvcOpenApiResource> apiMap = new HashMap<>();
 
   @Value("${spring.cloud.servicecomb.swagger.enableJavaChassisAdapter:true}")
   protected boolean withJavaChassis;
@@ -58,8 +63,20 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
 
   @Override
   public void init(String appName, String serviceName) {
-    swaggerMap.put(Constants.DEFAULT_GROUP_NAME, openApiResource.getOpenApiResource().getOpenAPI());
+    SpringMvcOpenApiResource mvcOpenApiResource = openApiResource.createOpenApiResource(Constants.DEFAULT_GROUP_NAME);
+    //mvcOpenApiResource.getOpenAPI();
+    //apiMap.put(Constants.DEFAULT_GROUP_NAME, mvcOpenApiResource);
+    //swaggerMap.put(Constants.DEFAULT_GROUP_NAME, mvcOpenApiResource.getOpenAPI());
 
+    Set<String> set = mvcOpenApiResource.getControllers();
+    set.forEach(key -> {
+      SpringMvcOpenApiResource beanOpenApiResource = openApiResource.createOpenApiResource(key);
+      beanOpenApiResource.clearCache();
+      apiMap.put(key, beanOpenApiResource);
+      swaggerMap.put(key, beanOpenApiResource.getOpenAPI());
+    });
+
+    renameOperations(swaggerMap);
     if (withJavaChassis) {
       swaggerMap = convertToJavaChassis(swaggerMap);
     }
@@ -77,7 +94,7 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   private Map<String, String> calcSchemaContent() {
     return swaggerMap.entrySet().stream().collect(Collectors.toMap(Entry::getKey, entry -> {
       try {
-        return openApiResource.getOpenApiResource().writeYamlValue(entry.getValue());
+        return Yaml.mapper().writeValueAsString(entry.getValue());
       } catch (JsonProcessingException e) {
         LOGGER.error("error when calcSchemaSummary.", e);
       }
@@ -104,6 +121,78 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
     return swaggerContent.entrySet()
         .stream()
         .collect(Collectors.toMap(Entry::getKey, entry -> calcSchemaSummary(entry.getValue())));
+  }
+
+  private void renameOperations(Map<String, OpenAPI> swaggerMap) {
+    swaggerMap.forEach((key, openApi) -> {
+      openApi.getPaths().forEach((operationID, pathItem) -> {
+        int index = 0;
+        if (pathItem.getGet() != null) {
+          if (index == 0) {
+            pathItem.getGet().setOperationId(operationID);
+          } else {
+            pathItem.getGet().setOperationId(operationID + "_" + index);
+          }
+          index++;
+        }
+        if (pathItem.getPut() != null) {
+          if (index == 0) {
+            pathItem.getPut().setOperationId(operationID);
+          } else {
+            pathItem.getPut().setOperationId(operationID + "_" + index);
+          }
+          index++;
+        }
+        if (pathItem.getPost() != null) {
+          if (index == 0) {
+            pathItem.getPost().setOperationId(operationID);
+          } else {
+            pathItem.getPost().setOperationId(operationID + "_" + index);
+          }
+          index++;
+        }
+        if (pathItem.getDelete() != null) {
+          if (index == 0) {
+            pathItem.getDelete().setOperationId(operationID);
+          } else {
+            pathItem.getDelete().setOperationId(operationID + "_" + index);
+          }
+          index++;
+        }
+        if (pathItem.getOptions() != null) {
+          if (index == 0) {
+            pathItem.getOptions().setOperationId(operationID);
+          } else {
+            pathItem.getOptions().setOperationId(operationID + "_" + index);
+          }
+          index++;
+        }
+        if (pathItem.getHead() != null) {
+          if (index == 0) {
+            pathItem.getHead().setOperationId(operationID);
+          } else {
+            pathItem.getHead().setOperationId(operationID + "_" + index);
+          }
+          index++;
+        }
+        if (pathItem.getPatch() != null) {
+          if (index == 0) {
+            pathItem.getPatch().setOperationId(operationID);
+          } else {
+            pathItem.getPatch().setOperationId(operationID + "_" + index);
+          }
+          index++;
+        }
+        if (pathItem.getTrace() != null) {
+          if (index == 0) {
+            pathItem.getTrace().setOperationId(operationID);
+          } else {
+            pathItem.getTrace().setOperationId(operationID + "_" + index);
+          }
+          index++;
+        }
+      });
+    });
   }
 
   private static String calcSchemaSummary(String schemaContent) {

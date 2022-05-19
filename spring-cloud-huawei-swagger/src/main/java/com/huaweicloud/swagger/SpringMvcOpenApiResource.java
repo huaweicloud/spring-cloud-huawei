@@ -19,6 +19,7 @@ package com.huaweicloud.swagger;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,21 +34,23 @@ import org.springdoc.core.customizers.OperationCustomizer;
 import org.springdoc.core.filters.OpenApiMethodFilter;
 import org.springdoc.webmvc.api.OpenApiResource;
 import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.method.HandlerMethod;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import io.swagger.v3.oas.models.OpenAPI;
 
+import static org.springdoc.core.Constants.DEFAULT_GROUP_NAME;
+
 public class SpringMvcOpenApiResource extends OpenApiResource {
 
-  @Autowired
-  public SpringMvcOpenApiResource(ObjectFactory<OpenAPIService> openAPIBuilderObjectFactory,
+  public SpringMvcOpenApiResource(String groupName, ObjectFactory<OpenAPIService> openAPIBuilderObjectFactory,
       AbstractRequestService requestBuilder, GenericResponseService responseBuilder, OperationService operationParser,
       Optional<List<OperationCustomizer>> operationCustomizers, Optional<List<OpenApiCustomiser>> openApiCustomisers,
       Optional<List<OpenApiMethodFilter>> methodFilters, SpringDocConfigProperties springDocConfigProperties,
       SpringDocProviders springDocProviders) {
-    super(openAPIBuilderObjectFactory, requestBuilder, responseBuilder, operationParser, operationCustomizers,
+    super(groupName, openAPIBuilderObjectFactory, requestBuilder, responseBuilder, operationParser,
+        operationCustomizers,
         openApiCustomisers, methodFilters, springDocConfigProperties, springDocProviders);
   }
 
@@ -61,6 +64,25 @@ public class SpringMvcOpenApiResource extends OpenApiResource {
   @Override
   public String writeYamlValue(OpenAPI openAPI) throws JsonProcessingException {
     return super.writeYamlValue(openAPI);
+  }
+
+  @Override
+  protected boolean isFilterCondition(HandlerMethod handlerMethod, String operationPath, String[] produces,
+      String[] consumes, String[] headers) {
+    if (DEFAULT_GROUP_NAME.equals(groupName)) {
+      return super.isFilterCondition(handlerMethod, operationPath, produces, consumes, headers);
+    }
+    return super.isFilterCondition(handlerMethod, operationPath, produces, consumes, headers)
+        && handlerMethod.getBean().equals(groupName);
+  }
+
+  public void clearCache() {
+    openAPIService.setCachedOpenAPI(null, Locale.getDefault());
+  }
+
+  public Set<String> getControllers() {
+    openAPIService.build(Locale.getDefault());
+    return openAPIService.getMappingsMap().keySet();
   }
 
   /**
