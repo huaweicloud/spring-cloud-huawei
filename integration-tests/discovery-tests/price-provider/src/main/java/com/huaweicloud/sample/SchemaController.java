@@ -20,6 +20,7 @@ package com.huaweicloud.sample;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -66,7 +67,7 @@ public class SchemaController {
     // test code, make simple
     try {
       InputStream inputStream = this.getClass().getResource("/" + restController).openStream();
-      return IOUtils.toString(inputStream, Charset.forName("UTF-8"));
+      return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
     } catch (IOException e) {
       Assertions.fail(e.getMessage());
       return null;
