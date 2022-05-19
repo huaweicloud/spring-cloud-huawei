@@ -88,13 +88,13 @@
                       <log>register microservice successfully</log>
                       <tcp>
                         <ports>
-                          <port>9090</port>
+                          <port>10088</port>
                         </ports>
                       </tcp>
                       <time>120000</time>
                     </wait>
                     <ports>
-                      <port>9090:9090</port>
+                      <port>10088:10088</port>
                     </ports>
                     <dependsOn>
                       <container>service-center</container>
