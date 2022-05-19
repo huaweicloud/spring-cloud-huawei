@@ -30,8 +30,6 @@ import org.springdoc.core.customizers.OperationCustomizer;
 import org.springdoc.core.filters.OpenApiMethodFilter;
 import org.springframework.beans.factory.ObjectFactory;
 
-import static org.springdoc.core.Constants.DEFAULT_GROUP_NAME;
-
 /**
  * This class is to create a SpringMvcOpenApiResource object,
  * if make SpringMvcOpenApiResource as a spring bean,it will effect springdoc
