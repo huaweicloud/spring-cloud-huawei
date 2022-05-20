@@ -38,7 +38,7 @@ public class ServiceCombServerListUpdater implements ServerListUpdater {
 
   private PollingServerListUpdater pollingServerListUpdater;
 
-  private static long INITIAL_DELAY_TIME = 1000;
+  private static long INITIAL_DELAY_TIME = 5 * 1000;
 
   private static long REFRESH_INITIAL_TIME = 5 * 1000;
 
