@@ -19,6 +19,7 @@ package com.huaweicloud.servicecomb.discovery.ribbon;
 
 import java.util.Date;
 
+import com.netflix.loadbalancer.PollingServerListUpdater;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.InstanceChangedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,14 @@ public class ServiceCombServerListUpdater implements ServerListUpdater {
 
   private UpdateAction updateAction;
 
+  private PollingServerListUpdater pollingServerListUpdater;
+
+  private static long INITIAL_DELAY_TIME = 1000;
+
+  private static long REFRESH_INITIAL_TIME = 5 * 1000;
+
   public ServiceCombServerListUpdater() {
+    pollingServerListUpdater = new PollingServerListUpdater(INITIAL_DELAY_TIME, REFRESH_INITIAL_TIME);
     EventManager.getEventBus().register(this);
   }
 
@@ -51,6 +59,7 @@ public class ServiceCombServerListUpdater implements ServerListUpdater {
 
   @Override
   public void start(UpdateAction updateAction) {
+    pollingServerListUpdater.start(updateAction);
     this.updateAction = updateAction;
   }
 
