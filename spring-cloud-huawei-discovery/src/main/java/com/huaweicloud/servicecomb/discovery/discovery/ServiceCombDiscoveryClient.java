@@ -1,19 +1,19 @@
 /*
 
-  * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
 
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
@@ -64,6 +64,8 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
 
   private final AtomicLong changeId = new AtomicLong(0);
 
+  private final List<String> serviceIds = new ArrayList<>();
+
   public ServiceCombDiscoveryClient(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCenterClient serviceCenterClient, ServiceCombRegistration serviceCombRegistration) {
     this.discoveryProperties = discoveryProperties;
@@ -81,6 +83,15 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
       serviceCenterDiscovery.updateMyselfServiceId(serviceCombRegistration.getMicroservice().getServiceId());
       // startDiscovery will check if already started, can call several times
       serviceCenterDiscovery.startDiscovery();
+
+      if (discoveryProperties.isEnableServicePolling()) {
+        List<String> services = getServices();
+        if (!serviceIds.equals(services)) {
+          serviceIds.clear();
+          serviceIds.addAll(services);
+          this.applicationEventPublisher.publishEvent(new HeartbeatEvent(this, changeId.getAndIncrement()));
+        }
+      }
     }
   }
 

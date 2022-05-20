@@ -26,6 +26,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>discovery-tests-client</artifactId>
+  <name>Integration Tests::Discovery Tests::Discovery Tests Client</name>
 
   <dependencies>
     <dependency>
@@ -159,6 +160,40 @@
                     </ports>
                     <dependsOn>
                       <container>service-center</container>
+                    </dependsOn>
+                  </run>
+                </image>
+
+                <image>
+                  <name>discovery-gateway-test:${project.version}</name>
+                  <alias>discovery-gateway-test</alias>
+                  <run>
+                    <env>
+                      <JAVA_OPTS>
+                        -Dspring.cloud.servicecomb.discovery.address=http://sc.servicecomb.io:30100
+                      </JAVA_OPTS>
+                      <JAR_PATH>/maven/discovery-gateway-test-${project.version}.jar</JAR_PATH>
+                    </env>
+                    <links>
+                      <link>service-center:sc.servicecomb.io</link>
+                    </links>
+                    <wait>
+                      <log>register microservice successfully</log>
+                      <tcp>
+                        <ports>
+                          <port>10088</port>
+                        </ports>
+                      </tcp>
+                      <time>120000</time>
+                    </wait>
+                    <ports>
+                      <port>10088:10088</port>
+                    </ports>
+                    <!-- gateway using discovery locator and will poll services when heart beat successfully.
+                         make sure order-consumer-test registered before gateway and test case success.
+                     -->
+                    <dependsOn>
+                      <container>order-consumer-test</container>
                     </dependsOn>
                   </run>
                 </image>

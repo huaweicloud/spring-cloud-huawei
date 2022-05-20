@@ -25,6 +25,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
+  <name>Integration Tests::Discovery Tests::Price Provider Test</name>
   <artifactId>price-provider-test</artifactId>
 
   <dependencies>
