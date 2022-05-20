@@ -36,7 +36,7 @@ public class ServiceCombServerListUpdater implements ServerListUpdater {
 
   private UpdateAction updateAction;
 
-  private PollingServerListUpdater pollingServerListUpdater;
+  private final PollingServerListUpdater pollingServerListUpdater;
 
   private static long INITIAL_DELAY_TIME = 5 * 1000;
 
