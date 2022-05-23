@@ -29,7 +29,7 @@
 
   <groupId>com.huaweicloud</groupId>
   <artifactId>spring-cloud-huawei</artifactId>
-  <version>1.10.0-2020.0.x-SNAPSHOT</version>
+  <version>1.10.0-2021.0.x-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Spring Cloud Huawei</name>
 
@@ -38,8 +38,8 @@
     <!-- spring-cloud-dependencies do not import spring-boot-dependencies, spring-boot-dependencies
      import spring-framework-bom. No need configure spring version. -->
     <spring.version>5.3.18</spring.version>
-    <spring-cloud.version>2020.0.5</spring-cloud.version>
-    <spring-boot.version>2.5.12</spring-boot.version>
+    <spring-cloud.version>2021.0.2</spring-cloud.version>
+    <spring-boot.version>2.6.7</spring-boot.version>
     <servicecomb.version>2.7.3</servicecomb.version>
   </properties>
 

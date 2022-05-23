@@ -57,13 +57,7 @@ public class SpringMvcOpenApiResource extends OpenApiResource {
   public OpenAPI getOpenAPI() {
     super.initOpenAPIBuilder(Locale.getDefault());
     openAPIService.setServerBaseUrl(getServerBaseUrl());
-    OpenAPI openAPI = this.getOpenApi(Locale.getDefault());
-    return openAPI;
-  }
-
-  @Override
-  public String writeYamlValue(OpenAPI openAPI) throws JsonProcessingException {
-    return super.writeYamlValue(openAPI);
+    return this.getOpenApi(Locale.getDefault());
   }
 
   @Override

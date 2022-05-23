@@ -22,14 +22,14 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-huawei</artifactId>
-    <version>1.10.0-2020.0.x-SNAPSHOT</version>
+    <version>1.10.0-2021.0.x-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>spring-cloud-huawei-dependencies</artifactId>
   <packaging>pom</packaging>
-  <version>1.10.0-2020.0.x-SNAPSHOT</version>
+  <version>1.10.0-2021.0.x-SNAPSHOT</version>
   <name>Spring Cloud Huawei Dependencies</name>
   <properties>
     <feign-core.version>11.8</feign-core.version>
@@ -40,9 +40,6 @@
     <snakeyaml.version>1.26</snakeyaml.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <websocket.version>1.5.0</websocket.version>
-    <spring-fox.version>3.0.0</spring-fox.version>
-    <swagger-core.version>2.1.9</swagger-core.version>
-    <swagger-core-v2.version>1.6.2</swagger-core-v2.version>
     <resilience4j.version>1.7.0</resilience4j.version>
     <jasypt.version>2.1.2</jasypt.version>
     <annotations.version>3.0.1</annotations.version>
