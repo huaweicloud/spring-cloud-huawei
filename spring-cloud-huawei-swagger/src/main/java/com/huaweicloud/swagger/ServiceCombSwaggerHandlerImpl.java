@@ -21,10 +21,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.core.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -33,32 +35,14 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 
-import io.swagger.models.Swagger;
 import io.swagger.v3.core.util.Yaml;
-import springfox.documentation.service.Documentation;
-import springfox.documentation.spring.web.DocumentationCache;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.spring.web.plugins.DocumentationPluginsBootstrapper;
-import springfox.documentation.swagger2.mappers.ServiceModelToSwagger2Mapper;
+import io.swagger.v3.oas.models.OpenAPI;
 
 public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombSwaggerHandlerImpl.class);
 
-  protected final DocumentationPluginsBootstrapper documentationPluginsBootstrapper;
-
-  protected final DocumentationCache documentationCache;
-
-  protected final ServiceModelToSwagger2Mapper mapper;
-
-  @Autowired
-  public ServiceCombSwaggerHandlerImpl(DocumentationPluginsBootstrapper documentationPluginsBootstrapper, DocumentationCache documentationCache, ServiceModelToSwagger2Mapper mapper) {
-    this.documentationPluginsBootstrapper = documentationPluginsBootstrapper;
-    this.documentationCache = documentationCache;
-    this.mapper = mapper;
-  }
-
-  private Map<String, Swagger> swaggerMap = new HashMap<>();
+  private Map<String, OpenAPI> swaggerMap = new HashMap<>();
 
   private Map<String, String> swaggerContent = new HashMap<>();
 
@@ -67,24 +51,36 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   @Value("${spring.cloud.servicecomb.swagger.enableJavaChassisAdapter:true}")
   protected boolean withJavaChassis;
 
+  private OpenApiResourceWrapper openApiResource;
+
+  @Autowired
+  public void setOpenApiResource(OpenApiResourceWrapper openApiResource) {
+    this.openApiResource = openApiResource;
+  }
+
   @Override
   public void init(String appName, String serviceName) {
-    documentationPluginsBootstrapper.start();
+    SpringMvcOpenApiResource mvcOpenApiResource = openApiResource.createOpenApiResource(Constants.DEFAULT_GROUP_NAME);
+    Set<String> set = mvcOpenApiResource.getControllers();
+    set.forEach(key -> {
+      SpringMvcOpenApiResource beanOpenApiResource = openApiResource.createOpenApiResource(key);
+      beanOpenApiResource.clearCache();
+      swaggerMap.put(key, beanOpenApiResource.getOpenAPI());
+    });
 
-    Documentation documentation = documentationCache
-        .documentationByGroup(Docket.DEFAULT_GROUP_NAME);
-
-    DocumentationSwaggerMapper documentationSwaggerMapper;
+    renameOperations(swaggerMap);
     if (withJavaChassis) {
-      documentationSwaggerMapper = new ServiceCombDocumentationSwaggerMapper(appName, serviceName, mapper);
-    } else {
-      documentationSwaggerMapper = new SpringCloudDocumentationSwaggerMapper(mapper);
+      swaggerMap = convertToJavaChassis(swaggerMap);
     }
-    this.swaggerMap = documentationSwaggerMapper.documentationToSwaggers(documentation);
 
     this.swaggerContent = calcSchemaContent();
 
     this.swaggerSummary = calcSchemaSummary();
+  }
+
+  private Map<String, OpenAPI> convertToJavaChassis(Map<String, OpenAPI> swaggerMap) {
+    //TODO this should be done later to be compatible with java chassis
+    return swaggerMap;
   }
 
   private Map<String, String> calcSchemaContent() {
@@ -114,15 +110,81 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   }
 
   private Map<String, String> calcSchemaSummary() {
-    return swaggerMap.entrySet().stream()
-        .collect(Collectors.toMap(Entry::getKey, entry -> {
-          try {
-            return calcSchemaSummary(Yaml.mapper().writeValueAsString(entry.getValue()));
-          } catch (JsonProcessingException e) {
-            LOGGER.error("error when calcSchemaSummary.", e);
+    return swaggerContent.entrySet()
+        .stream()
+        .collect(Collectors.toMap(Entry::getKey, entry -> calcSchemaSummary(entry.getValue())));
+  }
+
+  private void renameOperations(Map<String, OpenAPI> swaggerMap) {
+    swaggerMap.forEach((key, openApi) -> {
+      openApi.getPaths().forEach((operationID, pathItem) -> {
+        int index = 0;
+        if (pathItem.getGet() != null) {
+          if (index == 0) {
+            pathItem.getGet().setOperationId(operationID);
+          } else {
+            pathItem.getGet().setOperationId(operationID + "_" + index);
           }
-          return null;
-        }));
+          index++;
+        }
+        if (pathItem.getPut() != null) {
+          if (index == 0) {
+            pathItem.getPut().setOperationId(operationID);
+          } else {
+            pathItem.getPut().setOperationId(operationID + "_" + index);
+          }
+          index++;
+        }
+        if (pathItem.getPost() != null) {
+          if (index == 0) {
+            pathItem.getPost().setOperationId(operationID);
+          } else {
+            pathItem.getPost().setOperationId(operationID + "_" + index);
+          }
+          index++;
+        }
+        if (pathItem.getDelete() != null) {
+          if (index == 0) {
+            pathItem.getDelete().setOperationId(operationID);
+          } else {
+            pathItem.getDelete().setOperationId(operationID + "_" + index);
+          }
+          index++;
+        }
+        if (pathItem.getOptions() != null) {
+          if (index == 0) {
+            pathItem.getOptions().setOperationId(operationID);
+          } else {
+            pathItem.getOptions().setOperationId(operationID + "_" + index);
+          }
+          index++;
+        }
+        if (pathItem.getHead() != null) {
+          if (index == 0) {
+            pathItem.getHead().setOperationId(operationID);
+          } else {
+            pathItem.getHead().setOperationId(operationID + "_" + index);
+          }
+          index++;
+        }
+        if (pathItem.getPatch() != null) {
+          if (index == 0) {
+            pathItem.getPatch().setOperationId(operationID);
+          } else {
+            pathItem.getPatch().setOperationId(operationID + "_" + index);
+          }
+          index++;
+        }
+        if (pathItem.getTrace() != null) {
+          if (index == 0) {
+            pathItem.getTrace().setOperationId(operationID);
+          } else {
+            pathItem.getTrace().setOperationId(operationID + "_" + index);
+          }
+          index++;
+        }
+      });
+    });
   }
 
   private static String calcSchemaSummary(String schemaContent) {
