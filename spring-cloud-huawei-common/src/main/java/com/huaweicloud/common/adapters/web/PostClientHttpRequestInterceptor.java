@@ -15,19 +15,19 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.router.client.track;
+package com.huaweicloud.common.adapters.web;
 
-import feign.RequestInterceptor;
-import feign.RequestTemplate;
+import org.springframework.core.Ordered;
+import org.springframework.http.client.ClientHttpResponse;
 
-public class RouterRequestInterceptor implements RequestInterceptor {
-  // TODO: when request header contains special characters like `{}`,
-  // feign may not properly set the header.
-  // But now, we can not encode the header for compatible reasons.
+/**
+ * PreClientHttpRequestInterceptor extensions which supports order.
+ */
+public interface PostClientHttpRequestInterceptor extends Ordered {
   @Override
-  public void apply(RequestTemplate requestTemplate) {
-    if (RouterTrackContext.getRequestHeader() != null) {
-      requestTemplate.header(RouterTrackContext.ROUTER_TRACK_HEADER, RouterTrackContext.getRequestHeader());
-    }
+  default int getOrder() {
+    return 0;
   }
+
+  void process(ClientHttpResponse clientHttpResponse);
 }

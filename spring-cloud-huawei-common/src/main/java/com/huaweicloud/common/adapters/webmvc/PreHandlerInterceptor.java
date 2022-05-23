@@ -15,19 +15,13 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.router.client.track;
+package com.huaweicloud.common.adapters.webmvc;
 
-import feign.RequestInterceptor;
-import feign.RequestTemplate;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-public class RouterRequestInterceptor implements RequestInterceptor {
-  // TODO: when request header contains special characters like `{}`,
-  // feign may not properly set the header.
-  // But now, we can not encode the header for compatible reasons.
-  @Override
-  public void apply(RequestTemplate requestTemplate) {
-    if (RouterTrackContext.getRequestHeader() != null) {
-      requestTemplate.header(RouterTrackContext.ROUTER_TRACK_HEADER, RouterTrackContext.getRequestHeader());
-    }
-  }
+import org.springframework.core.Ordered;
+
+public interface PreHandlerInterceptor extends Ordered {
+  boolean handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception;
 }

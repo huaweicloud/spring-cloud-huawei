@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
   ~ Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
@@ -15,28 +14,26 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://maven.apache.org/POM/4.0.0"
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>discovery-tests</artifactId>
     <version>1.10.0-2020.0.x-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
 
-  <name>Integration Tests::Discovery Tests::Price Provider Test</name>
-  <artifactId>price-provider-test</artifactId>
+
+  <name>Integration Tests::Discovery Tests::Gateway</name>
+  <artifactId>discovery-gateway-test</artifactId>
+  <packaging>jar</packaging>
 
   <dependencies>
     <dependency>
-      <groupId>com.huaweicloud</groupId>
-      <artifactId>discovery-tests-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-gateway</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -44,11 +41,11 @@
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-service-engine</artifactId>
+      <artifactId>spring-cloud-starter-huawei-service-engine-gateway</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.swagger.core.v3</groupId>
-      <artifactId>swagger-core</artifactId>
+      <groupId>io.github.resilience4j</groupId>
+      <artifactId>resilience4j-reactor</artifactId>
     </dependency>
   </dependencies>
 
@@ -60,11 +57,12 @@
       </plugin>
     </plugins>
   </build>
+
   <profiles>
     <profile>
       <id>docker</id>
       <properties>
-        <server.port>9090</server.port>
+        <server.port>10088</server.port>
       </properties>
       <build>
         <plugins>
