@@ -25,6 +25,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
+  <name>Integration Tests::Discovery Tests::Order Consumer Test</name>
   <artifactId>order-consumer-test</artifactId>
 
   <dependencies>
@@ -64,7 +65,7 @@
     <profile>
       <id>docker</id>
       <properties>
-        <server.port>8088</server.port>
+        <server.port>9098</server.port>
       </properties>
       <build>
         <plugins>

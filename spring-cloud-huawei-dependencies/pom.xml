@@ -32,7 +32,7 @@
   <version>1.10.0-2020.0.x-SNAPSHOT</version>
   <name>Spring Cloud Huawei Dependencies</name>
   <properties>
-    <feign-core.version>11.0</feign-core.version>
+    <feign-core.version>11.8</feign-core.version>
     <httpclient.version>4.5.9</httpclient.version>
     <jackson.version>2.12.1</jackson.version>
     <jmockit.version>1.36</jmockit.version>
@@ -45,6 +45,7 @@
     <swagger-core-v2.version>1.6.2</swagger-core-v2.version>
     <resilience4j.version>1.7.0</resilience4j.version>
     <jasypt.version>2.1.2</jasypt.version>
+    <annotations.version>3.0.1</annotations.version>
     <dubbo.hessian.version>2.7.15</dubbo.hessian.version>
     <springdoc.version>1.6.8</springdoc.version>
   </properties>
@@ -120,6 +121,11 @@
         <groupId>org.jmockit</groupId>
         <artifactId>jmockit</artifactId>
         <version>${jmockit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.code.findbugs</groupId>
+        <artifactId>annotations</artifactId>
+        <version>${annotations.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-configuration</groupId>

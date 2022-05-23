@@ -25,10 +25,12 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>discovery-tests</artifactId>
+  <name>Integration Tests::Discovery Tests</name>
   <packaging>pom</packaging>
 
   <modules>
     <module>common</module>
+    <module>gateway</module>
     <module>price-provider</module>
     <module>order-consumer</module>
     <module>account-provider</module>

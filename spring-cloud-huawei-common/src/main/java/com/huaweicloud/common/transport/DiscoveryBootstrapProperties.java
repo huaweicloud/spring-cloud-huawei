@@ -1,19 +1,19 @@
 /*
 
-  * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
 
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.huaweicloud.common.transport;
 
@@ -24,6 +24,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("spring.cloud.servicecomb.discovery")
 public class DiscoveryBootstrapProperties {
+  private static final int HEALTH_CHECK_MAX_INTERVAL = 600;
+
+  private static final int HEALTH_CHECK_MIN_INTERVAL = 1;
 
   private boolean enabled = true;
 
@@ -71,9 +74,16 @@ public class DiscoveryBootstrapProperties {
 
   private DataCenterInfo datacenter;
 
-  private static final int HEALTH_CHECK_MAX_INTERVAL = 600;
-
-  private static final int HEALTH_CHECK_MIN_INTERVAL = 1;
+  // when service polling is enabled, client will try to query service names
+  // to check if service names list changed. This is quite useful when in
+  // spring cloud gateway and
+  // spring:
+  //  cloud:
+  //    gateway:
+  //      discovery:
+  //        locator:
+  //          enabled: true
+  private boolean enableServicePolling = false;
 
   public String getServerAddress() {
     return serverAddress;
@@ -177,7 +187,7 @@ public class DiscoveryBootstrapProperties {
 
   public void setHealthCheckInterval(int healthCheckInterval) {
     if (healthCheckInterval <= HEALTH_CHECK_MAX_INTERVAL && healthCheckInterval >= HEALTH_CHECK_MIN_INTERVAL) {
-        this.healthCheckInterval = healthCheckInterval;
+      this.healthCheckInterval = healthCheckInterval;
     }
   }
 
@@ -227,6 +237,14 @@ public class DiscoveryBootstrapProperties {
 
   public void setIgnoreSwaggerDifferent(boolean ignoreSwaggerDifferent) {
     this.ignoreSwaggerDifferent = ignoreSwaggerDifferent;
+  }
+
+  public boolean isEnableServicePolling() {
+    return enableServicePolling;
+  }
+
+  public void setEnableServicePolling(boolean enableServicePolling) {
+    this.enableServicePolling = enableServicePolling;
   }
 
   public boolean isWatch() {
