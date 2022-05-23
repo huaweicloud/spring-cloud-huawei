@@ -41,11 +41,16 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @RestController
 public class SchemaController {
-  @Autowired
-  ServiceCombSwaggerHandler serviceCombSwaggerHandler;
+
+  final ServiceCombSwaggerHandler serviceCombSwaggerHandler;
+
+  private final RestTemplate restTemplate;
 
   @Autowired
-  private RestTemplate restTemplate;
+  public SchemaController(ServiceCombSwaggerHandler serviceCombSwaggerHandler, RestTemplate restTemplate) {
+    this.serviceCombSwaggerHandler = serviceCombSwaggerHandler;
+    this.restTemplate = restTemplate;
+  }
 
   @RequestMapping("/testSchemaGeneratorSpringCloud")
   public String testSchemaGeneratorSpringCloud() {
