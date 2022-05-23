@@ -28,10 +28,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
+@ConditionalOnClass(name = {"org.springframework.http.client.ClientHttpRequestInterceptor",
+    "org.springframework.web.client.RestTemplate"})
 public class WebConfiguration {
   @Bean
-  @ConditionalOnClass(name = {"org.springframework.http.client.ClientHttpRequestInterceptor",
-      "org.springframework.web.client.RestTemplate"})
   public DecorateClientHttpRequestInterceptor decorateClientHttpRequestInterceptor(
       @Autowired(required = false) List<PreClientHttpRequestInterceptor> preClientHttpRequestInterceptors,
       @Autowired(required = false) List<PostClientHttpRequestInterceptor> postClientHttpRequestInterceptors,

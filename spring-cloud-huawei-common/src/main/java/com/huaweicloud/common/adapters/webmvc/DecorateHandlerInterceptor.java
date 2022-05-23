@@ -22,11 +22,12 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.core.Ordered;
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-public class DecorateHandlerInterceptor implements HandlerInterceptor {
+public class DecorateHandlerInterceptor implements HandlerInterceptor, Ordered {
   private final List<PreHandlerInterceptor> preHandlerInterceptors;
 
   private final List<PostHandlerInterceptor> postHandlerInterceptors;
@@ -59,5 +60,10 @@ public class DecorateHandlerInterceptor implements HandlerInterceptor {
     for (PostHandlerInterceptor postHandlerInterceptor : postHandlerInterceptors) {
       postHandlerInterceptor.handle(request, response, handler, modelAndView);
     }
+  }
+
+  @Override
+  public int getOrder() {
+    return 0;
   }
 }

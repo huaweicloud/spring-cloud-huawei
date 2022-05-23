@@ -15,24 +15,23 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.common.adapters.webmvc;
+package com.huaweicloud.samples;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
 
-import org.springframework.core.Ordered;
-
+import com.huaweicloud.common.adapters.gateway.PreGlobalFilter;
 import com.huaweicloud.common.context.InvocationContextHolder;
 
-public class DeserializeContextPreHandlerInterceptor implements PreHandlerInterceptor {
+@Component
+public class AddTestHeaderPreGlobalFilter implements PreGlobalFilter {
   @Override
-  public boolean handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-    InvocationContextHolder.deserializeAndCreate(request.getHeader(InvocationContextHolder.SERIALIZE_KEY));
-    return true;
+  public void process(ServerWebExchange exchange) {
+    InvocationContextHolder.getInvocationContext().putContext("test03", "test03");
   }
 
   @Override
   public int getOrder() {
-    return Ordered.HIGHEST_PRECEDENCE;
+    return 0;
   }
 }
