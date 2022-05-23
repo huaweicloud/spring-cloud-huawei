@@ -47,6 +47,7 @@
     <jasypt.version>2.1.2</jasypt.version>
     <annotations.version>3.0.1</annotations.version>
     <dubbo.hessian.version>2.7.15</dubbo.hessian.version>
+    <springdoc.version>1.6.8</springdoc.version>
   </properties>
 
   <dependencyManagement>
@@ -85,29 +86,11 @@
 
       <!-- swagger -->
       <dependency>
-        <groupId>io.springfox</groupId>
-        <artifactId>springfox-boot-starter</artifactId>
-        <version>${spring-fox.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.swagger.core.v3</groupId>
-        <artifactId>swagger-core</artifactId>
-        <version>${swagger-core.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.swagger</groupId>
-        <artifactId>swagger-core</artifactId>
-        <version>${swagger-core-v2.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.swagger</groupId>
-        <artifactId>swagger-models</artifactId>
-        <version>${swagger-core-v2.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.swagger</groupId>
-        <artifactId>swagger-annotations</artifactId>
-        <version>${swagger-core-v2.version}</version>
+        <groupId>org.springdoc</groupId>
+        <artifactId>springdoc-openapi-ui</artifactId>
+        <version>${springdoc.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <!-- servicecomb -->
       <dependency>
