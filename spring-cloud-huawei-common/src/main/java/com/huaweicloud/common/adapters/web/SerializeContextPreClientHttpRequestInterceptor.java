@@ -17,6 +17,7 @@
 
 package com.huaweicloud.common.adapters.web;
 
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpRequest;
 
 import com.huaweicloud.common.context.InvocationContextHolder;
@@ -24,7 +25,7 @@ import com.huaweicloud.common.context.InvocationContextHolder;
 public class SerializeContextPreClientHttpRequestInterceptor implements PreClientHttpRequestInterceptor {
   @Override
   public int getOrder() {
-    return Integer.MAX_VALUE;
+    return Ordered.LOWEST_PRECEDENCE;
   }
 
   @Override

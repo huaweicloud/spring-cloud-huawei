@@ -20,12 +20,13 @@ package com.huaweicloud.common.adapters.web;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
-public class DecorateClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
+public class DecorateClientHttpRequestInterceptor implements ClientHttpRequestInterceptor, Ordered {
   private final List<PreClientHttpRequestInterceptor> preClientHttpRequestInterceptors;
 
   private final List<PostClientHttpRequestInterceptor> postClientHttpRequestInterceptors;
@@ -48,5 +49,10 @@ public class DecorateClientHttpRequestInterceptor implements ClientHttpRequestIn
       postClientHttpRequestInterceptors.forEach(interceptor -> interceptor.process(clientHttpResponse));
     }
     return clientHttpResponse;
+  }
+
+  @Override
+  public int getOrder() {
+    return 0;
   }
 }

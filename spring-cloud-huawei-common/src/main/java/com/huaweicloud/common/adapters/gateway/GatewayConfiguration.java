@@ -15,27 +15,37 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.common.adapters.feign;
+package com.huaweicloud.common.adapters.gateway;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnClass(name = {"feign.RequestInterceptor"})
-public class FeignConfiguration {
+@ConditionalOnClass(name = {"org.springframework.cloud.gateway.filter.GlobalFilter"})
+public class GatewayConfiguration {
   @Bean
-  public DecorateRequestInterceptor decorateRequestInterceptor(
-      List<OrderedRequestInterceptor> orderedRequestInterceptors) {
-    return new DecorateRequestInterceptor(orderedRequestInterceptors);
+  public DecorateGlobalFilter decorateGlobalFilter(
+      @Autowired(required = false) List<PreGlobalFilter> preGlobalFilters,
+      @Autowired(required = false) List<PostGlobalFilter> postGlobalFilters) {
+    return new DecorateGlobalFilter(
+        preGlobalFilters,
+        postGlobalFilters);
   }
 
   @Bean
-  @ConditionalOnBean(DecorateRequestInterceptor.class)
-  public OrderedRequestInterceptor serializeContextOrderedRequestInterceptor() {
-    return new SerializeContextOrderedRequestInterceptor();
+  @ConditionalOnBean(DecorateGlobalFilter.class)
+  public PreGlobalFilter deserializeContextPreGlobalFilter() {
+    return new DeserializeContextPreGlobalFilter();
+  }
+
+  @Bean
+  @ConditionalOnBean(DecorateGlobalFilter.class)
+  public PreGlobalFilter serializeContextPreGlobalFilter() {
+    return new SerializeContextPreGlobalFilter();
   }
 }

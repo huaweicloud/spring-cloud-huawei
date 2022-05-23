@@ -20,6 +20,9 @@ package com.huaweicloud.sample;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
 public class GatewayIT {
@@ -31,5 +34,24 @@ public class GatewayIT {
   public void testGetOrder() {
     String result = template.getForObject(url + "/order/order?id=hello", String.class);
     assertThat(result).isEqualTo("hello");
+  }
+
+  @Test
+  public void testInvocationContext() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("x-invocation-context", "{\"test01\":\"test01\"}");
+    HttpEntity<Void> entity = new HttpEntity<>(headers);
+    String result = template.exchange(url + "/order/invocationContext", HttpMethod.GET, entity, String.class).getBody();
+    assertThat(result).isEqualTo("success");
+  }
+
+  @Test
+  public void testinvocationContextGateway() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("x-invocation-context", "{\"test01\":\"test01\"}");
+    HttpEntity<Void> entity = new HttpEntity<>(headers);
+    String result = template.exchange(url + "/order/invocationContextGateway", HttpMethod.GET, entity, String.class)
+        .getBody();
+    assertThat(result).isEqualTo("success");
   }
 }
