@@ -28,25 +28,30 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @ConditionalOnClass(name = "org.springframework.web.servlet.config.annotation.WebMvcConfigurer")
-public class WebmvcConfiguration implements WebMvcConfigurer {
-  private List<PreHandlerInterceptor> preHandlerInterceptors;
+public class WebMvcConfiguration {
+  static class WebMvcConfigurerBean implements WebMvcConfigurer {
+    private List<PreHandlerInterceptor> preHandlerInterceptors;
 
-  private List<PostHandlerInterceptor> postHandlerInterceptors;
+    private List<PostHandlerInterceptor> postHandlerInterceptors;
 
-  @Override
-  public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(new DecorateHandlerInterceptor(preHandlerInterceptors, postHandlerInterceptors))
-        .addPathPatterns("/**");
+    WebMvcConfigurerBean(List<PreHandlerInterceptor> preHandlerInterceptors,
+        List<PostHandlerInterceptor> postHandlerInterceptors) {
+      this.preHandlerInterceptors = preHandlerInterceptors;
+      this.postHandlerInterceptors = postHandlerInterceptors;
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+      registry.addInterceptor(new DecorateHandlerInterceptor(preHandlerInterceptors, postHandlerInterceptors))
+          .addPathPatterns("/**");
+    }
   }
 
-  @Autowired(required = false)
-  public void setPreHandlerInterceptors(List<PreHandlerInterceptor> preHandlerInterceptors) {
-    this.preHandlerInterceptors = preHandlerInterceptors;
-  }
-
-  @Autowired(required = false)
-  public void setPostHandlerInterceptors(List<PostHandlerInterceptor> postHandlerInterceptors) {
-    this.postHandlerInterceptors = postHandlerInterceptors;
+  @Bean
+  public WebMvcConfigurer webMvcConfigurer(
+      @Autowired(required = false) List<PreHandlerInterceptor> preHandlerInterceptors,
+      @Autowired(required = false) List<PostHandlerInterceptor> postHandlerInterceptors) {
+    return new WebMvcConfigurerBean(preHandlerInterceptors, postHandlerInterceptors);
   }
 
   @Bean
