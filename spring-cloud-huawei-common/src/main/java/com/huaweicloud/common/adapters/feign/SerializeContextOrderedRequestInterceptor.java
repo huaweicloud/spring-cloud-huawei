@@ -17,6 +17,8 @@
 
 package com.huaweicloud.common.adapters.feign;
 
+import org.springframework.core.Ordered;
+
 import com.huaweicloud.common.context.InvocationContextHolder;
 
 import feign.RequestTemplate;
@@ -31,6 +33,6 @@ public class SerializeContextOrderedRequestInterceptor implements OrderedRequest
 
   @Override
   public int getOrder() {
-    return Integer.MAX_VALUE;
+    return Ordered.LOWEST_PRECEDENCE;
   }
 }

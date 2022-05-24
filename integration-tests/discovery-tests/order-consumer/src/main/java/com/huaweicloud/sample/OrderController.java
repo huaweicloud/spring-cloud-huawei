@@ -69,6 +69,18 @@ public class OrderController {
     return restTemplate.getForObject("http://price/invocationContext", String.class);
   }
 
+  @RequestMapping("/invocationContextGateway")
+  public String invocationContextGateway() {
+    InvocationContext invocationContext = InvocationContextHolder.getInvocationContext();
+    if (!"test01".equals(invocationContext.getContext("test01"))) {
+      return null;
+    }
+    if (!"test03".equals(invocationContext.getContext("test03"))) {
+      return null;
+    }
+    return "success";
+  }
+
   @RequestMapping("/invocationContextFeign")
   public String invocationContextFeign() {
     InvocationContext invocationContext = InvocationContextHolder.getInvocationContext();

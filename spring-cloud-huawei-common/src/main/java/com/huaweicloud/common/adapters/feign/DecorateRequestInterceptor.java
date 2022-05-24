@@ -19,10 +19,12 @@ package com.huaweicloud.common.adapters.feign;
 
 import java.util.List;
 
+import org.springframework.core.Ordered;
+
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 
-public class DecorateRequestInterceptor implements RequestInterceptor {
+public class DecorateRequestInterceptor implements RequestInterceptor, Ordered {
   private List<OrderedRequestInterceptor> orderedRequestInterceptors;
 
   public DecorateRequestInterceptor(List<OrderedRequestInterceptor> orderedRequestInterceptors) {
@@ -34,5 +36,10 @@ public class DecorateRequestInterceptor implements RequestInterceptor {
     if (orderedRequestInterceptors != null) {
       orderedRequestInterceptors.forEach(interceptor -> interceptor.apply(requestTemplate));
     }
+  }
+
+  @Override
+  public int getOrder() {
+    return 0;
   }
 }
