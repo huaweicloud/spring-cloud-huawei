@@ -42,7 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RestController
 public class SchemaController {
 
-  final ServiceCombSwaggerHandler serviceCombSwaggerHandler;
+  private final ServiceCombSwaggerHandler serviceCombSwaggerHandler;
 
   private final RestTemplate restTemplate;
 
