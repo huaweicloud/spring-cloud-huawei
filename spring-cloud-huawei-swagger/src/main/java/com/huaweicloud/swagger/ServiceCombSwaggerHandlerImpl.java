@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -119,29 +120,28 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   private void renameOperations(Map<String, OpenAPI> swaggerMap) {
     swaggerMap.forEach((key, openApi) -> {
       openApi.getPaths().forEach((operationID, pathItem) -> {
-        int index = 0;
-        index = setOperationId(operationID, pathItem.getGet(), index);
-        index = setOperationId(operationID, pathItem.getPut(), index);
-        index = setOperationId(operationID, pathItem.getPost(), index);
-        index = setOperationId(operationID, pathItem.getDelete(), index);
-        index = setOperationId(operationID, pathItem.getOptions(), index);
-        index = setOperationId(operationID, pathItem.getHead(), index);
-        index = setOperationId(operationID, pathItem.getPatch(), index);
+        AtomicInteger index = new AtomicInteger(0);
+        setOperationId(operationID, pathItem.getGet(), index);
+        setOperationId(operationID, pathItem.getPut(), index);
+        setOperationId(operationID, pathItem.getPost(), index);
+        setOperationId(operationID, pathItem.getDelete(), index);
+        setOperationId(operationID, pathItem.getOptions(), index);
+        setOperationId(operationID, pathItem.getHead(), index);
+        setOperationId(operationID, pathItem.getPatch(), index);
         setOperationId(operationID, pathItem.getTrace(), index);
       });
     });
   }
 
-  private int setOperationId(String operationID, Operation operation, int index) {
+  private void setOperationId(String operationID, Operation operation, AtomicInteger index) {
     if (operation != null) {
-      if (index == 0) {
+      if (index.get() == 0) {
         operation.setOperationId(operationID);
       } else {
-        operation.setOperationId(operationID + "_" + index);
+        operation.setOperationId(operationID + "_" + index.get());
       }
-      return index + 1;
+      index.incrementAndGet();
     }
-    return index;
   }
 
   private static String calcSchemaSummary(String schemaContent) {
