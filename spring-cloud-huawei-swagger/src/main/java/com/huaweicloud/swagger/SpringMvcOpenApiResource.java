@@ -36,7 +36,6 @@ import org.springdoc.webmvc.api.OpenApiResource;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.web.method.HandlerMethod;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.models.OpenAPI;
 
 import static org.springdoc.core.Constants.DEFAULT_GROUP_NAME;
