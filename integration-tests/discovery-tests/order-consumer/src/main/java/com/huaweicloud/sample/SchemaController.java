@@ -17,6 +17,8 @@
 
 package com.huaweicloud.sample;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -33,8 +35,6 @@ import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Class for testing schema generator
@@ -59,8 +59,21 @@ public class SchemaController {
 
   @RequestMapping("/testSchemaGeneratorServiceComb")
   public String testSchemaGeneratorServiceComb() throws Exception {
-    //TODO not support now
-    return "success";
+    List<String> schemas = serviceCombSwaggerHandler.getSchemaIds();
+    Map<String, String> schemaContents = serviceCombSwaggerHandler.getSchemasMap();
+    Map<String, String> schemaSummary = serviceCombSwaggerHandler.getSchemasSummaryMap();
+    assertThat(schemaContents.size()).isEqualTo(schemas.size());
+    assertThat(schemaContents.size()).isEqualTo(schemaSummary.size());
+
+    String a1 = schemaContents.get("schemaContentController");
+    String a2 = readFile("SchemaContentController.yaml");
+    OpenAPI swagger2 = Yaml.mapper().readValue(a2, OpenAPI.class);
+    OpenAPI swagger1 = Yaml.mapper().readValue(a1, OpenAPI.class);
+    if (swagger1.equals(swagger2)) {
+      return "success";
+    } else {
+      return a1;
+    }
   }
 
   private String readFile(String restController) {

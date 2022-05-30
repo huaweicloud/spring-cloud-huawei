@@ -17,201 +17,66 @@
 ---
 swagger: "2.0"
 info:
-  description: Api Documentation
-  version: "1.0"
-  title: swagger definition for com.huaweicloud.sample.SchemaContentController
-  termsOfService: urn:tos
-  contact:
-    name: ""
-    url: ""
-    email: ""
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0
-  x-java-interface: cse.gen.default.order.SchemaContentControllerIntf
-host: ""
-basePath: /
-tags: []
-schemes: []
-consumes: []
-produces: []
+  version: "1.0.0"
+  title: "swagger definition for com.huaweicloud.sample.SchemaContentController"
+  x-java-interface: "gen.swagger.SchemaContentControllerIntf"
+basePath: "/"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
 paths:
-  /danglingPattern/(.*):
+  /danglingPattern/**:
     post:
-      tags:
-      - schema-content-controller
-      summary: danglingPattern
-      operationId: danglingPattern
-      schemes: []
-      consumes:
-      - application/json
-      produces:
-      - text/plain
+      operationId: "danglingPattern"
       parameters:
-      - in: body
-        name: id
-        description: id
-        required: true
-        schema:
-          type: string
-          format: ""
-        x-raw-json: "true"
+        - in: "body"
+          name: "id"
+          required: true
+          schema:
+            type: "string"
       responses:
         "200":
-          description: OK
-          examples: {}
-          headers: {}
+          description: "response of 200"
           schema:
-            type: string
-          responseSchema:
-            type: string
-            format: ""
-        "201":
-          description: Created
-          examples: {}
-          headers: {}
-        "401":
-          description: Unauthorized
-          examples: {}
-          headers: {}
-        "403":
-          description: Forbidden
-          examples: {}
-          headers: {}
-        "404":
-          description: Not Found
-          examples: {}
-          headers: {}
-      security: []
+            type: "string"
   /sayHelloGet:
     get:
-      tags:
-      - schema-content-controller
-      summary: sayHelloGet
-      operationId: sayHelloGet
-      schemes: []
-      consumes: []
-      produces:
-      - text/plain
+      operationId: "sayHelloGet"
       parameters:
-      - name: id
-        in: query
-        description: id
-        required: true
-        type: string
+        - name: "id"
+          in: "query"
+          required: true
+          type: "string"
       responses:
         "200":
-          description: OK
-          examples: {}
-          headers: {}
+          description: "response of 200"
           schema:
-            type: string
-          responseSchema:
-            type: string
-            format: ""
-        "401":
-          description: Unauthorized
-          examples: {}
-          headers: {}
-        "403":
-          description: Forbidden
-          examples: {}
-          headers: {}
-        "404":
-          description: Not Found
-          examples: {}
-          headers: {}
-      security: []
+            type: "string"
   /sayHelloPost:
     post:
-      tags:
-      - schema-content-controller
-      summary: sayHelloPost
-      operationId: sayHelloPost
-      schemes: []
-      consumes:
-      - application/json
-      produces:
-      - text/plain
+      operationId: "sayHelloPost"
       parameters:
-      - name: id
-        in: query
-        description: id
-        required: true
-        type: string
+        - name: "id"
+          in: "query"
+          required: true
+          type: "string"
       responses:
         "200":
-          description: OK
-          examples: {}
-          headers: {}
+          description: "response of 200"
           schema:
-            type: string
-          responseSchema:
-            type: string
-            format: ""
-        "201":
-          description: Created
-          examples: {}
-          headers: {}
-        "401":
-          description: Unauthorized
-          examples: {}
-          headers: {}
-        "403":
-          description: Forbidden
-          examples: {}
-          headers: {}
-        "404":
-          description: Not Found
-          examples: {}
-          headers: {}
-      security: []
+            type: "string"
   /stringRequestBody:
     post:
-      tags:
-      - schema-content-controller
-      summary: stringRequestBody
-      operationId: stringRequestBody
-      schemes: []
-      consumes:
-      - application/json
-      produces:
-      - text/plain
+      operationId: "stringRequestBody"
       parameters:
-      - in: body
-        name: id
-        description: id
-        required: true
-        schema:
-          type: string
-          format: ""
-        x-raw-json: "true"
+        - in: "body"
+          name: "id"
+          required: true
+          schema:
+            type: "string"
       responses:
         "200":
-          description: OK
-          examples: {}
-          headers: {}
+          description: "response of 200"
           schema:
-            type: string
-          responseSchema:
-            type: string
-            format: ""
-        "201":
-          description: Created
-          examples: {}
-          headers: {}
-        "401":
-          description: Unauthorized
-          examples: {}
-          headers: {}
-        "403":
-          description: Forbidden
-          examples: {}
-          headers: {}
-        "404":
-          description: Not Found
-          examples: {}
-          headers: {}
-      security: []
-securityDefinitions: {}
-definitions: {}
+            type: "string"
