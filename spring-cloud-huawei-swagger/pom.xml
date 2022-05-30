@@ -34,6 +34,10 @@
       <artifactId>springdoc-openapi-ui</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.servicecomb</groupId>
+      <artifactId>swagger-generator-springmvc</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-huawei-common</artifactId>
     </dependency>
