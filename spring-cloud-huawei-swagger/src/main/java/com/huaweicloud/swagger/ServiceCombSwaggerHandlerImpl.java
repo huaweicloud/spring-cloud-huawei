@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -37,6 +38,7 @@ import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
 
 public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler {
 
@@ -118,73 +120,28 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   private void renameOperations(Map<String, OpenAPI> swaggerMap) {
     swaggerMap.forEach((key, openApi) -> {
       openApi.getPaths().forEach((operationID, pathItem) -> {
-        int index = 0;
-        if (pathItem.getGet() != null) {
-          if (index == 0) {
-            pathItem.getGet().setOperationId(operationID);
-          } else {
-            pathItem.getGet().setOperationId(operationID + "_" + index);
-          }
-          index++;
-        }
-        if (pathItem.getPut() != null) {
-          if (index == 0) {
-            pathItem.getPut().setOperationId(operationID);
-          } else {
-            pathItem.getPut().setOperationId(operationID + "_" + index);
-          }
-          index++;
-        }
-        if (pathItem.getPost() != null) {
-          if (index == 0) {
-            pathItem.getPost().setOperationId(operationID);
-          } else {
-            pathItem.getPost().setOperationId(operationID + "_" + index);
-          }
-          index++;
-        }
-        if (pathItem.getDelete() != null) {
-          if (index == 0) {
-            pathItem.getDelete().setOperationId(operationID);
-          } else {
-            pathItem.getDelete().setOperationId(operationID + "_" + index);
-          }
-          index++;
-        }
-        if (pathItem.getOptions() != null) {
-          if (index == 0) {
-            pathItem.getOptions().setOperationId(operationID);
-          } else {
-            pathItem.getOptions().setOperationId(operationID + "_" + index);
-          }
-          index++;
-        }
-        if (pathItem.getHead() != null) {
-          if (index == 0) {
-            pathItem.getHead().setOperationId(operationID);
-          } else {
-            pathItem.getHead().setOperationId(operationID + "_" + index);
-          }
-          index++;
-        }
-        if (pathItem.getPatch() != null) {
-          if (index == 0) {
-            pathItem.getPatch().setOperationId(operationID);
-          } else {
-            pathItem.getPatch().setOperationId(operationID + "_" + index);
-          }
-          index++;
-        }
-        if (pathItem.getTrace() != null) {
-          if (index == 0) {
-            pathItem.getTrace().setOperationId(operationID);
-          } else {
-            pathItem.getTrace().setOperationId(operationID + "_" + index);
-          }
-          index++;
-        }
+        AtomicInteger index = new AtomicInteger(0);
+        setOperationId(operationID, pathItem.getGet(), index);
+        setOperationId(operationID, pathItem.getPut(), index);
+        setOperationId(operationID, pathItem.getPost(), index);
+        setOperationId(operationID, pathItem.getDelete(), index);
+        setOperationId(operationID, pathItem.getOptions(), index);
+        setOperationId(operationID, pathItem.getHead(), index);
+        setOperationId(operationID, pathItem.getPatch(), index);
+        setOperationId(operationID, pathItem.getTrace(), index);
       });
     });
+  }
+
+  private void setOperationId(String operationID, Operation operation, AtomicInteger index) {
+    if (operation != null) {
+      if (index.get() == 0) {
+        operation.setOperationId(operationID);
+      } else {
+        operation.setOperationId(operationID + "_" + index.get());
+      }
+      index.incrementAndGet();
+    }
   }
 
   private static String calcSchemaSummary(String schemaContent) {
