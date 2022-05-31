@@ -30,12 +30,12 @@
 
   <dependencies>
     <dependency>
-      <groupId>io.springfox</groupId>
-      <artifactId>springfox-boot-starter</artifactId>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-ui</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.swagger.core.v3</groupId>
-      <artifactId>swagger-core</artifactId>
+      <groupId>org.apache.servicecomb</groupId>
+      <artifactId>swagger-generator-springmvc</artifactId>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>

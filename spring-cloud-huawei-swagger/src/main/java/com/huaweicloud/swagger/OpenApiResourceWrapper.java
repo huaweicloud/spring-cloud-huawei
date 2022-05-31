@@ -29,35 +29,51 @@ import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springdoc.core.filters.OpenApiMethodFilter;
 import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-
-import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 
 /**
- * @Author GuoYl123
- * @Date 2019/12/17
- **/
-@Configuration
-public class SwaggerConfiguration {
+ * This class is to create a SpringMvcOpenApiResource object,
+ * if make SpringMvcOpenApiResource as a spring bean,it will effect springdoc
+ */
+public class OpenApiResourceWrapper {
 
-  @Bean
-  @Lazy
-  public ServiceCombSwaggerHandler serviceCombSwaggerHandler() {
-    return new ServiceCombSwaggerHandlerImpl();
-  }
+  ObjectFactory<OpenAPIService> openAPIBuilderObjectFactory;
 
-  @Bean
-  OpenApiResourceWrapper openApiResourceWrapper(ObjectFactory<OpenAPIService> openAPIBuilderObjectFactory,
-      AbstractRequestService requestBuilder,
+  AbstractRequestService requestBuilder;
+
+  GenericResponseService responseBuilder;
+
+  OperationService operationParser;
+
+  Optional<List<OperationCustomizer>> operationCustomizers;
+
+  Optional<List<OpenApiCustomiser>> openApiCustomisers;
+
+  Optional<List<OpenApiMethodFilter>> methodFilters;
+
+  SpringDocConfigProperties springDocConfigProperties;
+
+  SpringDocProviders springDocProviders;
+
+  public OpenApiResourceWrapper(
+      ObjectFactory<OpenAPIService> openAPIBuilderObjectFactory, AbstractRequestService requestBuilder,
       GenericResponseService responseBuilder, OperationService operationParser,
-      SpringDocConfigProperties springDocConfigProperties,
       Optional<List<OperationCustomizer>> operationCustomizers,
       Optional<List<OpenApiCustomiser>> openApiCustomisers,
       Optional<List<OpenApiMethodFilter>> methodFilters,
-      SpringDocProviders springDocProviders) {
-    return new OpenApiResourceWrapper(openAPIBuilderObjectFactory, requestBuilder,
+      SpringDocConfigProperties springDocConfigProperties, SpringDocProviders springDocProviders) {
+    this.openAPIBuilderObjectFactory = openAPIBuilderObjectFactory;
+    this.requestBuilder = requestBuilder;
+    this.responseBuilder = responseBuilder;
+    this.operationParser = operationParser;
+    this.operationCustomizers = operationCustomizers;
+    this.openApiCustomisers = openApiCustomisers;
+    this.methodFilters = methodFilters;
+    this.springDocConfigProperties = springDocConfigProperties;
+    this.springDocProviders = springDocProviders;
+  }
+
+  public SpringMvcOpenApiResource createOpenApiResource(String groupName) {
+    return new SpringMvcOpenApiResource(groupName, openAPIBuilderObjectFactory, requestBuilder,
         responseBuilder, operationParser, operationCustomizers,
         openApiCustomisers, methodFilters, springDocConfigProperties, springDocProviders);
   }
