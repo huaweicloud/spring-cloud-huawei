@@ -21,7 +21,7 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-starter-huawei</artifactId>
-    <version>1.10.0-2020.0.x-SNAPSHOT</version>
+    <version>1.11.0-2020.0.x-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>spring-cloud-starter-huawei-core</artifactId>
