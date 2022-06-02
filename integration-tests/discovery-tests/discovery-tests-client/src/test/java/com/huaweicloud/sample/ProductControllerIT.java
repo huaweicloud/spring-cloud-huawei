@@ -32,4 +32,10 @@ public class ProductControllerIT {
     String result = template.getForObject(url + "/product?id=1000", String.class);
     assertThat(result).isEqualTo("1000");
   }
+
+  @Test
+  public void testGetProductAsync() {
+    String result = template.getForObject(url + "/productAsync?id=1000", String.class);
+    assertThat(result).isEqualTo("1000");
+  }
 }

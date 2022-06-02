@@ -16,6 +16,10 @@
   */
 package com.huaweicloud.sample;
 
+import java.util.concurrent.CountDownLatch;
+
+import javax.xml.ws.Holder;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,4 +34,25 @@ public class ProductController {
   public String getProduct(@RequestParam("id") long id) {
     return feignService.getPrice(id);
   }
+
+  @RequestMapping("/productAsync")
+  public String getProductAsync(@RequestParam("id") long id) {
+    CountDownLatch latch = new CountDownLatch(1);
+    Holder<String> holder = new Holder<>();
+    new Thread(() -> {
+      try {
+        holder.value = feignService.getPrice(id);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      latch.countDown();
+    }).start();
+    try {
+      latch.await();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    return holder.value;
+  }
 }
+
