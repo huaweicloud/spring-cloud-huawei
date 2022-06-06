@@ -61,7 +61,7 @@ public class OrderController {
 
   @RequestMapping("/invocationContext")
   public String invocationContext() {
-    InvocationContext invocationContext = InvocationContextHolder.getInvocationContext();
+    InvocationContext invocationContext = InvocationContextHolder.getOrCreateInvocationContext();
     if (!"test01".equals(invocationContext.getContext("test01"))) {
       return null;
     }
@@ -71,7 +71,7 @@ public class OrderController {
 
   @RequestMapping("/invocationContextGateway")
   public String invocationContextGateway() {
-    InvocationContext invocationContext = InvocationContextHolder.getInvocationContext();
+    InvocationContext invocationContext = InvocationContextHolder.getOrCreateInvocationContext();
     if (!"test01".equals(invocationContext.getContext("test01"))) {
       return null;
     }
@@ -83,7 +83,7 @@ public class OrderController {
 
   @RequestMapping("/invocationContextFeign")
   public String invocationContextFeign() {
-    InvocationContext invocationContext = InvocationContextHolder.getInvocationContext();
+    InvocationContext invocationContext = InvocationContextHolder.getOrCreateInvocationContext();
     if (!"test01".equals(invocationContext.getContext("test01"))) {
       return null;
     }

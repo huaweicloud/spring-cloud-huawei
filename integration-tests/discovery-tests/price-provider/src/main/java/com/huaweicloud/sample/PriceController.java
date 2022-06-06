@@ -18,6 +18,7 @@ package com.huaweicloud.sample;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,11 +46,17 @@ public class PriceController {
 
   @RequestMapping("/invocationContext")
   public String invocationContext() {
-    InvocationContext invocationContext = InvocationContextHolder.getInvocationContext();
+    InvocationContext invocationContext = InvocationContextHolder.getOrCreateInvocationContext();
     if (!"test01".equals(invocationContext.getContext("test01"))) {
       return null;
     }
     if (!"test02".equals(invocationContext.getContext("test02"))) {
+      return null;
+    }
+    if (!"order".equals(invocationContext.getContext(InvocationContext.CONTEXT_MICROSERVICE_NAME))) {
+      return null;
+    }
+    if (StringUtils.isEmpty(invocationContext.getContext(InvocationContext.CONTEXT_INSTANCE_ID))) {
       return null;
     }
     return "success";
