@@ -15,22 +15,19 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.common.adapters.gateway;
+package com.huaweicloud.servicecomb.discovery.context;
 
-import org.springframework.core.Ordered;
-import org.springframework.web.server.ServerWebExchange;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
-public class SerializeContextPreGlobalFilter implements PreGlobalFilter {
-  @Override
-  public void process(ServerWebExchange exchange) {
-    exchange.mutate().request(r -> r.header(InvocationContextHolder.SERIALIZE_KEY,
-        InvocationContextHolder.serialize(InvocationContextHolder.getOrCreateInvocationContext())));
-  }
-
-  @Override
-  public int getOrder() {
-    return Ordered.LOWEST_PRECEDENCE;
+@Configuration
+@ConditionalOnClass(name = {"feign.RequestInterceptor"})
+public class FeignContextConfiguration {
+  @Bean
+  public FeignAddServiceNameContext feignAddServiceNameContext(ServiceCombRegistration registration) {
+    return new FeignAddServiceNameContext(registration);
   }
 }

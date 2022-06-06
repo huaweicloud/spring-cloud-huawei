@@ -28,7 +28,7 @@ public class SerializeContextOrderedRequestInterceptor implements OrderedRequest
   @Override
   public void apply(RequestTemplate requestTemplate) {
     requestTemplate.header(InvocationContextHolder.SERIALIZE_KEY,
-        InvocationContextHolder.serialize(InvocationContextHolder.getInvocationContext()));
+        InvocationContextHolder.serialize(InvocationContextHolder.getOrCreateInvocationContext()));
   }
 
   @Override

@@ -27,7 +27,7 @@ import com.huaweicloud.common.context.InvocationContextHolder;
 public class AddTestHeaderPreGlobalFilter implements PreGlobalFilter {
   @Override
   public void process(ServerWebExchange exchange) {
-    InvocationContextHolder.getInvocationContext().putContext("test03", "test03");
+    InvocationContextHolder.getOrCreateInvocationContext().putContext("test03", "test03");
   }
 
   @Override

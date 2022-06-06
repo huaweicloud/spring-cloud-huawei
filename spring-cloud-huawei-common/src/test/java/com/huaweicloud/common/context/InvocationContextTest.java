@@ -31,7 +31,7 @@ public class InvocationContextTest {
     InvocationContext invocationContext = InvocationContextHolder.deserializeAndCreate(context);
     Assertions.assertEquals("foo", invocationContext.getContext("foo"));
 
-    invocationContext = InvocationContextHolder.getInvocationContext();
+    invocationContext = InvocationContextHolder.getOrCreateInvocationContext();
     Assertions.assertEquals("foo", invocationContext.getContext("foo"));
 
     invocationContext.putLocalContext("bar", "bar");
@@ -52,7 +52,7 @@ public class InvocationContextTest {
     InvocationContext invocationContext = InvocationContextHolder.deserializeAndCreate(context);
     Assertions.assertNull(invocationContext.getLocalContext("foo"));
 
-    invocationContext = InvocationContextHolder.getInvocationContext();
+    invocationContext = InvocationContextHolder.getOrCreateInvocationContext();
     Assertions.assertNull(invocationContext.getLocalContext("foo"));
 
     invocationContext.putLocalContext("bar", "bar");

@@ -23,4 +23,9 @@ import feign.RequestTemplate;
 
 public interface OrderedRequestInterceptor extends Ordered {
   void apply(RequestTemplate requestTemplate);
+
+  @Override
+  default int getOrder() {
+    return 0;
+  }
 }

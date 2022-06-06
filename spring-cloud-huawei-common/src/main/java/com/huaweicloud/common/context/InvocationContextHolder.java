@@ -24,8 +24,13 @@ public final class InvocationContextHolder {
 
   private static final ThreadLocal<InvocationContext> INVOCATION_CONTEXT = new ThreadLocal<>();
 
-  public static InvocationContext getInvocationContext() {
-    return INVOCATION_CONTEXT.get();
+  public static InvocationContext getOrCreateInvocationContext() {
+    InvocationContext result = INVOCATION_CONTEXT.get();
+    if (result == null) {
+      result = new InvocationContext();
+      INVOCATION_CONTEXT.set(result);
+    }
+    return result;
   }
 
   public static InvocationContext deserializeAndCreate(String context) {

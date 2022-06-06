@@ -21,6 +21,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InvocationContext {
+  public static final String CONTEXT_MICROSERVICE_NAME = "x-microservice-name";
+
+  public static final String CONTEXT_INSTANCE_ID = "x-instance-id";
+
   protected Map<String, String> context = new HashMap<>();
 
   protected Map<String, Object> localContext = new HashMap<>();

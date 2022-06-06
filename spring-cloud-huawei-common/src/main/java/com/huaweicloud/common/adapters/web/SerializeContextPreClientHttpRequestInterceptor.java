@@ -31,6 +31,6 @@ public class SerializeContextPreClientHttpRequestInterceptor implements PreClien
   @Override
   public void process(HttpRequest request, byte[] body) {
     request.getHeaders().add(InvocationContextHolder.SERIALIZE_KEY,
-        InvocationContextHolder.serialize(InvocationContextHolder.getInvocationContext()));
+        InvocationContextHolder.serialize(InvocationContextHolder.getOrCreateInvocationContext()));
   }
 }
