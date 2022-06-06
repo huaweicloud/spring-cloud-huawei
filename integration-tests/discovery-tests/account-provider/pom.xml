@@ -25,8 +25,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>account-provider</artifactId>
-  <name>Integration Tests::Discovery Tests::Account Provider</name>
+  <artifactId>account-provider-test</artifactId>
+  <name>Integration Tests::Discovery Tests::Account Provider Test</name>
 
   <dependencies>
     <dependency>
