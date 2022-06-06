@@ -17,8 +17,6 @@
 
 package com.huaweicloud.common.context;
 
-import java.net.URL;
-
 import org.apache.commons.codec.net.URLCodec;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -64,5 +62,16 @@ public class InvocationContextTest {
     invocationContext = InvocationContextHolder.deserializeAndCreate(serialized);
     Assertions.assertNull(invocationContext.getLocalContext("foo"));
     Assertions.assertNull(invocationContext.getLocalContext("bar"));
+  }
+
+  @Test
+  public void test_empty_context() {
+    InvocationContext invocationContext = InvocationContextHolder.deserializeAndCreate(null);
+    Assertions.assertNull(invocationContext.getContext("foo"));
+    invocationContext = InvocationContextHolder.deserializeAndCreate("");
+    Assertions.assertNull(invocationContext.getContext("foo"));
+
+    String context = InvocationContextHolder.serialize(null);
+    Assertions.assertEquals("", context);
   }
 }

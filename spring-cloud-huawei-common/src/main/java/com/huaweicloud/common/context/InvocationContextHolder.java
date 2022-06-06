@@ -36,6 +36,9 @@ public final class InvocationContextHolder {
   }
 
   public static String serialize(InvocationContext context) {
+    if (context == null) {
+      return "";
+    }
     return HeaderUtil.serialize(context.getContext());
   }
 }
