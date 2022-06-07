@@ -33,6 +33,6 @@ public class FeignAddServiceNameContext implements OrderedRequestInterceptor {
   public void apply(feign.RequestTemplate requestTemplate) {
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
     context.putContext(InvocationContext.CONTEXT_MICROSERVICE_NAME, registration.getServiceId());
-    context.putContext(InvocationContext.CONTEXT_INSTANCE_ID, registration.getMicroserviceInstance().getInstanceId());
+    context.putContext(InvocationContext.CONTEXT_INSTANCE_ID, registration.getInstanceId());
   }
 }

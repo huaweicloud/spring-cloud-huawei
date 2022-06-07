@@ -74,6 +74,11 @@
       <artifactId>annotations</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-gateway-server</artifactId>
+      <scope>provided</scope>
+    </dependency>
     <!-- end extensions module -->
   </dependencies>
 </project>
