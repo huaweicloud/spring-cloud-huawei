@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.servicecomb.config.center.client.AddressManager;
 import org.apache.servicecomb.config.center.client.ConfigCenterClient;
@@ -39,7 +40,6 @@ import org.apache.servicecomb.http.client.common.HttpTransport;
 import org.apache.servicecomb.http.client.common.HttpTransportFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.commons.lang3.StringUtils;
 
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.common.transport.ServiceCombAkSkProperties;
@@ -72,7 +72,7 @@ public class ConfigService {
       ServiceCombAkSkProperties serviceCombAkSkProperties, ServiceCombSSLProperties serviceCombSSLProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
 
-    if (URLUtil.getEnvConfigUrl().isEmpty() && StringUtils.isEmpty(configProperties.getServerAddr())) {
+    if (StringUtils.isEmpty(configProperties.getServerAddr())) {
       throw new IllegalArgumentException(
           "Config server address is not configured. "
               + "Please configure config server address or set spring.cloud.servicecomb.config.enabled to false");
@@ -104,12 +104,10 @@ public class ConfigService {
 
   private AddressManager configCenterAddressManager(ServiceCombConfigProperties configProperties,
       ServiceCombAkSkProperties serviceCombAkSkProperties) {
-    List<String> addresses = URLUtil.getEnvConfigUrl();
-    if (addresses.isEmpty()) {
-      addresses = URLUtil.dealMultiUrl(configProperties.getServerAddr());
-    }
-    LOGGER
-        .info("initialize config server type={}, address={}.", configProperties.getServerType(), addresses);
+
+    List<String> addresses = URLUtil.dealMultiUrl(configProperties.getServerAddr());
+
+    LOGGER.info("initialize config server type={}, address={}.", configProperties.getServerType(), addresses);
     return new AddressManager(serviceCombAkSkProperties.getProject(), addresses, EventManager.getEventBus());
   }
 
@@ -169,12 +167,8 @@ public class ConfigService {
   }
 
   private KieAddressManager configKieAddressManager(ServiceCombConfigProperties configProperties) {
-    List<String> addresses = URLUtil.getEnvConfigUrl();
-    if (addresses.isEmpty()) {
-      addresses = URLUtil.dealMultiUrl(configProperties.getServerAddr());
-    }
-    LOGGER
-        .info("initialize config server type={}, address={}.", configProperties.getServerType(), addresses);
+    List<String> addresses = URLUtil.dealMultiUrl(configProperties.getServerAddr());
+    LOGGER.info("initialize config server type={}, address={}.", configProperties.getServerType(), addresses);
     return createKieAddressManager(addresses);
   }
 
