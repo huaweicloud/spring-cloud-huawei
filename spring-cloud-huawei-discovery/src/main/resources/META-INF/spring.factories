@@ -20,5 +20,5 @@ com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryClientConfig
 com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistryAutoConfiguration, \
 com.huaweicloud.servicecomb.discovery.discovery.ServiceCombReactiveDiscoveryClientConfiguration, \
 com.huaweicloud.servicecomb.discovery.context.FeignContextConfiguration, \
-com.huaweicloud.servicecomb.discovery.context.RestTemplateContextConfiguration
-
+com.huaweicloud.servicecomb.discovery.context.RestTemplateContextConfiguration, \
+com.huaweicloud.servicecomb.discovery.context.GatewayContextConfiguration
