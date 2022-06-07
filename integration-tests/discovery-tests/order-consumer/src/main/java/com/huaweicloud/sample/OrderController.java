@@ -16,6 +16,7 @@
  */
 package com.huaweicloud.sample;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -76,6 +77,12 @@ public class OrderController {
       return null;
     }
     if (!"test03".equals(invocationContext.getContext("test03"))) {
+      return null;
+    }
+    if (!"discovery-gateway".equals(invocationContext.getContext(InvocationContext.CONTEXT_MICROSERVICE_NAME))) {
+      return null;
+    }
+    if (StringUtils.isEmpty(invocationContext.getContext(InvocationContext.CONTEXT_INSTANCE_ID))) {
       return null;
     }
     return "success";

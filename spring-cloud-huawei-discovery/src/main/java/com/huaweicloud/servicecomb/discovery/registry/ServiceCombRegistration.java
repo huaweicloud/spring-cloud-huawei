@@ -70,6 +70,11 @@ public class ServiceCombRegistration implements Registration {
   }
 
   @Override
+  public String getInstanceId() {
+    return this.microserviceInstance.getInstanceId();
+  }
+
+  @Override
   public String getHost() {
     throw new IllegalStateException("not supported");
   }
