@@ -15,16 +15,19 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.common.adapters.gateway;
+package com.huaweicloud.servicecomb.discovery.context;
 
-import org.springframework.core.Ordered;
-import org.springframework.web.server.ServerWebExchange;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-public interface PreGlobalFilter extends Ordered {
-  void process(ServerWebExchange exchange);
+import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
-  @Override
-  default int getOrder() {
-    return 0;
+@Configuration
+@ConditionalOnClass(name = {"org.springframework.cloud.gateway.filter.GlobalFilter"})
+public class GatewayContextConfiguration {
+  @Bean
+  public GatewayAddServiceNameContext gatewayAddServiceNameContext(ServiceCombRegistration registration) {
+    return new GatewayAddServiceNameContext(registration);
   }
 }

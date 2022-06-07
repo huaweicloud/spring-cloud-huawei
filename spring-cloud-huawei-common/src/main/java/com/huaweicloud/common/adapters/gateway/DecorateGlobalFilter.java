@@ -21,8 +21,12 @@ import java.util.List;
 
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
 import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
+
+import com.huaweicloud.common.context.InvocationContext;
+import com.huaweicloud.common.context.InvocationContextHolder;
 
 import reactor.core.publisher.Mono;
 
@@ -39,8 +43,9 @@ public class DecorateGlobalFilter implements GlobalFilter, Ordered {
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
     preProcess(exchange);
-    return chain.filter(exchange).doOnSuccess(v -> postProcess(exchange))
-        .doOnError(t -> postProcess(exchange));
+    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
+    return chain.filter(exchange).doOnSuccess(v -> postProcess(exchange, context))
+        .doOnError(t -> postProcess(exchange, context));
   }
 
   private void preProcess(ServerWebExchange exchange) {
@@ -49,7 +54,8 @@ public class DecorateGlobalFilter implements GlobalFilter, Ordered {
     }
   }
 
-  private void postProcess(ServerWebExchange exchange) {
+  private void postProcess(ServerWebExchange exchange, InvocationContext context) {
+    InvocationContextHolder.setInvocationContext(context);
     if (postGlobalFilters != null) {
       postGlobalFilters.forEach(filter -> filter.process(exchange));
     }
@@ -57,6 +63,8 @@ public class DecorateGlobalFilter implements GlobalFilter, Ordered {
 
   @Override
   public int getOrder() {
-    return 0;
+    // this filter executed after ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER
+    // so that we can get ServerWebExchangeUtils.GATEWAY_LOADBALANCER_RESPONSE_ATTR in PreGlobalFilter
+    return ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER + 1;
   }
 }

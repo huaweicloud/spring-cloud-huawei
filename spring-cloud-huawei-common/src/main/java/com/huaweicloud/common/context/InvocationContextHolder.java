@@ -46,4 +46,8 @@ public final class InvocationContextHolder {
     }
     return HeaderUtil.serialize(context.getContext());
   }
+
+  public static void setInvocationContext(InvocationContext context) {
+    INVOCATION_CONTEXT.set(context);
+  }
 }

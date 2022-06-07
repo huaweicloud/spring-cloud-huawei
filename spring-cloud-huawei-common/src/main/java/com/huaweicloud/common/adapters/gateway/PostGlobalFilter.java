@@ -22,4 +22,9 @@ import org.springframework.web.server.ServerWebExchange;
 
 public interface PostGlobalFilter extends Ordered {
   void process(ServerWebExchange exchange);
+
+  @Override
+  default int getOrder() {
+    return 0;
+  }
 }

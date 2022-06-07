@@ -17,22 +17,22 @@
 
 package com.huaweicloud.servicecomb.discovery.context;
 
-import org.springframework.http.HttpRequest;
+import org.springframework.web.server.ServerWebExchange;
 
-import com.huaweicloud.common.adapters.web.PreClientHttpRequestInterceptor;
+import com.huaweicloud.common.adapters.gateway.PreGlobalFilter;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
-public class RestTemplateAddServiceNameContext implements PreClientHttpRequestInterceptor {
+public class GatewayAddServiceNameContext implements PreGlobalFilter {
   private final ServiceCombRegistration registration;
 
-  public RestTemplateAddServiceNameContext(ServiceCombRegistration registration) {
+  public GatewayAddServiceNameContext(ServiceCombRegistration registration) {
     this.registration = registration;
   }
 
   @Override
-  public void process(HttpRequest request, byte[] body) {
+  public void process(ServerWebExchange exchange) {
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
     context.putContext(InvocationContext.CONTEXT_MICROSERVICE_NAME, registration.getServiceId());
     context.putContext(InvocationContext.CONTEXT_INSTANCE_ID, registration.getInstanceId());
