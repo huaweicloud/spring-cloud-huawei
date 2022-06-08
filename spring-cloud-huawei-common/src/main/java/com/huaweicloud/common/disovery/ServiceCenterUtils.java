@@ -40,10 +40,7 @@ public class ServiceCenterUtils {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCenterUtils.class);
 
   public static AddressManager createAddressManager(DiscoveryBootstrapProperties discoveryProperties) {
-    List<String> addresses = URLUtil.getEnvServerURL();
-    if (addresses.isEmpty()) {
-      addresses = URLUtil.dealMultiUrl(discoveryProperties.getAddress());
-    }
+    List<String> addresses = URLUtil.dealMultiUrl(discoveryProperties.getAddress());
     LOGGER.info("initialize discovery server={}", addresses);
     return new AddressManager("default", addresses, EventManager.getEventBus());
   }
