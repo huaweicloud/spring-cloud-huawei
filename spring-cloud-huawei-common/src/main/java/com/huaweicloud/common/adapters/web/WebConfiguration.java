@@ -27,6 +27,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
+import com.huaweicloud.common.configration.dynamic.ContextProperties;
+
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.http.client.ClientHttpRequestInterceptor",
     "org.springframework.web.client.RestTemplate"})
@@ -50,5 +52,12 @@ public class WebConfiguration {
   @ConditionalOnBean(DecorateClientHttpRequestInterceptor.class)
   public PreClientHttpRequestInterceptor addContextPreClientHttpRequestInterceptor() {
     return new SerializeContextPreClientHttpRequestInterceptor();
+  }
+
+  @Bean
+  @ConditionalOnBean(DecorateClientHttpRequestInterceptor.class)
+  public TraceIdPreClientHttpRequestInterceptor traceIdPreClientHttpRequestInterceptor(
+      ContextProperties contextProperties) {
+    return new TraceIdPreClientHttpRequestInterceptor(contextProperties);
   }
 }

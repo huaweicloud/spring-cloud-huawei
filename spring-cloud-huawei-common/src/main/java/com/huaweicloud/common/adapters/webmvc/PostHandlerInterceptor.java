@@ -27,4 +27,9 @@ import org.springframework.web.servlet.ModelAndView;
 public interface PostHandlerInterceptor extends Ordered {
   void handle(HttpServletRequest request, HttpServletResponse response, Object handler,
       @Nullable ModelAndView modelAndView) throws Exception;
+
+  @Override
+  default int getOrder() {
+    return 0;
+  }
 }

@@ -24,6 +24,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.common.configration.dynamic.ContextProperties;
+
 @Configuration
 @ConditionalOnClass(name = {"feign.RequestInterceptor"})
 public class FeignConfiguration {
@@ -37,5 +39,11 @@ public class FeignConfiguration {
   @ConditionalOnBean(DecorateRequestInterceptor.class)
   public OrderedRequestInterceptor serializeContextOrderedRequestInterceptor() {
     return new SerializeContextOrderedRequestInterceptor();
+  }
+
+  @Bean
+  @ConditionalOnBean(DecorateRequestInterceptor.class)
+  public TraceIdOrderedRequestInterceptor traceIdOrderedRequestInterceptor(ContextProperties contextProperties) {
+    return new TraceIdOrderedRequestInterceptor(contextProperties);
   }
 }

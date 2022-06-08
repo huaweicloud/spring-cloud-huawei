@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.Subscribe;
 import com.huaweicloud.common.event.EventManager;
-import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
+import com.huaweicloud.common.configration.bootstrap.DiscoveryBootstrapProperties;
 import com.huaweicloud.common.util.Type;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;

@@ -31,8 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.huaweicloud.common.event.EventManager;
-import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
-import com.huaweicloud.common.transport.ServiceCombSSLProperties;
+import com.huaweicloud.common.configration.bootstrap.DiscoveryBootstrapProperties;
+import com.huaweicloud.common.configration.bootstrap.ServiceCombSSLProperties;
 import com.huaweicloud.common.transport.TransportUtils;
 import com.huaweicloud.common.util.URLUtil;
 

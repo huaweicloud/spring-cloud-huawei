@@ -25,6 +25,8 @@ import java.util.Map;
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.apache.servicecomb.http.client.common.HttpUtils;
 
+import com.huaweicloud.common.configration.bootstrap.ServiceCombAkSkProperties;
+
 public class AkSkRequestAuthHeaderProvider implements AuthHeaderProvider {
   public static final String X_SERVICE_AK = "X-Service-AK";
 
