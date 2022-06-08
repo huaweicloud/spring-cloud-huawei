@@ -19,27 +19,15 @@ package com.huaweicloud.common.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
-import org.apache.commons.configuration.EnvironmentConfiguration;
-import org.apache.commons.configuration.SystemConfiguration;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.CollectionUtils;
 
 public class URLUtil {
 
   private static final String SCHEMA_SEPRATOR = "://";
 
   private static final String IPPORT_SEPRATOR = ":";
-
-  private static final String SYSTEM_KEY_BOTH = "PAAS_CSE_ENDPOINT";
-
-  private static final String SYSTEM_KEY_SERVICE_CENTER = "PAAS_CSE_SC_ENDPOINT";
-
-  private static final String SYSTEM_KEY_CONFIG_CENTER = "PAAS_CSE_CC_ENDPOINT";
 
   public static String[] splitIpPort(String url) {
     String[] res = new String[2];
@@ -125,44 +113,5 @@ public class URLUtil {
       urlList.add(urls);
     }
     return urlList;
-  }
-
-  public static List<String> getEnvConfigUrl() {
-    return getEnvURL(SYSTEM_KEY_CONFIG_CENTER);
-  }
-
-  public static List<String> getEnvServerURL() {
-    return getEnvURL(SYSTEM_KEY_SERVICE_CENTER);
-  }
-
-  private static List<String> getEnvURL(String systemServer) {
-    SystemConfiguration sysConfig = new SystemConfiguration();
-    List<Object> result = sysConfig.getList(systemServer);
-
-    if (!CollectionUtils.isEmpty(result)) {
-      return toStringList(result);
-    }
-
-    EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
-    result = envConfig.getList(systemServer);
-    if (!CollectionUtils.isEmpty(result)) {
-      return toStringList(result);
-    }
-
-    result = sysConfig.getList(SYSTEM_KEY_BOTH);
-    if (!CollectionUtils.isEmpty(result)) {
-      return toStringList(result);
-    }
-
-    result = envConfig.getList(SYSTEM_KEY_BOTH);
-    if (!CollectionUtils.isEmpty(result)) {
-      return toStringList(result);
-    }
-
-    return Collections.emptyList();
-  }
-
-  private static List<String> toStringList(List<Object> list) {
-    return list.stream().map(obj -> Objects.toString(obj, null)).collect(Collectors.toList());
   }
 }
