@@ -31,4 +31,7 @@ spring:
         healthCheckInterval: 30
         enableServicePolling: true
       config:
-        enabled: false
+        enabled: true
+        serverType: kie
+        serverAddr: http://127.0.0.1:30110
+        firstPullRequired: false
