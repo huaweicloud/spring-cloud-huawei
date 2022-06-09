@@ -15,9 +15,11 @@
 # limitations under the License.
 #
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
+  com.huaweicloud.common.configration.BootstrapPropertiesConfiguration,\
   com.huaweicloud.common.CommonConfiguration
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.huaweicloud.common.adapters.web.WebConfiguration,\
   com.huaweicloud.common.adapters.webmvc.WebMvcConfiguration,\
   com.huaweicloud.common.adapters.feign.FeignConfiguration,\
-  com.huaweicloud.common.adapters.gateway.GatewayConfiguration
+  com.huaweicloud.common.adapters.gateway.GatewayConfiguration,\
+  com.huaweicloud.common.configration.DynamicPropertiesConfiguration

@@ -41,6 +41,9 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.huaweicloud.common.configration.bootstrap.DiscoveryBootstrapProperties;
+import com.huaweicloud.common.configration.bootstrap.ServiceCombRBACProperties;
+import com.huaweicloud.common.configration.bootstrap.ServiceCombSSLProperties;
 import com.huaweicloud.common.disovery.ServiceCenterUtils;
 import com.huaweicloud.common.event.EventManager;
 
