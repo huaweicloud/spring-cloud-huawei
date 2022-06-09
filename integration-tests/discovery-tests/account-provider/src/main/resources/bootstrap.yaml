@@ -30,10 +30,12 @@ spring:
         version: 0.0.1
         healthCheckInterval: 30
         allowCrossApp: true
+      config:
+        enabled: true
+        serverType: kie
+        serverAddr: http://127.0.0.1:30110
+        firstPullRequired: false
 
       # testing spring cloud swagger generation
       swagger:
         enableJavaChassisAdapter: false
-
-      config:
-        enabled: false
