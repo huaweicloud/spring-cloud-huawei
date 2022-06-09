@@ -32,7 +32,7 @@ import org.springframework.cloud.client.serviceregistry.ServiceRegistryAutoConfi
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
+import com.huaweicloud.common.configration.bootstrap.DiscoveryBootstrapProperties;
 import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombEnabled;
 import com.huaweicloud.servicecomb.discovery.DiscoveryAutoConfiguration;
 import com.huaweicloud.servicecomb.discovery.discovery.DiscoveryProperties;

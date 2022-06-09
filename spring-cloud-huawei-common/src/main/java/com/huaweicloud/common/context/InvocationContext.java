@@ -19,11 +19,14 @@ package com.huaweicloud.common.context;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class InvocationContext {
   public static final String CONTEXT_MICROSERVICE_NAME = "x-microservice-name";
 
   public static final String CONTEXT_INSTANCE_ID = "x-instance-id";
+
+  public static final String CONTEXT_TRACE_ID = "x-trace-id";
 
   protected Map<String, String> context = new HashMap<>();
 
@@ -55,5 +58,11 @@ public class InvocationContext {
   @SuppressWarnings("unchecked")
   public <T> T getLocalContext(String key) {
     return (T) localContext.get(key);
+  }
+
+  public static String generateTraceId() {
+    long epochSeconds = System.currentTimeMillis() / 1000L;
+    int random = ThreadLocalRandom.current().nextInt();
+    return Long.toHexString((epochSeconds & 4294967295L) << 32 | (long) random & 4294967295L);
   }
 }

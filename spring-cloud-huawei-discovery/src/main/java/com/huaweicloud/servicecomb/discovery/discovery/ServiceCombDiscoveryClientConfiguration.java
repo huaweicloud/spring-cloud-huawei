@@ -25,9 +25,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
-import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
-import com.huaweicloud.common.transport.ServiceCombRBACProperties;
-import com.huaweicloud.common.transport.ServiceCombSSLProperties;
+import com.huaweicloud.common.configration.bootstrap.DiscoveryBootstrapProperties;
+import com.huaweicloud.common.configration.bootstrap.ServiceCombRBACProperties;
+import com.huaweicloud.common.configration.bootstrap.ServiceCombSSLProperties;
 import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 import com.huaweicloud.servicecomb.discovery.registry.TagsProperties;

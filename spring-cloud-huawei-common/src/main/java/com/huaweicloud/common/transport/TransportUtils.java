@@ -21,6 +21,8 @@ import org.apache.servicecomb.foundation.ssl.SSLCustom;
 import org.apache.servicecomb.foundation.ssl.SSLOption;
 import org.apache.servicecomb.http.client.common.HttpConfiguration.SSLProperties;
 
+import com.huaweicloud.common.configration.bootstrap.ServiceCombSSLProperties;
+
 public class TransportUtils {
   public static SSLProperties createSSLProperties(boolean sslEnabled,
       ServiceCombSSLProperties serviceCombSSLProperties) {

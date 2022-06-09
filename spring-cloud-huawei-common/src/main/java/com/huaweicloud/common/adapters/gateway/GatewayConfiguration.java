@@ -25,6 +25,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.common.configration.dynamic.ContextProperties;
+
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.cloud.gateway.filter.GlobalFilter"})
 public class GatewayConfiguration {
@@ -47,5 +49,11 @@ public class GatewayConfiguration {
   @ConditionalOnBean(DecorateGlobalFilter.class)
   public PreGlobalFilter serializeContextPreGlobalFilter() {
     return new SerializeContextPreGlobalFilter();
+  }
+
+  @Bean
+  @ConditionalOnBean(DecorateGlobalFilter.class)
+  public PreGlobalFilter traceIdPreGlobalFilter(ContextProperties contextProperties) {
+    return new TraceIdPreGlobalFilter(contextProperties);
   }
 }

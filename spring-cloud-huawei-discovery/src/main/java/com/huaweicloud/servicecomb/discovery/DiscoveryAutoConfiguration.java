@@ -28,8 +28,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.common.disovery.ServiceCenterUtils;
-import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
-import com.huaweicloud.common.transport.ServiceCombSSLProperties;
+import com.huaweicloud.common.configration.bootstrap.DiscoveryBootstrapProperties;
+import com.huaweicloud.common.configration.bootstrap.ServiceCombSSLProperties;
 import com.huaweicloud.servicecomb.discovery.discovery.DiscoveryProperties;
 import com.huaweicloud.servicecomb.discovery.registry.TagsProperties;
 

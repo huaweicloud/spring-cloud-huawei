@@ -26,6 +26,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.huaweicloud.common.configration.bootstrap.DiscoveryBootstrapProperties;
+import com.huaweicloud.common.configration.bootstrap.ServiceCombRBACProperties;
+import com.huaweicloud.common.configration.bootstrap.ServiceCombSSLProperties;
+
 public class RBACRequestAuthHeaderProviderTest {
   private final DiscoveryBootstrapProperties discoveryProperties = Mockito.mock(DiscoveryBootstrapProperties.class);
 

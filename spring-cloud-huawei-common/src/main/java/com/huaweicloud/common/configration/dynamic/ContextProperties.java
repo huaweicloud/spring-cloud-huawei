@@ -14,19 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.huaweicloud.common.configration.dynamic;
 
-package com.huaweicloud.common.adapters.webmvc;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+@RefreshScope
+@ConfigurationProperties("spring.cloud.servicecomb.context")
+public class ContextProperties {
+  private boolean enableTraceInfo;
 
-import org.springframework.core.Ordered;
+  public boolean isEnableTraceInfo() {
+    return enableTraceInfo;
+  }
 
-public interface PreHandlerInterceptor extends Ordered {
-  boolean handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception;
-
-  @Override
-  default int getOrder() {
-    return 0;
+  public void setEnableTraceInfo(boolean enableTraceInfo) {
+    this.enableTraceInfo = enableTraceInfo;
   }
 }

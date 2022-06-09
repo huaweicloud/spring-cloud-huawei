@@ -15,18 +15,14 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.common.adapters.webmvc;
+package com.huaweicloud.common.configration;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
-import org.springframework.core.Ordered;
+import com.huaweicloud.common.configration.dynamic.ContextProperties;
 
-public interface PreHandlerInterceptor extends Ordered {
-  boolean handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception;
-
-  @Override
-  default int getOrder() {
-    return 0;
-  }
+@Configuration
+@EnableConfigurationProperties({ContextProperties.class})
+public class DynamicPropertiesConfiguration {
 }

@@ -28,6 +28,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.huaweicloud.common.CommonConfiguration;
+import com.huaweicloud.common.configration.bootstrap.ServiceCombAkSkProperties;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {CommonConfiguration.class, AkSkTestConfiguration.class})

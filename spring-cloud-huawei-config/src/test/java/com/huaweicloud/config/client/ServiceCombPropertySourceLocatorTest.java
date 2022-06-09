@@ -30,8 +30,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 
-import com.huaweicloud.config.ServiceCombConfigProperties;
-import com.huaweicloud.config.ServiceCombConfigProperties.Watch;
+import com.huaweicloud.common.configration.bootstrap.ServiceCombConfigProperties;
+import com.huaweicloud.common.configration.bootstrap.ServiceCombConfigProperties.Watch;
 import com.huaweicloud.config.ServiceCombConfigPropertySource;
 import com.huaweicloud.config.ServiceCombPropertySourceLocator;
 

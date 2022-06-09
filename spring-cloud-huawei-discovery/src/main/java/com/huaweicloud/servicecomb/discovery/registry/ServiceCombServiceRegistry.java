@@ -43,7 +43,7 @@ import org.springframework.context.ApplicationContextAware;
 import com.google.common.eventbus.Subscribe;
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
-import com.huaweicloud.common.transport.DiscoveryBootstrapProperties;
+import com.huaweicloud.common.configration.bootstrap.DiscoveryBootstrapProperties;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
 
 public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRegistration>, ApplicationContextAware {
