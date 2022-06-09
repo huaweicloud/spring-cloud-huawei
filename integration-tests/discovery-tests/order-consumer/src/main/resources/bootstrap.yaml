@@ -27,13 +27,15 @@ spring:
         address: http://127.0.0.1:30100
         serviceName: order
         version: 0.0.1
+      config:
+        enabled: true
+        serverType: kie
+        serverAddr: http://127.0.0.1:30110
+        firstPullRequired: false
 
       # testing servicecomb swagger generation
       swagger:
         enableJavaChassisAdapter: true
-
-      config:
-        enabled: false
 
 servicecomb:
   matchGroup:
