@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.common.transport;
+package com.huaweicloud.common.configration.bootstrap;
 
 
 import org.apache.servicecomb.service.center.client.model.DataCenterInfo;

@@ -15,7 +15,7 @@
   * limitations under the License.
   */
 
-package com.huaweicloud.common.transport;
+package com.huaweicloud.common.configration.bootstrap;
 
 import java.util.List;
 

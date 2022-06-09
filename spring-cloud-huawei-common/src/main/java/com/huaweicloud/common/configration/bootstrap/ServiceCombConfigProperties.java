@@ -15,7 +15,7 @@
   * limitations under the License.
   */
 
-package com.huaweicloud.config;
+package com.huaweicloud.common.configration.bootstrap;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
