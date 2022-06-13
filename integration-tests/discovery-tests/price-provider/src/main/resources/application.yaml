@@ -14,3 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+servicecomb:
+  matchGroup:
+    # 从 order 来的请求限制， 其他服务不限制
+    rateLimiting-order: |
+      matches:
+        - apiPath:
+            exact: "/rate/testRateLimitForService"
+          serviceName: order
+  rateLimiting:
+    rateLimiting-order: |
+      rate: 1
