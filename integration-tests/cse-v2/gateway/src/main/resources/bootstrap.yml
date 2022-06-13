@@ -29,6 +29,7 @@ spring:
         address: ${PAAS_CSE_SC_ENDPOINT:http://127.0.0.1:30100}
         version: 0.0.1
         healthCheckInterval: 30
+        enableServicePolling: true
       config:
         serverAddr: ${PAAS_CSE_CC_ENDPOINT:http://127.0.0.1:30110}
         serverType: kie
