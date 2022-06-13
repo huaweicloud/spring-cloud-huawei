@@ -1,19 +1,19 @@
 /*
 
-  * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
 
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.huaweicloud.sample;
 
@@ -29,21 +29,25 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestTemplate;
 
 public class GovernanceControllerIT {
-  final String url = "http://127.0.0.1:9098";
+  final String orderServiceUrl = "http://127.0.0.1:9098";
+
+  final String priceServiceUrl = "http://127.0.0.1:9090";
 
   final RestTemplate template = new RestTemplate();
 
   @Test
   public void testRetry() {
     String invocationID = UUID.randomUUID().toString();
-    String result = template.getForObject(url + "/govern/retry?invocationID={1}", String.class, invocationID);
+    String result = template.getForObject(orderServiceUrl + "/govern/retry?invocationID={1}", String.class,
+        invocationID);
     assertThat(result).isEqualTo("try times: 3");
   }
 
   @Test
   public void testRetryFeign() {
     String invocationID = UUID.randomUUID().toString();
-    String result = template.getForObject(url + "/govern/retryFeign?invocationID={1}", String.class, invocationID);
+    String result = template.getForObject(orderServiceUrl + "/govern/retryFeign?invocationID={1}", String.class,
+        invocationID);
     assertThat(result).isEqualTo("try times: 3");
   }
 
@@ -60,13 +64,13 @@ public class GovernanceControllerIT {
         new Thread(name) {
           public void run() {
             try {
-              String result = template.getForObject(url + "/govern/circuitBreaker", String.class);
+              String result = template.getForObject(orderServiceUrl + "/govern/circuitBreaker", String.class);
               if (!"ok".equals(result)) {
                 notExpectedFailed.set(true);
               }
             } catch (Exception e) {
               if (!"429 : \"circuitBreaker is open.\"".equals(e.getMessage())
-                  && !e.getMessage().contains("test error")  && !e.getMessage().startsWith("500")) {
+                  && !e.getMessage().contains("test error") && !e.getMessage().startsWith("500")) {
                 notExpectedFailed.set(true);
               }
               if ("429 : \"circuitBreaker is open.\"".equals(e.getMessage())) {
@@ -97,7 +101,7 @@ public class GovernanceControllerIT {
         new Thread(name) {
           public void run() {
             try {
-              String result = template.getForObject(url + "/govern/bulkhead", String.class);
+              String result = template.getForObject(orderServiceUrl + "/govern/bulkhead", String.class);
               if (!"Hello world!".equals(result)) {
                 notExpectedFailed.set(true);
               }
@@ -131,12 +135,82 @@ public class GovernanceControllerIT {
         new Thread(name) {
           public void run() {
             try {
-              String result = template.getForObject(url + "/govern/hello", String.class);
+              String result = template.getForObject(orderServiceUrl + "/govern/hello", String.class);
               if (!"Hello world!".equals(result)) {
                 notExpectedFailed.set(true);
               }
             } catch (Exception e) {
               if (!"429 : \"rate limited.\"".equals(e.getMessage())) {
+                notExpectedFailed.set(true);
+              }
+              expectedFailed.set(true);
+            }
+            latch.countDown();
+          }
+        }.start();
+      }
+      Thread.sleep(100);
+    }
+
+    latch.await(20, TimeUnit.SECONDS);
+    Assertions.assertTrue(expectedFailed.get());
+    Assertions.assertFalse(notExpectedFailed.get());
+  }
+
+  @Test
+  public void testRateLimitingForServiceOther() throws Exception {
+    CountDownLatch latch = new CountDownLatch(100);
+    AtomicBoolean expectedFailed = new AtomicBoolean(false);
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+
+    for (int i = 0; i < 10; i++) {
+      for (int j = 0; j < 10; j++) {
+        String name = "t-" + i + "-" + j;
+        new Thread(name) {
+          public void run() {
+            try {
+              String result = template.getForObject(priceServiceUrl + "/rate/testRateLimitForService", String.class);
+              if (!"success".equals(result)) {
+                notExpectedFailed.set(true);
+              }
+            } catch (Exception e) {
+              if (!"429 : \"rate limited.\"".equals(e.getMessage())) {
+                notExpectedFailed.set(true);
+              }
+              expectedFailed.set(true);
+            }
+            latch.countDown();
+          }
+        }.start();
+      }
+      Thread.sleep(100);
+    }
+
+    latch.await(20, TimeUnit.SECONDS);
+    Assertions.assertFalse(expectedFailed.get());
+    Assertions.assertFalse(notExpectedFailed.get());
+  }
+
+  @Test
+  public void testRateLimitingForServiceOrder() throws Exception {
+    CountDownLatch latch = new CountDownLatch(100);
+    AtomicBoolean expectedFailed = new AtomicBoolean(false);
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+
+    for (int i = 0; i < 10; i++) {
+      for (int j = 0; j < 10; j++) {
+        String name = "t-" + i + "-" + j;
+        new Thread(name) {
+          public void run() {
+            try {
+              String result = template.getForObject(orderServiceUrl + "/govern/rate/testRateLimitForService",
+                  String.class);
+              if (!"success".equals(result)) {
+                notExpectedFailed.set(true);
+              }
+            } catch (Exception e) {
+              // client 429 error will report 500 error by provider
+              if (!(e.getMessage().contains("500") && e.getMessage().contains("testRateLimitForService"))) {
                 notExpectedFailed.set(true);
               }
               expectedFailed.set(true);
