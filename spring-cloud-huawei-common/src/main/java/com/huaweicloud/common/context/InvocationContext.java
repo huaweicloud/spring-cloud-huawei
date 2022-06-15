@@ -50,7 +50,7 @@ public class InvocationContext {
     return context;
   }
 
-  public InvocationContext putLocalContext(String key, String value) {
+  public InvocationContext putLocalContext(String key, Object value) {
     localContext.put(key, value);
     return this;
   }
