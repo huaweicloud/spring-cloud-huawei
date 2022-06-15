@@ -15,7 +15,7 @@
   * limitations under the License.
   */
 
-package com.huaweicloud.gateway.governance;
+package com.huaweicloud.governance.adapters.gateway;
 
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.reset;
 
