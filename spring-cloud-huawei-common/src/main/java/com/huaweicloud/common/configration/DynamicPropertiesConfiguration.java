@@ -21,8 +21,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
+import com.huaweicloud.common.configration.dynamic.LoadBalancerProperties;
 
 @Configuration
-@EnableConfigurationProperties({ContextProperties.class})
+@EnableConfigurationProperties({ContextProperties.class, LoadBalancerProperties.class})
 public class DynamicPropertiesConfiguration {
 }
