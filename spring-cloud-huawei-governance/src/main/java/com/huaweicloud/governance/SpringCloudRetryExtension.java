@@ -45,11 +45,4 @@ public class SpringCloudRetryExtension extends AbstractRetryExtension {
     }
     return String.valueOf(status);
   }
-
-  @Override
-  public Class<? extends Throwable>[] retryExceptions() {
-    return new Class[] {
-        HttpServerErrorException.class
-    };
-  }
 }
