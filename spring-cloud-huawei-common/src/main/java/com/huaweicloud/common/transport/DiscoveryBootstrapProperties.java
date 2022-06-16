@@ -48,7 +48,7 @@ public class DiscoveryBootstrapProperties {
 
   private boolean healthCheck = true;
 
-  private int healthCheckInterval = 15000;
+  private int healthCheckInterval = 15;
 
   private int healthCheckRequestTimeout = 5000;
 
@@ -68,6 +68,10 @@ public class DiscoveryBootstrapProperties {
   private boolean ignoreSwaggerDifferent;
 
   private DataCenterInfo datacenter;
+
+  private static final int HEALTH_CHECK_MAX_INTERVAL = 600;
+
+  private static final int HEALTH_CHECK_MIN_INTERVAL = 1;
 
   public String getServerAddress() {
     return serverAddress;
@@ -170,7 +174,9 @@ public class DiscoveryBootstrapProperties {
   }
 
   public void setHealthCheckInterval(int healthCheckInterval) {
-    this.healthCheckInterval = healthCheckInterval;
+    if (healthCheckInterval <= HEALTH_CHECK_MAX_INTERVAL && healthCheckInterval >= HEALTH_CHECK_MIN_INTERVAL) {
+      this.healthCheckInterval = healthCheckInterval;
+    }
   }
 
   public int getHealthCheckRequestTimeout() {
