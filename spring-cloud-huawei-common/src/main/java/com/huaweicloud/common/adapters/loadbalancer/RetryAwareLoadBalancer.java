@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.router.client.loabalancer;
+package com.huaweicloud.common.adapters.loadbalancer;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,7 +40,7 @@ import reactor.core.publisher.Mono;
 /**
  * load balancers to support retry on same and on next
  */
-public class DecorateLoadBalancer implements ReactorServiceInstanceLoadBalancer {
+public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalancer {
   private final String serviceId;
 
   private final ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider;
@@ -51,7 +51,7 @@ public class DecorateLoadBalancer implements ReactorServiceInstanceLoadBalancer 
 
   private final Map<String, ReactorServiceInstanceLoadBalancer> loadBalancers = new ConcurrentHashMap<>();
 
-  public DecorateLoadBalancer(ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider,
+  public RetryAwareLoadBalancer(ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider,
       String serviceId, LoadBalancerProperties loadBalancerProperties, Environment environment) {
     this.serviceInstanceListSupplierProvider = serviceInstanceListSupplierProvider;
     this.serviceId = serviceId;

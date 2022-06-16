@@ -27,6 +27,8 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
 public class DecorateClientHttpRequestInterceptor implements ClientHttpRequestInterceptor, Ordered {
+  private static final int ORDER = 10000;
+
   private final List<PreClientHttpRequestInterceptor> preClientHttpRequestInterceptors;
 
   private final List<PostClientHttpRequestInterceptor> postClientHttpRequestInterceptors;
@@ -53,6 +55,6 @@ public class DecorateClientHttpRequestInterceptor implements ClientHttpRequestIn
 
   @Override
   public int getOrder() {
-    return 0;
+    return ORDER;
   }
 }

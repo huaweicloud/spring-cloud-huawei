@@ -19,3 +19,9 @@ spring:
     servicecomb:
       loadbalancer.price:
         retryOnSame: 1
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 1000
+        readTimeout: 30000

@@ -16,14 +16,20 @@
  */
 package com.huaweicloud.router.client;
 
+import org.apache.servicecomb.router.RouterFilter;
 import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClientConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+
+import com.huaweicloud.router.client.loabalancer.CanaryServiceInstanceFilter;
+import com.huaweicloud.router.client.loabalancer.ZoneAwareServiceInstanceFilter;
 
 @Configuration
 @ComponentScan(basePackages = {"org.apache.servicecomb.router"})
@@ -32,5 +38,19 @@ public class RouterClientAutoConfiguration {
   @Bean
   public AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor() {
     return new SpringCloudRouterDistributor();
+  }
+
+  @Bean
+  @ConditionalOnMissingBean(CanaryServiceInstanceFilter.class)
+  public CanaryServiceInstanceFilter canaryServiceInstanceFilter(
+      AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor, RouterFilter routerFilter) {
+    return new CanaryServiceInstanceFilter(routerDistributor, routerFilter);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean(ZoneAwareServiceInstanceFilter.class)
+  @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.enabledZoneAware", havingValue = "true")
+  public ZoneAwareServiceInstanceFilter zoneAwareServiceInstanceFilter() {
+    return new ZoneAwareServiceInstanceFilter();
   }
 }
