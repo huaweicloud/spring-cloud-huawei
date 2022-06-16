@@ -48,7 +48,7 @@ public class DiscoveryBootstrapProperties {
 
   private boolean healthCheck = true;
 
-  private int healthCheckInterval = 15000;
+  private int healthCheckInterval = 15;
 
   private int healthCheckRequestTimeout = 5000;
 
