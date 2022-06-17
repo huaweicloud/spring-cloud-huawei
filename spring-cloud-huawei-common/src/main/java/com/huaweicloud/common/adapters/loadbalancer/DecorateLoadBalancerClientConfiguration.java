@@ -15,11 +15,8 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.router.client.loabalancer;
+package com.huaweicloud.common.adapters.loadbalancer;
 
-import org.apache.servicecomb.router.RouterFilter;
-import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
-import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -61,31 +58,15 @@ import reactor.util.retry.RetrySpec;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnDiscoveryEnabled
-public class RouterLoadBalancerClientConfiguration {
+public class DecorateLoadBalancerClientConfiguration {
 
   private static final int REACTIVE_SERVICE_INSTANCE_SUPPLIER_ORDER = 193827465;
 
-
   @Bean
-  @ConditionalOnMissingBean(CanaryServiceInstanceFilter.class)
-  public CanaryServiceInstanceFilter canaryServiceInstanceFilter(
-      AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor, RouterFilter routerFilter) {
-    return new CanaryServiceInstanceFilter(routerDistributor, routerFilter);
-  }
-
-  @Bean
-  @ConditionalOnMissingBean(ZoneAwareServiceInstanceFilter.class)
-  @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.enabledZoneAware", havingValue = "true")
-  public ZoneAwareServiceInstanceFilter zoneAwareServiceInstanceFilter() {
-    return new ZoneAwareServiceInstanceFilter();
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
   public ReactorLoadBalancer<ServiceInstance> reactorServiceInstanceLoadBalancer(Environment environment,
       LoadBalancerClientFactory loadBalancerClientFactory, LoadBalancerProperties loadBalancerProperties) {
     String name = environment.getProperty(LoadBalancerClientFactory.PROPERTY_NAME);
-    return new DecorateLoadBalancer(
+    return new RetryAwareLoadBalancer(
         loadBalancerClientFactory.getLazyProvider(
             name, ServiceInstanceListSupplier.class), name, loadBalancerProperties, environment);
   }
@@ -102,7 +83,7 @@ public class RouterLoadBalancerClientConfiguration {
         matchIfMissing = true)
     public ServiceInstanceListSupplier discoveryClientServiceInstanceListSupplier(
         ConfigurableApplicationContext context) {
-      return new RouterServiceInstanceListSupplier(
+      return new DecorateServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withDiscoveryClient().withCaching().build(context));
     }
 
@@ -112,7 +93,7 @@ public class RouterLoadBalancerClientConfiguration {
     @ConditionalOnProperty(value = "spring.cloud.loadbalancer.configurations", havingValue = "zone-preference")
     public ServiceInstanceListSupplier zonePreferenceDiscoveryClientServiceInstanceListSupplier(
         ConfigurableApplicationContext context) {
-      return new RouterServiceInstanceListSupplier(
+      return new DecorateServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withDiscoveryClient().withZonePreference().withCaching()
               .build(context));
     }
@@ -123,7 +104,7 @@ public class RouterLoadBalancerClientConfiguration {
     @ConditionalOnProperty(value = "spring.cloud.loadbalancer.configurations", havingValue = "health-check")
     public ServiceInstanceListSupplier healthCheckDiscoveryClientServiceInstanceListSupplier(
         ConfigurableApplicationContext context) {
-      return new RouterServiceInstanceListSupplier(
+      return new DecorateServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withDiscoveryClient().withHealthChecks().build(context));
     }
 
@@ -134,7 +115,7 @@ public class RouterLoadBalancerClientConfiguration {
         havingValue = "request-based-sticky-session")
     public ServiceInstanceListSupplier requestBasedStickySessionDiscoveryClientServiceInstanceListSupplier(
         ConfigurableApplicationContext context) {
-      return new RouterServiceInstanceListSupplier(
+      return new DecorateServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withDiscoveryClient().withRequestBasedStickySession()
               .build(context));
     }
@@ -146,7 +127,7 @@ public class RouterLoadBalancerClientConfiguration {
         havingValue = "same-instance-preference")
     public ServiceInstanceListSupplier sameInstancePreferenceServiceInstanceListSupplier(
         ConfigurableApplicationContext context) {
-      return new RouterServiceInstanceListSupplier(
+      return new DecorateServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withDiscoveryClient().withSameInstancePreference()
               .build(context));
     }
@@ -164,7 +145,7 @@ public class RouterLoadBalancerClientConfiguration {
         matchIfMissing = true)
     public ServiceInstanceListSupplier discoveryClientServiceInstanceListSupplier(
         ConfigurableApplicationContext context) {
-      return new RouterServiceInstanceListSupplier(
+      return new DecorateServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withBlockingDiscoveryClient().withCaching().build(context));
     }
 
@@ -174,7 +155,7 @@ public class RouterLoadBalancerClientConfiguration {
     @ConditionalOnProperty(value = "spring.cloud.loadbalancer.configurations", havingValue = "zone-preference")
     public ServiceInstanceListSupplier zonePreferenceDiscoveryClientServiceInstanceListSupplier(
         ConfigurableApplicationContext context) {
-      return new RouterServiceInstanceListSupplier(
+      return new DecorateServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withBlockingDiscoveryClient().withZonePreference()
               .withCaching().build(context));
     }
@@ -185,7 +166,7 @@ public class RouterLoadBalancerClientConfiguration {
     @ConditionalOnProperty(value = "spring.cloud.loadbalancer.configurations", havingValue = "health-check")
     public ServiceInstanceListSupplier healthCheckDiscoveryClientServiceInstanceListSupplier(
         ConfigurableApplicationContext context) {
-      return new RouterServiceInstanceListSupplier(
+      return new DecorateServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withBlockingDiscoveryClient().withBlockingHealthChecks()
               .build(context));
     }
@@ -197,7 +178,7 @@ public class RouterLoadBalancerClientConfiguration {
         havingValue = "request-based-sticky-session")
     public ServiceInstanceListSupplier requestBasedStickySessionDiscoveryClientServiceInstanceListSupplier(
         ConfigurableApplicationContext context) {
-      return new RouterServiceInstanceListSupplier(
+      return new DecorateServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withBlockingDiscoveryClient().withRequestBasedStickySession()
               .build(context));
     }
@@ -209,7 +190,7 @@ public class RouterLoadBalancerClientConfiguration {
         havingValue = "same-instance-preference")
     public ServiceInstanceListSupplier sameInstancePreferenceServiceInstanceListSupplier(
         ConfigurableApplicationContext context) {
-      return new RouterServiceInstanceListSupplier(
+      return new DecorateServiceInstanceListSupplier(
           ServiceInstanceListSupplier.builder().withBlockingDiscoveryClient().withSameInstancePreference()
               .build(context));
     }
@@ -218,7 +199,7 @@ public class RouterLoadBalancerClientConfiguration {
   @Configuration(proxyBeanMethods = false)
   @ConditionalOnBlockingDiscoveryEnabled
   @ConditionalOnClass(RetryTemplate.class)
-  @Conditional(RouterLoadBalancerClientConfiguration.BlockingOnAvoidPreviousInstanceAndRetryEnabledCondition.class)
+  @Conditional(DecorateLoadBalancerClientConfiguration.BlockingOnAvoidPreviousInstanceAndRetryEnabledCondition.class)
   @AutoConfigureAfter(LoadBalancerClientConfiguration.BlockingSupportConfiguration.class)
   @ConditionalOnBean(ServiceInstanceListSupplier.class)
   public static class BlockingRetryConfiguration {
@@ -234,7 +215,7 @@ public class RouterLoadBalancerClientConfiguration {
 
   @Configuration(proxyBeanMethods = false)
   @ConditionalOnBlockingDiscoveryEnabled
-  @Conditional(RouterLoadBalancerClientConfiguration.ReactiveOnAvoidPreviousInstanceAndRetryEnabledCondition.class)
+  @Conditional(DecorateLoadBalancerClientConfiguration.ReactiveOnAvoidPreviousInstanceAndRetryEnabledCondition.class)
   @AutoConfigureAfter(LoadBalancerClientConfiguration.ReactiveSupportConfiguration.class)
   @ConditionalOnBean(ServiceInstanceListSupplier.class)
   @ConditionalOnClass(RetrySpec.class)

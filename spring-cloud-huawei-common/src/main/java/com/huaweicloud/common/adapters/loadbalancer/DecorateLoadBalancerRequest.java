@@ -15,19 +15,19 @@
   * limitations under the License.
   */
 
-package com.huaweicloud.router.client.loabalancer;
+package com.huaweicloud.common.adapters.loadbalancer;
 
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerRequest;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
 
-public class RouterLoadBalancerRequest implements LoadBalancerRequest<ClientHttpResponse> {
+public class DecorateLoadBalancerRequest implements LoadBalancerRequest<ClientHttpResponse> {
   private final LoadBalancerRequest<ClientHttpResponse> delegate;
 
   private HttpRequest request;
 
-  public RouterLoadBalancerRequest(LoadBalancerRequest<ClientHttpResponse> delegate) {
+  public DecorateLoadBalancerRequest(LoadBalancerRequest<ClientHttpResponse> delegate) {
     this.delegate = delegate;
   }
 

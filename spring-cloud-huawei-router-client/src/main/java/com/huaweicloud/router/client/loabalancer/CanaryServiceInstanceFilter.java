@@ -33,6 +33,8 @@ import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.CollectionUtils;
 
+import com.huaweicloud.common.adapters.loadbalancer.DecorateLoadBalancerRequest;
+import com.huaweicloud.common.adapters.loadbalancer.ServiceInstanceFilter;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 
@@ -59,9 +61,9 @@ public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
 
     Object clientRequest = context.getClientRequest();
     HttpHeaders httpHeaders;
-    if (clientRequest instanceof RouterLoadBalancerRequest) {
+    if (clientRequest instanceof DecorateLoadBalancerRequest) {
       // rest template
-      httpHeaders = ((RouterLoadBalancerRequest) clientRequest).getRequest().getHeaders();
+      httpHeaders = ((DecorateLoadBalancerRequest) clientRequest).getRequest().getHeaders();
     } else {
       // feign
       httpHeaders = ((RequestData) clientRequest).getHeaders();
