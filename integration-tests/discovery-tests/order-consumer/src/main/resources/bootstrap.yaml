@@ -69,3 +69,8 @@ servicecomb:
   bulkhead:
     demo-bulkhead: |
       maxConcurrentCalls: 5
+  instanceIsolation:
+    default: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      failureRateThreshold: 20

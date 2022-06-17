@@ -23,6 +23,8 @@ import java.net.URI;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequest;
@@ -35,6 +37,7 @@ import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import com.huaweicloud.common.adapters.web.FallbackClientHttpResponse;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.governance.SpringCloudInvocationContext;
@@ -50,6 +53,8 @@ import io.vavr.CheckedFunction0;
  * NOTICE: doExecute is copied from RestTemplate. Need update when upgrading.
  */
 public class RetryableRestTemplate extends RestTemplate {
+  private static final Logger LOGGER = LoggerFactory.getLogger(RetryableRestTemplate.class);
+
   private static final String CONTEXT_IS_RETRY = "x-is-retry";
 
   private final RetryHandler retryHandler;
@@ -127,7 +132,9 @@ public class RetryableRestTemplate extends RestTemplate {
       if (clientRecoverPolicy != null) {
         return (ClientHttpResponse) clientRecoverPolicy.apply(e);
       }
-      throw new RuntimeException(e);
+      LOGGER.error("retry catch throwable", e);
+      // return 503, so that we can retry
+      return new FallbackClientHttpResponse(500, e.getMessage());
     } finally {
       SpringCloudInvocationContext.removeInvocationContext();
     }

@@ -15,7 +15,7 @@
   * limitations under the License.
   */
 
-package com.huaweicloud.router.client.loabalancer;
+package com.huaweicloud.common.adapters.loadbalancer;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,13 +32,13 @@ import org.springframework.core.Ordered;
 import reactor.core.publisher.Flux;
 
 @SuppressWarnings({"rawtype", "unchecked"})
-public class RouterServiceInstanceListSupplier implements ServiceInstanceListSupplier {
+public class DecorateServiceInstanceListSupplier implements ServiceInstanceListSupplier {
 
   private List<ServiceInstanceFilter> filters;
 
   private final ServiceInstanceListSupplier delegate;
 
-  public RouterServiceInstanceListSupplier(ServiceInstanceListSupplier delegate) {
+  public DecorateServiceInstanceListSupplier(ServiceInstanceListSupplier delegate) {
     this.delegate = delegate;
   }
 
