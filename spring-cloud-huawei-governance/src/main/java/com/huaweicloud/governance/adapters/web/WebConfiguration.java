@@ -17,6 +17,7 @@
 
 package com.huaweicloud.governance.adapters.web;
 
+import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,19 +27,44 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+
+import com.huaweicloud.common.configration.dynamic.HttpClientProperties;
 
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.http.client.ClientHttpRequestInterceptor",
     "org.springframework.web.client.RestTemplate"})
 public class WebConfiguration {
   @Bean
-  @ConditionalOnProperty(value = "spring.cloud.servicecomb.restTemplate.governance.enabled",
+  @ConditionalOnProperty(value = "spring.cloud.servicecomb.restTemplate.retryable.enabled",
       havingValue = "true", matchIfMissing = true)
   @LoadBalanced
   @Primary
-  public RestTemplate decorateRestTemplate(RetryHandler retryHandler,
-      @Autowired(required = false) ClientRecoverPolicy<Object> recoverPolicy) {
-    return new RetryableRestTemplate(retryHandler, recoverPolicy);
+  public RestTemplate retryableRestTemplate(RetryHandler retryHandler,
+      @Autowired(required = false) ClientRecoverPolicy<Object> recoverPolicy,
+      HttpClientProperties httpClientProperties) {
+    RetryableRestTemplate restTemplate = new RetryableRestTemplate(retryHandler, recoverPolicy);
+    restTemplate.setRequestFactory(getClientHttpRequestFactory(httpClientProperties));
+    return restTemplate;
+  }
+
+  private ClientHttpRequestFactory getClientHttpRequestFactory(HttpClientProperties httpClientProperties) {
+    HttpComponentsClientHttpRequestFactory clientHttpRequestFactory =
+        new HttpComponentsClientHttpRequestFactory();
+    clientHttpRequestFactory.setConnectTimeout(httpClientProperties.getConnectTimeoutInMilliSeconds());
+    clientHttpRequestFactory.setReadTimeout(httpClientProperties.getReadTimeoutInMilliSeconds());
+    return clientHttpRequestFactory;
+  }
+
+  @Bean
+  @ConditionalOnProperty(value = "spring.cloud.servicecomb.restTemplate.isolation.enabled",
+      havingValue = "true", matchIfMissing = true)
+  public ClientHttpRequestInterceptor isolationClientHttpRequestInterceptor(InstanceIsolationHandler isolationHandler,
+      @Autowired(required = false) ClientRecoverPolicy<ClientHttpResponse> recoverPolicy) {
+    return new IsolationClientHttpRequestInterceptor(isolationHandler, recoverPolicy);
   }
 }
