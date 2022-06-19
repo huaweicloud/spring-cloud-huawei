@@ -1,19 +1,19 @@
 /*
 
-  * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
 
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.huaweicloud.governance.adapters.gateway;
 
@@ -28,11 +28,11 @@ import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.cloud.gateway.support.HasRouteId;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
@@ -64,8 +64,8 @@ public class GovernanceGatewayFilterFactory
 
   private final RetryHandler retryHandler;
 
-  @Autowired
-  public GovernanceGatewayFilterFactory(RateLimitingHandler rateLimitingHandler, CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler, RetryHandler retryHandler) {
+  public GovernanceGatewayFilterFactory(RateLimitingHandler rateLimitingHandler,
+      CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler, RetryHandler retryHandler) {
     super(Config.class);
     this.rateLimitingHandler = rateLimitingHandler;
     this.circuitBreakerHandler = circuitBreakerHandler;
@@ -83,7 +83,7 @@ public class GovernanceGatewayFilterFactory
     return "governance";
   }
 
-  class GovernanceGatewayFilter implements GatewayFilter {
+  class GovernanceGatewayFilter implements GatewayFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
@@ -110,15 +110,15 @@ public class GovernanceGatewayFilterFactory
       if (retry != null) {
         Retry.Context<Object> context = retry.context();
         mono = toRun.transform(RetryOperator.of(retry))
-                .doOnSuccess(v -> {
-                  if (exchange.getResponse().getRawStatusCode() != null) {
-                    if (context.onResult(exchange.getResponse().getRawStatusCode())) {
-                      exchange.getResponse().setStatusCode(null);
-                      reset(exchange);
-                      throw new RetryException();
-                    }
-                  }
-                }).retryWhen(reactor.util.retry.Retry.indefinitely().filter(e -> e instanceof RetryException));
+            .doOnSuccess(v -> {
+              if (exchange.getResponse().getRawStatusCode() != null) {
+                if (context.onResult(exchange.getResponse().getRawStatusCode())) {
+                  exchange.getResponse().setStatusCode(null);
+                  reset(exchange);
+                  throw new RetryException();
+                }
+              }
+            }).retryWhen(reactor.util.retry.Retry.indefinitely().filter(e -> e instanceof RetryException));
       }
       return mono;
     }
@@ -183,6 +183,11 @@ public class GovernanceGatewayFilterFactory
       request.setUri(exchange.getRequest().getURI().getPath());
       return request;
     }
+
+    @Override
+    public int getOrder() {
+      return Ordered.HIGHEST_PRECEDENCE;
+    }
   }
 
   public static class Config implements HasRouteId {
@@ -192,6 +197,7 @@ public class GovernanceGatewayFilterFactory
     public void setRouteId(String routeId) {
       this.routeId = routeId;
     }
+
     @Override
     public String getRouteId() {
       return routeId;
