@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerProperties;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,10 +42,11 @@ public class FeignConfiguration {
       InstanceIsolationHandler instanceIsolationHandler,
       @Autowired(required = false) ClientRecoverPolicy<Response> clientRecoverPolicy,
       LoadBalancerClient loadBalancerClient,
+      LoadBalancerProperties loadBalancerProperties,
       LoadBalancerClientFactory loadBalancerClientFactory) {
     return new RetryableFeignBlockingLoadBalancerClient(
         retryHandler, instanceIsolationHandler, clientRecoverPolicy,
         new Client.Default(null, null), loadBalancerClient,
-        loadBalancerClientFactory);
+        loadBalancerProperties, loadBalancerClientFactory);
   }
 }
