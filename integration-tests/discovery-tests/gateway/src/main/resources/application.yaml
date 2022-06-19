@@ -23,6 +23,18 @@ spring:
         locator:
           enabled: true
           lowerCaseServiceId: true
+      httpclient:
+        connect-timeout: 1000
+        response-timeout: 3s
+
+servicecomb:
+  instanceIsolation:
+    default: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      slidingWindowType: COUNT_BASED
+      failureRateThreshold: 20
+
 management:
   endpoint:
     gateway:
