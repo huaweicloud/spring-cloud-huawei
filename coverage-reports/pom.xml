@@ -31,7 +31,7 @@
   <packaging>jar</packaging>
 
   <dependencies>
-    <!-- core modules need count discovery -->
+    <!-- core modules need count coverage -->
     <dependency>
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-huawei-common</artifactId>
@@ -39,6 +39,10 @@
     <dependency>
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-huawei-config</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.huaweicloud</groupId>
+      <artifactId>spring-cloud-huawei-dashboard</artifactId>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>

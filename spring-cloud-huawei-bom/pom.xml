@@ -57,6 +57,16 @@
       </dependency>
       <dependency>
         <groupId>com.huaweicloud</groupId>
+        <artifactId>spring-cloud-huawei-dashboard</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.huaweicloud</groupId>
+        <artifactId>spring-cloud-starter-huawei-dashboard</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.huaweicloud</groupId>
         <artifactId>spring-cloud-starter-huawei-config</artifactId>
         <version>${project.version}</version>
       </dependency>
