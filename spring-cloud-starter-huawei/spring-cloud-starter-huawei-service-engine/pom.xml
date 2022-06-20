@@ -52,5 +52,9 @@
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-hessian</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.huaweicloud</groupId>
+      <artifactId>spring-cloud-starter-huawei-dashboard</artifactId>
+    </dependency>
   </dependencies>
 </project>
