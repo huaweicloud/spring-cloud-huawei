@@ -18,3 +18,16 @@
 
 server:
   port: 8081
+
+servicecomb:
+  matchGroup:
+    allOperation: |
+      matches:
+        - apiPath:
+            prefix: "/"
+  circuitBreaker:
+    allOperation: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      slidingWindowType: COUNT_BASED
+      failureRateThreshold: 20
