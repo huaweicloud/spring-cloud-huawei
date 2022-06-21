@@ -34,6 +34,9 @@ spring:
         fileSource: gateway.yaml
         watch:
           delay: 10000
+      dashboard:
+        enabled: true
+        address: https://cse.cn-south-1.myhuaweicloud.com
 
       credentials:
         enabled: true

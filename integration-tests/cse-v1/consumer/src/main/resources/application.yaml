@@ -20,6 +20,23 @@ server:
   port: 8082
 
 servicecomb:
+  matchGroup:
+    allOperation: |
+      matches:
+        - apiPath:
+            prefix: "/"
+  circuitBreaker:
+    allOperation: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      slidingWindowType: COUNT_BASED
+      failureRateThreshold: 20
+  instanceIsolation:
+    default: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      slidingWindowType: COUNT_BASED
+      failureRateThreshold: 20
   routeRule:
     basic-provider: |
       - precedence: 1
