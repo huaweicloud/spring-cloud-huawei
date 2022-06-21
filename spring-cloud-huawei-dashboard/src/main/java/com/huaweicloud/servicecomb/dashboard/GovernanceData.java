@@ -41,6 +41,10 @@ public class GovernanceData {
 
   private double slowRate;
 
+  private boolean circuitBreakerOpen;
+
+  private long shortCircuitedCalls;
+
   public long getSuccessfulCalls() {
     return successfulCalls;
   }
@@ -92,6 +96,24 @@ public class GovernanceData {
 
   public GovernanceData setSlowRate(double slowRate) {
     this.slowRate = slowRate;
+    return this;
+  }
+
+  public boolean isCircuitBreakerOpen() {
+    return circuitBreakerOpen;
+  }
+
+  public GovernanceData setCircuitBreakerOpen(boolean circuitBreakerOpen) {
+    this.circuitBreakerOpen = circuitBreakerOpen;
+    return this;
+  }
+
+  public long getShortCircuitedCalls() {
+    return shortCircuitedCalls;
+  }
+
+  public GovernanceData setShortCircuitedCalls(long shortCircuitedCalls) {
+    this.shortCircuitedCalls = shortCircuitedCalls;
     return this;
   }
 }
