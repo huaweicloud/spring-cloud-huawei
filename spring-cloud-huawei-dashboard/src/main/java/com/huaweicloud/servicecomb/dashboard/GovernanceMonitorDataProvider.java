@@ -96,8 +96,13 @@ public class GovernanceMonitorDataProvider implements MonitorDataProvider {
           name = name.replace(InstanceIsolationProperties.MATCH_INSTANCE_ISOLATION_KEY, NAME_CONSUMER);
         } else if (name.startsWith(CircuitBreakerProperties.MATCH_CIRCUITBREAKER_KEY)) {
           name = name.replace(CircuitBreakerProperties.MATCH_CIRCUITBREAKER_KEY, NAME_PROVIDER);
+        } else {
+          continue;
         }
+      } else {
+        continue;
       }
+
       GovernanceData governanceData = metricsData.computeIfAbsent(name, key -> {
         GovernanceData obj = new GovernanceData();
         obj.setName(key);

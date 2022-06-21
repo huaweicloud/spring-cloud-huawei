@@ -67,6 +67,12 @@ servicecomb:
   bulkhead:
     demo-bulkhead: |
       maxConcurrentCalls: 5
+  instanceIsolation:
+    default: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      slidingWindowType: COUNT_BASED
+      failureRateThreshold: 20
 
   # 灰度发布配置
   routeRule:
