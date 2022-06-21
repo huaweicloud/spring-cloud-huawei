@@ -35,6 +35,7 @@ import com.huaweicloud.common.configration.dynamic.DashboardProperties;
 import com.huaweicloud.servicecomb.dashboard.model.MonitorDataProvider;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -131,6 +132,21 @@ public class GovernanceMonitorDataProvider implements MonitorDataProvider {
       if ("resilience4j.circuitbreaker.slow.call.rate".equals(meter.getId().getName())) {
         Gauge gauge = (Gauge) meter;
         governanceData.setSlowRate(gauge.value());
+        continue;
+      }
+
+      if ("resilience4j.circuitbreaker.state".equals(meter.getId().getName())) {
+        Gauge gauge = (Gauge) meter;
+        String state = gauge.getId().getTag("state");
+        if ("open".equals(state)) {
+          governanceData.setCircuitBreakerOpen(gauge.value() == 1);
+        }
+        continue;
+      }
+
+      if ("resilience4.circuitbreaker.not.permitted.calls".equals(meter.getId().getName())) {
+        Counter counter = (Counter) meter;
+        governanceData.setShortCircuitedCalls(doubleToLong(counter.count()));
       }
     }
 
@@ -146,11 +162,17 @@ public class GovernanceMonitorDataProvider implements MonitorDataProvider {
           doubleToInt(interfaceInfo.getTotal() > 0d ? v.getTotalTime() / interfaceInfo.getTotal() : 0d));
       interfaceInfo.setCountTimeout(
           doubleToInt(interfaceInfo.getTotal() * (Math.max(v.getSlowRate(), 0d))));
+      interfaceInfo.setCircuitBreakerOpen(v.isCircuitBreakerOpen());
+      interfaceInfo.setShortCircuited(v.getShortCircuitedCalls());
       monitorData.addInterfaceInfo(interfaceInfo);
     });
   }
 
   private int doubleToInt(Double d) {
     return d.intValue();
+  }
+
+  private long doubleToLong(Double d) {
+    return d.longValue();
   }
 }
