@@ -48,5 +48,9 @@
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-jasypt</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.huaweicloud</groupId>
+      <artifactId>spring-cloud-starter-huawei-dashboard</artifactId>
+    </dependency>
   </dependencies>
 </project>

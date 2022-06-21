@@ -20,26 +20,16 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <groupId>com.huaweicloud</groupId>
-    <artifactId>spring-cloud-huawei-parents</artifactId>
+    <artifactId>spring-cloud-starter-huawei</artifactId>
     <version>1.11.0-2020.0.x-SNAPSHOT</version>
-    <relativePath>../spring-cloud-huawei-parents</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <packaging>pom</packaging>
-  <artifactId>spring-cloud-starter-huawei</artifactId>
-  <modules>
-    <module>spring-cloud-starter-huawei-discovery</module>
-    <module>spring-cloud-starter-huawei-router</module>
-    <module>spring-cloud-starter-huawei-config</module>
-    <module>spring-cloud-starter-huawei-swagger</module>
-    <module>spring-cloud-starter-huawei-governance</module>
-    <module>spring-cloud-starter-huawei-core</module>
-    <module>spring-cloud-starter-huawei-service-engine</module>
-    <module>spring-cloud-starter-huawei-service-engine-gateway</module>
-    <module>spring-cloud-starter-huawei-jasypt</module>
-    <module>spring-cloud-starter-huawei-hessian</module>
-    <module>spring-cloud-starter-huawei-actuator</module>
-    <module>spring-cloud-starter-huawei-dashboard</module>
-  </modules>
+  <artifactId>spring-cloud-starter-huawei-dashboard</artifactId>
 
+  <dependencies>
+    <dependency>
+      <groupId>com.huaweicloud</groupId>
+      <artifactId>spring-cloud-huawei-dashboard</artifactId>
+    </dependency>
+  </dependencies>
 </project>
