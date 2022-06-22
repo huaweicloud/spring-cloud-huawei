@@ -24,6 +24,7 @@ public interface StatusCodeExtractor extends Ordered {
 
   String extractStatusCode(Object response);
 
+  @Override
   default int getOrder() {
     return 0;
   }

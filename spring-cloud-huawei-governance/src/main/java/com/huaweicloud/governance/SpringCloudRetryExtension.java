@@ -20,12 +20,8 @@ package com.huaweicloud.governance;
 import java.util.List;
 
 import org.apache.servicecomb.governance.handler.ext.AbstractRetryExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SpringCloudRetryExtension extends AbstractRetryExtension {
-  private static final Logger LOGGER = LoggerFactory.getLogger(SpringCloudRetryExtension.class);
-
   private final List<StatusCodeExtractor> statusCodeExtractors;
 
   public SpringCloudRetryExtension(List<StatusCodeExtractor> statusCodeExtractors) {
