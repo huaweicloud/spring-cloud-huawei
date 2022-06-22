@@ -1,39 +1,42 @@
 /*
 
-  * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
 
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.huaweicloud.samples;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 @RestController
 @RequestMapping(path = "govern")
 public class ConsumerGovernanceController {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ConsumerGovernanceController.class);
+
   private final Map<String, Integer> retryTimes = new HashMap<>();
 
-  private int count = 0;
+  private AtomicInteger count = new AtomicInteger(0);
 
   @RequestMapping("/rateLimiting")
   public String rateLimiting() {
@@ -50,14 +53,15 @@ public class ConsumerGovernanceController {
     if (retry == 3) {
       return "try times: " + retry;
     }
-    response.setStatus(502);
+    response.setStatus(503);
     return null;
   }
 
   @RequestMapping("/circuitBreaker")
   public String circuitBreaker() throws Exception {
-    count++;
-    if (count % 3 == 0) {
+    int index = count.getAndIncrement();
+    LOGGER.info("circuitBreaker index {}", index);
+    if (index % 3 != 0) {
       return "ok";
     }
     throw new RuntimeException("test error");

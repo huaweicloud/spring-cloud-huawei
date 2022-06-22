@@ -37,6 +37,8 @@ import com.huaweicloud.common.adapters.loadbalancer.DecorateLoadBalancerRequest;
 import com.huaweicloud.common.adapters.loadbalancer.ServiceInstanceFilter;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.common.util.HeaderUtil;
+import com.huaweicloud.router.client.RouterConstant;
 
 public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
   private final AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor;
@@ -56,9 +58,20 @@ public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
     if (CollectionUtils.isEmpty(instances)) {
       return instances;
     }
+
+    Map<String, String> canaryHeaders = new HashMap<>();
+
+    // headers from outer request
+    InvocationContext invocationContext = InvocationContextHolder.getOrCreateInvocationContext();
+    String headers = invocationContext.getContext(RouterConstant.CONTEXT_HEADER);
+    if (headers != null) {
+      canaryHeaders.putAll(HeaderUtil.deserialize(headers));
+    }
+    // headers from invocation context
+    canaryHeaders.putAll(invocationContext.getContext());
+    // headers from current request
     String targetServiceName = instances.get(0).getServiceId();
     DefaultRequestContext context = (DefaultRequestContext) request.getContext();
-
     Object clientRequest = context.getClientRequest();
     HttpHeaders httpHeaders;
     if (clientRequest instanceof DecorateLoadBalancerRequest) {
@@ -68,11 +81,7 @@ public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
       // feign
       httpHeaders = ((RequestData) clientRequest).getHeaders();
     }
-
-    Map<String, String> canaryHeaders = new HashMap<>(httpHeaders.toSingleValueMap());
-
-    InvocationContext invocationContext = InvocationContextHolder.getOrCreateInvocationContext();
-    canaryHeaders.putAll(invocationContext.getContext());
+    canaryHeaders.putAll(httpHeaders.toSingleValueMap());
 
     return routerFilter
         .getFilteredListOfServers(instances, targetServiceName, canaryHeaders,

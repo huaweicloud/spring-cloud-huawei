@@ -59,11 +59,14 @@ servicecomb:
   retry:
     demo-retry: |
       maxAttempts: 3
+      retryOnResponseStatus:
+        - 503
   circuitBreaker:
     demo-circuitBreaker: |
       minimumNumberOfCalls: 10
-      slidingWindowSize: 10
-      failureRateThreshold: 20
+      slidingWindowSize: 20
+      slidingWindowType: COUNT_BASED
+      failureRateThreshold: 10
   bulkhead:
     demo-bulkhead: |
       maxConcurrentCalls: 5
