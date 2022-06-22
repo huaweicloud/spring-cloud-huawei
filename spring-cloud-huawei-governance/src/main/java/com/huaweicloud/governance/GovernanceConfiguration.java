@@ -17,6 +17,7 @@
 package com.huaweicloud.governance;
 
 import java.util.HashSet;
+import java.util.List;
 
 import org.apache.servicecomb.governance.InvocationContext;
 import org.apache.servicecomb.governance.MicroserviceMeta;
@@ -50,7 +51,7 @@ public class GovernanceConfiguration {
   }
 
   @Bean
-  public RetryExtension governanceRetryExtension() {
-    return new SpringCloudRetryExtension();
+  public RetryExtension governanceRetryExtension(List<StatusCodeExtractor> statusCodeExtractors) {
+    return new SpringCloudRetryExtension(statusCodeExtractors);
   }
 }

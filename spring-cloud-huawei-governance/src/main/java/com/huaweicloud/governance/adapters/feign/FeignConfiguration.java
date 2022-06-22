@@ -47,4 +47,9 @@ public class FeignConfiguration {
         new Client.Default(null, null), loadBalancerClient,
         loadBalancerClientFactory);
   }
+
+  @Bean
+  public ResponseStatusCodeExtractor responseStatusCodeExtractor() {
+    return new ResponseStatusCodeExtractor();
+  }
 }

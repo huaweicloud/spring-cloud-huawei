@@ -1,19 +1,19 @@
 /*
 
-  * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
 
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.huaweicloud.sample;
 
@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 public class GatewayGovernanceIT {
@@ -75,7 +76,8 @@ public class GatewayGovernanceIT {
   @Test
   public void testCircuitBreaker() throws Exception {
     CountDownLatch latch = new CountDownLatch(100);
-    AtomicBoolean expectedFailed = new AtomicBoolean(false);
+    AtomicBoolean expectedFailed503 = new AtomicBoolean(false);
+    AtomicBoolean expectedFailed500 = new AtomicBoolean(false);
     AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
     AtomicLong successCount = new AtomicLong(0);
 
@@ -92,8 +94,11 @@ public class GatewayGovernanceIT {
                 successCount.getAndIncrement();
               }
             } catch (Exception e) {
-              if (e instanceof HttpClientErrorException && ((HttpClientErrorException) e).getRawStatusCode() == 429) {
-                expectedFailed.set(true);
+              if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 503) {
+                expectedFailed503.set(true);
+              } else if (e instanceof HttpServerErrorException
+                  && ((HttpServerErrorException) e).getRawStatusCode() == 500) {
+                expectedFailed500.set(true);
               } else {
                 notExpectedFailed.set(true);
               }
@@ -102,11 +107,12 @@ public class GatewayGovernanceIT {
           }
         }.start();
       }
-      Thread.sleep(100);
+      Thread.sleep(300);
     }
 
     latch.await(20, TimeUnit.SECONDS);
-    Assertions.assertTrue(expectedFailed.get());
+    Assertions.assertTrue(expectedFailed503.get());
+    Assertions.assertTrue(expectedFailed500.get());
     Assertions.assertFalse(notExpectedFailed.get());
     Assertions.assertTrue(successCount.get() >= 8);
   }
