@@ -24,6 +24,8 @@ import java.util.Map;
 import org.apache.servicecomb.router.RouterFilter;
 import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.DefaultRequestContext;
@@ -41,6 +43,8 @@ import com.huaweicloud.common.util.HeaderUtil;
 import com.huaweicloud.router.client.RouterConstant;
 
 public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
+  private static final Logger LOGGER = LoggerFactory.getLogger(CanaryServiceInstanceFilter.class);
+
   private final AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor;
 
   private final RouterFilter routerFilter;
@@ -71,17 +75,24 @@ public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
     canaryHeaders.putAll(invocationContext.getContext());
     // headers from current request
     String targetServiceName = instances.get(0).getServiceId();
-    DefaultRequestContext context = (DefaultRequestContext) request.getContext();
-    Object clientRequest = context.getClientRequest();
-    HttpHeaders httpHeaders;
-    if (clientRequest instanceof DecorateLoadBalancerRequest) {
-      // rest template
-      httpHeaders = ((DecorateLoadBalancerRequest) clientRequest).getRequest().getHeaders();
+    Object context = request.getContext();
+    if (context instanceof DefaultRequestContext) {
+      Object clientRequest = ((DefaultRequestContext) context).getClientRequest();
+      HttpHeaders httpHeaders;
+      if (clientRequest instanceof DecorateLoadBalancerRequest) {
+        // rest template
+        httpHeaders = ((DecorateLoadBalancerRequest) clientRequest).getRequest().getHeaders();
+      } else if (clientRequest instanceof RequestData) {
+        // feign
+        httpHeaders = ((RequestData) clientRequest).getHeaders();
+      } else {
+        LOGGER.warn("not implemented client request {}.", clientRequest == null ? null : clientRequest.getClass());
+        httpHeaders = HttpHeaders.EMPTY;
+      }
+      canaryHeaders.putAll(httpHeaders.toSingleValueMap());
     } else {
-      // feign
-      httpHeaders = ((RequestData) clientRequest).getHeaders();
+      LOGGER.warn("not implemented context {}.", context == null ? null : context.getClass());
     }
-    canaryHeaders.putAll(httpHeaders.toSingleValueMap());
 
     return routerFilter
         .getFilteredListOfServers(instances, targetServiceName, canaryHeaders,
