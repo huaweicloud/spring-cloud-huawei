@@ -62,8 +62,9 @@ Spring Cloud Huawei的目的是为了让Spring Cloud使用
 
 ## 如何使用
 
-1. [开发指南](https://support.huaweicloud.com/devg-servicestage/ss-devg-0010.html)
-2. [例子和快速入门](https://github.com/huaweicloud/spring-cloud-huawei-samples)
+1. [快速入门和开发指南](https://github.com/huaweicloud/spring-cloud-huawei/wiki)
+2. [例子](https://github.com/huaweicloud/spring-cloud-huawei-samples)
+3. [CSE帮助文档][CSE]
 
 [ServiceStage]: https://support.huaweicloud.com/usermanual-servicestage/servicestage_user_0400.html
 

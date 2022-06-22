@@ -63,8 +63,9 @@ Spring Cloud Huawei is a framework that makes it easier to integrate Spring Clou
 
 ## How to use
 
-1. [Developer Guide](https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0010.html)
-2. [Quick Start and Samples](https://github.com/huaweicloud/spring-cloud-huawei-samples)
+1. [Quick Start and Developer Guide](https://github.com/huaweicloud/spring-cloud-huawei/wiki)
+2. [Samples](https://github.com/huaweicloud/spring-cloud-huawei-samples)
+3. [ServiceStage Guide][ServiceStage]
 
 [ServiceStage]: https://support.huaweicloud.com/intl/en-us/productdesc-servicestage/ss_productdesc_0001.html
 [CSE]: https://www.huaweicloud.com/intl/en-us/product/cse.html
