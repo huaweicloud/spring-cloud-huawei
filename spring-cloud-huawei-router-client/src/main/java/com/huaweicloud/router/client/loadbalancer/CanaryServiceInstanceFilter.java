@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.router.client.loabalancer;
+package com.huaweicloud.router.client.loadbalancer;
 
 import java.util.HashMap;
 import java.util.List;

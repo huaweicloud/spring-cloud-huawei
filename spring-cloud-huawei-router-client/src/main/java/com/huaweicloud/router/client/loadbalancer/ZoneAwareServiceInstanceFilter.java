@@ -15,7 +15,7 @@
   * limitations under the License.
   */
 
-package com.huaweicloud.router.client.loabalancer;
+package com.huaweicloud.router.client.loadbalancer;
 
 import com.huaweicloud.common.adapters.loadbalancer.ServiceInstanceFilter;
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
