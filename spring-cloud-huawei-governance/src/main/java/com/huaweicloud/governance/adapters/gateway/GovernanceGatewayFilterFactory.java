@@ -19,6 +19,8 @@ package com.huaweicloud.governance.adapters.gateway;
 
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.reset;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.ws.rs.core.Response.Status.Family;
 
 import org.apache.servicecomb.governance.handler.BulkheadHandler;
@@ -133,7 +135,8 @@ public class GovernanceGatewayFilterFactory
                   t.getMessage());
               return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
                   "bulkhead is full and does not permit further calls.", t));
-            });
+            })
+            .doOnError(e -> LOGGER.warn("bulk head got error.", e));
       }
       return mono;
     }
@@ -143,20 +146,28 @@ public class GovernanceGatewayFilterFactory
       CircuitBreaker circuitBreaker = circuitBreakerHandler.getActuator(governanceRequest);
       Mono<Void> mono = toRun;
       if (circuitBreaker != null) {
-        mono = toRun.transform(CircuitBreakerOperator.of(circuitBreaker))
+        long start = System.currentTimeMillis();
+        mono = toRun.transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
             .doOnSuccess(v -> {
               if (exchange.getResponse().getStatusCode() != null
                   && Family.familyOf(exchange.getResponse().getStatusCode().value()) == Family.SERVER_ERROR) {
-                exchange.getResponse().setStatusCode(null);
-                reset(exchange);
-                throw CallNotPermittedException.createCallNotPermittedException(circuitBreaker);
+                circuitBreaker.onError((System.currentTimeMillis() - start), TimeUnit.MILLISECONDS, new Exception());
+              } else {
+                circuitBreaker.onResult((System.currentTimeMillis() - start), TimeUnit.MILLISECONDS, null);
               }
+            })
+            .doOnError(e -> {
+              if (e instanceof CallNotPermittedException) {
+                return;
+              }
+              LOGGER.warn("circuit breaker got error.", e);
+              circuitBreaker.onError((System.currentTimeMillis() - start), TimeUnit.MILLISECONDS, e);
             })
             .onErrorResume(CallNotPermittedException.class, (t) -> {
               LOGGER.warn("circuitBreaker is open by policy : {}",
                   t.getMessage());
-              return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
-                  "bulkhead is full and does not permit further calls.", t));
+              return Mono.error(new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+                  "circuitBreaker is open.", t));
             });
       }
       return mono;
@@ -171,7 +182,8 @@ public class GovernanceGatewayFilterFactory
               LOGGER.warn("the request is rate limit by policy : {}",
                   t.getMessage());
               return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "rate limited.", t));
-            });
+            })
+            .doOnError(e -> LOGGER.warn("rate limiter got error.", e));
       }
       return mono;
     }

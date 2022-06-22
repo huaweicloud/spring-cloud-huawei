@@ -67,4 +67,9 @@ public class WebConfiguration {
       @Autowired(required = false) ClientRecoverPolicy<ClientHttpResponse> recoverPolicy) {
     return new IsolationClientHttpRequestInterceptor(isolationHandler, recoverPolicy);
   }
+
+  @Bean
+  public ClientHttpResponseStatusCodeExtractor clientHttpResponseStatusCodeExtractor() {
+    return new ClientHttpResponseStatusCodeExtractor();
+  }
 }

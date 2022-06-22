@@ -144,7 +144,7 @@ public class GovernanceMonitorDataProvider implements MonitorDataProvider {
         continue;
       }
 
-      if ("resilience4.circuitbreaker.not.permitted.calls".equals(meter.getId().getName())) {
+      if ("resilience4j.circuitbreaker.not.permitted.calls".equals(meter.getId().getName())) {
         Counter counter = (Counter) meter;
         governanceData.setShortCircuitedCalls(doubleToLong(counter.count()));
       }
