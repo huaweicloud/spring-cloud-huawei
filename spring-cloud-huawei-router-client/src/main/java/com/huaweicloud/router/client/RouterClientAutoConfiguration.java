@@ -28,8 +28,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import com.huaweicloud.router.client.loabalancer.CanaryServiceInstanceFilter;
-import com.huaweicloud.router.client.loabalancer.ZoneAwareServiceInstanceFilter;
+import com.huaweicloud.router.client.loadbalancer.CanaryServiceInstanceFilter;
+import com.huaweicloud.router.client.loadbalancer.ZoneAwareServiceInstanceFilter;
 
 @Configuration
 @ComponentScan(basePackages = {"org.apache.servicecomb.router"})
