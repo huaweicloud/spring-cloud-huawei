@@ -24,11 +24,21 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 public class ContextProperties {
   private boolean enableTraceInfo;
 
+  private int waitTimeForShutDownInMillis = 3000;
+
   public boolean isEnableTraceInfo() {
     return enableTraceInfo;
   }
 
   public void setEnableTraceInfo(boolean enableTraceInfo) {
     this.enableTraceInfo = enableTraceInfo;
+  }
+
+  public int getWaitTimeForShutDownInMillis() {
+    return waitTimeForShutDownInMillis;
+  }
+
+  public void setWaitTimeForShutDownInMillis(int waitTimeForShutDownInMillis) {
+    this.waitTimeForShutDownInMillis = waitTimeForShutDownInMillis;
   }
 }

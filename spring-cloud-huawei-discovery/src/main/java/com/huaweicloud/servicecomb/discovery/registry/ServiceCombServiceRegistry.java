@@ -1,19 +1,19 @@
 /*
 
-  * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
 
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.huaweicloud.servicecomb.discovery.registry;
 
@@ -41,12 +41,15 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import com.google.common.eventbus.Subscribe;
+import com.huaweicloud.common.configration.bootstrap.DiscoveryBootstrapProperties;
+import com.huaweicloud.common.event.ClosedEventListener;
+import com.huaweicloud.common.event.ClosedEventProcessor;
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
-import com.huaweicloud.common.configration.bootstrap.DiscoveryBootstrapProperties;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
 
-public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRegistration>, ApplicationContextAware {
+public class ServiceCombServiceRegistry implements
+    ServiceRegistry<ServiceCombRegistration>, ApplicationContextAware {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombServiceRegistry.class);
 
   // use bean name to avoid cyclic dependencies for swagger
@@ -67,12 +70,24 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
   private ApplicationContext applicationContext;
 
   public ServiceCombServiceRegistry(DiscoveryBootstrapProperties discoveryBootstrapProperties,
+      ClosedEventListener closedEventListener,
       ServiceCenterClient serviceCenterClient, @Autowired(required = false) ServiceCenterWatch watch) {
     this.serviceCenterClient = serviceCenterClient;
     this.watch = watch;
     this.discoveryBootstrapProperties = discoveryBootstrapProperties;
     this.serviceCenterConfiguration = new ServiceCenterConfiguration().setIgnoreSwaggerDifferent(
         discoveryBootstrapProperties.isIgnoreSwaggerDifferent());
+    closedEventListener.addClosedEventProcessor(new ClosedEventProcessor() {
+      @Override
+      public void process() {
+        unregisterService();
+      }
+
+      @Override
+      public int getOrder() {
+        return 100;
+      }
+    });
   }
 
   @Subscribe
@@ -90,7 +105,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
     EventManager.getEventBus().register(this);
     serviceCenterRegistration.setMicroservice(registration.getMicroservice());
     serviceCenterRegistration.setMicroserviceInstance(registration.getMicroserviceInstance());
-    serviceCenterRegistration.setHeartBeatInterval(TimeUnit.SECONDS.toMillis(discoveryBootstrapProperties.getHealthCheckInterval()));
+    serviceCenterRegistration.setHeartBeatInterval(
+        TimeUnit.SECONDS.toMillis(discoveryBootstrapProperties.getHealthCheckInterval()));
     serviceCenterRegistration.setHeartBeatRequestTimeout(discoveryBootstrapProperties.getHealthCheckRequestTimeout());
 
     addSchemaInfo(registration);
@@ -118,20 +134,8 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
 
   @Override
   public void deregister(ServiceCombRegistration registration) {
-    if (serviceCenterRegistration != null) {
-      serviceCenterRegistration.stop();
-      if (!StringUtils.isEmpty(registration.getMicroserviceInstance().getInstanceId())) {
-        try {
-          serviceCenterClient.deleteMicroserviceInstance(registration.getMicroserviceInstance().getServiceId(),
-              registration.getMicroserviceInstance().getInstanceId());
-        } catch (Exception e) {
-          LOGGER.error("delete microservice failed. ", e);
-        }
-      }
-    }
-    if (watch != null) {
-      watch.stop();
-    }
+    LOGGER.info("deregister instance {}", registration.getMicroserviceInstance().getInstanceId());
+    unregisterService();
   }
 
   @Override
@@ -166,5 +170,33 @@ public class ServiceCombServiceRegistry implements ServiceRegistry<ServiceCombRe
   @Override
   public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
     this.applicationContext = applicationContext;
+  }
+
+  private void unregisterService() {
+    if (serviceCenterRegistration != null) {
+      serviceCenterRegistration.stop();
+      serviceCenterRegistration = null;
+      if (!StringUtils.isEmpty(serviceCombRegistration.getMicroserviceInstance().getInstanceId())) {
+        try {
+          LOGGER.warn("application is shutting down, deregister instance {}",
+              serviceCombRegistration.getMicroserviceInstance().getInstanceId());
+          serviceCenterClient.deleteMicroserviceInstance(
+              serviceCombRegistration.getMicroserviceInstance().getServiceId(),
+              serviceCombRegistration.getMicroserviceInstance().getInstanceId());
+
+          // wait a while for un registration event broadcast to others
+          if (discoveryBootstrapProperties.getWaitTimeForShutDownInMillis() > 0) {
+            LOGGER.info("wait {}ms for un registration event broadcast to others",
+                discoveryBootstrapProperties.getWaitTimeForShutDownInMillis());
+            Thread.sleep(discoveryBootstrapProperties.getWaitTimeForShutDownInMillis());
+          }
+        } catch (Exception e) {
+          LOGGER.error("delete microservice failed. ", e);
+        }
+      }
+    }
+    if (watch != null) {
+      watch.stop();
+    }
   }
 }
