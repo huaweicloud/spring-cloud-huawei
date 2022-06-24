@@ -53,7 +53,7 @@ public class ServiceCombConfigProperties {
   @Value("${spring.cloud.servicecomb.config.fileSource:}")
   private String fileSource;
 
-  private Watch watch = new Watch();
+  private ConfigCenter configCenter = new ConfigCenter();
 
   private Kie kie = new Kie();
 
@@ -89,20 +89,21 @@ public class ServiceCombConfigProperties {
     this.serverAddr = serverAddr;
   }
 
-  public Watch getWatch() {
-    return watch;
-  }
-
-  public void setWatch(Watch watch) {
-    this.watch = watch;
-  }
-
   public void setKie(Kie kie) {
     this.kie = kie;
   }
 
   public Kie getKie() {
     return this.kie;
+  }
+
+  public ConfigCenter getConfigCenter() {
+    return configCenter;
+  }
+
+  public void setConfigCenter(
+      ConfigCenter configCenter) {
+    this.configCenter = configCenter;
   }
 
   public String getServiceName() {
@@ -156,35 +157,15 @@ public class ServiceCombConfigProperties {
     this.firstPullRequired = firstPullRequired;
   }
 
-  public static class Watch {
-    private boolean enable;
+  public static class ConfigCenter {
+    private long refreshInterval;
 
-    private int delay = 10 * 1000;
-
-    private int waitTime = 10 * 1000;
-
-    public boolean isEnable() {
-      return enable;
+    public long getRefreshInterval() {
+      return refreshInterval;
     }
 
-    public void setEnable(boolean enable) {
-      this.enable = enable;
-    }
-
-    public int getDelay() {
-      return delay;
-    }
-
-    public void setDelay(int delay) {
-      this.delay = delay;
-    }
-
-    public int getWaitTime() {
-      return waitTime;
-    }
-
-    public void setWaitTime(int waitTime) {
-      this.waitTime = waitTime;
+    public void setRefreshInterval(long refreshInterval) {
+      this.refreshInterval = refreshInterval;
     }
   }
 

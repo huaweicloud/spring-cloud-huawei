@@ -1,19 +1,19 @@
 /*
 
-  * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
 
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.huaweicloud.config;
 
@@ -27,6 +27,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.servicecomb.config.center.client.AddressManager;
 import org.apache.servicecomb.config.center.client.ConfigCenterClient;
 import org.apache.servicecomb.config.center.client.ConfigCenterManager;
+import org.apache.servicecomb.config.center.client.model.ConfigCenterConfiguration;
 import org.apache.servicecomb.config.center.client.model.QueryConfigurationsRequest;
 import org.apache.servicecomb.config.center.client.model.QueryConfigurationsResponse;
 import org.apache.servicecomb.config.common.ConfigConverter;
@@ -41,10 +42,10 @@ import org.apache.servicecomb.http.client.common.HttpTransportFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.huaweicloud.common.configration.bootstrap.ServiceCombConfigProperties;
-import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.common.configration.bootstrap.ServiceCombAkSkProperties;
+import com.huaweicloud.common.configration.bootstrap.ServiceCombConfigProperties;
 import com.huaweicloud.common.configration.bootstrap.ServiceCombSSLProperties;
+import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.common.transport.TransportUtils;
 import com.huaweicloud.common.util.URLUtil;
 
@@ -157,10 +158,17 @@ public class ConfigService {
       configConverter.updateData(response.getConfigurations());
     }
     queryConfigurationsRequest.setRevision(response.getRevision());
+    ConfigCenterConfiguration configCenterConfiguration = createConfigCenterConfiguration(configProperties);
     ConfigCenterManager configCenterManager = new ConfigCenterManager(configCenterClient, EventManager.getEventBus(),
-        configConverter);
+        configConverter, configCenterConfiguration);
     configCenterManager.setQueryConfigurationsRequest(queryConfigurationsRequest);
     configCenterManager.startConfigCenterManager();
+  }
+
+  private ConfigCenterConfiguration createConfigCenterConfiguration(ServiceCombConfigProperties configProperties) {
+    ConfigCenterConfiguration configCenterConfiguration = new ConfigCenterConfiguration();
+    configCenterConfiguration.setRefreshInterval(configProperties.getConfigCenter().getRefreshInterval());
+    return configCenterConfiguration;
   }
 
   private KieAddressManager createKieAddressManager(List<String> addresses) {

@@ -23,6 +23,7 @@ import java.net.URI;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.policy.RetryPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -37,6 +38,7 @@ import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import com.huaweicloud.common.adapters.loadbalancer.RetryContext;
 import com.huaweicloud.common.adapters.web.FallbackClientHttpResponse;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
@@ -154,6 +156,10 @@ public class RetryableRestTemplate extends RestTemplate {
     Retry retry = retryHandler.getActuator(request);
     if (retry != null) {
       dcs.withRetry(retry);
+      RetryPolicy retryPolicy = retryHandler.matchPolicy(request);
+      InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
+      RetryContext retryContext = new RetryContext(retryPolicy.getRetryOnSame());
+      context.putLocalContext(RetryContext.RETRY_CONTEXT, retryContext);
     }
   }
 }

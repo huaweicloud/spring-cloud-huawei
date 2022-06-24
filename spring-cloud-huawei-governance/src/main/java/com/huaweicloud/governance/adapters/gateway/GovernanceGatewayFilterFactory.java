@@ -17,8 +17,6 @@
 
 package com.huaweicloud.governance.adapters.gateway;
 
-import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.reset;
-
 import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.Response.Status.Family;
@@ -26,7 +24,6 @@ import javax.ws.rs.core.Response.Status.Family;
 import org.apache.servicecomb.governance.handler.BulkheadHandler;
 import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
-import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +47,6 @@ import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.github.resilience4j.reactor.bulkhead.operator.BulkheadOperator;
 import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
 import io.github.resilience4j.reactor.ratelimiter.operator.RateLimiterOperator;
-import io.github.resilience4j.reactor.retry.RetryOperator;
-import io.github.resilience4j.retry.Retry;
 import reactor.core.publisher.Mono;
 
 public class GovernanceGatewayFilterFactory
@@ -64,15 +59,12 @@ public class GovernanceGatewayFilterFactory
 
   private final BulkheadHandler bulkheadHandler;
 
-  private final RetryHandler retryHandler;
-
   public GovernanceGatewayFilterFactory(RateLimitingHandler rateLimitingHandler,
-      CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler, RetryHandler retryHandler) {
+      CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler) {
     super(Config.class);
     this.rateLimitingHandler = rateLimitingHandler;
     this.circuitBreakerHandler = circuitBreakerHandler;
     this.bulkheadHandler = bulkheadHandler;
-    this.retryHandler = retryHandler;
   }
 
   @Override
@@ -95,7 +87,6 @@ public class GovernanceGatewayFilterFactory
         SpringCloudInvocationContext.setInvocationContext();
         Mono<Void> toRun = chain.filter(exchange);
 
-        toRun = addRetry(exchange, governanceRequest, toRun);
         toRun = addCircuitBreaker(exchange, governanceRequest, toRun);
         toRun = addBulkhead(governanceRequest, toRun);
         toRun = addRateLimiter(governanceRequest, toRun);
@@ -104,25 +95,6 @@ public class GovernanceGatewayFilterFactory
       } finally {
         SpringCloudInvocationContext.removeInvocationContext();
       }
-    }
-
-    private Mono<Void> addRetry(ServerWebExchange exchange, GovernanceRequest governanceRequest, Mono<Void> toRun) {
-      Retry retry = retryHandler.getActuator(governanceRequest);
-      Mono<Void> mono = toRun;
-      if (retry != null) {
-        Retry.Context<Object> context = retry.context();
-        mono = toRun.transform(RetryOperator.of(retry))
-            .doOnSuccess(v -> {
-              if (exchange.getResponse().getRawStatusCode() != null) {
-                if (context.onResult(exchange.getResponse().getRawStatusCode())) {
-                  exchange.getResponse().setStatusCode(null);
-                  reset(exchange);
-                  throw new RetryException();
-                }
-              }
-            }).retryWhen(reactor.util.retry.Retry.indefinitely().filter(e -> e instanceof RetryException));
-      }
-      return mono;
     }
 
     private Mono<Void> addBulkhead(GovernanceRequest governanceRequest, Mono<Void> toRun) {
@@ -213,14 +185,6 @@ public class GovernanceGatewayFilterFactory
     @Override
     public String getRouteId() {
       return routeId;
-    }
-  }
-
-  public static class RetryException extends RuntimeException {
-    static final long serialVersionUID = -1;
-
-    public RetryException() {
-      super();
     }
   }
 }

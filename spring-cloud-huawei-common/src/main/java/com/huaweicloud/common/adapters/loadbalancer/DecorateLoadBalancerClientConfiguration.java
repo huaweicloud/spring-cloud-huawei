@@ -68,7 +68,7 @@ public class DecorateLoadBalancerClientConfiguration {
     String name = environment.getProperty(LoadBalancerClientFactory.PROPERTY_NAME);
     return new RetryAwareLoadBalancer(
         loadBalancerClientFactory.getLazyProvider(
-            name, ServiceInstanceListSupplier.class), name, loadBalancerProperties, environment);
+            name, ServiceInstanceListSupplier.class), name, loadBalancerProperties);
   }
 
   @Configuration(proxyBeanMethods = false)

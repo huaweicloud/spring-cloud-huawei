@@ -66,6 +66,10 @@ servicecomb:
       minimumNumberOfCalls: 10
       slidingWindowSize: 10
       failureRateThreshold: 20
+      recordFailureStatus:
+        - 500
+        - 502
+        - 503
   bulkhead:
     demo-bulkhead: |
       maxConcurrentCalls: 5
