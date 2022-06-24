@@ -63,6 +63,8 @@ public class DiscoveryBootstrapProperties {
 
   private boolean autoDiscovery = false;
 
+  private int waitTimeForShutDownInMillis = 30000;
+
   @Value("${spring.cloud.servicecomb.discovery.allowCrossApp:false}")
   private boolean allowCrossApp;
 
@@ -253,6 +255,14 @@ public class DiscoveryBootstrapProperties {
 
   public void setWatch(boolean watch) {
     this.watch = watch;
+  }
+
+  public int getWaitTimeForShutDownInMillis() {
+    return waitTimeForShutDownInMillis;
+  }
+
+  public void setWaitTimeForShutDownInMillis(int waitTimeForShutDownInMillis) {
+    this.waitTimeForShutDownInMillis = waitTimeForShutDownInMillis;
   }
 
   @Override
