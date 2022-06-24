@@ -33,6 +33,7 @@ import org.springframework.core.Ordered;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
+import com.huaweicloud.common.event.ClosedEventListener;
 
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.http.client.ClientHttpRequestInterceptor",
@@ -40,9 +41,13 @@ import com.huaweicloud.common.configration.dynamic.ContextProperties;
 public class WebConfiguration {
   @Bean
   public DecorateClientHttpRequestInterceptor decorateClientHttpRequestInterceptor(
+      ContextProperties contextProperties,
+      ClosedEventListener closedEventListener,
       @Autowired(required = false) List<PreClientHttpRequestInterceptor> preClientHttpRequestInterceptors,
       @Autowired(required = false) List<PostClientHttpRequestInterceptor> postClientHttpRequestInterceptors) {
     return new DecorateClientHttpRequestInterceptor(
+        contextProperties,
+        closedEventListener,
         preClientHttpRequestInterceptors,
         postClientHttpRequestInterceptors);
   }
