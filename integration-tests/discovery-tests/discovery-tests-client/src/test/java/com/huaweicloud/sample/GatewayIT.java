@@ -19,6 +19,8 @@ package com.huaweicloud.sample;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -53,5 +55,13 @@ public class GatewayIT {
     String result = template.exchange(url + "/order/invocationContextGateway", HttpMethod.GET, entity, String.class)
         .getBody();
     assertThat(result).isEqualTo("success");
+  }
+
+  @Test
+  public void testRetry() {
+    String invocationID = UUID.randomUUID().toString();
+    String result = template.getForObject(url + "/gateway/retry?invocationID={1}", String.class,
+        invocationID);
+    assertThat(result).isEqualTo("try times: 3");
   }
 }

@@ -30,6 +30,7 @@ import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.policy.RetryPolicy;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.PullInstanceEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +51,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 
+import com.huaweicloud.common.adapters.loadbalancer.RetryContext;
+import com.huaweicloud.common.context.InvocationContext;
+import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.governance.SpringCloudInvocationContext;
 
@@ -285,6 +289,10 @@ public class RetryableFeignBlockingLoadBalancerClient implements Client {
     Retry retry = retryHandler.getActuator(request);
     if (retry != null) {
       dcs.withRetry(retry);
+      RetryPolicy retryPolicy = retryHandler.matchPolicy(request);
+      InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
+      RetryContext retryContext = new RetryContext(retryPolicy.getRetryOnSame());
+      context.putLocalContext(RetryContext.RETRY_CONTEXT, retryContext);
     }
   }
 }

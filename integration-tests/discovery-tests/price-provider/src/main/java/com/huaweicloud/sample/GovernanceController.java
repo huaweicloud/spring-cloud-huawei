@@ -50,6 +50,20 @@ public class GovernanceController {
     return null;
   }
 
+  @RequestMapping("/gateway/retry")
+  public String gatewayRetry(HttpServletResponse response, @RequestParam(name = "invocationID") String invocationID) {
+    retryTimes.putIfAbsent(invocationID, 0);
+    retryTimes.put(invocationID, retryTimes.get(invocationID) + 1);
+
+    int retry = retryTimes.get(invocationID);
+
+    if (retry == 3) {
+      return "try times: " + retry;
+    }
+    response.setStatus(502);
+    return null;
+  }
+
   @RequestMapping("/circuitBreaker")
   public String circuitBreaker() {
     throw new RuntimeException("circuitBreaker by provider.");
