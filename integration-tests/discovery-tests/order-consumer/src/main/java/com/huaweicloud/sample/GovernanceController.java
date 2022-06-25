@@ -69,6 +69,21 @@ public class GovernanceController {
     return restTemplate.getForObject("http://price/hello", String.class);
   }
 
+  @RequestMapping("/isolationForceOpen")
+  public String isolationForceOpen() {
+    return restTemplate.getForObject("http://price/isolationForceOpen", String.class);
+  }
+
+  @RequestMapping("/isolationForceOpenFeign")
+  public String isolationForceOpenFeign() {
+    return feignService.isolationForceOpen();
+  }
+
+  @RequestMapping("/gatewayIsolationForceOpenFeign")
+  public String gatewayIsolationForceOpenFeign() {
+    return "success";
+  }
+
   @GetMapping("/rate/testRateLimitForService")
   public String testRateLimitForService() {
     for (int i = 0; i <= 10; i++) {

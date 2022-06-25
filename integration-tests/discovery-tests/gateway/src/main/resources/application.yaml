@@ -44,12 +44,20 @@ servicecomb:
       matches:
         - apiPath:
             prefix: "/"
+    gatewayIsolationForceOpenFeign: |
+      matches:
+        - apiPath:
+            prefix: "/govern/gatewayIsolationForceOpenFeign"
   instanceIsolation:
     allOperation: |
       minimumNumberOfCalls: 10
       slidingWindowSize: 10
       slidingWindowType: COUNT_BASED
       failureRateThreshold: 20
+      order: 2
+    gatewayIsolationForceOpenFeign: |
+      forceOpen: true
+      order: 1
 
 management:
   endpoint:
