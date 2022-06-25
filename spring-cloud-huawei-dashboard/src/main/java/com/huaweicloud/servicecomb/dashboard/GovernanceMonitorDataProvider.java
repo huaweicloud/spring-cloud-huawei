@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import io.github.resilience4j.micrometer.tagged.CircuitBreakerMetricNames;
+import io.github.resilience4j.micrometer.tagged.TagNames;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.dashboard.client.model.InterfaceInfo;
 import org.apache.servicecomb.dashboard.client.model.MonitorData;
@@ -91,7 +93,7 @@ public class GovernanceMonitorDataProvider implements MonitorDataProvider {
     Map<String, GovernanceData> metricsData = new HashMap<>();
 
     for (Meter meter : meters) {
-      String name = meter.getId().getTag("name");
+      String name = meter.getId().getTag(TagNames.NAME);
       if (StringUtils.isNotEmpty(name)) {
         if (name.startsWith(InstanceIsolationProperties.MATCH_INSTANCE_ISOLATION_KEY)) {
           name = name.replace(InstanceIsolationProperties.MATCH_INSTANCE_ISOLATION_KEY, NAME_CONSUMER);
@@ -110,32 +112,32 @@ public class GovernanceMonitorDataProvider implements MonitorDataProvider {
         return obj;
       });
 
-      if ("resilience4j.circuitbreaker.calls".equals(meter.getId().getName())) {
+      if (CircuitBreakerMetricNames.DEFAULT_CIRCUIT_BREAKER_CALLS.equals(meter.getId().getName())) {
         Timer timer = (Timer) meter;
-        if ("successful".equals(meter.getId().getTag("kind"))) {
+        if ("successful".equals(meter.getId().getTag(TagNames.KIND))) {
           governanceData.setSuccessfulCalls(timer.count());
-        } else if ("failed".equals(meter.getId().getTag("kind"))) {
+        } else if ("failed".equals(meter.getId().getTag(TagNames.KIND))) {
           governanceData.setFailedCalls(timer.count());
-        } else if ("ignored".equals(meter.getId().getTag("kind"))) {
+        } else if ("ignored".equals(meter.getId().getTag(TagNames.KIND))) {
           governanceData.setIgnoredCalls(timer.count());
         }
         governanceData.setTotalTime(timer.totalTime(TimeUnit.MILLISECONDS) + governanceData.getTotalTime());
         continue;
       }
 
-      if ("resilience4j.circuitbreaker.failure.rate".equals(meter.getId().getName())) {
+      if (CircuitBreakerMetricNames.DEFAULT_CIRCUIT_BREAKER_FAILURE_RATE.equals(meter.getId().getName())) {
         Gauge gauge = (Gauge) meter;
         governanceData.setFailureRate(gauge.value());
         continue;
       }
 
-      if ("resilience4j.circuitbreaker.slow.call.rate".equals(meter.getId().getName())) {
+      if (CircuitBreakerMetricNames.DEFAULT_CIRCUIT_BREAKER_SLOW_CALL_RATE.equals(meter.getId().getName())) {
         Gauge gauge = (Gauge) meter;
         governanceData.setSlowRate(gauge.value());
         continue;
       }
 
-      if ("resilience4j.circuitbreaker.state".equals(meter.getId().getName())) {
+      if (CircuitBreakerMetricNames.DEFAULT_CIRCUIT_BREAKER_STATE.equals(meter.getId().getName())) {
         Gauge gauge = (Gauge) meter;
         String state = gauge.getId().getTag("state");
         if ("open".equals(state)) {
@@ -144,7 +146,7 @@ public class GovernanceMonitorDataProvider implements MonitorDataProvider {
         continue;
       }
 
-      if ("resilience4j.circuitbreaker.not.permitted.calls".equals(meter.getId().getName())) {
+      if (CircuitBreakerMetricNames.DEFAULT_CIRCUIT_BREAKER_NOT_PERMITTED_CALLS.equals(meter.getId().getName())) {
         Counter counter = (Counter) meter;
         governanceData.setShortCircuitedCalls(doubleToLong(counter.count()));
       }
