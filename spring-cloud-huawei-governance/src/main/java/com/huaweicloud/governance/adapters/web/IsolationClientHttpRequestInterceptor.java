@@ -20,6 +20,7 @@ package com.huaweicloud.governance.adapters.web;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.policy.CircuitBreakerPolicy;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.PullInstanceEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +67,16 @@ public class IsolationClientHttpRequestInterceptor implements ClientHttpRequestI
     GovernanceRequest governanceRequest = convert(request);
     try {
       SpringCloudInvocationContext.setInvocationContext();
-      addInstanceIsolation(dcs, governanceRequest);
+
+      CircuitBreakerPolicy circuitBreakerPolicy = instanceIsolationHandler.matchPolicy(governanceRequest);
+      if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
+        return new FallbackClientHttpResponse(503,
+            "Policy " + circuitBreakerPolicy.getName() + " forced open and deny requests");
+      }
+
+      if (circuitBreakerPolicy != null && !circuitBreakerPolicy.isForceClosed()) {
+        addInstanceIsolation(dcs, governanceRequest);
+      }
 
       return dcs.get();
     } catch (Throwable e) {

@@ -30,6 +30,7 @@ import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.policy.CircuitBreakerPolicy;
 import org.apache.servicecomb.governance.policy.RetryPolicy;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.PullInstanceEvent;
 import org.slf4j.Logger;
@@ -243,7 +244,16 @@ public class RetryableFeignBlockingLoadBalancerClient implements Client {
     try {
       SpringCloudInvocationContext.setInvocationContext();
 
-      addInstanceIsolation(dcs, governanceRequest);
+      CircuitBreakerPolicy circuitBreakerPolicy = instanceIsolationHandler.matchPolicy(governanceRequest);
+      if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
+        return Response.builder().status(503)
+            .reason("Policy " + circuitBreakerPolicy.getName() + " forced open and deny requests").request(feignRequest)
+            .build();
+      }
+
+      if (circuitBreakerPolicy != null && !circuitBreakerPolicy.isForceClosed()) {
+        addInstanceIsolation(dcs, governanceRequest);
+      }
 
       return dcs.get();
     } catch (Throwable e) {
