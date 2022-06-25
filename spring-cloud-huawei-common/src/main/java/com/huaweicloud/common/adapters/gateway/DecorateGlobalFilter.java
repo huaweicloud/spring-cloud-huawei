@@ -65,6 +65,6 @@ public class DecorateGlobalFilter implements GlobalFilter, Ordered {
   public int getOrder() {
     // this filter executed after ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER
     // so that we can get ServerWebExchangeUtils.GATEWAY_LOADBALANCER_RESPONSE_ATTR in PreGlobalFilter
-    return ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER + 1;
+    return ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER + 10;
   }
 }
