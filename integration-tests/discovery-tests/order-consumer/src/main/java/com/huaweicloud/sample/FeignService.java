@@ -31,4 +31,7 @@ public interface FeignService {
 
   @RequestMapping("/invocationContext")
   String invocationContext();
+
+  @RequestMapping("/isolationForceOpen")
+  String isolationForceOpen();
 }

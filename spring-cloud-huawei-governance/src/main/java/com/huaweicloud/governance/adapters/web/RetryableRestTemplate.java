@@ -160,6 +160,11 @@ public class RetryableRestTemplate extends RestTemplate {
       InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
       RetryContext retryContext = new RetryContext(retryPolicy.getRetryOnSame());
       context.putLocalContext(RetryContext.RETRY_CONTEXT, retryContext);
+    } else {
+      // when retry not enabled and Isolation enabled, we need get instance from RetryContext
+      InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
+      RetryContext retryContext = new RetryContext(0);
+      context.putLocalContext(RetryContext.RETRY_CONTEXT, retryContext);
     }
   }
 }

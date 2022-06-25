@@ -39,6 +39,14 @@ spring:
 
 servicecomb:
   matchGroup:
+    allOperation: |
+      matches:
+        - apiPath:
+            prefix: "/"
+    isolationForceOpen: |
+      matches:
+        - apiPath:
+            prefix: "/isolationForceOpen"
     demo-rateLimiting: |
       matches:
         - apiPath:
@@ -74,7 +82,9 @@ servicecomb:
     demo-bulkhead: |
       maxConcurrentCalls: 5
   instanceIsolation:
-    default: |
+    allOperation: |
       minimumNumberOfCalls: 10
       slidingWindowSize: 10
       failureRateThreshold: 20
+    isolationForceOpen: |
+      forceOpen: true

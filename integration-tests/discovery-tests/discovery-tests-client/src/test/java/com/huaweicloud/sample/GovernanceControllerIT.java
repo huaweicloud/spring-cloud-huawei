@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 public class GovernanceControllerIT {
@@ -51,6 +52,18 @@ public class GovernanceControllerIT {
     assertThat(result).isEqualTo("try times: 3");
   }
 
+  @Test
+  public void testIsolationForceOpen() {
+    Assertions.assertThrows(HttpServerErrorException.class,
+        () -> template.getForObject(orderServiceUrl + "/govern/isolationForceOpen", String.class));
+  }
+
+  @Test
+  public void testIsolationForceOpenFeign() {
+    // exceptions thrown by feign is catch by spring mvc and will throw of error 500
+    Assertions.assertThrows(HttpServerErrorException.class,
+        () -> template.getForObject(orderServiceUrl + "/govern/isolationForceOpenFeign", String.class));
+  }
 
   @Test
   public void testCircuitBreaker() throws Exception {

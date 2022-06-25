@@ -69,6 +69,11 @@ public class GovernanceController {
     throw new RuntimeException("circuitBreaker by provider.");
   }
 
+  @RequestMapping("/isolationForceOpen")
+  public String isolationForceOpen() {
+    return "success";
+  }
+
   @GetMapping("/rate/testRateLimitForService")
   public String testRateLimitForService() {
     return "success";
