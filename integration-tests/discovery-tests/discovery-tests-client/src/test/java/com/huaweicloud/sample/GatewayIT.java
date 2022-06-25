@@ -21,10 +21,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.UUID;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 public class GatewayIT {
@@ -63,5 +65,11 @@ public class GatewayIT {
     String result = template.getForObject(url + "/gateway/retry?invocationID={1}", String.class,
         invocationID);
     assertThat(result).isEqualTo("try times: 3");
+  }
+
+  @Test
+  public void gatewayIsolationForceOpenFeign() {
+    Assertions.assertThrows(HttpServerErrorException.class,
+        () -> template.getForObject(url + "/order/govern/gatewayIsolationForceOpenFeign", String.class));
   }
 }

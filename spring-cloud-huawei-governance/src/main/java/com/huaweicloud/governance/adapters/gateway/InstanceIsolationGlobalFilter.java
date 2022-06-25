@@ -19,6 +19,7 @@ package com.huaweicloud.governance.adapters.gateway;
 
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.policy.CircuitBreakerPolicy;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.PullInstanceEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +58,15 @@ public class InstanceIsolationGlobalFilter implements GlobalFilter, Ordered {
     try {
       SpringCloudInvocationContext.setInvocationContext();
       Mono<Void> toRun = chain.filter(exchange);
-      toRun = addInstanceIsolation(governanceRequest, toRun);
+
+      CircuitBreakerPolicy circuitBreakerPolicy = isolationHandler.matchPolicy(governanceRequest);
+      if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
+        return Mono.error(new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+            "instance isolated."));
+      }
+      if (circuitBreakerPolicy != null && !circuitBreakerPolicy.isForceClosed()) {
+        toRun = addInstanceIsolation(governanceRequest, toRun);
+      }
       return toRun;
     } finally {
       SpringCloudInvocationContext.removeInvocationContext();
