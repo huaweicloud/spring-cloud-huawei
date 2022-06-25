@@ -23,13 +23,29 @@ spring:
         locator:
           enabled: true
           lowerCaseServiceId: true
+      routes:
+        - id: price
+          uri: lb://price
+          predicates:
+            - Path=/gateway/**
+          filters:
+            - name: governance
+            - name: Retry
+              args:
+                retries: 3
+                series: SERVER_ERROR
       httpclient:
         connect-timeout: 1000
         response-timeout: 3s
 
 servicecomb:
+  matchGroup:
+    allOperation: |
+      matches:
+        - apiPath:
+            prefix: "/"
   instanceIsolation:
-    default: |
+    allOperation: |
       minimumNumberOfCalls: 10
       slidingWindowSize: 10
       slidingWindowType: COUNT_BASED

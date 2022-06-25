@@ -29,7 +29,6 @@ import org.springframework.cloud.loadbalancer.core.RandomLoadBalancer;
 import org.springframework.cloud.loadbalancer.core.ReactorServiceInstanceLoadBalancer;
 import org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
-import org.springframework.core.env.Environment;
 
 import com.huaweicloud.common.configration.dynamic.LoadBalancerProperties;
 import com.huaweicloud.common.context.InvocationContext;
@@ -47,33 +46,37 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
 
   private final LoadBalancerProperties loadBalancerProperties;
 
-  private final Environment environment;
-
   private final Map<String, ReactorServiceInstanceLoadBalancer> loadBalancers = new ConcurrentHashMap<>();
 
   public RetryAwareLoadBalancer(ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider,
-      String serviceId, LoadBalancerProperties loadBalancerProperties, Environment environment) {
+      String serviceId, LoadBalancerProperties loadBalancerProperties) {
     this.serviceInstanceListSupplierProvider = serviceInstanceListSupplierProvider;
     this.serviceId = serviceId;
     this.loadBalancerProperties = loadBalancerProperties;
-    this.environment = environment;
   }
 
   @Override
   @SuppressWarnings("rawtypes")
   public Mono<Response<ServiceInstance>> choose(Request request) {
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
-    RetryContext retryContext;
-    if (context.getLocalContext(RetryContext.RETRY_CONTEXT) != null) {
-      retryContext = context.getLocalContext(RetryContext.RETRY_CONTEXT);
+    if (context.getLocalContext(RetryContext.RETRY_CONTEXT) == null) {
+      // gateway do not use RetryContext
+      ReactorServiceInstanceLoadBalancer loadBalancer = loadBalancers.computeIfAbsent(loadBalancerProperties.getRule(),
+          key -> {
+            if (LoadBalancerProperties.RULE_RANDOM.equals(key)) {
+              return new RandomLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
+            } else {
+              return new RoundRobinLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
+            }
+          });
+      return loadBalancer.choose(request);
+    }
+
+    // feign / restTemplate using RetryContext
+    RetryContext retryContext = context.getLocalContext(RetryContext.RETRY_CONTEXT);
+    if (retryContext.trySameServer() && retryContext.getLastServer() != null) {
       retryContext.incrementRetry();
-      if (retryContext.trySameServer() && retryContext.getLastServer() != null) {
-        return Mono.just(new DefaultResponse(retryContext.getLastServer()));
-      }
-    } else {
-      retryContext = new RetryContext(
-          environment.getProperty(String.format(RetryContext.RETRY_ON_SAME, serviceId), int.class, 0));
-      context.putLocalContext(RetryContext.RETRY_CONTEXT, retryContext);
+      return Mono.just(new DefaultResponse(retryContext.getLastServer()));
     }
 
     ReactorServiceInstanceLoadBalancer loadBalancer = loadBalancers.computeIfAbsent(loadBalancerProperties.getRule(),

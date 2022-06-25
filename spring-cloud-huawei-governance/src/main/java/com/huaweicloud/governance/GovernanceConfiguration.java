@@ -23,7 +23,9 @@ import org.apache.servicecomb.governance.InvocationContext;
 import org.apache.servicecomb.governance.MicroserviceMeta;
 import org.apache.servicecomb.governance.event.GovernanceConfigurationChangedEvent;
 import org.apache.servicecomb.governance.event.GovernanceEventManager;
-import org.apache.servicecomb.governance.handler.ext.RetryExtension;
+import org.apache.servicecomb.governance.handler.ext.AbstractCircuitBreakerExtension;
+import org.apache.servicecomb.governance.handler.ext.AbstractInstanceIsolationExtension;
+import org.apache.servicecomb.governance.handler.ext.AbstractRetryExtension;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -51,7 +53,17 @@ public class GovernanceConfiguration {
   }
 
   @Bean
-  public RetryExtension governanceRetryExtension(List<StatusCodeExtractor> statusCodeExtractors) {
+  public AbstractRetryExtension governanceRetryExtension(List<StatusCodeExtractor> statusCodeExtractors) {
     return new SpringCloudRetryExtension(statusCodeExtractors);
+  }
+
+  @Bean
+  public AbstractCircuitBreakerExtension circuitBreakerExtension(List<StatusCodeExtractor> statusCodeExtractors) {
+    return new SpringCloudCircuitBreakerExtension(statusCodeExtractors);
+  }
+
+  @Bean
+  public AbstractInstanceIsolationExtension instanceIsolationExtension(List<StatusCodeExtractor> statusCodeExtractors) {
+    return new SpringCloudInstanceIsolationExtension(statusCodeExtractors);
   }
 }

@@ -21,7 +21,6 @@ import org.apache.servicecomb.governance.handler.BulkheadHandler;
 import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
-import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.gateway.config.conditional.ConditionalOnEnabledFilter;
@@ -36,9 +35,8 @@ public class GatewayConfiguration {
   @Bean
   @ConditionalOnEnabledFilter
   public GovernanceGatewayFilterFactory governanceGatewayFilterFactory(RateLimitingHandler rateLimitingHandler,
-      CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler, RetryHandler retryHandler) {
-    return new GovernanceGatewayFilterFactory(rateLimitingHandler, circuitBreakerHandler, bulkheadHandler,
-        retryHandler);
+      CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler) {
+    return new GovernanceGatewayFilterFactory(rateLimitingHandler, circuitBreakerHandler, bulkheadHandler);
   }
 
   @Bean
