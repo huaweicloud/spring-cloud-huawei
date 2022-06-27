@@ -29,22 +29,30 @@ spring:
           uri: lb://basic-provider
           predicates:
             - Path=/gateway/**
-        - id: consumer
+        - id: consumer-governance-test
           uri: lb://basic-consumer
           filters:
             - name: governance
           predicates:
             - Path=/**
+          order: 1
+        - id: consumer-retry-test
+          uri: lb://basic-consumer
+          filters:
+            - name: governance
+            - name: Retry
+              args:
+                retries: 3
+                series: SERVER_ERROR
+          predicates:
+            - Path=/govern/retry/**
+          order: 0
 servicecomb:
   matchGroup:
     demo-rateLimiting: |
       matches:
         - apiPath:
             exact: "/govern/rateLimiting"
-    demo-retry: |
-      matches:
-        - apiPath:
-            prefix: "/govern/retry"
     demo-circuitBreaker: |
       matches:
         - apiPath:
@@ -56,11 +64,6 @@ servicecomb:
   rateLimiting:
     demo-rateLimiting: |
       rate: 10
-  retry:
-    demo-retry: |
-      maxAttempts: 3
-      retryOnResponseStatus:
-        - 503
   circuitBreaker:
     demo-circuitBreaker: |
       minimumNumberOfCalls: 10
@@ -70,12 +73,6 @@ servicecomb:
   bulkhead:
     demo-bulkhead: |
       maxConcurrentCalls: 5
-  instanceIsolation:
-    default: |
-      minimumNumberOfCalls: 10
-      slidingWindowSize: 10
-      slidingWindowType: COUNT_BASED
-      failureRateThreshold: 20
 
   # 灰度发布配置
   routeRule:

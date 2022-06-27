@@ -58,13 +58,14 @@ public class ConsumerGovernanceController {
   }
 
   @RequestMapping("/circuitBreaker")
-  public String circuitBreaker() throws Exception {
+  public String circuitBreaker(HttpServletResponse response) throws Exception {
     int index = count.getAndIncrement();
     LOGGER.info("circuitBreaker index {}", index);
     if (index % 3 != 0) {
       return "ok";
     }
-    throw new RuntimeException("test error");
+    response.setStatus(502);
+    return null;
   }
 
   @RequestMapping("/bulkhead")
