@@ -23,8 +23,10 @@ import javax.ws.rs.core.Response.Status.Family;
 
 import org.apache.servicecomb.governance.handler.BulkheadHandler;
 import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
+import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.policy.FaultInjectionPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -37,6 +39,8 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.huaweicloud.governance.SpringCloudInvocationContext;
+import com.huaweicloud.governance.faultInjection.FaultInjectionException;
+import com.huaweicloud.governance.faultInjection.reactor.FaultInjectionOperator;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadFullException;
@@ -59,12 +63,16 @@ public class GovernanceGatewayFilterFactory
 
   private final BulkheadHandler bulkheadHandler;
 
+  private final FaultInjectionHandler faultInjectionHandler;
+
   public GovernanceGatewayFilterFactory(RateLimitingHandler rateLimitingHandler,
-      CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler) {
+      CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler,
+      FaultInjectionHandler faultInjectionHandler) {
     super(Config.class);
     this.rateLimitingHandler = rateLimitingHandler;
     this.circuitBreakerHandler = circuitBreakerHandler;
     this.bulkheadHandler = bulkheadHandler;
+    this.faultInjectionHandler = faultInjectionHandler;
   }
 
   @Override
@@ -90,6 +98,7 @@ public class GovernanceGatewayFilterFactory
         toRun = addCircuitBreaker(exchange, governanceRequest, toRun);
         toRun = addBulkhead(governanceRequest, toRun);
         toRun = addRateLimiter(governanceRequest, toRun);
+        toRun = addFaultInject(governanceRequest, toRun);
 
         return toRun;
       } finally {
@@ -156,6 +165,25 @@ public class GovernanceGatewayFilterFactory
               return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "rate limited.", t));
             })
             .doOnError(e -> LOGGER.warn("rate limiter got error.", e));
+      }
+      return mono;
+    }
+
+    private Mono<Void> addFaultInject(GovernanceRequest governanceRequest, Mono<Void> toRun) {
+      Mono<Void> mono = toRun;
+      if(faultInjectionHandler!=null){
+        FaultInjectionPolicy faultInject = faultInjectionHandler.getActuator(governanceRequest);
+        if (faultInject != null) {
+          mono = toRun.transform(FaultInjectionOperator.of(governanceRequest,faultInject))
+              .onErrorResume(FaultInjectionException.class, (t) -> {
+                LOGGER.warn("the request is fault injection by policy : {}",
+                    t.getMessage());
+                //如何error code不对的话这里会抛异常
+                return Mono.error(new ResponseStatusException(t.getFaultResponse().getErrorCode(),
+                    t.getFaultResponse().getErrorMsg(), t));
+              })
+              .doOnError(e -> LOGGER.warn("fault injection got error.", e));
+        }
       }
       return mono;
     }

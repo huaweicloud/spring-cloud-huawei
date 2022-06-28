@@ -26,6 +26,64 @@ spring:
         locator:
           enabled: true
           lowerCaseServiceId: true
+      routes:
+        - id: consumer
+          uri: lb://basic-consumer
+          filters:
+            - name: governance
+          predicates:
+            - Path=/**
+
+servicecomb:
+  matchGroup:
+    demo-rateLimiting: |
+      matches:
+        - apiPath:
+            exact: "/sayHello"
+    demo-retry: |
+      matches:
+        - apiPath:
+            prefix: "/sayHello"
+    demo-circuitBreaker: |
+      matches:
+        - apiPath:
+            exact: "/sayHello"
+    demo-bulkhead: |
+      matches:
+        - apiPath:
+            exact: "/sayHello"
+    demo-faultInjectDelay: |
+      matches:
+        - apiPath:
+            contains: "/sayHello1"
+    demo-faultInjectAbort: |
+      matches:
+        - apiPath:
+            contains: "/sayHello"
+  rateLimiting:
+    demo-rateLimiting: |
+      rate: 10
+  retry:
+    demo-retry: |
+      maxAttempts: 3
+  circuitBreaker:
+    demo-circuitBreaker: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      failureRateThreshold: 20
+  bulkhead:
+    demo-bulkhead: |
+      maxConcurrentCalls: 5
+  faultInjection:
+    demo-faultInjectDelay: |
+      type: delay
+      delayTime: 3S
+      percentage: 1
+    demo-faultInjectAbort: |
+      type: abort
+      percentage: 100
+      errorCode: 490
+
 management:
   endpoint:
     gateway:

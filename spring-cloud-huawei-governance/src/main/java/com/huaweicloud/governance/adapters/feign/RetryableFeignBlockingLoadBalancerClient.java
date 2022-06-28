@@ -26,11 +26,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.apache.servicecomb.governance.policy.CircuitBreakerPolicy;
+import org.apache.servicecomb.governance.policy.FaultInjectionPolicy;
 import org.apache.servicecomb.governance.policy.RetryPolicy;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.PullInstanceEvent;
 import org.slf4j.Logger;
@@ -57,6 +59,7 @@ import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.governance.SpringCloudInvocationContext;
+import com.huaweicloud.governance.faultInjection.FaultExecutor;
 
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -94,13 +97,17 @@ public class RetryableFeignBlockingLoadBalancerClient implements Client {
 
   private final ClientRecoverPolicy<Response> clientRecoverPolicy;
 
+  private final FaultInjectionHandler faultInjectionHandler;
+
   public RetryableFeignBlockingLoadBalancerClient(RetryHandler retryHandler,
       InstanceIsolationHandler instanceIsolationHandler,
+      FaultInjectionHandler faultInjectionHandler,
       ClientRecoverPolicy<Response> clientRecoverPolicy,
       Client delegate, LoadBalancerClient loadBalancerClient,
       LoadBalancerClientFactory loadBalancerClientFactory) {
     this.retryHandler = retryHandler;
     this.instanceIsolationHandler = instanceIsolationHandler;
+    this.faultInjectionHandler = faultInjectionHandler;
     this.clientRecoverPolicy = clientRecoverPolicy;
     this.delegate = delegate;
     this.loadBalancerClient = loadBalancerClient;
@@ -122,6 +129,8 @@ public class RetryableFeignBlockingLoadBalancerClient implements Client {
       SpringCloudInvocationContext.setInvocationContext();
 
       addRetry(dcs, governanceRequest);
+
+      addFaultInject(governanceRequest);
 
       return dcs.get();
     } catch (Throwable e) {
@@ -303,6 +312,15 @@ public class RetryableFeignBlockingLoadBalancerClient implements Client {
       InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
       RetryContext retryContext = new RetryContext(retryPolicy.getRetryOnSame());
       context.putLocalContext(RetryContext.RETRY_CONTEXT, retryContext);
+    }
+  }
+
+  private void addFaultInject(GovernanceRequest governanceRequest) {
+    if(faultInjectionHandler!=null){
+      FaultInjectionPolicy faultInject = faultInjectionHandler.getActuator(governanceRequest);
+      if (faultInject != null) {
+        FaultExecutor.execute(governanceRequest,faultInject);
+      }
     }
   }
 }

@@ -19,8 +19,10 @@ package com.huaweicloud.governance.adapters.gateway;
 
 import org.apache.servicecomb.governance.handler.BulkheadHandler;
 import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
+import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.gateway.config.conditional.ConditionalOnEnabledFilter;
@@ -35,8 +37,10 @@ public class GatewayConfiguration {
   @Bean
   @ConditionalOnEnabledFilter
   public GovernanceGatewayFilterFactory governanceGatewayFilterFactory(RateLimitingHandler rateLimitingHandler,
-      CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler) {
-    return new GovernanceGatewayFilterFactory(rateLimitingHandler, circuitBreakerHandler, bulkheadHandler);
+      CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler,
+      @Autowired(required = false) FaultInjectionHandler faultInjectionHandler) {
+    return new GovernanceGatewayFilterFactory(rateLimitingHandler, circuitBreakerHandler, bulkheadHandler,
+        faultInjectionHandler);
   }
 
   @Bean
