@@ -64,6 +64,8 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
 
   private final AtomicLong changeId = new AtomicLong(0);
 
+  private final List<String> serviceIds = new ArrayList<>();
+
   public ServiceCombDiscoveryClient(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCenterClient serviceCenterClient, ServiceCombRegistration serviceCombRegistration) {
     this.discoveryProperties = discoveryProperties;
@@ -81,6 +83,15 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
       serviceCenterDiscovery.updateMyselfServiceId(serviceCombRegistration.getMicroservice().getServiceId());
       // startDiscovery will check if already started, can call several times
       serviceCenterDiscovery.startDiscovery();
+
+      if (discoveryProperties.isEnableServicePolling()) {
+        List<String> services = getServices();
+        if (!serviceIds.equals(services)) {
+          serviceIds.clear();
+          serviceIds.addAll(services);
+          this.applicationEventPublisher.publishEvent(new HeartbeatEvent(this, changeId.getAndIncrement()));
+        }
+      }
     }
   }
 

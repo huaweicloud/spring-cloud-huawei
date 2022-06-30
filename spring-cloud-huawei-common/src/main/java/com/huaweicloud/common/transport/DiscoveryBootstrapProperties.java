@@ -24,6 +24,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("spring.cloud.servicecomb.discovery")
 public class DiscoveryBootstrapProperties {
+  private static final int HEALTH_CHECK_MAX_INTERVAL = 600;
+
+  private static final int HEALTH_CHECK_MIN_INTERVAL = 1;
 
   private boolean enabled = true;
 
@@ -73,9 +76,16 @@ public class DiscoveryBootstrapProperties {
 
   private DataCenterInfo datacenter;
 
-  private static final int HEALTH_CHECK_MAX_INTERVAL = 600;
-
-  private static final int HEALTH_CHECK_MIN_INTERVAL = 1;
+  // when service polling is enabled, client will try to query service names
+  // to check if service names list changed. This is quite useful when in
+  // spring cloud gateway and
+  // spring:
+  //  cloud:
+  //    gateway:
+  //      discovery:
+  //        locator:
+  //          enabled: true
+  private boolean enableServicePolling = false;
 
   public String getServerAddress() {
     return serverAddress;
@@ -229,6 +239,14 @@ public class DiscoveryBootstrapProperties {
 
   public void setIgnoreSwaggerDifferent(boolean ignoreSwaggerDifferent) {
     this.ignoreSwaggerDifferent = ignoreSwaggerDifferent;
+  }
+
+  public boolean isEnableServicePolling() {
+    return enableServicePolling;
+  }
+
+  public void setEnableServicePolling(boolean enableServicePolling) {
+    this.enableServicePolling = enableServicePolling;
   }
 
   public boolean isWatch() {
