@@ -81,7 +81,7 @@ public class InstanceIsolationGlobalFilter implements GlobalFilter, Ordered {
 
     Response<ServiceInstance> response = exchange.getAttribute(
         ServerWebExchangeUtils.GATEWAY_LOADBALANCER_RESPONSE_ATTR);
-    if (response.hasServer()) {
+    if (response !=null && response.hasServer()) {
       request.setServiceName(response.getServer().getServiceId());
       request.setInstanceId(response.getServer().getInstanceId());
     }
