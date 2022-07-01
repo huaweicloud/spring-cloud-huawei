@@ -18,16 +18,16 @@
 package com.huaweicloud.servicecomb.discovery.ribbon;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 import com.netflix.client.config.IClientConfig;
-import com.netflix.loadbalancer.IPing;
-import com.netflix.loadbalancer.ServerList;
-import com.netflix.loadbalancer.ServerListUpdater;
+import com.netflix.loadbalancer.AbstractServerList;
+import com.netflix.loadbalancer.ILoadBalancer;
+import com.netflix.loadbalancer.IRule;
+import com.netflix.loadbalancer.Server;
 
 /**
  * @Author wangqijun
@@ -37,21 +37,23 @@ import com.netflix.loadbalancer.ServerListUpdater;
 public class ServiceCombRibbonClientConfiguration {
   @Bean
   @ConditionalOnMissingBean
-  public ServerList<?> ribbonServerList(IClientConfig config, DiscoveryClient discoveryClient,
-      ServiceCombRegistration serviceCombRegistration) {
+  public ILoadBalancer ribbonLoadBalancer(
+          IRule rule, AbstractServerList<Server> serverList) {
+    return new ServiceCombLoadBalancer(rule, serverList);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  public AbstractServerList<Server> ribbonServerList(IClientConfig config, DiscoveryClient discoveryClient,
+       ServiceCombRegistration serviceCombRegistration) {
     ServiceCombServerList serverList = new ServiceCombServerList(discoveryClient, serviceCombRegistration);
     serverList.initWithNiwsConfig(config);
     return serverList;
   }
 
   @Bean
-  @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.ping")
-  public IPing ping() {
-    return new ServiceCombIPing();
-  }
-
-  @Bean
-  public ServerListUpdater serviceCombServerListUpdater() {
-    return new ServiceCombServerListUpdater();
+  @ConditionalOnMissingBean
+  public IRule ribbonRule() {
+    return new ServiceCombRoundRobinRule();
   }
 }
