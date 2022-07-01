@@ -1,3 +1,5 @@
+[![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.huaweicloud/spring-cloud-huawei/badge.svg)](https://search.maven.org/search?q=g:com.huaweicloud%20AND%20a:spring-cloud-huawei-dependencies)
 # 使用微服务引擎专业版的测试用例
 
 * 首先登陆华为云华南区，获取 AK/SK。 测试机器设置环境变量： CREDENTIALS_AK、CREDENTIALS_SK。
@@ -19,3 +21,5 @@ cse.v1.test.configModels[1].index: 3
   * cse.v1.test.bar: bar
 
 * 执行 tests-client 里面的集成测试用例
+
+
