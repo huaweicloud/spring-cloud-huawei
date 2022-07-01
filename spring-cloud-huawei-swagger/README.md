@@ -1,3 +1,5 @@
+[![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.huaweicloud/spring-cloud-huawei/badge.svg)](https://search.maven.org/search?q=g:com.huaweicloud%20AND%20a:spring-cloud-huawei-dependencies)
 # 契约注册模块
 
 本模块的主要功能是扫描所有的 `@RestController`， 生成 swagger， 然后将 swagger 内容注册到服务中心。
