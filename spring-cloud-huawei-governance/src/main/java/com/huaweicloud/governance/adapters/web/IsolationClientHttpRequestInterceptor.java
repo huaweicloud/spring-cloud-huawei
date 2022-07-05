@@ -34,7 +34,6 @@ import com.huaweicloud.common.adapters.loadbalancer.RetryContext;
 import com.huaweicloud.common.adapters.web.FallbackClientHttpResponse;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.common.event.EventManager;
-import com.huaweicloud.governance.SpringCloudInvocationContext;
 
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -66,8 +65,6 @@ public class IsolationClientHttpRequestInterceptor implements ClientHttpRequestI
 
     GovernanceRequest governanceRequest = convert(request);
     try {
-      SpringCloudInvocationContext.setInvocationContext();
-
       CircuitBreakerPolicy circuitBreakerPolicy = instanceIsolationHandler.matchPolicy(governanceRequest);
       if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
         return new FallbackClientHttpResponse(503,
@@ -91,8 +88,6 @@ public class IsolationClientHttpRequestInterceptor implements ClientHttpRequestI
       LOG.error("instance isolation catch throwable", e);
       // return 503, so that we can retry
       return new FallbackClientHttpResponse(503, e.getMessage());
-    } finally {
-      SpringCloudInvocationContext.removeInvocationContext();
     }
   }
 
