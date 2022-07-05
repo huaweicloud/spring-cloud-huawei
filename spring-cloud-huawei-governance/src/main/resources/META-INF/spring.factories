@@ -15,4 +15,6 @@
 # limitations under the License.
 #
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.huaweicloud.governance.GovernanceConfiguration
+  com.huaweicloud.governance.GovernanceConfiguration,\
+  com.huaweicloud.governance.adapters.feign.FeignConfiguration,\
+  com.huaweicloud.governance.adapters.web.WebConfiguration

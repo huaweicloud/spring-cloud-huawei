@@ -1,19 +1,19 @@
 /*
 
-  * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
 
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.huaweicloud.gateway.governance;
 
@@ -34,8 +34,6 @@ import org.springframework.cloud.gateway.support.HasRouteId;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
-
-import com.huaweicloud.governance.SpringCloudInvocationContext;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadFullException;
@@ -85,17 +83,13 @@ public class GovernanceGatewayFilterFactory extends
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
       GovernanceRequest governanceRequest = createGovernanceRequest(exchange);
-      try {
-        SpringCloudInvocationContext.setInvocationContext();
-        Mono<Void> toRun = chain.filter(exchange);
-        toRun = addRetry(exchange, governanceRequest, toRun);
-        toRun = addCircuitBreaker(exchange, governanceRequest, toRun);
-        toRun = addBulkhead(governanceRequest, toRun);
-        toRun = addRateLimiter(governanceRequest, toRun);
-        return toRun;
-      } finally {
-        SpringCloudInvocationContext.removeInvocationContext();
-      }
+
+      Mono<Void> toRun = chain.filter(exchange);
+      toRun = addRetry(exchange, governanceRequest, toRun);
+      toRun = addCircuitBreaker(exchange, governanceRequest, toRun);
+      toRun = addBulkhead(governanceRequest, toRun);
+      toRun = addRateLimiter(governanceRequest, toRun);
+      return toRun;
     }
 
     private Mono<Void> addRetry(ServerWebExchange exchange, GovernanceRequest governanceRequest, Mono<Void> toRun) {
