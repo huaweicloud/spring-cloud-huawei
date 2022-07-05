@@ -35,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.common.util.HeaderUtil;
-import com.huaweicloud.governance.SpringCloudInvocationContext;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadFullException;
@@ -90,8 +89,6 @@ public class GovernanceRequestMappingHandlerAdapter {
     DecorateCheckedSupplier<Object> dcs = Decorators.ofCheckedSupplier(next);
 
     try {
-      SpringCloudInvocationContext.setInvocationContext();
-
       addCircuitBreaker(dcs, governanceRequest);
       addBulkhead(dcs, governanceRequest);
       addRateLimiting(dcs, governanceRequest);
@@ -119,8 +116,6 @@ public class GovernanceRequestMappingHandlerAdapter {
         }
         throw th;
       }
-    } finally {
-      SpringCloudInvocationContext.removeInvocationContext();
     }
     return null;
   }

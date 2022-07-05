@@ -36,8 +36,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.huaweicloud.governance.SpringCloudInvocationContext;
-
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadFullException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
@@ -83,18 +81,13 @@ public class GovernanceGatewayFilterFactory
 
       GovernanceRequest governanceRequest = createGovernanceRequest(exchange);
 
-      try {
-        SpringCloudInvocationContext.setInvocationContext();
-        Mono<Void> toRun = chain.filter(exchange);
+      Mono<Void> toRun = chain.filter(exchange);
 
-        toRun = addCircuitBreaker(exchange, governanceRequest, toRun);
-        toRun = addBulkhead(governanceRequest, toRun);
-        toRun = addRateLimiter(governanceRequest, toRun);
+      toRun = addCircuitBreaker(exchange, governanceRequest, toRun);
+      toRun = addBulkhead(governanceRequest, toRun);
+      toRun = addRateLimiter(governanceRequest, toRun);
 
-        return toRun;
-      } finally {
-        SpringCloudInvocationContext.removeInvocationContext();
-      }
+      return toRun;
     }
 
     private Mono<Void> addBulkhead(GovernanceRequest governanceRequest, Mono<Void> toRun) {

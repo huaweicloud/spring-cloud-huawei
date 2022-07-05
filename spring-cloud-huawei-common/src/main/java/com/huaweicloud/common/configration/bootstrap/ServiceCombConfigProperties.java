@@ -1,25 +1,25 @@
 /*
 
-  * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
 
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.huaweicloud.common.configration.bootstrap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.apache.commons.lang3.StringUtils;
 
 import com.huaweicloud.common.exception.ServiceCombRuntimeException;
 
@@ -158,7 +158,7 @@ public class ServiceCombConfigProperties {
   }
 
   public static class ConfigCenter {
-    private long refreshInterval;
+    private long refreshInterval = 15000;
 
     public long getRefreshInterval() {
       return refreshInterval;
@@ -183,6 +183,8 @@ public class ServiceCombConfigProperties {
     private boolean enableLongPolling = true;
 
     private int pollingWaitTimeInSeconds = 10;
+
+    private int refreshIntervalInMillis = 15000;
 
     public int getPollingWaitTimeInSeconds() {
       return pollingWaitTimeInSeconds;
@@ -238,6 +240,14 @@ public class ServiceCombConfigProperties {
 
     public void setCustomLabel(String customLabel) {
       this.customLabel = customLabel;
+    }
+
+    public int getRefreshIntervalInMillis() {
+      return refreshIntervalInMillis;
+    }
+
+    public void setRefreshIntervalInMillis(int refreshIntervalInMillis) {
+      this.refreshIntervalInMillis = refreshIntervalInMillis;
     }
   }
 }
