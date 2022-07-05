@@ -167,7 +167,7 @@ public class ConfigService {
 
   private ConfigCenterConfiguration createConfigCenterConfiguration(ServiceCombConfigProperties configProperties) {
     ConfigCenterConfiguration configCenterConfiguration = new ConfigCenterConfiguration();
-    configCenterConfiguration.setRefreshInterval(configProperties.getConfigCenter().getRefreshInterval());
+    configCenterConfiguration.setRefreshIntervalInMillis(configProperties.getConfigCenter().getRefreshInterval());
     return configCenterConfiguration;
   }
 
@@ -193,6 +193,7 @@ public class ConfigService {
         .setEnableServiceConfig(configProperties.getKie().isEnableServiceConfig())
         .setEnvironment(configProperties.getEnv())
         .setPollingWaitInSeconds(configProperties.getKie().getPollingWaitTimeInSeconds())
+        .setRefreshIntervalInMillis(configProperties.getKie().getRefreshIntervalInMillis())
         .setProject(serviceCombAkSkProperties.getProject())
         .setServiceName(configProperties.getServiceName());
   }

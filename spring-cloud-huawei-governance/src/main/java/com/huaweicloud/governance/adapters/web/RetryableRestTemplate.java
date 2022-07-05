@@ -42,7 +42,6 @@ import com.huaweicloud.common.adapters.loadbalancer.RetryContext;
 import com.huaweicloud.common.adapters.web.FallbackClientHttpResponse;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.governance.SpringCloudInvocationContext;
 
 import io.github.resilience4j.decorators.Decorators;
 import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
@@ -125,8 +124,6 @@ public class RetryableRestTemplate extends RestTemplate {
     DecorateCheckedSupplier<ClientHttpResponse> dcs = Decorators.ofCheckedSupplier(next);
 
     try {
-      SpringCloudInvocationContext.setInvocationContext();
-
       addRetry(dcs, governanceRequest);
 
       return dcs.get();
@@ -137,8 +134,6 @@ public class RetryableRestTemplate extends RestTemplate {
       LOGGER.error("retry catch throwable", e);
       // return 503, so that we can retry
       return new FallbackClientHttpResponse(500, e.getMessage());
-    } finally {
-      SpringCloudInvocationContext.removeInvocationContext();
     }
   }
 

@@ -56,7 +56,6 @@ import com.huaweicloud.common.adapters.loadbalancer.RetryContext;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.common.event.EventManager;
-import com.huaweicloud.governance.SpringCloudInvocationContext;
 
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -119,8 +118,6 @@ public class RetryableFeignBlockingLoadBalancerClient implements Client {
     DecorateCheckedSupplier<Response> dcs = Decorators.ofCheckedSupplier(next);
 
     try {
-      SpringCloudInvocationContext.setInvocationContext();
-
       addRetry(dcs, governanceRequest);
 
       return dcs.get();
@@ -130,8 +127,6 @@ public class RetryableFeignBlockingLoadBalancerClient implements Client {
       }
       LOG.error("retry catch throwable", e);
       return Response.builder().status(500).reason(e.getMessage()).request(request).build();
-    } finally {
-      SpringCloudInvocationContext.removeInvocationContext();
     }
   }
 
@@ -242,8 +237,6 @@ public class RetryableFeignBlockingLoadBalancerClient implements Client {
     DecorateCheckedSupplier<Response> dcs = Decorators.ofCheckedSupplier(next);
 
     try {
-      SpringCloudInvocationContext.setInvocationContext();
-
       CircuitBreakerPolicy circuitBreakerPolicy = instanceIsolationHandler.matchPolicy(governanceRequest);
       if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
         return Response.builder().status(503)
@@ -267,8 +260,6 @@ public class RetryableFeignBlockingLoadBalancerClient implements Client {
       }
       LOG.error("instance isolation catch throwable", e);
       return Response.builder().status(503).reason(e.getMessage()).request(feignRequest).build();
-    } finally {
-      SpringCloudInvocationContext.removeInvocationContext();
     }
   }
 
