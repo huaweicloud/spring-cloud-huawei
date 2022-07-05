@@ -8,14 +8,14 @@ Spring Cloud Huawei的目的是为了让Spring Cloud使用
 
 ## 支持的版本列表
 
-| 分支 | 最新版本 | Spring Cloud版本 | Spring Boot版本 |
-| ---------- | ------------ | ----------- | ----------- |
-| master    | 1.10.0-2021.0.x                    | 2021.0.3             | 2.6.7                  | 
-| 2020.0.x  | 1.10.0-2020.0.x                    | 2020.0.5             | 2.5.12                  |
-| Hoxton    | 1.9.2-Hoxton                       | Hoxton.SR9           | 2.3.5.RELEASE           |
-| Greenwich | 1.6.1-Greenwich                    | Greenwich.SR6        | 2.1.6-RELEASE |
-| Finchley  | 1.6.1-Finchley                     | 2.0.4.RELEASE        | 2.0.9.RELEASE     |
-| Edgware   | 1.2.0-Edgware                      | 1.3.6.RELEASE        | 1.5.22.RELEASE    |
+| 分支 | 最新版本            | Spring Cloud版本 | Spring Boot版本 |
+| ---------- |-----------------| ----------- | ----------- |
+| master    | 1.10.2-2021.0.x | 2021.0.3             | 2.6.7                  | 
+| 2020.0.x  | 1.10.2-2020.0.x | 2020.0.5             | 2.5.12                  |
+| Hoxton    | 1.9.3-Hoxton    | Hoxton.SR9           | 2.3.5.RELEASE           |
+| Greenwich | 1.6.1-Greenwich | Greenwich.SR6        | 2.1.6-RELEASE |
+| Finchley  | 1.6.1-Finchley  | 2.0.4.RELEASE        | 2.0.9.RELEASE     |
+| Edgware   | 1.2.0-Edgware   | 1.3.6.RELEASE        | 1.5.22.RELEASE    |
 
 ***注意：***
 * Spring Cloud Edgeware, Finchley, Greenwich, Hoxton 已经停止维护，不建议在生产环境使用。
