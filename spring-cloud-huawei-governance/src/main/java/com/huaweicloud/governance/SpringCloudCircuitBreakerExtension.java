@@ -14,34 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.huaweicloud.governance;
 
 import java.util.List;
 
-import org.apache.servicecomb.governance.handler.ext.AbstractRetryExtension;
+import org.apache.servicecomb.governance.handler.ext.AbstractCircuitBreakerExtension;
 
-public class SpringCloudRetryExtension extends AbstractRetryExtension {
+public class SpringCloudCircuitBreakerExtension extends AbstractCircuitBreakerExtension {
+  private final SpringCloudRetryExtension retryExtension;
+
   private final List<StatusCodeExtractor> statusCodeExtractors;
 
-  public SpringCloudRetryExtension(List<StatusCodeExtractor> statusCodeExtractors) {
+  public SpringCloudCircuitBreakerExtension(List<StatusCodeExtractor> statusCodeExtractors) {
     this.statusCodeExtractors = statusCodeExtractors;
+    this.retryExtension = new SpringCloudRetryExtension(this.statusCodeExtractors);
   }
 
   @Override
   protected String extractStatusCode(Object response) {
-    if (response instanceof Integer) {
-      return String.valueOf((int) response);
-    }
+    return this.retryExtension.extractStatusCode(response);
+  }
 
-    if (statusCodeExtractors != null) {
-      for (StatusCodeExtractor statusCodeExtractor : statusCodeExtractors) {
-        if (statusCodeExtractor.canProcess(response)) {
-          return statusCodeExtractor.extractStatusCode(response);
-        }
-      }
+  @Override
+  public boolean isFailedResult(Throwable e) {
+    if (e instanceof RuntimeException) {
+      return true;
     }
-
-    return "0";
+    return super.isFailedResult(e);
   }
 }
