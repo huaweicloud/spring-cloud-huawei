@@ -50,7 +50,6 @@ public class GovernanceClientHttpRequestInterceptor implements ClientHttpRequest
     DecorateCheckedSupplier<ClientHttpResponse> dcs = Decorators.ofCheckedSupplier(next);
 
     try {
-      SpringCloudInvocationContext.setInvocationContext();
 
       addRetry(dcs, governanceRequest);
 
@@ -60,8 +59,6 @@ public class GovernanceClientHttpRequestInterceptor implements ClientHttpRequest
         return (ClientHttpResponse) clientRecoverPolicy.apply(e);
       }
       throw new RuntimeException(e);
-    } finally {
-      SpringCloudInvocationContext.removeInvocationContext();
     }
   }
 

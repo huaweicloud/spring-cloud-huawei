@@ -78,7 +78,6 @@ public class GovernanceRequestMappingHandlerAdapter {
     DecorateCheckedSupplier<Object> dcs = Decorators.ofCheckedSupplier(next);
 
     try {
-      SpringCloudInvocationContext.setInvocationContext();
 
       addRateLimiting(dcs, governanceRequest);
       addBulkhead(dcs, governanceRequest);
@@ -107,9 +106,7 @@ public class GovernanceRequestMappingHandlerAdapter {
         }
         throw th;
       }
-    } finally {
-      SpringCloudInvocationContext.removeInvocationContext();
-    }
+    } 
     return null;
   }
 

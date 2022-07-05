@@ -20,11 +20,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import org.apache.servicecomb.governance.InvocationContext;
 import org.apache.servicecomb.governance.MicroserviceMeta;
 import org.apache.servicecomb.governance.event.GovernanceConfigurationChangedEvent;
 import org.apache.servicecomb.governance.event.GovernanceEventManager;
-import org.apache.servicecomb.governance.handler.ext.RetryExtension;
+import org.apache.servicecomb.governance.handler.ext.AbstractRetryExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -94,12 +93,7 @@ public class GovernanceConfiguration {
   }
 
   @Bean
-  public InvocationContext governanceInvocationContext() {
-    return new SpringCloudInvocationContext();
-  }
-
-  @Bean
-  public RetryExtension governanceRetryExtension() {
+  public AbstractRetryExtension governanceRetryExtension() {
     return new SpringCloudRetryExtension();
   }
 }

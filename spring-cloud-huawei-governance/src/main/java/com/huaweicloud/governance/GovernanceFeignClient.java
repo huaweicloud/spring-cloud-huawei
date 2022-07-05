@@ -62,7 +62,6 @@ public class GovernanceFeignClient {
     DecorateCheckedSupplier<Object> dcs = Decorators.ofCheckedSupplier(next);
 
     try {
-      SpringCloudInvocationContext.setInvocationContext();
 
       addRetry(dcs, governanceRequest);
 
@@ -72,8 +71,6 @@ public class GovernanceFeignClient {
         return (Response) clientRecoverPolicy.apply(e);
       }
       throw new RuntimeException(e);
-    } finally {
-      SpringCloudInvocationContext.removeInvocationContext();
     }
   }
 

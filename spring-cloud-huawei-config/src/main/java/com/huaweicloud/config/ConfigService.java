@@ -26,6 +26,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.servicecomb.config.center.client.AddressManager;
 import org.apache.servicecomb.config.center.client.ConfigCenterClient;
 import org.apache.servicecomb.config.center.client.ConfigCenterManager;
+import org.apache.servicecomb.config.center.client.model.ConfigCenterConfiguration;
 import org.apache.servicecomb.config.center.client.model.QueryConfigurationsRequest;
 import org.apache.servicecomb.config.center.client.model.QueryConfigurationsResponse;
 import org.apache.servicecomb.config.common.ConfigConverter;
@@ -151,10 +152,17 @@ public class ConfigService {
       configConverter.updateData(response.getConfigurations());
     }
     queryConfigurationsRequest.setRevision(response.getRevision());
+    ConfigCenterConfiguration configCenterConfiguration = createConfigCenterConfiguration(configProperties);
     ConfigCenterManager configCenterManager = new ConfigCenterManager(configCenterClient, EventManager.getEventBus(),
-        configConverter);
+        configConverter, configCenterConfiguration);
     configCenterManager.setQueryConfigurationsRequest(queryConfigurationsRequest);
     configCenterManager.startConfigCenterManager();
+  }
+
+  private ConfigCenterConfiguration createConfigCenterConfiguration(ServiceCombConfigProperties configProperties) {
+    ConfigCenterConfiguration configCenterConfiguration = new ConfigCenterConfiguration();
+    configCenterConfiguration.setRefreshIntervalInMillis(configProperties.getConfigCenter().getRefreshInterval());
+    return configCenterConfiguration;
   }
 
   private KieAddressManager createKieAddressManager(List<String> addresses) {
@@ -183,6 +191,7 @@ public class ConfigService {
         .setEnableServiceConfig(configProperties.getKie().isEnableServiceConfig())
         .setEnvironment(configProperties.getEnv())
         .setPollingWaitInSeconds(configProperties.getKie().getPollingWaitTimeInSeconds())
+        .setRefreshIntervalInMillis(configProperties.getKie().getRefreshIntervalInMillis())
         .setProject(serviceCombAkSkProperties.getProject())
         .setServiceName(configProperties.getServiceName());
   }

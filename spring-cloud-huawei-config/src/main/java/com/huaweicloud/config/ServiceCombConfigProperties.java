@@ -57,6 +57,8 @@ public class ServiceCombConfigProperties {
 
   private Kie kie = new Kie();
 
+  private ConfigCenter configCenter = new ConfigCenter();
+
   public String getFileSource() {
     return fileSource;
   }
@@ -95,6 +97,14 @@ public class ServiceCombConfigProperties {
 
   public void setWatch(Watch watch) {
     this.watch = watch;
+  }
+
+  public ConfigCenter getConfigCenter() {
+    return configCenter;
+  }
+
+  public void setConfigCenter(ConfigCenter configCenter) {
+    this.configCenter = configCenter;
   }
 
   public void setKie(Kie kie) {
@@ -156,6 +166,17 @@ public class ServiceCombConfigProperties {
     this.firstPullRequired = firstPullRequired;
   }
 
+  public static class ConfigCenter {
+    private long refreshInterval = 15000;
+
+    public long getRefreshInterval() {
+      return refreshInterval;
+    }
+    public void setRefreshInterval(long refreshInterval) {
+      this.refreshInterval = refreshInterval;
+    }
+  }
+
   public static class Watch {
     private boolean enable;
 
@@ -203,12 +224,22 @@ public class ServiceCombConfigProperties {
 
     private int pollingWaitTimeInSeconds = 10;
 
+    private int refreshIntervalInMillis = 15000;
+
     public int getPollingWaitTimeInSeconds() {
       return pollingWaitTimeInSeconds;
     }
 
     public void setPollingWaitTimeInSeconds(int pollingWaitTimeInSeconds) {
       this.pollingWaitTimeInSeconds = pollingWaitTimeInSeconds;
+    }
+
+    public int getRefreshIntervalInMillis() {
+      return refreshIntervalInMillis;
+    }
+
+    public void setRefreshIntervalInMillis(int refreshIntervalInMillis) {
+      this.refreshIntervalInMillis = refreshIntervalInMillis;
     }
 
     public boolean isEnableLongPolling() {
