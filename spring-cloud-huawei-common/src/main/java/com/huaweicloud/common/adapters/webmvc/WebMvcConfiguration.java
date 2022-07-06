@@ -27,24 +27,29 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
+import com.huaweicloud.common.metrics.InvocationMetrics;
 
 @Configuration
 @ConditionalOnClass(name = "org.springframework.web.servlet.config.annotation.WebMvcConfigurer")
 public class WebMvcConfiguration {
   static class WebMvcConfigurerBean implements WebMvcConfigurer {
-    private List<PreHandlerInterceptor> preHandlerInterceptors;
+    private final List<PreHandlerInterceptor> preHandlerInterceptors;
 
-    private List<PostHandlerInterceptor> postHandlerInterceptors;
+    private final List<PostHandlerInterceptor> postHandlerInterceptors;
+
+    private final InvocationMetrics invocationMetrics;
 
     WebMvcConfigurerBean(List<PreHandlerInterceptor> preHandlerInterceptors,
-        List<PostHandlerInterceptor> postHandlerInterceptors) {
+        List<PostHandlerInterceptor> postHandlerInterceptors, InvocationMetrics invocationMetrics) {
       this.preHandlerInterceptors = preHandlerInterceptors;
       this.postHandlerInterceptors = postHandlerInterceptors;
+      this.invocationMetrics = invocationMetrics;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-      registry.addInterceptor(new DecorateHandlerInterceptor(preHandlerInterceptors, postHandlerInterceptors))
+      registry.addInterceptor(
+              new DecorateHandlerInterceptor(preHandlerInterceptors, postHandlerInterceptors, invocationMetrics))
           .addPathPatterns("/**");
     }
   }
@@ -52,13 +57,19 @@ public class WebMvcConfiguration {
   @Bean
   public WebMvcConfigurer webMvcConfigurer(
       @Autowired(required = false) List<PreHandlerInterceptor> preHandlerInterceptors,
-      @Autowired(required = false) List<PostHandlerInterceptor> postHandlerInterceptors) {
-    return new WebMvcConfigurerBean(preHandlerInterceptors, postHandlerInterceptors);
+      @Autowired(required = false) List<PostHandlerInterceptor> postHandlerInterceptors,
+      InvocationMetrics invocationMetrics) {
+    return new WebMvcConfigurerBean(preHandlerInterceptors, postHandlerInterceptors, invocationMetrics);
   }
 
   @Bean
   public PreHandlerInterceptor deserializeContextPreHandlerInterceptor() {
     return new DeserializeContextPreHandlerInterceptor();
+  }
+
+  @Bean
+  public PreHandlerInterceptor metricsPreHandlerInterceptor() {
+    return new MetricsPreHandlerInterceptor();
   }
 
   @Bean
