@@ -59,16 +59,16 @@ public class InvocationMetrics {
   }
 
   public void recordSuccessfulCall(String name, long amount, TimeUnit timeUnit) {
-    Timer timer = getOrCreateSuccessfulCalls("Total number of successful calls", name, CALLS_TAG_SUCCESSFUL);
+    Timer timer = getOrCreateSuccessfulCalls("Total number of successful calls", name);
     timer.record(amount, timeUnit);
   }
 
   public void recordFailedCall(String name, long amount, TimeUnit timeUnit) {
-    Timer timer = getOrCreateFailedCalls("Total number of failed calls", name, CALLS_TAG_FAILED);
+    Timer timer = getOrCreateFailedCalls("Total number of failed calls", name);
     timer.record(amount, timeUnit);
   }
 
-  private Timer getOrCreateSuccessfulCalls(String description, String name, String kind) {
+  private Timer getOrCreateSuccessfulCalls(String description, String name) {
     return successfulCalls.computeIfAbsent(name, key -> Timer.builder(METRICS_CALLS)
         .description(description)
         .tag(TAG_NAME, key)
@@ -76,7 +76,7 @@ public class InvocationMetrics {
         .register(meterRegistry));
   }
 
-  private Timer getOrCreateFailedCalls(String description, String name, String kind) {
+  private Timer getOrCreateFailedCalls(String description, String name) {
     return failedCalls.computeIfAbsent(name, key -> Timer.builder(METRICS_CALLS)
         .description(description)
         .tag(TAG_NAME, key)
