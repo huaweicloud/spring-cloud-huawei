@@ -41,7 +41,9 @@ public class DataFactory {
 
   private static final int CORE_SIZE = 1;
 
-  private boolean hasStart = false;
+  private volatile boolean hasStart = false;
+
+  private volatile boolean sendingData = false;
 
   private final List<MonitorDataProvider> dataProviders;
 
@@ -70,6 +72,8 @@ public class DataFactory {
 
   private void start() {
     if (!hasStart) {
+      hasStart = true;
+
       monitorDataPublisher.init();
 
       StringBuilder sb = new StringBuilder();
@@ -83,12 +87,17 @@ public class DataFactory {
 
       executorService.scheduleWithFixedDelay(() -> {
         try {
+          if (sendingData) {
+            return;
+          }
+          sendingData = true;
           sendData();
         } catch (Throwable e) {
           LOGGER.error("send monitor data error.", e);
+        } finally {
+          sendingData = false;
         }
       }, dashboardProperties.getIntervalInMills(), dashboardProperties.getIntervalInMills(), TimeUnit.MILLISECONDS);
-      hasStart = true;
     }
   }
 
