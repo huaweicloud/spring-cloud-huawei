@@ -45,6 +45,8 @@ public class GovernanceData {
 
   private long shortCircuitedCalls;
 
+  private long timeInMillis;
+
   public long getSuccessfulCalls() {
     return successfulCalls;
   }
@@ -115,5 +117,13 @@ public class GovernanceData {
   public GovernanceData setShortCircuitedCalls(long shortCircuitedCalls) {
     this.shortCircuitedCalls = shortCircuitedCalls;
     return this;
+  }
+
+  public long getTimeInMillis() {
+    return timeInMillis;
+  }
+
+  public void setTimeInMillis(long timeInMillis) {
+    this.timeInMillis = timeInMillis;
   }
 }
