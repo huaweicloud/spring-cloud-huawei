@@ -74,6 +74,9 @@ public class DiscoveryBootstrapProperties {
   @Value("${spring.cloud.servicecomb.discovery.ignoreSwaggerDifferent:false}")
   private boolean ignoreSwaggerDifferent;
 
+  @Value("${spring.cloud.servicecomb.discovery.coverSwagger:true}")
+  private boolean coverSwagger;
+
   private DataCenterInfo datacenter;
 
   // when service polling is enabled, client will try to query service names
@@ -237,10 +240,17 @@ public class DiscoveryBootstrapProperties {
     return ignoreSwaggerDifferent;
   }
 
+  public boolean isCoverSwagger(){
+    return coverSwagger;
+  }
+
   public void setIgnoreSwaggerDifferent(boolean ignoreSwaggerDifferent) {
     this.ignoreSwaggerDifferent = ignoreSwaggerDifferent;
   }
 
+  public  void setCoverSwagger(boolean coverSwagger){
+    this.coverSwagger = coverSwagger;
+  }
   public boolean isEnableServicePolling() {
     return enableServicePolling;
   }
