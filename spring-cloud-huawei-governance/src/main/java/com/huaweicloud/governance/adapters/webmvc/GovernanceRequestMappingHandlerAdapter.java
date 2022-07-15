@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.huaweicloud.common.configration.dynamic.FallbackProperties;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.common.util.HeaderUtil;
@@ -92,6 +93,7 @@ public class GovernanceRequestMappingHandlerAdapter {
       addCircuitBreaker(dcs, governanceRequest);
       addBulkhead(dcs, governanceRequest);
       addRateLimiting(dcs, governanceRequest);
+      addInfault(dcs, governanceRequest);
 
       return dcs.get();
     } catch (Throwable th) {
@@ -118,6 +120,15 @@ public class GovernanceRequestMappingHandlerAdapter {
       }
     }
     return null;
+  }
+
+  private void addInfault(DecorateCheckedSupplier<Object> dcs, GovernanceRequest request) {
+    /*if (FallbackProperties.enabled){
+      Fault fault = faultInjectionHandler.getActuator(request);
+    }
+    if (fault != null) {
+      dcs.withFaultInjection(fault);
+    }*/
   }
 
   private GovernanceRequest convert(HttpServletRequest request) {

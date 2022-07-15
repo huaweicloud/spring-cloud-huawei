@@ -22,11 +22,12 @@ import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.configration.dynamic.DashboardProperties;
+import com.huaweicloud.common.configration.dynamic.FallbackProperties;
 import com.huaweicloud.common.configration.dynamic.HttpClientProperties;
 import com.huaweicloud.common.configration.dynamic.LoadBalancerProperties;
 
 @Configuration
 @EnableConfigurationProperties({ContextProperties.class, LoadBalancerProperties.class,
-    HttpClientProperties.class, DashboardProperties.class})
+    HttpClientProperties.class, DashboardProperties.class, FallbackProperties.class})
 public class DynamicPropertiesConfiguration {
 }
