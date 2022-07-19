@@ -8,16 +8,17 @@ Spring Cloud Huawei的目的是为了让Spring Cloud使用
 
 ## 支持的版本列表
 
-| 分支 | 最新版本            | Spring Cloud版本 | Spring Boot版本 |
-| ---------- |-----------------| ----------- | ----------- |
-| master    | 1.10.2-2021.0.x | 2021.0.3             | 2.6.7                  | 
-| 2020.0.x  | 1.10.2-2020.0.x | 2020.0.5             | 2.5.12                  |
-| Hoxton    | 1.9.3-Hoxton    | Hoxton.SR9           | 2.3.5.RELEASE           |
-| Greenwich | 1.6.1-Greenwich | Greenwich.SR6        | 2.1.6-RELEASE |
-| Finchley  | 1.6.1-Finchley  | 2.0.4.RELEASE        | 2.0.9.RELEASE     |
-| Edgware   | 1.2.0-Edgware   | 1.3.6.RELEASE        | 1.5.22.RELEASE    |
+| 分支        | 最新版本            | 编译使用 Spring Cloud版本 | 编译使用 Spring Boot版本 |
+|-----------|-----------------|---------------------|--------------------|
+| master    | 1.10.2-2021.0.x | 2021.0.3            | 2.6.7              | 
+| 2020.0.x  | 1.10.2-2020.0.x | 2020.0.5            | 2.5.12             |
+| Hoxton    | 1.9.3-Hoxton    | Hoxton.SR9          | 2.3.5.RELEASE      |
+| Greenwich | 1.6.1-Greenwich | Greenwich.SR6       | 2.1.6-RELEASE      |
+| Finchley  | 1.6.1-Finchley  | 2.0.4.RELEASE       | 2.0.9.RELEASE      |
+| Edgware   | 1.2.0-Edgware   | 1.3.6.RELEASE       | 1.5.22.RELEASE     |
 
 ***注意：***
+* 使用`Spring Cloud Huawei`时可以使用兼容的`Spring Cloud`版本。详细信息可参考 https://spring.io/projects/spring-cloud。
 * Spring Cloud Edgeware, Finchley, Greenwich, Hoxton 已经停止维护，不建议在生产环境使用。
   详细情况可以查询 [Spring Cloud Releases][Spring Cloud Releases]。
 * Hoxton(包括)之前的版本支持Netfix OSS的组件，比如Ribbon, Hystrix. 2020.0.x(包括)之后的版本支持
