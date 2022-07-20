@@ -31,10 +31,17 @@ spring:
         version: 0.0.1
         healthCheckInterval: 30
         allowCrossApp: true
+        service-description:
+          properties:
+            component: ServiceComponent
+            k2: v2
+        instance-description:
+          properties:
+            x-group: red
       config:
         enabled: true
         serverType: kie
-        serverAddr: http://127.0.0.1:30110
+        serverAddr: http://127.0.0.1:30113
         firstPullRequired: false
 
       # testing spring cloud swagger generation

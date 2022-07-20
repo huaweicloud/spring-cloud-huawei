@@ -21,7 +21,13 @@ package com.huaweicloud.common.configration.bootstrap;
 import org.apache.servicecomb.service.center.client.model.DataCenterInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+import java.util.HashMap;
+import java.util.Map;
+
+@Configuration
 @ConfigurationProperties("spring.cloud.servicecomb.discovery")
 public class DiscoveryBootstrapProperties {
   private static final int HEALTH_CHECK_MAX_INTERVAL = 600;
@@ -86,6 +92,30 @@ public class DiscoveryBootstrapProperties {
   //        locator:
   //          enabled: true
   private boolean enableServicePolling = false;
+
+  public static class DescriptionProperties {
+    private Map<String, String> properties;
+
+    public Map<String, String> getProperties() {
+      return properties;
+    }
+
+    public void setProperties(Map<String, String> properties) {
+      this.properties = properties;
+    }
+  }
+
+  @Bean
+  @ConfigurationProperties("spring.cloud.servicecomb.discovery.service-description")
+  public DescriptionProperties serviceDescriptionProperties() {
+    return new DescriptionProperties();
+  }
+
+  @Bean
+  @ConfigurationProperties("spring.cloud.servicecomb.discovery.instance-description")
+  public DescriptionProperties instanceDescriptionProperties() {
+    return new DescriptionProperties();
+  }
 
   public String getServerAddress() {
     return serverAddress;

@@ -87,6 +87,11 @@ public class MicroserviceHandler {
     if (discoveryBootstrapProperties.isAllowCrossApp()) {
       microservice.getProperties().put(DiscoveryConstants.CONFIG_ALLOW_CROSS_APP_KEY, "true");
     }
+    Map<String, String> properties = discoveryBootstrapProperties.serviceDescriptionProperties().getProperties();
+    if (properties != null) {
+      microservice.getProperties().putAll(properties);
+    }
+
     microservice.setStatus(MicroserviceStatus.UP);
     return microservice;
   }
@@ -143,6 +148,11 @@ public class MicroserviceHandler {
     if (tagsProperties.getTag() != null) {
       properties.putAll(tagsProperties.getTag());
     }
+    Map<String, String> instanceProperties = discoveryBootstrapProperties.instanceDescriptionProperties().getProperties();
+    if (instanceProperties != null) {
+      properties.putAll(instanceProperties);
+    }
+
     properties.putAll(genCasProperties());
     microserviceInstance.setProperties(properties);
     return microserviceInstance;
