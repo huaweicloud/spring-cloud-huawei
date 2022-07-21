@@ -24,7 +24,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestTemplate;
 
-public class PriceControllerTest {
+public class PriceControllerIT {
   final String priceServiceUrl = "http://127.0.0.1:9090";
 
   final RestTemplate template = new RestTemplate();
