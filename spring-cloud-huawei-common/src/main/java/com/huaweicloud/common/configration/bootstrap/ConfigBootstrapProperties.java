@@ -17,40 +17,16 @@
 
 package com.huaweicloud.common.configration.bootstrap;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import com.huaweicloud.common.exception.ServiceCombRuntimeException;
-
-@ConfigurationProperties("spring.cloud.servicecomb.config")
-public class ServiceCombConfigProperties {
+public class ConfigBootstrapProperties {
 
   private boolean enabled = true;
 
   private boolean firstPullRequired = true;
 
-  @Value("${spring.cloud.servicecomb.discovery.address:}")
-  private String discoveryAddress;
-
-  @Value("${spring.cloud.servicecomb.discovery.serviceName:${spring.application.name:}}")
-  private String serviceName;
-
-  @Value("${spring.cloud.servicecomb.discovery.appName:default}")
-  private String appName;
-
-  @Value("${spring.cloud.servicecomb.discovery.version:}")
-  private String version;
-
-  @Value("${server.env:}")
-  private String env;
-
-  @Value("${spring.cloud.servicecomb.config.serverType:}")
   private String serverType;
 
   private String serverAddr;
 
-  @Value("${spring.cloud.servicecomb.config.fileSource:}")
   private String fileSource;
 
   private ConfigCenter configCenter = new ConfigCenter();
@@ -63,14 +39,6 @@ public class ServiceCombConfigProperties {
 
   public void setFileSource(String fileSource) {
     this.fileSource = fileSource;
-  }
-
-  public String getDiscoveryAddress() {
-    return discoveryAddress;
-  }
-
-  public void setDiscoveryAddress(String discoveryAddress) {
-    this.discoveryAddress = discoveryAddress;
   }
 
   public boolean isEnabled() {
@@ -104,41 +72,6 @@ public class ServiceCombConfigProperties {
   public void setConfigCenter(
       ConfigCenter configCenter) {
     this.configCenter = configCenter;
-  }
-
-  public String getServiceName() {
-    if (StringUtils.isEmpty(serviceName)) {
-      throw new ServiceCombRuntimeException("please use bootstrap.yml for config properties.");
-    }
-    return serviceName;
-  }
-
-  public void setServiceName(String serviceName) {
-    this.serviceName = serviceName;
-  }
-
-  public String getAppName() {
-    return appName;
-  }
-
-  public void setAppName(String appName) {
-    this.appName = appName;
-  }
-
-  public String getVersion() {
-    return version;
-  }
-
-  public void setVersion(String version) {
-    this.version = version;
-  }
-
-  public String getEnv() {
-    return env;
-  }
-
-  public void setEnv(String env) {
-    this.env = env;
   }
 
   public String getServerType() {

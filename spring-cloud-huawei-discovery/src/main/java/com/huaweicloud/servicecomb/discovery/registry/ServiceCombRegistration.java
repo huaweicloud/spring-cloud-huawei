@@ -1,19 +1,19 @@
 /*
 
-  * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
 
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.huaweicloud.servicecomb.discovery.registry;
 
@@ -24,9 +24,10 @@ import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.cloud.client.serviceregistry.Registration;
 
+import com.huaweicloud.common.configration.bootstrap.BootstrapProperties;
+import com.huaweicloud.common.configration.bootstrap.DiscoveryBootstrapProperties;
 import com.huaweicloud.servicecomb.discovery.discovery.DiscoveryProperties;
 import com.huaweicloud.servicecomb.discovery.discovery.MicroserviceHandler;
-import com.huaweicloud.common.configration.bootstrap.DiscoveryBootstrapProperties;
 
 /**
  * Spring Cloud Registration 实现。
@@ -42,13 +43,12 @@ public class ServiceCombRegistration implements Registration {
 
   private final DiscoveryBootstrapProperties discoveryBootstrapProperties;
 
-  public ServiceCombRegistration(DiscoveryBootstrapProperties discoveryBootstrapProperties,
-      DiscoveryProperties discoveryProperties,
-      TagsProperties tagsProperties) {
-    this.discoveryBootstrapProperties = discoveryBootstrapProperties;
-    this.microservice = MicroserviceHandler.createMicroservice(discoveryBootstrapProperties);
+  public ServiceCombRegistration(BootstrapProperties bootstrapProperties,
+      DiscoveryProperties discoveryProperties) {
+    this.discoveryBootstrapProperties = bootstrapProperties.getDiscoveryBootstrapProperties();
+    this.microservice = MicroserviceHandler.createMicroservice(bootstrapProperties);
     this.microserviceInstance = MicroserviceHandler
-        .createMicroserviceInstance(discoveryProperties, discoveryBootstrapProperties, tagsProperties);
+        .createMicroserviceInstance(bootstrapProperties, discoveryProperties);
   }
 
   public DiscoveryBootstrapProperties getDiscoveryBootstrapProperties() {
