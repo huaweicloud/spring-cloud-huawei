@@ -43,8 +43,10 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 
 import com.google.common.eventbus.Subscribe;
-import com.huaweicloud.common.event.EventManager;
+import com.huaweicloud.common.configration.bootstrap.BootstrapProperties;
 import com.huaweicloud.common.configration.bootstrap.DiscoveryBootstrapProperties;
+import com.huaweicloud.common.configration.bootstrap.MicroserviceProperties;
+import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
@@ -56,6 +58,8 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
 
   private final DiscoveryBootstrapProperties discoveryProperties;
 
+  private final MicroserviceProperties microserviceProperties;
+
   private final ServiceCenterDiscovery serviceCenterDiscovery;
 
   private final ServiceCombRegistration serviceCombRegistration;
@@ -66,9 +70,10 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
 
   private final List<String> serviceIds = new ArrayList<>();
 
-  public ServiceCombDiscoveryClient(DiscoveryBootstrapProperties discoveryProperties,
+  public ServiceCombDiscoveryClient(BootstrapProperties bootstrapProperties,
       ServiceCenterClient serviceCenterClient, ServiceCombRegistration serviceCombRegistration) {
-    this.discoveryProperties = discoveryProperties;
+    this.discoveryProperties = bootstrapProperties.getDiscoveryBootstrapProperties();
+    this.microserviceProperties = bootstrapProperties.getMicroserviceProperties();
     this.serviceCenterClient = serviceCenterClient;
     this.serviceCombRegistration = serviceCombRegistration;
 
@@ -113,7 +118,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
   private SubscriptionKey parseMicroserviceName(String serviceId) {
     int idxAt = serviceId.indexOf(DiscoveryConstants.APP_SERVICE_SEPRATOR);
     if (idxAt == -1) {
-      return new SubscriptionKey(discoveryProperties.getAppName(), serviceId);
+      return new SubscriptionKey(microserviceProperties.getApplication(), serviceId);
     }
     return new SubscriptionKey(serviceId.substring(0, idxAt), serviceId.substring(idxAt + 1));
   }
@@ -161,7 +166,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
       return null;
     }
 
-    if (microservice.getAppId().equals(discoveryProperties.getAppName())) {
+    if (microservice.getAppId().equals(microserviceProperties.getApplication())) {
       return microservice.getServiceName();
     } else if (Boolean.parseBoolean(microservice.getProperties().get(DiscoveryConstants.CONFIG_ALLOW_CROSS_APP_KEY))) {
       return microservice.getAppId() + DiscoveryConstants.APP_SERVICE_SEPRATOR + microservice.getServiceName();
@@ -172,10 +177,10 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
   private boolean environmentEqual(Microservice microservice) {
     // empty is equal.
     if (StringUtils.isEmpty(microservice.getEnvironment()) && StringUtils
-        .isEmpty(discoveryProperties.getEnvironment())) {
+        .isEmpty(microserviceProperties.getEnvironment())) {
       return true;
     }
-    return StringUtils.equals(microservice.getEnvironment(), discoveryProperties.getEnvironment());
+    return StringUtils.equals(microservice.getEnvironment(), microserviceProperties.getEnvironment());
   }
 
   @Override

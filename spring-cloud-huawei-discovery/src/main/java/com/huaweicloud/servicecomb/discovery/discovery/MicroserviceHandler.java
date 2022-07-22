@@ -1,19 +1,19 @@
 /*
 
-  * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
 
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.huaweicloud.servicecomb.discovery.discovery;
 
@@ -30,12 +30,15 @@ import org.apache.servicecomb.service.center.client.model.HealthCheck;
 import org.apache.servicecomb.service.center.client.model.HealthCheckMode;
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
+import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.apache.servicecomb.service.center.client.model.MicroserviceStatus;
 
+import com.huaweicloud.common.configration.bootstrap.BootstrapProperties;
 import com.huaweicloud.common.configration.bootstrap.DiscoveryBootstrapProperties;
+import com.huaweicloud.common.configration.bootstrap.InstanceProperties;
+import com.huaweicloud.common.configration.bootstrap.MicroserviceProperties;
 import com.huaweicloud.common.util.NetUtil;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
-import com.huaweicloud.servicecomb.discovery.registry.TagsProperties;
 
 public class MicroserviceHandler {
   private static final String SERVICE_MAPPING = "SERVICE_MAPPING";
@@ -54,33 +57,36 @@ public class MicroserviceHandler {
 
   private static final String CAS_ENVIRONMENT_ID = "CAS_ENVIRONMENT_ID";
 
-  public static Microservice createMicroservice(DiscoveryBootstrapProperties discoveryBootstrapProperties) {
+  public static Microservice createMicroservice(BootstrapProperties bootstrapProperties) {
+    DiscoveryBootstrapProperties discoveryBootstrapProperties = bootstrapProperties.getDiscoveryBootstrapProperties();
+    MicroserviceProperties microserviceProperties = bootstrapProperties.getMicroserviceProperties();
     Microservice microservice = new Microservice();
+    microservice.setProperties(microserviceProperties.getProperties());
 
     if (discoveryBootstrapProperties.isAllowCrossApp()) {
-      microservice.setAlias(discoveryBootstrapProperties.getAppName() +
-          DiscoveryConstants.APP_SERVICE_SEPRATOR + discoveryBootstrapProperties.getServiceName());
+      microservice.setAlias(microserviceProperties.getApplication() +
+          DiscoveryConstants.APP_SERVICE_SEPRATOR + microserviceProperties.getName());
     }
     EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
     if (!StringUtils.isEmpty(envConfig.getString(APP_MAPPING)) &&
         !StringUtils.isEmpty(envConfig.getString(envConfig.getString(APP_MAPPING)))) {
       microservice.setAppId(envConfig.getString(envConfig.getString(APP_MAPPING)));
     } else {
-      microservice.setAppId(discoveryBootstrapProperties.getAppName());
+      microservice.setAppId(microserviceProperties.getApplication());
     }
     if (!StringUtils.isEmpty(envConfig.getString(SERVICE_MAPPING)) &&
         !StringUtils.isEmpty(envConfig.getString(envConfig.getString(SERVICE_MAPPING)))) {
       microservice.setServiceName(envConfig.getString(envConfig.getString(SERVICE_MAPPING)));
     } else {
-      microservice.setServiceName(discoveryBootstrapProperties.getServiceName());
+      microservice.setServiceName(microserviceProperties.getName());
     }
     if (!StringUtils.isEmpty(envConfig.getString(VERSION_MAPPING)) &&
         !StringUtils.isEmpty(envConfig.getString(envConfig.getString(VERSION_MAPPING)))) {
       microservice.setVersion(envConfig.getString(envConfig.getString(VERSION_MAPPING)));
     } else {
-      microservice.setVersion(discoveryBootstrapProperties.getVersion());
+      microservice.setVersion(microserviceProperties.getVersion());
     }
-    microservice.setEnvironment(discoveryBootstrapProperties.getEnvironment());
+    microservice.setEnvironment(microserviceProperties.getEnvironment());
 
     Framework framework = createFramework();
     microservice.setFramework(framework);
@@ -99,9 +105,12 @@ public class MicroserviceHandler {
   }
 
   public static MicroserviceInstance createMicroserviceInstance(
-      DiscoveryProperties discoveryProperties,
-      DiscoveryBootstrapProperties discoveryBootstrapProperties,
-      TagsProperties tagsProperties) {
+      BootstrapProperties bootstrapProperties,
+      DiscoveryProperties discoveryProperties) {
+    DiscoveryBootstrapProperties discoveryBootstrapProperties = bootstrapProperties.getDiscoveryBootstrapProperties();
+    MicroserviceProperties microserviceProperties = bootstrapProperties.getMicroserviceProperties();
+    InstanceProperties instanceProperties = bootstrapProperties.getInstanceProperties();
+
     MicroserviceInstance microserviceInstance = new MicroserviceInstance();
     String hostName = StringUtils.isEmpty(discoveryBootstrapProperties.getHostname()) ? NetUtil.getLocalHost()
         : discoveryBootstrapProperties.getHostname();
@@ -117,9 +126,10 @@ public class MicroserviceHandler {
       address = discoveryBootstrapProperties.getServerAddress();
     }
     if (discoveryProperties.isSslEnabled()) {
-        endPoints.add("rest://" + address + ":" + discoveryProperties.getPort() + "?sslEnabled=" + discoveryProperties.isSslEnabled());
+      endPoints.add("rest://" + address + ":" + discoveryProperties.getPort() + "?sslEnabled="
+          + discoveryProperties.isSslEnabled());
     } else {
-        endPoints.add("rest://" + address + ":" + discoveryProperties.getPort());
+      endPoints.add("rest://" + address + ":" + discoveryProperties.getPort());
     }
     microserviceInstance.setEndpoints(endPoints);
     HealthCheck healthCheck = new HealthCheck();
@@ -131,20 +141,23 @@ public class MicroserviceHandler {
     microserviceInstance.setTimestamp(currTime);
     microserviceInstance.setModTimestamp(currTime);
 
+    // what's MicroserviceInstance doing? same sa Microservice?
     EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
     if (!StringUtils.isEmpty(envConfig.getString(VERSION_MAPPING)) &&
         !StringUtils.isEmpty(envConfig.getString(envConfig.getString(VERSION_MAPPING)))) {
       microserviceInstance.setVersion(envConfig.getString(VERSION_MAPPING));
     } else {
-      microserviceInstance.setVersion(discoveryBootstrapProperties.getVersion());
+      microserviceInstance.setVersion(microserviceProperties.getVersion());
     }
 
     Map<String, String> properties = new HashMap<>();
-    if (tagsProperties.getTag() != null) {
-      properties.putAll(tagsProperties.getTag());
-    }
+    properties.putAll(instanceProperties.getProperties());
     properties.putAll(genCasProperties());
     microserviceInstance.setProperties(properties);
+
+    if (StringUtils.isNotEmpty(instanceProperties.getInitialStatus())) {
+      microserviceInstance.setStatus(MicroserviceInstanceStatus.valueOf(instanceProperties.getInitialStatus()));
+    }
     return microserviceInstance;
   }
 

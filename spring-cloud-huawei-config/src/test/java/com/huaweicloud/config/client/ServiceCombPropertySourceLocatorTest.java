@@ -30,7 +30,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 
-import com.huaweicloud.common.configration.bootstrap.ServiceCombConfigProperties;
+import com.huaweicloud.common.configration.bootstrap.ConfigBootstrapProperties;
 import com.huaweicloud.config.ServiceCombConfigPropertySource;
 import com.huaweicloud.config.ServiceCombPropertySourceLocator;
 
@@ -42,9 +42,9 @@ public class ServiceCombPropertySourceLocatorTest {
 
   @Test
   public void locate() {
-    ServiceCombConfigProperties serviceCombConfigProperties = new ServiceCombConfigProperties();
-    serviceCombConfigProperties.setEnabled(true);
-    serviceCombConfigProperties.setServerAddr("http://ddd");
+    ConfigBootstrapProperties configBootstrapProperties = new ConfigBootstrapProperties();
+    configBootstrapProperties.setEnabled(true);
+    configBootstrapProperties.setServerAddr("http://ddd");
 
     Map<String, Object> sources = new HashMap<>();
     sources.put("test", "tt");
