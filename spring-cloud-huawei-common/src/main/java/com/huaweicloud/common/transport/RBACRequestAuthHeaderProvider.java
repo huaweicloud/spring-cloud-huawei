@@ -1,19 +1,19 @@
 /*
 
-  * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
 
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.huaweicloud.common.transport;
 
@@ -41,7 +41,9 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.huaweicloud.common.configration.bootstrap.BootstrapProperties;
 import com.huaweicloud.common.configration.bootstrap.DiscoveryBootstrapProperties;
+import com.huaweicloud.common.configration.bootstrap.MicroserviceProperties;
 import com.huaweicloud.common.configration.bootstrap.ServiceCombRBACProperties;
 import com.huaweicloud.common.configration.bootstrap.ServiceCombSSLProperties;
 import com.huaweicloud.common.disovery.ServiceCenterUtils;
@@ -69,6 +71,8 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
 
   private final ServiceCombRBACProperties serviceCombRBACProperties;
 
+  private final MicroserviceProperties microserviceProperties;
+
   private ExecutorService executorService;
 
   private LoadingCache<String, String> cache;
@@ -77,12 +81,12 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
 
   private int lastStatusCode = 401;
 
-  public RBACRequestAuthHeaderProvider(DiscoveryBootstrapProperties discoveryProperties,
-      ServiceCombSSLProperties serviceCombSSLProperties,
-      ServiceCombRBACProperties serviceCombRBACProperties) {
-    this.discoveryProperties = discoveryProperties;
-    this.serviceCombSSLProperties = serviceCombSSLProperties;
-    this.serviceCombRBACProperties = serviceCombRBACProperties;
+  public RBACRequestAuthHeaderProvider(BootstrapProperties bootstrapProperties) {
+    this.discoveryProperties = bootstrapProperties.getDiscoveryBootstrapProperties();
+    this.serviceCombSSLProperties = bootstrapProperties.getServiceCombSSLProperties();
+    this.serviceCombRBACProperties = bootstrapProperties.getServiceCombRBACProperties();
+    this.microserviceProperties = bootstrapProperties.getMicroserviceProperties();
+
     EventManager.getEventBus().register(this);
 
     if (enabled()) {
@@ -172,7 +176,7 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
 
   private void retryRefresh() {
     if (Status.UNAUTHORIZED.getStatusCode() == lastStatusCode && UN_AUTHORIZED_CODE_HALF_OPEN.equals(lastErrorCode)) {
-      cache.refresh(discoveryProperties.getServiceName());
+      cache.refresh(microserviceProperties.getName());
     }
   }
 }

@@ -20,9 +20,7 @@ package com.huaweicloud.common.configration.bootstrap;
 
 import org.apache.servicecomb.service.center.client.model.DataCenterInfo;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties("spring.cloud.servicecomb.discovery")
 public class DiscoveryBootstrapProperties {
   private static final int HEALTH_CHECK_MAX_INTERVAL = 600;
 
@@ -36,22 +34,11 @@ public class DiscoveryBootstrapProperties {
 
   private String address;
 
-  private String appName = "default";
-
-  @Value("${spring.cloud.servicecomb.discovery.serviceName:${spring.application.name:}}")
-  private String serviceName;
-
-  @Value("${server.env:}")
-  private String environment;
-
-  private String version;
-
   private String hostname;
 
   private boolean preferIpAddress;
 
   private boolean healthCheck = true;
-
 
   private int healthCheckInterval = 15;
 
@@ -59,11 +46,9 @@ public class DiscoveryBootstrapProperties {
 
   private int pollInterval = 15000;
 
-  private int refreshInterval = 30000;
-
   private boolean autoDiscovery = false;
 
-  private int waitTimeForShutDownInMillis = 30000;
+  private int waitTimeForShutDownInMillis = 15000;
 
   @Value("${spring.cloud.servicecomb.discovery.allowCrossApp:false}")
   private boolean allowCrossApp;
@@ -103,44 +88,12 @@ public class DiscoveryBootstrapProperties {
     this.datacenter = datacenter;
   }
 
-  public String getAppName() {
-    return appName;
-  }
-
-  public String getEnvironment() {
-    return environment;
-  }
-
-  public void setEnvironment(String environment) {
-    this.environment = environment;
-  }
-
-  public void setAppName(String appName) {
-    this.appName = appName;
-  }
-
   public String getAddress() {
     return address;
   }
 
   public void setAddress(String address) {
     this.address = address;
-  }
-
-  public String getServiceName() {
-    return serviceName;
-  }
-
-  public void setServiceName(String serviceName) {
-    this.serviceName = serviceName;
-  }
-
-  public String getVersion() {
-    return version;
-  }
-
-  public void setVersion(String version) {
-    this.version = version;
   }
 
   public boolean isEnabled() {
@@ -209,14 +162,6 @@ public class DiscoveryBootstrapProperties {
     this.pollInterval = pollInterval;
   }
 
-  public int getRefreshInterval() {
-    return refreshInterval;
-  }
-
-  public void setRefreshInterval(int refreshInterval) {
-    this.refreshInterval = refreshInterval;
-  }
-
   public boolean isAutoDiscovery() {
     return autoDiscovery;
   }
@@ -271,10 +216,6 @@ public class DiscoveryBootstrapProperties {
         "enabled=" + enabled +
         ", watch=" + watch +
         ", address='" + address + '\'' +
-        ", appName='" + appName + '\'' +
-        ", serviceName='" + serviceName + '\'' +
-        ", environment='" + environment + '\'' +
-        ", version='" + version + '\'' +
         ", hostname='" + hostname + '\'' +
         ", preferIpAddress=" + preferIpAddress +
         ", healthCheck=" + healthCheck +

@@ -43,12 +43,11 @@ public class OrderControllerIT {
     assertThat(result).isEqualTo("hello");
   }
 
-  // tests can be enabled when dynamic configuration is enabled
-//  @Test
-//  public void testGetConfiguration() {
-//    String result = template.getForObject(url + "/configuration", String.class);
-//    assertThat(result).isEqualTo("[FIRST, SECOND]:name");
-//  }
+  @Test
+  public void testMicroserviceInfoCorrect() {
+    boolean result = template.getForObject(url + "/testMicroserviceInfoCorrect", boolean.class);
+    assertThat(result).isTrue();
+  }
 
   @Test
   @SuppressWarnings({"rawtypes", "unchecked"})
