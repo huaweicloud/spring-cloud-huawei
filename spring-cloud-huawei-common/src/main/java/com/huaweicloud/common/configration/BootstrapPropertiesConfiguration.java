@@ -17,17 +17,72 @@
 
 package com.huaweicloud.common.configration;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.common.configration.bootstrap.BootstrapProperties;
+import com.huaweicloud.common.configration.bootstrap.ConfigBootstrapProperties;
 import com.huaweicloud.common.configration.bootstrap.DiscoveryBootstrapProperties;
+import com.huaweicloud.common.configration.bootstrap.InstanceProperties;
+import com.huaweicloud.common.configration.bootstrap.MicroserviceProperties;
 import com.huaweicloud.common.configration.bootstrap.ServiceCombAkSkProperties;
-import com.huaweicloud.common.configration.bootstrap.ServiceCombConfigProperties;
 import com.huaweicloud.common.configration.bootstrap.ServiceCombRBACProperties;
 import com.huaweicloud.common.configration.bootstrap.ServiceCombSSLProperties;
 
 @Configuration
-@EnableConfigurationProperties({ServiceCombAkSkProperties.class, ServiceCombRBACProperties.class,
-    ServiceCombSSLProperties.class, DiscoveryBootstrapProperties.class, ServiceCombConfigProperties.class})
 public class BootstrapPropertiesConfiguration {
+  @Bean
+  @ConfigurationProperties("spring.cloud.servicecomb.service")
+  public MicroserviceProperties microserviceProperties() {
+    return new MicroserviceProperties();
+  }
+
+  @Bean
+  @ConfigurationProperties("spring.cloud.servicecomb.instance")
+  public InstanceProperties instanceProperties() {
+    return new InstanceProperties();
+  }
+
+  @Bean
+  @ConfigurationProperties("spring.cloud.servicecomb.credentials")
+  public ServiceCombAkSkProperties serviceCombAkSkProperties() {
+    return new ServiceCombAkSkProperties();
+  }
+
+  @Bean
+  @ConfigurationProperties("spring.cloud.servicecomb.credentials.account")
+  public ServiceCombRBACProperties serviceCombRBACProperties() {
+    return new ServiceCombRBACProperties();
+  }
+
+  @Bean
+  @ConfigurationProperties("spring.cloud.servicecomb.ssl")
+  public ServiceCombSSLProperties serviceCombSSLProperties() {
+    return new ServiceCombSSLProperties();
+  }
+
+  @Bean
+  @ConfigurationProperties("spring.cloud.servicecomb.discovery")
+  public DiscoveryBootstrapProperties discoveryBootstrapProperties() {
+    return new DiscoveryBootstrapProperties();
+  }
+
+  @Bean
+  @ConfigurationProperties("spring.cloud.servicecomb.config")
+  public ConfigBootstrapProperties configBootstrapProperties() {
+    return new ConfigBootstrapProperties();
+  }
+
+  @Bean
+  public BootstrapProperties bootstrapProperties(MicroserviceProperties microserviceProperties,
+      InstanceProperties instanceProperties,
+      DiscoveryBootstrapProperties discoveryBootstrapProperties,
+      ConfigBootstrapProperties configBootstrapProperties,
+      ServiceCombSSLProperties serviceCombSSLProperties,
+      ServiceCombAkSkProperties serviceCombAkSkProperties,
+      ServiceCombRBACProperties serviceCombRBACProperties) {
+    return new BootstrapProperties(microserviceProperties, instanceProperties, discoveryBootstrapProperties,
+        configBootstrapProperties, serviceCombSSLProperties, serviceCombAkSkProperties, serviceCombRBACProperties);
+  }
 }

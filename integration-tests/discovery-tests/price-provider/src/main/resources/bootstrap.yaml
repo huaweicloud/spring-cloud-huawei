@@ -23,6 +23,14 @@ spring:
     name: price
   cloud:
     servicecomb:
+      service:
+        properties:
+          x-test: value
+          x-test2: value2
+      instance:
+        properties:
+          x-test: value
+          x-test2: value2
       discovery:
         enabled: true
         # testing multiple registries
