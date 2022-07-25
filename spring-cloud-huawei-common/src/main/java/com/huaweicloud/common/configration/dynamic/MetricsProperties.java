@@ -17,20 +17,34 @@
 
 package com.huaweicloud.common.configration.dynamic;
 
-public class LoadBalancerProperties {
-  public static final String LOADBALANCER_ENABLED = "spring.cloud.servicecomb.loadbalancer.enabled";
+public class MetricsProperties {
+  private int maxMethodCount = 1000;
 
-  public static final String RULE_ROUND_ROBIN = "RoundRobin";
+  private String includePattern;
 
-  public static final String RULE_RANDOM = "Random";
+  private String excludePattern;
 
-  private String rule = RULE_ROUND_ROBIN;
-
-  public String getRule() {
-    return rule;
+  public int getMaxMethodCount() {
+    return maxMethodCount;
   }
 
-  public void setRule(String rule) {
-    this.rule = rule;
+  public void setMaxMethodCount(int maxMethodCount) {
+    this.maxMethodCount = maxMethodCount;
+  }
+
+  public String getIncludePattern() {
+    return includePattern;
+  }
+
+  public void setIncludePattern(String includePattern) {
+    this.includePattern = includePattern;
+  }
+
+  public String getExcludePattern() {
+    return excludePattern;
+  }
+
+  public void setExcludePattern(String excludePattern) {
+    this.excludePattern = excludePattern;
   }
 }

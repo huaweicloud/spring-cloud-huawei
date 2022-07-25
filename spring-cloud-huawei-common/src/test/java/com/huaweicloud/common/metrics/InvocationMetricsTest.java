@@ -23,6 +23,8 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import com.huaweicloud.common.configration.dynamic.MetricsProperties;
+
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
@@ -32,12 +34,49 @@ public class InvocationMetricsTest {
   @Test
   public void testMetricsRecorded() {
     MeterRegistry meterRegistry = new SimpleMeterRegistry();
-    InvocationMetrics metrics = new InvocationMetrics(meterRegistry);
+    MetricsProperties metricsProperties = new MetricsProperties();
+    InvocationMetrics metrics = new InvocationMetrics(meterRegistry, metricsProperties);
     metrics.recordFailedCall("/hello", 1, TimeUnit.SECONDS);
     metrics.recordFailedCall("/hello", 1, TimeUnit.SECONDS);
     metrics.recordSuccessfulCall("/hello", 2, TimeUnit.SECONDS);
     metrics.recordSuccessfulCall("/hello", 2, TimeUnit.SECONDS);
     metrics.recordSuccessfulCall("/hello", 1, TimeUnit.SECONDS);
+
+    List<Meter> meters = meterRegistry.getMeters();
+    Assertions.assertEquals(2, meters.size());
+    for (Meter meter : meters) {
+      Assertions.assertEquals(InvocationMetrics.METRICS_CALLS, meter.getId().getName());
+      Assertions.assertEquals("/hello", meter.getId().getTag(InvocationMetrics.TAG_NAME));
+
+      Timer timer = (Timer) meter;
+
+      if (meter.getId().getTag(InvocationMetrics.TAG_KIND).equals(InvocationMetrics.CALLS_TAG_SUCCESSFUL)) {
+        Assertions.assertEquals(3, timer.count());
+        Assertions.assertEquals(5, ((Double) timer.totalTime(TimeUnit.SECONDS)).intValue());
+      } else if (meter.getId().getTag(InvocationMetrics.TAG_KIND).equals(InvocationMetrics.CALLS_TAG_FAILED)) {
+        Assertions.assertEquals(2, timer.count());
+        Assertions.assertEquals(2, ((Double) timer.totalTime(TimeUnit.SECONDS)).intValue());
+      } else {
+        Assertions.fail();
+      }
+    }
+  }
+
+  @Test
+  public void testMetricsIncludePattern() {
+    MeterRegistry meterRegistry = new SimpleMeterRegistry();
+    MetricsProperties metricsProperties = new MetricsProperties();
+    metricsProperties.setIncludePattern("/hello.*");
+    metricsProperties.setMaxMethodCount(1);
+    InvocationMetrics metrics = new InvocationMetrics(meterRegistry, metricsProperties);
+    metrics.recordFailedCall("/hello", 1, TimeUnit.SECONDS);
+    metrics.recordFailedCall("/hello", 1, TimeUnit.SECONDS);
+    metrics.recordSuccessfulCall("/hello", 2, TimeUnit.SECONDS);
+    metrics.recordSuccessfulCall("/hello", 2, TimeUnit.SECONDS);
+    metrics.recordSuccessfulCall("/hello", 1, TimeUnit.SECONDS);
+    metrics.recordSuccessfulCall("/wrong", 1, TimeUnit.SECONDS);
+    metrics.recordFailedCall("/wrong", 1, TimeUnit.SECONDS);
+    metrics.recordSuccessfulCall("/hello/exceed", 1, TimeUnit.SECONDS);
 
     List<Meter> meters = meterRegistry.getMeters();
     Assertions.assertEquals(2, meters.size());
