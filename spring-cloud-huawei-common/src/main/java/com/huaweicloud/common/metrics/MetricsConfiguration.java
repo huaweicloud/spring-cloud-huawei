@@ -21,14 +21,16 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.common.configration.dynamic.MetricsProperties;
+
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 
 @Configuration
 public class MetricsConfiguration {
   @Bean
-  public InvocationMetrics invocationMetrics(MeterRegistry meterRegistry) {
-    return new InvocationMetrics(meterRegistry);
+  public InvocationMetrics invocationMetrics(MeterRegistry meterRegistry, MetricsProperties metricsProperties) {
+    return new InvocationMetrics(meterRegistry, metricsProperties);
   }
 
   @Bean
