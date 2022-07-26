@@ -17,9 +17,17 @@
 
 package com.huaweicloud.common.metrics;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.huaweicloud.common.configration.dynamic.MetricsProperties;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
@@ -31,6 +39,8 @@ import io.micrometer.core.instrument.Timer;
  * record the successful calls, failed calls and time taken for this path.
  */
 public class InvocationMetrics {
+  private static final Logger LOGGER = LoggerFactory.getLogger(InvocationMetrics.class);
+
   public static final String CONTEXT_TIME = "x-m-start";
 
   public static final String CONTEXT_OPERATION = "x-m-operation";
@@ -50,20 +60,58 @@ public class InvocationMetrics {
 
   private final MeterRegistry meterRegistry;
 
+  private final MetricsProperties metricsProperties;
+
+  private final Pattern includePatter;
+
+  private final Pattern excludePatter;
+
   private final ConcurrentMap<String, Timer> successfulCalls = new ConcurrentHashMap<>();
 
   private final ConcurrentMap<String, Timer> failedCalls = new ConcurrentHashMap<>();
 
-  public InvocationMetrics(MeterRegistry meterRegistry) {
+  public InvocationMetrics(MeterRegistry meterRegistry, MetricsProperties metricsProperties) {
     this.meterRegistry = meterRegistry;
+    this.metricsProperties = metricsProperties;
+    if (StringUtils.isNotEmpty(metricsProperties.getExcludePattern())) {
+      excludePatter = Pattern.compile(metricsProperties.getIncludePattern());
+    } else {
+      excludePatter = null;
+    }
+    if (StringUtils.isNotEmpty(metricsProperties.getIncludePattern())) {
+      includePatter = Pattern.compile(metricsProperties.getIncludePattern());
+    } else {
+      includePatter = null;
+    }
   }
 
   public void recordSuccessfulCall(String name, long amount, TimeUnit timeUnit) {
+    if (byPassMethod(name, successfulCalls)) {
+      return;
+    }
     Timer timer = getOrCreateSuccessfulCalls("Total number of successful calls", name);
     timer.record(amount, timeUnit);
   }
 
+  private boolean byPassMethod(String name, Map<String, Timer> group) {
+    if (excludePatter != null && excludePatter.matcher(name).matches()) {
+      return true;
+    }
+    if (includePatter != null && !includePatter.matcher(name).matches()) {
+      return true;
+    }
+    if (group.size() >= metricsProperties.getMaxMethodCount()
+        && !group.containsKey(name)) {
+      LOGGER.warn("metrics method exceed count {}", metricsProperties.getMaxMethodCount());
+      return true;
+    }
+    return false;
+  }
+
   public void recordFailedCall(String name, long amount, TimeUnit timeUnit) {
+    if (byPassMethod(name, failedCalls)) {
+      return;
+    }
     Timer timer = getOrCreateFailedCalls("Total number of failed calls", name);
     timer.record(amount, timeUnit);
   }

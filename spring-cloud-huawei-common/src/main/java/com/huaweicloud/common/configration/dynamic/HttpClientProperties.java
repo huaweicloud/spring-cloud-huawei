@@ -15,11 +15,6 @@
  */
 package com.huaweicloud.common.configration.dynamic;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-
-@RefreshScope
-@ConfigurationProperties("spring.cloud.servicecomb.httpclient")
 public class HttpClientProperties {
   private int connectTimeoutInMilliSeconds = 1000;
 
