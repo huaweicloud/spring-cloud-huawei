@@ -17,17 +17,14 @@
 
 package com.huaweicloud.common.configration.dynamic;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-
-@RefreshScope
-@ConfigurationProperties("spring.cloud.servicecomb.dashboard")
 public class DashboardProperties {
   private static final int MIN_INTERVAL = 5000;
 
   private String address;
 
-  private boolean governanceProviderEnabled = true;
+  private boolean governanceProviderEnabled = false;
+
+  private boolean invocationProviderEnabled = true;
 
   private int intervalInMills = 10000;
 
@@ -56,5 +53,13 @@ public class DashboardProperties {
 
   public void setGovernanceProviderEnabled(boolean governanceProviderEnabled) {
     this.governanceProviderEnabled = governanceProviderEnabled;
+  }
+
+  public boolean isInvocationProviderEnabled() {
+    return invocationProviderEnabled;
+  }
+
+  public void setInvocationProviderEnabled(boolean invocationProviderEnabled) {
+    this.invocationProviderEnabled = invocationProviderEnabled;
   }
 }

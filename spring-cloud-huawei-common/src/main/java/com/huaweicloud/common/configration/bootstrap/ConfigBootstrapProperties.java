@@ -1,56 +1,32 @@
 /*
 
-  * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
 
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.huaweicloud.common.configration.bootstrap;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.apache.commons.lang3.StringUtils;
-
-import com.huaweicloud.common.exception.ServiceCombRuntimeException;
-
-@ConfigurationProperties("spring.cloud.servicecomb.config")
-public class ServiceCombConfigProperties {
+public class ConfigBootstrapProperties {
 
   private boolean enabled = true;
 
   private boolean firstPullRequired = true;
 
-  @Value("${spring.cloud.servicecomb.discovery.address:}")
-  private String discoveryAddress;
-
-  @Value("${spring.cloud.servicecomb.discovery.serviceName:${spring.application.name:}}")
-  private String serviceName;
-
-  @Value("${spring.cloud.servicecomb.discovery.appName:default}")
-  private String appName;
-
-  @Value("${spring.cloud.servicecomb.discovery.version:}")
-  private String version;
-
-  @Value("${server.env:}")
-  private String env;
-
-  @Value("${spring.cloud.servicecomb.config.serverType:}")
   private String serverType;
 
   private String serverAddr;
 
-  @Value("${spring.cloud.servicecomb.config.fileSource:}")
   private String fileSource;
 
   private ConfigCenter configCenter = new ConfigCenter();
@@ -63,14 +39,6 @@ public class ServiceCombConfigProperties {
 
   public void setFileSource(String fileSource) {
     this.fileSource = fileSource;
-  }
-
-  public String getDiscoveryAddress() {
-    return discoveryAddress;
-  }
-
-  public void setDiscoveryAddress(String discoveryAddress) {
-    this.discoveryAddress = discoveryAddress;
   }
 
   public boolean isEnabled() {
@@ -106,41 +74,6 @@ public class ServiceCombConfigProperties {
     this.configCenter = configCenter;
   }
 
-  public String getServiceName() {
-    if (StringUtils.isEmpty(serviceName)) {
-      throw new ServiceCombRuntimeException("please use bootstrap.yml for config properties.");
-    }
-    return serviceName;
-  }
-
-  public void setServiceName(String serviceName) {
-    this.serviceName = serviceName;
-  }
-
-  public String getAppName() {
-    return appName;
-  }
-
-  public void setAppName(String appName) {
-    this.appName = appName;
-  }
-
-  public String getVersion() {
-    return version;
-  }
-
-  public void setVersion(String version) {
-    this.version = version;
-  }
-
-  public String getEnv() {
-    return env;
-  }
-
-  public void setEnv(String env) {
-    this.env = env;
-  }
-
   public String getServerType() {
     return serverType;
   }
@@ -158,7 +91,7 @@ public class ServiceCombConfigProperties {
   }
 
   public static class ConfigCenter {
-    private long refreshInterval;
+    private long refreshInterval = 15000;
 
     public long getRefreshInterval() {
       return refreshInterval;
@@ -183,6 +116,8 @@ public class ServiceCombConfigProperties {
     private boolean enableLongPolling = true;
 
     private int pollingWaitTimeInSeconds = 10;
+
+    private int refreshIntervalInMillis = 15000;
 
     public int getPollingWaitTimeInSeconds() {
       return pollingWaitTimeInSeconds;
@@ -238,6 +173,14 @@ public class ServiceCombConfigProperties {
 
     public void setCustomLabel(String customLabel) {
       this.customLabel = customLabel;
+    }
+
+    public int getRefreshIntervalInMillis() {
+      return refreshIntervalInMillis;
+    }
+
+    public void setRefreshIntervalInMillis(int refreshIntervalInMillis) {
+      this.refreshIntervalInMillis = refreshIntervalInMillis;
     }
   }
 }

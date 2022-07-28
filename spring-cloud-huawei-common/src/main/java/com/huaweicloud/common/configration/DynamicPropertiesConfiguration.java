@@ -17,16 +17,51 @@
 
 package com.huaweicloud.common.configration;
 
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.configration.dynamic.DashboardProperties;
 import com.huaweicloud.common.configration.dynamic.HttpClientProperties;
 import com.huaweicloud.common.configration.dynamic.LoadBalancerProperties;
+import com.huaweicloud.common.configration.dynamic.MetricsProperties;
 
 @Configuration
-@EnableConfigurationProperties({ContextProperties.class, LoadBalancerProperties.class,
-    HttpClientProperties.class, DashboardProperties.class})
 public class DynamicPropertiesConfiguration {
+  @Bean
+  @RefreshScope
+  @ConfigurationProperties("spring.cloud.servicecomb.metrics")
+  public MetricsProperties metricsProperties() {
+    return new MetricsProperties();
+  }
+
+  @Bean
+  @RefreshScope
+  @ConfigurationProperties("spring.cloud.servicecomb.context")
+  public ContextProperties contextProperties() {
+    return new ContextProperties();
+  }
+
+  @Bean
+  @RefreshScope
+  @ConfigurationProperties("spring.cloud.servicecomb.loadbalancer")
+  public LoadBalancerProperties loadBalancerProperties() {
+    return new LoadBalancerProperties();
+  }
+
+  @Bean
+  @RefreshScope
+  @ConfigurationProperties("spring.cloud.servicecomb.httpclient")
+  public HttpClientProperties restTemplateHttpClientProperties() {
+    return new HttpClientProperties();
+  }
+
+  @Bean
+  @RefreshScope
+  @ConfigurationProperties("spring.cloud.servicecomb.dashboard")
+  public DashboardProperties dashboardProperties() {
+    return new DashboardProperties();
+  }
 }

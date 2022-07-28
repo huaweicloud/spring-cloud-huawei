@@ -21,10 +21,8 @@ import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.huaweicloud.common.configration.bootstrap.DiscoveryBootstrapProperties;
+import com.huaweicloud.common.configration.bootstrap.BootstrapProperties;
 import com.huaweicloud.common.configration.bootstrap.ServiceCombAkSkProperties;
-import com.huaweicloud.common.configration.bootstrap.ServiceCombRBACProperties;
-import com.huaweicloud.common.configration.bootstrap.ServiceCombSSLProperties;
 import com.huaweicloud.common.transport.AkSkRequestAuthHeaderProvider;
 import com.huaweicloud.common.transport.RBACRequestAuthHeaderProvider;
 import com.huaweicloud.common.util.Cipher;
@@ -43,9 +41,7 @@ public class CommonConfiguration {
   }
 
   @Bean
-  public AuthHeaderProvider rbacRequestAuthHeaderProvider(DiscoveryBootstrapProperties discoveryProperties,
-      ServiceCombSSLProperties serviceCombSSLProperties,
-      ServiceCombRBACProperties serviceCombRBACProperties) {
-    return new RBACRequestAuthHeaderProvider(discoveryProperties, serviceCombSSLProperties, serviceCombRBACProperties);
+  public AuthHeaderProvider rbacRequestAuthHeaderProvider(BootstrapProperties bootstrapProperties) {
+    return new RBACRequestAuthHeaderProvider(bootstrapProperties);
   }
 }

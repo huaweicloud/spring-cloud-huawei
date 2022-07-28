@@ -51,9 +51,17 @@ public class DashboardConfiguration {
   }
 
   @Bean
-  public MonitorDataProvider monitorDataProvider(MeterRegistry meterRegistry, ServiceCombRegistration registration,
+  public MonitorDataProvider governanceMonitorDataProvider(MeterRegistry meterRegistry,
+      ServiceCombRegistration registration,
       DashboardProperties dashboardProperties) {
     return new GovernanceMonitorDataProvider(meterRegistry, registration, dashboardProperties);
+  }
+
+  @Bean
+  public MonitorDataProvider invocationMonitorDataProvider(MeterRegistry meterRegistry,
+      ServiceCombRegistration registration,
+      DashboardProperties dashboardProperties) {
+    return new InvocationMonitorDataProvider(meterRegistry, registration, dashboardProperties);
   }
 
   @Bean

@@ -19,7 +19,6 @@ package com.huaweicloud.governance;
 import java.util.HashSet;
 import java.util.List;
 
-import org.apache.servicecomb.governance.InvocationContext;
 import org.apache.servicecomb.governance.MicroserviceMeta;
 import org.apache.servicecomb.governance.event.GovernanceConfigurationChangedEvent;
 import org.apache.servicecomb.governance.event.GovernanceEventManager;
@@ -45,11 +44,6 @@ public class GovernanceConfiguration {
   @Bean
   public MicroserviceMeta governanceMicroserviceMeta() {
     return new SpringCloudMicroserviceMeta();
-  }
-
-  @Bean
-  public InvocationContext governanceInvocationContext() {
-    return new SpringCloudInvocationContext();
   }
 
   @Bean

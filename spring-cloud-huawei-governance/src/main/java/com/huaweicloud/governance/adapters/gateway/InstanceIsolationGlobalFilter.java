@@ -35,7 +35,6 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.huaweicloud.common.event.EventManager;
-import com.huaweicloud.governance.SpringCloudInvocationContext;
 
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -55,22 +54,17 @@ public class InstanceIsolationGlobalFilter implements GlobalFilter, Ordered {
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
     GovernanceRequest governanceRequest = createGovernanceRequest(exchange);
 
-    try {
-      SpringCloudInvocationContext.setInvocationContext();
-      Mono<Void> toRun = chain.filter(exchange);
+    Mono<Void> toRun = chain.filter(exchange);
 
-      CircuitBreakerPolicy circuitBreakerPolicy = isolationHandler.matchPolicy(governanceRequest);
-      if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
-        return Mono.error(new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
-            "instance isolated."));
-      }
-      if (circuitBreakerPolicy != null && !circuitBreakerPolicy.isForceClosed()) {
-        toRun = addInstanceIsolation(governanceRequest, toRun);
-      }
-      return toRun;
-    } finally {
-      SpringCloudInvocationContext.removeInvocationContext();
+    CircuitBreakerPolicy circuitBreakerPolicy = isolationHandler.matchPolicy(governanceRequest);
+    if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
+      return Mono.error(new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+          "instance isolated."));
     }
+    if (circuitBreakerPolicy != null && !circuitBreakerPolicy.isForceClosed()) {
+      toRun = addInstanceIsolation(governanceRequest, toRun);
+    }
+    return toRun;
   }
 
   private GovernanceRequest createGovernanceRequest(ServerWebExchange exchange) {
@@ -81,7 +75,7 @@ public class InstanceIsolationGlobalFilter implements GlobalFilter, Ordered {
 
     Response<ServiceInstance> response = exchange.getAttribute(
         ServerWebExchangeUtils.GATEWAY_LOADBALANCER_RESPONSE_ATTR);
-    if (response.hasServer()) {
+    if (response !=null && response.hasServer()) {
       request.setServiceName(response.getServer().getServiceId());
       request.setInstanceId(response.getServer().getInstanceId());
     }

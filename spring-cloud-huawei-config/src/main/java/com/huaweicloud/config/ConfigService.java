@@ -42,8 +42,9 @@ import org.apache.servicecomb.http.client.common.HttpTransportFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.huaweicloud.common.configration.bootstrap.BootstrapProperties;
+import com.huaweicloud.common.configration.bootstrap.ConfigBootstrapProperties;
 import com.huaweicloud.common.configration.bootstrap.ServiceCombAkSkProperties;
-import com.huaweicloud.common.configration.bootstrap.ServiceCombConfigProperties;
 import com.huaweicloud.common.configration.bootstrap.ServiceCombSSLProperties;
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.common.transport.TransportUtils;
@@ -70,11 +71,10 @@ public class ConfigService {
     return this.configConverter;
   }
 
-  public void init(ServiceCombConfigProperties configProperties,
-      ServiceCombAkSkProperties serviceCombAkSkProperties, ServiceCombSSLProperties serviceCombSSLProperties,
+  public void init(BootstrapProperties bootstrapProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
 
-    if (StringUtils.isEmpty(configProperties.getServerAddr())) {
+    if (StringUtils.isEmpty(bootstrapProperties.getConfigBootstrapProperties().getServerAddr())) {
       throw new IllegalArgumentException(
           "Config server address is not configured. "
               + "Please configure config server address or set spring.cloud.servicecomb.config.enabled to false");
@@ -86,25 +86,26 @@ public class ConfigService {
 
     initialized = true;
 
-    initConfigConverter(configProperties);
+    initConfigConverter(bootstrapProperties.getConfigBootstrapProperties());
 
-    if ("kie".equalsIgnoreCase(configProperties.getServerType())) {
-      initKieConfig(configProperties, serviceCombAkSkProperties, serviceCombSSLProperties,
+    if ("kie".equalsIgnoreCase(bootstrapProperties.getConfigBootstrapProperties().getServerType())) {
+      initKieConfig(bootstrapProperties,
           authHeaderProviders);
     } else {
-      initServiceCenterConfig(configProperties, serviceCombAkSkProperties, serviceCombSSLProperties,
+      initServiceCenterConfig(bootstrapProperties,
           authHeaderProviders);
     }
   }
 
-  private void initConfigConverter(ServiceCombConfigProperties configProperties) {
+  private void initConfigConverter(ConfigBootstrapProperties configProperties) {
     if (StringUtils.isEmpty(configProperties.getFileSource())) {
       configConverter = new ConfigConverter(null);
+      return;
     }
     configConverter = new ConfigConverter(Arrays.asList(configProperties.getFileSource().split(",")));
   }
 
-  private AddressManager configCenterAddressManager(ServiceCombConfigProperties configProperties,
+  private AddressManager configCenterAddressManager(ConfigBootstrapProperties configProperties,
       ServiceCombAkSkProperties serviceCombAkSkProperties) {
 
     List<String> addresses = URLUtil.dealMultiUrl(configProperties.getServerAddr());
@@ -130,44 +131,46 @@ public class ConfigService {
     };
   }
 
-  private QueryConfigurationsRequest createQueryConfigurationsRequest(ServiceCombConfigProperties configProperties) {
+  private QueryConfigurationsRequest createQueryConfigurationsRequest(BootstrapProperties bootstrapProperties) {
     QueryConfigurationsRequest request = new QueryConfigurationsRequest();
-    request.setApplication(configProperties.getAppName());
-    request.setServiceName(configProperties.getServiceName());
-    request.setVersion(configProperties.getVersion());
-    request.setEnvironment(configProperties.getEnv());
+    request.setApplication(bootstrapProperties.getMicroserviceProperties().getApplication());
+    request.setServiceName(bootstrapProperties.getMicroserviceProperties().getName());
+    request.setVersion(bootstrapProperties.getMicroserviceProperties().getVersion());
+    request.setEnvironment(bootstrapProperties.getMicroserviceProperties().getEnvironment());
     // 需要设置为 null， 并且 query 参数为 revision=null 才会返回 revision 信息。 revision = 是不行的。
     request.setRevision(null);
     return request;
   }
 
-  private void initServiceCenterConfig(ServiceCombConfigProperties configProperties,
-      ServiceCombAkSkProperties serviceCombAkSkProperties, ServiceCombSSLProperties serviceCombSSLProperties,
+  private void initServiceCenterConfig(BootstrapProperties bootstrapProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
     QueryConfigurationsRequest queryConfigurationsRequest;
 
-    AddressManager addressManager = configCenterAddressManager(configProperties, serviceCombAkSkProperties);
-    HttpTransport httpTransport = createHttpTransport(addressManager.sslEnabled(), serviceCombSSLProperties,
+    AddressManager addressManager = configCenterAddressManager(bootstrapProperties.getConfigBootstrapProperties(),
+        bootstrapProperties.getServiceCombAkSkProperties());
+    HttpTransport httpTransport = createHttpTransport(addressManager.sslEnabled(),
+        bootstrapProperties.getServiceCombSSLProperties(),
         authHeaderProviders, HttpTransportFactory.defaultRequestConfig().build());
     ConfigCenterClient configCenterClient = new ConfigCenterClient(addressManager, httpTransport);
 
-    queryConfigurationsRequest = createQueryConfigurationsRequest(configProperties);
+    queryConfigurationsRequest = createQueryConfigurationsRequest(bootstrapProperties);
     QueryConfigurationsResponse response = configCenterClient
         .queryConfigurations(queryConfigurationsRequest);
     if (response.isChanged()) {
       configConverter.updateData(response.getConfigurations());
     }
     queryConfigurationsRequest.setRevision(response.getRevision());
-    ConfigCenterConfiguration configCenterConfiguration = createConfigCenterConfiguration(configProperties);
+    ConfigCenterConfiguration configCenterConfiguration = createConfigCenterConfiguration(
+        bootstrapProperties.getConfigBootstrapProperties());
     ConfigCenterManager configCenterManager = new ConfigCenterManager(configCenterClient, EventManager.getEventBus(),
         configConverter, configCenterConfiguration);
     configCenterManager.setQueryConfigurationsRequest(queryConfigurationsRequest);
     configCenterManager.startConfigCenterManager();
   }
 
-  private ConfigCenterConfiguration createConfigCenterConfiguration(ServiceCombConfigProperties configProperties) {
+  private ConfigCenterConfiguration createConfigCenterConfiguration(ConfigBootstrapProperties configProperties) {
     ConfigCenterConfiguration configCenterConfiguration = new ConfigCenterConfiguration();
-    configCenterConfiguration.setRefreshInterval(configProperties.getConfigCenter().getRefreshInterval());
+    configCenterConfiguration.setRefreshIntervalInMillis(configProperties.getConfigCenter().getRefreshInterval());
     return configCenterConfiguration;
   }
 
@@ -175,42 +178,46 @@ public class ConfigService {
     return new KieAddressManager(addresses, EventManager.getEventBus());
   }
 
-  private KieAddressManager configKieAddressManager(ServiceCombConfigProperties configProperties) {
+  private KieAddressManager configKieAddressManager(ConfigBootstrapProperties configProperties) {
     List<String> addresses = URLUtil.dealMultiUrl(configProperties.getServerAddr());
     LOGGER.info("initialize config server type={}, address={}.", configProperties.getServerType(), addresses);
     return createKieAddressManager(addresses);
   }
 
-  private KieConfiguration createKieConfiguration(ServiceCombConfigProperties configProperties,
-      ServiceCombAkSkProperties serviceCombAkSkProperties) {
-    return new KieConfiguration().setAppName(configProperties.getAppName())
-        .setFirstPullRequired(configProperties.isFirstPullRequired())
-        .setCustomLabel(configProperties.getKie().getCustomLabel())
-        .setCustomLabelValue(configProperties.getKie().getCustomLabelValue())
-        .setEnableAppConfig(configProperties.getKie().isEnableAppConfig())
-        .setEnableCustomConfig(configProperties.getKie().isEnableCustomConfig())
-        .setEnableLongPolling(configProperties.getKie().isEnableLongPolling())
-        .setEnableServiceConfig(configProperties.getKie().isEnableServiceConfig())
-        .setEnvironment(configProperties.getEnv())
-        .setPollingWaitInSeconds(configProperties.getKie().getPollingWaitTimeInSeconds())
-        .setProject(serviceCombAkSkProperties.getProject())
-        .setServiceName(configProperties.getServiceName());
+  private KieConfiguration createKieConfiguration(BootstrapProperties bootstrapProperties) {
+    return new KieConfiguration().setAppName(bootstrapProperties.getMicroserviceProperties().getApplication())
+        .setFirstPullRequired(bootstrapProperties.getConfigBootstrapProperties().isFirstPullRequired())
+        .setCustomLabel(bootstrapProperties.getConfigBootstrapProperties().getKie().getCustomLabel())
+        .setCustomLabelValue(bootstrapProperties.getConfigBootstrapProperties().getKie().getCustomLabelValue())
+        .setEnableAppConfig(bootstrapProperties.getConfigBootstrapProperties().getKie().isEnableAppConfig())
+        .setEnableCustomConfig(bootstrapProperties.getConfigBootstrapProperties().getKie().isEnableCustomConfig())
+        .setEnableLongPolling(bootstrapProperties.getConfigBootstrapProperties().getKie().isEnableLongPolling())
+        .setEnableServiceConfig(bootstrapProperties.getConfigBootstrapProperties().getKie().isEnableServiceConfig())
+        .setEnvironment(bootstrapProperties.getMicroserviceProperties().getEnvironment())
+        .setPollingWaitInSeconds(
+            bootstrapProperties.getConfigBootstrapProperties().getKie().getPollingWaitTimeInSeconds())
+        .setRefreshIntervalInMillis(
+            bootstrapProperties.getConfigBootstrapProperties().getKie().getRefreshIntervalInMillis())
+        .setProject(bootstrapProperties.getServiceCombAkSkProperties().getProject())
+        .setServiceName(bootstrapProperties.getMicroserviceProperties().getName());
   }
 
-  private void initKieConfig(ServiceCombConfigProperties configProperties,
-      ServiceCombAkSkProperties serviceCombAkSkProperties, ServiceCombSSLProperties serviceCombSSLProperties,
+  private void initKieConfig(BootstrapProperties bootstrapProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
-    KieAddressManager kieAddressManager = configKieAddressManager(configProperties);
+    KieAddressManager kieAddressManager = configKieAddressManager(bootstrapProperties.getConfigBootstrapProperties());
 
     RequestConfig.Builder requestBuilder = HttpTransportFactory.defaultRequestConfig();
-    if (configProperties.getKie().isEnableLongPolling()
-        && configProperties.getKie().getPollingWaitTimeInSeconds() >= 0) {
-      requestBuilder.setConnectionRequestTimeout(configProperties.getKie().getPollingWaitTimeInSeconds() * 2 * 1000);
-      requestBuilder.setSocketTimeout(configProperties.getKie().getPollingWaitTimeInSeconds() * 2 * 1000);
+    if (bootstrapProperties.getConfigBootstrapProperties().getKie().isEnableLongPolling()
+        && bootstrapProperties.getConfigBootstrapProperties().getKie().getPollingWaitTimeInSeconds() >= 0) {
+      requestBuilder.setConnectionRequestTimeout(
+          bootstrapProperties.getConfigBootstrapProperties().getKie().getPollingWaitTimeInSeconds() * 2 * 1000);
+      requestBuilder.setSocketTimeout(
+          bootstrapProperties.getConfigBootstrapProperties().getKie().getPollingWaitTimeInSeconds() * 2 * 1000);
     }
-    HttpTransport httpTransport = createHttpTransport(kieAddressManager.sslEnabled(), serviceCombSSLProperties,
+    HttpTransport httpTransport = createHttpTransport(kieAddressManager.sslEnabled(),
+        bootstrapProperties.getServiceCombSSLProperties(),
         authHeaderProviders, requestBuilder.build());
-    KieConfiguration kieConfiguration = createKieConfiguration(configProperties, serviceCombAkSkProperties);
+    KieConfiguration kieConfiguration = createKieConfiguration(bootstrapProperties);
     KieClient kieClient = new KieClient(kieAddressManager, httpTransport, kieConfiguration);
     KieConfigManager kieConfigManager = new KieConfigManager(kieClient, EventManager.getEventBus(), kieConfiguration,
         configConverter);

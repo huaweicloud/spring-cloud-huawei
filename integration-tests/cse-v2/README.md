@@ -1,3 +1,5 @@
+[![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.huaweicloud/spring-cloud-huawei/badge.svg)](https://search.maven.org/search?q=g:com.huaweicloud%20AND%20a:spring-cloud-huawei-dependencies) 
 # 使用微服务引擎2.0的测试用例
 
 * 参考：https://support.huaweicloud.com/devg-cse/cse_devg_0036.html 安装微服务引擎2.0

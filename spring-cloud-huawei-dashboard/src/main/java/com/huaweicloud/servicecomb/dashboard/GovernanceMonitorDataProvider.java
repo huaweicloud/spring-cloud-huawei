@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import io.github.resilience4j.micrometer.tagged.CircuitBreakerMetricNames;
-import io.github.resilience4j.micrometer.tagged.TagNames;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.dashboard.client.model.InterfaceInfo;
 import org.apache.servicecomb.dashboard.client.model.MonitorData;
@@ -37,6 +35,8 @@ import com.huaweicloud.common.configration.dynamic.DashboardProperties;
 import com.huaweicloud.servicecomb.dashboard.model.MonitorDataProvider;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
+import io.github.resilience4j.micrometer.tagged.CircuitBreakerMetricNames;
+import io.github.resilience4j.micrometer.tagged.TagNames;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.Meter;
@@ -56,6 +56,8 @@ public class GovernanceMonitorDataProvider implements MonitorDataProvider {
   private final ServiceCombRegistration registration;
 
   private final DashboardProperties dashboardProperties;
+
+  private Map<String, GovernanceData> lastMetricsData;
 
   public GovernanceMonitorDataProvider(MeterRegistry meterRegistry, ServiceCombRegistration registration,
       DashboardProperties dashboardProperties) {
@@ -87,6 +89,7 @@ public class GovernanceMonitorDataProvider implements MonitorDataProvider {
   }
 
   @Override
+  // no concurrent access
   public void extractInterfaceInfo(MonitorData monitorData) {
     List<Meter> meters = this.meterRegistry.getMeters();
 
@@ -108,6 +111,7 @@ public class GovernanceMonitorDataProvider implements MonitorDataProvider {
 
       GovernanceData governanceData = metricsData.computeIfAbsent(name, key -> {
         GovernanceData obj = new GovernanceData();
+        obj.setTimeInMillis(System.currentTimeMillis());
         obj.setName(key);
         return obj;
       });
@@ -152,22 +156,44 @@ public class GovernanceMonitorDataProvider implements MonitorDataProvider {
       }
     }
 
+    if (lastMetricsData == null) {
+      lastMetricsData = metricsData;
+      return;
+    }
+
     metricsData.forEach((k, v) -> {
+      GovernanceData lastData = lastMetricsData.get(k);
+      if (lastData == null) {
+        return;
+      }
+
       InterfaceInfo interfaceInfo = new InterfaceInfo();
       interfaceInfo.setName(v.getName());
-      interfaceInfo.setTotal(v.getSuccessfulCalls() + v.getFailedCalls() + v.getIgnoredCalls());
-      interfaceInfo.setFailure(v.getFailedCalls() + v.getIgnoredCalls());
+
+      // circuit breaker state between T1 and T2
+      interfaceInfo.setTotal((v.getSuccessfulCalls() + v.getFailedCalls() + v.getIgnoredCalls()) -
+          (lastData.getSuccessfulCalls() + lastData.getFailedCalls() + lastData.getIgnoredCalls()));
+      interfaceInfo.setFailure((v.getFailedCalls() + v.getIgnoredCalls()) -
+          (lastData.getFailedCalls() + lastData.getIgnoredCalls()));
       interfaceInfo.setFailureRate(
           interfaceInfo.getTotal() == 0 ? 0 : interfaceInfo.getFailure() / (double) interfaceInfo.getTotal());
-      interfaceInfo.setQps(v.getTotalTime() > 0d ? interfaceInfo.getTotal() * 1000 / v.getTotalTime() : 0d);
+      interfaceInfo.setQps(interfaceInfo.getTotal() * 1000 /
+          (double) (v.getTimeInMillis() - lastData.getTimeInMillis()));
       interfaceInfo.setLatency(
-          doubleToInt(interfaceInfo.getTotal() > 0d ? v.getTotalTime() / interfaceInfo.getTotal() : 0d));
+          doubleToInt(interfaceInfo.getTotal() > 0d ?
+              (v.getTotalTime() - lastData.getTotalTime()) / interfaceInfo.getTotal()
+              : 0d));
+
+      // circuit breaker state in T
       interfaceInfo.setCountTimeout(
           doubleToInt(interfaceInfo.getTotal() * (Math.max(v.getSlowRate(), 0d))));
       interfaceInfo.setCircuitBreakerOpen(v.isCircuitBreakerOpen());
       interfaceInfo.setShortCircuited(v.getShortCircuitedCalls());
+
       monitorData.addInterfaceInfo(interfaceInfo);
     });
+
+    lastMetricsData = metricsData;
   }
 
   private int doubleToInt(Double d) {

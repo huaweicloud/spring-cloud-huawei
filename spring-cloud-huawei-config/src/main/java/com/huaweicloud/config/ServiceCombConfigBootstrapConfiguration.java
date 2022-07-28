@@ -24,9 +24,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.huaweicloud.common.configration.bootstrap.ServiceCombAkSkProperties;
-import com.huaweicloud.common.configration.bootstrap.ServiceCombConfigProperties;
-import com.huaweicloud.common.configration.bootstrap.ServiceCombSSLProperties;
+import com.huaweicloud.common.configration.bootstrap.BootstrapProperties;
 
 /**
  * bootstrap 配置信息。 由于使用 ContextRefresher 刷新配置， 会重新加载所有 bootstrap 的 bean， 因此配置中心的
@@ -36,11 +34,10 @@ import com.huaweicloud.common.configration.bootstrap.ServiceCombSSLProperties;
 @ConditionalOnProperty(name = "spring.cloud.servicecomb.config.enabled", matchIfMissing = true)
 public class ServiceCombConfigBootstrapConfiguration {
   @Bean
-  public ServiceCombPropertySourceLocator serviceCombPropertySourceLocator(ServiceCombConfigProperties configProperties,
-      ServiceCombAkSkProperties serviceCombAkSkProperties, ServiceCombSSLProperties serviceCombSSLProperties,
+  public ServiceCombPropertySourceLocator serviceCombPropertySourceLocator(BootstrapProperties bootstrapProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
     ConfigService.getInstance()
-        .init(configProperties, serviceCombAkSkProperties, serviceCombSSLProperties, authHeaderProviders);
+        .init(bootstrapProperties, authHeaderProviders);
     return new ServiceCombPropertySourceLocator(ConfigService.getInstance().getConfigConverter());
   }
 }

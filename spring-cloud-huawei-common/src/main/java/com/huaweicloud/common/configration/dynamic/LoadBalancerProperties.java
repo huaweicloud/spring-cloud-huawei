@@ -17,11 +17,6 @@
 
 package com.huaweicloud.common.configration.dynamic;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-
-@RefreshScope
-@ConfigurationProperties("spring.cloud.servicecomb.loadbalancer")
 public class LoadBalancerProperties {
   public static final String LOADBALANCER_ENABLED = "spring.cloud.servicecomb.loadbalancer.enabled";
 

@@ -1,19 +1,21 @@
 #
-# Licensed to the Apache Software Foundation (ASF) under one or more
-# contributor license agreements.  See the NOTICE file distributed with
-# this work for additional information regarding copyright ownership.
-# The ASF licenses this file to You under the Apache License, Version 2.0
-# (the "License"); you may not use this file except in compliance with
-# the License.  You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
+## ---------------------------------------------------------------------------
+##
+## Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+##
+## Licensed under the Apache License, Version 2.0 (the "License");
+## you may not use this file except in compliance with the License.
+## You may obtain a copy of the License at
+##
+##      http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+## ---------------------------------------------------------------------------
+
 server:
   port: 9098
 
@@ -22,11 +24,20 @@ spring:
     name: order
   cloud:
     servicecomb:
+      service:
+        name: order
+        version: 0.0.1
+        properties:
+          x-test: value
+          x-test2: value2
+      instance:
+        initialStatus: UP
+        properties:
+          x-test: value
+          x-test2: value2
       discovery:
         enabled: true
         address: http://127.0.0.1:30100
-        serviceName: order
-        version: 0.0.1
       config:
         enabled: true
         serverType: kie
@@ -82,9 +93,9 @@ servicecomb:
     demo-bulkhead: |
       maxConcurrentCalls: 5
   instanceIsolation:
-    allOperation: |
-      minimumNumberOfCalls: 10
-      slidingWindowSize: 10
-      failureRateThreshold: 20
+#    allOperation: |
+#      minimumNumberOfCalls: 10
+#      slidingWindowSize: 10
+#      failureRateThreshold: 20
     isolationForceOpen: |
       forceOpen: true

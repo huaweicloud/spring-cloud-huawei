@@ -20,11 +20,9 @@ package com.huaweicloud.governance.adapters.web;
 import java.io.IOException;
 import java.net.URI;
 
-import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
-import org.apache.servicecomb.governance.policy.FaultInjectionPolicy;
 import org.apache.servicecomb.governance.policy.RetryPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,8 +42,6 @@ import com.huaweicloud.common.adapters.loadbalancer.RetryContext;
 import com.huaweicloud.common.adapters.web.FallbackClientHttpResponse;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.governance.SpringCloudInvocationContext;
-import com.huaweicloud.governance.faultInjection.FaultExecutor;
 
 import io.github.resilience4j.decorators.Decorators;
 import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
@@ -64,13 +60,10 @@ public class RetryableRestTemplate extends RestTemplate {
 
   private final RetryHandler retryHandler;
 
-  private final FaultInjectionHandler faultInjectionHandler;
-
   private final ClientRecoverPolicy<Object> clientRecoverPolicy;
 
-  public RetryableRestTemplate(RetryHandler retryHandler, FaultInjectionHandler faultInjectionHandler, ClientRecoverPolicy<Object> clientRecoverPolicy) {
+  public RetryableRestTemplate(RetryHandler retryHandler, ClientRecoverPolicy<Object> clientRecoverPolicy) {
     this.retryHandler = retryHandler;
-    this.faultInjectionHandler = faultInjectionHandler;
     this.clientRecoverPolicy = clientRecoverPolicy;
   }
 
@@ -131,11 +124,7 @@ public class RetryableRestTemplate extends RestTemplate {
     DecorateCheckedSupplier<ClientHttpResponse> dcs = Decorators.ofCheckedSupplier(next);
 
     try {
-      SpringCloudInvocationContext.setInvocationContext();
-
       addRetry(dcs, governanceRequest);
-
-      addFaultInject(governanceRequest);
 
       return dcs.get();
     } catch (Throwable e) {
@@ -145,8 +134,6 @@ public class RetryableRestTemplate extends RestTemplate {
       LOGGER.error("retry catch throwable", e);
       // return 503, so that we can retry
       return new FallbackClientHttpResponse(500, e.getMessage());
-    } finally {
-      SpringCloudInvocationContext.removeInvocationContext();
     }
   }
 
@@ -173,15 +160,6 @@ public class RetryableRestTemplate extends RestTemplate {
       InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
       RetryContext retryContext = new RetryContext(0);
       context.putLocalContext(RetryContext.RETRY_CONTEXT, retryContext);
-    }
-  }
-
-  private void addFaultInject(GovernanceRequest governanceRequest) {
-    if(faultInjectionHandler!=null){
-      FaultInjectionPolicy faultInject = faultInjectionHandler.getActuator(governanceRequest);
-      if (faultInject != null) {
-        FaultExecutor.execute(governanceRequest,faultInject);
-      }
     }
   }
 }
