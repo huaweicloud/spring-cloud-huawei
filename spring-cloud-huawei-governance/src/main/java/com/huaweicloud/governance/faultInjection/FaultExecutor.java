@@ -17,48 +17,38 @@
 
 package com.huaweicloud.governance.faultInjection;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.servicecomb.foundation.common.utils.SPIServiceUtils;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
-import org.apache.servicecomb.governance.policy.FaultInjectionPolicy;
 import org.apache.servicecomb.injection.Fault;
+import org.apache.servicecomb.injection.FaultInjectionConst;
+import org.apache.servicecomb.injection.FaultInjectionException;
 import org.apache.servicecomb.injection.FaultInjectionUtil;
 import org.apache.servicecomb.injection.FaultParam;
+import org.apache.servicecomb.injection.FaultResponse;
 import org.apache.servicecomb.injection.Sleepable;
 
-import io.vertx.core.Context;
-import io.vertx.core.Vertx;
+import static org.apache.servicecomb.injection.AbortFault.ABORTED_ERROR_MSG;
 
 /**
  * Implements the fault feature execution one after other.
  */
 public class FaultExecutor {
-  private static final List<Fault> faultInjectList = SPIServiceUtils.getSortedService(Fault.class);
 
-  public static void execute(GovernanceRequest governanceRequest,
-      FaultInjectionPolicy policy) {
-    execute(governanceRequest, policy,null);
+  public static void execute(GovernanceRequest governanceRequest, Fault fault) {
+    execute(governanceRequest, fault, null);
   }
 
   public static void execute(GovernanceRequest governanceRequest,
-      FaultInjectionPolicy policy, Sleepable sleepable) {
-    Fault fault = null;
-    for (Fault f : faultInjectList) {
-      if (policy.getType().equals(f.getName())) {
-        fault = f;
-        break;
-      }
-    }
-
+      Fault fault, Sleepable sleepable) {
     if (fault != null) {
       FaultParam param = initFaultParam(getInjectFaultKey(governanceRequest), sleepable);
-      fault.injectFault(param, policy, faultResponse -> {
-        if (!faultResponse.isSuccess()) {
-          throw new FaultInjectionException(faultResponse);
+      if (fault.injectFault(param)) {
+        if (FaultInjectionConst.FALLBACK_THROWEXCEPTION.equals(fault.getPolicy().getFallbackType())) {
+          throw new FaultInjectionException(
+              FaultResponse.createFail(fault.getPolicy().getErrorCode(), ABORTED_ERROR_MSG));
         }
-      });
+      }
     }
   }
 
@@ -68,14 +58,8 @@ public class FaultExecutor {
     long reqCountCurrent = reqCount.getAndIncrement();
 
     FaultParam param = new FaultParam(reqCountCurrent);
-    if(sleepable!=null){
+    if (sleepable != null) {
       param.setSleepable(sleepable);
-    }else{
-      Context currentContext = Vertx.currentContext();
-      if (currentContext != null && currentContext.owner() != null && currentContext.isEventLoopContext()) {
-        param.setSleepable(
-            (delay, sleepCallback) -> currentContext.owner().setTimer(delay, timeId -> sleepCallback.callback()));
-      }
     }
     return param;
   }

@@ -20,10 +20,12 @@ package com.huaweicloud.governance.adapters.web;
 import java.io.IOException;
 import java.net.URI;
 
+import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.apache.servicecomb.governance.policy.RetryPolicy;
+import org.apache.servicecomb.injection.Fault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -42,6 +44,7 @@ import com.huaweicloud.common.adapters.loadbalancer.RetryContext;
 import com.huaweicloud.common.adapters.web.FallbackClientHttpResponse;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.governance.faultInjection.FaultExecutor;
 
 import io.github.resilience4j.decorators.Decorators;
 import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
@@ -62,9 +65,12 @@ public class RetryableRestTemplate extends RestTemplate {
 
   private final ClientRecoverPolicy<Object> clientRecoverPolicy;
 
-  public RetryableRestTemplate(RetryHandler retryHandler, ClientRecoverPolicy<Object> clientRecoverPolicy) {
+  private final FaultInjectionHandler faultInjectionHandler;
+
+  public RetryableRestTemplate(RetryHandler retryHandler, ClientRecoverPolicy<Object> clientRecoverPolicy, FaultInjectionHandler faultInjectionHandler) {
     this.retryHandler = retryHandler;
     this.clientRecoverPolicy = clientRecoverPolicy;
+    this.faultInjectionHandler = faultInjectionHandler;
   }
 
   @SuppressWarnings("PMD.UseTryWithResources")
@@ -126,6 +132,8 @@ public class RetryableRestTemplate extends RestTemplate {
     try {
       addRetry(dcs, governanceRequest);
 
+      addFaultInject(governanceRequest);
+
       return dcs.get();
     } catch (Throwable e) {
       if (clientRecoverPolicy != null) {
@@ -160,6 +168,15 @@ public class RetryableRestTemplate extends RestTemplate {
       InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
       RetryContext retryContext = new RetryContext(0);
       context.putLocalContext(RetryContext.RETRY_CONTEXT, retryContext);
+    }
+  }
+
+  private void addFaultInject(GovernanceRequest governanceRequest) {
+    if(faultInjectionHandler!=null){
+      Fault fault = faultInjectionHandler.getActuator(governanceRequest);
+      if (fault != null) {
+        FaultExecutor.execute(governanceRequest,fault);
+      }
     }
   }
 }

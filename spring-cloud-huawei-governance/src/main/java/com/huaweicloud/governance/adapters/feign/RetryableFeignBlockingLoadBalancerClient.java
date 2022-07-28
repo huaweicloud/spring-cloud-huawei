@@ -32,8 +32,8 @@ import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.apache.servicecomb.governance.policy.CircuitBreakerPolicy;
-import org.apache.servicecomb.governance.policy.FaultInjectionPolicy;
 import org.apache.servicecomb.governance.policy.RetryPolicy;
+import org.apache.servicecomb.injection.Fault;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.PullInstanceEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,16 +60,16 @@ import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.governance.faultInjection.FaultExecutor;
 
+import feign.Client;
+import feign.Request;
+import feign.Request.Options;
+import feign.Response;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.decorators.Decorators;
 import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
 import io.github.resilience4j.retry.Retry;
 import io.vavr.CheckedFunction0;
-import feign.Client;
-import feign.Request;
-import feign.Request.Options;
-import feign.Response;
 
 /**
  * Support for retryable and instance isolation for FeignBlockingLoadBalancerClient.
@@ -99,11 +99,11 @@ public class RetryableFeignBlockingLoadBalancerClient implements Client {
   private final FaultInjectionHandler faultInjectionHandler;
 
   public RetryableFeignBlockingLoadBalancerClient(RetryHandler retryHandler,
-                                                  InstanceIsolationHandler instanceIsolationHandler,
-                                                  FaultInjectionHandler faultInjectionHandler,
-                                                  ClientRecoverPolicy<Response> clientRecoverPolicy,
-                                                  Client delegate, LoadBalancerClient loadBalancerClient,
-                                                  LoadBalancerClientFactory loadBalancerClientFactory) {
+      InstanceIsolationHandler instanceIsolationHandler,
+      FaultInjectionHandler faultInjectionHandler,
+      ClientRecoverPolicy<Response> clientRecoverPolicy,
+      Client delegate, LoadBalancerClient loadBalancerClient,
+      LoadBalancerClientFactory loadBalancerClientFactory) {
     this.retryHandler = retryHandler;
     this.instanceIsolationHandler = instanceIsolationHandler;
     this.faultInjectionHandler = faultInjectionHandler;
@@ -125,7 +125,6 @@ public class RetryableFeignBlockingLoadBalancerClient implements Client {
     DecorateCheckedSupplier<Response> dcs = Decorators.ofCheckedSupplier(next);
 
     try {
-
       addRetry(dcs, governanceRequest);
 
       addFaultInject(governanceRequest);
@@ -141,30 +140,30 @@ public class RetryableFeignBlockingLoadBalancerClient implements Client {
   }
 
   private Response doExecute(URI originalUri, Request request, Options options, GovernanceRequest governanceRequest)
-          throws IOException {
+      throws IOException {
     String serviceId = originalUri.getHost();
     Assert.state(serviceId != null, "Request URI does not contain a valid hostname: " + originalUri);
     String hint = getHint(serviceId);
     DefaultRequest<RequestDataContext> lbRequest = new DefaultRequest<>(
-            new RequestDataContext(buildRequestData(request), hint));
+        new RequestDataContext(buildRequestData(request), hint));
     Set<LoadBalancerLifecycle> supportedLifecycleProcessors = LoadBalancerLifecycleValidator
-            .getSupportedLifecycleProcessors(
-                    loadBalancerClientFactory.getInstances(serviceId, LoadBalancerLifecycle.class),
-                    RequestDataContext.class, ResponseData.class, ServiceInstance.class);
+        .getSupportedLifecycleProcessors(
+            loadBalancerClientFactory.getInstances(serviceId, LoadBalancerLifecycle.class),
+            RequestDataContext.class, ResponseData.class, ServiceInstance.class);
     supportedLifecycleProcessors.forEach(lifecycle -> lifecycle.onStart(lbRequest));
     ServiceInstance instance = loadBalancerClient.choose(serviceId, lbRequest);
     org.springframework.cloud.client.loadbalancer.Response<ServiceInstance> lbResponse = new DefaultResponse(
-            instance);
+        instance);
     if (instance == null) {
       String message = "Load balancer does not contain an instance for the service " + serviceId;
       if (LOG.isWarnEnabled()) {
         LOG.warn(message);
       }
       supportedLifecycleProcessors.forEach(lifecycle -> lifecycle
-              .onComplete(new CompletionContext<ResponseData, ServiceInstance, RequestDataContext>(
-                      CompletionContext.Status.DISCARD, lbRequest, lbResponse)));
+          .onComplete(new CompletionContext<ResponseData, ServiceInstance, RequestDataContext>(
+              CompletionContext.Status.DISCARD, lbRequest, lbResponse)));
       return Response.builder().request(request).status(HttpStatus.SERVICE_UNAVAILABLE.value())
-              .body(message, StandardCharsets.UTF_8).build();
+          .body(message, StandardCharsets.UTF_8).build();
     }
 
     governanceRequest.setInstanceId(instance.getInstanceId());
@@ -173,13 +172,13 @@ public class RetryableFeignBlockingLoadBalancerClient implements Client {
     Request newRequest = buildRequest(request, reconstructedUrl);
     LoadBalancerProperties loadBalancerProperties = loadBalancerClientFactory.getProperties(serviceId);
     return executeWithLoadBalancerLifecycleProcessing(governanceRequest, delegate, options, newRequest, lbRequest,
-            lbResponse,
-            supportedLifecycleProcessors, loadBalancerProperties.isUseRawStatusCodeInResponseData());
+        lbResponse,
+        supportedLifecycleProcessors, loadBalancerProperties.isUseRawStatusCodeInResponseData());
   }
 
   protected Request buildRequest(Request request, String reconstructedUrl) {
     return Request.create(request.httpMethod(), reconstructedUrl, request.headers(), request.body(),
-            request.charset(), request.requestTemplate());
+        request.charset(), request.requestTemplate());
   }
 
   // Visible for Sleuth instrumentation
@@ -195,23 +194,23 @@ public class RetryableFeignBlockingLoadBalancerClient implements Client {
   }
 
   private Response executeWithLoadBalancerLifecycleProcessing(Client feignClient, Request.Options options,
-                                                              Request feignRequest, org.springframework.cloud.client.loadbalancer.Request lbRequest,
-                                                              org.springframework.cloud.client.loadbalancer.Response<ServiceInstance> lbResponse,
-                                                              Set<LoadBalancerLifecycle> supportedLifecycleProcessors, boolean loadBalanced, boolean useRawStatusCodes)
-          throws IOException {
+      Request feignRequest, org.springframework.cloud.client.loadbalancer.Request lbRequest,
+      org.springframework.cloud.client.loadbalancer.Response<ServiceInstance> lbResponse,
+      Set<LoadBalancerLifecycle> supportedLifecycleProcessors, boolean loadBalanced, boolean useRawStatusCodes)
+      throws IOException {
     supportedLifecycleProcessors.forEach(lifecycle -> lifecycle.onStartRequest(lbRequest, lbResponse));
     try {
       Response response = feignClient.execute(feignRequest, options);
       if (loadBalanced) {
         supportedLifecycleProcessors.forEach(
-                lifecycle -> lifecycle.onComplete(new CompletionContext<>(CompletionContext.Status.SUCCESS,
-                        lbRequest, lbResponse, buildResponseData(response, useRawStatusCodes))));
+            lifecycle -> lifecycle.onComplete(new CompletionContext<>(CompletionContext.Status.SUCCESS,
+                lbRequest, lbResponse, buildResponseData(response, useRawStatusCodes))));
       }
       return response;
     } catch (Exception exception) {
       if (loadBalanced) {
         supportedLifecycleProcessors.forEach(lifecycle -> lifecycle.onComplete(
-                new CompletionContext<>(CompletionContext.Status.FAILED, exception, lbRequest, lbResponse)));
+            new CompletionContext<>(CompletionContext.Status.FAILED, exception, lbRequest, lbResponse)));
       }
       throw exception;
     }
@@ -224,25 +223,25 @@ public class RetryableFeignBlockingLoadBalancerClient implements Client {
       return new ResponseData(responseHeaders, null, buildRequestData(response.request()), response.status());
     }
     return new ResponseData(HttpStatus.resolve(response.status()), responseHeaders, null,
-            buildRequestData(response.request()));
+        buildRequestData(response.request()));
   }
 
   static RequestData buildRequestData(Request request) {
     HttpHeaders requestHeaders = new HttpHeaders();
     request.headers().forEach((key, value) -> requestHeaders.put(key, new ArrayList<>(value)));
     return new RequestData(HttpMethod.resolve(request.httpMethod().name()), URI.create(request.url()),
-            requestHeaders, null, new HashMap<>());
+        requestHeaders, null, new HashMap<>());
   }
 
   private Response executeWithLoadBalancerLifecycleProcessing(GovernanceRequest governanceRequest, Client feignClient,
-                                                              Request.Options options,
-                                                              Request feignRequest, org.springframework.cloud.client.loadbalancer.Request lbRequest,
-                                                              org.springframework.cloud.client.loadbalancer.Response<ServiceInstance> lbResponse,
-                                                              Set<LoadBalancerLifecycle> supportedLifecycleProcessors, boolean useRawStatusCodes) {
+      Request.Options options,
+      Request feignRequest, org.springframework.cloud.client.loadbalancer.Request lbRequest,
+      org.springframework.cloud.client.loadbalancer.Response<ServiceInstance> lbResponse,
+      Set<LoadBalancerLifecycle> supportedLifecycleProcessors, boolean useRawStatusCodes) {
 
     CheckedFunction0<Response> next = () -> executeWithLoadBalancerLifecycleProcessing(feignClient, options,
-            feignRequest, lbRequest, lbResponse,
-            supportedLifecycleProcessors, true, useRawStatusCodes);
+        feignRequest, lbRequest, lbResponse,
+        supportedLifecycleProcessors, true, useRawStatusCodes);
 
     DecorateCheckedSupplier<Response> dcs = Decorators.ofCheckedSupplier(next);
 
@@ -250,8 +249,8 @@ public class RetryableFeignBlockingLoadBalancerClient implements Client {
       CircuitBreakerPolicy circuitBreakerPolicy = instanceIsolationHandler.matchPolicy(governanceRequest);
       if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
         return Response.builder().status(503)
-                .reason("Policy " + circuitBreakerPolicy.getName() + " forced open and deny requests").request(feignRequest)
-                .build();
+            .reason("Policy " + circuitBreakerPolicy.getName() + " forced open and deny requests").request(feignRequest)
+            .build();
       }
 
       if (circuitBreakerPolicy != null && !circuitBreakerPolicy.isForceClosed()) {
@@ -308,10 +307,10 @@ public class RetryableFeignBlockingLoadBalancerClient implements Client {
   }
 
   private void addFaultInject(GovernanceRequest governanceRequest) {
-    if(faultInjectionHandler!=null){
-      FaultInjectionPolicy faultInject = faultInjectionHandler.getActuator(governanceRequest);
-      if (faultInject != null) {
-        FaultExecutor.execute(governanceRequest,faultInject);
+    if (faultInjectionHandler != null) {
+      Fault fault = faultInjectionHandler.getActuator(governanceRequest);
+      if (fault != null) {
+        FaultExecutor.execute(governanceRequest, fault);
       }
     }
   }

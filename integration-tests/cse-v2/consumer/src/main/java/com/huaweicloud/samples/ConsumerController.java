@@ -46,4 +46,12 @@ public class ConsumerController {
   public String jasypt2() {
     return restTemplate.getForObject("http://basic-provider/jasypt2", String.class);
   }
+  @GetMapping("/jasypt3")
+  public String jasypt3() {
+    return "OK";
+  }
+  @GetMapping("/jasypt4")
+  public String jasypt4() {
+    return "OK";
+  }
 }

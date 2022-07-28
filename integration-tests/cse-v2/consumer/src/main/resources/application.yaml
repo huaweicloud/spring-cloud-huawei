@@ -18,3 +18,53 @@
 
 server:
   port: 8082
+
+servicecomb:
+  matchGroup:
+    demo-rateLimiting: |
+      matches:
+        - apiPath:
+            exact: "/jasypt3"
+    demo-retry: |
+      matches:
+        - apiPath:
+            prefix: "/jasypt3"
+    demo-circuitBreaker: |
+      matches:
+        - apiPath:
+            exact: "/jasypt3"
+    demo-bulkhead: |
+      matches:
+        - apiPath:
+            exact: "/jasypt3"
+    demo-faultInjectDelay: |
+      matches:
+        - apiPath:
+            contains: "/jasypt3"
+    demo-faultInjectAbort: |
+      matches:
+        - apiPath:
+            contains: "/jasypt4"
+  rateLimiting:
+    demo-rateLimiting: |
+      rate: 10
+  retry:
+    demo-retry: |
+      maxAttempts: 3
+  circuitBreaker:
+    demo-circuitBreaker: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      failureRateThreshold: 20
+  bulkhead:
+    demo-bulkhead: |
+      maxConcurrentCalls: 5
+  faultInjection:
+    demo-faultInjectDelay: |
+      type: delay
+      delayTime: 3S
+      percentage: 50
+    demo-faultInjectAbort: |
+      type: abort
+      percentage: 50
+      errorCode: 490

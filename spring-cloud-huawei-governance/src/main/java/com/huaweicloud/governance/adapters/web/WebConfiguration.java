@@ -49,7 +49,7 @@ public class WebConfiguration {
       @Autowired(required = false) ClientRecoverPolicy<Object> recoverPolicy,
       @Autowired(required = false) FaultInjectionHandler faultInjectionHandler,
       HttpClientProperties httpClientProperties) {
-    RetryableRestTemplate restTemplate = new RetryableRestTemplate(retryHandler, faultInjectionHandler, recoverPolicy);
+    RetryableRestTemplate restTemplate = new RetryableRestTemplate(retryHandler, recoverPolicy, faultInjectionHandler);
     restTemplate.setRequestFactory(getClientHttpRequestFactory(httpClientProperties));
     return restTemplate;
   }

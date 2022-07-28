@@ -26,7 +26,7 @@ import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
-import org.apache.servicecomb.governance.policy.FaultInjectionPolicy;
+import org.apache.servicecomb.injection.Fault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -53,7 +53,7 @@ import io.github.resilience4j.reactor.ratelimiter.operator.RateLimiterOperator;
 import reactor.core.publisher.Mono;
 
 public class GovernanceGatewayFilterFactory
-        extends AbstractGatewayFilterFactory<GovernanceGatewayFilterFactory.Config> {
+    extends AbstractGatewayFilterFactory<GovernanceGatewayFilterFactory.Config> {
   private static final Logger LOGGER = LoggerFactory.getLogger(GovernanceGatewayFilterFactory.class);
 
   private final RateLimitingHandler rateLimitingHandler;
@@ -65,8 +65,8 @@ public class GovernanceGatewayFilterFactory
   private final FaultInjectionHandler faultInjectionHandler;
 
   public GovernanceGatewayFilterFactory(RateLimitingHandler rateLimitingHandler,
-                                        CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler,
-                                        FaultInjectionHandler faultInjectionHandler) {
+      CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler,
+      FaultInjectionHandler faultInjectionHandler) {
     super(Config.class);
     this.rateLimitingHandler = rateLimitingHandler;
     this.circuitBreakerHandler = circuitBreakerHandler;
@@ -105,45 +105,45 @@ public class GovernanceGatewayFilterFactory
       Mono<Void> mono = toRun;
       if (bulkhead != null) {
         mono = toRun.transform(BulkheadOperator.of(bulkhead))
-                .onErrorResume(BulkheadFullException.class, (t) -> {
-                  LOGGER.warn("bulkhead is full and does not permit further calls by policy : {}",
-                          t.getMessage());
-                  return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
-                          "bulkhead is full and does not permit further calls.", t));
-                })
-                .doOnError(e -> LOGGER.warn("bulk head got error.", e));
+            .onErrorResume(BulkheadFullException.class, (t) -> {
+              LOGGER.warn("bulkhead is full and does not permit further calls by policy : {}",
+                  t.getMessage());
+              return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
+                  "bulkhead is full and does not permit further calls.", t));
+            })
+            .doOnError(e -> LOGGER.warn("bulk head got error.", e));
       }
       return mono;
     }
 
     private Mono<Void> addCircuitBreaker(ServerWebExchange exchange, GovernanceRequest governanceRequest,
-                                         Mono<Void> toRun) {
+        Mono<Void> toRun) {
       CircuitBreaker circuitBreaker = circuitBreakerHandler.getActuator(governanceRequest);
       Mono<Void> mono = toRun;
       if (circuitBreaker != null) {
         long start = System.currentTimeMillis();
         mono = toRun.transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
-                .doOnSuccess(v -> {
-                  if (exchange.getResponse().getStatusCode() != null
-                          && Family.familyOf(exchange.getResponse().getStatusCode().value()) == Family.SERVER_ERROR) {
-                    circuitBreaker.onError((System.currentTimeMillis() - start), TimeUnit.MILLISECONDS, new Exception());
-                  } else {
-                    circuitBreaker.onResult((System.currentTimeMillis() - start), TimeUnit.MILLISECONDS, null);
-                  }
-                })
-                .doOnError(e -> {
-                  if (e instanceof CallNotPermittedException) {
-                    return;
-                  }
-                  LOGGER.warn("circuit breaker got error.", e);
-                  circuitBreaker.onError((System.currentTimeMillis() - start), TimeUnit.MILLISECONDS, e);
-                })
-                .onErrorResume(CallNotPermittedException.class, (t) -> {
-                  LOGGER.warn("circuitBreaker is open by policy : {}",
-                          t.getMessage());
-                  return Mono.error(new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
-                          "circuitBreaker is open.", t));
-                });
+            .doOnSuccess(v -> {
+              if (exchange.getResponse().getStatusCode() != null
+                  && Family.familyOf(exchange.getResponse().getStatusCode().value()) == Family.SERVER_ERROR) {
+                circuitBreaker.onError((System.currentTimeMillis() - start), TimeUnit.MILLISECONDS, new Exception());
+              } else {
+                circuitBreaker.onResult((System.currentTimeMillis() - start), TimeUnit.MILLISECONDS, null);
+              }
+            })
+            .doOnError(e -> {
+              if (e instanceof CallNotPermittedException) {
+                return;
+              }
+              LOGGER.warn("circuit breaker got error.", e);
+              circuitBreaker.onError((System.currentTimeMillis() - start), TimeUnit.MILLISECONDS, e);
+            })
+            .onErrorResume(CallNotPermittedException.class, (t) -> {
+              LOGGER.warn("circuitBreaker is open by policy : {}",
+                  t.getMessage());
+              return Mono.error(new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+                  "circuitBreaker is open.", t));
+            });
       }
       return mono;
     }
@@ -153,30 +153,29 @@ public class GovernanceGatewayFilterFactory
       Mono<Void> mono = toRun;
       if (rateLimiter != null) {
         mono = toRun.transform(RateLimiterOperator.of(rateLimiter))
-                .onErrorResume(RequestNotPermitted.class, (t) -> {
-                  LOGGER.warn("the request is rate limit by policy : {}",
-                          t.getMessage());
-                  return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "rate limited.", t));
-                })
-                .doOnError(e -> LOGGER.warn("rate limiter got error.", e));
+            .onErrorResume(RequestNotPermitted.class, (t) -> {
+              LOGGER.warn("the request is rate limit by policy : {}",
+                  t.getMessage());
+              return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "rate limited.", t));
+            })
+            .doOnError(e -> LOGGER.warn("rate limiter got error.", e));
       }
       return mono;
     }
 
     private Mono<Void> addFaultInject(GovernanceRequest governanceRequest, Mono<Void> toRun) {
       Mono<Void> mono = toRun;
-      if(faultInjectionHandler!=null){
-        FaultInjectionPolicy faultInject = faultInjectionHandler.getActuator(governanceRequest);
-        if (faultInject != null) {
-          mono = toRun.transform(FaultInjectionOperator.of(governanceRequest,faultInject))
-                  .onErrorResume(FaultInjectionException.class, (t) -> {
-                    LOGGER.warn("the request is fault injection by policy : {}",
-                            t.getMessage());
-                    //如何error code不对的话这里会抛异常
-                    return Mono.error(new ResponseStatusException(t.getFaultResponse().getErrorCode(),
-                            t.getFaultResponse().getErrorMsg(), t));
-                  })
-                  .doOnError(e -> LOGGER.warn("fault injection got error.", e));
+      if (faultInjectionHandler != null) {
+        Fault fault = faultInjectionHandler.getActuator(governanceRequest);
+        if (fault != null) {
+          mono = toRun.transform(FaultInjectionOperator.of(governanceRequest, fault))
+              .onErrorResume(FaultInjectionException.class, (t) -> {
+                LOGGER.warn("the request is fault injection by policy : {}",
+                    t.getMessage());
+                return Mono.error(new ResponseStatusException(t.getFaultResponse().getErrorCode(),
+                    t.getFaultResponse().getErrorMsg(), t));
+              })
+              .doOnError(e -> LOGGER.warn("fault injection got error.", e));
         }
       }
       return mono;
