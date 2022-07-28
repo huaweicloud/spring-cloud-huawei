@@ -58,7 +58,9 @@ public class ConfigWatch implements ApplicationEventPublisherAware {
     updatedKey.addAll(event.getUpdated().keySet());
     updatedKey.addAll(event.getDeleted().keySet());
     ConfigRefreshEvent configRefreshEvent = new ConfigRefreshEvent(this, updatedKey);
-    applicationEventPublisher.publishEvent(configRefreshEvent);
+    // publish RefreshEvent first to make sure spring bean refreshed
     applicationEventPublisher.publishEvent(new RefreshEvent(this, configRefreshEvent, "Config refreshed"));
+    // then invoke service listeners
+    applicationEventPublisher.publishEvent(configRefreshEvent);
   }
 }
