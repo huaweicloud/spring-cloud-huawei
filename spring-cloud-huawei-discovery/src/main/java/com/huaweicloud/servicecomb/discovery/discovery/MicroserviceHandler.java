@@ -131,10 +131,10 @@ public class MicroserviceHandler {
     }
     List<String> endPoints = new ArrayList<>();
     String address;
-    if (StringUtils.isEmpty(discoveryBootstrapProperties.getServerAddress())) {
+    if (StringUtils.isEmpty(discoveryBootstrapProperties.getPublishAddress())) {
       address = NetUtils.getHostAddress();
     } else {
-      address = discoveryBootstrapProperties.getServerAddress();
+      address = discoveryBootstrapProperties.getPublishAddress();
     }
     if (discoveryProperties.isSslEnabled()) {
       endPoints.add("rest://" + address + ":" + discoveryProperties.getPort() + "?sslEnabled="

@@ -75,8 +75,9 @@ public class ServiceCombServiceRegistry implements
     this.serviceCenterClient = serviceCenterClient;
     this.watch = watch;
     this.discoveryBootstrapProperties = discoveryBootstrapProperties;
-    this.serviceCenterConfiguration = new ServiceCenterConfiguration().setIgnoreSwaggerDifferent(
-        discoveryBootstrapProperties.isIgnoreSwaggerDifferent());
+    this.serviceCenterConfiguration = new ServiceCenterConfiguration()
+        .setIgnoreSwaggerDifferent(discoveryBootstrapProperties.isIgnoreSwaggerDifferent())
+        .setCanOverwriteSwagger(discoveryBootstrapProperties.isCanOverwriteSwagger());
     closedEventListener.addClosedEventProcessor(new ClosedEventProcessor() {
       @Override
       public void process() {
