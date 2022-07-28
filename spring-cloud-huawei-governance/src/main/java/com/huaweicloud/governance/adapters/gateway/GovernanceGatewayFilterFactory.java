@@ -27,6 +27,7 @@ import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.apache.servicecomb.injection.Fault;
+import org.apache.servicecomb.injection.FaultInjectionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -38,7 +39,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.huaweicloud.governance.faultInjection.FaultInjectionException;
 import com.huaweicloud.governance.faultInjection.reactor.FaultInjectionOperator;
 
 import io.github.resilience4j.bulkhead.Bulkhead;

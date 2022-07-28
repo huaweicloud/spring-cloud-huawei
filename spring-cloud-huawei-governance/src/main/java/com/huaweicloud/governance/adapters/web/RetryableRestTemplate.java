@@ -67,7 +67,8 @@ public class RetryableRestTemplate extends RestTemplate {
 
   private final FaultInjectionHandler faultInjectionHandler;
 
-  public RetryableRestTemplate(RetryHandler retryHandler, ClientRecoverPolicy<Object> clientRecoverPolicy, FaultInjectionHandler faultInjectionHandler) {
+  public RetryableRestTemplate(RetryHandler retryHandler, ClientRecoverPolicy<Object> clientRecoverPolicy,
+      FaultInjectionHandler faultInjectionHandler) {
     this.retryHandler = retryHandler;
     this.clientRecoverPolicy = clientRecoverPolicy;
     this.faultInjectionHandler = faultInjectionHandler;
@@ -172,10 +173,10 @@ public class RetryableRestTemplate extends RestTemplate {
   }
 
   private void addFaultInject(GovernanceRequest governanceRequest) {
-    if(faultInjectionHandler!=null){
+    if (faultInjectionHandler != null) {
       Fault fault = faultInjectionHandler.getActuator(governanceRequest);
       if (fault != null) {
-        FaultExecutor.execute(governanceRequest,fault);
+        FaultExecutor.execute(governanceRequest, fault);
       }
     }
   }

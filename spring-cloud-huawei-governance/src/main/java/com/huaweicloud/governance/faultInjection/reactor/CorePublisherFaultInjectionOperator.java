@@ -21,9 +21,9 @@ import java.time.Duration;
 
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.apache.servicecomb.injection.Fault;
+import org.apache.servicecomb.injection.FaultInjectionException;
 
 import com.huaweicloud.governance.faultInjection.FaultExecutor;
-import com.huaweicloud.governance.faultInjection.FaultInjectionException;
 
 import reactor.core.CorePublisher;
 import reactor.core.CoreSubscriber;
