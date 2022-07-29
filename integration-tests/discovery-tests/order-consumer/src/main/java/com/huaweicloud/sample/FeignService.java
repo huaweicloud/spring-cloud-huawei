@@ -34,6 +34,10 @@ public interface FeignService {
   @ResponseBody
   String faultInjection();
 
+  @RequestMapping(value = "/faultInjectionModel", produces = "application/json")
+  @ResponseBody
+  PojoModel faultInjectionModel();
+
   @RequestMapping("/invocationContext")
   String invocationContext();
 

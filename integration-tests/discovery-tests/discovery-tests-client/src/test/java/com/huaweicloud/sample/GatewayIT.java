@@ -94,4 +94,18 @@ public class GatewayIT {
     Assertions.assertEquals("null",
         template.getForObject(url + "/order/govern/faultInjectionFeign", String.class));
   }
+
+  @Test
+  public void testFaultInjectionConsumerRestTemplateModel() {
+    // spring decoder not properly decode json null and here will get string `null`
+    Assertions.assertEquals(null,
+        template.getForObject(url + "/order/govern/faultInjectionRestTemplateModel", PojoModel.class));
+  }
+
+  @Test
+  public void testFaultInjectionConsumerFeignModel() {
+    // spring decoder not properly decode json null and here will get string `null`
+    Assertions.assertEquals(null,
+        template.getForObject(url + "/order/govern/faultInjectionFeignModel", PojoModel.class));
+  }
 }
