@@ -50,14 +50,14 @@ public class DiscoveryBootstrapProperties {
 
   private int waitTimeForShutDownInMillis = 15000;
 
-  @Value("${spring.cloud.servicecomb.discovery.allowCrossApp:false}")
   private boolean allowCrossApp;
 
-  @Value("${server.publishAddress:}")
-  private String serverAddress;
+  @Value("${spring.cloud.servicecomb.discovery.publishAddress:${server.publishAddress:}}")
+  private String publishAddress;
 
-  @Value("${spring.cloud.servicecomb.discovery.ignoreSwaggerDifferent:false}")
   private boolean ignoreSwaggerDifferent;
+
+  private boolean canOverwriteSwagger = true;
 
   private DataCenterInfo datacenter;
 
@@ -72,12 +72,12 @@ public class DiscoveryBootstrapProperties {
   //          enabled: true
   private boolean enableServicePolling = false;
 
-  public String getServerAddress() {
-    return serverAddress;
+  public String getPublishAddress() {
+    return publishAddress;
   }
 
-  public void setServerAddress(String serverAddress) {
-    this.serverAddress = serverAddress;
+  public void setPublishAddress(String publishAddress) {
+    this.publishAddress = publishAddress;
   }
 
   public DataCenterInfo getDatacenter() {
@@ -208,6 +208,14 @@ public class DiscoveryBootstrapProperties {
 
   public void setWaitTimeForShutDownInMillis(int waitTimeForShutDownInMillis) {
     this.waitTimeForShutDownInMillis = waitTimeForShutDownInMillis;
+  }
+
+  public boolean isCanOverwriteSwagger() {
+    return canOverwriteSwagger;
+  }
+
+  public void setCanOverwriteSwagger(boolean canOverwriteSwagger) {
+    this.canOverwriteSwagger = canOverwriteSwagger;
   }
 
   @Override
