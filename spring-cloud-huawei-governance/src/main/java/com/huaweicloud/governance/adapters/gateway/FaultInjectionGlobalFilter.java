@@ -25,8 +25,6 @@ import org.apache.servicecomb.http.client.common.HttpUtils;
 import org.apache.servicecomb.injection.Fault;
 import org.apache.servicecomb.injection.FaultInjectionDecorators;
 import org.apache.servicecomb.injection.FaultInjectionDecorators.FaultInjectionDecorateCheckedSupplier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -38,8 +36,6 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 public class FaultInjectionGlobalFilter implements GlobalFilter, Ordered {
-  private static final Logger LOGGER = LoggerFactory.getLogger(InstanceIsolationGlobalFilter.class);
-
   private final FaultInjectionHandler faultInjectionHandler;
 
   private final Object faultObject = new Object();
