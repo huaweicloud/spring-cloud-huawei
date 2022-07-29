@@ -20,10 +20,15 @@ package com.huaweicloud.governance.adapters.web;
 import java.io.IOException;
 import java.net.URI;
 
+import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.apache.servicecomb.governance.policy.RetryPolicy;
+import org.apache.servicecomb.http.client.common.HttpUtils;
+import org.apache.servicecomb.injection.Fault;
+import org.apache.servicecomb.injection.FaultInjectionDecorators;
+import org.apache.servicecomb.injection.FaultInjectionDecorators.FaultInjectionDecorateCheckedSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -49,21 +54,28 @@ import io.github.resilience4j.retry.Retry;
 import io.vavr.CheckedFunction0;
 
 /**
- * Retryable RestTemplate
+ * Add retry, fault injection to RestTemplate
  *
  * NOTICE: doExecute is copied from RestTemplate. Need update when upgrading.
  */
-public class RetryableRestTemplate extends RestTemplate {
-  private static final Logger LOGGER = LoggerFactory.getLogger(RetryableRestTemplate.class);
+public class GovernanceRestTemplate extends RestTemplate {
+  private static final Logger LOGGER = LoggerFactory.getLogger(GovernanceRestTemplate.class);
 
   private static final String CONTEXT_IS_RETRY = "x-is-retry";
 
+  private final Object faultObject = new Object();
+
   private final RetryHandler retryHandler;
+
+  private final FaultInjectionHandler faultInjectionHandler;
 
   private final ClientRecoverPolicy<Object> clientRecoverPolicy;
 
-  public RetryableRestTemplate(RetryHandler retryHandler, ClientRecoverPolicy<Object> clientRecoverPolicy) {
+  public GovernanceRestTemplate(RetryHandler retryHandler,
+      FaultInjectionHandler faultInjectionHandler,
+      ClientRecoverPolicy<Object> clientRecoverPolicy) {
     this.retryHandler = retryHandler;
+    this.faultInjectionHandler = faultInjectionHandler;
     this.clientRecoverPolicy = clientRecoverPolicy;
   }
 
@@ -126,6 +138,23 @@ public class RetryableRestTemplate extends RestTemplate {
     try {
       addRetry(dcs, governanceRequest);
 
+      // add fault
+      Fault fault = faultInjectionHandler.getActuator(governanceRequest);
+      if (fault != null) {
+        FaultInjectionDecorateCheckedSupplier<Object> faultInjectionDecorateCheckedSupplier =
+            FaultInjectionDecorators.ofCheckedSupplier(() -> faultObject);
+        faultInjectionDecorateCheckedSupplier.withFaultInjection(fault);
+        try {
+          Object result = faultInjectionDecorateCheckedSupplier.get();
+          if (result != faultObject) {
+            return new FallbackClientHttpResponse(200, HttpUtils.serialize(result), "application/json");
+          }
+        } catch (Throwable e) {
+          return new FallbackClientHttpResponse(500, e.getMessage());
+        }
+      }
+
+      // continue
       return dcs.get();
     } catch (Throwable e) {
       if (clientRecoverPolicy != null) {

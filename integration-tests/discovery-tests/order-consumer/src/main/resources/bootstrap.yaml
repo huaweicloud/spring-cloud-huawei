@@ -58,6 +58,10 @@ servicecomb:
       matches:
         - apiPath:
             prefix: "/isolationForceOpen"
+    faultInjection: |
+      matches:
+        - apiPath:
+            prefix: "/faultInjection"
     demo-rateLimiting: |
       matches:
         - apiPath:
@@ -99,3 +103,8 @@ servicecomb:
 #      failureRateThreshold: 20
     isolationForceOpen: |
       forceOpen: true
+  faultInjection:
+    faultInjection: |
+      fallbackType: ReturnNull
+      type: abort
+      percentage: 100

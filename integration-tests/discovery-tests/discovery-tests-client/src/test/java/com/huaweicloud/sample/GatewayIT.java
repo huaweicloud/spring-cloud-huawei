@@ -72,4 +72,26 @@ public class GatewayIT {
     Assertions.assertThrows(HttpServerErrorException.class,
         () -> template.getForObject(url + "/order/govern/gatewayIsolationForceOpenFeign", String.class));
   }
+
+  @Test
+  public void testFaultInjectionGateway() {
+    long begin = System.currentTimeMillis();
+    String result = template.getForObject(url + "/price/faultInjection", String.class);
+    Assertions.assertEquals("success", result);
+    Assertions.assertTrue((System.currentTimeMillis() - begin) >= 1000);
+  }
+
+  @Test
+  public void testFaultInjectionConsumerRestTemplate() {
+    // spring decoder not properly decode json null and here will get string `null`
+    Assertions.assertEquals("null",
+        template.getForObject(url + "/order/govern/faultInjectionRestTemplate", String.class));
+  }
+
+  @Test
+  public void testFaultInjectionConsumerFeign() {
+    // spring decoder not properly decode json null and here will get string `null`
+    Assertions.assertEquals("null",
+        template.getForObject(url + "/order/govern/faultInjectionFeign", String.class));
+  }
 }

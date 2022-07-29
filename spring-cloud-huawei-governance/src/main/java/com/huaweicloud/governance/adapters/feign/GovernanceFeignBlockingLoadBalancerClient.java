@@ -22,16 +22,23 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.apache.servicecomb.governance.policy.CircuitBreakerPolicy;
 import org.apache.servicecomb.governance.policy.RetryPolicy;
+import org.apache.servicecomb.http.client.common.HttpUtils;
+import org.apache.servicecomb.injection.Fault;
+import org.apache.servicecomb.injection.FaultInjectionDecorators;
+import org.apache.servicecomb.injection.FaultInjectionDecorators.FaultInjectionDecorateCheckedSupplier;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.PullInstanceEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +76,7 @@ import feign.Request.Options;
 import feign.Response;
 
 /**
- * Support for retryable and instance isolation for FeignBlockingLoadBalancerClient.
+ * Support for retry, fault injection and instance isolation for FeignBlockingLoadBalancerClient.
  *
  * NOTICE: this class is copied from
  *    #org.springframework.cloud.openfeign.loadbalancer.FeignBlockingLoadBalancerClient
@@ -77,9 +84,11 @@ import feign.Response;
  */
 
 @SuppressWarnings({"rawtypes", "unchecked", "deprecation"})
-public class RetryableFeignBlockingLoadBalancerClient implements Client {
+public class GovernanceFeignBlockingLoadBalancerClient implements Client {
 
-  private static final Logger LOG = LoggerFactory.getLogger(RetryableFeignBlockingLoadBalancerClient.class);
+  private static final Logger LOG = LoggerFactory.getLogger(GovernanceFeignBlockingLoadBalancerClient.class);
+
+  private final Object faultObject = new Object();
 
   private final Client delegate;
 
@@ -89,16 +98,20 @@ public class RetryableFeignBlockingLoadBalancerClient implements Client {
 
   private final RetryHandler retryHandler;
 
+  private final FaultInjectionHandler faultInjectionHandler;
+
   private final InstanceIsolationHandler instanceIsolationHandler;
 
   private final ClientRecoverPolicy<Response> clientRecoverPolicy;
 
-  public RetryableFeignBlockingLoadBalancerClient(RetryHandler retryHandler,
+  public GovernanceFeignBlockingLoadBalancerClient(RetryHandler retryHandler,
+      FaultInjectionHandler faultInjectionHandler,
       InstanceIsolationHandler instanceIsolationHandler,
       ClientRecoverPolicy<Response> clientRecoverPolicy,
       Client delegate, LoadBalancerClient loadBalancerClient,
       LoadBalancerClientFactory loadBalancerClientFactory) {
     this.retryHandler = retryHandler;
+    this.faultInjectionHandler = faultInjectionHandler;
     this.instanceIsolationHandler = instanceIsolationHandler;
     this.clientRecoverPolicy = clientRecoverPolicy;
     this.delegate = delegate;
@@ -120,6 +133,29 @@ public class RetryableFeignBlockingLoadBalancerClient implements Client {
     try {
       addRetry(dcs, governanceRequest);
 
+      // add Fault
+      Fault fault = faultInjectionHandler.getActuator(governanceRequest);
+      if (fault != null) {
+        FaultInjectionDecorateCheckedSupplier<Object> faultInjectionDecorateCheckedSupplier =
+            FaultInjectionDecorators.ofCheckedSupplier(() -> faultObject);
+        faultInjectionDecorateCheckedSupplier.withFaultInjection(fault);
+        try {
+          Object result = faultInjectionDecorateCheckedSupplier.get();
+          if (result != faultObject) {
+            Map<String, Collection<String>> headers = new HashMap<>();
+            headers.put("Content-Type", Arrays.asList("application/json"));
+            return Response.builder().status(200)
+                .request(request)
+                .headers(headers)
+                .body(HttpUtils.serialize(result).getBytes(
+                    StandardCharsets.UTF_8)).build();
+          }
+        } catch (Throwable e) {
+          return Response.builder().status(500).reason(e.getMessage()).request(request).build();
+        }
+      }
+
+      // continue
       return dcs.get();
     } catch (Throwable e) {
       if (clientRecoverPolicy != null) {

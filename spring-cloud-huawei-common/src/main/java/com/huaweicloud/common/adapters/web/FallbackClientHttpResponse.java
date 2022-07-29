@@ -29,9 +29,18 @@ public class FallbackClientHttpResponse extends AbstractClientHttpResponse {
 
   private final String message;
 
+  private final String contentType;
+
   public FallbackClientHttpResponse(int code, String message) {
     this.code = code;
     this.message = message;
+    this.contentType = "application/text";
+  }
+
+  public FallbackClientHttpResponse(int code, String message, String contentType) {
+    this.code = code;
+    this.message = message;
+    this.contentType = contentType;
   }
 
   @Override
@@ -57,7 +66,7 @@ public class FallbackClientHttpResponse extends AbstractClientHttpResponse {
   @Override
   public HttpHeaders getHeaders() {
     HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.add(HttpHeaders.CONTENT_TYPE, "application/text");
+    httpHeaders.add(HttpHeaders.CONTENT_TYPE, contentType);
     return httpHeaders;
   }
 }

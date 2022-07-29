@@ -45,6 +45,16 @@ public class GovernanceController {
     return restTemplate.getForObject("http://price/hello", String.class);
   }
 
+  @RequestMapping("/faultInjectionRestTemplate")
+  public String faultInjectionRestTemplate() {
+    return restTemplate.getForObject("http://price/faultInjection", String.class);
+  }
+
+  @RequestMapping("/faultInjectionFeign")
+  public String faultInjectionFeign() {
+    return feignService.faultInjection();
+  }
+
   @RequestMapping("/retry")
   public String retry(@RequestParam(name = "invocationID") String invocationID) {
     return restTemplate.getForObject("http://price/retry?invocationID={1}", String.class, invocationID);
