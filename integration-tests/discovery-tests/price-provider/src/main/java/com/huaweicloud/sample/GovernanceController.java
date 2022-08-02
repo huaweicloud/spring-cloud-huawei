@@ -36,6 +36,16 @@ public class GovernanceController {
     return "Hello world!";
   }
 
+  @RequestMapping("/faultInjection")
+  public String faultInjection() {
+    return "success";
+  }
+
+  @RequestMapping("/faultInjectionModel")
+  public PojoModel faultInjectionModel() {
+    return new PojoModel(2, "hello");
+  }
+
   @RequestMapping("/retry")
   public String retry(HttpServletResponse response, @RequestParam(name = "invocationID") String invocationID) {
     retryTimes.putIfAbsent(invocationID, 0);

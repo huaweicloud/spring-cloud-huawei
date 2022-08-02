@@ -17,6 +17,7 @@
 
 package com.huaweicloud.governance.adapters.feign;
 
+import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
@@ -38,12 +39,13 @@ public class FeignConfiguration {
   @ConditionalOnProperty(value = "spring.cloud.servicecomb.feign.governance.enabled",
       havingValue = "true", matchIfMissing = true)
   public Client feignClient(RetryHandler retryHandler,
+      FaultInjectionHandler faultInjectionHandler,
       InstanceIsolationHandler instanceIsolationHandler,
       @Autowired(required = false) ClientRecoverPolicy<Response> clientRecoverPolicy,
       LoadBalancerClient loadBalancerClient,
       LoadBalancerClientFactory loadBalancerClientFactory) {
-    return new RetryableFeignBlockingLoadBalancerClient(
-        retryHandler, instanceIsolationHandler, clientRecoverPolicy,
+    return new GovernanceFeignBlockingLoadBalancerClient(
+        retryHandler, faultInjectionHandler, instanceIsolationHandler, clientRecoverPolicy,
         new Client.Default(null, null), loadBalancerClient,
         loadBalancerClientFactory);
   }

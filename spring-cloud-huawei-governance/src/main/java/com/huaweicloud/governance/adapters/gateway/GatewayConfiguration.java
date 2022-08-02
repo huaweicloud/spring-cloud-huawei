@@ -19,6 +19,7 @@ package com.huaweicloud.governance.adapters.gateway;
 
 import org.apache.servicecomb.governance.handler.BulkheadHandler;
 import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
+import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -45,5 +46,13 @@ public class GatewayConfiguration {
       havingValue = "true", matchIfMissing = true)
   public InstanceIsolationGlobalFilter instanceIsolationGlobalFilter(InstanceIsolationHandler handler) {
     return new InstanceIsolationGlobalFilter(handler);
+  }
+
+  @Bean
+  @ConditionalOnEnabledFilter
+  @ConditionalOnProperty(value = "spring.cloud.servicecomb.gateway.faultInjection.enabled",
+      havingValue = "true", matchIfMissing = true)
+  public FaultInjectionGlobalFilter faultInjectionGlobalFilter(FaultInjectionHandler handler) {
+    return new FaultInjectionGlobalFilter(handler);
   }
 }
