@@ -20,6 +20,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @FeignClient(name = "price")
 public interface FeignService {
@@ -28,6 +29,14 @@ public interface FeignService {
 
   @RequestMapping("/retry")
   String retry(@RequestParam(name = "invocationID") String invocationID);
+
+  @RequestMapping(value = "/faultInjection", produces = "application/json")
+  @ResponseBody
+  String faultInjection();
+
+  @RequestMapping(value = "/faultInjectionModel", produces = "application/json")
+  @ResponseBody
+  PojoModel faultInjectionModel();
 
   @RequestMapping("/invocationContext")
   String invocationContext();
