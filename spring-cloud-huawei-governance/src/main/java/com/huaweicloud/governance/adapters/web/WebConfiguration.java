@@ -17,6 +17,7 @@
 
 package com.huaweicloud.governance.adapters.web;
 
+import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
@@ -45,9 +46,10 @@ public class WebConfiguration {
   @LoadBalanced
   @Primary
   public RestTemplate retryableRestTemplate(RetryHandler retryHandler,
+      FaultInjectionHandler faultInjectionHandler,
       @Autowired(required = false) ClientRecoverPolicy<Object> recoverPolicy,
       HttpClientProperties httpClientProperties) {
-    RetryableRestTemplate restTemplate = new RetryableRestTemplate(retryHandler, recoverPolicy);
+    GovernanceRestTemplate restTemplate = new GovernanceRestTemplate(retryHandler, faultInjectionHandler, recoverPolicy);
     restTemplate.setRequestFactory(getClientHttpRequestFactory(httpClientProperties));
     return restTemplate;
   }
