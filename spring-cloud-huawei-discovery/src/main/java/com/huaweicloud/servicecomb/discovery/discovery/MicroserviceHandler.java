@@ -100,8 +100,9 @@ public class MicroserviceHandler {
       microservice.getProperties().put(DiscoveryConstants.CONFIG_ALLOW_CROSS_APP_KEY, "true");
     }
 
-    if (!StringUtils.isEmpty(envConfig.getString(SERVICE_PROPS))) {
-      microservice.getProperties().putAll(parseProps(envConfig.getString(SERVICE_PROPS)));
+    String[] servicePropArray = envConfig.getStringArray(SERVICE_PROPS);
+    if (servicePropArray.length != 0) {
+      microservice.getProperties().putAll(parseProps(servicePropArray));
     }
 
     microservice.setStatus(MicroserviceStatus.UP);
@@ -191,19 +192,16 @@ public class MicroserviceHandler {
       properties.put(CAS_ENVIRONMENT_ID, envConfig.getString(CAS_ENVIRONMENT_ID));
     }
 
-    if (!StringUtils.isEmpty(envConfig.getString(INSTANCE_PROPS))) {
-      properties.putAll(parseProps(envConfig.getString(INSTANCE_PROPS)));
+    String[] instancePropArray = envConfig.getStringArray(INSTANCE_PROPS);
+    if (instancePropArray.length != 0) {
+      properties.putAll(parseProps(instancePropArray));
     }
 
     return properties;
   }
 
-  private static Map<String, String> parseProps(String value) {
-    Map<String, String> rs = new HashMap<>();
-    if (StringUtils.isEmpty(value)) {
-      return rs;
-    }
-    return Arrays.stream(value.split(",")).map(v -> v.split(":"))
+  private static Map<String, String> parseProps(String... value) {
+    return Arrays.stream(value).map(v -> v.split(":"))
             .filter(v -> v.length == 2)
             .collect(Collectors.toMap(v -> v[0], v -> v[1]));
   }
