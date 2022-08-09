@@ -26,9 +26,7 @@ import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.huaweicloud.governance.authentication.Const;
 import com.huaweicloud.governance.authentication.provider.BlackWhiteListProperties.ConfigurationItem;
-import com.netflix.config.DynamicPropertyFactory;
 
 /**
  * Add black / white list control to service access
