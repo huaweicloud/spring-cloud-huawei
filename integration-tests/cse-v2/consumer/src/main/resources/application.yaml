@@ -18,3 +18,11 @@
 
 server:
   port: 8082
+spring:
+  cloud:
+    servicecomb:
+      webmvc:
+        governance:
+          publickey:
+            consumer:
+              enabled: true
