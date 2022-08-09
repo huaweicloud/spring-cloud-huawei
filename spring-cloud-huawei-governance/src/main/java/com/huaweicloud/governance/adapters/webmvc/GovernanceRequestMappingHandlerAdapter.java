@@ -35,6 +35,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.common.util.HeaderUtil;
+import com.huaweicloud.governance.authentication.UnAuthorizedException;
+import com.huaweicloud.governance.authentication.provider.ProviderAuthHandler;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadFullException;
@@ -60,14 +62,18 @@ public class GovernanceRequestMappingHandlerAdapter {
 
   private final BulkheadHandler bulkheadHandler;
 
+  private final ProviderAuthHandler providerAuthHandler;
+
   private ServerRecoverPolicy<Object> serverRecoverPolicy;
 
   @Autowired
   public GovernanceRequestMappingHandlerAdapter(RateLimitingHandler rateLimitingHandler,
-      CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler) {
+      CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler,
+      ProviderAuthHandler providerAuthHandler) {
     this.rateLimitingHandler = rateLimitingHandler;
     this.circuitBreakerHandler = circuitBreakerHandler;
     this.bulkheadHandler = bulkheadHandler;
+    this.providerAuthHandler = providerAuthHandler;
   }
 
   @Autowired(required = false)
@@ -89,6 +95,9 @@ public class GovernanceRequestMappingHandlerAdapter {
     DecorateCheckedSupplier<Object> dcs = Decorators.ofCheckedSupplier(next);
 
     try {
+      if (providerAuthHandler != null) {
+        providerAuthHandler.checkToken();
+      }
       addCircuitBreaker(dcs, governanceRequest);
       addBulkhead(dcs, governanceRequest);
       addRateLimiting(dcs, governanceRequest);
@@ -110,6 +119,10 @@ public class GovernanceRequestMappingHandlerAdapter {
         response.getWriter().print("bulkhead is full and does not permit further calls.");
         LOGGER.warn("bulkhead is full and does not permit further calls by policy : {}",
             th.getMessage());
+      } else if (th instanceof UnAuthorizedException) {
+        response.setStatus(401);
+        response.getWriter().print("UNAUTHORIZED.");
+        LOGGER.warn("UNAUTHORIZED : {}", th.getMessage());
       } else {
         if (serverRecoverPolicy != null) {
           return serverRecoverPolicy.apply(th);

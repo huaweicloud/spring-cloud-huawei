@@ -29,6 +29,8 @@ import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
+
 import feign.Client;
 import feign.Response;
 
@@ -53,5 +55,12 @@ public class FeignConfiguration {
   @Bean
   public ResponseStatusCodeExtractor responseStatusCodeExtractor() {
     return new ResponseStatusCodeExtractor();
+  }
+
+  @Bean
+  @ConditionalOnProperty(value = "spring.cloud.servicecomb.webmvc.governance.publickey.consumer.enabled",
+      havingValue = "true")
+  public FeignAddTokenContext feignAddTokenContext(RSAConsumerTokenManager authenticationTokenManager) {
+    return new FeignAddTokenContext(authenticationTokenManager);
   }
 }

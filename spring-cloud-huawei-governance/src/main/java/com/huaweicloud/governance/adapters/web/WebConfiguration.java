@@ -35,6 +35,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import com.huaweicloud.common.configration.dynamic.HttpClientProperties;
+import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
 
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.http.client.ClientHttpRequestInterceptor",
@@ -73,5 +74,12 @@ public class WebConfiguration {
   @Bean
   public ClientHttpResponseStatusCodeExtractor clientHttpResponseStatusCodeExtractor() {
     return new ClientHttpResponseStatusCodeExtractor();
+  }
+
+  @Bean
+  @ConditionalOnProperty(value = "spring.cloud.servicecomb.webmvc.governance.publickey.consumer.enabled",
+      havingValue = "true")
+  public RestTemplateAddTokenContext restTemplateAddTokenContext(RSAConsumerTokenManager authenticationTokenManager) {
+    return new RestTemplateAddTokenContext(authenticationTokenManager);
   }
 }
