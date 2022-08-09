@@ -38,6 +38,11 @@ spring:
         connect-timeout: 1000
         response-timeout: 3s
 
+    servicecomb:
+      context:
+        headerContextMapper:
+          header-context: x-header-context
+
 servicecomb:
   matchGroup:
     allOperation: |
