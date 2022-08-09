@@ -19,6 +19,9 @@
 spring:
   cloud:
     servicecomb:
+      context:
+        queryContextMapper:
+          query-context: x-query-context
       loadbalancer.price:
         retryOnSame: 1
 feign:

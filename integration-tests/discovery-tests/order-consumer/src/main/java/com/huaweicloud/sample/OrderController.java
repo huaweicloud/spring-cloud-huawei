@@ -22,6 +22,7 @@ import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -50,6 +51,15 @@ public class OrderController {
     this.restTemplate = restTemplate;
     this.feignService = feignService;
     this.serviceCombRegistration = serviceCombRegistration;
+  }
+
+  @GetMapping("/testContextMapper")
+  public String testContextMapper(@RequestParam("query-context") String queryContext) {
+    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
+    String result = context.getContext("x-query-context");
+    result += context.getContext("x-header-context");
+    result += queryContext;
+    return result;
   }
 
   @RequestMapping("/instances")

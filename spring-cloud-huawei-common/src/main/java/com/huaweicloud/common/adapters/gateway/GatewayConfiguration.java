@@ -44,8 +44,8 @@ public class GatewayConfiguration {
 
   @Bean
   @ConditionalOnBean(DecorateGlobalFilter.class)
-  public PreGlobalFilter deserializeContextPreGlobalFilter() {
-    return new DeserializeContextPreGlobalFilter();
+  public PreGlobalFilter deserializeContextPreGlobalFilter(ContextProperties contextProperties) {
+    return new DeserializeContextPreGlobalFilter(contextProperties);
   }
 
   @Bean

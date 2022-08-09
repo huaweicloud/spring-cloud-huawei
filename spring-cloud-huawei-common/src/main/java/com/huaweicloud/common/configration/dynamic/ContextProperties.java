@@ -16,10 +16,17 @@
  */
 package com.huaweicloud.common.configration.dynamic;
 
+import java.util.Collections;
+import java.util.Map;
+
 public class ContextProperties {
   private boolean enableTraceInfo;
 
   private int waitTimeForShutDownInMillis = 3000;
+
+  private Map<String, String> headerContextMapper = Collections.emptyMap();
+
+  private Map<String, String> queryContextMapper = Collections.emptyMap();
 
   public boolean isEnableTraceInfo() {
     return enableTraceInfo;
@@ -35,5 +42,21 @@ public class ContextProperties {
 
   public void setWaitTimeForShutDownInMillis(int waitTimeForShutDownInMillis) {
     this.waitTimeForShutDownInMillis = waitTimeForShutDownInMillis;
+  }
+
+  public Map<String, String> getHeaderContextMapper() {
+    return headerContextMapper;
+  }
+
+  public void setHeaderContextMapper(Map<String, String> headerContextMapper) {
+    this.headerContextMapper = headerContextMapper;
+  }
+
+  public Map<String, String> getQueryContextMapper() {
+    return queryContextMapper;
+  }
+
+  public void setQueryContextMapper(Map<String, String> queryContextMapper) {
+    this.queryContextMapper = queryContextMapper;
   }
 }

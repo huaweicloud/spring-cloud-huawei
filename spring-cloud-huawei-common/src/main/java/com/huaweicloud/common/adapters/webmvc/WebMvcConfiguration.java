@@ -63,8 +63,8 @@ public class WebMvcConfiguration {
   }
 
   @Bean
-  public PreHandlerInterceptor deserializeContextPreHandlerInterceptor() {
-    return new DeserializeContextPreHandlerInterceptor();
+  public PreHandlerInterceptor deserializeContextPreHandlerInterceptor(ContextProperties contextProperties) {
+    return new DeserializeContextPreHandlerInterceptor(contextProperties);
   }
 
   @Bean
