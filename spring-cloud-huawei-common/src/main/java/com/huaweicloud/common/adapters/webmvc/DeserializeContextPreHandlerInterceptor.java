@@ -22,12 +22,28 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.core.Ordered;
 
+import com.huaweicloud.common.configration.dynamic.ContextProperties;
+import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 
 public class DeserializeContextPreHandlerInterceptor implements PreHandlerInterceptor {
+  private final ContextProperties contextProperties;
+
+  public DeserializeContextPreHandlerInterceptor(
+      ContextProperties contextProperties) {
+    this.contextProperties = contextProperties;
+  }
+
   @Override
   public boolean handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-    InvocationContextHolder.deserializeAndCreate(request.getHeader(InvocationContextHolder.SERIALIZE_KEY));
+    InvocationContext context = InvocationContextHolder.deserializeAndCreate(
+        request.getHeader(InvocationContextHolder.SERIALIZE_KEY));
+
+    contextProperties.getHeaderContextMapper()
+        .forEach((k, v) -> context.putContext(v, request.getHeader(k)));
+    contextProperties.getQueryContextMapper()
+        .forEach((k, v) -> context.putContext(v, request.getParameter(k)));
+
     return true;
   }
 

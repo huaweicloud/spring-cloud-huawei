@@ -20,13 +20,27 @@ package com.huaweicloud.common.adapters.gateway;
 import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.huaweicloud.common.configration.dynamic.ContextProperties;
+import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 
 public class DeserializeContextPreGlobalFilter implements PreGlobalFilter {
+  private final ContextProperties contextProperties;
+
+  public DeserializeContextPreGlobalFilter(
+      ContextProperties contextProperties) {
+    this.contextProperties = contextProperties;
+  }
+
   @Override
   public void process(ServerWebExchange exchange) {
-    InvocationContextHolder.deserializeAndCreate(
+    InvocationContext context = InvocationContextHolder.deserializeAndCreate(
         exchange.getRequest().getHeaders().getFirst(InvocationContextHolder.SERIALIZE_KEY));
+
+    contextProperties.getHeaderContextMapper()
+        .forEach((k, v) -> context.putContext(v, exchange.getRequest().getHeaders().getFirst(k)));
+    contextProperties.getQueryContextMapper()
+        .forEach((k, v) -> context.putContext(v, exchange.getRequest().getQueryParams().getFirst(k)));
   }
 
   @Override
