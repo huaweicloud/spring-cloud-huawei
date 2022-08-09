@@ -20,10 +20,17 @@ package com.huaweicloud.governance.adapters.webmvc;
 import org.apache.servicecomb.governance.handler.BulkheadHandler;
 import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
+import org.apache.servicecomb.service.center.client.ServiceCenterClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.huaweicloud.governance.authentication.provider.BlackWhiteListProperties;
+import com.huaweicloud.governance.authentication.provider.ProviderAuthHandler;
 
 @Configuration
 @ConditionalOnClass(name = "org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter")
@@ -33,8 +40,26 @@ public class WebMvcConfiguration {
       havingValue = "true", matchIfMissing = true)
   public GovernanceRequestMappingHandlerAdapter governanceRequestMappingHandlerAdapter(
       RateLimitingHandler rateLimitingHandler, CircuitBreakerHandler circuitBreakerHandler,
-      BulkheadHandler bulkheadHandler
+      BulkheadHandler bulkheadHandler,@Autowired(required = false) ProviderAuthHandler providerAuthHandler
   ) {
-    return new GovernanceRequestMappingHandlerAdapter(rateLimitingHandler, circuitBreakerHandler, bulkheadHandler);
+    return new GovernanceRequestMappingHandlerAdapter(rateLimitingHandler, circuitBreakerHandler, bulkheadHandler,
+        providerAuthHandler);
+  }
+
+  @Bean
+  @RefreshScope
+  @ConditionalOnProperty(value = "spring.cloud.servicecomb.webmvc.governance.publickey.provider.enabled",
+      havingValue = "true")
+  @ConfigurationProperties("servicecomb.publickey.accesscontrol")
+  public BlackWhiteListProperties blackWhiteListProperties() {
+    return new BlackWhiteListProperties();
+  }
+
+  @Bean
+  @ConditionalOnProperty(value = "spring.cloud.servicecomb.webmvc.governance.publickey.provider.enabled",
+      havingValue = "true")
+  public ProviderAuthHandler providerAuthHanlder(ServiceCenterClient client,
+      BlackWhiteListProperties blackWhiteListProperties) {
+    return new ProviderAuthHandler(client, blackWhiteListProperties);
   }
 }
