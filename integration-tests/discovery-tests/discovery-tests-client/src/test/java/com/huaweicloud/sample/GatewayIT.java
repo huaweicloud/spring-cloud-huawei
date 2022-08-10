@@ -20,12 +20,17 @@ package com.huaweicloud.sample;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -108,14 +113,52 @@ public class GatewayIT {
   @Test
   public void testFaultInjectionConsumerRestTemplateModel() {
     // spring decoder not properly decode json null and here will get string `null`
-    Assertions.assertEquals(null,
+    Assertions.assertNull(
         template.getForObject(url + "/order/govern/faultInjectionRestTemplateModel", PojoModel.class));
   }
 
   @Test
   public void testFaultInjectionConsumerFeignModel() {
     // spring decoder not properly decode json null and here will get string `null`
-    Assertions.assertEquals(null,
-        template.getForObject(url + "/order/govern/faultInjectionFeignModel", PojoModel.class));
+    Assertions.assertNull(template.getForObject(url + "/order/govern/faultInjectionFeignModel", PojoModel.class));
+  }
+
+  @Test
+  public void testRateLimiting() throws Exception {
+    CountDownLatch latch = new CountDownLatch(100);
+    AtomicBoolean expectedFailed = new AtomicBoolean(false);
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+    AtomicLong successCount = new AtomicLong(0);
+
+    for (int i = 0; i < 10; i++) {
+      for (int j = 0; j < 10; j++) {
+        String name = "t-" + i + "-" + j;
+        new Thread(name) {
+          public void run() {
+            try {
+              String result = template.getForObject(url + "/order/govern/rateLimiting", String.class);
+              if (!"rateLimiting".equals(result)) {
+                notExpectedFailed.set(true);
+              } else {
+                successCount.getAndIncrement();
+              }
+            } catch (Exception e) {
+              if (e instanceof HttpClientErrorException && ((HttpClientErrorException) e).getRawStatusCode() == 429) {
+                expectedFailed.set(true);
+              } else {
+                notExpectedFailed.set(true);
+              }
+            }
+            latch.countDown();
+          }
+        }.start();
+      }
+      Thread.sleep(100);
+    }
+
+    latch.await(20, TimeUnit.SECONDS);
+    Assertions.assertTrue(expectedFailed.get());
+    Assertions.assertFalse(notExpectedFailed.get());
+    Assertions.assertTrue(successCount.get() >= 10);
   }
 }
