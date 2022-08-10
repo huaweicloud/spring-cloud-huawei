@@ -49,6 +49,10 @@ servicecomb:
       matches:
         - apiPath:
             prefix: "/"
+    demo-rateLimiting: |
+      matches:
+        - apiPath:
+            exact: "/order/govern/rateLimiting"
     gatewayIsolationForceOpenFeign: |
       matches:
         - apiPath:
@@ -57,6 +61,9 @@ servicecomb:
       matches:
         - apiPath:
             prefix: "/price/faultInjection"
+  rateLimiting:
+    demo-rateLimiting: |
+      rate: 10
   instanceIsolation:
     allOperation: |
       minimumNumberOfCalls: 10

@@ -23,7 +23,6 @@ import javax.ws.rs.core.Response.Status.Family;
 
 import org.apache.servicecomb.governance.handler.BulkheadHandler;
 import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
-import org.apache.servicecomb.governance.handler.RateLimitingHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,27 +39,20 @@ import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadFullException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-import io.github.resilience4j.ratelimiter.RateLimiter;
-import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.github.resilience4j.reactor.bulkhead.operator.BulkheadOperator;
 import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
-import io.github.resilience4j.reactor.ratelimiter.operator.RateLimiterOperator;
 import reactor.core.publisher.Mono;
 
 public class GovernanceGatewayFilterFactory
     extends AbstractGatewayFilterFactory<GovernanceGatewayFilterFactory.Config> {
   private static final Logger LOGGER = LoggerFactory.getLogger(GovernanceGatewayFilterFactory.class);
 
-  private final RateLimitingHandler rateLimitingHandler;
-
   private final CircuitBreakerHandler circuitBreakerHandler;
 
   private final BulkheadHandler bulkheadHandler;
 
-  public GovernanceGatewayFilterFactory(RateLimitingHandler rateLimitingHandler,
-      CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler) {
+  public GovernanceGatewayFilterFactory(CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler) {
     super(Config.class);
-    this.rateLimitingHandler = rateLimitingHandler;
     this.circuitBreakerHandler = circuitBreakerHandler;
     this.bulkheadHandler = bulkheadHandler;
   }
@@ -85,8 +77,6 @@ public class GovernanceGatewayFilterFactory
 
       toRun = addCircuitBreaker(exchange, governanceRequest, toRun);
       toRun = addBulkhead(governanceRequest, toRun);
-      toRun = addRateLimiter(governanceRequest, toRun);
-
       return toRun;
     }
 
@@ -134,21 +124,6 @@ public class GovernanceGatewayFilterFactory
               return Mono.error(new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
                   "circuitBreaker is open.", t));
             });
-      }
-      return mono;
-    }
-
-    private Mono<Void> addRateLimiter(GovernanceRequest governanceRequest, Mono<Void> toRun) {
-      RateLimiter rateLimiter = rateLimitingHandler.getActuator(governanceRequest);
-      Mono<Void> mono = toRun;
-      if (rateLimiter != null) {
-        mono = toRun.transform(RateLimiterOperator.of(rateLimiter))
-            .onErrorResume(RequestNotPermitted.class, (t) -> {
-              LOGGER.warn("the request is rate limit by policy : {}",
-                  t.getMessage());
-              return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "rate limited.", t));
-            })
-            .doOnError(e -> LOGGER.warn("rate limiter got error.", e));
       }
       return mono;
     }
