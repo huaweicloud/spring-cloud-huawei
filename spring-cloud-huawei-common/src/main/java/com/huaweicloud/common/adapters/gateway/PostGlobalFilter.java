@@ -21,7 +21,7 @@ import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
 
 public interface PostGlobalFilter extends Ordered {
-  void process(ServerWebExchange exchange);
+  void process(ServerWebExchange exchange, Throwable error);
 
   @Override
   default int getOrder() {

@@ -61,7 +61,7 @@ public class DecorateGlobalFilter implements GlobalFilter, Ordered {
   private void postProcess(ServerWebExchange exchange, InvocationContext context, Throwable ex) {
     InvocationContextHolder.setInvocationContext(context);
     if (postGlobalFilters != null) {
-      postGlobalFilters.forEach(filter -> filter.process(exchange));
+      postGlobalFilters.forEach(filter -> filter.process(exchange, ex));
     }
   }
 
