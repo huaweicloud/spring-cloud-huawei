@@ -45,6 +45,11 @@ public class GovernanceController {
     return restTemplate.getForObject("http://price/hello", String.class);
   }
 
+  @RequestMapping("/rateLimiting")
+  public String rateLimiting() {
+    return "rateLimiting";
+  }
+
   @RequestMapping("/faultInjectionRestTemplate")
   public String faultInjectionRestTemplate() {
     return restTemplate.getForObject("http://price/faultInjection", String.class);

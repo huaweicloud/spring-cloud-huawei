@@ -27,22 +27,25 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.gateway.config.conditional.ConditionalOnEnabledFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.server.WebFilter;
+
+import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory"})
-@ConditionalOnProperty(value = "spring.cloud.servicecomb.gateway.governance.enabled",
+@ConditionalOnProperty(value = GovernanceProperties.GATEWAY_GOVERNANCE_ENABLED,
     havingValue = "true", matchIfMissing = true)
 public class GatewayConfiguration {
   @Bean
   @ConditionalOnEnabledFilter
-  public GovernanceGatewayFilterFactory governanceGatewayFilterFactory(RateLimitingHandler rateLimitingHandler,
-      CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler) {
-    return new GovernanceGatewayFilterFactory(rateLimitingHandler, circuitBreakerHandler, bulkheadHandler);
+  public GovernanceGatewayFilterFactory governanceGatewayFilterFactory(CircuitBreakerHandler circuitBreakerHandler,
+      BulkheadHandler bulkheadHandler) {
+    return new GovernanceGatewayFilterFactory(circuitBreakerHandler, bulkheadHandler);
   }
 
   @Bean
   @ConditionalOnEnabledFilter
-  @ConditionalOnProperty(value = "spring.cloud.servicecomb.gateway.instanceIsolation.enabled",
+  @ConditionalOnProperty(value = GovernanceProperties.GATEWAY_INSTANCE_ISOLATION_ENABLED,
       havingValue = "true", matchIfMissing = true)
   public InstanceIsolationGlobalFilter instanceIsolationGlobalFilter(InstanceIsolationHandler handler) {
     return new InstanceIsolationGlobalFilter(handler);
@@ -50,9 +53,18 @@ public class GatewayConfiguration {
 
   @Bean
   @ConditionalOnEnabledFilter
-  @ConditionalOnProperty(value = "spring.cloud.servicecomb.gateway.faultInjection.enabled",
+  @ConditionalOnProperty(value = GovernanceProperties.GATEWAY_FAULT_INJECTION_ENABLED,
       havingValue = "true", matchIfMissing = true)
   public FaultInjectionGlobalFilter faultInjectionGlobalFilter(FaultInjectionHandler handler) {
     return new FaultInjectionGlobalFilter(handler);
+  }
+
+  @Bean
+  @ConditionalOnEnabledFilter
+  @ConditionalOnProperty(value = GovernanceProperties.GATEWAY_RATE_LIMITING_ENABLED,
+      havingValue = "true", matchIfMissing = true)
+  public WebFilter rateLimitingWebFilter(RateLimitingHandler rateLimitingHandler,
+      GovernanceProperties governanceProperties) {
+    return new RateLimitingWebFilter(rateLimitingHandler, governanceProperties);
   }
 }
