@@ -18,9 +18,7 @@
 package com.huaweicloud.common.adapters.gateway;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
@@ -29,7 +27,6 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.common.metrics.InvocationMetrics;
 
 import reactor.core.publisher.Mono;
 
@@ -41,14 +38,10 @@ public class DecorateGlobalFilter implements GlobalFilter, Ordered {
 
   private final List<PostGlobalFilter> postGlobalFilters;
 
-  private final InvocationMetrics invocationMetrics;
-
   public DecorateGlobalFilter(List<PreGlobalFilter> preGlobalFilters,
-      List<PostGlobalFilter> postGlobalFilters,
-      InvocationMetrics invocationMetrics) {
+      List<PostGlobalFilter> postGlobalFilters) {
     this.preGlobalFilters = preGlobalFilters;
     this.postGlobalFilters = postGlobalFilters;
-    this.invocationMetrics = invocationMetrics;
   }
 
   @Override
@@ -70,18 +63,6 @@ public class DecorateGlobalFilter implements GlobalFilter, Ordered {
     if (postGlobalFilters != null) {
       postGlobalFilters.forEach(filter -> filter.process(exchange));
     }
-
-    String operation = context.getLocalContext(InvocationMetrics.CONTEXT_OPERATION);
-    if (StringUtils.isEmpty(operation)) {
-      return;
-    }
-
-    long start = context.getLocalContext(InvocationMetrics.CONTEXT_TIME);
-    if (ex != null || exchange.getResponse().getStatusCode().is5xxServerError()) {
-      this.invocationMetrics.recordFailedCall(operation, System.currentTimeMillis() - start, TimeUnit.MILLISECONDS);
-      return;
-    }
-    this.invocationMetrics.recordSuccessfulCall(operation, System.currentTimeMillis() - start, TimeUnit.MILLISECONDS);
   }
 
   @Override
