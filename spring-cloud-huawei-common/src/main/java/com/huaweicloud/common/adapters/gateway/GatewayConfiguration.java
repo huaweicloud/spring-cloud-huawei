@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
+import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.common.metrics.InvocationMetrics;
 
 @Configuration
@@ -34,12 +35,10 @@ public class GatewayConfiguration {
   @Bean
   public DecorateGlobalFilter decorateGlobalFilter(
       @Autowired(required = false) List<PreGlobalFilter> preGlobalFilters,
-      @Autowired(required = false) List<PostGlobalFilter> postGlobalFilters,
-      InvocationMetrics invocationMetrics) {
+      @Autowired(required = false) List<PostGlobalFilter> postGlobalFilters) {
     return new DecorateGlobalFilter(
         preGlobalFilters,
-        postGlobalFilters,
-        invocationMetrics);
+        postGlobalFilters);
   }
 
   @Bean
@@ -56,13 +55,14 @@ public class GatewayConfiguration {
 
   @Bean
   @ConditionalOnBean(DecorateGlobalFilter.class)
-  public PreGlobalFilter metricsPreGlobalFilter() {
-    return new MetricsPreGlobalFilter();
+  public PreGlobalFilter traceIdPreGlobalFilter(ContextProperties contextProperties) {
+    return new TraceIdPreGlobalFilter(contextProperties);
   }
 
   @Bean
   @ConditionalOnBean(DecorateGlobalFilter.class)
-  public PreGlobalFilter traceIdPreGlobalFilter(ContextProperties contextProperties) {
-    return new TraceIdPreGlobalFilter(contextProperties);
+  public InvocationMetricsWebFilter invocationMetricsWebFilter(InvocationMetrics invocationMetrics,
+      GovernanceProperties governanceProperties) {
+    return new InvocationMetricsWebFilter(invocationMetrics, governanceProperties);
   }
 }
