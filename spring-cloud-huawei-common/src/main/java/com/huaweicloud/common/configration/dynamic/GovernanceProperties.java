@@ -17,9 +17,11 @@
 
 package com.huaweicloud.common.configration.dynamic;
 
-import org.springframework.core.Ordered;
-
 public class GovernanceProperties {
+  public static final int WEB_FILTER_RATE_LIMITING_ORDER = -50000;
+
+  public static final int WEB_FILTER_INVOCATION_METRICS_ORDER = -60000;
+
   public static final String PREFIX = "spring.cloud.servicecomb";
 
   public static final String GATEWAY_GOVERNANCE_ENABLED = PREFIX + "." + "gateway.governance.enabled";
@@ -33,6 +35,8 @@ public class GovernanceProperties {
   public static class Gateway {
     private RateLimiting rateLimiting = new RateLimiting();
 
+    private InvocationMetrics invocationMetrics = new InvocationMetrics();
+
     public RateLimiting getRateLimiting() {
       return rateLimiting;
     }
@@ -40,10 +44,31 @@ public class GovernanceProperties {
     public void setRateLimiting(RateLimiting rateLimiting) {
       this.rateLimiting = rateLimiting;
     }
+
+    public InvocationMetrics getInvocationMetrics() {
+      return invocationMetrics;
+    }
+
+    public void setInvocationMetrics(
+        InvocationMetrics invocationMetrics) {
+      this.invocationMetrics = invocationMetrics;
+    }
   }
 
   public static class RateLimiting {
-    private int order = Ordered.HIGHEST_PRECEDENCE;
+    private int order = WEB_FILTER_RATE_LIMITING_ORDER;
+
+    public int getOrder() {
+      return order;
+    }
+
+    public void setOrder(int order) {
+      this.order = order;
+    }
+  }
+
+  public static class InvocationMetrics {
+    private int order = WEB_FILTER_INVOCATION_METRICS_ORDER;
 
     public int getOrder() {
       return order;
