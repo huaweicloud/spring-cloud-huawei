@@ -22,7 +22,6 @@ import org.apache.servicecomb.foundation.token.RSAKeypair4Auth;
 import org.springframework.cloud.client.discovery.event.InstancePreRegisteredEvent;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Component;
 
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
@@ -32,7 +31,6 @@ import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
  *
  *
  */
-@Component
 public class AuthHandlerBoot implements ApplicationListener<ApplicationEvent> {
 
   private final ServiceCombRegistration registration;
