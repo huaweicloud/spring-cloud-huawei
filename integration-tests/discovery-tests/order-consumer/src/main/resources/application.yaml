@@ -24,6 +24,12 @@ spring:
           query-context: x-query-context
       loadbalancer.price:
         retryOnSame: 1
+      webmvc:
+        governance:
+          publickey:
+            consumer:
+              enabled: true
+
 feign:
   client:
     config:
