@@ -19,6 +19,7 @@ package com.huaweicloud.governance;
 import java.util.HashSet;
 import java.util.List;
 
+import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import org.apache.servicecomb.governance.MicroserviceMeta;
 import org.apache.servicecomb.governance.event.GovernanceConfigurationChangedEvent;
 import org.apache.servicecomb.governance.event.GovernanceEventManager;
@@ -68,14 +69,14 @@ public class GovernanceConfiguration {
   }
 
   @Bean
-  @ConditionalOnExpression("${spring.cloud.servicecomb.webmvc.governance.publickey.consumer.enabled:true} "
-      + "or ${spring.cloud.servicecomb.webmvc.governance.publickey.provider.enabled:true}")
+  @ConditionalOnExpression("${"+GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED +":true} "
+      + "or ${"+GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED +":true}")
   public ApplicationListener<ApplicationEvent> authHandlerBoot(ServiceCombRegistration registration) {
     return new AuthHandlerBoot(registration);
   }
 
   @Bean
-  @ConditionalOnProperty(value = "spring.cloud.servicecomb.webmvc.governance.publickey.consumer.enabled",
+  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED,
       havingValue = "true")
   public RSAConsumerTokenManager authenticationTokenManager(ServiceCombRegistration registration) {
     return new RSAConsumerTokenManager(registration);

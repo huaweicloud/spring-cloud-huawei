@@ -37,6 +37,12 @@ public class GovernanceProperties {
 
   public static final String GATEWAY_INSTANCE_ISOLATION_ENABLED = PREFIX + "." + "gateway.instanceIsolation.enabled";
 
+  public static final String WEBMVC_PUBLICKEY_CONSUMER_ENABLED = PREFIX + "." + "webmvc.publicKey.consumerEnabled";
+
+  public static final String WEBMVC_PUBLICKEY_PROVIDER_ENABLED = PREFIX + "." + "webmvc.publicKey.providerEnabled";
+
+  public static final String WEBMVC_PUBLICKEY_ACCSSCONTROL = PREFIX + "." + "webmvc.publicKey.accessControl";
+
   public static class Gateway {
     private RateLimiting rateLimiting = new RateLimiting();
 

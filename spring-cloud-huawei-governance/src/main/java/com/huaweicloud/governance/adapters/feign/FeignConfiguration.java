@@ -17,6 +17,7 @@
 
 package com.huaweicloud.governance.adapters.feign;
 
+import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
@@ -58,7 +59,7 @@ public class FeignConfiguration {
   }
 
   @Bean
-  @ConditionalOnProperty(value = "spring.cloud.servicecomb.webmvc.governance.publickey.consumer.enabled",
+  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED,
       havingValue = "true")
   public FeignAddTokenContext feignAddTokenContext(RSAConsumerTokenManager authenticationTokenManager) {
     return new FeignAddTokenContext(authenticationTokenManager);

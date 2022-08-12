@@ -24,6 +24,9 @@ import org.springframework.web.client.RestTemplate;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AuthControllerIT {
+
+  final String gatewayUrl = "http://127.0.0.1:10088";
+
   final String orderServiceUrl = "http://127.0.0.1:9098";
 
   final String priceServiceUrl = "http://127.0.0.1:9090";
@@ -31,13 +34,19 @@ public class AuthControllerIT {
   final RestTemplate template = new RestTemplate();
 
   @Test
-  public void checkToken1() {
+  public void testCheckTokenSucesssFromGateway() {
+    String result = template.getForObject(gatewayUrl + "/checkToken", String.class);
+    assertThat(result).isEqualTo("success");
+  }
+
+  @Test
+  public void testCheckTokenSucesssFromConsumer() {
     String result = template.getForObject(orderServiceUrl + "/checkToken", String.class);
     assertThat(result).isEqualTo("success");
   }
 
   @Test
-  public void checkToken2() {
+  public void testCheckTokenFailFromOther() {
     boolean exception = false;
     try {
       template.getForObject(priceServiceUrl + "/checkToken", String.class);

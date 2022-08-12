@@ -62,23 +62,26 @@ public class GovernanceRequestMappingHandlerAdapter {
 
   private final BulkheadHandler bulkheadHandler;
 
-  private final ProviderAuthHandler providerAuthHandler;
+  private ProviderAuthHandler providerAuthHandler;
 
   private ServerRecoverPolicy<Object> serverRecoverPolicy;
 
   @Autowired
   public GovernanceRequestMappingHandlerAdapter(RateLimitingHandler rateLimitingHandler,
-      CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler,
-      ProviderAuthHandler providerAuthHandler) {
+      CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler) {
     this.rateLimitingHandler = rateLimitingHandler;
     this.circuitBreakerHandler = circuitBreakerHandler;
     this.bulkheadHandler = bulkheadHandler;
-    this.providerAuthHandler = providerAuthHandler;
   }
 
   @Autowired(required = false)
   public void setServerRecoverPolicy(ServerRecoverPolicy<Object> serverRecoverPolicy) {
     this.serverRecoverPolicy = serverRecoverPolicy;
+  }
+
+  @Autowired(required = false)
+  public void setProviderAuthHandler(ProviderAuthHandler providerAuthHandler) {
+    this.providerAuthHandler = providerAuthHandler;
   }
 
   @Pointcut("execution(* org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(..))")

@@ -25,10 +25,8 @@ spring:
       loadbalancer.price:
         retryOnSame: 1
       webmvc:
-        governance:
-          publickey:
-            consumer:
-              enabled: true
+        publicKey:
+          consumerEnabled: true
 
 feign:
   client:

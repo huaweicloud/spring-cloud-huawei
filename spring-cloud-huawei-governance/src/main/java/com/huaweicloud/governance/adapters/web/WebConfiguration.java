@@ -17,6 +17,7 @@
 
 package com.huaweicloud.governance.adapters.web;
 
+import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
@@ -77,7 +78,7 @@ public class WebConfiguration {
   }
 
   @Bean
-  @ConditionalOnProperty(value = "spring.cloud.servicecomb.webmvc.governance.publickey.consumer.enabled",
+  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED,
       havingValue = "true")
   public RestTemplateAddTokenContext restTemplateAddTokenContext(RSAConsumerTokenManager authenticationTokenManager) {
     return new RestTemplateAddTokenContext(authenticationTokenManager);
