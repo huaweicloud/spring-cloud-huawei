@@ -53,6 +53,10 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/order/govern/rateLimiting"
+    demo-identifierRateLimiting: |
+      matches:
+        - apiPath:
+            exact: "/identifierRateLimiting"
     gatewayIsolationForceOpenFeign: |
       matches:
         - apiPath:
@@ -64,6 +68,10 @@ servicecomb:
   rateLimiting:
     demo-rateLimiting: |
       rate: 10
+  identifierRateLimiting:
+    demo-identifierRateLimiting: |
+      rate: 2
+      identifier: user-id
   instanceIsolation:
     allOperation: |
       minimumNumberOfCalls: 10
