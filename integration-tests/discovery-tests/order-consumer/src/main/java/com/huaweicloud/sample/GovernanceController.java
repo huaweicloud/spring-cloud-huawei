@@ -55,6 +55,17 @@ public class GovernanceController {
     return "identifierRateLimiting";
   }
 
+  @GetMapping("/identifierRateLimitingService")
+  public String identifierRateLimitingService() {
+    for (int i = 0; i <= 10; i++) {
+      if (!"success".equals(
+          restTemplate.getForObject("http://price/rate/identifierRateLimitingService", String.class))) {
+        return "failed";
+      }
+    }
+    return "success";
+  }
+
   @RequestMapping("/faultInjectionRestTemplate")
   public String faultInjectionRestTemplate() {
     return restTemplate.getForObject("http://price/faultInjection", String.class);

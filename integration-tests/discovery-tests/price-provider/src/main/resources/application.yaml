@@ -25,6 +25,14 @@ servicecomb:
         - apiPath:
             exact: "/rate/testRateLimitForService"
           serviceName: order
+    demo-identifierRateLimitingService: |
+      matches:
+        - apiPath:
+            exact: "/rate/identifierRateLimitingService"
+          serviceName: order
   rateLimiting:
     rateLimiting-order: |
       rate: 1
+    demo-identifierRateLimitingService: |
+      rate: 2
+      identifier: user-name

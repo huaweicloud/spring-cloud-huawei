@@ -17,38 +17,44 @@
 
 package com.huaweicloud.common.adapters.webmvc;
 
+import java.io.IOException;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.core.Ordered;
 
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 
-public class DeserializeContextPreHandlerInterceptor implements PreHandlerInterceptor {
+public class DeserializeContextFilter implements Filter {
   private final ContextProperties contextProperties;
 
-  public DeserializeContextPreHandlerInterceptor(
-      ContextProperties contextProperties) {
+  public DeserializeContextFilter(ContextProperties contextProperties) {
     this.contextProperties = contextProperties;
   }
 
   @Override
-  public boolean handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+      throws IOException, ServletException {
+    if (!(request instanceof HttpServletRequest && response instanceof HttpServletResponse)) {
+      chain.doFilter(request, response);
+      return;
+    }
+
+    HttpServletRequest httpServletRequest = (HttpServletRequest) request;
     InvocationContext context = InvocationContextHolder.deserializeAndCreate(
-        request.getHeader(InvocationContextHolder.SERIALIZE_KEY));
+        httpServletRequest.getHeader(InvocationContextHolder.SERIALIZE_KEY));
 
     contextProperties.getHeaderContextMapper()
-        .forEach((k, v) -> context.putContext(v, request.getHeader(k)));
+        .forEach((k, v) -> context.putContext(v, httpServletRequest.getHeader(k)));
     contextProperties.getQueryContextMapper()
-        .forEach((k, v) -> context.putContext(v, request.getParameter(k)));
+        .forEach((k, v) -> context.putContext(v, httpServletRequest.getParameter(k)));
 
-    return true;
-  }
-
-  @Override
-  public int getOrder() {
-    return Ordered.HIGHEST_PRECEDENCE;
+    chain.doFilter(request, response);
   }
 }
