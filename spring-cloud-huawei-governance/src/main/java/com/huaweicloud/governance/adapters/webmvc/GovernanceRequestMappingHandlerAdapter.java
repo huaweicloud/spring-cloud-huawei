@@ -36,7 +36,6 @@ import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.common.util.HeaderUtil;
 import com.huaweicloud.governance.authentication.UnAuthorizedException;
-import com.huaweicloud.governance.authentication.provider.ProviderAuthHandler;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadFullException;
@@ -62,8 +61,6 @@ public class GovernanceRequestMappingHandlerAdapter {
 
   private final BulkheadHandler bulkheadHandler;
 
-  private ProviderAuthHandler providerAuthHandler;
-
   private ServerRecoverPolicy<Object> serverRecoverPolicy;
 
   @Autowired
@@ -77,11 +74,6 @@ public class GovernanceRequestMappingHandlerAdapter {
   @Autowired(required = false)
   public void setServerRecoverPolicy(ServerRecoverPolicy<Object> serverRecoverPolicy) {
     this.serverRecoverPolicy = serverRecoverPolicy;
-  }
-
-  @Autowired(required = false)
-  public void setProviderAuthHandler(ProviderAuthHandler providerAuthHandler) {
-    this.providerAuthHandler = providerAuthHandler;
   }
 
   @Pointcut("execution(* org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(..))")
@@ -98,9 +90,6 @@ public class GovernanceRequestMappingHandlerAdapter {
     DecorateCheckedSupplier<Object> dcs = Decorators.ofCheckedSupplier(next);
 
     try {
-      if (providerAuthHandler != null) {
-        providerAuthHandler.checkToken();
-      }
       addCircuitBreaker(dcs, governanceRequest);
       addBulkhead(dcs, governanceRequest);
       addRateLimiting(dcs, governanceRequest);

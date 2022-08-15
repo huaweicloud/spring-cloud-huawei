@@ -18,13 +18,9 @@ package com.huaweicloud.sample;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-
-import com.huaweicloud.governance.authentication.AuthHandlerBoot;
-import com.huaweicloud.governance.authentication.provider.ProviderAuthHandler;
 
 @RestController
 public class AuthController {
@@ -44,6 +40,6 @@ public class AuthController {
     if (applicationContext.containsBean("providerAuthHandler") || !applicationContext.containsBean("authHandlerBoot")) {
       return null;
     }
-    return restTemplate.getForObject("http://price/checkToken", String.class);
+    return restTemplate.getForObject("http://account-app.account/checkToken", String.class);
   }
 }

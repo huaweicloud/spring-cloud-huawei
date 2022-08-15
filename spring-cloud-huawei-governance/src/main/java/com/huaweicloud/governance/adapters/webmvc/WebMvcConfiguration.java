@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.governance.authentication.provider.BlackWhiteListProperties;
-import com.huaweicloud.governance.authentication.provider.ProviderAuthHandler;
+import com.huaweicloud.governance.authentication.provider.ProviderAuthPreHandlerInterceptor;
 
 @Configuration
 @ConditionalOnClass(name = "org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter")
@@ -56,8 +56,8 @@ public class WebMvcConfiguration {
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED,
       havingValue = "true")
-  public ProviderAuthHandler providerAuthHanlder(ServiceCenterClient client,
+  public ProviderAuthPreHandlerInterceptor providerAuthPreHandlerInterceptor(ServiceCenterClient client,
       BlackWhiteListProperties blackWhiteListProperties) {
-    return new ProviderAuthHandler(client, blackWhiteListProperties);
+    return new ProviderAuthPreHandlerInterceptor(client, blackWhiteListProperties);
   }
 }
