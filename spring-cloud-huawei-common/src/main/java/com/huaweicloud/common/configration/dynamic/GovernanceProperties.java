@@ -41,7 +41,7 @@ public class GovernanceProperties {
 
   public static final String GATEWAY_INSTANCE_ISOLATION_ENABLED = PREFIX + "." + "gateway.instanceIsolation.enabled";
 
-  public static final String WEBMVC_GOVERNANCE_ENABLED = PREFIX + "." + "webmvc.governance.enabled";
+  public static final String GATEWAY_INSTANCE_BULKHEAD_ENABLED = PREFIX + "." + "gateway.instanceBulkhead.enabled";
 
   public static final String WEBMVC_RATE_LIMITING_ENABLED =
       PREFIX + "." + "webmvc.rateLimiting.enabled";

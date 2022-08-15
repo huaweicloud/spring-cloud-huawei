@@ -134,4 +134,10 @@ public class GovernanceController {
     }
     return "success";
   }
+
+  @RequestMapping("/gatewayInstanceBulkhead")
+  public String gatewayInstanceBulkhead() throws Exception {
+    Thread.sleep(500);
+    return "gatewayInstanceBulkhead";
+  }
 }
