@@ -17,8 +17,8 @@
 
 package com.huaweicloud.governance.adapters.feign;
 
-import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
+import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
@@ -30,6 +30,7 @@ import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
 
 import feign.Client;
@@ -44,11 +45,13 @@ public class FeignConfiguration {
   public Client feignClient(RetryHandler retryHandler,
       FaultInjectionHandler faultInjectionHandler,
       InstanceIsolationHandler instanceIsolationHandler,
+      InstanceBulkheadHandler instanceBulkheadHandler,
       @Autowired(required = false) ClientRecoverPolicy<Response> clientRecoverPolicy,
       LoadBalancerClient loadBalancerClient,
       LoadBalancerClientFactory loadBalancerClientFactory) {
     return new GovernanceFeignBlockingLoadBalancerClient(
-        retryHandler, faultInjectionHandler, instanceIsolationHandler, clientRecoverPolicy,
+        retryHandler, faultInjectionHandler, instanceIsolationHandler,
+        instanceBulkheadHandler, clientRecoverPolicy,
         new Client.Default(null, null), loadBalancerClient,
         loadBalancerClientFactory);
   }

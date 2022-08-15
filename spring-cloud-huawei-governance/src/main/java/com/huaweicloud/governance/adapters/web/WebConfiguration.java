@@ -17,8 +17,8 @@
 
 package com.huaweicloud.governance.adapters.web;
 
-import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
+import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
@@ -35,6 +35,7 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
+import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.common.configration.dynamic.HttpClientProperties;
 import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
 
@@ -51,7 +52,8 @@ public class WebConfiguration {
       FaultInjectionHandler faultInjectionHandler,
       @Autowired(required = false) ClientRecoverPolicy<Object> recoverPolicy,
       HttpClientProperties httpClientProperties) {
-    GovernanceRestTemplate restTemplate = new GovernanceRestTemplate(retryHandler, faultInjectionHandler, recoverPolicy);
+    GovernanceRestTemplate restTemplate = new GovernanceRestTemplate(retryHandler, faultInjectionHandler,
+        recoverPolicy);
     restTemplate.setRequestFactory(getClientHttpRequestFactory(httpClientProperties));
     return restTemplate;
   }
@@ -70,6 +72,14 @@ public class WebConfiguration {
   public ClientHttpRequestInterceptor isolationClientHttpRequestInterceptor(InstanceIsolationHandler isolationHandler,
       @Autowired(required = false) ClientRecoverPolicy<ClientHttpResponse> recoverPolicy) {
     return new IsolationClientHttpRequestInterceptor(isolationHandler, recoverPolicy);
+  }
+
+  @Bean
+  @ConditionalOnProperty(value = "spring.cloud.servicecomb.restTemplate.bulkhead.enabled",
+      havingValue = "true", matchIfMissing = true)
+  public ClientHttpRequestInterceptor bulkheadClientHttpRequestInterceptor(InstanceBulkheadHandler bulkheadHandler,
+      @Autowired(required = false) ClientRecoverPolicy<ClientHttpResponse> recoverPolicy) {
+    return new BulkheadClientHttpRequestInterceptor(bulkheadHandler, recoverPolicy);
   }
 
   @Bean
