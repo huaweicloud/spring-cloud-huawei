@@ -18,12 +18,14 @@
 package com.huaweicloud.servicecomb.discovery.context;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 @Configuration
+@ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.enabled", matchIfMissing = true)
 @ConditionalOnClass(name = {"org.springframework.http.client.ClientHttpRequestInterceptor",
     "org.springframework.web.client.RestTemplate"})
 public class RestTemplateContextConfiguration {

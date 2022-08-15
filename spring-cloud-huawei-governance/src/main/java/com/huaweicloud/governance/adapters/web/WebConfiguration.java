@@ -17,6 +17,7 @@
 
 package com.huaweicloud.governance.adapters.web;
 
+import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
@@ -35,6 +36,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import com.huaweicloud.common.configration.dynamic.HttpClientProperties;
+import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
 
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.http.client.ClientHttpRequestInterceptor",
@@ -73,5 +75,12 @@ public class WebConfiguration {
   @Bean
   public ClientHttpResponseStatusCodeExtractor clientHttpResponseStatusCodeExtractor() {
     return new ClientHttpResponseStatusCodeExtractor();
+  }
+
+  @Bean
+  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED,
+      havingValue = "true")
+  public RestTemplateAddTokenContext restTemplateAddTokenContext(RSAConsumerTokenManager authenticationTokenManager) {
+    return new RestTemplateAddTokenContext(authenticationTokenManager);
   }
 }
