@@ -21,6 +21,7 @@ import org.apache.servicecomb.governance.handler.BulkheadHandler;
 import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.IdentifierRateLimitingHandler;
+import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -55,6 +56,14 @@ public class GatewayConfiguration {
 
   @Bean
   @ConditionalOnEnabledFilter
+  @ConditionalOnProperty(value = GovernanceProperties.GATEWAY_INSTANCE_BULKHEAD_ENABLED,
+      havingValue = "true", matchIfMissing = true)
+  public InstanceBulkheadGlobalFilter instanceBulkheadGlobalFilter(InstanceBulkheadHandler handler) {
+    return new InstanceBulkheadGlobalFilter(handler);
+  }
+
+  @Bean
+  @ConditionalOnEnabledFilter
   @ConditionalOnProperty(value = GovernanceProperties.GATEWAY_FAULT_INJECTION_ENABLED,
       havingValue = "true", matchIfMissing = true)
   public FaultInjectionGlobalFilter faultInjectionGlobalFilter(FaultInjectionHandler handler) {
@@ -85,5 +94,4 @@ public class GatewayConfiguration {
   public GatewayAddTokenContext gatewayAddTokenContext(RSAConsumerTokenManager authenticationTokenManager) {
     return new GatewayAddTokenContext(authenticationTokenManager);
   }
-  
 }
