@@ -17,6 +17,7 @@
 
 package com.huaweicloud.governance.adapters.feign;
 
+import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
@@ -29,6 +30,8 @@ import org.springframework.cloud.client.loadbalancer.LoadBalancerProperties;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
 
 import feign.Client;
 import feign.Response;
@@ -55,5 +58,12 @@ public class FeignConfiguration {
   @Bean
   public ResponseStatusCodeExtractor responseStatusCodeExtractor() {
     return new ResponseStatusCodeExtractor();
+  }
+
+  @Bean
+  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED,
+      havingValue = "true")
+  public FeignAddTokenContext feignAddTokenContext(RSAConsumerTokenManager authenticationTokenManager) {
+    return new FeignAddTokenContext(authenticationTokenManager);
   }
 }
