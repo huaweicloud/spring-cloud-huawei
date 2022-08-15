@@ -37,6 +37,11 @@ public class GovernanceProperties {
 
   public static final String GATEWAY_INSTANCE_ISOLATION_ENABLED = PREFIX + "." + "gateway.instanceIsolation.enabled";
 
+  public static final String WEBMVC_GOVERNANCE_ENABLED = PREFIX + "." + "webmvc.governance.enabled";
+
+  public static final String WEBMVC_IDENTIFIER_RATE_LIMITING_ENABLED =
+      PREFIX + "." + "webmvc.identifierRateLimiting.enabled";
+
   public static final String WEBMVC_PUBLICKEY_CONSUMER_ENABLED = PREFIX + "." + "webmvc.publicKey.consumerEnabled";
 
   public static final String WEBMVC_PUBLICKEY_PROVIDER_ENABLED = PREFIX + "." + "webmvc.publicKey.providerEnabled";
@@ -44,6 +49,40 @@ public class GovernanceProperties {
   public static final String WEBMVC_PUBLICKEY_ACCSSCONTROL = PREFIX + "." + "webmvc.public-key.access-control";
 
   public static class Gateway {
+    private RateLimiting rateLimiting = new RateLimiting();
+
+    private IdentifierRateLimiting identifierRateLimiting = new IdentifierRateLimiting();
+
+    private InvocationMetrics invocationMetrics = new InvocationMetrics();
+
+    public RateLimiting getRateLimiting() {
+      return rateLimiting;
+    }
+
+    public void setRateLimiting(RateLimiting rateLimiting) {
+      this.rateLimiting = rateLimiting;
+    }
+
+    public IdentifierRateLimiting getIdentifierRateLimiting() {
+      return identifierRateLimiting;
+    }
+
+    public void setIdentifierRateLimiting(
+        IdentifierRateLimiting identifierRateLimiting) {
+      this.identifierRateLimiting = identifierRateLimiting;
+    }
+
+    public InvocationMetrics getInvocationMetrics() {
+      return invocationMetrics;
+    }
+
+    public void setInvocationMetrics(
+        InvocationMetrics invocationMetrics) {
+      this.invocationMetrics = invocationMetrics;
+    }
+  }
+
+  public static class Webmvc {
     private RateLimiting rateLimiting = new RateLimiting();
 
     private IdentifierRateLimiting identifierRateLimiting = new IdentifierRateLimiting();
@@ -115,11 +154,21 @@ public class GovernanceProperties {
 
   private Gateway gateway = new Gateway();
 
+  private Webmvc webmvc = new Webmvc();
+
   public Gateway getGateway() {
     return gateway;
   }
 
   public void setGateway(Gateway gateway) {
     this.gateway = gateway;
+  }
+
+  public Webmvc getWebmvc() {
+    return webmvc;
+  }
+
+  public void setWebmvc(Webmvc webmvc) {
+    this.webmvc = webmvc;
   }
 }
