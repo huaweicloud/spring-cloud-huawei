@@ -17,7 +17,7 @@
 
 package com.huaweicloud.governance.adapters.gateway;
 
-import org.apache.servicecomb.governance.handler.RateLimitingHandler;
+import org.apache.servicecomb.governance.handler.IdentifierRateLimitingHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,15 +34,16 @@ import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.github.resilience4j.reactor.ratelimiter.operator.RateLimiterOperator;
 import reactor.core.publisher.Mono;
 
-public class RateLimitingWebFilter implements OrderedWebFilter {
-  private static final Logger LOGGER = LoggerFactory.getLogger(RateLimitingWebFilter.class);
+public class IdentifierRateLimitingWebFilter implements OrderedWebFilter {
+  private static final Logger LOGGER = LoggerFactory.getLogger(IdentifierRateLimitingWebFilter.class);
 
-  private final RateLimitingHandler rateLimitingHandler;
+  private final IdentifierRateLimitingHandler identifierRateLimitingHandler;
 
   private final GovernanceProperties governanceProperties;
 
-  public RateLimitingWebFilter(RateLimitingHandler rateLimitingHandler, GovernanceProperties governanceProperties) {
-    this.rateLimitingHandler = rateLimitingHandler;
+  public IdentifierRateLimitingWebFilter(IdentifierRateLimitingHandler identifierRateLimitingHandler,
+      GovernanceProperties governanceProperties) {
+    this.identifierRateLimitingHandler = identifierRateLimitingHandler;
     this.governanceProperties = governanceProperties;
   }
 
@@ -52,7 +53,7 @@ public class RateLimitingWebFilter implements OrderedWebFilter {
 
     Mono<Void> toRun = chain.filter(exchange);
 
-    return addRateLimiter(governanceRequest, toRun);
+    return addIdentifierRateLimiter(governanceRequest, toRun);
   }
 
   private GovernanceRequest createGovernanceRequest(ServerWebExchange exchange) {
@@ -63,8 +64,8 @@ public class RateLimitingWebFilter implements OrderedWebFilter {
     return request;
   }
 
-  private Mono<Void> addRateLimiter(GovernanceRequest governanceRequest, Mono<Void> toRun) {
-    RateLimiter rateLimiter = rateLimitingHandler.getActuator(governanceRequest);
+  private Mono<Void> addIdentifierRateLimiter(GovernanceRequest governanceRequest, Mono<Void> toRun) {
+    RateLimiter rateLimiter = identifierRateLimitingHandler.getActuator(governanceRequest);
     Mono<Void> mono = toRun;
     if (rateLimiter != null) {
       mono = toRun.transform(RateLimiterOperator.of(rateLimiter))
@@ -79,6 +80,6 @@ public class RateLimitingWebFilter implements OrderedWebFilter {
 
   @Override
   public int getOrder() {
-    return governanceProperties.getGateway().getRateLimiting().getOrder();
+    return governanceProperties.getGateway().getIdentifierRateLimiting().getOrder();
   }
 }

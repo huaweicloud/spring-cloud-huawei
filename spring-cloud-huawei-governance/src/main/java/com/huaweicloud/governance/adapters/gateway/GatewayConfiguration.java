@@ -20,6 +20,7 @@ package com.huaweicloud.governance.adapters.gateway;
 import org.apache.servicecomb.governance.handler.BulkheadHandler;
 import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
+import org.apache.servicecomb.governance.handler.IdentifierRateLimitingHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -66,5 +67,14 @@ public class GatewayConfiguration {
   public WebFilter rateLimitingWebFilter(RateLimitingHandler rateLimitingHandler,
       GovernanceProperties governanceProperties) {
     return new RateLimitingWebFilter(rateLimitingHandler, governanceProperties);
+  }
+
+  @Bean
+  @ConditionalOnEnabledFilter
+  @ConditionalOnProperty(value = GovernanceProperties.GATEWAY_IDENTIFIER_RATE_LIMITING_ENABLED,
+      havingValue = "true", matchIfMissing = true)
+  public WebFilter identifierRateLimitingWebFilter(IdentifierRateLimitingHandler identifierRateLimitingHandler,
+      GovernanceProperties governanceProperties) {
+    return new IdentifierRateLimitingWebFilter(identifierRateLimitingHandler, governanceProperties);
   }
 }

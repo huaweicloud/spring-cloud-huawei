@@ -20,6 +20,8 @@ package com.huaweicloud.common.configration.dynamic;
 public class GovernanceProperties {
   public static final int WEB_FILTER_RATE_LIMITING_ORDER = -50000;
 
+  public static final int WEB_FILTER_IDENTIFIER_RATE_LIMITING_ORDER = -55000;
+
   public static final int WEB_FILTER_INVOCATION_METRICS_ORDER = -60000;
 
   public static final String PREFIX = "spring.cloud.servicecomb";
@@ -28,12 +30,17 @@ public class GovernanceProperties {
 
   public static final String GATEWAY_RATE_LIMITING_ENABLED = PREFIX + "." + "gateway.rateLimiting.enabled";
 
+  public static final String GATEWAY_IDENTIFIER_RATE_LIMITING_ENABLED =
+      PREFIX + "." + "gateway.identifierRateLimiting.enabled";
+
   public static final String GATEWAY_FAULT_INJECTION_ENABLED = PREFIX + "." + "gateway.faultInjection.enabled";
 
   public static final String GATEWAY_INSTANCE_ISOLATION_ENABLED = PREFIX + "." + "gateway.instanceIsolation.enabled";
 
   public static class Gateway {
     private RateLimiting rateLimiting = new RateLimiting();
+
+    private IdentifierRateLimiting identifierRateLimiting = new IdentifierRateLimiting();
 
     private InvocationMetrics invocationMetrics = new InvocationMetrics();
 
@@ -43,6 +50,15 @@ public class GovernanceProperties {
 
     public void setRateLimiting(RateLimiting rateLimiting) {
       this.rateLimiting = rateLimiting;
+    }
+
+    public IdentifierRateLimiting getIdentifierRateLimiting() {
+      return identifierRateLimiting;
+    }
+
+    public void setIdentifierRateLimiting(
+        IdentifierRateLimiting identifierRateLimiting) {
+      this.identifierRateLimiting = identifierRateLimiting;
     }
 
     public InvocationMetrics getInvocationMetrics() {
@@ -57,6 +73,18 @@ public class GovernanceProperties {
 
   public static class RateLimiting {
     private int order = WEB_FILTER_RATE_LIMITING_ORDER;
+
+    public int getOrder() {
+      return order;
+    }
+
+    public void setOrder(int order) {
+      this.order = order;
+    }
+  }
+
+  public static class IdentifierRateLimiting {
+    private int order = WEB_FILTER_IDENTIFIER_RATE_LIMITING_ORDER;
 
     public int getOrder() {
       return order;
