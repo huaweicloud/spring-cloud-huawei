@@ -30,3 +30,72 @@ feign:
       default:
         connectTimeout: 1000
         readTimeout: 30000
+
+servicecomb:
+  matchGroup:
+    allOperation: |
+      matches:
+        - apiPath:
+            prefix: "/"
+    isolationForceOpen: |
+      matches:
+        - apiPath:
+            prefix: "/isolationForceOpen"
+    faultInjection: |
+      matches:
+        - apiPath:
+            prefix: "/faultInjection"
+    demo-rateLimiting: |
+      matches:
+        - apiPath:
+            exact: "/govern/hello"
+    demo-identifierRateLimiting: |
+      matches:
+        - apiPath:
+            exact: "/govern/identifierRateLimiting"
+    demo-retry: |
+      matches:
+        - apiPath:
+            prefix: "/retry"
+    demo-circuitBreaker: |
+      matches:
+        - apiPath:
+            exact: "/govern/circuitBreaker"
+    demo-bulkhead: |
+      matches:
+        - apiPath:
+            exact: "/govern/bulkhead"
+  rateLimiting:
+    demo-rateLimiting: |
+      rate: 10
+  identifierRateLimiting:
+    demo-identifierRateLimiting: |
+      rate: 2
+      identifier: user-name
+  retry:
+    demo-retry: |
+      maxAttempts: 3
+  circuitBreaker:
+    demo-circuitBreaker: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      failureRateThreshold: 20
+      recordFailureStatus:
+        - 500
+        - 502
+        - 503
+  bulkhead:
+    demo-bulkhead: |
+      maxConcurrentCalls: 5
+  instanceIsolation:
+    #    allOperation: |
+    #      minimumNumberOfCalls: 10
+    #      slidingWindowSize: 10
+    #      failureRateThreshold: 20
+    isolationForceOpen: |
+      forceOpen: true
+  faultInjection:
+    faultInjection: |
+      fallbackType: ReturnNull
+      type: abort
+      percentage: 100
