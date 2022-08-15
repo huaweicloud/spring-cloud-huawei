@@ -19,7 +19,7 @@ package com.huaweicloud.governance.authentication;
 
 public class Const {
 
-  public static final String AUTH_TOKEN = "x-cse-auth-rsatoken";
+  public static final String AUTH_TOKEN = "x-auth-token";
 
   public static final String INSTANCE_PUBKEY_PRO = "publickey";
 }
