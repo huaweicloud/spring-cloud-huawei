@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.servicecomb.governance.handler.BulkheadHandler;
 import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
-import org.apache.servicecomb.governance.handler.RateLimitingHandler;
 import org.apache.servicecomb.governance.handler.ext.ServerRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -42,7 +41,6 @@ import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.decorators.Decorators;
 import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
-import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.vavr.CheckedFunction0;
 
@@ -54,8 +52,6 @@ public class GovernanceRequestMappingHandlerAdapter {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(GovernanceRequestMappingHandlerAdapter.class);
 
-  private final RateLimitingHandler rateLimitingHandler;
-
   private final CircuitBreakerHandler circuitBreakerHandler;
 
   private final BulkheadHandler bulkheadHandler;
@@ -63,9 +59,8 @@ public class GovernanceRequestMappingHandlerAdapter {
   private ServerRecoverPolicy<Object> serverRecoverPolicy;
 
   @Autowired
-  public GovernanceRequestMappingHandlerAdapter(RateLimitingHandler rateLimitingHandler,
-      CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler) {
-    this.rateLimitingHandler = rateLimitingHandler;
+  public GovernanceRequestMappingHandlerAdapter(CircuitBreakerHandler circuitBreakerHandler,
+      BulkheadHandler bulkheadHandler) {
     this.circuitBreakerHandler = circuitBreakerHandler;
     this.bulkheadHandler = bulkheadHandler;
   }
@@ -91,8 +86,6 @@ public class GovernanceRequestMappingHandlerAdapter {
     try {
       addCircuitBreaker(dcs, governanceRequest);
       addBulkhead(dcs, governanceRequest);
-      addRateLimiting(dcs, governanceRequest);
-
       return dcs.get();
     } catch (Throwable th) {
       if (th instanceof RequestNotPermitted) {
@@ -143,13 +136,6 @@ public class GovernanceRequestMappingHandlerAdapter {
     CircuitBreaker circuitBreaker = circuitBreakerHandler.getActuator(request);
     if (circuitBreaker != null) {
       dcs.withCircuitBreaker(circuitBreaker);
-    }
-  }
-
-  private void addRateLimiting(DecorateCheckedSupplier<Object> dcs, GovernanceRequest request) {
-    RateLimiter rateLimiter = rateLimitingHandler.getActuator(request);
-    if (rateLimiter != null) {
-      dcs.withRateLimiter(rateLimiter);
     }
   }
 }
