@@ -35,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.common.util.HeaderUtil;
-import com.huaweicloud.governance.authentication.UnAuthorizedException;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadFullException;
@@ -111,10 +110,6 @@ public class GovernanceRequestMappingHandlerAdapter {
         response.getWriter().print("bulkhead is full and does not permit further calls.");
         LOGGER.warn("bulkhead is full and does not permit further calls by policy : {}",
             th.getMessage());
-      } else if (th instanceof UnAuthorizedException) {
-        response.setStatus(401);
-        response.getWriter().print("UNAUTHORIZED.");
-        LOGGER.warn("UNAUTHORIZED : {}", th.getMessage());
       } else {
         if (serverRecoverPolicy != null) {
           return serverRecoverPolicy.apply(th);
