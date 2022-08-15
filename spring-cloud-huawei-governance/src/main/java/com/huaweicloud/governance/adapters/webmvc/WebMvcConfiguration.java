@@ -36,9 +36,25 @@ public class WebMvcConfiguration {
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_GOVERNANCE_ENABLED,
       havingValue = "true", matchIfMissing = true)
   public GovernanceRequestMappingHandlerAdapter governanceRequestMappingHandlerAdapter(
-      RateLimitingHandler rateLimitingHandler, CircuitBreakerHandler circuitBreakerHandler,
+      CircuitBreakerHandler circuitBreakerHandler,
       BulkheadHandler bulkheadHandler) {
-    return new GovernanceRequestMappingHandlerAdapter(rateLimitingHandler, circuitBreakerHandler, bulkheadHandler);
+    return new GovernanceRequestMappingHandlerAdapter(circuitBreakerHandler, bulkheadHandler);
+  }
+
+  @Bean
+  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_RATE_LIMITING_ENABLED,
+      havingValue = "true", matchIfMissing = true)
+  public FilterRegistrationBean<RateLimitingFilter> rateLimitingFilter(
+      RateLimitingHandler rateLimitingHandler,
+      GovernanceProperties governanceProperties) {
+    FilterRegistrationBean<RateLimitingFilter> registrationBean
+        = new FilterRegistrationBean<>();
+
+    registrationBean.setFilter(new RateLimitingFilter(rateLimitingHandler));
+    registrationBean.addUrlPatterns("/*");
+    registrationBean.setOrder(governanceProperties.getWebmvc().getRateLimiting().getOrder());
+
+    return registrationBean;
   }
 
   @Bean
