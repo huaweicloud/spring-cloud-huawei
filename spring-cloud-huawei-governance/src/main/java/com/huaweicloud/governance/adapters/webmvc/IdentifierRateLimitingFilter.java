@@ -44,6 +44,8 @@ import io.vavr.CheckedConsumer;
 public class IdentifierRateLimitingFilter implements Filter {
   private static final Logger LOGGER = LoggerFactory.getLogger(IdentifierRateLimitingFilter.class);
 
+  private static final Object EMPTY_HOLDER = new Object();
+
   private final IdentifierRateLimitingHandler identifierRateLimitingHandler;
 
   public IdentifierRateLimitingFilter(IdentifierRateLimitingHandler identifierRateLimitingHandler) {
@@ -58,8 +60,8 @@ public class IdentifierRateLimitingFilter implements Filter {
       return;
     }
 
-    CheckedConsumer<Void> next = (v) -> chain.doFilter(request, response);
-    DecorateConsumer<Void> decorateConsumer = Decorators.ofConsumer(next.unchecked());
+    CheckedConsumer<Object> next = (v) -> chain.doFilter(request, response);
+    DecorateConsumer<Object> decorateConsumer = Decorators.ofConsumer(next.unchecked());
     GovernanceRequest governanceRequest = convert((HttpServletRequest) request);
 
     try {
@@ -67,7 +69,7 @@ public class IdentifierRateLimitingFilter implements Filter {
       if (rateLimiter != null) {
         decorateConsumer.withRateLimiter(rateLimiter);
       }
-      decorateConsumer.accept(null);
+      decorateConsumer.accept(EMPTY_HOLDER);
     } catch (Throwable e) {
       if (e instanceof RequestNotPermitted) {
         ((HttpServletResponse) response).setStatus(429);
