@@ -21,31 +21,17 @@ import org.apache.servicecomb.governance.handler.BulkheadHandler;
 import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
 import org.apache.servicecomb.governance.handler.IdentifierRateLimitingHandler;
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
-import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
-import com.huaweicloud.governance.authentication.provider.BlackWhiteListProperties;
-import com.huaweicloud.governance.authentication.provider.ProviderAuthPreHandlerInterceptor;
 
 @Configuration
 @ConditionalOnClass(name = "org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter")
 public class WebMvcConfiguration {
-  @Bean
-  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_GOVERNANCE_ENABLED,
-      havingValue = "true", matchIfMissing = true)
-  public GovernanceRequestMappingHandlerAdapter governanceRequestMappingHandlerAdapter(
-      CircuitBreakerHandler circuitBreakerHandler,
-      BulkheadHandler bulkheadHandler) {
-    return new GovernanceRequestMappingHandlerAdapter(circuitBreakerHandler, bulkheadHandler);
-  }
-
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_RATE_LIMITING_ENABLED,
       havingValue = "true", matchIfMissing = true)
@@ -78,20 +64,36 @@ public class WebMvcConfiguration {
     return registrationBean;
   }
 
+
   @Bean
-  @RefreshScope
-  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED,
-      havingValue = "true")
-  @ConfigurationProperties(GovernanceProperties.WEBMVC_PUBLICKEY_ACCSSCONTROL)
-  public BlackWhiteListProperties blackWhiteListProperties() {
-    return new BlackWhiteListProperties();
+  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_CIRCUIT_BREAKER_ENABLED,
+      havingValue = "true", matchIfMissing = true)
+  public FilterRegistrationBean<CircuitBreakerFilter> circuitBreakerFilter(
+      CircuitBreakerHandler circuitBreakerHandler,
+      GovernanceProperties governanceProperties) {
+    FilterRegistrationBean<CircuitBreakerFilter> registrationBean
+        = new FilterRegistrationBean<>();
+
+    registrationBean.setFilter(new CircuitBreakerFilter(circuitBreakerHandler));
+    registrationBean.addUrlPatterns("/*");
+    registrationBean.setOrder(governanceProperties.getWebmvc().getCircuitBreaker().getOrder());
+
+    return registrationBean;
   }
 
   @Bean
-  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED,
-      havingValue = "true")
-  public ProviderAuthPreHandlerInterceptor providerAuthPreHandlerInterceptor(ServiceCenterClient client,
-      BlackWhiteListProperties blackWhiteListProperties) {
-    return new ProviderAuthPreHandlerInterceptor(client, blackWhiteListProperties);
+  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_BULKHEAD_ENABLED,
+      havingValue = "true", matchIfMissing = true)
+  public FilterRegistrationBean<BulkheadFilter> bulkheadFilter(
+      BulkheadHandler bulkheadHandler,
+      GovernanceProperties governanceProperties) {
+    FilterRegistrationBean<BulkheadFilter> registrationBean
+        = new FilterRegistrationBean<>();
+
+    registrationBean.setFilter(new BulkheadFilter(bulkheadHandler));
+    registrationBean.addUrlPatterns("/*");
+    registrationBean.setOrder(governanceProperties.getWebmvc().getBulkhead().getOrder());
+
+    return registrationBean;
   }
 }
