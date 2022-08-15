@@ -17,25 +17,32 @@
 
 package com.huaweicloud.governance.authentication.provider;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 
+import com.huaweicloud.common.adapters.webmvc.PreHandlerInterceptor;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.governance.authentication.Const;
 import com.huaweicloud.governance.authentication.UnAuthorizedException;
 
-public class ProviderAuthHandler {
+public class ProviderAuthPreHandlerInterceptor implements PreHandlerInterceptor {
+
   private final RSAProviderTokenManager authenticationTokenManager;
 
-  public ProviderAuthHandler(ServiceCenterClient client, BlackWhiteListProperties blackWhiteListProperties) {
+  public ProviderAuthPreHandlerInterceptor(ServiceCenterClient client, BlackWhiteListProperties blackWhiteListProperties) {
     authenticationTokenManager = new RSAProviderTokenManager(client, blackWhiteListProperties);
   }
 
-  public void checkToken() {
+  @Override
+  public boolean handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
     String token = InvocationContextHolder
         .getOrCreateInvocationContext()
         .getContext(Const.AUTH_TOKEN);
     if (null == token || !authenticationTokenManager.valid(token)) {
       throw new UnAuthorizedException("UNAUTHORIZED.");
     }
+    return true;
   }
 }

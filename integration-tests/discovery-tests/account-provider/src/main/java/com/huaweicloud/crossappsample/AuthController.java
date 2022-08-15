@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.sample;
+package com.huaweicloud.crossappsample;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.governance.authentication.AuthHandlerBoot;
 import com.huaweicloud.governance.authentication.Const;
 import com.huaweicloud.governance.authentication.provider.BlackWhiteListProperties;
-import com.huaweicloud.governance.authentication.provider.ProviderAuthHandler;
+import com.huaweicloud.governance.authentication.provider.ProviderAuthPreHandlerInterceptor;
 
 @RestController
 public class AuthController {
@@ -41,10 +41,10 @@ public class AuthController {
 
   @RequestMapping("/checkToken")
   public String checkToken() {
-    ProviderAuthHandler providerAuthHandler = applicationContext.getBean(ProviderAuthHandler.class);
+    ProviderAuthPreHandlerInterceptor interceptor = applicationContext.getBean(ProviderAuthPreHandlerInterceptor.class);
     AuthHandlerBoot authHandlerBoot = applicationContext.getBean(AuthHandlerBoot.class);
     BlackWhiteListProperties blackWhiteListProperties = applicationContext.getBean(BlackWhiteListProperties.class);
-    if (providerAuthHandler == null || authHandlerBoot == null || blackWhiteListProperties == null
+    if (interceptor == null || authHandlerBoot == null || blackWhiteListProperties == null
         || blackWhiteListProperties.getBlack().size() != 2 || blackWhiteListProperties.getWhite().size() != 1) {
       return null;
     }

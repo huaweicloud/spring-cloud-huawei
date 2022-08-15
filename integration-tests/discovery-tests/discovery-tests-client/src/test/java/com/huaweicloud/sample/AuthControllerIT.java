@@ -18,30 +18,38 @@
 package com.huaweicloud.sample;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.web.client.HttpClientErrorException.Unauthorized;
 import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AuthControllerIT {
+
+  final String gatewayUrl = "http://127.0.0.1:10088";
+
   final String orderServiceUrl = "http://127.0.0.1:9098";
 
-  final String priceServiceUrl = "http://127.0.0.1:9090";
+  final String accountServiceUrl = "http://127.0.0.1:9092";
 
   final RestTemplate template = new RestTemplate();
 
   @Test
-  public void checkToken1() {
+  public void testCheckTokenSucesssFromGateway() {
+    String result = template.getForObject(gatewayUrl + "/order/checkToken", String.class);
+    assertThat(result).isEqualTo("success");
+  }
+
+  @Test
+  public void testCheckTokenSucesssFromConsumer() {
     String result = template.getForObject(orderServiceUrl + "/checkToken", String.class);
     assertThat(result).isEqualTo("success");
   }
 
   @Test
-  public void checkToken2() {
+  public void testCheckTokenFailFromOther() {
     boolean exception = false;
     try {
-      template.getForObject(priceServiceUrl + "/checkToken", String.class);
-    } catch (Unauthorized e) {
+      template.getForObject(accountServiceUrl + "/checkToken", String.class);
+    } catch (Exception e) {
       exception = true;
     }
     assertThat(exception).isEqualTo(true);
