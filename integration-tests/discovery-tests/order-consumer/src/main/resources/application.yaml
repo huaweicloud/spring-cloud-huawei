@@ -45,6 +45,14 @@ servicecomb:
       matches:
         - apiPath:
             prefix: "/isolationForceOpen"
+    feignInstanceBulkhead: |
+      matches:
+        - apiPath:
+            exact: "/feignInstanceBulkhead"
+    restTemplateInstanceBulkhead: |
+      matches:
+        - apiPath:
+            exact: "/restTemplateInstanceBulkhead"
     faultInjection: |
       matches:
         - apiPath:
@@ -98,6 +106,13 @@ servicecomb:
     #      failureRateThreshold: 20
     isolationForceOpen: |
       forceOpen: true
+  instanceBulkhead:
+    feignInstanceBulkhead: |
+      maxConcurrentCalls: 2
+      maxWaitDuration: 100
+    restTemplateInstanceBulkhead: |
+      maxConcurrentCalls: 2
+      maxWaitDuration: 100
   faultInjection:
     faultInjection: |
       fallbackType: ReturnNull

@@ -17,11 +17,9 @@
 
 package com.huaweicloud.governance.adapters.web;
 
-import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
+import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
-import org.apache.servicecomb.governance.policy.CircuitBreakerPolicy;
-import org.apache.servicecomb.service.center.client.DiscoveryEvents.PullInstanceEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -33,26 +31,25 @@ import org.springframework.http.client.ClientHttpResponse;
 import com.huaweicloud.common.adapters.loadbalancer.RetryContext;
 import com.huaweicloud.common.adapters.web.FallbackClientHttpResponse;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.common.event.EventManager;
 
-import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
-import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.bulkhead.Bulkhead;
+import io.github.resilience4j.bulkhead.BulkheadFullException;
 import io.github.resilience4j.decorators.Decorators;
 import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
 import io.vavr.CheckedFunction0;
 
-public class IsolationClientHttpRequestInterceptor implements ClientHttpRequestInterceptor, Ordered {
+public class BulkheadClientHttpRequestInterceptor implements ClientHttpRequestInterceptor, Ordered {
   private static final Logger LOG = LoggerFactory.getLogger(IsolationClientHttpRequestInterceptor.class);
 
   private static final int ORDER = 100;
 
-  private final InstanceIsolationHandler instanceIsolationHandler;
+  private final InstanceBulkheadHandler instanceBulkheadHandler;
 
   private final ClientRecoverPolicy<ClientHttpResponse> clientRecoverPolicy;
 
-  public IsolationClientHttpRequestInterceptor(InstanceIsolationHandler instanceIsolationHandler,
+  public BulkheadClientHttpRequestInterceptor(InstanceBulkheadHandler instanceBulkheadHandler,
       ClientRecoverPolicy<ClientHttpResponse> clientRecoverPolicy) {
-    this.instanceIsolationHandler = instanceIsolationHandler;
+    this.instanceBulkheadHandler = instanceBulkheadHandler;
     this.clientRecoverPolicy = clientRecoverPolicy;
   }
 
@@ -64,28 +61,20 @@ public class IsolationClientHttpRequestInterceptor implements ClientHttpRequestI
 
     GovernanceRequest governanceRequest = convert(request);
     try {
-      CircuitBreakerPolicy circuitBreakerPolicy = instanceIsolationHandler.matchPolicy(governanceRequest);
-      if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
-        return new FallbackClientHttpResponse(503,
-            "Policy " + circuitBreakerPolicy.getName() + " forced open and deny requests");
-      }
 
-      if (circuitBreakerPolicy != null && !circuitBreakerPolicy.isForceClosed()) {
-        addInstanceIsolation(dcs, governanceRequest);
-      }
+      addInstanceBulkhead(dcs, governanceRequest);
 
       return dcs.get();
     } catch (Throwable e) {
-      if (e instanceof CallNotPermittedException) {
+      if (e instanceof BulkheadFullException) {
         // when instance isolated, request to pull instances.
-        LOG.warn("instance isolated [{}]", governanceRequest.getInstanceId());
-        EventManager.post(new PullInstanceEvent());
-        return new FallbackClientHttpResponse(503, "instance isolated");
+        LOG.warn("instance bulkhead is full [{}]", governanceRequest.getInstanceId());
+        return new FallbackClientHttpResponse(503, "instance bulkhead is full.");
       }
       if (clientRecoverPolicy != null) {
         return clientRecoverPolicy.apply(e);
       }
-      LOG.error("instance isolation catch throwable", e);
+      LOG.error("instance bulkhead catch throwable", e);
       // return 503, so that we can retry
       return new FallbackClientHttpResponse(503, e.getMessage());
     }
@@ -106,11 +95,11 @@ public class IsolationClientHttpRequestInterceptor implements ClientHttpRequestI
     return governanceRequest;
   }
 
-  private void addInstanceIsolation(DecorateCheckedSupplier<ClientHttpResponse> dcs,
+  private void addInstanceBulkhead(DecorateCheckedSupplier<ClientHttpResponse> dcs,
       GovernanceRequest governanceRequest) {
-    CircuitBreaker circuitBreaker = instanceIsolationHandler.getActuator(governanceRequest);
-    if (circuitBreaker != null) {
-      dcs.withCircuitBreaker(circuitBreaker);
+    Bulkhead bulkhead = instanceBulkheadHandler.getActuator(governanceRequest);
+    if (bulkhead != null) {
+      dcs.withBulkhead(bulkhead);
     }
   }
 

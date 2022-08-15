@@ -17,6 +17,7 @@
 package com.huaweicloud.sample;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,4 +44,7 @@ public interface FeignService {
 
   @RequestMapping("/isolationForceOpen")
   String isolationForceOpen();
+
+  @GetMapping("/feignInstanceBulkhead")
+  String feignInstanceBulkhead();
 }

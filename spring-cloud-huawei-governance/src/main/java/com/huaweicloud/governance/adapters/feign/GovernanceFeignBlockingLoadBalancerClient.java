@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
+import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
@@ -64,6 +65,8 @@ import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.common.event.EventManager;
 
+import io.github.resilience4j.bulkhead.Bulkhead;
+import io.github.resilience4j.bulkhead.BulkheadFullException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.decorators.Decorators;
@@ -102,17 +105,21 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
 
   private final InstanceIsolationHandler instanceIsolationHandler;
 
+  private final InstanceBulkheadHandler instanceBulkheadHandler;
+
   private final ClientRecoverPolicy<Response> clientRecoverPolicy;
 
   public GovernanceFeignBlockingLoadBalancerClient(RetryHandler retryHandler,
       FaultInjectionHandler faultInjectionHandler,
       InstanceIsolationHandler instanceIsolationHandler,
+      InstanceBulkheadHandler instanceBulkheadHandler,
       ClientRecoverPolicy<Response> clientRecoverPolicy,
       Client delegate, LoadBalancerClient loadBalancerClient,
       LoadBalancerClientFactory loadBalancerClientFactory) {
     this.retryHandler = retryHandler;
     this.faultInjectionHandler = faultInjectionHandler;
     this.instanceIsolationHandler = instanceIsolationHandler;
+    this.instanceBulkheadHandler = instanceBulkheadHandler;
     this.clientRecoverPolicy = clientRecoverPolicy;
     this.delegate = delegate;
     this.loadBalancerClient = loadBalancerClient;
@@ -273,6 +280,8 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
     DecorateCheckedSupplier<Response> dcs = Decorators.ofCheckedSupplier(next);
 
     try {
+      addInstanceBulkhead(dcs, governanceRequest);
+
       CircuitBreakerPolicy circuitBreakerPolicy = instanceIsolationHandler.matchPolicy(governanceRequest);
       if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
         return Response.builder().status(503)
@@ -288,9 +297,16 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
     } catch (Throwable e) {
       if (e instanceof CallNotPermittedException) {
         // when instance isolated, request to pull instances.
-        LOG.warn("instance isolated [{}]", governanceRequest.getInstanceId());
+        LOG.error("instance isolated [{}]", governanceRequest.getInstanceId());
         EventManager.post(new PullInstanceEvent());
+        return Response.builder().status(503).reason("instance isolated.").request(feignRequest).build();
       }
+
+      if (e instanceof BulkheadFullException) {
+        LOG.error("instance bulkhead is full [{}]", governanceRequest.getInstanceId());
+        return Response.builder().status(503).reason("instance bulkhead is full.").request(feignRequest).build();
+      }
+
       if (clientRecoverPolicy != null) {
         return clientRecoverPolicy.apply(e);
       }
@@ -312,6 +328,13 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
       return governanceRequest;
     } catch (MalformedURLException e) {
       return governanceRequest;
+    }
+  }
+
+  private void addInstanceBulkhead(DecorateCheckedSupplier<Response> dcs, GovernanceRequest governanceRequest) {
+    Bulkhead bulkhead = instanceBulkheadHandler.getActuator(governanceRequest);
+    if (bulkhead != null) {
+      dcs.withBulkhead(bulkhead);
     }
   }
 
