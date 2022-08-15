@@ -17,10 +17,8 @@
 
 package com.huaweicloud.governance.adapters.gateway;
 
-import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
+import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
-import org.apache.servicecomb.governance.policy.CircuitBreakerPolicy;
-import org.apache.servicecomb.service.center.client.DiscoveryEvents.PullInstanceEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
@@ -34,20 +32,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.huaweicloud.common.event.EventManager;
-
-import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
-import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
+import io.github.resilience4j.bulkhead.Bulkhead;
+import io.github.resilience4j.bulkhead.BulkheadFullException;
+import io.github.resilience4j.reactor.bulkhead.operator.BulkheadOperator;
 import reactor.core.publisher.Mono;
 
-public class InstanceIsolationGlobalFilter implements GlobalFilter, Ordered {
-  private static final Logger LOGGER = LoggerFactory.getLogger(InstanceIsolationGlobalFilter.class);
+public class InstanceBulkheadGlobalFilter implements GlobalFilter, Ordered {
+  private static final Logger LOGGER = LoggerFactory.getLogger(InstanceBulkheadGlobalFilter.class);
 
-  private final InstanceIsolationHandler isolationHandler;
+  private final InstanceBulkheadHandler instanceBulkheadHandler;
 
-  public InstanceIsolationGlobalFilter(InstanceIsolationHandler isolationHandler) {
-    this.isolationHandler = isolationHandler;
+  public InstanceBulkheadGlobalFilter(InstanceBulkheadHandler instanceBulkheadHandler) {
+    this.instanceBulkheadHandler = instanceBulkheadHandler;
   }
 
   @Override
@@ -56,14 +52,7 @@ public class InstanceIsolationGlobalFilter implements GlobalFilter, Ordered {
 
     Mono<Void> toRun = chain.filter(exchange);
 
-    CircuitBreakerPolicy circuitBreakerPolicy = isolationHandler.matchPolicy(governanceRequest);
-    if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
-      return Mono.error(new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
-          "instance isolated."));
-    }
-    if (circuitBreakerPolicy != null && !circuitBreakerPolicy.isForceClosed()) {
-      toRun = addInstanceIsolation(governanceRequest, toRun);
-    }
+    toRun = addInstanceBulkhead(governanceRequest, toRun);
     return toRun;
   }
 
@@ -82,17 +71,16 @@ public class InstanceIsolationGlobalFilter implements GlobalFilter, Ordered {
     return request;
   }
 
-  private Mono<Void> addInstanceIsolation(GovernanceRequest governanceRequest,
+  private Mono<Void> addInstanceBulkhead(GovernanceRequest governanceRequest,
       Mono<Void> toRun) {
-    CircuitBreaker circuitBreaker = isolationHandler.getActuator(governanceRequest);
+    Bulkhead bulkhead = instanceBulkheadHandler.getActuator(governanceRequest);
     Mono<Void> mono = toRun;
-    if (circuitBreaker != null) {
-      mono = toRun.transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
-          .onErrorResume(CallNotPermittedException.class, (t) -> {
-            LOGGER.error("instance isolated [{}]", governanceRequest.getInstanceId());
-            EventManager.post(new PullInstanceEvent());
+    if (bulkhead != null) {
+      mono = toRun.transformDeferred(BulkheadOperator.of(bulkhead))
+          .onErrorResume(BulkheadFullException.class, (t) -> {
+            LOGGER.error("bulkhead is full [{}]", governanceRequest.getInstanceId());
             return Mono.error(new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
-                "instance isolated.", t));
+                "bulkhead is full.", t));
           });
     }
     return mono;
@@ -100,6 +88,6 @@ public class InstanceIsolationGlobalFilter implements GlobalFilter, Ordered {
 
   @Override
   public int getOrder() {
-    return ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER + 100;
+    return ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER + 200;
   }
 }
