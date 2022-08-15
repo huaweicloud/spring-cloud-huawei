@@ -45,6 +45,12 @@ public class GovernanceProperties {
   public static final String WEBMVC_IDENTIFIER_RATE_LIMITING_ENABLED =
       PREFIX + "." + "webmvc.identifierRateLimiting.enabled";
 
+  public static final String WEBMVC_PUBLICKEY_CONSUMER_ENABLED = PREFIX + "." + "webmvc.publicKey.consumerEnabled";
+
+  public static final String WEBMVC_PUBLICKEY_PROVIDER_ENABLED = PREFIX + "." + "webmvc.publicKey.providerEnabled";
+
+  public static final String WEBMVC_PUBLICKEY_ACCSSCONTROL = PREFIX + "." + "webmvc.public-key.access-control";
+
   public static class Gateway {
     private RateLimiting rateLimiting = new RateLimiting();
 

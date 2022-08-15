@@ -31,6 +31,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.server.WebFilter;
 
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
+import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
 
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory"})
@@ -77,4 +78,12 @@ public class GatewayConfiguration {
       GovernanceProperties governanceProperties) {
     return new IdentifierRateLimitingWebFilter(identifierRateLimitingHandler, governanceProperties);
   }
+
+  @Bean
+  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED,
+      havingValue = "true")
+  public GatewayAddTokenContext gatewayAddTokenContext(RSAConsumerTokenManager authenticationTokenManager) {
+    return new GatewayAddTokenContext(authenticationTokenManager);
+  }
+  
 }
