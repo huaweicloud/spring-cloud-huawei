@@ -93,4 +93,16 @@ public class GovernanceController {
   public String identifierRateLimitingService() {
     return "success";
   }
+
+  @GetMapping("/feignInstanceBulkhead")
+  public String feignInstanceBulkhead() throws Exception {
+    Thread.sleep(500);
+    return "success";
+  }
+
+  @GetMapping("/restTemplateInstanceBulkhead")
+  public String restTemplateInstanceBulkhead() throws Exception {
+    Thread.sleep(500);
+    return "success";
+  }
 }
