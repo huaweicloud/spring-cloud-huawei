@@ -22,7 +22,6 @@ import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
 import org.apache.servicecomb.governance.handler.IdentifierRateLimitingHandler;
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -43,10 +42,8 @@ public class WebMvcConfiguration {
       havingValue = "true", matchIfMissing = true)
   public GovernanceRequestMappingHandlerAdapter governanceRequestMappingHandlerAdapter(
       RateLimitingHandler rateLimitingHandler, CircuitBreakerHandler circuitBreakerHandler,
-      BulkheadHandler bulkheadHandler,@Autowired(required = false) ProviderAuthHandler providerAuthHandler
-  ) {
-    return new GovernanceRequestMappingHandlerAdapter(rateLimitingHandler, circuitBreakerHandler, bulkheadHandler,
-        providerAuthHandler);
+      BulkheadHandler bulkheadHandler) {
+    return new GovernanceRequestMappingHandlerAdapter(rateLimitingHandler, circuitBreakerHandler, bulkheadHandler);
   }
 
   @Bean
@@ -67,15 +64,15 @@ public class WebMvcConfiguration {
 
   @Bean
   @RefreshScope
-  @ConditionalOnProperty(value = "spring.cloud.servicecomb.webmvc.governance.publickey.provider.enabled",
+  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED,
       havingValue = "true")
-  @ConfigurationProperties("servicecomb.publickey.accesscontrol")
+  @ConfigurationProperties(GovernanceProperties.WEBMVC_PUBLICKEY_ACCSSCONTROL)
   public BlackWhiteListProperties blackWhiteListProperties() {
     return new BlackWhiteListProperties();
   }
 
   @Bean
-  @ConditionalOnProperty(value = "spring.cloud.servicecomb.webmvc.governance.publickey.provider.enabled",
+  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED,
       havingValue = "true")
   public ProviderAuthPreHandlerInterceptor providerAuthPreHandlerInterceptor(ServiceCenterClient client,
       BlackWhiteListProperties blackWhiteListProperties) {

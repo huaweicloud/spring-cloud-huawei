@@ -22,13 +22,14 @@ import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.IdentifierRateLimitingHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
-import org.apache.servicecomb.governance.handler.RateLimitingHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.gateway.config.conditional.ConditionalOnEnabledFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.server.WebFilter;
 
+import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
 
 @Configuration
@@ -38,9 +39,9 @@ import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManage
 public class GatewayConfiguration {
   @Bean
   @ConditionalOnEnabledFilter
-  public GovernanceGatewayFilterFactory governanceGatewayFilterFactory(RateLimitingHandler rateLimitingHandler,
-      CircuitBreakerHandler circuitBreakerHandler, BulkheadHandler bulkheadHandler) {
-    return new GovernanceGatewayFilterFactory(rateLimitingHandler, circuitBreakerHandler, bulkheadHandler);
+  public GovernanceGatewayFilterFactory governanceGatewayFilterFactory(CircuitBreakerHandler circuitBreakerHandler,
+      BulkheadHandler bulkheadHandler) {
+    return new GovernanceGatewayFilterFactory(circuitBreakerHandler, bulkheadHandler);
   }
 
   @Bean
