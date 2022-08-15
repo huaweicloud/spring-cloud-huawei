@@ -140,4 +140,14 @@ public class GovernanceController {
     Thread.sleep(500);
     return "gatewayInstanceBulkhead";
   }
+
+  @RequestMapping("/feignInstanceBulkhead")
+  public String feignInstanceBulkhead() throws Exception {
+    return feignService.feignInstanceBulkhead();
+  }
+
+  @RequestMapping("/restTemplateInstanceBulkhead")
+  public String restTemplateInstanceBulkhead() throws Exception {
+    return restTemplate.getForObject("http://price/restTemplateInstanceBulkhead", String.class);
+  }
 }
