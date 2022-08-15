@@ -17,7 +17,6 @@
 
 package com.huaweicloud.governance.adapters.gateway;
 
-import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
 import org.apache.servicecomb.governance.handler.BulkheadHandler;
 import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
@@ -59,13 +58,6 @@ public class GatewayConfiguration {
       havingValue = "true", matchIfMissing = true)
   public FaultInjectionGlobalFilter faultInjectionGlobalFilter(FaultInjectionHandler handler) {
     return new FaultInjectionGlobalFilter(handler);
-  }
-
-  @Bean
-  @ConditionalOnProperty(value = "spring.cloud.servicecomb.webmvc.governance.publickey.consumer.enabled",
-      havingValue = "true")
-  public GatewayAddTokenContext gatewayAddTokenContext(RSAConsumerTokenManager authenticationTokenManager) {
-    return new GatewayAddTokenContext(authenticationTokenManager);
   }
 
   @Bean
