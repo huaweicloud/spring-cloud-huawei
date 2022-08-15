@@ -18,6 +18,10 @@
 package com.huaweicloud.common.configration.dynamic;
 
 public class GovernanceProperties {
+  public static final int WEB_FILTER_BULKHEAD_ORDER = -40000;
+
+  public static final int WEB_FILTER_CIRCUIT_BREAKER_ORDER = -45000;
+
   public static final int WEB_FILTER_RATE_LIMITING_ORDER = -50000;
 
   public static final int WEB_FILTER_IDENTIFIER_RATE_LIMITING_ORDER = -55000;
@@ -41,6 +45,12 @@ public class GovernanceProperties {
 
   public static final String WEBMVC_RATE_LIMITING_ENABLED =
       PREFIX + "." + "webmvc.rateLimiting.enabled";
+
+  public static final String WEBMVC_BULKHEAD_ENABLED =
+      PREFIX + "." + "webmvc.bulkhead.enabled";
+
+  public static final String WEBMVC_CIRCUIT_BREAKER_ENABLED =
+      PREFIX + "." + "webmvc.circuitBreaker.enabled";
 
   public static final String WEBMVC_IDENTIFIER_RATE_LIMITING_ENABLED =
       PREFIX + "." + "webmvc.identifierRateLimiting.enabled";
@@ -90,6 +100,10 @@ public class GovernanceProperties {
 
     private IdentifierRateLimiting identifierRateLimiting = new IdentifierRateLimiting();
 
+    private Bulkhead bulkhead = new Bulkhead();
+
+    private CircuitBreaker circuitBreaker = new CircuitBreaker();
+
     private InvocationMetrics invocationMetrics = new InvocationMetrics();
 
     public RateLimiting getRateLimiting() {
@@ -117,10 +131,50 @@ public class GovernanceProperties {
         InvocationMetrics invocationMetrics) {
       this.invocationMetrics = invocationMetrics;
     }
+
+    public Bulkhead getBulkhead() {
+      return bulkhead;
+    }
+
+    public void setBulkhead(Bulkhead bulkhead) {
+      this.bulkhead = bulkhead;
+    }
+
+    public CircuitBreaker getCircuitBreaker() {
+      return circuitBreaker;
+    }
+
+    public void setCircuitBreaker(CircuitBreaker circuitBreaker) {
+      this.circuitBreaker = circuitBreaker;
+    }
   }
 
   public static class RateLimiting {
     private int order = WEB_FILTER_RATE_LIMITING_ORDER;
+
+    public int getOrder() {
+      return order;
+    }
+
+    public void setOrder(int order) {
+      this.order = order;
+    }
+  }
+
+  public static class CircuitBreaker {
+    private int order = WEB_FILTER_CIRCUIT_BREAKER_ORDER;
+
+    public int getOrder() {
+      return order;
+    }
+
+    public void setOrder(int order) {
+      this.order = order;
+    }
+  }
+
+  public static class Bulkhead {
+    private int order = WEB_FILTER_BULKHEAD_ORDER;
 
     public int getOrder() {
       return order;

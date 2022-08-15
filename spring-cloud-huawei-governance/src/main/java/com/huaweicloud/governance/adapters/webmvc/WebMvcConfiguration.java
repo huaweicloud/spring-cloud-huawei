@@ -38,15 +38,6 @@ import com.huaweicloud.governance.authentication.provider.ProviderAuthPreHandler
 @ConditionalOnClass(name = "org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter")
 public class WebMvcConfiguration {
   @Bean
-  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_GOVERNANCE_ENABLED,
-      havingValue = "true", matchIfMissing = true)
-  public GovernanceRequestMappingHandlerAdapter governanceRequestMappingHandlerAdapter(
-      CircuitBreakerHandler circuitBreakerHandler,
-      BulkheadHandler bulkheadHandler) {
-    return new GovernanceRequestMappingHandlerAdapter(circuitBreakerHandler, bulkheadHandler);
-  }
-
-  @Bean
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_RATE_LIMITING_ENABLED,
       havingValue = "true", matchIfMissing = true)
   public FilterRegistrationBean<RateLimitingFilter> rateLimitingFilter(
@@ -74,6 +65,39 @@ public class WebMvcConfiguration {
     registrationBean.setFilter(new IdentifierRateLimitingFilter(identifierRateLimitingHandler));
     registrationBean.addUrlPatterns("/*");
     registrationBean.setOrder(governanceProperties.getWebmvc().getIdentifierRateLimiting().getOrder());
+
+    return registrationBean;
+  }
+
+
+  @Bean
+  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_CIRCUIT_BREAKER_ENABLED,
+      havingValue = "true", matchIfMissing = true)
+  public FilterRegistrationBean<CircuitBreakerFilter> circuitBreakerFilter(
+      CircuitBreakerHandler circuitBreakerHandler,
+      GovernanceProperties governanceProperties) {
+    FilterRegistrationBean<CircuitBreakerFilter> registrationBean
+        = new FilterRegistrationBean<>();
+
+    registrationBean.setFilter(new CircuitBreakerFilter(circuitBreakerHandler));
+    registrationBean.addUrlPatterns("/*");
+    registrationBean.setOrder(governanceProperties.getWebmvc().getCircuitBreaker().getOrder());
+
+    return registrationBean;
+  }
+
+  @Bean
+  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_BULKHEAD_ENABLED,
+      havingValue = "true", matchIfMissing = true)
+  public FilterRegistrationBean<BulkheadFilter> bulkheadFilter(
+      BulkheadHandler bulkheadHandler,
+      GovernanceProperties governanceProperties) {
+    FilterRegistrationBean<BulkheadFilter> registrationBean
+        = new FilterRegistrationBean<>();
+
+    registrationBean.setFilter(new BulkheadFilter(bulkheadHandler));
+    registrationBean.addUrlPatterns("/*");
+    registrationBean.setOrder(governanceProperties.getWebmvc().getBulkhead().getOrder());
 
     return registrationBean;
   }

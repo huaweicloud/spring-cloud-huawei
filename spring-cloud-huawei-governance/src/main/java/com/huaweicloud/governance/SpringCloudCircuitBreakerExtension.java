@@ -37,9 +37,19 @@ public class SpringCloudCircuitBreakerExtension extends AbstractCircuitBreakerEx
 
   @Override
   public boolean isFailedResult(Throwable e) {
-    if (e instanceof RuntimeException) {
+    if (isRuntimeException(e)) {
       return true;
     }
     return super.isFailedResult(e);
+  }
+
+  private boolean isRuntimeException(Throwable e) {
+    if (e == null) {
+      return false;
+    }
+    if (e instanceof RuntimeException) {
+      return true;
+    }
+    return isRuntimeException(e.getCause());
   }
 }
