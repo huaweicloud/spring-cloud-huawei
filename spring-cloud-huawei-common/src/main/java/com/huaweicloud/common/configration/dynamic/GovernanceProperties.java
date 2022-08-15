@@ -39,6 +39,9 @@ public class GovernanceProperties {
 
   public static final String WEBMVC_GOVERNANCE_ENABLED = PREFIX + "." + "webmvc.governance.enabled";
 
+  public static final String WEBMVC_RATE_LIMITING_ENABLED =
+      PREFIX + "." + "webmvc.rateLimiting.enabled";
+
   public static final String WEBMVC_IDENTIFIER_RATE_LIMITING_ENABLED =
       PREFIX + "." + "webmvc.identifierRateLimiting.enabled";
 
