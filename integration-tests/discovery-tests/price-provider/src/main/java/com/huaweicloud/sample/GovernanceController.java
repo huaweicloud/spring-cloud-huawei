@@ -88,4 +88,9 @@ public class GovernanceController {
   public String testRateLimitForService() {
     return "success";
   }
+
+  @GetMapping("/rate/identifierRateLimitingService")
+  public String identifierRateLimitingService() {
+    return "success";
+  }
 }

@@ -294,4 +294,40 @@ public class GovernanceControllerIT {
     Assertions.assertFalse(notExpectedFailed.get());
     Assertions.assertTrue(successCount.get() >= 2);
   }
+
+  @Test
+  public void testIdentifierRateLimitingService() throws Exception {
+    CountDownLatch latch = new CountDownLatch(100);
+    AtomicBoolean expectedFailed = new AtomicBoolean(false);
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+
+    for (int i = 0; i < 10; i++) {
+      for (int j = 0; j < 10; j++) {
+        String name = "t-" + i + "-" + j;
+        new Thread(name) {
+          public void run() {
+            try {
+              String result = template.getForObject(orderServiceUrl + "/govern/identifierRateLimitingService",
+                  String.class);
+              if (!"success".equals(result)) {
+                notExpectedFailed.set(true);
+              }
+            } catch (Exception e) {
+              // client 429 error will report 500 error by provider
+              if (!(e.getMessage().contains("500") && e.getMessage().contains("identifierRateLimitingService"))) {
+                notExpectedFailed.set(true);
+              }
+              expectedFailed.set(true);
+            }
+            latch.countDown();
+          }
+        }.start();
+      }
+      Thread.sleep(100);
+    }
+
+    latch.await(20, TimeUnit.SECONDS);
+    Assertions.assertTrue(expectedFailed.get());
+    Assertions.assertFalse(notExpectedFailed.get());
+  }
 }
