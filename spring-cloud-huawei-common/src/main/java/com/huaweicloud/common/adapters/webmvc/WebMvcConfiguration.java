@@ -21,12 +21,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
+import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.common.metrics.InvocationMetrics;
 
 @Configuration
@@ -63,17 +65,33 @@ public class WebMvcConfiguration {
   }
 
   @Bean
-  public PreHandlerInterceptor deserializeContextPreHandlerInterceptor(ContextProperties contextProperties) {
-    return new DeserializeContextPreHandlerInterceptor(contextProperties);
-  }
-
-  @Bean
-  public PreHandlerInterceptor metricsPreHandlerInterceptor() {
-    return new MetricsPreHandlerInterceptor();
-  }
-
-  @Bean
   public PreHandlerInterceptor traceIdPreHandlerInterceptor(ContextProperties contextProperties) {
     return new TraceIdPreHandlerInterceptor(contextProperties);
+  }
+
+  @Bean
+  public FilterRegistrationBean<InvocationMetricsFilter> invocationMetricsFilter(
+      InvocationMetrics invocationMetrics, GovernanceProperties governanceProperties) {
+    FilterRegistrationBean<InvocationMetricsFilter> registrationBean
+        = new FilterRegistrationBean<>();
+
+    registrationBean.setFilter(new InvocationMetricsFilter(invocationMetrics));
+    registrationBean.addUrlPatterns("/*");
+    registrationBean.setOrder(governanceProperties.getWebmvc().getInvocationMetrics().getOrder());
+
+    return registrationBean;
+  }
+
+  @Bean
+  public FilterRegistrationBean<DeserializeContextFilter> deserializeContextFilter(
+      ContextProperties contextProperties) {
+    FilterRegistrationBean<DeserializeContextFilter> registrationBean
+        = new FilterRegistrationBean<>();
+
+    registrationBean.setFilter(new DeserializeContextFilter(contextProperties));
+    registrationBean.addUrlPatterns("/*");
+    registrationBean.setOrder(Integer.MIN_VALUE);
+
+    return registrationBean;
   }
 }
