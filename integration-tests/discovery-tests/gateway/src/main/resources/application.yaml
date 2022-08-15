@@ -49,6 +49,7 @@ servicecomb:
       matches:
         - apiPath:
             prefix: "/"
+    # rate limiting apiPath have service name
     demo-rateLimiting: |
       matches:
         - apiPath:
@@ -57,10 +58,15 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/identifierRateLimiting"
+    # instance isolation and instance bulkhead apiPath do not have service name
     gatewayIsolationForceOpenFeign: |
       matches:
         - apiPath:
             prefix: "/govern/gatewayIsolationForceOpenFeign"
+    gatewayInstanceBulkhead: |
+      matches:
+        - apiPath:
+            exact: "/govern/gatewayInstanceBulkhead"
     faultInjection: |
       matches:
         - apiPath:
@@ -82,6 +88,10 @@ servicecomb:
     gatewayIsolationForceOpenFeign: |
       forceOpen: true
       order: 1
+  instanceBulkhead:
+    gatewayInstanceBulkhead: |
+      maxConcurrentCalls: 2
+      maxWaitDuration: 100
   faultInjection:
     faultInjection: |
       type: delay
