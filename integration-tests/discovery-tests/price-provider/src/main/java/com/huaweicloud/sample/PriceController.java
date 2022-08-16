@@ -43,15 +43,15 @@ public class PriceController {
   public boolean testMicroserviceInfoCorrect() {
     Microservice microservice = serviceCombRegistration.getMicroservice();
     assertTrue(microservice.getAppId().equals("default"));
-    assertTrue( microservice.getServiceName().equals("price"));
-    assertTrue( microservice.getVersion().equals("0.0.1"));
-    assertTrue( microservice.getProperties().get("x-test").equals("value"));
-    assertTrue( microservice.getProperties().get("x-test2").equals("value2"));
+    assertTrue(microservice.getServiceName().equals("price"));
+    assertTrue(microservice.getVersion().equals("0.0.1"));
+    assertTrue(microservice.getProperties().get("x-test").equals("value"));
+    assertTrue(microservice.getProperties().get("x-test2").equals("value2"));
 
     MicroserviceInstance microserviceInstance = serviceCombRegistration.getMicroserviceInstance();
-    assertTrue( microserviceInstance.getProperties().get("x-test").equals("value"));
-    assertTrue( microserviceInstance.getProperties().get("x-test2").equals("value2"));
-    assertTrue( microserviceInstance.getStatus() == null);
+    assertTrue(microserviceInstance.getProperties().get("x-test").equals("value"));
+    assertTrue(microserviceInstance.getProperties().get("x-test2").equals("value2"));
+    assertTrue(microserviceInstance.getStatus() == null);
     return true;
   }
 
@@ -89,5 +89,10 @@ public class PriceController {
       return null;
     }
     return "success";
+  }
+
+  @RequestMapping("/priceBalance")
+  public String priceBalance(@RequestParam("id") String id) {
+    return id;
   }
 }

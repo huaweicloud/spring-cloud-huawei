@@ -47,4 +47,7 @@ public interface FeignService {
 
   @GetMapping("/feignInstanceBulkhead")
   String feignInstanceBulkhead();
+
+  @RequestMapping("/loadbalance")
+  String loadbalabce();
 }

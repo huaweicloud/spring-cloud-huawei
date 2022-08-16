@@ -17,6 +17,7 @@
 
 package com.huaweicloud.common.adapters.loadbalancer;
 
+import org.apache.servicecomb.governance.handler.LoadBalanceHandler;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -64,11 +65,12 @@ public class DecorateLoadBalancerClientConfiguration {
 
   @Bean
   public ReactorLoadBalancer<ServiceInstance> reactorServiceInstanceLoadBalancer(Environment environment,
-      LoadBalancerClientFactory loadBalancerClientFactory, LoadBalancerProperties loadBalancerProperties) {
+      LoadBalancerClientFactory loadBalancerClientFactory, LoadBalancerProperties loadBalancerProperties,
+      LoadBalanceHandler loadBalanceHandler) {
     String name = environment.getProperty(LoadBalancerClientFactory.PROPERTY_NAME);
     return new RetryAwareLoadBalancer(
         loadBalancerClientFactory.getLazyProvider(
-            name, ServiceInstanceListSupplier.class), name, loadBalancerProperties);
+            name, ServiceInstanceListSupplier.class), name, loadBalancerProperties, loadBalanceHandler);
   }
 
   @Configuration(proxyBeanMethods = false)
