@@ -17,7 +17,7 @@
 
 package com.huaweicloud.governance.adapters.gateway;
 
-import org.apache.servicecomb.governance.handler.IdentifierRateLimitingHandler;
+import org.apache.servicecomb.governance.handler.BulkheadHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,21 +29,20 @@ import org.springframework.web.server.WebFilterChain;
 
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 
-import io.github.resilience4j.ratelimiter.RateLimiter;
-import io.github.resilience4j.ratelimiter.RequestNotPermitted;
-import io.github.resilience4j.reactor.ratelimiter.operator.RateLimiterOperator;
+import io.github.resilience4j.bulkhead.Bulkhead;
+import io.github.resilience4j.bulkhead.BulkheadFullException;
+import io.github.resilience4j.reactor.bulkhead.operator.BulkheadOperator;
 import reactor.core.publisher.Mono;
 
-public class IdentifierRateLimitingWebFilter implements OrderedWebFilter {
-  private static final Logger LOGGER = LoggerFactory.getLogger(IdentifierRateLimitingWebFilter.class);
+public class BulkheadWebFilter implements OrderedWebFilter {
+  private static final Logger LOGGER = LoggerFactory.getLogger(BulkheadWebFilter.class);
 
-  private final IdentifierRateLimitingHandler identifierRateLimitingHandler;
+  private final BulkheadHandler bulkheadHandler;
 
   private final GovernanceProperties governanceProperties;
 
-  public IdentifierRateLimitingWebFilter(IdentifierRateLimitingHandler identifierRateLimitingHandler,
-      GovernanceProperties governanceProperties) {
-    this.identifierRateLimitingHandler = identifierRateLimitingHandler;
+  public BulkheadWebFilter(BulkheadHandler bulkheadHandler, GovernanceProperties governanceProperties) {
+    this.bulkheadHandler = bulkheadHandler;
     this.governanceProperties = governanceProperties;
   }
 
@@ -53,18 +52,19 @@ public class IdentifierRateLimitingWebFilter implements OrderedWebFilter {
 
     Mono<Void> toRun = chain.filter(exchange);
 
-    return addIdentifierRateLimiter(governanceRequest, toRun);
+    return addBulkhead(governanceRequest, toRun);
   }
 
-  private Mono<Void> addIdentifierRateLimiter(GovernanceRequest governanceRequest, Mono<Void> toRun) {
-    RateLimiter rateLimiter = identifierRateLimitingHandler.getActuator(governanceRequest);
+  private Mono<Void> addBulkhead(GovernanceRequest governanceRequest, Mono<Void> toRun) {
+    Bulkhead bulkhead = bulkheadHandler.getActuator(governanceRequest);
     Mono<Void> mono = toRun;
-    if (rateLimiter != null) {
-      mono = toRun.transform(RateLimiterOperator.of(rateLimiter))
-          .onErrorResume(RequestNotPermitted.class, (t) -> {
-            LOGGER.warn("the request is rate limited by policy : {}",
+    if (bulkhead != null) {
+      mono = toRun.transform(BulkheadOperator.of(bulkhead))
+          .onErrorResume(BulkheadFullException.class, (t) -> {
+            LOGGER.warn("bulkhead is full and does not permit further calls by policy : {}",
                 t.getMessage());
-            return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "rate limited.", t));
+            return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
+                "bulkhead is full and does not permit further calls.", t));
           });
     }
     return mono;
@@ -72,6 +72,6 @@ public class IdentifierRateLimitingWebFilter implements OrderedWebFilter {
 
   @Override
   public int getOrder() {
-    return governanceProperties.getGateway().getIdentifierRateLimiting().getOrder();
+    return governanceProperties.getGateway().getBulkhead().getOrder();
   }
 }

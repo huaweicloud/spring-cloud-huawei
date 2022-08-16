@@ -17,7 +17,7 @@
 
 package com.huaweicloud.governance.adapters.gateway;
 
-import org.apache.servicecomb.governance.handler.IdentifierRateLimitingHandler;
+import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,21 +29,21 @@ import org.springframework.web.server.WebFilterChain;
 
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 
-import io.github.resilience4j.ratelimiter.RateLimiter;
-import io.github.resilience4j.ratelimiter.RequestNotPermitted;
-import io.github.resilience4j.reactor.ratelimiter.operator.RateLimiterOperator;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.reactor.circuitbreaker.operator.CircuitBreakerOperator;
 import reactor.core.publisher.Mono;
 
-public class IdentifierRateLimitingWebFilter implements OrderedWebFilter {
-  private static final Logger LOGGER = LoggerFactory.getLogger(IdentifierRateLimitingWebFilter.class);
+public class CircuitBreakerWebFilter implements OrderedWebFilter {
+  private static final Logger LOGGER = LoggerFactory.getLogger(CircuitBreakerWebFilter.class);
 
-  private final IdentifierRateLimitingHandler identifierRateLimitingHandler;
+  private final CircuitBreakerHandler circuitBreakerHandler;
 
   private final GovernanceProperties governanceProperties;
 
-  public IdentifierRateLimitingWebFilter(IdentifierRateLimitingHandler identifierRateLimitingHandler,
+  public CircuitBreakerWebFilter(CircuitBreakerHandler circuitBreakerHandler,
       GovernanceProperties governanceProperties) {
-    this.identifierRateLimitingHandler = identifierRateLimitingHandler;
+    this.circuitBreakerHandler = circuitBreakerHandler;
     this.governanceProperties = governanceProperties;
   }
 
@@ -53,18 +53,19 @@ public class IdentifierRateLimitingWebFilter implements OrderedWebFilter {
 
     Mono<Void> toRun = chain.filter(exchange);
 
-    return addIdentifierRateLimiter(governanceRequest, toRun);
+    return addCircuitBreaker(governanceRequest, toRun);
   }
 
-  private Mono<Void> addIdentifierRateLimiter(GovernanceRequest governanceRequest, Mono<Void> toRun) {
-    RateLimiter rateLimiter = identifierRateLimitingHandler.getActuator(governanceRequest);
+  private Mono<Void> addCircuitBreaker(GovernanceRequest governanceRequest, Mono<Void> toRun) {
+    CircuitBreaker circuitBreaker = circuitBreakerHandler.getActuator(governanceRequest);
     Mono<Void> mono = toRun;
-    if (rateLimiter != null) {
-      mono = toRun.transform(RateLimiterOperator.of(rateLimiter))
-          .onErrorResume(RequestNotPermitted.class, (t) -> {
-            LOGGER.warn("the request is rate limited by policy : {}",
+    if (circuitBreaker != null) {
+      mono = toRun.transform(CircuitBreakerOperator.of(circuitBreaker))
+          .onErrorResume(CallNotPermittedException.class, (t) -> {
+            LOGGER.warn("circuitBreaker is open by policy : {}",
                 t.getMessage());
-            return Mono.error(new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "rate limited.", t));
+            return Mono.error(new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+                "circuitBreaker is open.", t));
           });
     }
     return mono;
@@ -72,6 +73,6 @@ public class IdentifierRateLimitingWebFilter implements OrderedWebFilter {
 
   @Override
   public int getOrder() {
-    return governanceProperties.getGateway().getIdentifierRateLimiting().getOrder();
+    return governanceProperties.getGateway().getCircuitBreaker().getOrder();
   }
 }

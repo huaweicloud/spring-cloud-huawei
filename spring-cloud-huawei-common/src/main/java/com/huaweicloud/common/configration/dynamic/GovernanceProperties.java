@@ -34,6 +34,10 @@ public class GovernanceProperties {
 
   public static final String GATEWAY_RATE_LIMITING_ENABLED = PREFIX + "." + "gateway.rateLimiting.enabled";
 
+  public static final String GATEWAY_BULKHEAD_ENABLED = PREFIX + "." + "gateway.bulkhead.enabled";
+
+  public static final String GATEWAY_CIRCUIT_BREAKER_ENABLED = PREFIX + "." + "gateway.circuitBreaker.enabled";
+
   public static final String GATEWAY_IDENTIFIER_RATE_LIMITING_ENABLED =
       PREFIX + "." + "gateway.identifierRateLimiting.enabled";
 
@@ -66,6 +70,10 @@ public class GovernanceProperties {
 
     private IdentifierRateLimiting identifierRateLimiting = new IdentifierRateLimiting();
 
+    private Bulkhead bulkhead = new Bulkhead();
+
+    private CircuitBreaker circuitBreaker = new CircuitBreaker();
+
     private InvocationMetrics invocationMetrics = new InvocationMetrics();
 
     public RateLimiting getRateLimiting() {
@@ -83,6 +91,22 @@ public class GovernanceProperties {
     public void setIdentifierRateLimiting(
         IdentifierRateLimiting identifierRateLimiting) {
       this.identifierRateLimiting = identifierRateLimiting;
+    }
+
+    public Bulkhead getBulkhead() {
+      return bulkhead;
+    }
+
+    public void setBulkhead(Bulkhead bulkhead) {
+      this.bulkhead = bulkhead;
+    }
+
+    public CircuitBreaker getCircuitBreaker() {
+      return circuitBreaker;
+    }
+
+    public void setCircuitBreaker(CircuitBreaker circuitBreaker) {
+      this.circuitBreaker = circuitBreaker;
     }
 
     public InvocationMetrics getInvocationMetrics() {

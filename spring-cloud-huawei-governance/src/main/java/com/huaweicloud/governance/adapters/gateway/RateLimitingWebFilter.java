@@ -48,19 +48,11 @@ public class RateLimitingWebFilter implements OrderedWebFilter {
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-    GovernanceRequest governanceRequest = createGovernanceRequest(exchange);
+    GovernanceRequest governanceRequest = GatewayUtils.createProviderGovernanceRequest(exchange);
 
     Mono<Void> toRun = chain.filter(exchange);
 
     return addRateLimiter(governanceRequest, toRun);
-  }
-
-  private GovernanceRequest createGovernanceRequest(ServerWebExchange exchange) {
-    GovernanceRequest request = new GovernanceRequest();
-    request.setHeaders(exchange.getRequest().getHeaders().toSingleValueMap());
-    request.setMethod(exchange.getRequest().getMethodValue());
-    request.setUri(exchange.getRequest().getURI().getPath());
-    return request;
   }
 
   private Mono<Void> addRateLimiter(GovernanceRequest governanceRequest, Mono<Void> toRun) {
