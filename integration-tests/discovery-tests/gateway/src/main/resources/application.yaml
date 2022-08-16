@@ -29,7 +29,6 @@ spring:
           predicates:
             - Path=/gateway/**
           filters:
-            - name: governance
             - name: Retry
               args:
                 retries: 3
@@ -58,6 +57,14 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/identifierRateLimiting"
+    testCircuitBreaker: |
+      matches:
+        - apiPath:
+            exact: "/testCircuitBreaker"
+    testBulkhead: |
+      matches:
+        - apiPath:
+            exact: "/testBulkhead"
     # instance isolation and instance bulkhead apiPath do not have service name
     gatewayIsolationForceOpenFeign: |
       matches:
@@ -74,6 +81,18 @@ servicecomb:
   rateLimiting:
     demo-rateLimiting: |
       rate: 10
+  circuitBreaker:
+    testCircuitBreaker: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      slidingWindowType: COUNT_BASED
+      failureRateThreshold: 20
+      waitDurationInOpenState: 1000
+      permittedNumberOfCallsInHalfOpenState: 10
+  bulkhead:
+    testBulkhead: |
+      maxConcurrentCalls: 2
+      maxWaitDuration: 100
   identifierRateLimiting:
     demo-identifierRateLimiting: |
       rate: 2

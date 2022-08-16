@@ -17,6 +17,8 @@
 
 package com.huaweicloud.samples;
 
+import java.time.Duration;
+
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,10 +27,30 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class GatewayController {
+  private int count = 0;
+
   @GetMapping(
       path = "/identifierRateLimiting",
       produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<String> identifierRateLimiting() {
     return Mono.just("OK");
+  }
+
+  @GetMapping(
+      path = "/testCircuitBreaker",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<String> testCircuitBreaker() {
+    count++;
+    if (count % 3 != 0) {
+      return Mono.just("ok");
+    }
+    throw new RuntimeException("test error");
+  }
+
+  @GetMapping(
+      path = "/testBulkhead",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<String> testBulkhead() {
+    return Mono.delay(Duration.ofMillis(500)).then(Mono.just("ok"));
   }
 }
