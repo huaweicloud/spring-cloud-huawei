@@ -41,13 +41,6 @@ import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManage
 public class GatewayConfiguration {
   @Bean
   @ConditionalOnEnabledFilter
-  public GovernanceGatewayFilterFactory governanceGatewayFilterFactory(CircuitBreakerHandler circuitBreakerHandler,
-      BulkheadHandler bulkheadHandler) {
-    return new GovernanceGatewayFilterFactory(circuitBreakerHandler, bulkheadHandler);
-  }
-
-  @Bean
-  @ConditionalOnEnabledFilter
   @ConditionalOnProperty(value = GovernanceProperties.GATEWAY_INSTANCE_ISOLATION_ENABLED,
       havingValue = "true", matchIfMissing = true)
   public InstanceIsolationGlobalFilter instanceIsolationGlobalFilter(InstanceIsolationHandler handler) {
@@ -77,6 +70,24 @@ public class GatewayConfiguration {
   public WebFilter rateLimitingWebFilter(RateLimitingHandler rateLimitingHandler,
       GovernanceProperties governanceProperties) {
     return new RateLimitingWebFilter(rateLimitingHandler, governanceProperties);
+  }
+
+  @Bean
+  @ConditionalOnEnabledFilter
+  @ConditionalOnProperty(value = GovernanceProperties.GATEWAY_BULKHEAD_ENABLED,
+      havingValue = "true", matchIfMissing = true)
+  public WebFilter bulkheadWebFilter(BulkheadHandler bulkheadHandler,
+      GovernanceProperties governanceProperties) {
+    return new BulkheadWebFilter(bulkheadHandler, governanceProperties);
+  }
+
+  @Bean
+  @ConditionalOnEnabledFilter
+  @ConditionalOnProperty(value = GovernanceProperties.GATEWAY_CIRCUIT_BREAKER_ENABLED,
+      havingValue = "true", matchIfMissing = true)
+  public WebFilter circuitBreakerWebFilter(CircuitBreakerHandler circuitBreakerHandler,
+      GovernanceProperties governanceProperties) {
+    return new CircuitBreakerWebFilter(circuitBreakerHandler, governanceProperties);
   }
 
   @Bean
