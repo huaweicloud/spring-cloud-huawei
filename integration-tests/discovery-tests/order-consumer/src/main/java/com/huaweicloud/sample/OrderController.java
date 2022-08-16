@@ -152,4 +152,10 @@ public class OrderController {
   public String getCrossAppOrder(@RequestParam("id") String id) {
     return restTemplate.getForObject("http://account-app.account/account?id=" + id, String.class);
   }
+
+  @RequestMapping("/orderBal")
+  public String orderBal(@RequestParam("id") String id) {
+    String callServiceResult = restTemplate.getForObject("http://price/priceBalance?id=" + id, String.class);
+    return callServiceResult;
+  }
 }

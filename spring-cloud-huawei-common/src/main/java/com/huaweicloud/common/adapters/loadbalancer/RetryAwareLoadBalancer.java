@@ -20,10 +20,17 @@ package com.huaweicloud.common.adapters.loadbalancer;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.servicecomb.governance.handler.LoadBalanceHandler;
+import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.loadbanlance.LoadBalance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.loadbalancer.DefaultRequestContext;
 import org.springframework.cloud.client.loadbalancer.DefaultResponse;
 import org.springframework.cloud.client.loadbalancer.Request;
+import org.springframework.cloud.client.loadbalancer.RequestData;
 import org.springframework.cloud.client.loadbalancer.Response;
 import org.springframework.cloud.loadbalancer.core.RandomLoadBalancer;
 import org.springframework.cloud.loadbalancer.core.ReactorServiceInstanceLoadBalancer;
@@ -40,25 +47,35 @@ import reactor.core.publisher.Mono;
  * load balancers to support retry on same and on next
  */
 public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalancer {
+  private static final Logger LOGGER = LoggerFactory.getLogger(RetryAwareLoadBalancer.class);
+
   private final String serviceId;
 
   private final ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider;
 
   private final LoadBalancerProperties loadBalancerProperties;
 
+  private final LoadBalanceHandler loadBalanceHandler;
+
   private final Map<String, ReactorServiceInstanceLoadBalancer> loadBalancers = new ConcurrentHashMap<>();
 
   public RetryAwareLoadBalancer(ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider,
-      String serviceId, LoadBalancerProperties loadBalancerProperties) {
+      String serviceId, LoadBalancerProperties loadBalancerProperties, LoadBalanceHandler loadBalanceHandler) {
     this.serviceInstanceListSupplierProvider = serviceInstanceListSupplierProvider;
     this.serviceId = serviceId;
     this.loadBalancerProperties = loadBalancerProperties;
+    this.loadBalanceHandler = loadBalanceHandler;
   }
 
   @Override
   @SuppressWarnings("rawtypes")
   public Mono<Response<ServiceInstance>> choose(Request request) {
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
+    GovernanceRequest governanceRequest = convert(request);
+    LoadBalance loadBalance = loadBalanceHandler.getActuator(governanceRequest);
+    if (loadBalance != null) {
+      loadBalancerProperties.setRule(loadBalance.getRule());
+    }
     if (context.getLocalContext(RetryContext.RETRY_CONTEXT) == null) {
       // gateway do not use RetryContext
       ReactorServiceInstanceLoadBalancer loadBalancer = loadBalancers.computeIfAbsent(loadBalancerProperties.getRule(),
@@ -88,5 +105,34 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
           }
         });
     return loadBalancer.choose(request).doOnSuccess(r -> retryContext.setLastServer(r.getServer()));
+  }
+
+  @SuppressWarnings("rawtypes")
+  private GovernanceRequest convert(Request request) {
+    GovernanceRequest governanceRequest = new GovernanceRequest();
+    Object context = request.getContext();
+    if (context instanceof DefaultRequestContext) {
+      Object clientRequest = ((DefaultRequestContext) context).getClientRequest();
+      if (clientRequest instanceof RequestData) {
+        RequestData requestData = (RequestData) clientRequest;
+        governanceRequest.setUri(requestData.getUrl().getPath());
+        governanceRequest.setMethod(requestData.getHttpMethod().name());
+        governanceRequest.setHeaders(requestData.getHeaders().toSingleValueMap());
+        governanceRequest.setServiceName(serviceId);
+      } else if (clientRequest instanceof DecorateLoadBalancerRequest) {
+        DecorateLoadBalancerRequest requestData = (DecorateLoadBalancerRequest) clientRequest;
+        governanceRequest.setUri((requestData.getRequest().getURI().getPath()));
+        governanceRequest.setMethod(requestData.getRequest().getMethod().name());
+        governanceRequest.setHeaders(
+            requestData.getRequest().getHeaders().toSingleValueMap());
+        String serviceName = requestData.getRequest().getURI().getHost();
+        governanceRequest.setServiceName(serviceName);
+      } else {
+        LOGGER.warn("not implemented client request {}.", clientRequest == null ? null : clientRequest.getClass());
+      }
+    } else {
+      LOGGER.warn("not implemented context {}.", context == null ? null : context.getClass());
+    }
+    return governanceRequest;
   }
 }

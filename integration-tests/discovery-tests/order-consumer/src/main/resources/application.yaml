@@ -77,6 +77,14 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/govern/bulkhead"
+    demo-loadbalance: |
+      matches:
+        - apiPath:
+            exact: "/priceBalance"
+    demo-loadbalance_feign: |
+      matches:
+        - apiPath:
+            exact: "/loadbalance"
   rateLimiting:
     demo-rateLimiting: |
       rate: 10
@@ -118,3 +126,9 @@ servicecomb:
       fallbackType: ReturnNull
       type: abort
       percentage: 100
+  loadbalance:
+    demo-loadbalance: |
+      rule: RoundRobin
+    demo-loadbalance_feign: |
+      rule: Random
+
