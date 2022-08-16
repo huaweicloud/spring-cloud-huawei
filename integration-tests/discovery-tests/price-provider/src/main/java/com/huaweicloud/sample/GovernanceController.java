@@ -105,4 +105,9 @@ public class GovernanceController {
     Thread.sleep(500);
     return "success";
   }
+
+  @RequestMapping("/loadbalance")
+  public String loadbalance() {
+    return "I am price";
+  }
 }

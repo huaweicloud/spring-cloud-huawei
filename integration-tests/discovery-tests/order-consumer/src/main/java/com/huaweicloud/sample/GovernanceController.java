@@ -150,4 +150,8 @@ public class GovernanceController {
   public String restTemplateInstanceBulkhead() throws Exception {
     return restTemplate.getForObject("http://price/restTemplateInstanceBulkhead", String.class);
   }
+  @RequestMapping("/loadbalance")
+  public String loadbalance() {
+    return feignService.loadbalabce();
+  }
 }
