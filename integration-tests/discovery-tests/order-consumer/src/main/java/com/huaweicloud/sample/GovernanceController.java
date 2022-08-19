@@ -18,11 +18,15 @@
 package com.huaweicloud.sample;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping(path = "govern")
@@ -33,6 +37,10 @@ public class GovernanceController {
   private final FeignService feignService;
 
   private int count = 0;
+
+  private int gatewayIsolationCounter = 0;
+
+  private int retryCounter = 0;
 
   @Autowired
   public GovernanceController(RestTemplate restTemplate, FeignService feignService) {
@@ -96,6 +104,20 @@ public class GovernanceController {
     return feignService.retry(invocationID);
   }
 
+  @GetMapping(
+      path = "/gatewayRetry",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<ResponseEntity<String>> gatewayRetry() {
+    ResponseEntity<String> result;
+    if (retryCounter % 2 == 0) {
+      result = ResponseEntity.status(503).body("fail");
+    } else {
+      result = ResponseEntity.status(200).body("ok");
+    }
+    retryCounter++;
+    return Mono.just(result);
+  }
+
   @RequestMapping("/circuitBreaker")
   public String circuitBreaker() throws Exception {
     count++;
@@ -125,6 +147,15 @@ public class GovernanceController {
     return "success";
   }
 
+  @RequestMapping("/testGatewayIsolationErrorCode")
+  public ResponseEntity<String> testGatewayIsolationErrorCode() {
+    gatewayIsolationCounter++;
+    if (gatewayIsolationCounter % 3 != 0) {
+      return ResponseEntity.status(200).body("ok");
+    }
+    return ResponseEntity.status(503).body("fail");
+  }
+
   @GetMapping("/rate/testRateLimitForService")
   public String testRateLimitForService() {
     for (int i = 0; i <= 10; i++) {
@@ -150,6 +181,7 @@ public class GovernanceController {
   public String restTemplateInstanceBulkhead() throws Exception {
     return restTemplate.getForObject("http://price/restTemplateInstanceBulkhead", String.class);
   }
+
   @RequestMapping("/loadbalance")
   public String loadbalance() {
     return feignService.loadbalabce();

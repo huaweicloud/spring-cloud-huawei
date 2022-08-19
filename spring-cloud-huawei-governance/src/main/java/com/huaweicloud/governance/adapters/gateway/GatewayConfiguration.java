@@ -24,9 +24,11 @@ import org.apache.servicecomb.governance.handler.IdentifierRateLimitingHandler;
 import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
+import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.gateway.config.conditional.ConditionalOnEnabledFilter;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.server.WebFilter;
@@ -43,7 +45,7 @@ public class GatewayConfiguration {
   @ConditionalOnEnabledFilter
   @ConditionalOnProperty(value = GovernanceProperties.GATEWAY_INSTANCE_ISOLATION_ENABLED,
       havingValue = "true", matchIfMissing = true)
-  public InstanceIsolationGlobalFilter instanceIsolationGlobalFilter(InstanceIsolationHandler handler) {
+  public GlobalFilter instanceIsolationGlobalFilter(InstanceIsolationHandler handler) {
     return new InstanceIsolationGlobalFilter(handler);
   }
 
@@ -51,7 +53,7 @@ public class GatewayConfiguration {
   @ConditionalOnEnabledFilter
   @ConditionalOnProperty(value = GovernanceProperties.GATEWAY_INSTANCE_BULKHEAD_ENABLED,
       havingValue = "true", matchIfMissing = true)
-  public InstanceBulkheadGlobalFilter instanceBulkheadGlobalFilter(InstanceBulkheadHandler handler) {
+  public GlobalFilter instanceBulkheadGlobalFilter(InstanceBulkheadHandler handler) {
     return new InstanceBulkheadGlobalFilter(handler);
   }
 
@@ -59,8 +61,16 @@ public class GatewayConfiguration {
   @ConditionalOnEnabledFilter
   @ConditionalOnProperty(value = GovernanceProperties.GATEWAY_FAULT_INJECTION_ENABLED,
       havingValue = "true", matchIfMissing = true)
-  public FaultInjectionGlobalFilter faultInjectionGlobalFilter(FaultInjectionHandler handler) {
+  public GlobalFilter faultInjectionGlobalFilter(FaultInjectionHandler handler) {
     return new FaultInjectionGlobalFilter(handler);
+  }
+
+  @Bean
+  @ConditionalOnEnabledFilter
+  @ConditionalOnProperty(value = GovernanceProperties.GATEWAY_RETRY_ENABLED,
+      havingValue = "true", matchIfMissing = true)
+  public GlobalFilter retryGlobalFilter(RetryHandler retryHandler) {
+    return new RetryGlobalFilter(retryHandler);
   }
 
   @Bean
