@@ -24,7 +24,7 @@ import java.util.Map;
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.apache.servicecomb.http.client.auth.RequestAuthHeaderProvider;
 import org.apache.servicecomb.http.client.common.HttpConfiguration.SSLProperties;
-import org.apache.servicecomb.service.center.client.AddressManager;
+import org.apache.servicecomb.service.center.client.ServiceCenterAddressManager;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.ServiceCenterWatch;
 import org.slf4j.Logger;
@@ -39,17 +39,17 @@ import com.huaweicloud.common.util.URLUtil;
 public class ServiceCenterUtils {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCenterUtils.class);
 
-  public static AddressManager createAddressManager(DiscoveryBootstrapProperties discoveryProperties) {
+  public static ServiceCenterAddressManager createAddressManager(DiscoveryBootstrapProperties discoveryProperties) {
     List<String> addresses = URLUtil.dealMultiUrl(discoveryProperties.getAddress());
     LOGGER.info("initialize discovery server={}", addresses);
-    return new AddressManager("default", addresses, EventManager.getEventBus());
+    return new ServiceCenterAddressManager("default", addresses, EventManager.getEventBus());
   }
 
   // add other headers needed for registration by new ServiceCenterClient(...)
   public static ServiceCenterClient serviceCenterClient(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCombSSLProperties serviceCombSSLProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
-    AddressManager addressManager = createAddressManager(discoveryProperties);
+    ServiceCenterAddressManager addressManager = createAddressManager(discoveryProperties);
     SSLProperties sslProperties = TransportUtils
         .createSSLProperties(addressManager.sslEnabled(), serviceCombSSLProperties);
     return new ServiceCenterClient(addressManager, sslProperties,
@@ -60,7 +60,7 @@ public class ServiceCenterUtils {
   public static ServiceCenterWatch serviceCenterWatch(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCombSSLProperties serviceCombSSLProperties,
       List<AuthHeaderProvider> authHeaderProviders) {
-    AddressManager addressManager = createAddressManager(discoveryProperties);
+    ServiceCenterAddressManager addressManager = createAddressManager(discoveryProperties);
     SSLProperties sslProperties = TransportUtils
         .createSSLProperties(addressManager.sslEnabled(), serviceCombSSLProperties);
     return new ServiceCenterWatch(addressManager, sslProperties, getRequestAuthHeaderProvider(authHeaderProviders),
