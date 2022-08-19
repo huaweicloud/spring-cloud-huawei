@@ -32,6 +32,8 @@ public class GovernanceProperties {
 
   public static final String GATEWAY_GOVERNANCE_ENABLED = PREFIX + "." + "gateway.governance.enabled";
 
+  public static final String GATEWAY_RETRY_ENABLED = PREFIX + "." + "gateway.retry.enabled";
+
   public static final String GATEWAY_RATE_LIMITING_ENABLED = PREFIX + "." + "gateway.rateLimiting.enabled";
 
   public static final String GATEWAY_BULKHEAD_ENABLED = PREFIX + "." + "gateway.bulkhead.enabled";
