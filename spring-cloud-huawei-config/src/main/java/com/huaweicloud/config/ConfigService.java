@@ -193,13 +193,15 @@ public class ConfigService {
         .setEnableCustomConfig(bootstrapProperties.getConfigBootstrapProperties().getKie().isEnableCustomConfig())
         .setEnableLongPolling(bootstrapProperties.getConfigBootstrapProperties().getKie().isEnableLongPolling())
         .setEnableServiceConfig(bootstrapProperties.getConfigBootstrapProperties().getKie().isEnableServiceConfig())
+        .setEnableVersionConfig(bootstrapProperties.getConfigBootstrapProperties().getKie().isEnableVersionConfig())
         .setEnvironment(bootstrapProperties.getMicroserviceProperties().getEnvironment())
         .setPollingWaitInSeconds(
             bootstrapProperties.getConfigBootstrapProperties().getKie().getPollingWaitTimeInSeconds())
         .setRefreshIntervalInMillis(
             bootstrapProperties.getConfigBootstrapProperties().getKie().getRefreshIntervalInMillis())
         .setProject(bootstrapProperties.getServiceCombAkSkProperties().getProject())
-        .setServiceName(bootstrapProperties.getMicroserviceProperties().getName());
+        .setServiceName(bootstrapProperties.getMicroserviceProperties().getName())
+        .setVersion(bootstrapProperties.getMicroserviceProperties().getVersion());
   }
 
   private void initKieConfig(BootstrapProperties bootstrapProperties,
