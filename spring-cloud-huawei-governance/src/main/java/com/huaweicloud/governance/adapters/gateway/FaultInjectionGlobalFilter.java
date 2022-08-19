@@ -27,6 +27,7 @@ import org.apache.servicecomb.injection.FaultInjectionDecorators;
 import org.apache.servicecomb.injection.FaultInjectionDecorators.FaultInjectionDecorateCheckedSupplier;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
@@ -46,7 +47,7 @@ public class FaultInjectionGlobalFilter implements GlobalFilter, Ordered {
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-    GovernanceRequest governanceRequest = createGovernanceRequest(exchange);
+    GovernanceRequest governanceRequest = GatewayUtils.createConsumerGovernanceRequest(exchange);
     FaultInjectionDecorateCheckedSupplier<Object> ds =
         FaultInjectionDecorators.ofCheckedSupplier(() -> faultObject);
     Fault fault = faultInjectionHandler.getActuator(governanceRequest);
@@ -71,14 +72,6 @@ public class FaultInjectionGlobalFilter implements GlobalFilter, Ordered {
 
   @Override
   public int getOrder() {
-    return Ordered.HIGHEST_PRECEDENCE;
-  }
-
-  private GovernanceRequest createGovernanceRequest(ServerWebExchange exchange) {
-    GovernanceRequest request = new GovernanceRequest();
-    request.setHeaders(exchange.getRequest().getHeaders().toSingleValueMap());
-    request.setMethod(exchange.getRequest().getMethodValue());
-    request.setUri(exchange.getRequest().getURI().getPath());
-    return request;
+    return ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER + 10;
   }
 }

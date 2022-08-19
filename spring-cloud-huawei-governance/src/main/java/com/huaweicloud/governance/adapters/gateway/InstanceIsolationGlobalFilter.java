@@ -23,12 +23,9 @@ import org.apache.servicecomb.governance.policy.CircuitBreakerPolicy;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.PullInstanceEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.loadbalancer.Response;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
-import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -52,44 +49,32 @@ public class InstanceIsolationGlobalFilter implements GlobalFilter, Ordered {
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-    GovernanceRequest governanceRequest = createGovernanceRequest(exchange);
+    GovernanceRequest governanceRequest = GatewayUtils.createConsumerGovernanceRequest(exchange);
 
     Mono<Void> toRun = chain.filter(exchange);
 
     CircuitBreakerPolicy circuitBreakerPolicy = isolationHandler.matchPolicy(governanceRequest);
     if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
       return Mono.error(new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
-          "instance isolated."));
+          "instance force isolated."));
     }
     if (circuitBreakerPolicy != null && !circuitBreakerPolicy.isForceClosed()) {
-      toRun = addInstanceIsolation(governanceRequest, toRun);
+      toRun = addInstanceIsolation(exchange, governanceRequest, toRun);
     }
     return toRun;
   }
 
-  private GovernanceRequest createGovernanceRequest(ServerWebExchange exchange) {
-    GovernanceRequest request = new GovernanceRequest();
-    request.setHeaders(exchange.getRequest().getHeaders().toSingleValueMap());
-    request.setMethod(exchange.getRequest().getMethodValue());
-    request.setUri(exchange.getRequest().getURI().getPath());
-
-    Response<ServiceInstance> response = exchange.getAttribute(
-        ServerWebExchangeUtils.GATEWAY_LOADBALANCER_RESPONSE_ATTR);
-    if (response != null && response.hasServer()) {
-      request.setServiceName(response.getServer().getServiceId());
-      request.setInstanceId(response.getServer().getInstanceId());
-    }
-    return request;
-  }
-
-  private Mono<Void> addInstanceIsolation(GovernanceRequest governanceRequest,
+  private Mono<Void> addInstanceIsolation(ServerWebExchange exchange, GovernanceRequest governanceRequest,
       Mono<Void> toRun) {
     CircuitBreaker circuitBreaker = isolationHandler.getActuator(governanceRequest);
     Mono<Void> mono = toRun;
     if (circuitBreaker != null) {
-      mono = toRun.transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
+      mono = toRun.then(Mono.defer(() -> Mono.just(exchange.getResponse().getStatusCode() == null ? 0
+              : exchange.getResponse().getStatusCode().value())))
+          .transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
+          .then()
           .onErrorResume(CallNotPermittedException.class, (t) -> {
-            LOGGER.error("instance isolated [{}]", governanceRequest.getInstanceId());
+            LOGGER.error("instance isolated [{}]", t.getMessage());
             EventManager.post(new PullInstanceEvent());
             return Mono.error(new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
                 "instance isolated.", t));
