@@ -37,6 +37,56 @@ public class GatewayGovernanceIT {
   final RestTemplate template = new RestTemplate();
 
   @Test
+  public void testRetryWorking() throws Exception {
+    for (int i = 0; i < 3; i++) {
+      HttpHeaders headers = new HttpHeaders();
+      HttpEntity<Void> entity = new HttpEntity<>(headers);
+      String result = template.exchange(url + "/order/govern/gatewayRetry", HttpMethod.GET, entity,
+          String.class).getBody();
+      Assertions.assertEquals("ok", result);
+    }
+  }
+
+  @Test
+  public void testGatewayIsolationErrorCodeWorking() throws Exception {
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+    AtomicLong successCount = new AtomicLong(0);
+    AtomicLong failCount = new AtomicLong(0);
+    AtomicLong rejectedCount = new AtomicLong(0);
+
+    for (int i = 0; i < 100; i++) {
+      try {
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        String result = template.exchange(url + "/order/govern/testGatewayIsolationErrorCode",
+            HttpMethod.GET, entity,
+            String.class).getBody();
+        if (!"ok".equals(result)) {
+          notExpectedFailed.set(true);
+        } else {
+          successCount.getAndIncrement();
+        }
+      } catch (Exception e) {
+        if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 503) {
+          if ("fail".equals(((HttpServerErrorException) e).getResponseBodyAsString())) {
+            failCount.getAndIncrement();
+          } else {
+            rejectedCount.getAndIncrement();
+          }
+        } else {
+          notExpectedFailed.set(true);
+        }
+      }
+    }
+
+    Assertions.assertFalse(notExpectedFailed.get());
+    Assertions.assertEquals(100, rejectedCount.get() + successCount.get() + failCount.get());
+    Assertions.assertTrue(rejectedCount.get() >= 90);
+    Assertions.assertTrue(successCount.get() >= 6);
+    Assertions.assertTrue(failCount.get() >= 3);
+  }
+
+  @Test
   public void testCircuitBreakerWorking() throws Exception {
     AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
     AtomicLong successCount = new AtomicLong(0);
@@ -59,6 +109,44 @@ public class GatewayGovernanceIT {
           rejectedCount.getAndIncrement();
         } else if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 500) {
           failCount.getAndIncrement();
+        } else {
+          notExpectedFailed.set(true);
+        }
+      }
+    }
+
+    Assertions.assertFalse(notExpectedFailed.get());
+    Assertions.assertEquals(100, rejectedCount.get() + successCount.get() + failCount.get());
+    Assertions.assertTrue(rejectedCount.get() >= 90);
+    Assertions.assertTrue(successCount.get() >= 6);
+    Assertions.assertTrue(failCount.get() >= 3);
+  }
+
+  @Test
+  public void testCircuitBreakerErrorCodeWorking() throws Exception {
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+    AtomicLong successCount = new AtomicLong(0);
+    AtomicLong failCount = new AtomicLong(0);
+    AtomicLong rejectedCount = new AtomicLong(0);
+
+    for (int i = 0; i < 100; i++) {
+      try {
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        String result = template.exchange(url + "/testCircuitBreakerErrorCode", HttpMethod.GET, entity,
+            String.class).getBody();
+        if (!"ok".equals(result)) {
+          notExpectedFailed.set(true);
+        } else {
+          successCount.getAndIncrement();
+        }
+      } catch (Exception e) {
+        if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 503) {
+          if ("fail".equals(((HttpServerErrorException) e).getResponseBodyAsString())) {
+            failCount.getAndIncrement();
+          } else {
+            rejectedCount.getAndIncrement();
+          }
         } else {
           notExpectedFailed.set(true);
         }

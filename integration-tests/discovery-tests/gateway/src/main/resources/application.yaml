@@ -61,15 +61,27 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/testCircuitBreaker"
+    testCircuitBreakerErrorCode: |
+      matches:
+        - apiPath:
+            exact: "/testCircuitBreakerErrorCode"
     testBulkhead: |
       matches:
         - apiPath:
             exact: "/testBulkhead"
-    # instance isolation and instance bulkhead apiPath do not have service name
+    # retry, instance isolation, fault injection and instance bulkhead apiPath do not have service name
+    gatewayRetry: |
+      matches:
+        - apiPath:
+            exact: "/govern/gatewayRetry"
     gatewayIsolationForceOpenFeign: |
       matches:
         - apiPath:
             prefix: "/govern/gatewayIsolationForceOpenFeign"
+    testGatewayIsolationErrorCode: |
+      matches:
+        - apiPath:
+            prefix: "/govern/testGatewayIsolationErrorCode"
     gatewayInstanceBulkhead: |
       matches:
         - apiPath:
@@ -77,12 +89,23 @@ servicecomb:
     faultInjection: |
       matches:
         - apiPath:
-            prefix: "/price/faultInjection"
+            prefix: "/faultInjection"
+  retry:
+    gatewayRetry: |
+      maxAttempts: 2
+      retryOnSame: 0
   rateLimiting:
     demo-rateLimiting: |
       rate: 10
   circuitBreaker:
     testCircuitBreaker: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      slidingWindowType: COUNT_BASED
+      failureRateThreshold: 20
+      waitDurationInOpenState: 1000
+      permittedNumberOfCallsInHalfOpenState: 10
+    testCircuitBreakerErrorCode: |
       minimumNumberOfCalls: 10
       slidingWindowSize: 10
       slidingWindowType: COUNT_BASED
@@ -98,11 +121,13 @@ servicecomb:
       rate: 2
       identifier: user-id
   instanceIsolation:
-    allOperation: |
+    testGatewayIsolationErrorCode: |
       minimumNumberOfCalls: 10
       slidingWindowSize: 10
       slidingWindowType: COUNT_BASED
       failureRateThreshold: 20
+      waitDurationInOpenState: 1000
+      permittedNumberOfCallsInHalfOpenState: 10
       order: 2
     gatewayIsolationForceOpenFeign: |
       forceOpen: true

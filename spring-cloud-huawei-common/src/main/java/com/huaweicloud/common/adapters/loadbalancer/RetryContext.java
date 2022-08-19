@@ -20,6 +20,8 @@ package com.huaweicloud.common.adapters.loadbalancer;
 import org.springframework.cloud.client.ServiceInstance;
 
 public class RetryContext {
+  public static final String RETRY_ITERATION = "x-r-iteration";
+
   public static final String RETRY_CONTEXT = "x-retry";
 
   public static final String RETRY_ON_SAME = "spring.cloud.servicecomb.loadbalancer.%s.retryOnSame";
