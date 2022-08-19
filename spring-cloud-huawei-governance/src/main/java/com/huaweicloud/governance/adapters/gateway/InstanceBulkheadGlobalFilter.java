@@ -21,12 +21,9 @@ import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.loadbalancer.Response;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
-import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -48,27 +45,12 @@ public class InstanceBulkheadGlobalFilter implements GlobalFilter, Ordered {
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-    GovernanceRequest governanceRequest = createGovernanceRequest(exchange);
+    GovernanceRequest governanceRequest = GatewayUtils.createConsumerGovernanceRequest(exchange);
 
     Mono<Void> toRun = chain.filter(exchange);
 
     toRun = addInstanceBulkhead(governanceRequest, toRun);
     return toRun;
-  }
-
-  private GovernanceRequest createGovernanceRequest(ServerWebExchange exchange) {
-    GovernanceRequest request = new GovernanceRequest();
-    request.setHeaders(exchange.getRequest().getHeaders().toSingleValueMap());
-    request.setMethod(exchange.getRequest().getMethodValue());
-    request.setUri(exchange.getRequest().getURI().getPath());
-
-    Response<ServiceInstance> response = exchange.getAttribute(
-        ServerWebExchangeUtils.GATEWAY_LOADBALANCER_RESPONSE_ATTR);
-    if (response != null && response.hasServer()) {
-      request.setServiceName(response.getServer().getServiceId());
-      request.setInstanceId(response.getServer().getInstanceId());
-    }
-    return request;
   }
 
   private Mono<Void> addInstanceBulkhead(GovernanceRequest governanceRequest,

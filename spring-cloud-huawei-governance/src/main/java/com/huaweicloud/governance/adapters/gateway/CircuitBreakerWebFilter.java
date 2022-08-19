@@ -53,14 +53,18 @@ public class CircuitBreakerWebFilter implements OrderedWebFilter {
 
     Mono<Void> toRun = chain.filter(exchange);
 
-    return addCircuitBreaker(governanceRequest, toRun);
+    return addCircuitBreaker(exchange, governanceRequest, toRun);
   }
 
-  private Mono<Void> addCircuitBreaker(GovernanceRequest governanceRequest, Mono<Void> toRun) {
+  private Mono<Void> addCircuitBreaker(ServerWebExchange exchange, GovernanceRequest governanceRequest,
+      Mono<Void> toRun) {
     CircuitBreaker circuitBreaker = circuitBreakerHandler.getActuator(governanceRequest);
     Mono<Void> mono = toRun;
     if (circuitBreaker != null) {
-      mono = toRun.transform(CircuitBreakerOperator.of(circuitBreaker))
+      mono = toRun.then(Mono.defer(() -> Mono.just(exchange.getResponse().getStatusCode() == null ? 0
+              : exchange.getResponse().getStatusCode().value())))
+          .transform(CircuitBreakerOperator.of(circuitBreaker))
+          .then()
           .onErrorResume(CallNotPermittedException.class, (t) -> {
             LOGGER.warn("circuitBreaker is open by policy : {}",
                 t.getMessage());

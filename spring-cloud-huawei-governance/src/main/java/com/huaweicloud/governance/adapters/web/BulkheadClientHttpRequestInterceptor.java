@@ -41,7 +41,7 @@ import io.vavr.CheckedFunction0;
 public class BulkheadClientHttpRequestInterceptor implements ClientHttpRequestInterceptor, Ordered {
   private static final Logger LOG = LoggerFactory.getLogger(IsolationClientHttpRequestInterceptor.class);
 
-  private static final int ORDER = 100;
+  private static final int ORDER = 200;
 
   private final InstanceBulkheadHandler instanceBulkheadHandler;
 
