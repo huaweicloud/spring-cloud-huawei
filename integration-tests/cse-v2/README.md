@@ -39,7 +39,27 @@ cse:
     test:
       priority: v3
 ```
-
+* 应用级配置：consumerApp.yaml，应用选择cse-v2-test-application。类型为 yaml。
+```yaml
+cse:
+  v2:
+    test:
+      priority1: v1
+```
+* 服务级配置：consumerSer.yaml，微服务性选择basic-consumer。类型为 yaml。
+```yaml
+cse:
+  v2:
+    test:
+      priority1: v2
+```
+* 版本级配置：consumerVer.yaml，labels: app=cse-v2-test-application,environment=production,service=basic-consumer,version = 0.0.1。类型为 yaml。
+```yaml
+cse:
+  v2:
+    test:
+      priority1: v3
+```
   * 应用级配置： cse.v2.test.bar: bar 。 类型为 text。 
   
 * 执行 tests-client 里面的集成测试用例 （成功）
@@ -76,3 +96,34 @@ cse:
 ```
 
 * 执行 tests-client 里面的集成测试用例 （成功） 
+* 修改
+  * 应用级consumerApp.yaml。
+```yaml
+cse:
+  v2:
+    test:
+      priority1: v10
+```
+
+* 执行 tests-client 里面的集成测试用例 （成功）
+* 修改
+  * 服务级配置：consumerSer.yaml。
+```yaml
+cse:
+  v2:
+    test:
+      priority1: v20
+```
+
+* 执行 tests-client 里面的集成测试用例 （成功）
+
+* 修改
+  * 版本级配置：consumerIns.yaml。
+```yaml
+cse:
+  v2:
+    test:
+      priority1: v30
+```
+
+* 执行 tests-client 里面的集成测试用例 （失败）

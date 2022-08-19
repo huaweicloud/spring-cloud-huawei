@@ -24,7 +24,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.servicecomb.config.center.client.AddressManager;
+import org.apache.servicecomb.config.center.client.ConfigCenterAddressManager;
 import org.apache.servicecomb.config.center.client.ConfigCenterClient;
 import org.apache.servicecomb.config.center.client.ConfigCenterManager;
 import org.apache.servicecomb.config.center.client.model.ConfigCenterConfiguration;
@@ -105,13 +105,13 @@ public class ConfigService {
     configConverter = new ConfigConverter(Arrays.asList(configProperties.getFileSource().split(",")));
   }
 
-  private AddressManager configCenterAddressManager(ConfigBootstrapProperties configProperties,
+  private ConfigCenterAddressManager configCenterAddressManager(ConfigBootstrapProperties configProperties,
       ServiceCombAkSkProperties serviceCombAkSkProperties) {
 
     List<String> addresses = URLUtil.dealMultiUrl(configProperties.getServerAddr());
 
     LOGGER.info("initialize config server type={}, address={}.", configProperties.getServerType(), addresses);
-    return new AddressManager(serviceCombAkSkProperties.getProject(), addresses, EventManager.getEventBus());
+    return new ConfigCenterAddressManager(serviceCombAkSkProperties.getProject(), addresses, EventManager.getEventBus());
   }
 
   private HttpTransport createHttpTransport(boolean sslEnabled,
@@ -146,7 +146,7 @@ public class ConfigService {
       List<AuthHeaderProvider> authHeaderProviders) {
     QueryConfigurationsRequest queryConfigurationsRequest;
 
-    AddressManager addressManager = configCenterAddressManager(bootstrapProperties.getConfigBootstrapProperties(),
+    ConfigCenterAddressManager addressManager = configCenterAddressManager(bootstrapProperties.getConfigBootstrapProperties(),
         bootstrapProperties.getServiceCombAkSkProperties());
     HttpTransport httpTransport = createHttpTransport(addressManager.sslEnabled(),
         bootstrapProperties.getServiceCombSSLProperties(),
@@ -193,13 +193,15 @@ public class ConfigService {
         .setEnableCustomConfig(bootstrapProperties.getConfigBootstrapProperties().getKie().isEnableCustomConfig())
         .setEnableLongPolling(bootstrapProperties.getConfigBootstrapProperties().getKie().isEnableLongPolling())
         .setEnableServiceConfig(bootstrapProperties.getConfigBootstrapProperties().getKie().isEnableServiceConfig())
+        .setEnableVersionConfig(bootstrapProperties.getConfigBootstrapProperties().getKie().isEnableVersionConfig())
         .setEnvironment(bootstrapProperties.getMicroserviceProperties().getEnvironment())
         .setPollingWaitInSeconds(
             bootstrapProperties.getConfigBootstrapProperties().getKie().getPollingWaitTimeInSeconds())
         .setRefreshIntervalInMillis(
             bootstrapProperties.getConfigBootstrapProperties().getKie().getRefreshIntervalInMillis())
         .setProject(bootstrapProperties.getServiceCombAkSkProperties().getProject())
-        .setServiceName(bootstrapProperties.getMicroserviceProperties().getName());
+        .setServiceName(bootstrapProperties.getMicroserviceProperties().getName())
+        .setVersion(bootstrapProperties.getMicroserviceProperties().getVersion());
   }
 
   private void initKieConfig(BootstrapProperties bootstrapProperties,
