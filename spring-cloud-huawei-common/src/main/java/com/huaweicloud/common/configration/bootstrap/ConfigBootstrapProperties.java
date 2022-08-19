@@ -109,6 +109,8 @@ public class ConfigBootstrapProperties {
 
     private boolean enableCustomConfig = true;
 
+    private boolean enableVersionConfig = true;
+
     private String customLabelValue = "";
 
     private String customLabel = "public";
@@ -157,6 +159,14 @@ public class ConfigBootstrapProperties {
 
     public void setEnableCustomConfig(boolean enableCustomConfig) {
       this.enableCustomConfig = enableCustomConfig;
+    }
+
+    public boolean isEnableVersionConfig() {
+      return enableVersionConfig;
+    }
+
+    public void setEnableVersionConfig(boolean enableVersionConfig) {
+      this.enableVersionConfig = enableVersionConfig;
     }
 
     public String getCustomLabelValue() {
