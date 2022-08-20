@@ -19,16 +19,21 @@ package com.huaweicloud.sample;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class GovernanceController {
+  private static final Logger LOGGER = LoggerFactory.getLogger(GovernanceController.class);
   private final Map<String, Integer> retryTimes = new HashMap<>();
 
   @RequestMapping("/hello")
@@ -109,5 +114,13 @@ public class GovernanceController {
   @RequestMapping("/loadbalance")
   public String loadbalance() {
     return "I am price";
+  }
+
+  @RequestMapping(value = "/testRetry",method = RequestMethod.GET)
+  public String testRetry(HttpServletResponse response) {
+    response.setStatus(503);
+    String result = "retry times is" + UUID.randomUUID().toString();
+    LOGGER.info(result);
+    return result;
   }
 }

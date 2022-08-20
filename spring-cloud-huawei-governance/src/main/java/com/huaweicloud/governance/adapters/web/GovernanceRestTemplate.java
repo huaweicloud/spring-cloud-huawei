@@ -19,6 +19,7 @@ package com.huaweicloud.governance.adapters.web;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
@@ -118,11 +119,13 @@ public class GovernanceRestTemplate extends RestTemplate {
       ClientHttpRequest request) {
     GovernanceRequest governanceRequest = convert(request);
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
-
+    AtomicInteger atomicInteger = new AtomicInteger(0);
     CheckedFunction0<ClientHttpResponse> next = () -> {
       ClientHttpRequest execution = request;
+      ClientHttpResponse clientHttpResponse = null;
       if (context.getLocalContext(CONTEXT_IS_RETRY) == null) {
         context.putLocalContext(CONTEXT_IS_RETRY, true);
+        return execution.execute();
       } else {
         // recreate request in retry
         execution = createRequest(url, method);
@@ -130,7 +133,13 @@ public class GovernanceRestTemplate extends RestTemplate {
           requestCallback.doWithRequest(execution);
         }
       }
-      return execution.execute();
+      clientHttpResponse = execution.execute();
+      RetryPolicy retryPolicy = context.getLocalContext(RetryContext.RETRY_POLICY);
+      if (retryPolicy.getRetryOnResponseStatus().contains(String.valueOf(clientHttpResponse.getStatusCode().value()))
+          && atomicInteger.incrementAndGet() < retryPolicy.getMaxAttempts()) {
+        clientHttpResponse.close();
+      }
+      return clientHttpResponse;
     };
 
     DecorateCheckedSupplier<ClientHttpResponse> dcs = Decorators.ofCheckedSupplier(next);
@@ -184,6 +193,7 @@ public class GovernanceRestTemplate extends RestTemplate {
       InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
       RetryContext retryContext = new RetryContext(retryPolicy.getRetryOnSame());
       context.putLocalContext(RetryContext.RETRY_CONTEXT, retryContext);
+      context.putLocalContext(RetryContext.RETRY_POLICY, retryPolicy);
     } else {
       // when retry not enabled and Isolation enabled, we need get instance from RetryContext
       InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();

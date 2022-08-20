@@ -69,6 +69,10 @@ servicecomb:
       matches:
         - apiPath:
             prefix: "/retry"
+    demo-retry-many: |
+      matches:
+        - apiPath:
+            prefix: "/testRetry"
     demo-circuitBreaker: |
       matches:
         - apiPath:
@@ -95,6 +99,8 @@ servicecomb:
   retry:
     demo-retry: |
       maxAttempts: 3
+    demo-retry-many: |
+      maxAttempts: 6
   circuitBreaker:
     demo-circuitBreaker: |
       minimumNumberOfCalls: 10

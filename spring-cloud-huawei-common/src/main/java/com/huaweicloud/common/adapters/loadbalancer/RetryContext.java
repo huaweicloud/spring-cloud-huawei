@@ -24,6 +24,8 @@ public class RetryContext {
 
   public static final String RETRY_CONTEXT = "x-retry";
 
+  public static final String RETRY_POLICY = "x-policy";
+
   public static final String RETRY_ON_SAME = "spring.cloud.servicecomb.loadbalancer.%s.retryOnSame";
 
   private boolean retry;
