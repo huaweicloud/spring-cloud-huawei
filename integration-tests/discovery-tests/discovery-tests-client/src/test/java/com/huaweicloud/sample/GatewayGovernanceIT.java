@@ -48,6 +48,17 @@ public class GatewayGovernanceIT {
   }
 
   @Test
+  public void testRetryMoreWorking() throws Exception {
+    for (int i = 0; i < 3; i++) {
+      HttpHeaders headers = new HttpHeaders();
+      HttpEntity<Void> entity = new HttpEntity<>(headers);
+      String result = template.exchange(url + "/order/govern/gatewayRetryMore", HttpMethod.GET, entity,
+          String.class).getBody();
+      Assertions.assertEquals("ok", result);
+    }
+  }
+
+  @Test
   public void testGatewayIsolationErrorCodeWorking() throws Exception {
     AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
     AtomicLong successCount = new AtomicLong(0);
