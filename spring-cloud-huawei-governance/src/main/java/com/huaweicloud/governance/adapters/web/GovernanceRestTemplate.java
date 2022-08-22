@@ -147,32 +147,37 @@ public class GovernanceRestTemplate extends RestTemplate {
     try {
       addRetry(dcs, governanceRequest);
 
-      // add fault
-      Fault fault = faultInjectionHandler.getActuator(governanceRequest);
-      if (fault != null) {
-        FaultInjectionDecorateCheckedSupplier<Object> faultInjectionDecorateCheckedSupplier =
-            FaultInjectionDecorators.ofCheckedSupplier(() -> faultObject);
-        faultInjectionDecorateCheckedSupplier.withFaultInjection(fault);
-        try {
-          Object result = faultInjectionDecorateCheckedSupplier.get();
-          if (result != faultObject) {
-            return new FallbackClientHttpResponse(200, HttpUtils.serialize(result), "application/json");
-          }
-        } catch (Throwable e) {
-          return new FallbackClientHttpResponse(500, e.getMessage());
-        }
+      FallbackClientHttpResponse result = addFault(governanceRequest);
+      if (result != null) {
+        return result;
       }
 
-      // continue
       return dcs.get();
     } catch (Throwable e) {
       if (clientRecoverPolicy != null) {
         return (ClientHttpResponse) clientRecoverPolicy.apply(e);
       }
       LOGGER.error("retry catch throwable", e);
-      // return 503, so that we can retry
       return new FallbackClientHttpResponse(500, e.getMessage());
     }
+  }
+
+  private FallbackClientHttpResponse addFault(GovernanceRequest governanceRequest) {
+    Fault fault = faultInjectionHandler.getActuator(governanceRequest);
+    if (fault != null) {
+      FaultInjectionDecorateCheckedSupplier<Object> faultInjectionDecorateCheckedSupplier =
+          FaultInjectionDecorators.ofCheckedSupplier(() -> faultObject);
+      faultInjectionDecorateCheckedSupplier.withFaultInjection(fault);
+      try {
+        Object result = faultInjectionDecorateCheckedSupplier.get();
+        if (result != faultObject) {
+          return new FallbackClientHttpResponse(200, HttpUtils.serialize(result), "application/json");
+        }
+      } catch (Throwable e) {
+        return new FallbackClientHttpResponse(500, e.getMessage());
+      }
+    }
+    return null;
   }
 
   private GovernanceRequest convert(HttpRequest request) {

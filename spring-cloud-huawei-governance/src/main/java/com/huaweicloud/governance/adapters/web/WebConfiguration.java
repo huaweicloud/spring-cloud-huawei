@@ -17,6 +17,8 @@
 
 package com.huaweicloud.governance.adapters.web;
 
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
@@ -44,11 +46,11 @@ import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManage
     "org.springframework.web.client.RestTemplate"})
 public class WebConfiguration {
   @Bean
-  @ConditionalOnProperty(value = "spring.cloud.servicecomb.restTemplate.retryable.enabled",
+  @ConditionalOnProperty(value = GovernanceProperties.REST_TEMPLATE_RETRY_ENABLED,
       havingValue = "true", matchIfMissing = true)
   @LoadBalanced
   @Primary
-  public RestTemplate retryableRestTemplate(RetryHandler retryHandler,
+  public RestTemplate governanceRestTemplate(RetryHandler retryHandler,
       FaultInjectionHandler faultInjectionHandler,
       @Autowired(required = false) ClientRecoverPolicy<Object> recoverPolicy,
       HttpClientProperties httpClientProperties) {
@@ -59,15 +61,20 @@ public class WebConfiguration {
   }
 
   private ClientHttpRequestFactory getClientHttpRequestFactory(HttpClientProperties httpClientProperties) {
+    PoolingHttpClientConnectionManager pool = new PoolingHttpClientConnectionManager();
+    pool.setDefaultMaxPerRoute(httpClientProperties.getPoolSizePerRoute());
+    pool.setMaxTotal(httpClientProperties.getPoolSizeMax());
     HttpComponentsClientHttpRequestFactory clientHttpRequestFactory =
-        new HttpComponentsClientHttpRequestFactory();
+        new HttpComponentsClientHttpRequestFactory(HttpClientBuilder.create().setConnectionManager(pool).build());
+    clientHttpRequestFactory.setConnectionRequestTimeout(
+        httpClientProperties.getConnectionRequestTimeoutInMilliSeconds());
     clientHttpRequestFactory.setConnectTimeout(httpClientProperties.getConnectTimeoutInMilliSeconds());
     clientHttpRequestFactory.setReadTimeout(httpClientProperties.getReadTimeoutInMilliSeconds());
     return clientHttpRequestFactory;
   }
 
   @Bean
-  @ConditionalOnProperty(value = "spring.cloud.servicecomb.restTemplate.isolation.enabled",
+  @ConditionalOnProperty(value = GovernanceProperties.REST_TEMPLATE_INSTANCE_ISOLATION_ENABLED,
       havingValue = "true", matchIfMissing = true)
   public ClientHttpRequestInterceptor isolationClientHttpRequestInterceptor(InstanceIsolationHandler isolationHandler,
       @Autowired(required = false) ClientRecoverPolicy<ClientHttpResponse> recoverPolicy) {
@@ -75,7 +82,7 @@ public class WebConfiguration {
   }
 
   @Bean
-  @ConditionalOnProperty(value = "spring.cloud.servicecomb.restTemplate.bulkhead.enabled",
+  @ConditionalOnProperty(value = GovernanceProperties.REST_TEMPLATE_INSTANCE_BULKHEAD_ENABLED,
       havingValue = "true", matchIfMissing = true)
   public ClientHttpRequestInterceptor bulkheadClientHttpRequestInterceptor(InstanceBulkheadHandler bulkheadHandler,
       @Autowired(required = false) ClientRecoverPolicy<ClientHttpResponse> recoverPolicy) {

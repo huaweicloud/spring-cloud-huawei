@@ -67,6 +67,14 @@ public class GovernanceProperties {
 
   public static final String WEBMVC_PUBLICKEY_ACCSSCONTROL = PREFIX + "." + "webmvc.public-key.access-control";
 
+  public static final String REST_TEMPLATE_RETRY_ENABLED = PREFIX + "." + "restTemplate.retry.enabled";
+
+  public static final String REST_TEMPLATE_INSTANCE_ISOLATION_ENABLED =
+      PREFIX + "." + "restTemplate.instanceIsolation.enabled";
+
+  public static final String REST_TEMPLATE_INSTANCE_BULKHEAD_ENABLED =
+      PREFIX + "." + "restTemplate.instanceBulkhead.enabled";
+
   public static class Gateway {
     private RateLimiting rateLimiting = new RateLimiting();
 
