@@ -50,11 +50,31 @@ public class GovernanceControllerIT {
   }
 
   @Test
+  public void testRetryMore() {
+    for (int i = 0; i < 5; i++) {
+      String invocationID = UUID.randomUUID().toString();
+      String result = template.getForObject(orderServiceUrl + "/govern/retryMore?invocationID={1}", String.class,
+          invocationID);
+      assertThat(result).isEqualTo("try times: 6");
+    }
+  }
+
+  @Test
   public void testRetryFeign() {
     String invocationID = UUID.randomUUID().toString();
     String result = template.getForObject(orderServiceUrl + "/govern/retryFeign?invocationID={1}", String.class,
         invocationID);
     assertThat(result).isEqualTo("try times: 3");
+  }
+
+  @Test
+  public void testRetryFeignMore() {
+    for (int i = 0; i < 5; i++) {
+      String invocationID = UUID.randomUUID().toString();
+      String result = template.getForObject(orderServiceUrl + "/govern/retryFeignMore?invocationID={1}", String.class,
+          invocationID);
+      assertThat(result).isEqualTo("try times: 6");
+    }
   }
 
   @Test
