@@ -16,9 +16,23 @@
 package com.huaweicloud.common.configration.dynamic;
 
 public class HttpClientProperties {
+  private int connectionRequestTimeoutInMilliSeconds = 10000;
+
   private int connectTimeoutInMilliSeconds = 1000;
 
   private int readTimeoutInMilliSeconds = 30000;
+
+  private int poolSizePerRoute = 50;
+
+  private int poolSizeMax = 5000;
+
+  public int getConnectionRequestTimeoutInMilliSeconds() {
+    return connectionRequestTimeoutInMilliSeconds;
+  }
+
+  public void setConnectionRequestTimeoutInMilliSeconds(int connectionRequestTimeoutInMilliSeconds) {
+    this.connectionRequestTimeoutInMilliSeconds = connectionRequestTimeoutInMilliSeconds;
+  }
 
   public int getConnectTimeoutInMilliSeconds() {
     return connectTimeoutInMilliSeconds;
@@ -34,5 +48,21 @@ public class HttpClientProperties {
 
   public void setReadTimeoutInMilliSeconds(int readTimeoutInMilliSeconds) {
     this.readTimeoutInMilliSeconds = readTimeoutInMilliSeconds;
+  }
+
+  public int getPoolSizePerRoute() {
+    return poolSizePerRoute;
+  }
+
+  public void setPoolSizePerRoute(int poolSizePerRoute) {
+    this.poolSizePerRoute = poolSizePerRoute;
+  }
+
+  public int getPoolSizeMax() {
+    return poolSizeMax;
+  }
+
+  public void setPoolSizeMax(int poolSizeMax) {
+    this.poolSizeMax = poolSizeMax;
   }
 }
