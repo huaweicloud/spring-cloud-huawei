@@ -57,7 +57,21 @@ public class GovernanceController {
       return "try times: " + retry;
     }
     response.setStatus(502);
-    return null;
+    return "failed result";
+  }
+
+  @RequestMapping("/retryMore")
+  public String retryMore(HttpServletResponse response, @RequestParam(name = "invocationID") String invocationID) {
+    retryTimes.putIfAbsent(invocationID, 0);
+    retryTimes.put(invocationID, retryTimes.get(invocationID) + 1);
+
+    int retry = retryTimes.get(invocationID);
+
+    if (retry == 6) {
+      return "try times: " + retry;
+    }
+    response.setStatus(503);
+    return "failed result";
   }
 
   @RequestMapping("/gateway/retry")
@@ -71,7 +85,7 @@ public class GovernanceController {
       return "try times: " + retry;
     }
     response.setStatus(502);
-    return null;
+    return "failed result";
   }
 
   @RequestMapping("/circuitBreaker")

@@ -74,6 +74,10 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/govern/gatewayRetry"
+    gatewayRetryMore: |
+      matches:
+        - apiPath:
+            exact: "/govern/gatewayRetryMore"
     gatewayIsolationForceOpenFeign: |
       matches:
         - apiPath:
@@ -94,6 +98,9 @@ servicecomb:
     gatewayRetry: |
       maxAttempts: 2
       retryOnSame: 0
+    gatewayRetryMore: |
+      maxAttempts: 5
+      retryOnSame: 1
   rateLimiting:
     demo-rateLimiting: |
       rate: 10
