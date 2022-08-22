@@ -63,6 +63,8 @@ public class GovernanceRestTemplate extends RestTemplate {
 
   private static final String CONTEXT_IS_RETRY = "x-is-retry";
 
+  private static final String CONTEXT_LAST_RESPONSE = "x-last-response";
+
   private final Object faultObject = new Object();
 
   private final RetryHandler retryHandler;
@@ -129,8 +131,15 @@ public class GovernanceRestTemplate extends RestTemplate {
         if (requestCallback != null) {
           requestCallback.doWithRequest(execution);
         }
+        // close last response in retry
+        ClientHttpResponse lastResponse = context.getLocalContext(CONTEXT_LAST_RESPONSE);
+        if (lastResponse != null) {
+          lastResponse.close();
+        }
       }
-      return execution.execute();
+      ClientHttpResponse response = execution.execute();
+      context.putLocalContext(CONTEXT_LAST_RESPONSE, response);
+      return response;
     };
 
     DecorateCheckedSupplier<ClientHttpResponse> dcs = Decorators.ofCheckedSupplier(next);

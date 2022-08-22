@@ -42,6 +42,8 @@ public class GovernanceController {
 
   private int retryCounter = 0;
 
+  private int retryCounterMore = 0;
+
   @Autowired
   public GovernanceController(RestTemplate restTemplate, FeignService feignService) {
     this.restTemplate = restTemplate;
@@ -99,9 +101,19 @@ public class GovernanceController {
     return restTemplate.getForObject("http://price/retry?invocationID={1}", String.class, invocationID);
   }
 
+  @RequestMapping("/retryMore")
+  public String retryMore(@RequestParam(name = "invocationID") String invocationID) {
+    return restTemplate.getForObject("http://price/retryMore?invocationID={1}", String.class, invocationID);
+  }
+
   @RequestMapping("/retryFeign")
   public String retryFeign(@RequestParam(name = "invocationID") String invocationID) {
     return feignService.retry(invocationID);
+  }
+
+  @RequestMapping("/retryFeignMore")
+  public String retryFeignMore(@RequestParam(name = "invocationID") String invocationID) {
+    return feignService.retryMore(invocationID);
   }
 
   @GetMapping(
@@ -115,6 +127,20 @@ public class GovernanceController {
       result = ResponseEntity.status(200).body("ok");
     }
     retryCounter++;
+    return Mono.just(result);
+  }
+
+  @GetMapping(
+      path = "/gatewayRetryMore",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<ResponseEntity<String>> gatewayRetryMore() {
+    ResponseEntity<String> result;
+    if (retryCounterMore % 5 != 4) {
+      result = ResponseEntity.status(503).body("fail");
+    } else {
+      result = ResponseEntity.status(200).body("ok");
+    }
+    retryCounterMore++;
     return Mono.just(result);
   }
 
