@@ -17,13 +17,9 @@
 
 package com.huaweicloud.governance.adapters.gateway;
 
-import org.apache.servicecomb.governance.handler.BulkheadHandler;
-import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
-import org.apache.servicecomb.governance.handler.IdentifierRateLimitingHandler;
 import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
-import org.apache.servicecomb.governance.handler.RateLimitingHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -31,7 +27,6 @@ import org.springframework.cloud.gateway.config.conditional.ConditionalOnEnabled
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.server.WebFilter;
 
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
@@ -71,42 +66,6 @@ public class GatewayConfiguration {
       havingValue = "true", matchIfMissing = true)
   public GlobalFilter retryGlobalFilter(RetryHandler retryHandler) {
     return new RetryGlobalFilter(retryHandler);
-  }
-
-  @Bean
-  @ConditionalOnEnabledFilter
-  @ConditionalOnProperty(value = GovernanceProperties.GATEWAY_RATE_LIMITING_ENABLED,
-      havingValue = "true", matchIfMissing = true)
-  public WebFilter rateLimitingWebFilter(RateLimitingHandler rateLimitingHandler,
-      GovernanceProperties governanceProperties) {
-    return new RateLimitingWebFilter(rateLimitingHandler, governanceProperties);
-  }
-
-  @Bean
-  @ConditionalOnEnabledFilter
-  @ConditionalOnProperty(value = GovernanceProperties.GATEWAY_BULKHEAD_ENABLED,
-      havingValue = "true", matchIfMissing = true)
-  public WebFilter bulkheadWebFilter(BulkheadHandler bulkheadHandler,
-      GovernanceProperties governanceProperties) {
-    return new BulkheadWebFilter(bulkheadHandler, governanceProperties);
-  }
-
-  @Bean
-  @ConditionalOnEnabledFilter
-  @ConditionalOnProperty(value = GovernanceProperties.GATEWAY_CIRCUIT_BREAKER_ENABLED,
-      havingValue = "true", matchIfMissing = true)
-  public WebFilter circuitBreakerWebFilter(CircuitBreakerHandler circuitBreakerHandler,
-      GovernanceProperties governanceProperties) {
-    return new CircuitBreakerWebFilter(circuitBreakerHandler, governanceProperties);
-  }
-
-  @Bean
-  @ConditionalOnEnabledFilter
-  @ConditionalOnProperty(value = GovernanceProperties.GATEWAY_IDENTIFIER_RATE_LIMITING_ENABLED,
-      havingValue = "true", matchIfMissing = true)
-  public WebFilter identifierRateLimitingWebFilter(IdentifierRateLimitingHandler identifierRateLimitingHandler,
-      GovernanceProperties governanceProperties) {
-    return new IdentifierRateLimitingWebFilter(identifierRateLimitingHandler, governanceProperties);
   }
 
   @Bean

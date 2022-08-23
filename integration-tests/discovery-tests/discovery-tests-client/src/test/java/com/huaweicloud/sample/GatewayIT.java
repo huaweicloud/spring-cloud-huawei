@@ -50,6 +50,12 @@ public class GatewayIT {
   }
 
   @Test
+  public void testWebClient() {
+    String result = template.getForObject(url + "/testWebClient", String.class);
+    assertThat(result).isEqualTo("ok");
+  }
+
+  @Test
   public void testGetOrder() {
     String result = template.getForObject(url + "/order/order?id=hello", String.class);
     assertThat(result).isEqualTo("hello");
