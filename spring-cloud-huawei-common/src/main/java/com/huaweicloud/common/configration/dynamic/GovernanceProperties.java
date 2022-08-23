@@ -34,20 +34,20 @@ public class GovernanceProperties {
 
   public static final String GATEWAY_RETRY_ENABLED = PREFIX + "." + "gateway.retry.enabled";
 
-  public static final String GATEWAY_RATE_LIMITING_ENABLED = PREFIX + "." + "gateway.rateLimiting.enabled";
-
-  public static final String GATEWAY_BULKHEAD_ENABLED = PREFIX + "." + "gateway.bulkhead.enabled";
-
-  public static final String GATEWAY_CIRCUIT_BREAKER_ENABLED = PREFIX + "." + "gateway.circuitBreaker.enabled";
-
-  public static final String GATEWAY_IDENTIFIER_RATE_LIMITING_ENABLED =
-      PREFIX + "." + "gateway.identifierRateLimiting.enabled";
-
   public static final String GATEWAY_FAULT_INJECTION_ENABLED = PREFIX + "." + "gateway.faultInjection.enabled";
 
   public static final String GATEWAY_INSTANCE_ISOLATION_ENABLED = PREFIX + "." + "gateway.instanceIsolation.enabled";
 
   public static final String GATEWAY_INSTANCE_BULKHEAD_ENABLED = PREFIX + "." + "gateway.instanceBulkhead.enabled";
+
+  public static final String WEBFLUX_RATE_LIMITING_ENABLED = PREFIX + "." + "webflux.rateLimiting.enabled";
+
+  public static final String WEBFLUX_BULKHEAD_ENABLED = PREFIX + "." + "webflux.bulkhead.enabled";
+
+  public static final String WEBFLUX_CIRCUIT_BREAKER_ENABLED = PREFIX + "." + "webflux.circuitBreaker.enabled";
+
+  public static final String WEBFLUX_IDENTIFIER_RATE_LIMITING_ENABLED =
+      PREFIX + "." + "webflux.identifierRateLimiting.enabled";
 
   public static final String WEBMVC_RATE_LIMITING_ENABLED =
       PREFIX + "." + "webmvc.rateLimiting.enabled";
