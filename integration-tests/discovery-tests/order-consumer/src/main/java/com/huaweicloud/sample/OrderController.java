@@ -22,6 +22,7 @@ import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -157,5 +158,12 @@ public class OrderController {
   public String orderBal(@RequestParam("id") String id) {
     String callServiceResult = restTemplate.getForObject("http://price/priceBalance?id=" + id, String.class);
     return callServiceResult;
+  }
+
+  @GetMapping(
+      path = "/testWebClient",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public String testWebClient() {
+    return "ok";
   }
 }

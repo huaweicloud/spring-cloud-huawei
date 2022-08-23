@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.governance.adapters.gateway;
+package com.huaweicloud.governance.adapters.webflux;
 
 import org.apache.servicecomb.governance.handler.IdentifierRateLimitingHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
@@ -49,7 +49,7 @@ public class IdentifierRateLimitingWebFilter implements OrderedWebFilter {
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-    GovernanceRequest governanceRequest = GatewayUtils.createProviderGovernanceRequest(exchange);
+    GovernanceRequest governanceRequest = WebFluxUtils.createProviderGovernanceRequest(exchange);
 
     Mono<Void> toRun = chain.filter(exchange);
 

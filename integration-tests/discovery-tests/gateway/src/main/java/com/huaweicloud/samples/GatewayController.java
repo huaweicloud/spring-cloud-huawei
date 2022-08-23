@@ -19,10 +19,12 @@ package com.huaweicloud.samples;
 
 import java.time.Duration;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import reactor.core.publisher.Mono;
 
@@ -31,6 +33,13 @@ public class GatewayController {
   private int circuitBreakerCounter = 0;
 
   private int circuitBreakerErrorCodeCounter = 0;
+
+  private WebClient.Builder webClientBuilder;
+
+  @Autowired
+  public GatewayController(WebClient.Builder webClientBuilder) {
+    this.webClientBuilder = webClientBuilder;
+  }
 
   @GetMapping(
       path = "/identifierRateLimiting",
@@ -66,5 +75,13 @@ public class GatewayController {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<String> testBulkhead() {
     return Mono.delay(Duration.ofMillis(500)).then(Mono.just("ok"));
+  }
+
+  @GetMapping(
+      path = "/testWebClient",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<String> testWebClient() {
+    return webClientBuilder.build().get().uri("http://order/testWebClient").retrieve()
+        .bodyToMono(String.class);
   }
 }

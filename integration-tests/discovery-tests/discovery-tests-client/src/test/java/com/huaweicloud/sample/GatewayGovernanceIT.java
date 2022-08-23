@@ -92,7 +92,7 @@ public class GatewayGovernanceIT {
 
     Assertions.assertFalse(notExpectedFailed.get());
     Assertions.assertEquals(100, rejectedCount.get() + successCount.get() + failCount.get());
-    Assertions.assertTrue(rejectedCount.get() >= 90);
+    Assertions.assertTrue(rejectedCount.get() >= 80);
     Assertions.assertTrue(successCount.get() >= 6);
     Assertions.assertTrue(failCount.get() >= 3);
   }
