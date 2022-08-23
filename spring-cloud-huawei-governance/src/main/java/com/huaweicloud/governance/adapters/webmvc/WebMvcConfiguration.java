@@ -22,8 +22,9 @@ import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
 import org.apache.servicecomb.governance.handler.IdentifierRateLimitingHandler;
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -35,7 +36,7 @@ import com.huaweicloud.governance.authentication.provider.BlackWhiteListProperti
 import com.huaweicloud.governance.authentication.provider.ProviderAuthPreHandlerInterceptor;
 
 @Configuration
-@ConditionalOnClass(name = "org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter")
+@ConditionalOnWebApplication(type = Type.SERVLET)
 public class WebMvcConfiguration {
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_RATE_LIMITING_ENABLED,
