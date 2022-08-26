@@ -23,8 +23,6 @@ import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
-import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -33,7 +31,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
@@ -52,10 +49,8 @@ public class WebConfiguration {
   @Primary
   public RestTemplate governanceRestTemplate(RetryHandler retryHandler,
       FaultInjectionHandler faultInjectionHandler,
-      @Autowired(required = false) ClientRecoverPolicy<Object> recoverPolicy,
       HttpClientProperties httpClientProperties) {
-    GovernanceRestTemplate restTemplate = new GovernanceRestTemplate(retryHandler, faultInjectionHandler,
-        recoverPolicy);
+    GovernanceRestTemplate restTemplate = new GovernanceRestTemplate(retryHandler, faultInjectionHandler);
     restTemplate.setRequestFactory(getClientHttpRequestFactory(httpClientProperties));
     return restTemplate;
   }
@@ -76,17 +71,15 @@ public class WebConfiguration {
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.REST_TEMPLATE_INSTANCE_ISOLATION_ENABLED,
       havingValue = "true", matchIfMissing = true)
-  public ClientHttpRequestInterceptor isolationClientHttpRequestInterceptor(InstanceIsolationHandler isolationHandler,
-      @Autowired(required = false) ClientRecoverPolicy<ClientHttpResponse> recoverPolicy) {
-    return new IsolationClientHttpRequestInterceptor(isolationHandler, recoverPolicy);
+  public ClientHttpRequestInterceptor isolationClientHttpRequestInterceptor(InstanceIsolationHandler isolationHandler) {
+    return new IsolationClientHttpRequestInterceptor(isolationHandler);
   }
 
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.REST_TEMPLATE_INSTANCE_BULKHEAD_ENABLED,
       havingValue = "true", matchIfMissing = true)
-  public ClientHttpRequestInterceptor bulkheadClientHttpRequestInterceptor(InstanceBulkheadHandler bulkheadHandler,
-      @Autowired(required = false) ClientRecoverPolicy<ClientHttpResponse> recoverPolicy) {
-    return new BulkheadClientHttpRequestInterceptor(bulkheadHandler, recoverPolicy);
+  public ClientHttpRequestInterceptor bulkheadClientHttpRequestInterceptor(InstanceBulkheadHandler bulkheadHandler) {
+    return new BulkheadClientHttpRequestInterceptor(bulkheadHandler);
   }
 
   @Bean
