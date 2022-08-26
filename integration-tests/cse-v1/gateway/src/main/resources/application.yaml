@@ -31,15 +31,12 @@ spring:
             - Path=/gateway/**
         - id: consumer-governance-test
           uri: lb://basic-consumer
-          filters:
-            - name: governance
           predicates:
             - Path=/**
           order: 1
         - id: consumer-retry-test
           uri: lb://basic-consumer
           filters:
-            - name: governance
             - name: Retry
               args:
                 retries: 3
@@ -70,6 +67,7 @@ servicecomb:
       slidingWindowSize: 20
       slidingWindowType: COUNT_BASED
       failureRateThreshold: 10
+      waitDurationInOpenState: 3000
   bulkhead:
     demo-bulkhead: |
       maxConcurrentCalls: 5

@@ -39,19 +39,16 @@ public class WebMvcConfiguration {
 
     private final List<PostHandlerInterceptor> postHandlerInterceptors;
 
-    private final InvocationMetrics invocationMetrics;
-
     WebMvcConfigurerBean(List<PreHandlerInterceptor> preHandlerInterceptors,
-        List<PostHandlerInterceptor> postHandlerInterceptors, InvocationMetrics invocationMetrics) {
+        List<PostHandlerInterceptor> postHandlerInterceptors) {
       this.preHandlerInterceptors = preHandlerInterceptors;
       this.postHandlerInterceptors = postHandlerInterceptors;
-      this.invocationMetrics = invocationMetrics;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
       registry.addInterceptor(
-              new DecorateHandlerInterceptor(preHandlerInterceptors, postHandlerInterceptors, invocationMetrics))
+              new DecorateHandlerInterceptor(preHandlerInterceptors, postHandlerInterceptors))
           .addPathPatterns("/**");
     }
   }
@@ -61,7 +58,7 @@ public class WebMvcConfiguration {
       @Autowired(required = false) List<PreHandlerInterceptor> preHandlerInterceptors,
       @Autowired(required = false) List<PostHandlerInterceptor> postHandlerInterceptors,
       InvocationMetrics invocationMetrics) {
-    return new WebMvcConfigurerBean(preHandlerInterceptors, postHandlerInterceptors, invocationMetrics);
+    return new WebMvcConfigurerBean(preHandlerInterceptors, postHandlerInterceptors);
   }
 
   @Bean
