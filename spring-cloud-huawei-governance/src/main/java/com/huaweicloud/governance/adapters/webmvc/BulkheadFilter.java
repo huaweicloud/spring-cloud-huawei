@@ -61,16 +61,17 @@ public class BulkheadFilter implements Filter {
       return;
     }
 
-    CheckedConsumer<Object> next = (v) -> chain.doFilter(request, response);
-    DecorateConsumer<Object> decorateConsumer = Decorators.ofConsumer(next.unchecked());
     GovernanceRequest governanceRequest = convert((HttpServletRequest) request);
-
     try {
       Bulkhead bulkhead = bulkheadHandler.getActuator(governanceRequest);
       if (bulkhead != null) {
+        CheckedConsumer<Object> next = (v) -> chain.doFilter(request, response);
+        DecorateConsumer<Object> decorateConsumer = Decorators.ofConsumer(next.unchecked());
         decorateConsumer.withBulkhead(bulkhead);
+        decorateConsumer.accept(EMPTY_HOLDER);
+        return;
       }
-      decorateConsumer.accept(EMPTY_HOLDER);
+      chain.doFilter(request, response);
     } catch (Throwable e) {
       if (e instanceof BulkheadFullException) {
         ((HttpServletResponse) response).setStatus(429);

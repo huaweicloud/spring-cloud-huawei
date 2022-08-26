@@ -60,16 +60,17 @@ public class IdentifierRateLimitingFilter implements Filter {
       return;
     }
 
-    CheckedConsumer<Object> next = (v) -> chain.doFilter(request, response);
-    DecorateConsumer<Object> decorateConsumer = Decorators.ofConsumer(next.unchecked());
     GovernanceRequest governanceRequest = convert((HttpServletRequest) request);
-
     try {
       RateLimiter rateLimiter = identifierRateLimitingHandler.getActuator(governanceRequest);
       if (rateLimiter != null) {
+        CheckedConsumer<Object> next = (v) -> chain.doFilter(request, response);
+        DecorateConsumer<Object> decorateConsumer = Decorators.ofConsumer(next.unchecked());
         decorateConsumer.withRateLimiter(rateLimiter);
+        decorateConsumer.accept(EMPTY_HOLDER);
+        return;
       }
-      decorateConsumer.accept(EMPTY_HOLDER);
+      chain.doFilter(request, response);
     } catch (Throwable e) {
       if (e instanceof RequestNotPermitted) {
         ((HttpServletResponse) response).setStatus(429);

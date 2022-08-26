@@ -18,7 +18,6 @@
 package com.huaweicloud.governance.adapters.web;
 
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
-import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.apache.servicecomb.governance.policy.CircuitBreakerPolicy;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.PullInstanceEvent;
@@ -48,20 +47,12 @@ public class IsolationClientHttpRequestInterceptor implements ClientHttpRequestI
 
   private final InstanceIsolationHandler instanceIsolationHandler;
 
-  private final ClientRecoverPolicy<ClientHttpResponse> clientRecoverPolicy;
-
-  public IsolationClientHttpRequestInterceptor(InstanceIsolationHandler instanceIsolationHandler,
-      ClientRecoverPolicy<ClientHttpResponse> clientRecoverPolicy) {
+  public IsolationClientHttpRequestInterceptor(InstanceIsolationHandler instanceIsolationHandler) {
     this.instanceIsolationHandler = instanceIsolationHandler;
-    this.clientRecoverPolicy = clientRecoverPolicy;
   }
 
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) {
-    CheckedFunction0<ClientHttpResponse> next = () -> execution.execute(request, body);
-
-    DecorateCheckedSupplier<ClientHttpResponse> dcs = Decorators.ofCheckedSupplier(next);
-
     GovernanceRequest governanceRequest = convert(request);
     try {
       CircuitBreakerPolicy circuitBreakerPolicy = instanceIsolationHandler.matchPolicy(governanceRequest);
@@ -71,10 +62,15 @@ public class IsolationClientHttpRequestInterceptor implements ClientHttpRequestI
       }
 
       if (circuitBreakerPolicy != null && !circuitBreakerPolicy.isForceClosed()) {
-        addInstanceIsolation(dcs, governanceRequest);
+        CircuitBreaker circuitBreaker = instanceIsolationHandler.getActuator(governanceRequest);
+        if (circuitBreaker != null) {
+          CheckedFunction0<ClientHttpResponse> next = () -> execution.execute(request, body);
+          DecorateCheckedSupplier<ClientHttpResponse> dcs = Decorators.ofCheckedSupplier(next);
+          dcs.withCircuitBreaker(circuitBreaker);
+          return dcs.get();
+        }
       }
-
-      return dcs.get();
+      return execution.execute(request, body);
     } catch (Throwable e) {
       if (e instanceof CallNotPermittedException) {
         // when instance isolated, request to pull instances.
@@ -82,12 +78,7 @@ public class IsolationClientHttpRequestInterceptor implements ClientHttpRequestI
         EventManager.post(new PullInstanceEvent());
         return new FallbackClientHttpResponse(503, "instance isolated");
       }
-      if (clientRecoverPolicy != null) {
-        return clientRecoverPolicy.apply(e);
-      }
-      LOG.error("instance isolation catch throwable", e);
-      // return 503, so that we can retry
-      return new FallbackClientHttpResponse(503, e.getMessage());
+      throw new RuntimeException(e);
     }
   }
 
@@ -104,14 +95,6 @@ public class IsolationClientHttpRequestInterceptor implements ClientHttpRequestI
       governanceRequest.setInstanceId(retryContext.getLastServer().getInstanceId());
     }
     return governanceRequest;
-  }
-
-  private void addInstanceIsolation(DecorateCheckedSupplier<ClientHttpResponse> dcs,
-      GovernanceRequest governanceRequest) {
-    CircuitBreaker circuitBreaker = instanceIsolationHandler.getActuator(governanceRequest);
-    if (circuitBreaker != null) {
-      dcs.withCircuitBreaker(circuitBreaker);
-    }
   }
 
   @Override

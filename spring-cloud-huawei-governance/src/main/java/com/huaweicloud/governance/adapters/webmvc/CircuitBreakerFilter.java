@@ -61,16 +61,17 @@ public class CircuitBreakerFilter implements Filter {
       return;
     }
 
-    CheckedConsumer<Object> next = (v) -> chain.doFilter(request, response);
-    DecorateConsumer<Object> decorateConsumer = Decorators.ofConsumer(next.unchecked());
     GovernanceRequest governanceRequest = convert((HttpServletRequest) request);
-
     try {
       CircuitBreaker circuitBreaker = circuitBreakerHandler.getActuator(governanceRequest);
       if (circuitBreaker != null) {
+        CheckedConsumer<Object> next = (v) -> chain.doFilter(request, response);
+        DecorateConsumer<Object> decorateConsumer = Decorators.ofConsumer(next.unchecked());
         decorateConsumer.withCircuitBreaker(circuitBreaker);
+        decorateConsumer.accept(EMPTY_HOLDER);
+        return;
       }
-      decorateConsumer.accept(EMPTY_HOLDER);
+      chain.doFilter(request, response);
     } catch (Throwable e) {
       if (e instanceof CallNotPermittedException) {
         ((HttpServletResponse) response).setStatus(429);
@@ -78,7 +79,6 @@ public class CircuitBreakerFilter implements Filter {
         LOGGER.warn("circuitBreaker is open : {}",
             e.getMessage());
       } else {
-        LOGGER.error("tttttttttt", e);
         throw e;
       }
     }
