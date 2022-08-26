@@ -32,7 +32,6 @@ import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
-import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.apache.servicecomb.governance.policy.CircuitBreakerPolicy;
 import org.apache.servicecomb.governance.policy.RetryPolicy;
@@ -107,20 +106,16 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
 
   private final InstanceBulkheadHandler instanceBulkheadHandler;
 
-  private final ClientRecoverPolicy<Response> clientRecoverPolicy;
-
   public GovernanceFeignBlockingLoadBalancerClient(RetryHandler retryHandler,
       FaultInjectionHandler faultInjectionHandler,
       InstanceIsolationHandler instanceIsolationHandler,
       InstanceBulkheadHandler instanceBulkheadHandler,
-      ClientRecoverPolicy<Response> clientRecoverPolicy,
       Client delegate, LoadBalancerClient loadBalancerClient,
       LoadBalancerClientFactory loadBalancerClientFactory) {
     this.retryHandler = retryHandler;
     this.faultInjectionHandler = faultInjectionHandler;
     this.instanceIsolationHandler = instanceIsolationHandler;
     this.instanceBulkheadHandler = instanceBulkheadHandler;
-    this.clientRecoverPolicy = clientRecoverPolicy;
     this.delegate = delegate;
     this.loadBalancerClient = loadBalancerClient;
     this.loadBalancerClientFactory = loadBalancerClientFactory;
@@ -133,48 +128,66 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
     GovernanceRequest governanceRequest = convert(request);
     governanceRequest.setServiceName(originalUri.getHost());
 
+    return decorateWithFault(request, options, originalUri, governanceRequest);
+  }
+
+  private Response decorateWithFault(Request request, Options options, URI originalUri,
+      GovernanceRequest governanceRequest) {
+    // add Fault
+    Fault fault = faultInjectionHandler.getActuator(governanceRequest);
+    if (fault != null) {
+      FaultInjectionDecorateCheckedSupplier<Object> faultInjectionDecorateCheckedSupplier =
+          FaultInjectionDecorators.ofCheckedSupplier(() -> faultObject);
+      faultInjectionDecorateCheckedSupplier.withFaultInjection(fault);
+      try {
+        Object result = faultInjectionDecorateCheckedSupplier.get();
+        if (result != faultObject) {
+          Map<String, Collection<String>> headers = new HashMap<>();
+          headers.put("Content-Type", Arrays.asList("application/json"));
+          return Response.builder().status(200)
+              .request(request)
+              .headers(headers)
+              .body(HttpUtils.serialize(result).getBytes(
+                  StandardCharsets.UTF_8)).build();
+        }
+      } catch (Throwable e) {
+        return Response.builder().status(500).reason(e.getMessage()).request(request).build();
+      }
+    }
+
+    return decorateWithRetry(request, options, originalUri, governanceRequest);
+  }
+
+  private Response decorateWithRetry(Request request, Options options, URI originalUri,
+      GovernanceRequest governanceRequest) {
+    Retry retry = retryHandler.getActuator(governanceRequest);
+    if (retry == null) {
+      return doExecute(originalUri, request, options, governanceRequest);
+    }
+
     CheckedFunction0<Response> next = () -> doExecute(originalUri, request, options, governanceRequest);
 
     DecorateCheckedSupplier<Response> dcs = Decorators.ofCheckedSupplier(next);
 
     try {
-      addRetry(dcs, governanceRequest);
+      dcs.withRetry(retry);
 
-      // add Fault
-      Fault fault = faultInjectionHandler.getActuator(governanceRequest);
-      if (fault != null) {
-        FaultInjectionDecorateCheckedSupplier<Object> faultInjectionDecorateCheckedSupplier =
-            FaultInjectionDecorators.ofCheckedSupplier(() -> faultObject);
-        faultInjectionDecorateCheckedSupplier.withFaultInjection(fault);
-        try {
-          Object result = faultInjectionDecorateCheckedSupplier.get();
-          if (result != faultObject) {
-            Map<String, Collection<String>> headers = new HashMap<>();
-            headers.put("Content-Type", Arrays.asList("application/json"));
-            return Response.builder().status(200)
-                .request(request)
-                .headers(headers)
-                .body(HttpUtils.serialize(result).getBytes(
-                    StandardCharsets.UTF_8)).build();
-          }
-        } catch (Throwable e) {
-          return Response.builder().status(500).reason(e.getMessage()).request(request).build();
-        }
-      }
+      addRetryContext(governanceRequest);
 
-      // continue
       return dcs.get();
     } catch (Throwable e) {
-      if (clientRecoverPolicy != null) {
-        return clientRecoverPolicy.apply(e);
-      }
-      LOG.error("retry catch throwable", e);
-      return Response.builder().status(500).reason(e.getMessage()).request(request).build();
+      throw new RuntimeException(e);
     }
   }
 
-  private Response doExecute(URI originalUri, Request request, Options options, GovernanceRequest governanceRequest)
-      throws IOException {
+  private void addRetryContext(GovernanceRequest governanceRequest) {
+    RetryPolicy retryPolicy = retryHandler.matchPolicy(governanceRequest);
+    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
+    RetryContext retryContext = new RetryContext(retryPolicy.getRetryOnSame());
+    context.putLocalContext(RetryContext.RETRY_CONTEXT, retryContext);
+  }
+
+  private Response doExecute(URI originalUri, Request request, Options options, GovernanceRequest governanceRequest) {
     String serviceId = originalUri.getHost();
     Assert.state(serviceId != null, "Request URI does not contain a valid hostname: " + originalUri);
     String hint = getHint(serviceId);
@@ -273,15 +286,17 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
       org.springframework.cloud.client.loadbalancer.Response<ServiceInstance> lbResponse,
       Set<LoadBalancerLifecycle> supportedLifecycleProcessors, boolean useRawStatusCodes) {
 
-    CheckedFunction0<Response> next = () -> executeWithLoadBalancerLifecycleProcessing(feignClient, options,
-        feignRequest, lbRequest, lbResponse,
-        supportedLifecycleProcessors, true, useRawStatusCodes);
+    return executeWithInstanceIsolation(governanceRequest, feignClient, options, feignRequest, lbRequest, lbResponse,
+        supportedLifecycleProcessors, useRawStatusCodes);
+  }
 
-    DecorateCheckedSupplier<Response> dcs = Decorators.ofCheckedSupplier(next);
+  private Response executeWithInstanceIsolation(GovernanceRequest governanceRequest, Client feignClient,
+      Options options,
+      Request feignRequest, org.springframework.cloud.client.loadbalancer.Request lbRequest,
+      org.springframework.cloud.client.loadbalancer.Response<ServiceInstance> lbResponse,
+      Set<LoadBalancerLifecycle> supportedLifecycleProcessors, boolean useRawStatusCodes) {
 
     try {
-      addInstanceBulkhead(dcs, governanceRequest);
-
       CircuitBreakerPolicy circuitBreakerPolicy = instanceIsolationHandler.matchPolicy(governanceRequest);
       if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
         return Response.builder().status(503)
@@ -290,10 +305,23 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
       }
 
       if (circuitBreakerPolicy != null && !circuitBreakerPolicy.isForceClosed()) {
-        addInstanceIsolation(dcs, governanceRequest);
+        CircuitBreaker circuitBreaker = instanceIsolationHandler.getActuator(governanceRequest);
+        if (circuitBreaker == null) {
+          return executeWithInstanceBulkhead(governanceRequest, feignClient, options, feignRequest, lbRequest,
+              lbResponse, supportedLifecycleProcessors, useRawStatusCodes);
+        }
+
+        CheckedFunction0<Response> next = () -> executeWithInstanceBulkhead(governanceRequest, feignClient, options,
+            feignRequest, lbRequest, lbResponse,
+            supportedLifecycleProcessors, useRawStatusCodes);
+
+        DecorateCheckedSupplier<Response> dcs = Decorators.ofCheckedSupplier(next);
+        dcs.withCircuitBreaker(circuitBreaker);
+        return dcs.get();
       }
 
-      return dcs.get();
+      return executeWithInstanceBulkhead(governanceRequest, feignClient, options, feignRequest, lbRequest,
+          lbResponse, supportedLifecycleProcessors, useRawStatusCodes);
     } catch (Throwable e) {
       if (e instanceof CallNotPermittedException) {
         // when instance isolated, request to pull instances.
@@ -302,16 +330,38 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
         return Response.builder().status(503).reason("instance isolated.").request(feignRequest).build();
       }
 
+      throw new RuntimeException(e);
+    }
+  }
+
+  private Response executeWithInstanceBulkhead(GovernanceRequest governanceRequest, Client feignClient, Options options,
+      Request feignRequest, org.springframework.cloud.client.loadbalancer.Request lbRequest,
+      org.springframework.cloud.client.loadbalancer.Response<ServiceInstance> lbResponse,
+      Set<LoadBalancerLifecycle> supportedLifecycleProcessors, boolean useRawStatusCodes) {
+
+    try {
+      Bulkhead bulkhead = instanceBulkheadHandler.getActuator(governanceRequest);
+      if (bulkhead == null) {
+        return executeWithLoadBalancerLifecycleProcessing(feignClient, options,
+            feignRequest, lbRequest, lbResponse,
+            supportedLifecycleProcessors, true, useRawStatusCodes);
+      }
+
+      CheckedFunction0<Response> next = () -> executeWithLoadBalancerLifecycleProcessing(feignClient, options,
+          feignRequest, lbRequest, lbResponse,
+          supportedLifecycleProcessors, true, useRawStatusCodes);
+
+      DecorateCheckedSupplier<Response> dcs = Decorators.ofCheckedSupplier(next);
+
+      dcs.withBulkhead(bulkhead);
+      return dcs.get();
+    } catch (Throwable e) {
       if (e instanceof BulkheadFullException) {
         LOG.error("instance bulkhead is full [{}]", governanceRequest.getInstanceId());
         return Response.builder().status(503).reason("instance bulkhead is full.").request(feignRequest).build();
       }
 
-      if (clientRecoverPolicy != null) {
-        return clientRecoverPolicy.apply(e);
-      }
-      LOG.error("instance isolation catch throwable", e);
-      return Response.builder().status(503).reason(e.getMessage()).request(feignRequest).build();
+      throw new RuntimeException(e);
     }
   }
 
@@ -328,31 +378,6 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
       return governanceRequest;
     } catch (MalformedURLException e) {
       return governanceRequest;
-    }
-  }
-
-  private void addInstanceBulkhead(DecorateCheckedSupplier<Response> dcs, GovernanceRequest governanceRequest) {
-    Bulkhead bulkhead = instanceBulkheadHandler.getActuator(governanceRequest);
-    if (bulkhead != null) {
-      dcs.withBulkhead(bulkhead);
-    }
-  }
-
-  private void addInstanceIsolation(DecorateCheckedSupplier<Response> dcs, GovernanceRequest governanceRequest) {
-    CircuitBreaker circuitBreaker = instanceIsolationHandler.getActuator(governanceRequest);
-    if (circuitBreaker != null) {
-      dcs.withCircuitBreaker(circuitBreaker);
-    }
-  }
-
-  private void addRetry(DecorateCheckedSupplier<Response> dcs, GovernanceRequest request) {
-    Retry retry = retryHandler.getActuator(request);
-    if (retry != null) {
-      dcs.withRetry(retry);
-      RetryPolicy retryPolicy = retryHandler.matchPolicy(request);
-      InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
-      RetryContext retryContext = new RetryContext(retryPolicy.getRetryOnSame());
-      context.putLocalContext(RetryContext.RETRY_CONTEXT, retryContext);
     }
   }
 }
