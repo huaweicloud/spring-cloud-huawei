@@ -22,7 +22,6 @@ import java.net.URI;
 
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
-import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.apache.servicecomb.governance.policy.RetryPolicy;
 import org.apache.servicecomb.http.client.common.HttpUtils;
@@ -67,14 +66,10 @@ public class GovernanceRestTemplate extends RestTemplate {
 
   private final FaultInjectionHandler faultInjectionHandler;
 
-  private final ClientRecoverPolicy<Object> clientRecoverPolicy;
-
   public GovernanceRestTemplate(RetryHandler retryHandler,
-      FaultInjectionHandler faultInjectionHandler,
-      ClientRecoverPolicy<Object> clientRecoverPolicy) {
+      FaultInjectionHandler faultInjectionHandler) {
     this.retryHandler = retryHandler;
     this.faultInjectionHandler = faultInjectionHandler;
-    this.clientRecoverPolicy = clientRecoverPolicy;
   }
 
   @SuppressWarnings("PMD.UseTryWithResources")

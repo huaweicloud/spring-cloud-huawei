@@ -23,8 +23,6 @@ import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
-import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -51,10 +49,8 @@ public class WebConfiguration {
   @Primary
   public RestTemplate governanceRestTemplate(RetryHandler retryHandler,
       FaultInjectionHandler faultInjectionHandler,
-      @Autowired(required = false) ClientRecoverPolicy<Object> recoverPolicy,
       HttpClientProperties httpClientProperties) {
-    GovernanceRestTemplate restTemplate = new GovernanceRestTemplate(retryHandler, faultInjectionHandler,
-        recoverPolicy);
+    GovernanceRestTemplate restTemplate = new GovernanceRestTemplate(retryHandler, faultInjectionHandler);
     restTemplate.setRequestFactory(getClientHttpRequestFactory(httpClientProperties));
     return restTemplate;
   }
