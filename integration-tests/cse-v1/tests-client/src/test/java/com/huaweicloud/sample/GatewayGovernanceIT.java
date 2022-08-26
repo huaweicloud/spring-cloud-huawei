@@ -77,9 +77,9 @@ public class GatewayGovernanceIT {
   public void testCircuitBreaker() throws Exception {
     CountDownLatch latch = new CountDownLatch(100);
     AtomicBoolean expectedFailed502 = new AtomicBoolean(false);
-    AtomicBoolean expectedFailed500 = new AtomicBoolean(false);
+    AtomicBoolean expectedFailed503 = new AtomicBoolean(false);
     AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
-    AtomicLong successCount = new AtomicLong(0);
+    AtomicLong failedCount = new AtomicLong(0);
 
     for (int i = 0; i < 10; i++) {
       for (int j = 0; j < 10; j++) {
@@ -90,15 +90,14 @@ public class GatewayGovernanceIT {
               String result = template.getForObject(Config.GATEWAY_URL + "/govern/circuitBreaker", String.class);
               if (!"ok".equals(result)) {
                 notExpectedFailed.set(true);
-              } else {
-                successCount.getAndIncrement();
               }
             } catch (Exception e) {
               if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 502) {
                 expectedFailed502.set(true);
               } else if (e instanceof HttpServerErrorException
-                  && ((HttpServerErrorException) e).getRawStatusCode() == 500) {
-                expectedFailed500.set(true);
+                  && ((HttpServerErrorException) e).getRawStatusCode() == 503) {
+                expectedFailed503.set(true);
+                failedCount.getAndIncrement();
               } else {
                 notExpectedFailed.set(true);
               }
@@ -112,9 +111,9 @@ public class GatewayGovernanceIT {
 
     latch.await(20, TimeUnit.SECONDS);
     Assertions.assertTrue(expectedFailed502.get());
-    Assertions.assertTrue(expectedFailed500.get());
+    Assertions.assertTrue(expectedFailed503.get());
     Assertions.assertFalse(notExpectedFailed.get());
-    Assertions.assertTrue(successCount.get() >= 8);
+    Assertions.assertTrue(failedCount.get() >= 90);
   }
 
   @Test
