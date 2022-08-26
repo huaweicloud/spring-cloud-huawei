@@ -48,10 +48,10 @@ public class FaultInjectionGlobalFilter implements GlobalFilter, Ordered {
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
     GovernanceRequest governanceRequest = GatewayUtils.createConsumerGovernanceRequest(exchange);
-    FaultInjectionDecorateCheckedSupplier<Object> ds =
-        FaultInjectionDecorators.ofCheckedSupplier(() -> faultObject);
     Fault fault = faultInjectionHandler.getActuator(governanceRequest);
     if (fault != null) {
+      FaultInjectionDecorateCheckedSupplier<Object> ds =
+          FaultInjectionDecorators.ofCheckedSupplier(() -> faultObject);
       ds.withFaultInjection(fault);
       try {
         Object result = ds.get();

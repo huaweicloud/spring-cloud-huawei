@@ -22,15 +22,12 @@ import java.net.URI;
 
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
-import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.apache.servicecomb.governance.policy.RetryPolicy;
 import org.apache.servicecomb.http.client.common.HttpUtils;
 import org.apache.servicecomb.injection.Fault;
 import org.apache.servicecomb.injection.FaultInjectionDecorators;
 import org.apache.servicecomb.injection.FaultInjectionDecorators.FaultInjectionDecorateCheckedSupplier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequest;
@@ -59,8 +56,6 @@ import io.vavr.CheckedFunction0;
  * NOTICE: doExecute is copied from RestTemplate. Need update when upgrading.
  */
 public class GovernanceRestTemplate extends RestTemplate {
-  private static final Logger LOGGER = LoggerFactory.getLogger(GovernanceRestTemplate.class);
-
   private static final String CONTEXT_IS_RETRY = "x-is-retry";
 
   private static final String CONTEXT_LAST_RESPONSE = "x-last-response";
@@ -71,14 +66,10 @@ public class GovernanceRestTemplate extends RestTemplate {
 
   private final FaultInjectionHandler faultInjectionHandler;
 
-  private final ClientRecoverPolicy<Object> clientRecoverPolicy;
-
   public GovernanceRestTemplate(RetryHandler retryHandler,
-      FaultInjectionHandler faultInjectionHandler,
-      ClientRecoverPolicy<Object> clientRecoverPolicy) {
+      FaultInjectionHandler faultInjectionHandler) {
     this.retryHandler = retryHandler;
     this.faultInjectionHandler = faultInjectionHandler;
-    this.clientRecoverPolicy = clientRecoverPolicy;
   }
 
   @SuppressWarnings("PMD.UseTryWithResources")
@@ -97,7 +88,7 @@ public class GovernanceRestTemplate extends RestTemplate {
       }
 
       // BEGIN: customize execution with retry
-      response = executeWithRetry(url, method, requestCallback, request);
+      response = executeWithFault(url, method, requestCallback, request);
       // END: customize execution with retry
 
       handleResponse(url, method, response);
@@ -115,50 +106,65 @@ public class GovernanceRestTemplate extends RestTemplate {
     }
   }
 
-  private ClientHttpResponse executeWithRetry(URI url, @Nullable HttpMethod method,
+  private ClientHttpResponse executeWithFault(URI url, @Nullable HttpMethod method,
       @Nullable RequestCallback requestCallback,
       ClientHttpRequest request) {
     GovernanceRequest governanceRequest = convert(request);
-    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
-
-    CheckedFunction0<ClientHttpResponse> next = () -> {
-      ClientHttpRequest execution = request;
-      if (context.getLocalContext(CONTEXT_IS_RETRY) == null) {
-        context.putLocalContext(CONTEXT_IS_RETRY, true);
-      } else {
-        // recreate request in retry
-        execution = createRequest(url, method);
-        if (requestCallback != null) {
-          requestCallback.doWithRequest(execution);
-        }
-        // close last response in retry
-        ClientHttpResponse lastResponse = context.getLocalContext(CONTEXT_LAST_RESPONSE);
-        if (lastResponse != null) {
-          lastResponse.close();
-        }
-      }
-      ClientHttpResponse response = execution.execute();
-      context.putLocalContext(CONTEXT_LAST_RESPONSE, response);
-      return response;
-    };
-
-    DecorateCheckedSupplier<ClientHttpResponse> dcs = Decorators.ofCheckedSupplier(next);
 
     try {
-      addRetry(dcs, governanceRequest);
-
       FallbackClientHttpResponse result = addFault(governanceRequest);
       if (result != null) {
         return result;
       }
 
+      return executeWithRetry(url, method, requestCallback, request, governanceRequest);
+    } catch (Throwable e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private ClientHttpResponse executeWithRetry(URI url, HttpMethod method, RequestCallback requestCallback,
+      ClientHttpRequest request, GovernanceRequest governanceRequest) {
+    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
+
+    try {
+      Retry retry = retryHandler.getActuator(governanceRequest);
+      if (retry == null) {
+        // when retry not enabled and Isolation enabled, we need get instance from RetryContext
+        RetryContext retryContext = new RetryContext(0);
+        context.putLocalContext(RetryContext.RETRY_CONTEXT, retryContext);
+        return request.execute();
+      }
+
+      CheckedFunction0<ClientHttpResponse> next = () -> {
+        ClientHttpRequest execution = request;
+        if (context.getLocalContext(CONTEXT_IS_RETRY) == null) {
+          context.putLocalContext(CONTEXT_IS_RETRY, true);
+        } else {
+          // recreate request in retry
+          execution = createRequest(url, method);
+          if (requestCallback != null) {
+            requestCallback.doWithRequest(execution);
+          }
+          // close last response in retry
+          ClientHttpResponse lastResponse = context.getLocalContext(CONTEXT_LAST_RESPONSE);
+          if (lastResponse != null) {
+            lastResponse.close();
+          }
+        }
+        ClientHttpResponse response = execution.execute();
+        context.putLocalContext(CONTEXT_LAST_RESPONSE, response);
+        return response;
+      };
+
+      DecorateCheckedSupplier<ClientHttpResponse> dcs = Decorators.ofCheckedSupplier(next);
+      dcs.withRetry(retry);
+      RetryPolicy retryPolicy = retryHandler.matchPolicy(governanceRequest);
+      RetryContext retryContext = new RetryContext(retryPolicy.getRetryOnSame());
+      context.putLocalContext(RetryContext.RETRY_CONTEXT, retryContext);
       return dcs.get();
     } catch (Throwable e) {
-      if (clientRecoverPolicy != null) {
-        return (ClientHttpResponse) clientRecoverPolicy.apply(e);
-      }
-      LOGGER.error("retry catch throwable", e);
-      return new FallbackClientHttpResponse(500, e.getMessage());
+      throw new RuntimeException(e);
     }
   }
 
@@ -188,21 +194,5 @@ public class GovernanceRestTemplate extends RestTemplate {
     String serviceName = request.getURI().getHost();
     governanceRequest.setServiceName(serviceName);
     return governanceRequest;
-  }
-
-  private void addRetry(DecorateCheckedSupplier<ClientHttpResponse> dcs, GovernanceRequest request) {
-    Retry retry = retryHandler.getActuator(request);
-    if (retry != null) {
-      dcs.withRetry(retry);
-      RetryPolicy retryPolicy = retryHandler.matchPolicy(request);
-      InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
-      RetryContext retryContext = new RetryContext(retryPolicy.getRetryOnSame());
-      context.putLocalContext(RetryContext.RETRY_CONTEXT, retryContext);
-    } else {
-      // when retry not enabled and Isolation enabled, we need get instance from RetryContext
-      InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
-      RetryContext retryContext = new RetryContext(0);
-      context.putLocalContext(RetryContext.RETRY_CONTEXT, retryContext);
-    }
   }
 }
