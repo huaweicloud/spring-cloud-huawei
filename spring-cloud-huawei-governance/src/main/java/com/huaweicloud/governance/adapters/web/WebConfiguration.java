@@ -33,7 +33,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
@@ -76,17 +75,15 @@ public class WebConfiguration {
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.REST_TEMPLATE_INSTANCE_ISOLATION_ENABLED,
       havingValue = "true", matchIfMissing = true)
-  public ClientHttpRequestInterceptor isolationClientHttpRequestInterceptor(InstanceIsolationHandler isolationHandler,
-      @Autowired(required = false) ClientRecoverPolicy<ClientHttpResponse> recoverPolicy) {
-    return new IsolationClientHttpRequestInterceptor(isolationHandler, recoverPolicy);
+  public ClientHttpRequestInterceptor isolationClientHttpRequestInterceptor(InstanceIsolationHandler isolationHandler) {
+    return new IsolationClientHttpRequestInterceptor(isolationHandler);
   }
 
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.REST_TEMPLATE_INSTANCE_BULKHEAD_ENABLED,
       havingValue = "true", matchIfMissing = true)
-  public ClientHttpRequestInterceptor bulkheadClientHttpRequestInterceptor(InstanceBulkheadHandler bulkheadHandler,
-      @Autowired(required = false) ClientRecoverPolicy<ClientHttpResponse> recoverPolicy) {
-    return new BulkheadClientHttpRequestInterceptor(bulkheadHandler, recoverPolicy);
+  public ClientHttpRequestInterceptor bulkheadClientHttpRequestInterceptor(InstanceBulkheadHandler bulkheadHandler) {
+    return new BulkheadClientHttpRequestInterceptor(bulkheadHandler);
   }
 
   @Bean

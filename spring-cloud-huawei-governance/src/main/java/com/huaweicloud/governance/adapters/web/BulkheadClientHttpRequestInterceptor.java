@@ -18,7 +18,6 @@
 package com.huaweicloud.governance.adapters.web;
 
 import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
-import org.apache.servicecomb.governance.handler.ext.ClientRecoverPolicy;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,25 +44,21 @@ public class BulkheadClientHttpRequestInterceptor implements ClientHttpRequestIn
 
   private final InstanceBulkheadHandler instanceBulkheadHandler;
 
-  private final ClientRecoverPolicy<ClientHttpResponse> clientRecoverPolicy;
-
-  public BulkheadClientHttpRequestInterceptor(InstanceBulkheadHandler instanceBulkheadHandler,
-      ClientRecoverPolicy<ClientHttpResponse> clientRecoverPolicy) {
+  public BulkheadClientHttpRequestInterceptor(InstanceBulkheadHandler instanceBulkheadHandler) {
     this.instanceBulkheadHandler = instanceBulkheadHandler;
-    this.clientRecoverPolicy = clientRecoverPolicy;
   }
 
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) {
-    CheckedFunction0<ClientHttpResponse> next = () -> execution.execute(request, body);
-
-    DecorateCheckedSupplier<ClientHttpResponse> dcs = Decorators.ofCheckedSupplier(next);
-
     GovernanceRequest governanceRequest = convert(request);
     try {
-
-      addInstanceBulkhead(dcs, governanceRequest);
-
+      Bulkhead bulkhead = instanceBulkheadHandler.getActuator(governanceRequest);
+      if (bulkhead == null) {
+        return execution.execute(request, body);
+      }
+      CheckedFunction0<ClientHttpResponse> next = () -> execution.execute(request, body);
+      DecorateCheckedSupplier<ClientHttpResponse> dcs = Decorators.ofCheckedSupplier(next);
+      dcs.withBulkhead(bulkhead);
       return dcs.get();
     } catch (Throwable e) {
       if (e instanceof BulkheadFullException) {
@@ -71,12 +66,7 @@ public class BulkheadClientHttpRequestInterceptor implements ClientHttpRequestIn
         LOG.warn("instance bulkhead is full [{}]", governanceRequest.getInstanceId());
         return new FallbackClientHttpResponse(503, "instance bulkhead is full.");
       }
-      if (clientRecoverPolicy != null) {
-        return clientRecoverPolicy.apply(e);
-      }
-      LOG.error("instance bulkhead catch throwable", e);
-      // return 503, so that we can retry
-      return new FallbackClientHttpResponse(503, e.getMessage());
+      throw new RuntimeException(e);
     }
   }
 
@@ -93,14 +83,6 @@ public class BulkheadClientHttpRequestInterceptor implements ClientHttpRequestIn
       governanceRequest.setInstanceId(retryContext.getLastServer().getInstanceId());
     }
     return governanceRequest;
-  }
-
-  private void addInstanceBulkhead(DecorateCheckedSupplier<ClientHttpResponse> dcs,
-      GovernanceRequest governanceRequest) {
-    Bulkhead bulkhead = instanceBulkheadHandler.getActuator(governanceRequest);
-    if (bulkhead != null) {
-      dcs.withBulkhead(bulkhead);
-    }
   }
 
   @Override
