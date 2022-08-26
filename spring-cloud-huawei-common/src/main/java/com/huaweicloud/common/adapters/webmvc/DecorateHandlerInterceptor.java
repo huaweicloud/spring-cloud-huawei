@@ -18,21 +18,14 @@
 package com.huaweicloud.common.adapters.webmvc;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.Ordered;
-import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.huaweicloud.common.context.InvocationContext;
-import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.common.metrics.InvocationMetrics;
 
 /**
  * add invocation context and metrics support for webmvc
@@ -42,14 +35,10 @@ public class DecorateHandlerInterceptor implements HandlerInterceptor, Ordered {
 
   private final List<PostHandlerInterceptor> postHandlerInterceptors;
 
-  private final InvocationMetrics invocationMetrics;
-
   public DecorateHandlerInterceptor(List<PreHandlerInterceptor> preHandlerInterceptors,
-      List<PostHandlerInterceptor> postHandlerInterceptors,
-      InvocationMetrics invocationMetrics) {
+      List<PostHandlerInterceptor> postHandlerInterceptors) {
     this.preHandlerInterceptors = preHandlerInterceptors;
     this.postHandlerInterceptors = postHandlerInterceptors;
-    this.invocationMetrics = invocationMetrics;
   }
 
   @Override
@@ -74,23 +63,6 @@ public class DecorateHandlerInterceptor implements HandlerInterceptor, Ordered {
     for (PostHandlerInterceptor postHandlerInterceptor : postHandlerInterceptors) {
       postHandlerInterceptor.handle(request, response, handler, modelAndView);
     }
-  }
-
-  @Override
-  public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
-      @Nullable Exception ex) throws Exception {
-    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
-    String operation = context.getLocalContext(InvocationMetrics.CONTEXT_OPERATION);
-    if (StringUtils.isEmpty(operation)) {
-      return;
-    }
-
-    long start = context.getLocalContext(InvocationMetrics.CONTEXT_TIME);
-    if (ex != null || HttpStatus.valueOf(response.getStatus()).is5xxServerError()) {
-      this.invocationMetrics.recordFailedCall(operation, System.currentTimeMillis() - start, TimeUnit.MILLISECONDS);
-      return;
-    }
-    this.invocationMetrics.recordSuccessfulCall(operation, System.currentTimeMillis() - start, TimeUnit.MILLISECONDS);
   }
 
   @Override
