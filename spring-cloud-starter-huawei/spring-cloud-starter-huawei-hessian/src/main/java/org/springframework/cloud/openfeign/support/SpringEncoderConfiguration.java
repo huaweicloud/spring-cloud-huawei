@@ -37,6 +37,7 @@ import feign.form.spring.SpringFormEncoder;
 
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.cloud.openfeign.support.SpringEncoder"})
+@SuppressWarnings({"all", "PMD"})
 public class SpringEncoderConfiguration {
   @Autowired(required = false)
   private FeignClientProperties feignClientProperties;

@@ -72,7 +72,7 @@ import com.huaweicloud.hessian.HessianHttpMessageConverter;
  * This class is copied from SpringEncoder, and support HessianHttpMessageConverter.HESSIAN_MEDIA_TYPE.includes(contentType)
  * as a binary type.
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"all", "PMD"})
 public class ExtendedSpringEncoder implements Encoder {
 
   private static final Log log = LogFactory.getLog(ExtendedSpringEncoder.class);

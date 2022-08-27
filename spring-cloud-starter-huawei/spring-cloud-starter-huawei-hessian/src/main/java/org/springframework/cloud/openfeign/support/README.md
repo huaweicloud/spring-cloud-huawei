@@ -6,3 +6,5 @@ And when use feign with ApacheHttpClient, will encode body as string and cause d
 
 This package is created to make x-application/hessian2 binary type. May need updated
 with different version.
+
+see ： https://github.com/spring-cloud/spring-cloud-openfeign/issues/734
