@@ -26,6 +26,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>spring-cloud-starter-huawei-service-engine-gateway</artifactId>
+  <name>Spring Cloud Huawei::Starter::Service Engine Gateway</name>
 
   <dependencies>
     <dependency>

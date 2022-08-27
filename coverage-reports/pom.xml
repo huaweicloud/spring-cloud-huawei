@@ -29,6 +29,7 @@
 
   <artifactId>coverage-reports</artifactId>
   <packaging>jar</packaging>
+  <name>Spring Cloud Huawei::Coverage Reports</name>
 
   <dependencies>
     <!-- core modules need count coverage -->
@@ -46,7 +47,7 @@
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-huawei-router-client</artifactId>
+      <artifactId>spring-cloud-huawei-router</artifactId>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
