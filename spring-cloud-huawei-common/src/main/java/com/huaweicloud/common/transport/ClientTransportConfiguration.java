@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Configuration;
 import com.huaweicloud.common.configration.dynamic.HttpClientProperties;
 
 @Configuration
-public class TransportConfiguration {
+public class ClientTransportConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public HttpClient transportHttpClient(HttpClientProperties httpClientProperties) {
