@@ -17,4 +17,5 @@
 ## ---------------------------------------------------------------------------
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.huaweicloud.hessian.HessianConfiguration
+  com.huaweicloud.hessian.HessianConfiguration,\
+  org.springframework.cloud.openfeign.support.SpringEncoderConfiguration

@@ -90,6 +90,10 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
 
   private static final Logger LOG = LoggerFactory.getLogger(GovernanceFeignBlockingLoadBalancerClient.class);
 
+  private static final String CONTEXT_IS_RETRY = "x-is-retry";
+
+  private static final String CONTEXT_LAST_RESPONSE = "x-last-response";
+
   private final Object faultObject = new Object();
 
   private final Client delegate;
@@ -163,12 +167,29 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
 
   private Response decorateWithRetry(Request request, Options options, URI originalUri,
       GovernanceRequest governanceRequest) {
+    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
     Retry retry = retryHandler.getActuator(governanceRequest);
     if (retry == null) {
+      // when retry not enabled and Isolation enabled, we need get instance from RetryContext
+      RetryContext retryContext = new RetryContext(0);
+      context.putLocalContext(RetryContext.RETRY_CONTEXT, retryContext);
       return doExecute(originalUri, request, options, governanceRequest);
     }
 
-    CheckedFunction0<Response> next = () -> doExecute(originalUri, request, options, governanceRequest);
+    CheckedFunction0<Response> next = () -> {
+      if (context.getLocalContext(CONTEXT_IS_RETRY) == null) {
+        context.putLocalContext(CONTEXT_IS_RETRY, true);
+      } else {
+        // close last response in retry
+        Response response = context.getLocalContext(CONTEXT_LAST_RESPONSE);
+        if (response != null) {
+          response.close();
+        }
+      }
+      Response response = doExecute(originalUri, request, options, governanceRequest);
+      context.putLocalContext(CONTEXT_LAST_RESPONSE, response);
+      return response;
+    };
 
     DecorateCheckedSupplier<Response> dcs = Decorators.ofCheckedSupplier(next);
 

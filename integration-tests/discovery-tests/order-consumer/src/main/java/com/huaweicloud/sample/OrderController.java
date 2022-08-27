@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -165,5 +167,15 @@ public class OrderController {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public String testWebClient() {
     return "ok";
+  }
+
+  @PostMapping("/testPostModel")
+  public PojoModel testPostModel(@RequestBody PojoModel model) {
+    return restTemplate.postForObject("http://price/testPostModel", model, PojoModel.class);
+  }
+
+  @PostMapping("/testPostModelFeign")
+  public PojoModel testPostModelFeign(@RequestBody PojoModel model) {
+    return feignService.testPostModel(model);
   }
 }
