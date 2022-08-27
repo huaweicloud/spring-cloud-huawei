@@ -27,7 +27,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>integration-tests</artifactId>
-  <name>Integration Tests</name>
+  <name>Spring Cloud Huawei::Integration Tests</name>
   <packaging>pom</packaging>
 
   <modules>

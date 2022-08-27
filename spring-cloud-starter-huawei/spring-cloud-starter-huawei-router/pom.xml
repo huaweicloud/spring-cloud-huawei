@@ -26,10 +26,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>spring-cloud-starter-huawei-router</artifactId>
+  <name>Spring Cloud Huawei::Starter::Router</name>
+
   <dependencies>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-huawei-router-client</artifactId>
+      <artifactId>spring-cloud-huawei-router</artifactId>
     </dependency>
   </dependencies>
 

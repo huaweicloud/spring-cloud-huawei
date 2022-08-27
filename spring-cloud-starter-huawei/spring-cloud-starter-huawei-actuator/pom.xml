@@ -25,6 +25,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>spring-cloud-starter-huawei-actuator</artifactId>
+    <name>Spring Cloud Huawei::Starter::Actuator</name>
 
     <dependencies>
         <dependency>

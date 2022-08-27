@@ -25,6 +25,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>spring-cloud-starter-huawei-dashboard</artifactId>
+  <name>Spring Cloud Huawei::Starter::Dashboard</name>
 
   <dependencies>
     <dependency>

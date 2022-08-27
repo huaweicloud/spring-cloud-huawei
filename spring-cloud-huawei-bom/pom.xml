@@ -30,7 +30,7 @@
   <artifactId>spring-cloud-huawei-bom</artifactId>
   <packaging>pom</packaging>
   <version>1.11.0-2021.0.x-SNAPSHOT</version>
-  <name>Spring Cloud Huawei BOM</name>
+  <name>Spring Cloud Huawei::Bom</name>
 
   <dependencyManagement>
     <dependencies>
@@ -77,7 +77,7 @@
       </dependency>
       <dependency>
         <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-huawei-router-client</artifactId>
+        <artifactId>spring-cloud-huawei-router</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

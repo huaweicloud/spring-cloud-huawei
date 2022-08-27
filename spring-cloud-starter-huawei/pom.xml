@@ -27,6 +27,8 @@
   <modelVersion>4.0.0</modelVersion>
   <packaging>pom</packaging>
   <artifactId>spring-cloud-starter-huawei</artifactId>
+  <name>Spring Cloud Huawei::Starter</name>
+
   <modules>
     <module>spring-cloud-starter-huawei-discovery</module>
     <module>spring-cloud-starter-huawei-router</module>
