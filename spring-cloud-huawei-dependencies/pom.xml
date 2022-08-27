@@ -36,6 +36,7 @@
     <feign-core.version>11.8</feign-core.version>
     <httpclient.version>4.5.9</httpclient.version>
     <jackson.version>2.12.1</jackson.version>
+    <commons-io.version>2.7</commons-io.version>
     <jmockit.version>1.36</jmockit.version>
     <guava.version>30.0-jre</guava.version>
     <snakeyaml.version>1.26</snakeyaml.version>
@@ -101,8 +102,18 @@
 
       <!-- other 3rd parties -->
       <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io.version}</version>
+      </dependency>
+      <dependency>
         <groupId>io.github.openfeign</groupId>
         <artifactId>feign-core</artifactId>
+        <version>${feign-core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.openfeign</groupId>
+        <artifactId>feign-httpclient</artifactId>
         <version>${feign-core.version}</version>
       </dependency>
       <dependency>
