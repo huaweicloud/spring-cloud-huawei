@@ -21,8 +21,9 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
-import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -94,5 +95,10 @@ public class PriceController {
   @RequestMapping("/priceBalance")
   public String priceBalance(@RequestParam("id") String id) {
     return id;
+  }
+
+  @PostMapping("/testPostModel")
+  public PojoModel testPostModel(@RequestBody PojoModel model) {
+    return model;
   }
 }
