@@ -17,8 +17,7 @@
 
 package com.huaweicloud.governance.adapters.web;
 
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.client.HttpClient;
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
@@ -29,13 +28,11 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
-import com.huaweicloud.common.configration.dynamic.HttpClientProperties;
 import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
 
 @Configuration
@@ -49,23 +46,10 @@ public class WebConfiguration {
   @Primary
   public RestTemplate governanceRestTemplate(RetryHandler retryHandler,
       FaultInjectionHandler faultInjectionHandler,
-      HttpClientProperties httpClientProperties) {
+      HttpClient transportHttpClient) {
     GovernanceRestTemplate restTemplate = new GovernanceRestTemplate(retryHandler, faultInjectionHandler);
-    restTemplate.setRequestFactory(getClientHttpRequestFactory(httpClientProperties));
+    restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory(transportHttpClient));
     return restTemplate;
-  }
-
-  private ClientHttpRequestFactory getClientHttpRequestFactory(HttpClientProperties httpClientProperties) {
-    PoolingHttpClientConnectionManager pool = new PoolingHttpClientConnectionManager();
-    pool.setDefaultMaxPerRoute(httpClientProperties.getPoolSizePerRoute());
-    pool.setMaxTotal(httpClientProperties.getPoolSizeMax());
-    HttpComponentsClientHttpRequestFactory clientHttpRequestFactory =
-        new HttpComponentsClientHttpRequestFactory(HttpClientBuilder.create().setConnectionManager(pool).build());
-    clientHttpRequestFactory.setConnectionRequestTimeout(
-        httpClientProperties.getConnectionRequestTimeoutInMilliSeconds());
-    clientHttpRequestFactory.setConnectTimeout(httpClientProperties.getConnectTimeoutInMilliSeconds());
-    clientHttpRequestFactory.setReadTimeout(httpClientProperties.getReadTimeoutInMilliSeconds());
-    return clientHttpRequestFactory;
   }
 
   @Bean

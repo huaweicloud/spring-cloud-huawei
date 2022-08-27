@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
@@ -80,7 +81,7 @@ public class SchemaController {
     // test code, make simple
     try {
       InputStream inputStream = this.getClass().getResource("/" + restController).openStream();
-      return IOUtils.toString(inputStream);
+      return IOUtils.toString(inputStream, Charset.forName("UTF-8"));
     } catch (IOException e) {
       Assertions.fail(e.getMessage());
       return null;

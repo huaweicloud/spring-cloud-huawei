@@ -83,4 +83,18 @@ public class OrderControllerIT {
     Map instance = (Map) result.get(0);
     assertThat(instance.get("port")).isEqualTo(pricePort);
   }
+
+  @Test
+  public void testPojoModel() {
+    PojoModel input = new PojoModel();
+    input.setName("hello");
+    input.setNum(2);
+    PojoModel pojoModel = template.postForObject(url + "/testPostModel", input, PojoModel.class);
+    assertThat(pojoModel.getName()).isEqualTo("hello");
+    assertThat(pojoModel.getNum()).isEqualTo(2);
+
+    pojoModel = template.postForObject(url + "/testPostModelFeign", input, PojoModel.class);
+    assertThat(pojoModel.getName()).isEqualTo("hello");
+    assertThat(pojoModel.getNum()).isEqualTo(2);
+  }
 }
