@@ -31,6 +31,7 @@ import org.springframework.cloud.openfeign.FeignClientProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import feign.codec.Encoder;
 import feign.form.MultipartFormContentProcessor;
 import feign.form.spring.SpringFormEncoder;
@@ -38,6 +39,7 @@ import feign.form.spring.SpringFormEncoder;
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.cloud.openfeign.support.SpringEncoder"})
 @SuppressWarnings({"all", "PMD"})
+@SuppressFBWarnings
 public class SpringEncoderConfiguration {
   @Autowired(required = false)
   private FeignClientProperties feignClientProperties;

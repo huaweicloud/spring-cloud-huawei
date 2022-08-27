@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import feign.RequestTemplate;
 import feign.codec.EncodeException;
 import feign.codec.Encoder;
@@ -73,6 +74,7 @@ import com.huaweicloud.hessian.HessianHttpMessageConverter;
  * as a binary type.
  */
 @SuppressWarnings({"all", "PMD"})
+@SuppressFBWarnings
 public class ExtendedSpringEncoder implements Encoder {
 
   private static final Log log = LogFactory.getLog(ExtendedSpringEncoder.class);
