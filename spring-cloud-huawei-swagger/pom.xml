@@ -27,6 +27,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>spring-cloud-huawei-swagger</artifactId>
+  <name>Spring Cloud Huawei::Swagger</name>
 
   <dependencies>
     <dependency>

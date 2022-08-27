@@ -26,7 +26,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>spring-cloud-huawei-router-client</artifactId>
+  <artifactId>spring-cloud-huawei-router</artifactId>
+  <name>Spring Cloud Huawei::Router</name>
 
   <dependencies>
     <dependency>
