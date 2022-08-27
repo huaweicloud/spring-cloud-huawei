@@ -30,8 +30,7 @@
   <artifactId>spring-cloud-huawei-parents</artifactId>
   <packaging>pom</packaging>
   <version>1.11.0-2021.0.x-SNAPSHOT</version>
-  <name>Spring Cloud Huawei Dependencies</name>
-
+  <name>Spring Cloud Huawei::Parents</name>
 
   <dependencies>
     <!-- unit test-->

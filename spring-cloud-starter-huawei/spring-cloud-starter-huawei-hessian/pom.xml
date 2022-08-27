@@ -28,6 +28,8 @@
 
 
   <artifactId>spring-cloud-starter-huawei-hessian</artifactId>
+  <name>Spring Cloud Huawei::Starter::Hessian</name>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.dubbo</groupId>

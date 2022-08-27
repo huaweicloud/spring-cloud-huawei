@@ -27,8 +27,7 @@
   </parent>
 
   <artifactId>spring-cloud-huawei-discovery</artifactId>
-  <name>Spring Cloud Huawei Discovery</name>
-
+  <name>Spring Cloud Huawei::Discovery</name>
 
   <dependencies>
     <dependency>

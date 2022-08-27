@@ -27,8 +27,7 @@
   </parent>
 
   <artifactId>spring-cloud-huawei-dashboard</artifactId>
-  <name>Spring Cloud Huawei Dishboard</name>
-
+  <name>Spring Cloud Huawei::Dashboard</name>
 
   <dependencies>
     <dependency>

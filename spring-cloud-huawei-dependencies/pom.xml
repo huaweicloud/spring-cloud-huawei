@@ -30,7 +30,8 @@
   <artifactId>spring-cloud-huawei-dependencies</artifactId>
   <packaging>pom</packaging>
   <version>1.11.0-2021.0.x-SNAPSHOT</version>
-  <name>Spring Cloud Huawei Dependencies</name>
+  <name>Spring Cloud Huawei::Dependencies</name>
+
   <properties>
     <feign-core.version>11.8</feign-core.version>
     <httpclient.version>4.5.9</httpclient.version>
