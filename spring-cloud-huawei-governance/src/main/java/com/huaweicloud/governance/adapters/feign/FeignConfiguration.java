@@ -17,6 +17,7 @@
 
 package com.huaweicloud.governance.adapters.feign;
 
+import org.apache.http.client.HttpClient;
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
@@ -33,6 +34,7 @@ import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
 
 import feign.Client;
+import feign.httpclient.ApacheHttpClient;
 
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.cloud.openfeign.loadbalancer.FeignBlockingLoadBalancerClient"})
@@ -46,11 +48,12 @@ public class FeignConfiguration {
       InstanceBulkheadHandler instanceBulkheadHandler,
       LoadBalancerClient loadBalancerClient,
       LoadBalancerProperties loadBalancerProperties,
+      HttpClient transportHttpClient,
       LoadBalancerClientFactory loadBalancerClientFactory) {
     return new GovernanceFeignBlockingLoadBalancerClient(
         retryHandler, faultInjectionHandler, instanceIsolationHandler,
         instanceBulkheadHandler,
-        new Client.Default(null, null), loadBalancerClient,
+        new ApacheHttpClient(transportHttpClient), loadBalancerClient,
         loadBalancerProperties, loadBalancerClientFactory);
   }
 

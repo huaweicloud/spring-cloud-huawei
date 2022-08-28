@@ -56,18 +56,15 @@ public class SpringEncoderConfiguration {
   @Bean
   @ConditionalOnMissingBean
   @ConditionalOnMissingClass("org.springframework.data.domain.Pageable")
-  public Encoder feignEncoder(ObjectProvider<AbstractFormWriter> formWriterProvider,
-      ObjectProvider<HttpMessageConverterCustomizer> customizers) {
-    return springEncoder(formWriterProvider, encoderProperties, customizers);
+  public Encoder feignEncoder(ObjectProvider<AbstractFormWriter> formWriterProvider) {
+    return springEncoder(formWriterProvider, encoderProperties);
   }
 
   @Bean
   @ConditionalOnClass(name = "org.springframework.data.domain.Pageable")
   @ConditionalOnMissingBean
-  public Encoder feignEncoderPageable(ObjectProvider<AbstractFormWriter> formWriterProvider,
-      ObjectProvider<HttpMessageConverterCustomizer> customizers) {
-    PageableSpringEncoder encoder = new PageableSpringEncoder(
-        springEncoder(formWriterProvider, encoderProperties, customizers));
+  public Encoder feignEncoderPageable(ObjectProvider<AbstractFormWriter> formWriterProvider) {
+    PageableSpringEncoder encoder = new PageableSpringEncoder(springEncoder(formWriterProvider, encoderProperties));
 
     if (springDataWebProperties != null) {
       encoder.setPageParameter(springDataWebProperties.getPageable().getPageParameter());
@@ -78,14 +75,14 @@ public class SpringEncoderConfiguration {
   }
 
   private Encoder springEncoder(ObjectProvider<AbstractFormWriter> formWriterProvider,
-      FeignEncoderProperties encoderProperties, ObjectProvider<HttpMessageConverterCustomizer> customizers) {
+      FeignEncoderProperties encoderProperties) {
     AbstractFormWriter formWriter = formWriterProvider.getIfAvailable();
 
     if (formWriter != null) {
-      return new ExtendedSpringEncoder(new SpringPojoFormEncoder(formWriter), messageConverters, encoderProperties,
-          customizers);
-    } else {
-      return new ExtendedSpringEncoder(new SpringFormEncoder(), messageConverters, encoderProperties, customizers);
+      return new ExtendedSpringEncoder(new SpringPojoFormEncoder(formWriter), this.messageConverters, encoderProperties);
+    }
+    else {
+      return new ExtendedSpringEncoder(new SpringFormEncoder(), this.messageConverters, encoderProperties);
     }
   }
 
@@ -97,5 +94,6 @@ public class SpringEncoderConfiguration {
       MultipartFormContentProcessor processor = (MultipartFormContentProcessor) getContentProcessor(MULTIPART);
       processor.addFirstWriter(formWriter);
     }
+
   }
 }

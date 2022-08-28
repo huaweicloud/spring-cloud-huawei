@@ -77,7 +77,7 @@
       </dependency>
       <dependency>
         <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-huawei-router-client</artifactId>
+        <artifactId>spring-cloud-huawei-router</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
