@@ -15,21 +15,21 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.samples;
+package com.huaweicloud.sample;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootApplication
-@EnableDiscoveryClient
-@SuppressWarnings({"all", "PMD"})
-public class GatewayApplication {
-  public static void main(String[] args) throws Exception {
-    try {
-      SpringApplication.run(GatewayApplication.class, args);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+import org.junit.jupiter.api.Test;
+import org.springframework.web.client.RestTemplate;
+
+public class WebFluxControllerIT {
+  final String url = "http://127.0.0.1:9099";
+
+  final RestTemplate template = new RestTemplate();
+
+  @Test
+  public void testSchemaGeneratorSpringCloud() {
+    String result = template.getForObject(url + "//sayHello?name=jack", String.class);
+    assertThat(result).isEqualTo("jack");
   }
 }
