@@ -25,6 +25,14 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/testWebFluxServiceRateLimiting"
+    testWebFluxServiceIdentifierRateLimiting: |
+      matches:
+        - apiPath:
+            exact: "/testWebFluxServiceIdentifierRateLimiting"
   rateLimiting:
     testWebFluxServiceRateLimiting: |
       rate: 10
+  identifierRateLimiting:
+    testWebFluxServiceIdentifierRateLimiting: |
+      rate: 2
+      identifier: user-id
