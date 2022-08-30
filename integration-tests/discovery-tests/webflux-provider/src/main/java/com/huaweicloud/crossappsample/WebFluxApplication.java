@@ -23,6 +23,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
 @EnableDiscoveryClient
+@SuppressWarnings({"all", "PMD"})
 public class WebFluxApplication {
   public static void main(String[] args) {
     try {
