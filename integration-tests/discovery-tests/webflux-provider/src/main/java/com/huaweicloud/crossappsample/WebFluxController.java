@@ -16,6 +16,8 @@
  */
 package com.huaweicloud.crossappsample;
 
+import java.time.Duration;
+
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,5 +58,12 @@ public class WebFluxController {
       return Mono.just("OK");
     }
     throw new RuntimeException("test error");
+  }
+
+  @GetMapping(
+      path = "/testWebFluxServiceBulkhead",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<String> testWebFluxServiceBulkhead() {
+    return Mono.delay(Duration.ofMillis(500)).then(Mono.just("OK"));
   }
 }
