@@ -33,6 +33,10 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/testWebFluxServiceCircuitBreaker"
+    testWebFluxServiceBulkhead: |
+      matches:
+        - apiPath:
+            exact: "/testWebFluxServiceBulkhead"
   rateLimiting:
     testWebFluxServiceRateLimiting: |
       rate: 10
@@ -48,3 +52,7 @@ servicecomb:
       failureRateThreshold: 20
       waitDurationInOpenState: 1000
       permittedNumberOfCallsInHalfOpenState: 10
+  bulkhead:
+    testWebFluxServiceBulkhead: |
+      maxConcurrentCalls: 2
+      maxWaitDuration: 100
