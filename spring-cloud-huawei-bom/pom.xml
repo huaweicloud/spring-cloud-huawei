@@ -30,7 +30,7 @@
   <artifactId>spring-cloud-huawei-bom</artifactId>
   <packaging>pom</packaging>
   <version>1.11.0-2020.0.x-SNAPSHOT</version>
-  <name>Spring Cloud Huawei BOM</name>
+  <name>Spring Cloud Huawei::BOM</name>
 
   <dependencyManagement>
     <dependencies>
