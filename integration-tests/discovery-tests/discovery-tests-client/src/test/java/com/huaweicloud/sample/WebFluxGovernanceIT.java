@@ -19,9 +19,14 @@ package com.huaweicloud.sample;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 public class WebFluxGovernanceIT {
@@ -61,5 +66,55 @@ public class WebFluxGovernanceIT {
     latch.await(20, TimeUnit.SECONDS);
     Assertions.assertTrue(expectedFailed.get());
     Assertions.assertFalse(notExpectedFailed.get());
+  }
+
+  @Test
+  public void testIdentifierRateLimiting() throws Exception {
+    for (int i = 0; i < 10; i++) {
+      testIdentifierRateLimiting("user" + i);
+    }
+  }
+
+  private void testIdentifierRateLimiting(String userId) throws Exception {
+    CountDownLatch latch = new CountDownLatch(10);
+    AtomicBoolean expectedFailed = new AtomicBoolean(false);
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+    AtomicLong successCount = new AtomicLong(0);
+
+    for (int i = 0; i < 1; i++) {
+      for (int j = 0; j < 10; j++) {
+        String name = "t-" + i + "-" + j;
+        new Thread(name) {
+          public void run() {
+            try {
+              HttpHeaders headers = new HttpHeaders();
+              headers.add("user-id", userId);
+              HttpEntity<Void> entity = new HttpEntity<>(headers);
+              String result = template.exchange(webFluxURL + "/testWebFluxServiceIdentifierRateLimiting",
+                  HttpMethod.GET, entity,
+                  String.class).getBody();
+              if (!"OK".equals(result)) {
+                notExpectedFailed.set(true);
+              } else {
+                successCount.getAndIncrement();
+              }
+            } catch (Exception e) {
+              if (e instanceof HttpClientErrorException && ((HttpClientErrorException) e).getRawStatusCode() == 429) {
+                expectedFailed.set(true);
+              } else {
+                notExpectedFailed.set(true);
+              }
+            }
+            latch.countDown();
+          }
+        }.start();
+      }
+      Thread.sleep(100);
+    }
+
+    latch.await(20, TimeUnit.SECONDS);
+    Assertions.assertTrue(expectedFailed.get());
+    Assertions.assertFalse(notExpectedFailed.get());
+    Assertions.assertTrue(successCount.get() >= 2);
   }
 }

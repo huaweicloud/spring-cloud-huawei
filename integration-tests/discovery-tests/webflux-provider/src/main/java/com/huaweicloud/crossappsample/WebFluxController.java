@@ -37,4 +37,11 @@ public class WebFluxController {
   public Mono<String> testWebFluxServiceRateLimiting() {
     return Mono.just("OK");
   }
+
+  @GetMapping(
+      path = "/testWebFluxServiceIdentifierRateLimiting",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<String> testWebFluxServiceIdentifierRateLimiting() {
+    return Mono.just("OK");
+  }
 }
