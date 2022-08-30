@@ -27,6 +27,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 public class WebFluxGovernanceIT {
@@ -35,7 +36,7 @@ public class WebFluxGovernanceIT {
   final RestTemplate template = new RestTemplate();
 
   @Test
-  public void testRateLimiting() throws Exception {
+  public void testWebFluxServiceRateLimiting() throws Exception {
     CountDownLatch latch = new CountDownLatch(100);
     AtomicBoolean expectedFailed = new AtomicBoolean(false);
     AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
@@ -69,13 +70,13 @@ public class WebFluxGovernanceIT {
   }
 
   @Test
-  public void testIdentifierRateLimiting() throws Exception {
+  public void testWebFluxServiceIdentifierRateLimiting() throws Exception {
     for (int i = 0; i < 10; i++) {
-      testIdentifierRateLimiting("user" + i);
+      testWebFluxServiceIdentifierRateLimiting("user" + i);
     }
   }
 
-  private void testIdentifierRateLimiting(String userId) throws Exception {
+  private void testWebFluxServiceIdentifierRateLimiting(String userId) throws Exception {
     CountDownLatch latch = new CountDownLatch(10);
     AtomicBoolean expectedFailed = new AtomicBoolean(false);
     AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
@@ -116,5 +117,41 @@ public class WebFluxGovernanceIT {
     Assertions.assertTrue(expectedFailed.get());
     Assertions.assertFalse(notExpectedFailed.get());
     Assertions.assertTrue(successCount.get() >= 2);
+  }
+
+  @Test
+  public void testWebFluxServiceCircuitBreaker() throws Exception {
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+    AtomicLong successCount = new AtomicLong(0);
+    AtomicLong failCount = new AtomicLong(0);
+    AtomicLong rejectedCount = new AtomicLong(0);
+
+    for (int i = 0; i < 100; i++) {
+      try {
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        String result = template.exchange(webFluxURL + "/testWebFluxServiceCircuitBreaker", HttpMethod.GET, entity,
+            String.class).getBody();
+        if (!"OK".equals(result)) {
+          notExpectedFailed.set(true);
+        } else {
+          successCount.getAndIncrement();
+        }
+      } catch (Exception e) {
+        if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 503) {
+          rejectedCount.getAndIncrement();
+        } else if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 500) {
+          failCount.getAndIncrement();
+        } else {
+          notExpectedFailed.set(true);
+        }
+      }
+    }
+
+    Assertions.assertFalse(notExpectedFailed.get());
+    Assertions.assertEquals(100, rejectedCount.get() + successCount.get() + failCount.get());
+    Assertions.assertTrue(rejectedCount.get() >= 90);
+    Assertions.assertTrue(successCount.get() >= 6);
+    Assertions.assertTrue(failCount.get() >= 3);
   }
 }

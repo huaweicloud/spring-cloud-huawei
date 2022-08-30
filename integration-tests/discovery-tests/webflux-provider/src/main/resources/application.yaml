@@ -29,6 +29,10 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/testWebFluxServiceIdentifierRateLimiting"
+    testWebFluxServiceCircuitBreaker: |
+      matches:
+        - apiPath:
+            exact: "/testWebFluxServiceCircuitBreaker"
   rateLimiting:
     testWebFluxServiceRateLimiting: |
       rate: 10
@@ -36,3 +40,11 @@ servicecomb:
     testWebFluxServiceIdentifierRateLimiting: |
       rate: 2
       identifier: user-id
+  circuitBreaker:
+    testWebFluxServiceCircuitBreaker: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      slidingWindowType: COUNT_BASED
+      failureRateThreshold: 20
+      waitDurationInOpenState: 1000
+      permittedNumberOfCallsInHalfOpenState: 10

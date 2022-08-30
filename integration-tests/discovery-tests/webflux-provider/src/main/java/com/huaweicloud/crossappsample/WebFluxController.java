@@ -26,6 +26,8 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class WebFluxController {
+  private int circuitBreakerCounter = 0;
+
   @RequestMapping("/sayHello")
   public Mono<String> sayHello(@RequestParam("name") String name) {
     return Mono.just(name);
@@ -43,5 +45,16 @@ public class WebFluxController {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<String> testWebFluxServiceIdentifierRateLimiting() {
     return Mono.just("OK");
+  }
+
+  @GetMapping(
+      path = "/testWebFluxServiceCircuitBreaker",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<String> testWebFluxServiceCircuitBreaker() {
+    circuitBreakerCounter++;
+    if (circuitBreakerCounter % 3 != 0) {
+      return Mono.just("OK");
+    }
+    throw new RuntimeException("test error");
   }
 }
