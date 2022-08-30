@@ -14,21 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.huaweicloud.crossappsample;
 
-package com.huaweicloud.samples;
-
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
 @EnableDiscoveryClient
 @SuppressWarnings({"all", "PMD"})
-public class GatewayApplication {
-  public static void main(String[] args) throws Exception {
+public class WebFluxApplication {
+  public static void main(String[] args) {
     try {
-      SpringApplication.run(GatewayApplication.class, args);
-    } catch (Exception e) {
+      new SpringApplicationBuilder(WebFluxApplication.class).web(WebApplicationType.REACTIVE).build().run(args);
+    } catch (Throwable e) {
       e.printStackTrace();
     }
   }

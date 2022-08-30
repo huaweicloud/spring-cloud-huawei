@@ -25,8 +25,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>spring-cloud-starter-huawei-service-engine</artifactId>
-  <name>Spring Cloud Huawei::Starter::Service Engine</name>
+  <artifactId>spring-cloud-starter-huawei-service-engine-webflux</artifactId>
+  <name>Spring Cloud Huawei::Starter::Service Engine WebFlux</name>
 
   <dependencies>
     <dependency>
@@ -43,31 +43,15 @@
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-swagger</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-jasypt</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-hessian</artifactId>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-dashboard</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.github.openfeign</groupId>
-      <artifactId>feign-httpclient</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-openfeign</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
     </dependency>
   </dependencies>
 </project>
