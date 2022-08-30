@@ -14,22 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.huaweicloud.crossappsample;
 
-package com.huaweicloud.samples;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import reactor.core.publisher.Mono;
 
-@SpringBootApplication
-@EnableDiscoveryClient
-@SuppressWarnings({"all", "PMD"})
-public class GatewayApplication {
-  public static void main(String[] args) throws Exception {
-    try {
-      SpringApplication.run(GatewayApplication.class, args);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+@RestController
+public class WebFluxController {
+  @RequestMapping("/sayHello")
+  public Mono<String> sayHello(@RequestParam("name") String name) {
+    return Mono.just(name);
   }
 }
