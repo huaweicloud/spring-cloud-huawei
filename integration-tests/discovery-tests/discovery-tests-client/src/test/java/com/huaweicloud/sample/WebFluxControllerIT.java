@@ -29,7 +29,7 @@ public class WebFluxControllerIT {
 
   @Test
   public void testSchemaGeneratorSpringCloud() {
-    String result = template.getForObject(url + "//sayHello?name=jack", String.class);
+    String result = template.getForObject(url + "/sayHello?name=jack", String.class);
     assertThat(result).isEqualTo("jack");
   }
 }
