@@ -134,6 +134,37 @@
                 </image>
 
                 <image>
+                  <name>webflux-provider-test:${project.version}</name>
+                  <alias>webflux-provider-test</alias>
+                  <run>
+                    <env>
+                      <JAVA_OPTS>
+                        -Dspring.cloud.servicecomb.discovery.address=http://sc.servicecomb.io:30100
+                      </JAVA_OPTS>
+                      <JAR_PATH>/maven/webflux-provider-test-${project.version}.jar</JAR_PATH>
+                    </env>
+                    <links>
+                      <link>service-center:sc.servicecomb.io</link>
+                    </links>
+                    <wait>
+                      <log>register microservice successfully</log>
+                      <tcp>
+                        <ports>
+                          <port>9098</port>
+                        </ports>
+                      </tcp>
+                      <time>120000</time>
+                    </wait>
+                    <ports>
+                      <port>9098:9098</port>
+                    </ports>
+                    <dependsOn>
+                      <container>service-center</container>
+                    </dependsOn>
+                  </run>
+                </image>
+
+                <image>
                   <name>account-provider-test:${project.version}</name>
                   <alias>account-provider-test</alias>
                   <run>
@@ -196,6 +227,7 @@
                       <container>order-consumer-test</container>
                       <container>price-provider-test</container>
                       <container>account-provider-test</container>
+                      <container>webflux-provider-test</container>
                     </dependsOn>
                   </run>
                 </image>
