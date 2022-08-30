@@ -154,4 +154,44 @@ public class WebFluxGovernanceIT {
     Assertions.assertTrue(successCount.get() >= 6);
     Assertions.assertTrue(failCount.get() >= 3);
   }
+
+  @Test
+  public void testWebFluxServiceBulkhead() throws Exception {
+    CountDownLatch latch = new CountDownLatch(10);
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+    AtomicLong successCount = new AtomicLong(0);
+    AtomicLong rejectedCount = new AtomicLong(0);
+
+    for (int j = 0; j < 10; j++) {
+      String name = "t-" + j;
+      new Thread(name) {
+        public void run() {
+          try {
+            HttpHeaders headers = new HttpHeaders();
+            HttpEntity<Void> entity = new HttpEntity<>(headers);
+            String result = template.exchange(webFluxURL + "/testWebFluxServiceBulkhead", HttpMethod.GET, entity,
+                String.class).getBody();
+            if (!"OK".equals(result)) {
+              notExpectedFailed.set(true);
+            } else {
+              successCount.getAndIncrement();
+            }
+          } catch (Exception e) {
+            if (e instanceof HttpClientErrorException && ((HttpClientErrorException) e).getRawStatusCode() == 429) {
+              rejectedCount.getAndIncrement();
+            } else {
+              notExpectedFailed.set(true);
+            }
+          }
+          latch.countDown();
+        }
+      }.start();
+    }
+
+    latch.await(20, TimeUnit.SECONDS);
+    Assertions.assertTrue(rejectedCount.get() >= 2);
+    Assertions.assertFalse(notExpectedFailed.get());
+    Assertions.assertTrue(successCount.get() >= 2);
+    Assertions.assertTrue(successCount.get() + rejectedCount.get() == 10);
+  }
 }
