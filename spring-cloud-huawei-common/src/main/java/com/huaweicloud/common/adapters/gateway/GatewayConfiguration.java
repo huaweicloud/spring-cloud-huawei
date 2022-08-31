@@ -17,52 +17,24 @@
 
 package com.huaweicloud.common.adapters.gateway;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.common.access.AccessLogLogger;
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
-import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
-import com.huaweicloud.common.metrics.InvocationMetrics;
 
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.cloud.gateway.filter.GlobalFilter"})
 public class GatewayConfiguration {
   @Bean
-  public DecorateGlobalFilter decorateGlobalFilter(
-      @Autowired(required = false) List<PreGlobalFilter> preGlobalFilters,
-      @Autowired(required = false) List<PostGlobalFilter> postGlobalFilters) {
-    return new DecorateGlobalFilter(
-        preGlobalFilters,
-        postGlobalFilters);
+  public GlobalFilter serializeContextGlobalFilter() {
+    return new SerializeContextGlobalFilter();
   }
 
   @Bean
-  @ConditionalOnBean(DecorateGlobalFilter.class)
-  public PreGlobalFilter deserializeContextPreGlobalFilter(ContextProperties contextProperties) {
-    return new DeserializeContextPreGlobalFilter(contextProperties);
-  }
-
-  @Bean
-  @ConditionalOnBean(DecorateGlobalFilter.class)
-  public PreGlobalFilter serializeContextPreGlobalFilter() {
-    return new SerializeContextPreGlobalFilter();
-  }
-
-  @Bean
-  @ConditionalOnBean(DecorateGlobalFilter.class)
-  public PreGlobalFilter traceIdPreGlobalFilter(ContextProperties contextProperties) {
-    return new TraceIdPreGlobalFilter(contextProperties);
-  }
-
-  @Bean
-  @ConditionalOnBean(DecorateGlobalFilter.class)
-  public InvocationMetricsWebFilter invocationMetricsWebFilter(InvocationMetrics invocationMetrics,
-      GovernanceProperties governanceProperties) {
-    return new InvocationMetricsWebFilter(invocationMetrics, governanceProperties);
+  public GlobalFilter accessLogGlobalFilter(ContextProperties contextProperties, AccessLogLogger accessLogLogger) {
+    return new AccessLogGlobalFilter(contextProperties, accessLogLogger);
   }
 }

@@ -17,14 +17,19 @@
 
 package com.huaweicloud.servicecomb.discovery.context;
 
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
+import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.huaweicloud.common.adapters.gateway.PreGlobalFilter;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
-public class GatewayAddServiceNameContext implements PreGlobalFilter {
+import reactor.core.publisher.Mono;
+
+public class GatewayAddServiceNameContext implements GlobalFilter, Ordered {
   private final ServiceCombRegistration registration;
 
   public GatewayAddServiceNameContext(ServiceCombRegistration registration) {
@@ -32,9 +37,16 @@ public class GatewayAddServiceNameContext implements PreGlobalFilter {
   }
 
   @Override
-  public void process(ServerWebExchange exchange) {
-    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
+  public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+    InvocationContext context = exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY);
     context.putContext(InvocationContext.CONTEXT_MICROSERVICE_NAME, registration.getServiceId());
     context.putContext(InvocationContext.CONTEXT_INSTANCE_ID, registration.getInstanceId());
+    return chain.filter(exchange);
+  }
+
+  @Override
+  public int getOrder() {
+    // this filter executed after ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER
+    return ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER + 20;
   }
 }

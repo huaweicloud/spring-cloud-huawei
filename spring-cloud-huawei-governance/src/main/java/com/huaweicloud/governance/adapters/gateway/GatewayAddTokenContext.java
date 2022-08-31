@@ -17,21 +17,36 @@
 
 package com.huaweicloud.governance.adapters.gateway;
 
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
+import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.huaweicloud.common.adapters.gateway.PreGlobalFilter;
+import com.huaweicloud.common.context.InvocationContext;
+import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
 
-public class GatewayAddTokenContext implements PreGlobalFilter {
+import reactor.core.publisher.Mono;
+
+public class GatewayAddTokenContext implements GlobalFilter, Ordered {
 
   private final RSAConsumerTokenManager authenticationTokenManager;
 
-  public GatewayAddTokenContext(RSAConsumerTokenManager authenticationTokenManager){
+  public GatewayAddTokenContext(RSAConsumerTokenManager authenticationTokenManager) {
     this.authenticationTokenManager = authenticationTokenManager;
   }
 
   @Override
-  public void process(ServerWebExchange exchange) {
-    authenticationTokenManager.setToken();
+  public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+    InvocationContext context = exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY);
+    authenticationTokenManager.setToken(context);
+    return chain.filter(exchange);
+  }
+
+  @Override
+  public int getOrder() {
+    // this filter executed after ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER
+    return ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER + 40;
   }
 }
