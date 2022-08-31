@@ -18,6 +18,7 @@
 package com.huaweicloud.governance.adapters.feign;
 
 import com.huaweicloud.common.adapters.feign.OrderedRequestInterceptor;
+import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
 
 public class FeignAddTokenContext implements OrderedRequestInterceptor {
@@ -30,6 +31,6 @@ public class FeignAddTokenContext implements OrderedRequestInterceptor {
 
   @Override
   public void apply(feign.RequestTemplate requestTemplate) {
-    authenticationTokenManager.setToken();
+    authenticationTokenManager.setToken(InvocationContextHolder.getOrCreateInvocationContext());
   }
 }

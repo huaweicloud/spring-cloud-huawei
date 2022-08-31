@@ -18,6 +18,7 @@
 package com.huaweicloud.servicecomb.discovery.context;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,7 +28,7 @@ import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 @ConditionalOnClass(name = {"org.springframework.cloud.gateway.filter.GlobalFilter"})
 public class GatewayContextConfiguration {
   @Bean
-  public GatewayAddServiceNameContext gatewayAddServiceNameContext(ServiceCombRegistration registration) {
+  public GlobalFilter gatewayAddServiceNameContext(ServiceCombRegistration registration) {
     return new GatewayAddServiceNameContext(registration);
   }
 }

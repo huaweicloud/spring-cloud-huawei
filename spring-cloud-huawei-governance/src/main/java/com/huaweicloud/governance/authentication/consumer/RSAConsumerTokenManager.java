@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.huaweicloud.common.context.InvocationContext;
-import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.governance.authentication.Const;
 import com.huaweicloud.governance.authentication.RsaAuthenticationToken;
 import com.huaweicloud.governance.authentication.UnAuthorizedException;
@@ -96,12 +95,11 @@ public class RSAConsumerTokenManager {
     return now > expiredDate;
   }
 
-  public void setToken() {
+  public void setToken(InvocationContext context) {
     Optional<String> token = Optional.ofNullable(getToken());
     if (!token.isPresent()) {
       throw new UnAuthorizedException("auth token is not properly configured yet.");
     }
-    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
     context.putContext(Const.AUTH_TOKEN, token.get());
   }
 }

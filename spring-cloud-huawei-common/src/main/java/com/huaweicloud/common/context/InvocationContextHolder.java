@@ -22,6 +22,8 @@ import com.huaweicloud.common.util.HeaderUtil;
 public final class InvocationContextHolder {
   public static final String SERIALIZE_KEY = "x-invocation-context";
 
+  public static final String ATTRIBUTE_KEY = "x-invocation-context";
+
   private static final ThreadLocal<InvocationContext> INVOCATION_CONTEXT = new ThreadLocal<>();
 
   public static InvocationContext getOrCreateInvocationContext() {
@@ -34,9 +36,14 @@ public final class InvocationContextHolder {
   }
 
   public static InvocationContext deserializeAndCreate(String context) {
+    InvocationContext result = deserialize(context);
+    INVOCATION_CONTEXT.set(result);
+    return result;
+  }
+
+  public static InvocationContext deserialize(String context) {
     InvocationContext result = new InvocationContext();
     result.putContext(HeaderUtil.deserialize(context));
-    INVOCATION_CONTEXT.set(result);
     return result;
   }
 

@@ -15,16 +15,17 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.common.adapters.gateway;
+package com.huaweicloud.common.access;
 
-import org.springframework.core.Ordered;
-import org.springframework.web.server.ServerWebExchange;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-public interface PreGlobalFilter extends Ordered {
-  void process(ServerWebExchange exchange);
+import com.huaweicloud.common.configration.dynamic.ContextProperties;
 
-  @Override
-  default int getOrder() {
-    return 0;
+@Configuration
+public class AccessLogConfiguration {
+  @Bean
+  public AccessLogLogger accessLogLogger(ContextProperties contextProperties) {
+    return new AccessLogLogger(contextProperties);
   }
 }
