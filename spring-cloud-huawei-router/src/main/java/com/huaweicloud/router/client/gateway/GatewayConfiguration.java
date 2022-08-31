@@ -18,6 +18,7 @@
 package com.huaweicloud.router.client.gateway;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,7 +26,7 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnClass(name = {"org.springframework.cloud.gateway.filter.GlobalFilter"})
 public class GatewayConfiguration {
   @Bean
-  public RouterContextPreGlobalFilter routerContextPreGlobalFilter() {
-    return new RouterContextPreGlobalFilter();
+  public GlobalFilter routerContextPreGlobalFilter() {
+    return new RouterContextGlobalFilter();
   }
 }

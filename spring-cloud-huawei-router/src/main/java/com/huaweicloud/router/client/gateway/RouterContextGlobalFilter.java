@@ -20,19 +20,24 @@ package com.huaweicloud.router.client.gateway;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.huaweicloud.common.adapters.gateway.PreGlobalFilter;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.common.util.HeaderUtil;
 import com.huaweicloud.router.client.RouterConstant;
 
-public class RouterContextPreGlobalFilter implements PreGlobalFilter {
+import reactor.core.publisher.Mono;
+
+public class RouterContextGlobalFilter implements GlobalFilter, Ordered {
   @Override
-  public void process(ServerWebExchange exchange) {
-    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
+  public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+    InvocationContext context = exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY);
     if (context.getContext(RouterConstant.CONTEXT_HEADER) == null) {
       Map<String, String> routerContext = new HashMap<>();
       HttpHeaders headers = exchange.getRequest().getHeaders();
@@ -41,5 +46,12 @@ public class RouterContextPreGlobalFilter implements PreGlobalFilter {
       }
       context.putContext(RouterConstant.CONTEXT_HEADER, HeaderUtil.serialize(routerContext));
     }
+    return chain.filter(exchange);
+  }
+
+  @Override
+  public int getOrder() {
+    // this filter executed after ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER
+    return ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER + 30;
   }
 }

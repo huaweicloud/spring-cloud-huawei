@@ -26,6 +26,8 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.huaweicloud.common.adapters.feign.FeignConfiguration,\
   com.huaweicloud.common.adapters.gateway.GatewayConfiguration,\
   com.huaweicloud.common.adapters.loadbalancer.LoadbalancerConfiguration,\
+  com.huaweicloud.common.adapters.webflux.WebFluxConfiguration,\
+  com.huaweicloud.common.access.AccessLogConfiguration,\
   com.huaweicloud.common.configration.DynamicPropertiesConfiguration,\
   com.huaweicloud.common.transport.ClientTransportConfiguration,\
   com.huaweicloud.common.metrics.MetricsConfiguration

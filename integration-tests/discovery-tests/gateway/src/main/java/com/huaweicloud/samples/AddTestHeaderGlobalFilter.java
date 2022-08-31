@@ -15,16 +15,30 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.common.adapters.gateway;
+package com.huaweicloud.samples;
 
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 
-public interface PostGlobalFilter extends Ordered {
-  void process(ServerWebExchange exchange, Throwable error);
+import com.huaweicloud.common.context.InvocationContext;
+import com.huaweicloud.common.context.InvocationContextHolder;
+
+import reactor.core.publisher.Mono;
+
+@Component
+public class AddTestHeaderGlobalFilter implements GlobalFilter, Ordered {
+  @Override
+  public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+    InvocationContext context = exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY);
+    context.putContext("test03", "test03");
+    return chain.filter(exchange);
+  }
 
   @Override
-  default int getOrder() {
+  public int getOrder() {
     return 0;
   }
 }

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.common.adapters.gateway;
+package com.huaweicloud.common.adapters.webflux;
 
 import java.util.concurrent.TimeUnit;
 

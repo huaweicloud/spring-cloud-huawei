@@ -20,6 +20,7 @@ package com.huaweicloud.governance.adapters.web;
 import org.springframework.http.HttpRequest;
 
 import com.huaweicloud.common.adapters.web.PreClientHttpRequestInterceptor;
+import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
 
 public class RestTemplateAddTokenContext implements PreClientHttpRequestInterceptor {
@@ -32,6 +33,6 @@ public class RestTemplateAddTokenContext implements PreClientHttpRequestIntercep
 
   @Override
   public void process(HttpRequest request, byte[] body) {
-    authenticationTokenManager.setToken();
+    authenticationTokenManager.setToken(InvocationContextHolder.getOrCreateInvocationContext());
   }
 }

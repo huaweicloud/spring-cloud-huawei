@@ -17,20 +17,26 @@
 
 package com.huaweicloud.common.adapters.gateway;
 
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.huaweicloud.common.context.InvocationContextHolder;
 
-public class SerializeContextPreGlobalFilter implements PreGlobalFilter {
+import reactor.core.publisher.Mono;
+
+public class SerializeContextGlobalFilter implements GlobalFilter, Ordered {
   @Override
-  public void process(ServerWebExchange exchange) {
+  public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
     exchange.mutate().request(r -> r.header(InvocationContextHolder.SERIALIZE_KEY,
-        InvocationContextHolder.serialize(InvocationContextHolder.getOrCreateInvocationContext())));
+        InvocationContextHolder.serialize(exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY))));
+    return chain.filter(exchange);
   }
 
   @Override
   public int getOrder() {
-    return Ordered.LOWEST_PRECEDENCE;
+    // LOWEST_PRECEDENCE are filters executed after response
+    return Ordered.LOWEST_PRECEDENCE - 1;
   }
 }
