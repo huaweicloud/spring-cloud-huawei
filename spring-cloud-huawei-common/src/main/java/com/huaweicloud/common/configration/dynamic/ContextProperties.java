@@ -20,7 +20,9 @@ import java.util.Collections;
 import java.util.Map;
 
 public class ContextProperties {
-  private boolean enableTraceInfo;
+  private boolean enableTraceInfo = true;
+
+  private String traceLevel;
 
   private int waitTimeForShutDownInMillis = 3000;
 
@@ -58,5 +60,13 @@ public class ContextProperties {
 
   public void setQueryContextMapper(Map<String, String> queryContextMapper) {
     this.queryContextMapper = queryContextMapper;
+  }
+
+  public String getTraceLevel() {
+    return traceLevel;
+  }
+
+  public void setTraceLevel(String traceLevel) {
+    this.traceLevel = traceLevel;
   }
 }
