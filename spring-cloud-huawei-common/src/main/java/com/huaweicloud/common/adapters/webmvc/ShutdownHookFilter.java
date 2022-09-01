@@ -27,15 +27,35 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.huaweicloud.common.configration.dynamic.ContextProperties;
-import com.huaweicloud.common.context.InvocationContext;
-import com.huaweicloud.common.context.InvocationContextHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class DeserializeContextFilter implements Filter {
+import com.huaweicloud.common.configration.dynamic.ContextProperties;
+import com.huaweicloud.common.event.ClosedEventListener;
+import com.huaweicloud.common.event.ClosedEventProcessor;
+
+public class ShutdownHookFilter implements Filter {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ShutdownHookFilter.class);
+
   private final ContextProperties contextProperties;
 
-  public DeserializeContextFilter(ContextProperties contextProperties) {
+  private volatile boolean isShutDown = false;
+
+  public ShutdownHookFilter(
+      ContextProperties contextProperties,
+      ClosedEventListener closedEventListener) {
     this.contextProperties = contextProperties;
+    closedEventListener.addClosedEventProcessor(new ClosedEventProcessor() {
+      @Override
+      public void process() {
+        close();
+      }
+
+      @Override
+      public int getOrder() {
+        return 200;
+      }
+    });
   }
 
   @Override
@@ -46,15 +66,25 @@ public class DeserializeContextFilter implements Filter {
       return;
     }
 
-    HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-    InvocationContext context = InvocationContextHolder.deserializeAndCreate(
-        httpServletRequest.getHeader(InvocationContextHolder.SERIALIZE_KEY));
-
-    contextProperties.getHeaderContextMapper()
-        .forEach((k, v) -> context.putContext(v, httpServletRequest.getHeader(k)));
-    contextProperties.getQueryContextMapper()
-        .forEach((k, v) -> context.putContext(v, httpServletRequest.getParameter(k)));
+    if (isShutDown) {
+      LOGGER.warn("application is shutting down, reject request {}", ((HttpServletRequest) request).getRequestURI());
+      ((HttpServletResponse) response).sendError(503, "application is shutting down, reject requests");
+      return;
+    }
 
     chain.doFilter(request, response);
+  }
+
+  private void close() {
+    LOGGER.warn("application is shutting down, rejecting requests...");
+    isShutDown = true;
+    if (contextProperties.getWaitTimeForShutDownInMillis() > 0) {
+      try {
+        LOGGER.info("wait {}ms for requests done.", contextProperties.getWaitTimeForShutDownInMillis());
+        Thread.sleep(contextProperties.getWaitTimeForShutDownInMillis());
+      } catch (InterruptedException e) {
+        // ignore
+      }
+    }
   }
 }

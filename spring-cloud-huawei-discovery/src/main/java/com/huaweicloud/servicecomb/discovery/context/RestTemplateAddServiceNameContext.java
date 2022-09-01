@@ -17,14 +17,20 @@
 
 package com.huaweicloud.servicecomb.discovery.context;
 
-import org.springframework.http.HttpRequest;
+import java.io.IOException;
 
-import com.huaweicloud.common.adapters.web.PreClientHttpRequestInterceptor;
+import org.springframework.core.Ordered;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
+
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
-public class RestTemplateAddServiceNameContext implements PreClientHttpRequestInterceptor {
+public class RestTemplateAddServiceNameContext implements
+    ClientHttpRequestInterceptor, Ordered {
   private final ServiceCombRegistration registration;
 
   public RestTemplateAddServiceNameContext(ServiceCombRegistration registration) {
@@ -32,9 +38,16 @@ public class RestTemplateAddServiceNameContext implements PreClientHttpRequestIn
   }
 
   @Override
-  public void process(HttpRequest request, byte[] body) {
+  public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
+      throws IOException {
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
     context.putContext(InvocationContext.CONTEXT_MICROSERVICE_NAME, registration.getServiceId());
     context.putContext(InvocationContext.CONTEXT_INSTANCE_ID, registration.getInstanceId());
+    return execution.execute(request, body);
+  }
+
+  @Override
+  public int getOrder() {
+    return Ordered.HIGHEST_PRECEDENCE + 1;
   }
 }

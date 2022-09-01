@@ -27,8 +27,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.huaweicloud.common.access.AccessLogLogger;
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
+import com.huaweicloud.common.event.ClosedEventListener;
 import com.huaweicloud.common.metrics.InvocationMetrics;
 
 @Configuration
@@ -62,11 +64,6 @@ public class WebMvcConfiguration {
   }
 
   @Bean
-  public PreHandlerInterceptor traceIdPreHandlerInterceptor(ContextProperties contextProperties) {
-    return new TraceIdPreHandlerInterceptor(contextProperties);
-  }
-
-  @Bean
   public FilterRegistrationBean<InvocationMetricsFilter> invocationMetricsFilter(
       InvocationMetrics invocationMetrics, GovernanceProperties governanceProperties) {
     FilterRegistrationBean<InvocationMetricsFilter> registrationBean
@@ -80,14 +77,40 @@ public class WebMvcConfiguration {
   }
 
   @Bean
-  public FilterRegistrationBean<DeserializeContextFilter> deserializeContextFilter(
+  public FilterRegistrationBean<InvocationContextFilter> invocationContextFilter(
       ContextProperties contextProperties) {
-    FilterRegistrationBean<DeserializeContextFilter> registrationBean
+    FilterRegistrationBean<InvocationContextFilter> registrationBean
         = new FilterRegistrationBean<>();
 
-    registrationBean.setFilter(new DeserializeContextFilter(contextProperties));
+    registrationBean.setFilter(new InvocationContextFilter(contextProperties));
     registrationBean.addUrlPatterns("/*");
     registrationBean.setOrder(Integer.MIN_VALUE);
+
+    return registrationBean;
+  }
+
+  @Bean
+  public FilterRegistrationBean<AccessLogFilter> accessLogFilter(
+      ContextProperties contextProperties, AccessLogLogger accessLogLogger) {
+    FilterRegistrationBean<AccessLogFilter> registrationBean
+        = new FilterRegistrationBean<>();
+
+    registrationBean.setFilter(new AccessLogFilter(contextProperties, accessLogLogger));
+    registrationBean.addUrlPatterns("/*");
+    registrationBean.setOrder(Integer.MIN_VALUE + 1);
+
+    return registrationBean;
+  }
+
+  @Bean
+  public FilterRegistrationBean<ShutdownHookFilter> shutdownHookFilter(
+      ContextProperties contextProperties, ClosedEventListener closedEventListener) {
+    FilterRegistrationBean<ShutdownHookFilter> registrationBean
+        = new FilterRegistrationBean<>();
+
+    registrationBean.setFilter(new ShutdownHookFilter(contextProperties, closedEventListener));
+    registrationBean.addUrlPatterns("/*");
+    registrationBean.setOrder(Integer.MIN_VALUE + 2);
 
     return registrationBean;
   }

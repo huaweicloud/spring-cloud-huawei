@@ -15,33 +15,43 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.servicecomb.discovery.context;
+package com.huaweicloud.common.adapters.feign;
 
 import org.springframework.core.Ordered;
 
+import com.huaweicloud.common.access.AccessLogLogger;
+import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 
-public class FeignAddServiceNameContext implements RequestInterceptor, Ordered {
-  private final ServiceCombRegistration registration;
+public class AccessLogRequestInterceptor implements RequestInterceptor, Ordered {
+  private final ContextProperties contextProperties;
 
-  public FeignAddServiceNameContext(ServiceCombRegistration registration) {
-    this.registration = registration;
+  private final AccessLogLogger accessLogLogger;
+
+  public AccessLogRequestInterceptor(ContextProperties contextProperties,
+      AccessLogLogger accessLogLogger) {
+    this.contextProperties = contextProperties;
+    this.accessLogLogger = accessLogLogger;
   }
 
   @Override
   public void apply(RequestTemplate requestTemplate) {
+    if (!contextProperties.isEnableTraceInfo()) {
+      return;
+    }
+
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
-    context.putContext(InvocationContext.CONTEXT_MICROSERVICE_NAME, registration.getServiceId());
-    context.putContext(InvocationContext.CONTEXT_INSTANCE_ID, registration.getInstanceId());
+    accessLogLogger.log(context, "Feign start request", requestTemplate.feignTarget().name() +
+            requestTemplate.request().url(),
+        context.getContext(InvocationContext.CONTEXT_MICROSERVICE_NAME), null, 0, 0);
   }
 
   @Override
   public int getOrder() {
-    return Ordered.HIGHEST_PRECEDENCE + 1;
+    return Ordered.HIGHEST_PRECEDENCE + 2;
   }
 }

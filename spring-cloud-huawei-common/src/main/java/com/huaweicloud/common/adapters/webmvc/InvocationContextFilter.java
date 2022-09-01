@@ -17,37 +17,49 @@
 
 package com.huaweicloud.common.adapters.webmvc;
 
+import java.io.IOException;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 
-public class TraceIdPreHandlerInterceptor implements PreHandlerInterceptor {
-  private static final Logger LOGGER = LoggerFactory.getLogger(TraceIdPreHandlerInterceptor.class);
-
+public class InvocationContextFilter implements Filter {
   private final ContextProperties contextProperties;
 
-  public TraceIdPreHandlerInterceptor(ContextProperties contextProperties) {
+  public InvocationContextFilter(ContextProperties contextProperties) {
     this.contextProperties = contextProperties;
   }
 
   @Override
-  public boolean handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+      throws IOException, ServletException {
+    if (!(request instanceof HttpServletRequest && response instanceof HttpServletResponse)) {
+      chain.doFilter(request, response);
+      return;
+    }
+
+    HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+    InvocationContext context = InvocationContextHolder.deserializeAndCreate(
+        httpServletRequest.getHeader(InvocationContextHolder.SERIALIZE_KEY));
+
+    contextProperties.getHeaderContextMapper()
+        .forEach((k, v) -> context.putContext(v, httpServletRequest.getHeader(k)));
+    contextProperties.getQueryContextMapper()
+        .forEach((k, v) -> context.putContext(v, httpServletRequest.getParameter(k)));
+
+    // copy or generate trace id
     if (context.getContext(InvocationContext.CONTEXT_TRACE_ID) == null) {
       context.putContext(InvocationContext.CONTEXT_TRACE_ID, InvocationContext.generateTraceId());
     }
-    if (contextProperties.isEnableTraceInfo()) {
-      LOGGER.info("receive request [{}] from service [{}]. trace id [{}]",
-          request.getRequestURL().toString(),
-          context.getContext(InvocationContext.CONTEXT_MICROSERVICE_NAME),
-          context.getContext(InvocationContext.CONTEXT_TRACE_ID));
-    }
-    return true;
+
+    chain.doFilter(request, response);
   }
 }
