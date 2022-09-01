@@ -24,7 +24,7 @@ import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.context.InvocationContext;
 
 public class AccessLogLogger {
-  private static final Logger LOGGER = LoggerFactory.getLogger("access");
+  private static final Logger LOGGER = LoggerFactory.getLogger("access_logger");
 
   private final ContextProperties contextProperties;
 
@@ -37,8 +37,8 @@ public class AccessLogLogger {
     log(String.format("%1$s|%2$s|%3$s|%4$s|%5$d|%6$1d|%7$s",
         context.getContext(InvocationContext.CONTEXT_TRACE_ID),
         event,
-        source,
-        target,
+        source == null ? "" : source,
+        target == null ? "" : target,
         status,
         time,
         request));

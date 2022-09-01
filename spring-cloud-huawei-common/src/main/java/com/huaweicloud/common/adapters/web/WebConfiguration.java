@@ -53,7 +53,7 @@ public class WebConfiguration {
   }
 
   @Bean
-  public ClientHttpRequestInterceptor AccessLogClientHttpRequestInterceptor(
+  public ClientHttpRequestInterceptor accessLogClientHttpRequestInterceptor(
       ContextProperties contextProperties,
       AccessLogLogger accessLogLogger) {
     return new AccessLogClientHttpRequestInterceptor(contextProperties, accessLogLogger);
