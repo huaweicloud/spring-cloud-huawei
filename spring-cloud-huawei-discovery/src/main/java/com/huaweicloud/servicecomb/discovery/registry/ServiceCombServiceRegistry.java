@@ -61,7 +61,7 @@ public class ServiceCombServiceRegistry implements
 
   private ServiceCenterRegistration serviceCenterRegistration;
 
-  private final ServiceCenterWatch watch;
+  private ServiceCenterWatch watch;
 
   private ServiceCombRegistration serviceCombRegistration;
 
@@ -135,7 +135,6 @@ public class ServiceCombServiceRegistry implements
 
   @Override
   public void deregister(ServiceCombRegistration registration) {
-    LOGGER.info("deregister instance {}", registration.getMicroserviceInstance().getInstanceId());
     unregisterService();
   }
 
@@ -198,6 +197,7 @@ public class ServiceCombServiceRegistry implements
     }
     if (watch != null) {
       watch.stop();
+      watch = null;
     }
   }
 }
