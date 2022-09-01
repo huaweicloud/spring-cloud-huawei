@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
+import com.huaweicloud.common.context.InvocationContext;
 
 public class AccessLogLogger {
   private static final Logger LOGGER = LoggerFactory.getLogger("access");
@@ -31,7 +32,19 @@ public class AccessLogLogger {
     this.contextProperties = contextProperties;
   }
 
-  public void log(String format, Object... arguments) {
+  public void log(InvocationContext context, String event,
+      String request, String source, String target, int status, long time) {
+    log(String.format("%1$s|%2$s|%3$s|%4$s|%5$d|%6$1d|%7$s",
+        context.getContext(InvocationContext.CONTEXT_TRACE_ID),
+        event,
+        source,
+        target,
+        status,
+        time,
+        request));
+  }
+
+  private void log(String format, Object... arguments) {
     if (this.contextProperties.getTraceLevel() == null) {
       LOGGER.info(format, arguments);
       return;

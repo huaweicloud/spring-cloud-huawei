@@ -21,9 +21,10 @@ import org.springframework.core.Ordered;
 
 import com.huaweicloud.common.context.InvocationContextHolder;
 
+import feign.RequestInterceptor;
 import feign.RequestTemplate;
 
-public class SerializeContextOrderedRequestInterceptor implements OrderedRequestInterceptor {
+public class SerializeContextOrderedRequestInterceptor implements RequestInterceptor, Ordered {
 
   @Override
   public void apply(RequestTemplate requestTemplate) {

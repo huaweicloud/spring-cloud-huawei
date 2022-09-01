@@ -17,32 +17,36 @@
 
 package com.huaweicloud.common.adapters.web;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpRequest;
+import java.io.IOException;
 
-import com.huaweicloud.common.configration.dynamic.ContextProperties;
+import org.springframework.core.Ordered;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
+
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 
-public class TraceIdPreClientHttpRequestInterceptor implements PreClientHttpRequestInterceptor {
-  private static final Logger LOGGER = LoggerFactory.getLogger(TraceIdPreClientHttpRequestInterceptor.class);
+public class InvocationContextClientHttpRequestInterceptor implements
+    ClientHttpRequestInterceptor, Ordered {
 
-  private final ContextProperties contextProperties;
-
-  public TraceIdPreClientHttpRequestInterceptor(ContextProperties contextProperties) {
-    this.contextProperties = contextProperties;
+  public InvocationContextClientHttpRequestInterceptor() {
   }
 
   @Override
-  public void process(HttpRequest request, byte[] body) {
+  public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
+      throws IOException {
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
     if (context.getContext(InvocationContext.CONTEXT_TRACE_ID) == null) {
       context.putContext(InvocationContext.CONTEXT_TRACE_ID, InvocationContext.generateTraceId());
     }
-    if (contextProperties.isEnableTraceInfo()) {
-      LOGGER.info("send request [{}]. trace id [{}]", request.getURI(),
-          context.getContext(InvocationContext.CONTEXT_TRACE_ID));
-    }
+
+    return execution.execute(request, body);
+  }
+
+  @Override
+  public int getOrder() {
+    return Ordered.HIGHEST_PRECEDENCE;
   }
 }

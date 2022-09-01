@@ -41,30 +41,36 @@ public class AccessLogWebFilter implements OrderedWebFilter {
 
   @Override
   public int getOrder() {
+    // after InvocationContext
     return Ordered.HIGHEST_PRECEDENCE + 1;
   }
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-    if (contextProperties.isEnableTraceInfo()) {
-      InvocationContext context = exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY);
-      accessLogLogger.log("event=[{}],traceId=[{}],request=[{}]",
-          "WebFlux receive request",
-          context.getContext(InvocationContext.CONTEXT_TRACE_ID),
-          exchange.getRequest().getURI());
+    if (!contextProperties.isEnableTraceInfo()) {
+      return chain.filter(exchange);
     }
 
+    InvocationContext context = exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY);
+    assert context != null;
+    String source = context.getContext(InvocationContext.CONTEXT_MICROSERVICE_NAME);
+    String request = exchange.getRequest().getURI().toString();
+
+    accessLogLogger.log(context,
+        "WebFlux receive request",
+        request,
+        source,
+        null,
+        0,
+        0L);
+
     long begin = System.currentTimeMillis();
-    return chain.filter(exchange).doOnSuccess(v -> {
-      if (contextProperties.isEnableTraceInfo()) {
-        InvocationContext context = exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY);
-        accessLogLogger.log("event=[{}],traceId=[{}],request=[{}],status=[{}],time=[{}]",
-            "WebFlux finish request",
-            context.getContext(InvocationContext.CONTEXT_TRACE_ID),
-            exchange.getRequest().getURI(),
-            exchange.getResponse().getRawStatusCode(),
-            System.currentTimeMillis() - begin);
-      }
-    });
+    return chain.filter(exchange).doOnSuccess(v -> accessLogLogger.log(context,
+        "WebFlux finish request",
+        request,
+        source,
+        null,
+        exchange.getResponse().getRawStatusCode(),
+        System.currentTimeMillis() - begin));
   }
 }
