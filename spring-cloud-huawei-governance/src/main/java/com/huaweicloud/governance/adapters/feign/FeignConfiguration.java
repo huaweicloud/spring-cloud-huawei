@@ -29,6 +29,8 @@ import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.common.access.AccessLogLogger;
+import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
 
@@ -47,12 +49,14 @@ public class FeignConfiguration {
       InstanceBulkheadHandler instanceBulkheadHandler,
       LoadBalancerClient loadBalancerClient,
       HttpClient transportHttpClient,
-      LoadBalancerClientFactory loadBalancerClientFactory) {
+      LoadBalancerClientFactory loadBalancerClientFactory,
+      ContextProperties contextProperties,
+      AccessLogLogger accessLogLogger) {
     return new GovernanceFeignBlockingLoadBalancerClient(
         retryHandler, faultInjectionHandler, instanceIsolationHandler,
         instanceBulkheadHandler,
         new ApacheHttpClient(transportHttpClient), loadBalancerClient,
-        loadBalancerClientFactory);
+        loadBalancerClientFactory, contextProperties, accessLogLogger);
   }
 
   @Bean

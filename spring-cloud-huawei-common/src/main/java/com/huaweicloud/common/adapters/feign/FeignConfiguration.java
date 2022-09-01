@@ -27,7 +27,6 @@ import com.huaweicloud.common.access.AccessLogLogger;
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
 
 import feign.RequestInterceptor;
-import feign.ResponseInterceptor;
 
 @Configuration
 @ConditionalOnClass(name = {"feign.RequestInterceptor"})
@@ -52,12 +51,5 @@ public class FeignConfiguration {
   public RequestInterceptor accessLogRequestInterceptor(ContextProperties contextProperties,
       AccessLogLogger accessLogLogger) {
     return new AccessLogRequestInterceptor(contextProperties, accessLogLogger);
-  }
-
-  @Bean
-  public ResponseInterceptor responseInterceptor(ContextProperties contextProperties,
-      AccessLogLogger accessLogLogger) {
-    // require feign 11.9.1+
-    return new AccessLogResponseInterceptor(contextProperties, accessLogLogger);
   }
 }

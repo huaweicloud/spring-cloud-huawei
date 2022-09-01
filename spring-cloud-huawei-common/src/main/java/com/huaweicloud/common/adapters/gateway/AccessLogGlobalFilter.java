@@ -54,11 +54,12 @@ public class AccessLogGlobalFilter implements GlobalFilter, Ordered {
     String service = response == null ? "" : response.getServer().getServiceId() + ":" + response.getServer().getHost();
     InvocationContext context = exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY);
     assert context != null;
-    String request = exchange.getRequest().getURI().toString();
+    String request = exchange.getRequest().getPath().value();
+    String source = exchange.getRequest().getRemoteAddress().getHostString();
     accessLogLogger.log(context,
         "Gateway start request",
         request,
-        null,
+        source,
         service,
         0,
         0L);
@@ -68,7 +69,7 @@ public class AccessLogGlobalFilter implements GlobalFilter, Ordered {
       accessLogLogger.log(context,
           "Gateway finish request",
           request,
-          null,
+          source,
           service,
           exchange.getResponse().getRawStatusCode(),
           System.currentTimeMillis() - begin);
