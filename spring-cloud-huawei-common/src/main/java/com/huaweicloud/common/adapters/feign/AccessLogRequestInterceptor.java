@@ -45,9 +45,11 @@ public class AccessLogRequestInterceptor implements RequestInterceptor, Ordered 
     }
 
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
-    accessLogLogger.log(context, "Feign start request", requestTemplate.feignTarget().name() +
-            requestTemplate.request().url(),
-        context.getContext(InvocationContext.CONTEXT_MICROSERVICE_NAME), null, 0, 0);
+    accessLogLogger.log(context, "Feign start request",
+        requestTemplate.request().url(),
+        null,
+        requestTemplate.feignTarget().name(),
+        0, 0);
   }
 
   @Override

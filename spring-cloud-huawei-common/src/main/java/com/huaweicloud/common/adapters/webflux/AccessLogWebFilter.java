@@ -53,8 +53,10 @@ public class AccessLogWebFilter implements OrderedWebFilter {
 
     InvocationContext context = exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY);
     assert context != null;
-    String source = context.getContext(InvocationContext.CONTEXT_MICROSERVICE_NAME);
-    String request = exchange.getRequest().getURI().toString();
+    String source = context.getContext(InvocationContext.CONTEXT_MICROSERVICE_NAME) == null
+        ? exchange.getRequest().getRemoteAddress().getHostString()
+        : context.getContext(InvocationContext.CONTEXT_MICROSERVICE_NAME);
+    String request = exchange.getRequest().getPath().value();
 
     accessLogLogger.log(context,
         "WebFlux receive request",
