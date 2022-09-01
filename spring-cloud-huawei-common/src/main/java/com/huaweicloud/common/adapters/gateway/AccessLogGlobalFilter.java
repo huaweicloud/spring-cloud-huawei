@@ -45,31 +45,31 @@ public class AccessLogGlobalFilter implements GlobalFilter, Ordered {
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-    if (contextProperties.isEnableTraceInfo()) {
-      Response<ServiceInstance> response = exchange.getAttribute(
-          ServerWebExchangeUtils.GATEWAY_LOADBALANCER_RESPONSE_ATTR);
-      String service = "";
-      if (response != null) {
-        service = response.getServer().getServiceId() + ":" + response.getServer().getHost();
-      }
-
-      InvocationContext context = exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY);
-      assert context != null;
-      accessLogLogger.log("event=[{}],traceId=[{}],request=[{}],target=[{}]",
-          "Gateway send request",
-          context.getContext(InvocationContext.CONTEXT_TRACE_ID),
-          exchange.getRequest().getURI(),
-          service);
+    if (!contextProperties.isEnableTraceInfo()) {
+      return chain.filter(exchange);
     }
+
+    Response<ServiceInstance> response = exchange.getAttribute(
+        ServerWebExchangeUtils.GATEWAY_LOADBALANCER_RESPONSE_ATTR);
+    String service = response == null ? "" : response.getServer().getServiceId() + ":" + response.getServer().getHost();
+    InvocationContext context = exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY);
+    assert context != null;
+    String request = exchange.getRequest().getURI().toString();
+    accessLogLogger.log(context,
+        "Gateway start request",
+        request,
+        null,
+        service,
+        0,
+        0L);
 
     long begin = System.currentTimeMillis();
     return chain.filter(exchange).doOnSuccess(v -> {
-      InvocationContext context = exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY);
-      assert context != null;
-      accessLogLogger.log("event=[{}],traceId=[{}],request=[{}],status=[{}],time=[{}]",
+      accessLogLogger.log(context,
           "Gateway finish request",
-          context.getContext(InvocationContext.CONTEXT_TRACE_ID),
-          exchange.getRequest().getURI(),
+          request,
+          null,
+          service,
           exchange.getResponse().getRawStatusCode(),
           System.currentTimeMillis() - begin);
     });

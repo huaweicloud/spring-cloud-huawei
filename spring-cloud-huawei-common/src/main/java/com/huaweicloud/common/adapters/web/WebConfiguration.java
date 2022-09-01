@@ -22,7 +22,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor;
@@ -32,24 +31,37 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 
+import com.huaweicloud.common.access.AccessLogLogger;
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
-import com.huaweicloud.common.event.ClosedEventListener;
 
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.http.client.ClientHttpRequestInterceptor",
     "org.springframework.web.client.RestTemplate"})
 public class WebConfiguration {
   @Bean
-  public DecorateClientHttpRequestInterceptor decorateClientHttpRequestInterceptor(
-      ContextProperties contextProperties,
-      ClosedEventListener closedEventListener,
+  public ClientHttpRequestInterceptor decorateClientHttpRequestInterceptor(
       @Autowired(required = false) List<PreClientHttpRequestInterceptor> preClientHttpRequestInterceptors,
       @Autowired(required = false) List<PostClientHttpRequestInterceptor> postClientHttpRequestInterceptors) {
     return new DecorateClientHttpRequestInterceptor(
-        contextProperties,
-        closedEventListener,
         preClientHttpRequestInterceptors,
         postClientHttpRequestInterceptors);
+  }
+
+  @Bean
+  public ClientHttpRequestInterceptor invocationContextClientHttpRequestInterceptor() {
+    return new InvocationContextClientHttpRequestInterceptor();
+  }
+
+  @Bean
+  public ClientHttpRequestInterceptor accessLogClientHttpRequestInterceptor(
+      ContextProperties contextProperties,
+      AccessLogLogger accessLogLogger) {
+    return new AccessLogClientHttpRequestInterceptor(contextProperties, accessLogLogger);
+  }
+
+  @Bean
+  public ClientHttpRequestInterceptor serializeContextClientHttpRequestInterceptor() {
+    return new SerializeContextClientHttpRequestInterceptor();
   }
 
   @Bean
@@ -85,18 +97,5 @@ public class WebConfiguration {
       restTemplate.setInterceptors(new ArrayList<>());
       restTemplate.getInterceptors().addAll(nonOrderedList);
     };
-  }
-
-  @Bean
-  @ConditionalOnBean(DecorateClientHttpRequestInterceptor.class)
-  public PreClientHttpRequestInterceptor addContextPreClientHttpRequestInterceptor() {
-    return new SerializeContextPreClientHttpRequestInterceptor();
-  }
-
-  @Bean
-  @ConditionalOnBean(DecorateClientHttpRequestInterceptor.class)
-  public TraceIdPreClientHttpRequestInterceptor traceIdPreClientHttpRequestInterceptor(
-      ContextProperties contextProperties) {
-    return new TraceIdPreClientHttpRequestInterceptor(contextProperties);
   }
 }

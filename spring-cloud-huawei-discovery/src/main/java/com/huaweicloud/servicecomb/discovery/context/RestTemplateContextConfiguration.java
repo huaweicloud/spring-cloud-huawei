@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
@@ -30,7 +31,7 @@ import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
     "org.springframework.web.client.RestTemplate"})
 public class RestTemplateContextConfiguration {
   @Bean
-  public RestTemplateAddServiceNameContext restTemplateAddServiceNameContext(ServiceCombRegistration registration) {
+  public ClientHttpRequestInterceptor restTemplateAddServiceNameContext(ServiceCombRegistration registration) {
     return new RestTemplateAddServiceNameContext(registration);
   }
 }

@@ -17,20 +17,28 @@
 
 package com.huaweicloud.common.adapters.web;
 
+import java.io.IOException;
+
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpRequest;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
 
 import com.huaweicloud.common.context.InvocationContextHolder;
 
-public class SerializeContextPreClientHttpRequestInterceptor implements PreClientHttpRequestInterceptor {
+public class SerializeContextClientHttpRequestInterceptor implements
+    ClientHttpRequestInterceptor, Ordered {
   @Override
   public int getOrder() {
     return Ordered.LOWEST_PRECEDENCE;
   }
 
   @Override
-  public void process(HttpRequest request, byte[] body) {
+  public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
+      throws IOException {
     request.getHeaders().add(InvocationContextHolder.SERIALIZE_KEY,
         InvocationContextHolder.serialize(InvocationContextHolder.getOrCreateInvocationContext()));
+    return execution.execute(request, body);
   }
 }
