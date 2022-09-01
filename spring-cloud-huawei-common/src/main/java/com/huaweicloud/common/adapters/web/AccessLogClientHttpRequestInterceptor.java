@@ -50,9 +50,10 @@ public class AccessLogClientHttpRequestInterceptor implements
     }
 
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
-
-    accessLogLogger.log(context, "RestTemplate start request", request.getURI().toString(),
-        null, context.getContext(InvocationContext.CONTEXT_MICROSERVICE_NAME), 0, 0);
+    String url = request.getURI().getPath();
+    String target = request.getURI().getHost() + ":" + request.getURI().getPort();
+    accessLogLogger.log(context, "RestTemplate start request", url,
+        null, target, 0, 0);
 
     ClientHttpResponse response = null;
     long begin = System.currentTimeMillis();
@@ -60,8 +61,8 @@ public class AccessLogClientHttpRequestInterceptor implements
       response = execution.execute(request, body);
     } finally {
       int status = response == null ? 0 : response.getRawStatusCode();
-      accessLogLogger.log(context, "RestTemplate finish request", request.getURI().toString(),
-          null, context.getContext(InvocationContext.CONTEXT_MICROSERVICE_NAME), status,
+      accessLogLogger.log(context, "RestTemplate finish request", url,
+          null, target, status,
           System.currentTimeMillis() - begin);
     }
     return response;

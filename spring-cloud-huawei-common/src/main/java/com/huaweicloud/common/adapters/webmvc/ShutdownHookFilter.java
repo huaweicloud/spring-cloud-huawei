@@ -76,6 +76,9 @@ public class ShutdownHookFilter implements Filter {
   }
 
   private void close() {
+    if (isShutDown) {
+      return;
+    }
     LOGGER.warn("application is shutting down, rejecting requests...");
     isShutDown = true;
     if (contextProperties.getWaitTimeForShutDownInMillis() > 0) {

@@ -57,8 +57,10 @@ public class AccessLogFilter implements Filter {
 
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
 
-    String req = ((HttpServletRequest) request).getRequestURL().toString();
-    String source = context.getContext(InvocationContext.CONTEXT_MICROSERVICE_NAME);
+    String req = ((HttpServletRequest) request).getRequestURI();
+    String source = context.getContext(InvocationContext.CONTEXT_MICROSERVICE_NAME) == null
+        ? request.getRemoteAddr()
+        : context.getContext(InvocationContext.CONTEXT_MICROSERVICE_NAME);
     accessLogLogger.log(context, "WebMVC receive request", req, source, null, 0, 0);
 
     long begin = System.currentTimeMillis();

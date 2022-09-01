@@ -59,7 +59,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 
+import com.huaweicloud.common.access.AccessLogLogger;
 import com.huaweicloud.common.adapters.loadbalancer.RetryContext;
+import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.common.event.EventManager;
@@ -110,12 +112,17 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
 
   private final InstanceBulkheadHandler instanceBulkheadHandler;
 
+  private final ContextProperties contextProperties;
+
+  private final AccessLogLogger accessLogLogger;
+
   public GovernanceFeignBlockingLoadBalancerClient(RetryHandler retryHandler,
       FaultInjectionHandler faultInjectionHandler,
       InstanceIsolationHandler instanceIsolationHandler,
       InstanceBulkheadHandler instanceBulkheadHandler,
       Client delegate, LoadBalancerClient loadBalancerClient,
-      LoadBalancerClientFactory loadBalancerClientFactory) {
+      LoadBalancerClientFactory loadBalancerClientFactory,
+      ContextProperties contextProperties, AccessLogLogger accessLogLogger) {
     this.retryHandler = retryHandler;
     this.faultInjectionHandler = faultInjectionHandler;
     this.instanceIsolationHandler = instanceIsolationHandler;
@@ -123,6 +130,8 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
     this.delegate = delegate;
     this.loadBalancerClient = loadBalancerClient;
     this.loadBalancerClientFactory = loadBalancerClientFactory;
+    this.contextProperties = contextProperties;
+    this.accessLogLogger = accessLogLogger;
   }
 
   @Override
@@ -132,7 +141,22 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
     GovernanceRequest governanceRequest = convert(request);
     governanceRequest.setServiceName(originalUri.getHost());
 
-    return decorateWithFault(request, options, originalUri, governanceRequest);
+    Response response = null;
+    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
+    long begin = System.currentTimeMillis();
+    try {
+      response = decorateWithFault(request, options, originalUri, governanceRequest);
+    } finally {
+      if (contextProperties.isEnableTraceInfo()) {
+        accessLogLogger.log(context, "Feign finish request",
+            governanceRequest.getUri(),
+            null,
+            request.requestTemplate().feignTarget().name(),
+            response == null ? 0 : response.status(),
+            System.currentTimeMillis() - begin);
+      }
+    }
+    return response;
   }
 
   private Response decorateWithFault(Request request, Options options, URI originalUri,
