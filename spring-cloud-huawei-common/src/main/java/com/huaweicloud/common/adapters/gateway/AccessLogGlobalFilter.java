@@ -76,6 +76,14 @@ public class AccessLogGlobalFilter implements GlobalFilter, Ordered {
           service,
           exchange.getResponse().getRawStatusCode(),
           System.currentTimeMillis() - begin);
+    }).doOnError(error -> {
+      accessLogLogger.log(context,
+          "Gateway finish request",
+          request,
+          source,
+          service,
+          -1,
+          System.currentTimeMillis() - begin);
     });
   }
 

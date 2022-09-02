@@ -17,21 +17,12 @@
 
 package com.huaweicloud.governance.adapters.webclient;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cloud.client.loadbalancer.reactive.DeferringLoadBalancerExchangeFilterFunction;
-import org.springframework.cloud.client.loadbalancer.reactive.ReactorLoadBalancerExchangeFilterFunction;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.core.Ordered;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.governance.StatusCodeExtractor;
@@ -39,44 +30,6 @@ import com.huaweicloud.governance.StatusCodeExtractor;
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.web.reactive.function.client.WebClient"})
 public class WebClientConfiguration {
-  @Bean
-  @Primary
-  @ConditionalOnProperty(value = GovernanceProperties.WEBCLIENT_GOVERNANCE_ENABLED,
-      havingValue = "true", matchIfMissing = true)
-  public WebClient.Builder webClientBuilder(List<ExchangeFilterFunction> exchangeFilterFunctions) {
-    List<ExchangeFilterFunction> nonOrderedList = new ArrayList<>();
-    List<ExchangeFilterFunction> orderedList = new ArrayList<>();
-    ExchangeFilterFunction loadBalancerFunction = null;
-
-    for (ExchangeFilterFunction function : exchangeFilterFunctions) {
-      // use DeferringLoadBalancerExchangeFilterFunction if exists
-      if (function instanceof ReactorLoadBalancerExchangeFilterFunction) {
-        if (loadBalancerFunction == null) {
-          loadBalancerFunction = function;
-        }
-        continue;
-      }
-      if (function instanceof DeferringLoadBalancerExchangeFilterFunction) {
-        loadBalancerFunction = function;
-        continue;
-      }
-      if (function instanceof Ordered) {
-        orderedList.add(function);
-      } else {
-        nonOrderedList.add(function);
-      }
-    }
-    orderedList.sort(Comparator.comparingInt(a -> ((Ordered) a).getOrder()));
-    if (loadBalancerFunction != null) {
-      nonOrderedList.add(loadBalancerFunction);
-    }
-    nonOrderedList.addAll(orderedList);
-
-    return WebClient.builder().filters(allFilters -> {
-      allFilters.addAll(nonOrderedList);
-    });
-  }
-
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.WEBCLIENT_RETRY_ENABLED,
       havingValue = "true", matchIfMissing = true)
