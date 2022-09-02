@@ -16,7 +16,7 @@
  */
 package com.huaweicloud.governance.adapters.webclient;
 
-import org.apache.servicecomb.governance.handler.RetryHandler;
+import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.springframework.core.Ordered;
 import org.springframework.web.reactive.function.client.ClientRequest;
@@ -26,18 +26,18 @@ import org.springframework.web.reactive.function.client.ExchangeFunction;
 
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 
-import io.github.resilience4j.reactor.retry.RetryOperator;
-import io.github.resilience4j.retry.Retry;
+import io.github.resilience4j.bulkhead.Bulkhead;
+import io.github.resilience4j.reactor.bulkhead.operator.BulkheadOperator;
 import reactor.core.publisher.Mono;
 
-public class RetryExchangeFilterFunction implements ExchangeFilterFunction, Ordered {
-  private final RetryHandler retryHandler;
+public class InstanceBulkheadExchangeFilterFunction implements ExchangeFilterFunction, Ordered {
+  private final InstanceBulkheadHandler bulkheadHandler;
 
   private final GovernanceProperties governanceProperties;
 
-  public RetryExchangeFilterFunction(RetryHandler retryHandler,
+  public InstanceBulkheadExchangeFilterFunction(InstanceBulkheadHandler bulkheadHandler,
       GovernanceProperties governanceProperties) {
-    this.retryHandler = retryHandler;
+    this.bulkheadHandler = bulkheadHandler;
     this.governanceProperties = governanceProperties;
   }
 
@@ -47,21 +47,21 @@ public class RetryExchangeFilterFunction implements ExchangeFilterFunction, Orde
 
     Mono<ClientResponse> toRun = next.exchange(request);
 
-    return addRetry(governanceRequest, toRun);
+    return addBulkhead(governanceRequest, toRun);
   }
 
-  private Mono<ClientResponse> addRetry(GovernanceRequest governanceRequest,
+  private Mono<ClientResponse> addBulkhead(GovernanceRequest governanceRequest,
       Mono<ClientResponse> toRun) {
-    Retry retry = retryHandler.getActuator(governanceRequest);
-    if (retry == null) {
+    Bulkhead bulkhead = bulkheadHandler.getActuator(governanceRequest);
+    if (bulkhead == null) {
       return toRun;
     }
 
-    return toRun.transformDeferred(RetryOperator.of(retry));
+    return toRun.transformDeferred(BulkheadOperator.of(bulkhead));
   }
 
   @Override
   public int getOrder() {
-    return governanceProperties.getWebclient().getRetry().getOrder();
+    return governanceProperties.getWebclient().getInstanceBulkhead().getOrder();
   }
 }
