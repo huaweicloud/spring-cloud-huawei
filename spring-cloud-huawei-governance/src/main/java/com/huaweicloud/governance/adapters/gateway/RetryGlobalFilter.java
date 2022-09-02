@@ -33,6 +33,9 @@ import io.github.resilience4j.retry.Retry;
 import reactor.core.publisher.Mono;
 
 public class RetryGlobalFilter implements GlobalFilter, Ordered {
+
+  public static final int RETRY_ORDER = ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER + 20;
+
   private final RetryHandler retryHandler;
 
   public RetryGlobalFilter(RetryHandler retryHandler) {
@@ -73,6 +76,6 @@ public class RetryGlobalFilter implements GlobalFilter, Ordered {
 
   @Override
   public int getOrder() {
-    return ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER + 20;
+    return RETRY_ORDER;
   }
 }

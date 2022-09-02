@@ -41,7 +41,7 @@ public class RetryExchangeFilterFunction implements ExchangeFilterFunction, Orde
 
     Mono<ClientResponse> toRun = next.exchange(request);
 
-    return addRetry(request, governanceRequest, toRun);
+    return addRetry(governanceRequest, toRun);
   }
 
   private GovernanceRequest createGovernanceRequest(ClientRequest request) {
@@ -52,7 +52,7 @@ public class RetryExchangeFilterFunction implements ExchangeFilterFunction, Orde
     return governanceRequest;
   }
 
-  private Mono<ClientResponse> addRetry(ClientRequest request, GovernanceRequest governanceRequest,
+  private Mono<ClientResponse> addRetry(GovernanceRequest governanceRequest,
       Mono<ClientResponse> toRun) {
     Retry retry = retryHandler.getActuator(governanceRequest);
     if (retry == null) {
