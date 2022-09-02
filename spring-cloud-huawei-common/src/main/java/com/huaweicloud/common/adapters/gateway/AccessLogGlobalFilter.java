@@ -34,6 +34,9 @@ import com.huaweicloud.common.context.InvocationContextHolder;
 import reactor.core.publisher.Mono;
 
 public class AccessLogGlobalFilter implements GlobalFilter, Ordered {
+
+  public static final int ACCESS_LOG_ORDER = ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER + 30;
+
   private final ContextProperties contextProperties;
 
   private final AccessLogLogger accessLogLogger;
@@ -78,7 +81,7 @@ public class AccessLogGlobalFilter implements GlobalFilter, Ordered {
 
   @Override
   public int getOrder() {
-    // this filter executed after ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER
-    return ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER + 10;
+    // this filter executed after RetryGlobalFilter
+    return ACCESS_LOG_ORDER;
   }
 }

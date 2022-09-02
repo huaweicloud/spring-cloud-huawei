@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -82,6 +83,15 @@ public class GatewayController {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<String> testWebClient() {
     return webClientBuilder.build().get().uri("http://order/testWebClient").retrieve()
+        .bodyToMono(String.class);
+  }
+
+  @GetMapping(
+      path = "/testWebClientRetry",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<String> testWebClientRetry(@RequestParam(name = "invocationID") String invocationID) {
+    return webClientBuilder.build().get().uri("http://webflux/testWebClientRetry?invocationID={1}", invocationID)
+        .retrieve()
         .bodyToMono(String.class);
   }
 }
