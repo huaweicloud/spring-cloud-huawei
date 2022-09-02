@@ -67,12 +67,20 @@ public class AccessLogWebFilter implements OrderedWebFilter {
         0L);
 
     long begin = System.currentTimeMillis();
-    return chain.filter(exchange).doOnSuccess(v -> accessLogLogger.log(context,
-        "WebFlux finish request",
-        request,
-        source,
-        null,
-        exchange.getResponse().getRawStatusCode(),
-        System.currentTimeMillis() - begin));
+    return chain.filter(exchange)
+        .doOnSuccess(v -> accessLogLogger.log(context,
+            "WebFlux finish request",
+            request,
+            source,
+            null,
+            exchange.getResponse().getRawStatusCode(),
+            System.currentTimeMillis() - begin))
+        .doOnError(error -> accessLogLogger.log(context,
+            "WebFlux finish request",
+            request,
+            source,
+            null,
+            -1,
+            System.currentTimeMillis() - begin));
   }
 }

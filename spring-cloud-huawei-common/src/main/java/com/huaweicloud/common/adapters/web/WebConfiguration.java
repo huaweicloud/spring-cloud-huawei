@@ -37,6 +37,8 @@ import com.huaweicloud.common.configration.dynamic.ContextProperties;
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.http.client.ClientHttpRequestInterceptor",
     "org.springframework.web.client.RestTemplate"})
+@ConditionalOnProperty(value = ContextProperties.REST_TEMPLATE_CONTEXT_ENABLED,
+    havingValue = "true", matchIfMissing = true)
 public class WebConfiguration {
   @Bean
   public ClientHttpRequestInterceptor decorateClientHttpRequestInterceptor(
@@ -65,8 +67,6 @@ public class WebConfiguration {
   }
 
   @Bean
-  @ConditionalOnProperty(value = "spring.cloud.servicecomb.web.context.enabled",
-      havingValue = "true", matchIfMissing = true)
   // sort ClientHttpRequestInterceptors.
   // If ClientHttpRequestInterceptor does not implement Ordered, executed first, and then ordered .
   // And make LoadBalancerInterceptor the first ordered ClientHttpRequestInterceptor.
