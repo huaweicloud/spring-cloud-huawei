@@ -26,6 +26,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ServerWebExchange;
+
+import com.huaweicloud.common.context.InvocationContextHolder;
 
 import reactor.core.publisher.Mono;
 
@@ -89,8 +92,11 @@ public class GatewayController {
   @GetMapping(
       path = "/testWebClientRetry",
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public Mono<String> testWebClientRetry(@RequestParam(name = "invocationID") String invocationID) {
-    return webClientBuilder.build().get().uri("http://webflux/testWebClientRetry?invocationID={1}", invocationID)
+  public Mono<String> testWebClientRetry(ServerWebExchange exchange,
+      @RequestParam(name = "invocationID") String invocationID) {
+    return webClientBuilder.build().get()
+        .uri("http://webflux/testWebClientRetry?invocationID={1}", invocationID)
+        .attribute(InvocationContextHolder.ATTRIBUTE_KEY, exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY))
         .retrieve()
         .bodyToMono(String.class);
   }

@@ -20,6 +20,16 @@ import java.util.Collections;
 import java.util.Map;
 
 public class ContextProperties {
+  public static final String PREFIX = "spring.cloud.servicecomb";
+
+  public static final String REST_TEMPLATE_CONTEXT_ENABLED = PREFIX + "." + "restTemplate.context.enabled";
+
+  public static final String FEIGN_CONTEXT_ENABLED = PREFIX + "." + "feign.context.enabled";
+
+  public static final String WEBCLIENT_CONTEXT_ENABLED = PREFIX + "." + "webclient.context.enabled";
+
+  public static final String GATEWAY_CONTEXT_ENABLED = PREFIX + "." + "gateway.context.enabled";
+
   private boolean enableTraceInfo = true;
 
   private String traceLevel;

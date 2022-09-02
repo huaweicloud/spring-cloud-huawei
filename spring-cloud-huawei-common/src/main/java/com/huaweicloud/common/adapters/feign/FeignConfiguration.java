@@ -20,6 +20,7 @@ package com.huaweicloud.common.adapters.feign;
 import java.util.List;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -30,6 +31,8 @@ import feign.RequestInterceptor;
 
 @Configuration
 @ConditionalOnClass(name = {"feign.RequestInterceptor"})
+@ConditionalOnProperty(value = ContextProperties.FEIGN_CONTEXT_ENABLED,
+    havingValue = "true", matchIfMissing = true)
 public class FeignConfiguration {
   @Bean
   public RequestInterceptor decorateRequestInterceptor(
