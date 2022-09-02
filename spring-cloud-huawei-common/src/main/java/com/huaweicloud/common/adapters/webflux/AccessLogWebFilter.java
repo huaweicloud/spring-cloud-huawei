@@ -76,7 +76,7 @@ public class AccessLogWebFilter implements OrderedWebFilter {
             exchange.getResponse().getRawStatusCode(),
             System.currentTimeMillis() - begin))
         .doOnError(error -> accessLogLogger.log(context,
-            "WebFlux finish request",
+            "WebFlux finish request(" + error.getClass().getName() + ")",
             request,
             source,
             null,

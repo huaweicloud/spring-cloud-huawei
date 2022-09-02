@@ -19,6 +19,7 @@ package com.huaweicloud.crossappsample;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,8 @@ public class WebFluxController {
   private int circuitBreakerCounter = 0;
 
   private final Map<String, Integer> retryTimes = new HashMap<>();
+
+  private AtomicLong isolationCounter = new AtomicLong(0);
 
   @RequestMapping("/sayHello")
   public Mono<String> sayHello(@RequestParam("name") String name) {
@@ -92,5 +95,16 @@ public class WebFluxController {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<String> testWebClientBulkhead() {
     return Mono.delay(Duration.ofMillis(500)).then(Mono.just("OK"));
+  }
+
+  @GetMapping(
+      path = "/testWebClientInstanceIsolation",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<ResponseEntity<String>> testWebClientInstanceIsolation(
+      @RequestParam(name = "invocationID") String invocationID) {
+    if (isolationCounter.getAndIncrement() % 3 != 0) {
+      return Mono.just(ResponseEntity.status(200).body("ok"));
+    }
+    return Mono.just(ResponseEntity.status(503).body("fail"));
   }
 }

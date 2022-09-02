@@ -18,6 +18,7 @@
 package com.huaweicloud.governance.adapters.webclient;
 
 import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
+import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -45,6 +46,14 @@ public class WebClientConfiguration {
   public ExchangeFilterFunction instanceBulkheadExchangeFilterFunction(InstanceBulkheadHandler bulkheadHandler,
       GovernanceProperties governanceProperties) {
     return new InstanceBulkheadExchangeFilterFunction(bulkheadHandler, governanceProperties);
+  }
+
+  @Bean
+  @ConditionalOnProperty(value = GovernanceProperties.WEBCLIENT_INSTANCE_ISOLATION_ENABLED,
+      havingValue = "true", matchIfMissing = true)
+  public ExchangeFilterFunction instanceIsolationExchangeFilterFunction(InstanceIsolationHandler isolationHandler,
+      GovernanceProperties governanceProperties) {
+    return new InstanceIsolationExchangeFilterFunction(isolationHandler, governanceProperties);
   }
 
   @Bean
