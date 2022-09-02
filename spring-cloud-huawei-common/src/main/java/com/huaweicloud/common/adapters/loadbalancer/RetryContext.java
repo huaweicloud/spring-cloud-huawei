@@ -22,7 +22,9 @@ import org.springframework.cloud.client.ServiceInstance;
 public class RetryContext {
   public static final String RETRY_ITERATION = "x-r-iteration";
 
-  public static final String RETRY_CONTEXT = "x-retry";
+  public static final String RETRY_CONTEXT = "x-r-context";
+
+  public static final String RETRY_SERVICE_INSTANCE = "x-r-instance";
 
   private boolean retry;
 

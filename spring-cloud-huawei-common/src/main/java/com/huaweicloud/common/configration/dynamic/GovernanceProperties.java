@@ -18,6 +18,8 @@
 package com.huaweicloud.common.configration.dynamic;
 
 public class GovernanceProperties {
+  public static final String PREFIX = "spring.cloud.servicecomb";
+
   public static final int WEB_FILTER_BULKHEAD_ORDER = -40000;
 
   public static final int WEB_FILTER_CIRCUIT_BREAKER_ORDER = -45000;
@@ -28,7 +30,25 @@ public class GovernanceProperties {
 
   public static final int WEB_FILTER_INVOCATION_METRICS_ORDER = -60000;
 
-  public static final String PREFIX = "spring.cloud.servicecomb";
+  private static final int WEB_CLIENT_LOAD_BALANCE_BASE = 0;
+
+  public static final int WEB_CLIENT_RETRY_ORDER =
+      WEB_CLIENT_LOAD_BALANCE_BASE - 10;
+
+  public static final int WEB_CLIENT_INSTANCE_ISOLATION_ORDER =
+      WEB_CLIENT_LOAD_BALANCE_BASE + 10;
+
+  public static final int WEB_CLIENT_INSTANCE_BULKHEAD_ORDER =
+      WEB_CLIENT_LOAD_BALANCE_BASE + 20;
+
+  public static final String WEBCLIENT_RETRY_ENABLED =
+      PREFIX + "." + "webclient.retry.enabled";
+
+  public static final String WEBCLIENT_INSTANCE_BULKHEAD_ENABLED =
+      PREFIX + "." + "webclient.instanceBulkhead.enabled";
+
+  public static final String WEBCLIENT_INSTANCE_ISOLATION_ENABLED =
+      PREFIX + "." + "webclient.instanceIsolation.enabled";
 
   public static final String GATEWAY_GOVERNANCE_ENABLED = PREFIX + "." + "gateway.governance.enabled";
 
@@ -74,8 +94,6 @@ public class GovernanceProperties {
 
   public static final String REST_TEMPLATE_INSTANCE_BULKHEAD_ENABLED =
       PREFIX + "." + "restTemplate.instanceBulkhead.enabled";
-
-  public static final String WEBCLIENT_RETRY_ENABLED = PREFIX + "." + "webclient.retry.enabled";
 
   public static class Gateway {
     private RateLimiting rateLimiting = new RateLimiting();
@@ -185,6 +203,40 @@ public class GovernanceProperties {
     }
   }
 
+  public static class Webclient {
+    private InstanceIsolation instanceIsolation = new InstanceIsolation(WEB_CLIENT_INSTANCE_ISOLATION_ORDER);
+
+    private InstanceBulkhead instanceBulkhead = new InstanceBulkhead(WEB_CLIENT_INSTANCE_BULKHEAD_ORDER);
+
+    private Retry retry = new Retry(WEB_CLIENT_RETRY_ORDER);
+
+    public InstanceIsolation getInstanceIsolation() {
+      return instanceIsolation;
+    }
+
+    public void setInstanceIsolation(
+        InstanceIsolation instanceIsolation) {
+      this.instanceIsolation = instanceIsolation;
+    }
+
+    public InstanceBulkhead getInstanceBulkhead() {
+      return instanceBulkhead;
+    }
+
+    public void setInstanceBulkhead(
+        InstanceBulkhead instanceBulkhead) {
+      this.instanceBulkhead = instanceBulkhead;
+    }
+
+    public Retry getRetry() {
+      return retry;
+    }
+
+    public void setRetry(Retry retry) {
+      this.retry = retry;
+    }
+  }
+
   public static class RateLimiting {
     private int order = WEB_FILTER_RATE_LIMITING_ORDER;
 
@@ -245,9 +297,71 @@ public class GovernanceProperties {
     }
   }
 
+  public static class Retry {
+    private int order;
+
+    public Retry() {
+
+    }
+
+    public Retry(int order) {
+      this.order = order;
+    }
+
+    public int getOrder() {
+      return order;
+    }
+
+    public void setOrder(int order) {
+      this.order = order;
+    }
+  }
+
+  public static class InstanceIsolation {
+    private int order;
+
+    public InstanceIsolation() {
+
+    }
+
+    public InstanceIsolation(int order) {
+      this.order = order;
+    }
+
+    public int getOrder() {
+      return order;
+    }
+
+    public void setOrder(int order) {
+      this.order = order;
+    }
+  }
+
+  public static class InstanceBulkhead {
+    private int order;
+
+    public InstanceBulkhead() {
+
+    }
+
+    public InstanceBulkhead(int order) {
+      this.order = order;
+    }
+
+    public int getOrder() {
+      return order;
+    }
+
+    public void setOrder(int order) {
+      this.order = order;
+    }
+  }
+
   private Gateway gateway = new Gateway();
 
   private Webmvc webmvc = new Webmvc();
+
+  public Webclient webclient = new Webclient();
 
   public Gateway getGateway() {
     return gateway;
@@ -263,5 +377,13 @@ public class GovernanceProperties {
 
   public void setWebmvc(Webmvc webmvc) {
     this.webmvc = webmvc;
+  }
+
+  public Webclient getWebclient() {
+    return webclient;
+  }
+
+  public void setWebclient(Webclient webclient) {
+    this.webclient = webclient;
   }
 }
