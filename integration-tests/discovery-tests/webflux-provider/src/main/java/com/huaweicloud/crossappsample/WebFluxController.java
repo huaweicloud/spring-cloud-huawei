@@ -17,8 +17,11 @@
 package com.huaweicloud.crossappsample;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +32,8 @@ import reactor.core.publisher.Mono;
 @RestController
 public class WebFluxController {
   private int circuitBreakerCounter = 0;
+
+  private final Map<String, Integer> retryTimes = new HashMap<>();
 
   @RequestMapping("/sayHello")
   public Mono<String> sayHello(@RequestParam("name") String name) {
@@ -65,5 +70,20 @@ public class WebFluxController {
       produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<String> testWebFluxServiceBulkhead() {
     return Mono.delay(Duration.ofMillis(500)).then(Mono.just("OK"));
+  }
+
+  @GetMapping(
+      path = "/testWebClientRetry",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<ResponseEntity<String>> testWebClientRetry(@RequestParam(name = "invocationID") String invocationID) {
+    retryTimes.putIfAbsent(invocationID, 0);
+    retryTimes.put(invocationID, retryTimes.get(invocationID) + 1);
+
+    int retry = retryTimes.get(invocationID);
+
+    if (retry == 3) {
+      return Mono.just(ResponseEntity.status(200).body("try times: " + retry));
+    }
+    return Mono.just(ResponseEntity.status(503).body("fail"));
   }
 }
