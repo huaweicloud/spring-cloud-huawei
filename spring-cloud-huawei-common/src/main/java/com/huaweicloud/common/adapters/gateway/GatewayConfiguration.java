@@ -18,6 +18,7 @@
 package com.huaweicloud.common.adapters.gateway;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,8 @@ import com.huaweicloud.common.configration.dynamic.ContextProperties;
 
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.cloud.gateway.filter.GlobalFilter"})
+@ConditionalOnProperty(value = ContextProperties.GATEWAY_CONTEXT_ENABLED,
+    havingValue = "true", matchIfMissing = true)
 public class GatewayConfiguration {
   @Bean
   public GlobalFilter serializeContextGlobalFilter() {

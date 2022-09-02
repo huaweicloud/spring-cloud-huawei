@@ -75,8 +75,6 @@ public class GovernanceProperties {
   public static final String REST_TEMPLATE_INSTANCE_BULKHEAD_ENABLED =
       PREFIX + "." + "restTemplate.instanceBulkhead.enabled";
 
-  public static final String WEBCLIENT_GOVERNANCE_ENABLED = PREFIX + "." + "webclient.governance.enabled";
-
   public static final String WEBCLIENT_RETRY_ENABLED = PREFIX + "." + "webclient.retry.enabled";
 
   public static class Gateway {
