@@ -94,12 +94,19 @@ servicecomb:
       matches:
         - apiPath:
             prefix: "/faultInjection"
+    testWebClientRetry: |
+      matches:
+        - apiPath:
+            prefix: "/testWebClientRetry"
   retry:
     gatewayRetry: |
       maxAttempts: 2
       retryOnSame: 0
     gatewayRetryMore: |
       maxAttempts: 5
+      retryOnSame: 1
+    testWebClientRetry: |
+      maxAttempts: 2
       retryOnSame: 1
   rateLimiting:
     demo-rateLimiting: |
