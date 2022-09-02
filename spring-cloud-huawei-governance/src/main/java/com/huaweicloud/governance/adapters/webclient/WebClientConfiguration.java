@@ -17,6 +17,7 @@
 
 package com.huaweicloud.governance.adapters.webclient;
 
+import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -33,8 +34,17 @@ public class WebClientConfiguration {
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.WEBCLIENT_RETRY_ENABLED,
       havingValue = "true", matchIfMissing = true)
-  public ExchangeFilterFunction retryExchangeFilterFunction(RetryHandler retryHandler) {
-    return new RetryExchangeFilterFunction(retryHandler);
+  public ExchangeFilterFunction retryExchangeFilterFunction(RetryHandler retryHandler,
+      GovernanceProperties governanceProperties) {
+    return new RetryExchangeFilterFunction(retryHandler, governanceProperties);
+  }
+
+  @Bean
+  @ConditionalOnProperty(value = GovernanceProperties.WEBCLIENT_INSTANCE_BULKHEAD_ENABLED,
+      havingValue = "true", matchIfMissing = true)
+  public ExchangeFilterFunction instanceBulkheadExchangeFilterFunction(InstanceBulkheadHandler bulkheadHandler,
+      GovernanceProperties governanceProperties) {
+    return new InstanceBulkheadExchangeFilterFunction(bulkheadHandler, governanceProperties);
   }
 
   @Bean

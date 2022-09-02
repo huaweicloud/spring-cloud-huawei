@@ -43,10 +43,8 @@ public class WebClientConfiguration {
   @Bean
   @Primary
   public WebClient.Builder webClientBuilder(List<ExchangeFilterFunction> exchangeFilterFunctions) {
-    List<ExchangeFilterFunction> nonOrderedList = new ArrayList<>();
-    List<ExchangeFilterFunction> orderedList = new ArrayList<>();
+    List<ExchangeFilterFunction> resultList = new ArrayList<>();
     ExchangeFilterFunction loadBalancerFunction = null;
-
     for (ExchangeFilterFunction function : exchangeFilterFunctions) {
       // use DeferringLoadBalancerExchangeFilterFunction if exists
       if (function instanceof ReactorLoadBalancerExchangeFilterFunction) {
@@ -60,19 +58,18 @@ public class WebClientConfiguration {
         continue;
       }
       if (function instanceof Ordered) {
-        orderedList.add(function);
+        resultList.add(function);
       } else {
-        nonOrderedList.add(function);
+        resultList.add(new OrderedExchangeFilterFunction(function));
       }
     }
-    orderedList.sort(Comparator.comparingInt(a -> ((Ordered) a).getOrder()));
     if (loadBalancerFunction != null) {
-      nonOrderedList.add(loadBalancerFunction);
+      resultList.add(new OrderedExchangeFilterFunction(loadBalancerFunction));
     }
-    nonOrderedList.addAll(orderedList);
+    resultList.sort(Comparator.comparingInt(a -> ((Ordered) a).getOrder()));
 
     return WebClient.builder().filters(allFilters -> {
-      allFilters.addAll(nonOrderedList);
+      allFilters.addAll(resultList);
     });
   }
 

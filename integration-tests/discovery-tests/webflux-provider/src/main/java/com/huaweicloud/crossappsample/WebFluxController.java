@@ -86,4 +86,11 @@ public class WebFluxController {
     }
     return Mono.just(ResponseEntity.status(503).body("fail"));
   }
+
+  @GetMapping(
+      path = "/testWebClientBulkhead",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<String> testWebClientBulkhead() {
+    return Mono.delay(Duration.ofMillis(500)).then(Mono.just("OK"));
+  }
 }

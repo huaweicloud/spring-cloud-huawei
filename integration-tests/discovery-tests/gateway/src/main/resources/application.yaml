@@ -98,6 +98,10 @@ servicecomb:
       matches:
         - apiPath:
             prefix: "/testWebClientRetry"
+    testWebClientBulkhead: |
+      matches:
+        - apiPath:
+            prefix: "/testWebClientBulkhead"
   retry:
     gatewayRetry: |
       maxAttempts: 2
@@ -148,6 +152,9 @@ servicecomb:
       order: 1
   instanceBulkhead:
     gatewayInstanceBulkhead: |
+      maxConcurrentCalls: 2
+      maxWaitDuration: 100
+    testWebClientBulkhead: |
       maxConcurrentCalls: 2
       maxWaitDuration: 100
   faultInjection:
