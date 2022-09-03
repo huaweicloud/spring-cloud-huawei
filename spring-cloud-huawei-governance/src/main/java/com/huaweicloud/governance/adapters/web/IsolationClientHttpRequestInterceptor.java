@@ -29,9 +29,7 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
-import com.huaweicloud.common.adapters.loadbalancer.RetryContext;
 import com.huaweicloud.common.adapters.web.FallbackClientHttpResponse;
-import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.common.event.EventManager;
 
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
@@ -53,7 +51,7 @@ public class IsolationClientHttpRequestInterceptor implements ClientHttpRequestI
 
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) {
-    GovernanceRequest governanceRequest = convert(request);
+    GovernanceRequest governanceRequest = RestTemplateUtils.createGovernanceRequest(request);
     try {
       CircuitBreakerPolicy circuitBreakerPolicy = instanceIsolationHandler.matchPolicy(governanceRequest);
       if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
@@ -80,21 +78,6 @@ public class IsolationClientHttpRequestInterceptor implements ClientHttpRequestI
       }
       throw new RuntimeException(e);
     }
-  }
-
-  private GovernanceRequest convert(HttpRequest request) {
-    GovernanceRequest governanceRequest = new GovernanceRequest();
-    governanceRequest.setUri(request.getURI().getPath());
-    governanceRequest.setMethod(request.getMethod().name());
-    governanceRequest.setHeaders(request.getHeaders().toSingleValueMap());
-
-    RetryContext retryContext = InvocationContextHolder.getOrCreateInvocationContext()
-        .getLocalContext(RetryContext.RETRY_CONTEXT);
-    if (retryContext != null && retryContext.getLastServer() != null) {
-      governanceRequest.setServiceName(retryContext.getLastServer().getServiceId());
-      governanceRequest.setInstanceId(retryContext.getLastServer().getInstanceId());
-    }
-    return governanceRequest;
   }
 
   @Override

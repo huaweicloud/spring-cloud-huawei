@@ -30,7 +30,7 @@ public class RetryContext {
 
   private int triedCount;
 
-  private final int retryOnSame;
+  private int retryOnSame;
 
   private ServiceInstance lastServer;
 
@@ -50,7 +50,7 @@ public class RetryContext {
   }
 
   public boolean trySameServer() {
-    return triedCount <= retryOnSame;
+    return triedCount < retryOnSame;
   }
 
   public ServiceInstance getLastServer() {
