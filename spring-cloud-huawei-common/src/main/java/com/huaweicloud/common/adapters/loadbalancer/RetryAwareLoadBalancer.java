@@ -31,6 +31,7 @@ import org.springframework.cloud.client.loadbalancer.DefaultRequestContext;
 import org.springframework.cloud.client.loadbalancer.DefaultResponse;
 import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.client.loadbalancer.RequestData;
+import org.springframework.cloud.client.loadbalancer.RequestDataContext;
 import org.springframework.cloud.client.loadbalancer.Response;
 import org.springframework.cloud.loadbalancer.core.RandomLoadBalancer;
 import org.springframework.cloud.loadbalancer.core.ReactorServiceInstanceLoadBalancer;
@@ -70,14 +71,13 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
   @Override
   @SuppressWarnings("rawtypes")
   public Mono<Response<ServiceInstance>> choose(Request request) {
-    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
+    InvocationContext context = getOrCreateInvocationContext(request);
     GovernanceRequest governanceRequest = convert(request);
     LoadBalance loadBalance = loadBalanceHandler.getActuator(governanceRequest);
     if (loadBalance != null) {
       loadBalancerProperties.setRule(loadBalance.getRule());
     }
     if (context.getLocalContext(RetryContext.RETRY_CONTEXT) == null) {
-      // gateway do not use RetryContext
       ReactorServiceInstanceLoadBalancer loadBalancer = loadBalancers.computeIfAbsent(loadBalancerProperties.getRule(),
           key -> {
             if (LoadBalancerProperties.RULE_RANDOM.equals(key)) {
@@ -89,7 +89,6 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
       return loadBalancer.choose(request);
     }
 
-    // feign / restTemplate using RetryContext
     RetryContext retryContext = context.getLocalContext(RetryContext.RETRY_CONTEXT);
     if (retryContext.trySameServer() && retryContext.getLastServer() != null) {
       retryContext.incrementRetry();
@@ -105,6 +104,18 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
           }
         });
     return loadBalancer.choose(request).doOnSuccess(r -> retryContext.setLastServer(r.getServer()));
+  }
+
+  @SuppressWarnings("rawtypes")
+  private InvocationContext getOrCreateInvocationContext(Request request) {
+    Object context = request.getContext();
+    if (context instanceof RequestDataContext) {
+      RequestData data = ((RequestDataContext) context).getClientRequest();
+      if (data.getAttributes().get(InvocationContextHolder.ATTRIBUTE_KEY) != null) {
+        return (InvocationContext) data.getAttributes().get(InvocationContextHolder.ATTRIBUTE_KEY);
+      }
+    }
+    return InvocationContextHolder.getOrCreateInvocationContext();
   }
 
   @SuppressWarnings("rawtypes")

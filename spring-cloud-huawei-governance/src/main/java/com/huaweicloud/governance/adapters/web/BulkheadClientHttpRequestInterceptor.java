@@ -27,9 +27,7 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
-import com.huaweicloud.common.adapters.loadbalancer.RetryContext;
 import com.huaweicloud.common.adapters.web.FallbackClientHttpResponse;
-import com.huaweicloud.common.context.InvocationContextHolder;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadFullException;
@@ -50,7 +48,7 @@ public class BulkheadClientHttpRequestInterceptor implements ClientHttpRequestIn
 
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) {
-    GovernanceRequest governanceRequest = convert(request);
+    GovernanceRequest governanceRequest = RestTemplateUtils.createGovernanceRequest(request);
     try {
       Bulkhead bulkhead = instanceBulkheadHandler.getActuator(governanceRequest);
       if (bulkhead == null) {
@@ -68,21 +66,6 @@ public class BulkheadClientHttpRequestInterceptor implements ClientHttpRequestIn
       }
       throw new RuntimeException(e);
     }
-  }
-
-  private GovernanceRequest convert(HttpRequest request) {
-    GovernanceRequest governanceRequest = new GovernanceRequest();
-    governanceRequest.setUri(request.getURI().getPath());
-    governanceRequest.setMethod(request.getMethod().name());
-    governanceRequest.setHeaders(request.getHeaders().toSingleValueMap());
-
-    RetryContext retryContext = InvocationContextHolder.getOrCreateInvocationContext()
-        .getLocalContext(RetryContext.RETRY_CONTEXT);
-    if (retryContext != null && retryContext.getLastServer() != null) {
-      governanceRequest.setServiceName(retryContext.getLastServer().getServiceId());
-      governanceRequest.setInstanceId(retryContext.getLastServer().getInstanceId());
-    }
-    return governanceRequest;
   }
 
   @Override
