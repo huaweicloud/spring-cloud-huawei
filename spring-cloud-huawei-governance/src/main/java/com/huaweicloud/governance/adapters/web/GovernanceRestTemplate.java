@@ -29,7 +29,6 @@ import org.apache.servicecomb.injection.Fault;
 import org.apache.servicecomb.injection.FaultInjectionDecorators;
 import org.apache.servicecomb.injection.FaultInjectionDecorators.FaultInjectionDecorateCheckedSupplier;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.lang.Nullable;
@@ -109,7 +108,7 @@ public class GovernanceRestTemplate extends RestTemplate {
   private ClientHttpResponse executeWithFault(URI url, @Nullable HttpMethod method,
       @Nullable RequestCallback requestCallback,
       ClientHttpRequest request) {
-    GovernanceRequest governanceRequest = convert(request);
+    GovernanceRequest governanceRequest = RestTemplateUtils.createGovernanceRequest(request);
 
     try {
       FallbackClientHttpResponse result = addFault(governanceRequest);
@@ -184,15 +183,5 @@ public class GovernanceRestTemplate extends RestTemplate {
       }
     }
     return null;
-  }
-
-  private GovernanceRequest convert(HttpRequest request) {
-    GovernanceRequest governanceRequest = new GovernanceRequest();
-    governanceRequest.setUri(request.getURI().getPath());
-    governanceRequest.setMethod(request.getMethod().name());
-    governanceRequest.setHeaders(request.getHeaders().toSingleValueMap());
-    String serviceName = request.getURI().getHost();
-    governanceRequest.setServiceName(serviceName);
-    return governanceRequest;
   }
 }
