@@ -141,22 +141,30 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
     GovernanceRequest governanceRequest = convert(request);
     governanceRequest.setServiceName(originalUri.getHost());
 
-    Response response = null;
+    if (!contextProperties.isEnableTraceInfo()) {
+      return decorateWithFault(request, options, originalUri, governanceRequest);
+    }
+
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
     long begin = System.currentTimeMillis();
     try {
-      response = decorateWithFault(request, options, originalUri, governanceRequest);
-    } finally {
-      if (contextProperties.isEnableTraceInfo()) {
-        accessLogLogger.log(context, "Feign finish request",
-            governanceRequest.getUri(),
-            null,
-            request.requestTemplate().feignTarget().name(),
-            response == null ? 0 : response.status(),
-            System.currentTimeMillis() - begin);
-      }
+      Response response = decorateWithFault(request, options, originalUri, governanceRequest);
+      accessLogLogger.log(context, "Feign finish request",
+          governanceRequest.getUri(),
+          null,
+          request.requestTemplate().feignTarget().name(),
+          response.status(),
+          System.currentTimeMillis() - begin);
+      return response;
+    } catch (Throwable error) {
+      accessLogLogger.log(context, "Feign finish request(" + error.getClass().getName() + ")",
+          governanceRequest.getUri(),
+          null,
+          request.requestTemplate().feignTarget().name(),
+          -1,
+          System.currentTimeMillis() - begin);
+      throw error;
     }
-    return response;
   }
 
   private Response decorateWithFault(Request request, Options options, URI originalUri,
