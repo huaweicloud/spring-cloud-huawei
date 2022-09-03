@@ -45,7 +45,7 @@ public class InstanceIsolationExchangeFilterFunction implements ExchangeFilterFu
   public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
     GovernanceRequest governanceRequest = WebClientUtils.createGovernanceRequest(request);
 
-    Mono<ClientResponse> toRun = next.exchange(request);
+    Mono<ClientResponse> toRun = Mono.defer(() -> next.exchange(request));
 
     return addInstanceIsolation(governanceRequest, toRun);
   }

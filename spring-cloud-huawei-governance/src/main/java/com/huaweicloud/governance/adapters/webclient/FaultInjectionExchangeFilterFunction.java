@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.governance.adapters.gateway;
-
-import java.nio.charset.StandardCharsets;
+package com.huaweicloud.governance.adapters.webclient;
 
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
@@ -25,27 +23,41 @@ import org.apache.servicecomb.http.client.common.HttpUtils;
 import org.apache.servicecomb.injection.Fault;
 import org.apache.servicecomb.injection.FaultInjectionDecorators;
 import org.apache.servicecomb.injection.FaultInjectionDecorators.FaultInjectionDecorateCheckedSupplier;
-import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.cloud.gateway.filter.GlobalFilter;
-import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
 import org.springframework.core.Ordered;
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.web.server.ServerWebExchange;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.client.ClientRequest;
+import org.springframework.web.reactive.function.client.ClientResponse;
+import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
+import org.springframework.web.reactive.function.client.ExchangeFunction;
+
+import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 
 import reactor.core.publisher.Mono;
 
-public class FaultInjectionGlobalFilter implements GlobalFilter, Ordered {
-  private final FaultInjectionHandler faultInjectionHandler;
-
+public class FaultInjectionExchangeFilterFunction implements ExchangeFilterFunction, Ordered {
   private final Object faultObject = new Object();
 
-  public FaultInjectionGlobalFilter(FaultInjectionHandler faultInjectionHandler) {
+  private final GovernanceProperties governanceProperties;
+
+  private final FaultInjectionHandler faultInjectionHandler;
+
+  public FaultInjectionExchangeFilterFunction(
+      GovernanceProperties governanceProperties,
+      FaultInjectionHandler faultInjectionHandler) {
+    this.governanceProperties = governanceProperties;
     this.faultInjectionHandler = faultInjectionHandler;
   }
 
   @Override
-  public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-    GovernanceRequest governanceRequest = GatewayUtils.createConsumerGovernanceRequest(exchange);
+  public int getOrder() {
+    return governanceProperties.getWebclient().getFaultInjection().getOrder();
+  }
+
+  @Override
+  public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
+    GovernanceRequest governanceRequest = WebClientUtils.createGovernanceRequest(request);
     Fault fault = faultInjectionHandler.getActuator(governanceRequest);
     if (fault != null) {
       FaultInjectionDecorateCheckedSupplier<Object> ds =
@@ -54,21 +66,15 @@ public class FaultInjectionGlobalFilter implements GlobalFilter, Ordered {
       try {
         Object result = ds.get();
         if (result != faultObject) {
-          DataBuffer dataBuffer = exchange.getResponse().bufferFactory().allocateBuffer()
-              .write(HttpUtils.serialize(result).getBytes(
-                  StandardCharsets.UTF_8));
-          return exchange.getResponse().writeWith(Mono.just(dataBuffer));
+          return Mono.just(ClientResponse.create(HttpStatus.OK)
+              .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+              .body(HttpUtils.serialize(result)).build());
         }
       } catch (Throwable e) {
         return Mono.error(e);
       }
     }
 
-    return chain.filter(exchange);
-  }
-
-  @Override
-  public int getOrder() {
-    return ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER + 10;
+    return next.exchange(request);
   }
 }

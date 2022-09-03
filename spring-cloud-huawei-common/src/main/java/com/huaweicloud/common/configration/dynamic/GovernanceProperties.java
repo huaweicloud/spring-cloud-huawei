@@ -32,6 +32,9 @@ public class GovernanceProperties {
 
   private static final int WEB_CLIENT_LOAD_BALANCE_BASE = 0;
 
+  public static final int WEB_CLIENT_FAULT_INJECTION_ORDER =
+      WEB_CLIENT_LOAD_BALANCE_BASE - 20;
+
   public static final int WEB_CLIENT_RETRY_ORDER =
       WEB_CLIENT_LOAD_BALANCE_BASE - 10;
 
@@ -49,6 +52,9 @@ public class GovernanceProperties {
 
   public static final String WEBCLIENT_INSTANCE_ISOLATION_ENABLED =
       PREFIX + "." + "webclient.instanceIsolation.enabled";
+
+  public static final String WEBCLIENT_FAULT_INJECTION_ENABLED =
+      PREFIX + "." + "webclient.faultInjection.enabled";
 
   public static final String GATEWAY_GOVERNANCE_ENABLED = PREFIX + "." + "gateway.governance.enabled";
 
@@ -210,6 +216,8 @@ public class GovernanceProperties {
 
     private Retry retry = new Retry(WEB_CLIENT_RETRY_ORDER);
 
+    private FaultInjection faultInjection = new FaultInjection(WEB_CLIENT_FAULT_INJECTION_ORDER);
+
     public InstanceIsolation getInstanceIsolation() {
       return instanceIsolation;
     }
@@ -234,6 +242,14 @@ public class GovernanceProperties {
 
     public void setRetry(Retry retry) {
       this.retry = retry;
+    }
+
+    public FaultInjection getFaultInjection() {
+      return faultInjection;
+    }
+
+    public void setFaultInjection(FaultInjection faultInjection) {
+      this.faultInjection = faultInjection;
     }
   }
 
@@ -345,6 +361,26 @@ public class GovernanceProperties {
     }
 
     public InstanceBulkhead(int order) {
+      this.order = order;
+    }
+
+    public int getOrder() {
+      return order;
+    }
+
+    public void setOrder(int order) {
+      this.order = order;
+    }
+  }
+
+  public static class FaultInjection {
+    private int order;
+
+    public FaultInjection() {
+
+    }
+
+    public FaultInjection(int order) {
       this.order = order;
     }
 
