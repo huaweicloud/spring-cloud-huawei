@@ -55,17 +55,19 @@ public class AccessLogClientHttpRequestInterceptor implements
     accessLogLogger.log(context, "RestTemplate start request", url,
         null, target, 0, 0);
 
-    ClientHttpResponse response = null;
     long begin = System.currentTimeMillis();
     try {
-      response = execution.execute(request, body);
-    } finally {
-      int status = response == null ? 0 : response.getRawStatusCode();
+      ClientHttpResponse response = execution.execute(request, body);
       accessLogLogger.log(context, "RestTemplate finish request", url,
-          null, target, status,
+          null, target, response.getRawStatusCode(),
           System.currentTimeMillis() - begin);
+      return response;
+    } catch (Throwable error) {
+      accessLogLogger.log(context, "RestTemplate finish request(" + error.getClass().getName() + ")", url,
+          null, target, -1,
+          System.currentTimeMillis() - begin);
+      throw error;
     }
-    return response;
   }
 
   @Override

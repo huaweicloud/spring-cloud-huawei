@@ -78,7 +78,7 @@ public class AccessLogGlobalFilter implements GlobalFilter, Ordered {
           System.currentTimeMillis() - begin);
     }).doOnError(error -> {
       accessLogLogger.log(context,
-          "Gateway finish request",
+          "Gateway finish request(" + error.getClass().getName() + ")",
           request,
           source,
           service,

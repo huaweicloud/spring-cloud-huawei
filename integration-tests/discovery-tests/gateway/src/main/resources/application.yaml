@@ -102,6 +102,10 @@ servicecomb:
       matches:
         - apiPath:
             prefix: "/testWebClientBulkhead"
+    testWebClientInstanceIsolation: |
+      matches:
+        - apiPath:
+            prefix: "/testWebClientInstanceIsolation"
   retry:
     gatewayRetry: |
       maxAttempts: 2
@@ -150,6 +154,13 @@ servicecomb:
     gatewayIsolationForceOpenFeign: |
       forceOpen: true
       order: 1
+    testWebClientInstanceIsolation: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      slidingWindowType: COUNT_BASED
+      failureRateThreshold: 20
+      waitDurationInOpenState: 1000
+      permittedNumberOfCallsInHalfOpenState: 10
   instanceBulkhead:
     gatewayInstanceBulkhead: |
       maxConcurrentCalls: 2

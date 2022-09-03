@@ -67,7 +67,7 @@ public class AccessLogExchangeFilterFunction implements ExchangeFilterFunction, 
           null, target, response.rawStatusCode(),
           System.currentTimeMillis() - begin);
     }).doOnError(error -> {
-      accessLogLogger.log(context, "WebClient finish request", url,
+      accessLogLogger.log(context, "WebClient finish request(" + error.getClass().getName() + ")", url,
           null, target, -1,
           System.currentTimeMillis() - begin);
     });
