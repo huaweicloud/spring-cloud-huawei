@@ -66,9 +66,12 @@ public class AccessLogFilter implements Filter {
     long begin = System.currentTimeMillis();
     try {
       chain.doFilter(request, response);
-    } finally {
       accessLogLogger.log(context, "WebMVC finish request",
           req, source, null, ((HttpServletResponse) response).getStatus(), System.currentTimeMillis() - begin);
+    } catch (Throwable error) {
+      accessLogLogger.log(context, "WebMVC finish request(" + error.getClass().getName() + ")",
+          req, source, null, -1, System.currentTimeMillis() - begin);
+      throw error;
     }
   }
 }
