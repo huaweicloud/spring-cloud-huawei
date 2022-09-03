@@ -106,6 +106,14 @@ servicecomb:
       matches:
         - apiPath:
             prefix: "/testWebClientInstanceIsolation"
+    testWebClientFaultInjectionThrowException: |
+      matches:
+        - apiPath:
+            prefix: "/testWebClientFaultInjectionThrowException"
+    testWebClientFaultInjectionReturnNull: |
+      matches:
+        - apiPath:
+            prefix: "/testWebClientFaultInjectionReturnNull"
   retry:
     gatewayRetry: |
       maxAttempts: 2
@@ -173,7 +181,14 @@ servicecomb:
       type: delay
       delayTime: 1000
       percentage: 100
-
+    testWebClientFaultInjectionThrowException: |
+      type: abort
+      percentage: 100
+      fallbackType: ThrowException
+    testWebClientFaultInjectionReturnNull: |
+      type: abort
+      percentage: 100
+      fallbackType: ReturnNull
 management:
   endpoint:
     gateway:

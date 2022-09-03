@@ -17,6 +17,7 @@
 
 package com.huaweicloud.governance.adapters.webclient;
 
+import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
@@ -54,6 +55,14 @@ public class WebClientConfiguration {
   public ExchangeFilterFunction instanceIsolationExchangeFilterFunction(InstanceIsolationHandler isolationHandler,
       GovernanceProperties governanceProperties) {
     return new InstanceIsolationExchangeFilterFunction(isolationHandler, governanceProperties);
+  }
+
+  @Bean
+  @ConditionalOnProperty(value = GovernanceProperties.WEBCLIENT_FAULT_INJECTION_ENABLED,
+      havingValue = "true", matchIfMissing = true)
+  public ExchangeFilterFunction faultInjectionExchangeFilterFunction(FaultInjectionHandler faultInjectionHandler,
+      GovernanceProperties governanceProperties) {
+    return new FaultInjectionExchangeFilterFunction(governanceProperties, faultInjectionHandler);
   }
 
   @Bean

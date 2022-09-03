@@ -113,4 +113,12 @@ public class WebClientGovernanceIT {
     Assertions.assertTrue(rejectedCount.get() >= 80);
     Assertions.assertTrue(successCount.get() >= 6);
   }
+
+  @Test
+  public void testWebClientFaultInjection() {
+    String result = template.getForObject(url + "/testWebClientFaultInjectionReturnNull", String.class);
+    Assertions.assertEquals("null", result);
+    Assertions.assertThrows(HttpServerErrorException.class,
+        () -> template.getForObject(url + "/testWebClientFaultInjectionThrowException", String.class));
+  }
 }
