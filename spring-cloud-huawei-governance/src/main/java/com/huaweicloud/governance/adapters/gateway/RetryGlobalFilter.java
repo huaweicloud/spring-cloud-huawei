@@ -57,6 +57,9 @@ public class RetryGlobalFilter implements GlobalFilter, Ordered {
       return toRun;
     }
 
+    // TODO: spring cloud gateway can not pass RetryContext to Load balancer,
+    // so retry on same not support now and using RETRY_ITERATION
+    //  see https://github.com/spring-cloud/spring-cloud-gateway/issues/2720
     return Mono.defer(() -> Mono.fromRunnable(() -> {
           int iteration = exchange.getAttributeOrDefault(RetryContext.RETRY_ITERATION, 0);
           if (iteration > 0) {
