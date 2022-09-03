@@ -190,7 +190,7 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
                   StandardCharsets.UTF_8)).build();
         }
       } catch (Throwable e) {
-        return Response.builder().status(500).reason(e.getMessage()).request(request).build();
+        throw new RuntimeException(e);
       }
     }
 

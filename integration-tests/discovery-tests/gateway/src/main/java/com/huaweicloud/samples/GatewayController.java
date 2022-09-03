@@ -123,4 +123,26 @@ public class GatewayController {
         .retrieve()
         .bodyToMono(String.class);
   }
+
+  @GetMapping(
+      path = "/testWebClientFaultInjectionReturnNull",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<String> testWebClientFaultInjectionReturnNull(ServerWebExchange exchange) {
+    return webClientBuilder.build().get()
+        .uri("http://webflux/testWebClientFaultInjectionReturnNull")
+        .attribute(InvocationContextHolder.ATTRIBUTE_KEY, exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY))
+        .retrieve()
+        .bodyToMono(String.class);
+  }
+
+  @GetMapping(
+      path = "/testWebClientFaultInjectionThrowException",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<String> testWebClientFaultInjectionThrowException(ServerWebExchange exchange) {
+    return webClientBuilder.build().get()
+        .uri("http://webflux/testWebClientFaultInjectionThrowException")
+        .attribute(InvocationContextHolder.ATTRIBUTE_KEY, exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY))
+        .retrieve()
+        .bodyToMono(String.class);
+  }
 }
