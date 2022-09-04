@@ -3,15 +3,14 @@
 
 # Spring Cloud Huawei [English document](README.md)
 
-Spring Cloud Huawei的目的是为了让Spring Cloud使用
-[Apache ServiceComb](http://servicecomb.apache.org)和 [CSE][CSE] 。
+Spring Cloud Huawei的目的是为了让开发者更加方便、高效的使用Spring Cloud开发可靠的微服务应用。 Spring Cloud Huawei 使用[Apache ServiceComb][SERVICECOMB]和[CSE][CSE]的注册中心(servicecomb-service-center）与配置中心(servicecomb-kie), 并且提供了大量开箱即用的服务治理能力。
 
 ## 支持的版本列表
 
 | 分支        | 最新版本            | 编译使用 Spring Cloud版本 | 编译使用 Spring Boot版本 |
 |-----------|-----------------|---------------------|--------------------|
-| master    | 1.10.2-2021.0.x | 2021.0.3            | 2.6.7              | 
-| 2020.0.x  | 1.10.2-2020.0.x | 2020.0.5            | 2.5.12             |
+| master    | 1.10.5-2021.0.x | 2021.0.3            | 2.6.7              | 
+| 2020.0.x  | 1.10.5-2020.0.x | 2020.0.5            | 2.5.12             |
 | Hoxton    | 1.9.3-Hoxton    | Hoxton.SR9          | 2.3.5.RELEASE      |
 | Greenwich | 1.6.1-Greenwich | Greenwich.SR6       | 2.1.6-RELEASE      |
 | Finchley  | 1.6.1-Finchley  | 2.0.4.RELEASE       | 2.0.9.RELEASE      |
@@ -25,12 +24,6 @@ Spring Cloud Huawei的目的是为了让Spring Cloud使用
   Spring Cloud Loadbalancer.
 * 2020.0.x(包括)之前的版本使用springfox生成swagger. 2021.0.x(包括)之后的版本使用
     springdoc生成swagger.
-
-## 为什么使用
-
-1. Spring Cloud 使用 CSE 提供的服务. CSE 是一个微服务的运行与托管平台，包括高可用的注册中心、配置中心、服务治理等服务。
-2. Spring Cloud 使用开源项目 [Apache ServiceComb][ServiceComb] 提供的服务， 包括 servicecomb-service-center, servicecomb-kie等 。
-3. 给Spring Cloud应用提供契约生成和注册，灰度发布等功能。
 
 ## 功能模块
 
@@ -47,12 +40,10 @@ Spring Cloud Huawei的目的是为了让Spring Cloud使用
     * 实现 @RefreshScope
 
 * **spring-cloud-starter-huawei-governance:**
-    * 支持使用  [CSE][CSE] [基于动态配置的流量特征治理][Request Marker-based Governance]
-    * 实现 FeignClient and RestTemplate 的重试
-    * 实现 Servlet Web MVC 的限流、熔断器和隔离仓
+    * 支持使用 [流量特征治理][Request Marker-based Governance]
 
 * **spring-cloud-starter-huawei-router:**
-    * 支持使用  [ServiceStage][ServiceStage] [灰度发布][Canary release features].
+    * 支持使用 [灰度发布][Canary release features].
 
 * **spring-cloud-starter-huawei-swagger:**
     * 自动契约生成和注册.
@@ -71,15 +62,15 @@ Spring Cloud Huawei的目的是为了让Spring Cloud使用
 
 [CSE]: https://support.huaweicloud.com/cse/index.html
 
+[SERVICECOMB]: https://servicecomb.apache.org/cn/developers/
+
 [Service Registry]: https://support.huaweicloud.com/devg-cse/cse_devg_0018.html
 
 [Configuration Center]: https://support.huaweicloud.com/devg-cse/cse_devg_0020.html
 
-[Request Marker-based Governance]: https://support.huaweicloud.com/devg-cse/cse_devg_0025.html
+[Request Marker-based Governance]: https://github.com/huaweicloud/spring-cloud-huawei/wiki/using-governance
 
 [Canary release features]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0023.html
-
-[ServiceComb]: http://servicecomb.apache.org/cn/developers/
 
 [Profile encryption scheme]: https://support.huaweicloud.com/bestpractice-cse/cse_bestpractice_0007.html
 
