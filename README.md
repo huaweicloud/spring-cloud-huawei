@@ -3,15 +3,15 @@
 
 # Spring Cloud Huawei [查看中文文档](README_CN.md)
 
-Spring Cloud Huawei is a framework that makes it easier to integrate Spring Cloud with
-[Apache ServiceComb](http://servicecomb.apache.org) and [CSE][CSE].
+Spring Cloud Huawei is a framework that makes it easier and productive to develop microservices with Spring Cloud. Spring Cloud Huawei using 
+[Apache ServiceComb][SERVICECOMB] and [CSE][CSE] registry (servicecomb-service-center) and config (servicecomb-kie).
 
 ## Supported version
 
 | Branch    | Spring Cloud Huawei Latest Version | Compiled Spring Cloud Version | Compiled Spring Boot Version |
 |-----------|------------------------------------|-------------------------------|------------------------------|
-| master    | 1.10.2-2021.0.x                    | 2021.0.3                      | 2.6.7                        | 
-| 2020.0.x  | 1.10.2-2020.0.x                    | 2020.0.5                      | 2.5.12                       |
+| master    | 1.10.5-2021.0.x                    | 2021.0.3                      | 2.6.7                        | 
+| 2020.0.x  | 1.10.5-2020.0.x                    | 2020.0.5                      | 2.5.12                       |
 | Hoxton    | 1.9.3-Hoxton                       | Hoxton.SR9                    | 2.3.5.RELEASE                |
 | Greenwich | 1.6.1-Greenwich                    | Greenwich.SR6                 | 2.1.6-RELEASE                |
 | Finchley  | 1.6.1-Finchley                     | 2.0.4.RELEASE                 | 2.0.9.RELEASE                |
@@ -25,13 +25,6 @@ Spring Cloud Huawei is a framework that makes it easier to integrate Spring Clou
   Spring Cloud Loadbalancer are supported.
 * Before 2020.0.x(include)， springfox is used for swagger generation. After 2021.0.x(include),
   springdoc is used for swagger generation. 
-
-## Why use
-
-1. Integrate Spring Cloud applications to use CSE. CSE is a service deployment environment for microservices,
-   includes high available discovery and registration service, configuration service, governance service and so on. 
-2. Integrate Spring Cloud applications to use open source [Apache ServiceComb][ServiceComb] services, like servicecomb-service-center, servicecomb-kie.
-3. Other enhancements like swagger generation and registration, canary release and so on.
 
 ## Modules
 
@@ -48,7 +41,7 @@ Spring Cloud Huawei is a framework that makes it easier to integrate Spring Clou
      * Implements @RefreshScope
 
  * **spring-cloud-starter-huawei-governance:**
-     * Support for use [CSE][CSE] [Request Marker-based Governance][Request Marker-based Governance]
+     * Support for use [Request Marker-based Governance][Request Marker-based Governance]
      * Implements retry for FeignClient and RestTemplate
      * Implements rate limiter, circuit breaker, and bulkhead for Servlet Web MVC
 
@@ -70,10 +63,10 @@ Spring Cloud Huawei is a framework that makes it easier to integrate Spring Clou
 
 [ServiceStage]: https://support.huaweicloud.com/intl/en-us/productdesc-servicestage/ss_productdesc_0001.html
 [CSE]: https://www.huaweicloud.com/intl/en-us/product/cse.html
+[SERVICECOMB]: https://servicecomb.apache.org/developers/
 [Service Registry]: https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0017.html
 [Configuration Center]: https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0018.html
 [Request Marker-based Governance]: https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0020.html
 [Canary release features]: https://support.huaweicloud.com/devg-servicestage/ss-devg-0023.html
-[ServiceComb]: http://servicecomb.apache.org/developers/
 [Profile encryption scheme]: https://support.huaweicloud.com/bestpractice-cse/cse_bestpractice_0007.html
 [Spring Cloud Releases]: https://github.com/spring-cloud/spring-cloud-release/wiki/Supported-Versions
