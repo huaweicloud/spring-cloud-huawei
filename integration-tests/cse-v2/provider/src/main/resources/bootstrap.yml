@@ -19,6 +19,8 @@
 jasypt:
   encryptor:
     password: GXXX6
+    algorithm: PBEWithMD5AndDES
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator
 server:
   env: production
 spring:
@@ -28,7 +30,7 @@ spring:
     huawei:
       test:
         username: root
-        password: ENC(YuOl0awTR3T24tDj0oR1aivaUjgBubxA)
+        password: ENC(yT7Et5THf+7KIjnrdbnKiy4WmNqzwrE2)
     servicecomb:
       discovery:
         enabled: true
