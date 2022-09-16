@@ -43,7 +43,7 @@
     <commons-configuration.version>1.10</commons-configuration.version>
     <websocket.version>1.5.0</websocket.version>
     <resilience4j.version>1.7.0</resilience4j.version>
-    <jasypt.version>2.1.2</jasypt.version>
+    <jasypt.version>3.0.4</jasypt.version>
     <annotations.version>3.0.1</annotations.version>
     <dubbo.hessian.version>2.7.15</dubbo.hessian.version>
     <springdoc.version>1.6.8</springdoc.version>
