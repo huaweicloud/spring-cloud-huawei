@@ -38,7 +38,7 @@
     <commons-io.version>2.7</commons-io.version>
     <jmockit.version>1.36</jmockit.version>
     <guava.version>30.0-jre</guava.version>
-    <snakeyaml.version>1.26</snakeyaml.version>
+    <snakeyaml.version>1.31</snakeyaml.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <websocket.version>1.5.0</websocket.version>
     <spring-fox.version>3.0.0</spring-fox.version>
