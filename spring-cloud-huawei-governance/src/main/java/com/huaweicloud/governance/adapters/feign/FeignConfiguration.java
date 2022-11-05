@@ -34,6 +34,7 @@ import com.huaweicloud.common.access.AccessLogLogger;
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
+import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
 
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
@@ -69,6 +70,7 @@ public class FeignConfiguration {
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED,
       havingValue = "true")
+  @ConditionalOnServiceCombDiscoveryEnabled
   public FeignAddTokenContext feignAddTokenContext(RSAConsumerTokenManager authenticationTokenManager) {
     return new FeignAddTokenContext(authenticationTokenManager);
   }
