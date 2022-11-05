@@ -19,7 +19,6 @@ package com.huaweicloud.governance;
 import java.util.HashSet;
 import java.util.List;
 
-import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import org.apache.servicecomb.governance.MicroserviceMeta;
 import org.apache.servicecomb.governance.event.GovernanceConfigurationChangedEvent;
 import org.apache.servicecomb.governance.event.GovernanceEventManager;
@@ -34,9 +33,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.common.event.ConfigRefreshEvent;
 import com.huaweicloud.governance.authentication.AuthHandlerBoot;
 import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
+import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 @Configuration
@@ -69,8 +70,9 @@ public class GovernanceConfiguration {
   }
 
   @Bean
-  @ConditionalOnExpression("${"+GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED +":true}"
-      + " or ${"+GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED +":true}")
+  @ConditionalOnExpression("${" + GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED + ":true}"
+      + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":true}")
+  @ConditionalOnServiceCombDiscoveryEnabled
   public ApplicationListener<ApplicationEvent> authHandlerBoot(ServiceCombRegistration registration) {
     return new AuthHandlerBoot(registration);
   }
@@ -78,6 +80,7 @@ public class GovernanceConfiguration {
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED,
       havingValue = "true")
+  @ConditionalOnServiceCombDiscoveryEnabled
   public RSAConsumerTokenManager authenticationTokenManager(ServiceCombRegistration registration) {
     return new RSAConsumerTokenManager(registration);
   }

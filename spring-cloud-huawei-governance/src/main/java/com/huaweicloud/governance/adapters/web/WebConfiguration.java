@@ -34,6 +34,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
+import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
 
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.http.client.ClientHttpRequestInterceptor",
@@ -74,6 +75,7 @@ public class WebConfiguration {
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED,
       havingValue = "true")
+  @ConditionalOnServiceCombDiscoveryEnabled
   public RestTemplateAddTokenContext restTemplateAddTokenContext(RSAConsumerTokenManager authenticationTokenManager) {
     return new RestTemplateAddTokenContext(authenticationTokenManager);
   }

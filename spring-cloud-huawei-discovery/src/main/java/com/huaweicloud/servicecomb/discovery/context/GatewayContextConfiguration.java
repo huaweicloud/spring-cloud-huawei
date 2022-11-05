@@ -22,12 +22,14 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.cloud.gateway.filter.GlobalFilter"})
 public class GatewayContextConfiguration {
   @Bean
+  @ConditionalOnServiceCombDiscoveryEnabled
   public GlobalFilter gatewayAddServiceNameContext(ServiceCombRegistration registration) {
     return new GatewayAddServiceNameContext(registration);
   }

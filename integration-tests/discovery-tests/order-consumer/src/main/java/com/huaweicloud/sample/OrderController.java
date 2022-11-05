@@ -34,9 +34,11 @@ import org.springframework.web.client.RestTemplate;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 @RestController
+@ConditionalOnServiceCombDiscoveryEnabled
 public class OrderController {
 
   private final DiscoveryClient discoveryClient;

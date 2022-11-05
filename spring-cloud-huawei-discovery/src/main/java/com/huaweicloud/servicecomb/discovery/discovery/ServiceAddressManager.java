@@ -128,7 +128,7 @@ public class ServiceAddressManager {
     return myselfInstance.getDataCenterInfo();
   }
 
-  public List<MicroserviceInstance> findServiceInstance(String appId, String serviceName, String versionRule) {
+  private List<MicroserviceInstance> findServiceInstance(String appId, String serviceName, String versionRule) {
     try {
       FindMicroserviceInstancesResponse instancesResponse = serviceCenterClient
           .findMicroserviceInstance(this.myselfServiceId, appId, serviceName, versionRule, null);
