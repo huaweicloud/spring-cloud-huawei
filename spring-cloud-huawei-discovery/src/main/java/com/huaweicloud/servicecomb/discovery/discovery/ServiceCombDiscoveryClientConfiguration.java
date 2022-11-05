@@ -27,8 +27,6 @@ import org.springframework.core.annotation.Order;
 
 import com.huaweicloud.common.configration.bootstrap.BootstrapProperties;
 import com.huaweicloud.common.configration.bootstrap.DiscoveryBootstrapProperties;
-import com.huaweicloud.common.configration.bootstrap.ServiceCombRBACProperties;
-import com.huaweicloud.common.configration.bootstrap.ServiceCombSSLProperties;
 import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
@@ -36,17 +34,6 @@ import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 @ConditionalOnServiceCombDiscoveryEnabled
 @AutoConfigureBefore({CommonsClientAutoConfiguration.class})
 public class ServiceCombDiscoveryClientConfiguration {
-
-  @Bean
-  public ServiceCombSSLProperties serviceCombSSLProperties() {
-    return new ServiceCombSSLProperties();
-  }
-
-  @Bean
-  public ServiceCombRBACProperties serviceCombRBACProperties() {
-    return new ServiceCombRBACProperties();
-  }
-
   @Bean
   @Order(100)
   public DiscoveryClient serviceCombDiscoveryClient(
