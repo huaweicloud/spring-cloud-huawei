@@ -24,6 +24,7 @@ spring:
   cloud:
     servicecomb:
       discovery:
+        enabled: true
         serviceName: ${spring.application.name}
         watch: false
         address: ${PAAS_CSE_SC_ENDPOINT:http://127.0.0.1:30100}

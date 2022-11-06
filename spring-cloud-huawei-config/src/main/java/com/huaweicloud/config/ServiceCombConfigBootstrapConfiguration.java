@@ -20,7 +20,6 @@ package com.huaweicloud.config;
 import java.util.List;
 
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,7 +30,7 @@ import com.huaweicloud.common.configration.bootstrap.BootstrapProperties;
  * 连接实例采用单例，保证只加载一次。
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.cloud.servicecomb.config.enabled", matchIfMissing = true)
+@ConditionalOnServiceCombConfigEnabled
 public class ServiceCombConfigBootstrapConfiguration {
   @Bean
   public ServiceCombPropertySourceLocator serviceCombPropertySourceLocator(BootstrapProperties bootstrapProperties,

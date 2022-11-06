@@ -30,9 +30,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 @RestController
+@ConditionalOnServiceCombDiscoveryEnabled
 public class PriceController {
   @Autowired
   private Configuration configuration;
