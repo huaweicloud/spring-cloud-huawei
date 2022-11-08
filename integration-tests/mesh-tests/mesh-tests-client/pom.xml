@@ -51,29 +51,6 @@
             <artifactId>docker-maven-plugin</artifactId>
             <configuration>
               <images>
-
-                <image>
-                  <name>mesh-gateway-test:${project.version}</name>
-                  <alias>mesh-gateway-test</alias>
-                  <run>
-                    <env>
-                      <JAR_PATH>/maven/mesh-gateway-test-${project.version}.jar</JAR_PATH>
-                    </env>
-                    <wait>
-                      <log>Started MeshGatewayApplication</log>
-                      <tcp>
-                        <ports>
-                          <port>2990</port>
-                        </ports>
-                      </tcp>
-                      <time>120000</time>
-                    </wait>
-                    <ports>
-                      <port>2990:2990</port>
-                    </ports>
-                  </run>
-                </image>
-
                 <image>
                   <name>mesh-provider-test:${project.version}</name>
                   <alias>mesh-provider-test</alias>
@@ -103,6 +80,9 @@
                     <env>
                       <JAR_PATH>/maven/mesh-consumer-test-${project.version}.jar</JAR_PATH>
                     </env>
+                    <links>
+                      <link>mesh-provider-test:mesh-provider-test</link>
+                    </links>
                     <wait>
                       <log>Started MeshConsumerApplication</log>
                       <tcp>
@@ -115,9 +95,39 @@
                     <ports>
                       <port>2992:2992</port>
                     </ports>
+                    <dependsOn>
+                      <container>mesh-provider-test</container>
+                    </dependsOn>
                   </run>
                 </image>
 
+                <image>
+                  <name>mesh-gateway-test:${project.version}</name>
+                  <alias>mesh-gateway-test</alias>
+                  <run>
+                    <env>
+                      <JAR_PATH>/maven/mesh-gateway-test-${project.version}.jar</JAR_PATH>
+                    </env>
+                    <links>
+                      <link>mesh-consumer-test:mesh-consumer-test</link>
+                    </links>
+                    <wait>
+                      <log>Started MeshGatewayApplication</log>
+                      <tcp>
+                        <ports>
+                          <port>2990</port>
+                        </ports>
+                      </tcp>
+                      <time>120000</time>
+                    </wait>
+                    <ports>
+                      <port>2990:2990</port>
+                    </ports>
+                    <dependsOn>
+                      <container>mesh-consumer-test</container>
+                    </dependsOn>
+                  </run>
+                </image>
               </images>
             </configuration>
             <executions>
