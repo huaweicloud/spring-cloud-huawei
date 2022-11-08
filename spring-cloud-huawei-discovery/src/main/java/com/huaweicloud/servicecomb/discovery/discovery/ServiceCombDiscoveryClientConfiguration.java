@@ -23,7 +23,6 @@ import org.springframework.cloud.client.CommonsClientAutoConfiguration;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 
 import com.huaweicloud.common.configration.bootstrap.BootstrapProperties;
 import com.huaweicloud.common.configration.bootstrap.DiscoveryBootstrapProperties;
@@ -35,7 +34,6 @@ import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 @AutoConfigureBefore({CommonsClientAutoConfiguration.class})
 public class ServiceCombDiscoveryClientConfiguration {
   @Bean
-  @Order(100)
   public DiscoveryClient serviceCombDiscoveryClient(
       BootstrapProperties bootstrapProperties, ServiceCenterClient serviceCenterClient,
       ServiceCombRegistration serviceCombRegistration) {
@@ -43,7 +41,6 @@ public class ServiceCombDiscoveryClientConfiguration {
   }
 
   @Bean
-  @Order(100)
   public ServiceAddressManager serviceAddressManager(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCenterClient serviceCenterClient, ServiceCombRegistration serviceCombRegistration) {
     return new ServiceAddressManager(discoveryProperties, serviceCenterClient, serviceCombRegistration);
