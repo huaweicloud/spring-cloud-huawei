@@ -28,6 +28,8 @@ public class DiscoveryBootstrapProperties {
 
   private boolean enabled = true;
 
+  private int order = 100;
+
   private boolean watch = false;
 
   private boolean enableZoneAware = false;
@@ -216,6 +218,14 @@ public class DiscoveryBootstrapProperties {
 
   public void setCanOverwriteSwagger(boolean canOverwriteSwagger) {
     this.canOverwriteSwagger = canOverwriteSwagger;
+  }
+
+  public int getOrder() {
+    return order;
+  }
+
+  public void setOrder(int order) {
+    this.order = order;
   }
 
   @Override
