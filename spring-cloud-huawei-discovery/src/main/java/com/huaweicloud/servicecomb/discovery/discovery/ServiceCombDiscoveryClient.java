@@ -187,4 +187,9 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
   public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
     this.applicationEventPublisher = applicationEventPublisher;
   }
+
+  @Override
+  public int getOrder() {
+    return this.discoveryProperties.getOrder();
+  }
 }
