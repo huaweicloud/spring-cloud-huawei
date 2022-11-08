@@ -17,7 +17,6 @@
 package com.huaweicloud.servicecomb.discovery.discovery;
 
 import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.ReactiveDiscoveryClient;
 
 import reactor.core.publisher.Flux;
