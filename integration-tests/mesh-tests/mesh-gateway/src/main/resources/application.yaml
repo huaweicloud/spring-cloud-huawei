@@ -16,12 +16,11 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.huaweicloud.servicecomb.discovery.DiscoveryAutoConfiguration,\
-com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryClientConfiguration,\
-com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistryAutoConfiguration, \
-com.huaweicloud.servicecomb.discovery.discovery.ServiceCombReactiveDiscoveryClientConfiguration, \
-com.huaweicloud.servicecomb.discovery.context.FeignContextConfiguration, \
-com.huaweicloud.servicecomb.discovery.context.RestTemplateContextConfiguration, \
-com.huaweicloud.servicecomb.discovery.context.GatewayContextConfiguration,\
-com.huaweicloud.mesh.discovery.MeshDiscoveryAutoConfiguration
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: mesh-consumer
+          uri: lb://mesh-consumer
+          predicates:
+            - Path=/mesh/consumer/**
