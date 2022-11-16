@@ -14,19 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.huaweicloud.router.client;
 
-package com.huaweicloud.router.client.gateway;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.cloud.gateway.filter.GlobalFilter;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
-@Configuration
-@ConditionalOnClass(name = {"org.springframework.cloud.gateway.filter.GlobalFilter"})
-public class GatewayConfiguration {
-  @Bean
-  public GlobalFilter routerContextPreGlobalFilter() {
-    return new RouterContextGlobalFilter();
-  }
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD})
+@ConditionalOnProperty(value = "spring.cloud.servicecomb.router.enabled", matchIfMissing = true)
+public @interface ConditionalOnRouterEnabled {
 }
