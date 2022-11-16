@@ -45,3 +45,7 @@ spring:
         secretKey: ${CREDENTIALS_SK}
         cipher: default
         project: cn-south-1
+
+      context:
+        headerContextMapper:
+          canary: canary
