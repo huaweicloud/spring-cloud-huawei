@@ -39,8 +39,6 @@ import com.huaweicloud.common.adapters.loadbalancer.DecorateLoadBalancerRequest;
 import com.huaweicloud.common.adapters.loadbalancer.ServiceInstanceFilter;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.common.util.HeaderUtil;
-import com.huaweicloud.router.client.RouterConstant;
 
 public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
   private static final Logger LOGGER = LoggerFactory.getLogger(CanaryServiceInstanceFilter.class);
@@ -65,14 +63,10 @@ public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
 
     Map<String, String> canaryHeaders = new HashMap<>();
 
-    // headers from outer request
-    InvocationContext invocationContext = InvocationContextHolder.getOrCreateInvocationContext();
-    String headers = invocationContext.getContext(RouterConstant.CONTEXT_HEADER);
-    if (headers != null) {
-      canaryHeaders.putAll(HeaderUtil.deserialize(headers));
-    }
     // headers from invocation context
+    InvocationContext invocationContext = InvocationContextHolder.getOrCreateInvocationContext();
     canaryHeaders.putAll(invocationContext.getContext());
+
     // headers from current request
     String targetServiceName = instances.get(0).getServiceId();
     Object context = request.getContext();
