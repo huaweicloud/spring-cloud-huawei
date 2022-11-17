@@ -16,6 +16,12 @@
 
 package org.springframework.cloud.openfeign.support;
 
+import static org.springframework.cloud.openfeign.support.FeignUtils.getHttpHeaders;
+import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
+import static org.springframework.http.MediaType.MULTIPART_MIXED;
+import static org.springframework.http.MediaType.MULTIPART_RELATED;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,18 +30,13 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import feign.RequestTemplate;
-import feign.codec.EncodeException;
-import feign.codec.Encoder;
-import feign.form.spring.SpringFormEncoder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
@@ -50,14 +51,13 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
 import org.springframework.web.multipart.MultipartFile;
 
-import static org.springframework.cloud.openfeign.support.FeignUtils.getHeaders;
-import static org.springframework.cloud.openfeign.support.FeignUtils.getHttpHeaders;
-import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
-import static org.springframework.http.MediaType.MULTIPART_MIXED;
-import static org.springframework.http.MediaType.MULTIPART_RELATED;
-
 import com.huaweicloud.hessian.HessianHttpMessageConverter;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import feign.RequestTemplate;
+import feign.codec.EncodeException;
+import feign.codec.Encoder;
+import feign.form.spring.SpringFormEncoder;
 
 /**
  * @author Spencer Gibb
@@ -86,29 +86,6 @@ public class ExtendedSpringEncoder implements Encoder {
   private final FeignEncoderProperties encoderProperties;
 
   private final ObjectProvider<HttpMessageConverterCustomizer> customizers;
-
-  public ExtendedSpringEncoder(ObjectFactory<HttpMessageConverters> messageConverters) {
-    this(new SpringFormEncoder(), messageConverters);
-  }
-
-  /**
-   * @deprecated in favour of
-   * {@link SpringEncoder#SpringEncoder(SpringFormEncoder, ObjectFactory, FeignEncoderProperties, ObjectProvider)}
-   */
-  @Deprecated
-  public ExtendedSpringEncoder(SpringFormEncoder springFormEncoder, ObjectFactory<HttpMessageConverters> messageConverters) {
-    this(springFormEncoder, messageConverters, new FeignEncoderProperties());
-  }
-
-  /**
-   * @deprecated in favour of
-   * {@link SpringEncoder#SpringEncoder(SpringFormEncoder, ObjectFactory, FeignEncoderProperties, ObjectProvider)}
-   */
-  @Deprecated
-  public ExtendedSpringEncoder(SpringFormEncoder springFormEncoder, ObjectFactory<HttpMessageConverters> messageConverters,
-      FeignEncoderProperties encoderProperties) {
-    this(springFormEncoder, messageConverters, encoderProperties, new EmptyObjectProvider<>());
-  }
 
   public ExtendedSpringEncoder(SpringFormEncoder springFormEncoder, ObjectFactory<HttpMessageConverters> messageConverters,
       FeignEncoderProperties encoderProperties, ObjectProvider<HttpMessageConverterCustomizer> customizers) {
@@ -167,7 +144,7 @@ public class ExtendedSpringEncoder implements Encoder {
         request.headers(null);
         // converters can modify headers, so update the request
         // with the modified headers
-        request.headers(getHeaders(outputMessage.getHeaders()));
+        request.headers(new LinkedHashMap<>(outputMessage.getHeaders()));
 
         // do not use charset for binary data and protobuf
         Charset charset;
@@ -256,7 +233,7 @@ public class ExtendedSpringEncoder implements Encoder {
     return Objects.equals(APPLICATION_FORM_URLENCODED, requestContentType);
   }
 
-  private boolean binaryContentType(FeignOutputMessage outputMessage) {
+  protected boolean binaryContentType(FeignOutputMessage outputMessage) {
     MediaType contentType = outputMessage.getHeaders().getContentType();
     return contentType == null || HessianHttpMessageConverter.HESSIAN_MEDIA_TYPE.includes(contentType) || Stream
         .of(MediaType.APPLICATION_CBOR, MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_PDF,
