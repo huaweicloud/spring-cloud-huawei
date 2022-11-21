@@ -21,10 +21,10 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.processor.injection.Fault;
+import org.apache.servicecomb.governance.processor.injection.FaultInjectionDecorators;
+import org.apache.servicecomb.governance.processor.injection.FaultInjectionDecorators.FaultInjectionDecorateCheckedSupplier;
 import org.apache.servicecomb.http.client.common.HttpUtils;
-import org.apache.servicecomb.injection.Fault;
-import org.apache.servicecomb.injection.FaultInjectionDecorators;
-import org.apache.servicecomb.injection.FaultInjectionDecorators.FaultInjectionDecorateCheckedSupplier;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
