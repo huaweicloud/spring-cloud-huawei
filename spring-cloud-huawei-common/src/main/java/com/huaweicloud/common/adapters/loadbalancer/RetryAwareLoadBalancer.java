@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.servicecomb.governance.handler.LoadBalanceHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
-import org.apache.servicecomb.loadbanlance.LoadBalance;
+import org.apache.servicecomb.governance.processor.loadbanlance.LoadBalance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
