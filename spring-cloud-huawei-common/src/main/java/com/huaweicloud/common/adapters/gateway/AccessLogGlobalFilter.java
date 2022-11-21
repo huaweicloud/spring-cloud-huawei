@@ -59,18 +59,10 @@ public class AccessLogGlobalFilter implements GlobalFilter, Ordered {
     assert context != null;
     String request = exchange.getRequest().getPath().value();
     String source = exchange.getRequest().getRemoteAddress().getHostString();
-    accessLogLogger.log(context,
-        "Gateway start request",
-        request,
-        source,
-        service,
-        0,
-        0L);
-
     long begin = System.currentTimeMillis();
     return chain.filter(exchange).doOnSuccess(v -> {
       accessLogLogger.log(context,
-          "Gateway finish request",
+          "Gateway",
           request,
           source,
           service,
@@ -78,7 +70,7 @@ public class AccessLogGlobalFilter implements GlobalFilter, Ordered {
           System.currentTimeMillis() - begin);
     }).doOnError(error -> {
       accessLogLogger.log(context,
-          "Gateway finish request(" + error.getClass().getName() + ")",
+          "Gateway(" + error.getClass().getName() + ")",
           request,
           source,
           service,
