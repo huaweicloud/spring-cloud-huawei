@@ -24,7 +24,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.huaweicloud.common.access.AccessLogLogger;
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
 
 import feign.RequestInterceptor;
@@ -48,11 +47,5 @@ public class FeignConfiguration {
   @Bean
   public RequestInterceptor serializeContextOrderedRequestInterceptor() {
     return new SerializeContextOrderedRequestInterceptor();
-  }
-
-  @Bean
-  public RequestInterceptor accessLogRequestInterceptor(ContextProperties contextProperties,
-      AccessLogLogger accessLogLogger) {
-    return new AccessLogRequestInterceptor(contextProperties, accessLogLogger);
   }
 }

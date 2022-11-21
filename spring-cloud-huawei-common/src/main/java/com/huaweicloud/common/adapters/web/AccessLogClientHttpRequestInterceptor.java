@@ -52,18 +52,16 @@ public class AccessLogClientHttpRequestInterceptor implements
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
     String url = request.getURI().getPath();
     String target = request.getURI().getHost() + ":" + request.getURI().getPort();
-    accessLogLogger.log(context, "RestTemplate start request", url,
-        null, target, 0, 0);
 
     long begin = System.currentTimeMillis();
     try {
       ClientHttpResponse response = execution.execute(request, body);
-      accessLogLogger.log(context, "RestTemplate finish request", url,
+      accessLogLogger.log(context, "RestTemplate", url,
           null, target, response.getRawStatusCode(),
           System.currentTimeMillis() - begin);
       return response;
     } catch (Throwable error) {
-      accessLogLogger.log(context, "RestTemplate finish request(" + error.getClass().getName() + ")", url,
+      accessLogLogger.log(context, "RestTemplate(" + error.getClass().getName() + ")", url,
           null, target, -1,
           System.currentTimeMillis() - begin);
       throw error;

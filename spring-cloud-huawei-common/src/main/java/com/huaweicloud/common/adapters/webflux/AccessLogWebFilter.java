@@ -57,26 +57,17 @@ public class AccessLogWebFilter implements OrderedWebFilter {
         ? exchange.getRequest().getRemoteAddress().getHostString()
         : context.getContext(InvocationContext.CONTEXT_MICROSERVICE_NAME);
     String request = exchange.getRequest().getPath().value();
-
-    accessLogLogger.log(context,
-        "WebFlux receive request",
-        request,
-        source,
-        null,
-        0,
-        0L);
-
     long begin = System.currentTimeMillis();
     return chain.filter(exchange)
         .doOnSuccess(v -> accessLogLogger.log(context,
-            "WebFlux finish request",
+            "WebFlux",
             request,
             source,
             null,
             exchange.getResponse().getRawStatusCode(),
             System.currentTimeMillis() - begin))
         .doOnError(error -> accessLogLogger.log(context,
-            "WebFlux finish request(" + error.getClass().getName() + ")",
+            "WebFlux(" + error.getClass().getName() + ")",
             request,
             source,
             null,
