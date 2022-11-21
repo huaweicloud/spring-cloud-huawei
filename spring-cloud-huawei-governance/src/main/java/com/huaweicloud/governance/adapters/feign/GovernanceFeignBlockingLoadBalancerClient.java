@@ -149,7 +149,7 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
     long begin = System.currentTimeMillis();
     try {
       Response response = decorateWithFault(request, options, originalUri, governanceRequest);
-      accessLogLogger.log(context, "Feign finish request",
+      accessLogLogger.log(context, "Feign",
           governanceRequest.getUri(),
           null,
           request.requestTemplate().feignTarget().name(),
@@ -157,7 +157,7 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
           System.currentTimeMillis() - begin);
       return response;
     } catch (Throwable error) {
-      accessLogLogger.log(context, "Feign finish request(" + error.getClass().getName() + ")",
+      accessLogLogger.log(context, "Feign(" + error.getClass().getName() + ")",
           governanceRequest.getUri(),
           null,
           request.requestTemplate().feignTarget().name(),
