@@ -57,17 +57,13 @@ public class AccessLogExchangeFilterFunction implements ExchangeFilterFunction, 
         (InvocationContext) request.attribute(InvocationContextHolder.ATTRIBUTE_KEY).get() : new InvocationContext();
     String url = request.url().getPath();
     String target = request.url().getHost() + ":" + request.url().getPort();
-    accessLogLogger.log(context,
-        "WebClient start request", url,
-        null, target, 0, 0);
-
     long begin = System.currentTimeMillis();
     return next.exchange(request).doOnSuccess(response -> {
-      accessLogLogger.log(context, "WebClient finish request", url,
+      accessLogLogger.log(context, "WebClient", url,
           null, target, response.rawStatusCode(),
           System.currentTimeMillis() - begin);
     }).doOnError(error -> {
-      accessLogLogger.log(context, "WebClient finish request(" + error.getClass().getName() + ")", url,
+      accessLogLogger.log(context, "WebClient(" + error.getClass().getName() + ")", url,
           null, target, -1,
           System.currentTimeMillis() - begin);
     });

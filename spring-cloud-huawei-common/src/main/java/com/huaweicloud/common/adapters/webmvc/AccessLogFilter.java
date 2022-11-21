@@ -61,16 +61,14 @@ public class AccessLogFilter implements Filter {
     String source = context.getContext(InvocationContext.CONTEXT_MICROSERVICE_NAME) == null
         ? request.getRemoteAddr()
         : context.getContext(InvocationContext.CONTEXT_MICROSERVICE_NAME);
-    accessLogLogger.log(context, "WebMVC receive request", req, source, null, 0, 0);
-
     long begin = System.currentTimeMillis();
     try {
       chain.doFilter(request, response);
-      accessLogLogger.log(context, "WebMVC finish request",
-          req, source, null, ((HttpServletResponse) response).getStatus(), System.currentTimeMillis() - begin);
+      accessLogLogger.log(context, "WebMVC", req, source, null,
+          ((HttpServletResponse) response).getStatus(), System.currentTimeMillis() - begin);
     } catch (Throwable error) {
-      accessLogLogger.log(context, "WebMVC finish request(" + error.getClass().getName() + ")",
-          req, source, null, -1, System.currentTimeMillis() - begin);
+      accessLogLogger.log(context, "WebMVC(" + error.getClass().getName() + ")", req, source, null,
+          -1, System.currentTimeMillis() - begin);
       throw error;
     }
   }
