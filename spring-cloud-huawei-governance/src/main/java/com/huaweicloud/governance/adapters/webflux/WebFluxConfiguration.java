@@ -20,7 +20,9 @@ package com.huaweicloud.governance.adapters.webflux;
 import org.apache.servicecomb.governance.handler.BulkheadHandler;
 import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
 import org.apache.servicecomb.governance.handler.IdentifierRateLimitingHandler;
+import org.apache.servicecomb.governance.handler.MapperHandler;
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
@@ -63,5 +65,12 @@ public class WebFluxConfiguration {
   public WebFilter identifierRateLimitingWebFilter(IdentifierRateLimitingHandler identifierRateLimitingHandler,
       GovernanceProperties governanceProperties) {
     return new IdentifierRateLimitingWebFilter(identifierRateLimitingHandler, governanceProperties);
+  }
+
+  @Bean
+  @ConditionalOnProperty(value = GovernanceProperties.WEBFLUX_CONTEXT_MAPPER_ENABLED,
+      havingValue = "true", matchIfMissing = true)
+  public WebFilter contextMapperWebFilter(@Qualifier("contextMapperHandler") MapperHandler mapperHandler) {
+    return new ContextMapperWebFilter(mapperHandler);
   }
 }

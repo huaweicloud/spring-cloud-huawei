@@ -50,6 +50,26 @@ public class GatewayIT {
   }
 
   @Test
+  public void testWebFluxInvocationContext() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("header-context", "h1");
+    HttpEntity<Void> entity = new HttpEntity<>(headers);
+    String result = template.exchange(url + "/webflux/testWebFluxInvocationContext?name=hello", HttpMethod.GET, entity,
+        String.class).getBody();
+    assertThat(result).isEqualTo("hello.foo.h1./testWebFluxInvocationContext.GET");
+  }
+
+  @Test
+  public void testWebMvcInvocationContext() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("header-context", "h1");
+    HttpEntity<Void> entity = new HttpEntity<>(headers);
+    String result = template.exchange(url + "/price/testWebMvcInvocationContext?name=hello", HttpMethod.GET, entity,
+        String.class).getBody();
+    assertThat(result).isEqualTo("hello.foo.h1./testWebMvcInvocationContext.GET");
+  }
+
+  @Test
   public void testWebClient() {
     String result = template.getForObject(url + "/testWebClient", String.class);
     assertThat(result).isEqualTo("ok");

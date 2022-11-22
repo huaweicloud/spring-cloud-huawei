@@ -94,6 +94,22 @@ public class PriceController {
     return "success";
   }
 
+  @RequestMapping("/testWebMvcInvocationContext")
+  public String testWebMvcInvocationContext(@RequestParam("name") String name) {
+    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
+    StringBuilder sb = new StringBuilder();
+    sb.append(name);
+    sb.append(".");
+    sb.append(context.getContext("x-c"));
+    sb.append(".");
+    sb.append(context.getContext("x-header-context"));
+    sb.append(".");
+    sb.append(context.getContext("x-u"));
+    sb.append(".");
+    sb.append(context.getContext("x-m"));
+    return sb.toString();
+  }
+
   @RequestMapping("/priceBalance")
   public String priceBalance(@RequestParam("id") String id) {
     return id;

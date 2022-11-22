@@ -27,6 +27,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
+
+import com.huaweicloud.common.context.InvocationContext;
+import com.huaweicloud.common.context.InvocationContextHolder;
 
 import reactor.core.publisher.Mono;
 
@@ -41,6 +45,22 @@ public class WebFluxController {
   @RequestMapping("/sayHello")
   public Mono<String> sayHello(@RequestParam("name") String name) {
     return Mono.just(name);
+  }
+
+  @RequestMapping("/testWebFluxInvocationContext")
+  public Mono<String> testWebFluxInvocationContext(ServerWebExchange exchange, @RequestParam("name") String name) {
+    InvocationContext context = exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY);
+    StringBuilder sb = new StringBuilder();
+    sb.append(name);
+    sb.append(".");
+    sb.append(context.getContext("x-c"));
+    sb.append(".");
+    sb.append(context.getContext("x-header-context"));
+    sb.append(".");
+    sb.append(context.getContext("x-u"));
+    sb.append(".");
+    sb.append(context.getContext("x-m"));
+    return Mono.just(sb.toString());
   }
 
   @GetMapping(

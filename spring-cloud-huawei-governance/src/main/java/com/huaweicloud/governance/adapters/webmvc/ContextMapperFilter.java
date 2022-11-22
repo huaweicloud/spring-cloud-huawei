@@ -17,6 +17,7 @@
 package com.huaweicloud.governance.adapters.webmvc;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -26,27 +27,20 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.servicecomb.governance.handler.BulkheadHandler;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.servicecomb.governance.handler.MapperHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.servicecomb.governance.processor.mapping.Mapper;
+import org.springframework.util.CollectionUtils;
 
-import io.github.resilience4j.bulkhead.Bulkhead;
-import io.github.resilience4j.bulkhead.BulkheadFullException;
-import io.github.resilience4j.decorators.Decorators;
-import io.github.resilience4j.decorators.Decorators.DecorateConsumer;
-import io.vavr.CheckedConsumer;
+import com.huaweicloud.common.context.InvocationContext;
+import com.huaweicloud.common.context.InvocationContextHolder;
 
-public class BulkheadFilter implements Filter {
-  private static final Logger LOGGER = LoggerFactory.getLogger(BulkheadFilter.class);
+public class ContextMapperFilter implements Filter {
+  private final MapperHandler mapperHandler;
 
-
-  private static final Object EMPTY_HOLDER = new Object();
-
-  private final BulkheadHandler bulkheadHandler;
-
-  public BulkheadFilter(BulkheadHandler bulkheadHandler) {
-    this.bulkheadHandler = bulkheadHandler;
+  public ContextMapperFilter(MapperHandler mapperHandler) {
+    this.mapperHandler = mapperHandler;
   }
 
   @Override
@@ -58,25 +52,27 @@ public class BulkheadFilter implements Filter {
     }
 
     GovernanceRequest governanceRequest = WebMvcUtils.convert((HttpServletRequest) request);
-    try {
-      Bulkhead bulkhead = bulkheadHandler.getActuator(governanceRequest);
-      if (bulkhead != null) {
-        CheckedConsumer<Object> next = (v) -> chain.doFilter(request, response);
-        DecorateConsumer<Object> decorateConsumer = Decorators.ofConsumer(next.unchecked());
-        decorateConsumer.withBulkhead(bulkhead);
-        decorateConsumer.accept(EMPTY_HOLDER);
+    Mapper mapper = mapperHandler.getActuator(governanceRequest);
+    if (mapper == null || CollectionUtils.isEmpty(mapper.target())) {
+      chain.doFilter(request, response);
+      return;
+    }
+    Map<String, String> properties = mapper.target();
+    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
+    properties.forEach((k, v) -> {
+      if (StringUtils.isEmpty(v)) {
         return;
       }
-      chain.doFilter(request, response);
-    } catch (Throwable e) {
-      if (e instanceof BulkheadFullException) {
-        ((HttpServletResponse) response).setStatus(429);
-        response.getWriter().print("bulkhead is full and does not permit further calls.");
-        LOGGER.warn("bulkhead is full and does not permit further calls : {}",
-            e.getMessage());
+      if ("$U".equals(v)) {
+        context.putContext(k, governanceRequest.getUri());
+      } else if ("$M".equals(v)) {
+        context.putContext(k, governanceRequest.getMethod());
+      } else if (v.startsWith("$H{") && v.endsWith("}")) {
+        context.putContext(k, governanceRequest.getHeader(v.substring(3, v.length() - 1)));
       } else {
-        throw e;
+        context.putContext(k, v);
       }
-    }
+    });
+    chain.doFilter(request, response);
   }
 }
