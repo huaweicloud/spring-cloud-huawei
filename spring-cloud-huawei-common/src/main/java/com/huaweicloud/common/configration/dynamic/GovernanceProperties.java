@@ -75,6 +75,9 @@ public class GovernanceProperties {
   public static final String WEBFLUX_IDENTIFIER_RATE_LIMITING_ENABLED =
       PREFIX + "." + "webflux.identifierRateLimiting.enabled";
 
+  public static final String WEBFLUX_CONTEXT_MAPPER_ENABLED =
+      PREFIX + "." + "webflux.contextMapper.enabled";
+
   public static final String WEBMVC_RATE_LIMITING_ENABLED =
       PREFIX + "." + "webmvc.rateLimiting.enabled";
 
@@ -86,6 +89,9 @@ public class GovernanceProperties {
 
   public static final String WEBMVC_IDENTIFIER_RATE_LIMITING_ENABLED =
       PREFIX + "." + "webmvc.identifierRateLimiting.enabled";
+
+  public static final String WEBMVC_CONTEXT_MAPPER_ENABLED =
+      PREFIX + "." + "webmvc.contextMapper.enabled";
 
   public static final String WEBMVC_PUBLICKEY_CONSUMER_ENABLED = PREFIX + "." + "webmvc.publicKey.consumerEnabled";
 

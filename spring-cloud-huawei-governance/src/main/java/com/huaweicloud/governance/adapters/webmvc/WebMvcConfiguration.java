@@ -20,8 +20,10 @@ package com.huaweicloud.governance.adapters.webmvc;
 import org.apache.servicecomb.governance.handler.BulkheadHandler;
 import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
 import org.apache.servicecomb.governance.handler.IdentifierRateLimitingHandler;
+import org.apache.servicecomb.governance.handler.MapperHandler;
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
@@ -30,6 +32,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.governance.authentication.provider.BlackWhiteListProperties;
@@ -99,6 +102,21 @@ public class WebMvcConfiguration {
     registrationBean.setFilter(new BulkheadFilter(bulkheadHandler));
     registrationBean.addUrlPatterns("/*");
     registrationBean.setOrder(governanceProperties.getWebmvc().getBulkhead().getOrder());
+
+    return registrationBean;
+  }
+
+  @Bean
+  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_CONTEXT_MAPPER_ENABLED,
+      havingValue = "true", matchIfMissing = true)
+  public FilterRegistrationBean<ContextMapperFilter> contextMapperFilter(
+      @Qualifier("contextMapperHandler") MapperHandler mapperHandler) {
+    FilterRegistrationBean<ContextMapperFilter> registrationBean
+        = new FilterRegistrationBean<>();
+
+    registrationBean.setFilter(new ContextMapperFilter(mapperHandler));
+    registrationBean.addUrlPatterns("/*");
+    registrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
 
     return registrationBean;
   }
