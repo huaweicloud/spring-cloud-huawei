@@ -31,10 +31,6 @@ import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.huaweicloud.common.context.InvocationContext;
-import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.common.util.HeaderUtil;
-
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.decorators.Decorators;
@@ -61,7 +57,7 @@ public class CircuitBreakerFilter implements Filter {
       return;
     }
 
-    GovernanceRequest governanceRequest = convert((HttpServletRequest) request);
+    GovernanceRequest governanceRequest = WebMvcUtils.convert((HttpServletRequest) request);
     try {
       CircuitBreaker circuitBreaker = circuitBreakerHandler.getActuator(governanceRequest);
       if (circuitBreaker != null) {
@@ -82,15 +78,5 @@ public class CircuitBreakerFilter implements Filter {
         throw e;
       }
     }
-  }
-
-  private GovernanceRequest convert(HttpServletRequest request) {
-    GovernanceRequest govHttpRequest = new GovernanceRequest();
-    govHttpRequest.setHeaders(HeaderUtil.getHeaders(request));
-    govHttpRequest.setMethod(request.getMethod());
-    govHttpRequest.setUri(request.getRequestURI());
-    govHttpRequest.setServiceName(InvocationContextHolder
-        .getOrCreateInvocationContext().getContext(InvocationContext.CONTEXT_MICROSERVICE_NAME));
-    return govHttpRequest;
   }
 }

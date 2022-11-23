@@ -29,9 +29,20 @@ servicecomb:
         - apiPath:
             exact: "/rate/identifierRateLimitingService"
           serviceName: order
+    testWebMvcInvocationContext: |
+      matches:
+        - apiPath:
+            exact: "/testWebMvcInvocationContext"
   rateLimiting:
     rateLimiting-order: |
       rate: 1
     demo-identifierRateLimitingService: |
       rate: 2
       identifier: user-name
+  contextMapper:
+    testWebMvcInvocationContext: |
+      target:
+        x-c: foo
+        x-header-context: $H{header-context}
+        x-u: $U
+        x-m: $M
