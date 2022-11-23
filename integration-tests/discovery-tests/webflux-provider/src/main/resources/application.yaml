@@ -37,6 +37,10 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/testWebFluxServiceBulkhead"
+    testWebFluxInvocationContext: |
+      matches:
+        - apiPath:
+            exact: "/testWebFluxInvocationContext"
   rateLimiting:
     testWebFluxServiceRateLimiting: |
       rate: 10
@@ -56,3 +60,11 @@ servicecomb:
     testWebFluxServiceBulkhead: |
       maxConcurrentCalls: 2
       maxWaitDuration: 100
+  contextMapper:
+    testWebFluxInvocationContext: |
+      target:
+        x-c: foo
+        x-header-context: $H{header-context}
+        x-u: $U
+        x-m: $M
+      

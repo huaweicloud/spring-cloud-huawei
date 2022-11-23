@@ -22,9 +22,12 @@ import java.util.List;
 import org.apache.servicecomb.governance.MicroserviceMeta;
 import org.apache.servicecomb.governance.event.GovernanceConfigurationChangedEvent;
 import org.apache.servicecomb.governance.event.GovernanceEventManager;
+import org.apache.servicecomb.governance.handler.MapperHandler;
 import org.apache.servicecomb.governance.handler.ext.AbstractCircuitBreakerExtension;
 import org.apache.servicecomb.governance.handler.ext.AbstractInstanceIsolationExtension;
 import org.apache.servicecomb.governance.handler.ext.AbstractRetryExtension;
+import org.apache.servicecomb.governance.properties.MapperProperties;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEvent;
@@ -43,6 +46,16 @@ import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 @Configuration
 @ComponentScan(basePackages = {"org.apache.servicecomb.governance"})
 public class GovernanceConfiguration {
+  @Bean
+  public MapperProperties contextMapperProperties() {
+    return new MapperProperties("servicecomb.contextMapper");
+  }
+
+  @Bean
+  public MapperHandler contextMapperHandler(@Qualifier("contextMapperProperties") MapperProperties mapperProperties) {
+    return new MapperHandler(mapperProperties);
+  }
+
   @Bean
   public ApplicationListener<ConfigRefreshEvent> governanceApplicationListener() {
     return configRefreshEvent -> GovernanceEventManager
