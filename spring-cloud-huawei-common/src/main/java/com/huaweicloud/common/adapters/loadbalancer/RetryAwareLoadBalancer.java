@@ -74,11 +74,9 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
     InvocationContext context = getOrCreateInvocationContext(request);
     GovernanceRequest governanceRequest = convert(request);
     LoadBalance loadBalance = loadBalanceHandler.getActuator(governanceRequest);
-    if (loadBalance != null) {
-      loadBalancerProperties.setRule(loadBalance.getRule());
-    }
+    String rule = loadBalance != null ? loadBalance.getRule() : loadBalancerProperties.getRule();
     if (context.getLocalContext(RetryContext.RETRY_CONTEXT) == null) {
-      ReactorServiceInstanceLoadBalancer loadBalancer = loadBalancers.computeIfAbsent(loadBalancerProperties.getRule(),
+      ReactorServiceInstanceLoadBalancer loadBalancer = loadBalancers.computeIfAbsent(rule,
           key -> {
             if (LoadBalancerProperties.RULE_RANDOM.equals(key)) {
               return new RandomLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
@@ -95,7 +93,7 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
       return Mono.just(new DefaultResponse(retryContext.getLastServer()));
     }
 
-    ReactorServiceInstanceLoadBalancer loadBalancer = loadBalancers.computeIfAbsent(loadBalancerProperties.getRule(),
+    ReactorServiceInstanceLoadBalancer loadBalancer = loadBalancers.computeIfAbsent(rule,
         key -> {
           if (LoadBalancerProperties.RULE_RANDOM.equals(key)) {
             return new RandomLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
