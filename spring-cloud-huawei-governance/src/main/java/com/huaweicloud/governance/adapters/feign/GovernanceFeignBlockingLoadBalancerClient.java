@@ -60,7 +60,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 
 import com.huaweicloud.common.access.AccessLogLogger;
-import com.huaweicloud.common.adapters.loadbalancer.RetryContext;
+import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;

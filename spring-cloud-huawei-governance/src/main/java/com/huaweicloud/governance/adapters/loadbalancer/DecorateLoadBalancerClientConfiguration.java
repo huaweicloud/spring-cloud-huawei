@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.common.adapters.loadbalancer;
+package com.huaweicloud.governance.adapters.loadbalancer;
 
 import org.apache.servicecomb.governance.handler.LoadBalanceHandler;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;

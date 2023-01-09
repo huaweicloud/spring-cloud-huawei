@@ -35,8 +35,8 @@ import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.CollectionUtils;
 
-import com.huaweicloud.common.adapters.loadbalancer.DecorateLoadBalancerRequest;
-import com.huaweicloud.common.adapters.loadbalancer.ServiceInstanceFilter;
+import com.huaweicloud.governance.adapters.loadbalancer.DecorateLoadBalancerRequest;
+import com.huaweicloud.governance.adapters.loadbalancer.ServiceInstanceFilter;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 

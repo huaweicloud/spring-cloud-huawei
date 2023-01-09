@@ -19,6 +19,8 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.huaweicloud.governance.GovernanceConfiguration,\
   com.huaweicloud.governance.adapters.gateway.GatewayConfiguration,\
+  com.huaweicloud.governance.adapters.loadbalancer.LoadbalancerConfiguration,\
+  com.huaweicloud.governance.adapters.loadbalancer.WebFluxLoadbalancerConfiguration,\
   com.huaweicloud.governance.adapters.feign.FeignConfiguration,\
   com.huaweicloud.governance.adapters.web.WebConfiguration,\
   com.huaweicloud.governance.adapters.webclient.WebClientConfiguration,\
