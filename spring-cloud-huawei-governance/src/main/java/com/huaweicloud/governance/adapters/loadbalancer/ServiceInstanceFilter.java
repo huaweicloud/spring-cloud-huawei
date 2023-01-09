@@ -15,7 +15,7 @@
   * limitations under the License.
   */
 
-package com.huaweicloud.common.adapters.loadbalancer;
+package com.huaweicloud.governance.adapters.loadbalancer;
 
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.Request;
