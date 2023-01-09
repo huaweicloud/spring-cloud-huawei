@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.common.adapters.loadbalancer;
+package com.huaweicloud.governance.adapters.loadbalancer;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;

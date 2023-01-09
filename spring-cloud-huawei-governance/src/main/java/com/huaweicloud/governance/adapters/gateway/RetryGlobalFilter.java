@@ -26,7 +26,7 @@ import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.huaweicloud.common.adapters.loadbalancer.RetryContext;
+import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 
 import io.github.resilience4j.reactor.retry.RetryOperator;
 import io.github.resilience4j.retry.Retry;

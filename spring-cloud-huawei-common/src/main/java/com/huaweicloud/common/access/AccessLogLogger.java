@@ -34,7 +34,7 @@ public class AccessLogLogger {
 
   public void log(InvocationContext context, String event,
       String request, String source, String target, int status, long time) {
-    log(String.format("%1$s|%2$s|%3$s|%4$s|%5$d|%6$1d|%7$s",
+    log(String.format("|%1$s|%2$s|%3$s|%4$s|%5$d|%6$1d|%7$s|",
         context.getContext(InvocationContext.CONTEXT_TRACE_ID),
         event,
         source == null ? "" : source,

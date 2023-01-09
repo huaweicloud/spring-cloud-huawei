@@ -27,7 +27,7 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeFunction;
 
-import com.huaweicloud.common.adapters.loadbalancer.RetryContext;
+import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;

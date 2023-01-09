@@ -39,7 +39,7 @@ import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import com.huaweicloud.common.adapters.loadbalancer.RetryContext;
+import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 import com.huaweicloud.common.adapters.web.FallbackClientHttpResponse;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
