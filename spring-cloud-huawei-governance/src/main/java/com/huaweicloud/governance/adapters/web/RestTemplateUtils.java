@@ -20,7 +20,7 @@ package com.huaweicloud.governance.adapters.web;
 import org.apache.servicecomb.governance.marker.GovernanceRequest;
 import org.springframework.http.HttpRequest;
 
-import com.huaweicloud.common.adapters.loadbalancer.RetryContext;
+import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 
 public final class RestTemplateUtils {

@@ -15,7 +15,7 @@
   * limitations under the License.
   */
 
-package com.huaweicloud.common.adapters.loadbalancer;
+package com.huaweicloud.governance.adapters.loadbalancer;
 
 import java.util.Collections;
 import java.util.Comparator;

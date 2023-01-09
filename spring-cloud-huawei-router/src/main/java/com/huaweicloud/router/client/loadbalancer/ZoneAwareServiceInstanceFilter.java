@@ -17,7 +17,7 @@
 
 package com.huaweicloud.router.client.loadbalancer;
 
-import com.huaweicloud.common.adapters.loadbalancer.ServiceInstanceFilter;
+import com.huaweicloud.governance.adapters.loadbalancer.ServiceInstanceFilter;
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 

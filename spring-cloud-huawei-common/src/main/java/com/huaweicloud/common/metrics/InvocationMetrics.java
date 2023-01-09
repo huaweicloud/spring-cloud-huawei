@@ -62,9 +62,9 @@ public class InvocationMetrics {
 
   private final MetricsProperties metricsProperties;
 
-  private final Pattern includePatter;
+  private final Pattern includePattern;
 
-  private final Pattern excludePatter;
+  private final Pattern excludePattern;
 
   private final ConcurrentMap<String, Timer> successfulCalls = new ConcurrentHashMap<>();
 
@@ -74,14 +74,14 @@ public class InvocationMetrics {
     this.meterRegistry = meterRegistry;
     this.metricsProperties = metricsProperties;
     if (StringUtils.isNotEmpty(metricsProperties.getExcludePattern())) {
-      excludePatter = Pattern.compile(metricsProperties.getIncludePattern());
+      excludePattern = Pattern.compile(metricsProperties.getIncludePattern());
     } else {
-      excludePatter = null;
+      excludePattern = null;
     }
     if (StringUtils.isNotEmpty(metricsProperties.getIncludePattern())) {
-      includePatter = Pattern.compile(metricsProperties.getIncludePattern());
+      includePattern = Pattern.compile(metricsProperties.getIncludePattern());
     } else {
-      includePatter = null;
+      includePattern = null;
     }
   }
 
@@ -94,10 +94,10 @@ public class InvocationMetrics {
   }
 
   private boolean byPassMethod(String name, Map<String, Timer> group) {
-    if (excludePatter != null && excludePatter.matcher(name).matches()) {
+    if (excludePattern != null && excludePattern.matcher(name).matches()) {
       return true;
     }
-    if (includePatter != null && !includePatter.matcher(name).matches()) {
+    if (includePattern != null && !includePattern.matcher(name).matches()) {
       return true;
     }
     if (group.size() >= metricsProperties.getMaxMethodCount()
