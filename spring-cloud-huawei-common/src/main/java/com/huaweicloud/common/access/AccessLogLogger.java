@@ -17,6 +17,9 @@
 
 package com.huaweicloud.common.access;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,37 +37,69 @@ public class AccessLogLogger {
 
   public void log(InvocationContext context, String event,
       String request, String source, String target, int status, long time) {
-    log(String.format("|%1$s|%2$s|%3$s|%4$s|%5$d|%6$1d|%7$s|",
-        context.getContext(InvocationContext.CONTEXT_TRACE_ID),
-        event,
-        source == null ? "" : source,
-        target == null ? "" : target,
-        status,
-        time,
-        request));
-  }
+    if (!this.contextProperties.isEnableTraceInfo()) {
+      return;
+    }
 
-  private void log(String format, Object... arguments) {
     if (this.contextProperties.getTraceLevel() == null) {
-      LOGGER.info(format, arguments);
+      LOGGER.info(buildFormat(),
+          buildArguments(context, event, request, source, target, status, time));
       return;
     }
 
     if ("WARN".equals(this.contextProperties.getTraceLevel())) {
-      LOGGER.warn(format, arguments);
+      LOGGER.warn(buildFormat(),
+          buildArguments(context, event, request, source, target, status, time));
       return;
     }
 
     if ("ERROR".equals(this.contextProperties.getTraceLevel())) {
-      LOGGER.error(format, arguments);
+      LOGGER.error(buildFormat(),
+          buildArguments(context, event, request, source, target, status, time));
       return;
     }
 
     if ("DEBUG".equals(this.contextProperties.getTraceLevel())) {
-      LOGGER.debug(format, arguments);
+      LOGGER.debug(buildFormat(),
+          buildArguments(context, event, request, source, target, status, time));
       return;
     }
 
-    LOGGER.info(format, arguments);
+    LOGGER.info(buildFormat(),
+        buildArguments(context, event, request, source, target, status, time));
+  }
+
+  private Object[] buildArguments(InvocationContext context, String event,
+      String request, String source, String target, int status, long time) {
+    List<Object> result = new ArrayList<>(10);
+
+    if (contextProperties.getTraceContexts() != null) {
+      for (String item : contextProperties.getTraceContexts()) {
+        result.add(context.getContext(item) == null ? "" : context.getContext(item));
+      }
+    }
+    result.add(context.getContext(InvocationContext.CONTEXT_TRACE_ID));
+    result.add(event);
+    result.add(source == null ? "" : source);
+    result.add(target == null ? "" : target);
+    result.add(status);
+    result.add(time);
+    result.add(request);
+
+    return result.toArray(new Object[0]);
+  }
+
+  private String buildFormat() {
+    StringBuilder result = new StringBuilder();
+    result.append("|");
+
+    if (contextProperties.getTraceContexts() != null) {
+      for (int i = 0; i < contextProperties.getTraceContexts().size(); i++) {
+        result.append("{}|");
+      }
+    }
+    result.append("{}|{}|{}|{}|{}|{}|{}|");
+
+    return result.toString();
   }
 }
