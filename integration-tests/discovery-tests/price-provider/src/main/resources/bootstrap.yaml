@@ -48,3 +48,7 @@ spring:
       # testing spring cloud swagger generation
       swagger:
         enableJavaChassisAdapter: false
+
+      # testing access log
+      context:
+        traceContexts: x-microservice-name,x-instance-id
