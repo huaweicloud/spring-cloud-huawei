@@ -43,7 +43,7 @@ public class ContextProperties {
 
   private Map<String, String> queryContextMapper = Collections.emptyMap();
 
-  private boolean useContextOperationForMetrics = true;
+  private boolean useContextOperationForMetrics = false;
 
   public boolean isEnableTraceInfo() {
     return enableTraceInfo;

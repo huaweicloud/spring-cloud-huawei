@@ -82,7 +82,7 @@ public class InvocationMetrics {
       includePattern = null;
     }
 
-    EventManager.register(this);
+    EventManager.getEventBoundedAsyncEventBus().register(this);
   }
 
   @Subscribe

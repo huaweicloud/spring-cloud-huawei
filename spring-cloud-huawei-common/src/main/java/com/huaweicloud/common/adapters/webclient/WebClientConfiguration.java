@@ -32,7 +32,6 @@ import org.springframework.core.Ordered;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.huaweicloud.common.access.AccessLogLogger;
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
 
 @Configuration
@@ -74,9 +73,8 @@ public class WebClientConfiguration {
   }
 
   @Bean
-  public ExchangeFilterFunction accessLogExchangeFilterFunction(ContextProperties contextProperties,
-      AccessLogLogger accessLogLogger) {
-    return new AccessLogExchangeFilterFunction(contextProperties, accessLogLogger);
+  public ExchangeFilterFunction webClientMetricsExchangeFilterFunction() {
+    return new WebClientMetricsExchangeFilterFunction();
   }
 
   @Bean

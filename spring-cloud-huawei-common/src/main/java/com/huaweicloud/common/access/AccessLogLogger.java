@@ -31,65 +31,16 @@ public class AccessLogLogger {
 
   private final ContextProperties contextProperties;
 
+  private final String format;
+
   public AccessLogLogger(ContextProperties contextProperties) {
     this.contextProperties = contextProperties;
+
+    format = initializeFormat(contextProperties);
   }
 
-  public void log(InvocationContext context, String event,
-      String request, String source, String target, int status, long time) {
-    if (!this.contextProperties.isEnableTraceInfo()) {
-      return;
-    }
-
-    if (this.contextProperties.getTraceLevel() == null) {
-      LOGGER.info(buildFormat(),
-          buildArguments(context, event, request, source, target, status, time));
-      return;
-    }
-
-    if ("WARN".equals(this.contextProperties.getTraceLevel())) {
-      LOGGER.warn(buildFormat(),
-          buildArguments(context, event, request, source, target, status, time));
-      return;
-    }
-
-    if ("ERROR".equals(this.contextProperties.getTraceLevel())) {
-      LOGGER.error(buildFormat(),
-          buildArguments(context, event, request, source, target, status, time));
-      return;
-    }
-
-    if ("DEBUG".equals(this.contextProperties.getTraceLevel())) {
-      LOGGER.debug(buildFormat(),
-          buildArguments(context, event, request, source, target, status, time));
-      return;
-    }
-
-    LOGGER.info(buildFormat(),
-        buildArguments(context, event, request, source, target, status, time));
-  }
-
-  private Object[] buildArguments(InvocationContext context, String event,
-      String request, String source, String target, int status, long time) {
-    List<Object> result = new ArrayList<>(10);
-
-    if (contextProperties.getTraceContexts() != null) {
-      for (String item : contextProperties.getTraceContexts()) {
-        result.add(context.getContext(item) == null ? "" : context.getContext(item));
-      }
-    }
-    result.add(context.getContext(InvocationContext.CONTEXT_TRACE_ID));
-    result.add(event);
-    result.add(source == null ? "" : source);
-    result.add(target == null ? "" : target);
-    result.add(status);
-    result.add(time);
-    result.add(request);
-
-    return result.toArray(new Object[0]);
-  }
-
-  private String buildFormat() {
+  private String initializeFormat(ContextProperties contextProperties) {
+    final String format;
     StringBuilder result = new StringBuilder();
     result.append("|");
 
@@ -98,8 +49,60 @@ public class AccessLogLogger {
         result.append("{}|");
       }
     }
-    result.append("{}|{}|{}|{}|{}|{}|{}|");
+    result.append("{}|{}|{}|{}|");
 
-    return result.toString();
+    format = result.toString();
+    return format;
+  }
+
+  public void log(InvocationContext context,
+      String request, int status, long time) {
+    if (!this.contextProperties.isEnableTraceInfo()) {
+      return;
+    }
+
+    if (this.contextProperties.getTraceLevel() == null) {
+      LOGGER.info(format,
+          buildArguments(context, request, status, time));
+      return;
+    }
+
+    if ("WARN".equals(this.contextProperties.getTraceLevel())) {
+      LOGGER.warn(format,
+          buildArguments(context, request, status, time));
+      return;
+    }
+
+    if ("ERROR".equals(this.contextProperties.getTraceLevel())) {
+      LOGGER.error(format,
+          buildArguments(context, request, status, time));
+      return;
+    }
+
+    if ("DEBUG".equals(this.contextProperties.getTraceLevel())) {
+      LOGGER.debug(format,
+          buildArguments(context, request, status, time));
+      return;
+    }
+
+    LOGGER.info(format,
+        buildArguments(context, request, status, time));
+  }
+
+  private Object[] buildArguments(InvocationContext context,
+      String request, int status, long time) {
+    List<Object> result = new ArrayList<>(10);
+
+    if (contextProperties.getTraceContexts() != null) {
+      for (String item : contextProperties.getTraceContexts()) {
+        result.add(context.getContext(item) == null ? "" : context.getContext(item));
+      }
+    }
+    result.add(context.getContext(InvocationContext.CONTEXT_TRACE_ID));
+    result.add(status);
+    result.add(time);
+    result.add(request);
+
+    return result.toArray(new Object[0]);
   }
 }

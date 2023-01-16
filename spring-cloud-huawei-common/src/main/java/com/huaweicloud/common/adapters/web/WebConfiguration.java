@@ -31,7 +31,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 
-import com.huaweicloud.common.access.AccessLogLogger;
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
 
 @Configuration
@@ -55,10 +54,8 @@ public class WebConfiguration {
   }
 
   @Bean
-  public ClientHttpRequestInterceptor accessLogClientHttpRequestInterceptor(
-      ContextProperties contextProperties,
-      AccessLogLogger accessLogLogger) {
-    return new AccessLogClientHttpRequestInterceptor(contextProperties, accessLogLogger);
+  public ClientHttpRequestInterceptor metricsClientHttpRequestInterceptor() {
+    return new MetricsClientHttpRequestInterceptor();
   }
 
   @Bean

@@ -28,9 +28,13 @@ import com.huaweicloud.common.event.EventManager;
 public class InvocationStage {
   public static final String STAGE_ALL = "all";
 
-  public static final String STAGE_CONSUMER = "consumer";
+  public static final String STAGE_FEIGN = "feign";
+
+  public static final String STAGE_WEB_CLIENT = "webClient";
 
   public static final String STAGE_GATEWAY = "gateway";
+
+  public static final String STAGE_REST_TEMPLATE = "restTemplate";
 
   public static class Stage {
     private long beginTime;
@@ -99,7 +103,7 @@ public class InvocationStage {
   public void finish(int statusCode) {
     this.statusCode = statusCode;
     this.endTime = nanoTime();
-    EventManager.post(new InvocationFinishEvent(this));
+    EventManager.getEventBoundedAsyncEventBus().post(new InvocationFinishEvent(this));
   }
 
   public InvocationContext getInvocationContext() {

@@ -28,4 +28,9 @@ public class AccessLogConfiguration {
   public AccessLogLogger accessLogLogger(ContextProperties contextProperties) {
     return new AccessLogLogger(contextProperties);
   }
+
+  @Bean
+  public AccessLogSubscriber accessLogSubscriber(ContextProperties contextProperties, AccessLogLogger accessLogLogger) {
+    return new AccessLogSubscriber(contextProperties, accessLogLogger);
+  }
 }
