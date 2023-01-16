@@ -29,7 +29,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.huaweicloud.common.access.AccessLogLogger;
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
-import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.common.event.ClosedEventListener;
 import com.huaweicloud.common.metrics.InvocationMetrics;
 
@@ -61,19 +60,6 @@ public class WebMvcConfiguration {
       @Autowired(required = false) List<PostHandlerInterceptor> postHandlerInterceptors,
       InvocationMetrics invocationMetrics) {
     return new WebMvcConfigurerBean(preHandlerInterceptors, postHandlerInterceptors);
-  }
-
-  @Bean
-  public FilterRegistrationBean<InvocationMetricsFilter> invocationMetricsFilter(
-      InvocationMetrics invocationMetrics, GovernanceProperties governanceProperties) {
-    FilterRegistrationBean<InvocationMetricsFilter> registrationBean
-        = new FilterRegistrationBean<>();
-
-    registrationBean.setFilter(new InvocationMetricsFilter(invocationMetrics));
-    registrationBean.addUrlPatterns("/*");
-    registrationBean.setOrder(governanceProperties.getWebmvc().getInvocationMetrics().getOrder());
-
-    return registrationBean;
   }
 
   @Bean

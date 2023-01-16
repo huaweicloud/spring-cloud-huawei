@@ -28,9 +28,13 @@ public class InvocationContext {
 
   public static final String CONTEXT_TRACE_ID = "x-trace-id";
 
+  public static final String CONTEXT_OPERATION_ID = "x-operation-id";
+
   protected Map<String, String> context = new HashMap<>();
 
   protected Map<String, Object> localContext = new HashMap<>();
+
+  protected InvocationStage invocationStage = new InvocationStage(this);
 
   public InvocationContext putContext(String key, String value) {
     context.put(key, value);
@@ -48,6 +52,10 @@ public class InvocationContext {
 
   public Map<String, String> getContext() {
     return context;
+  }
+
+  public InvocationStage getInvocationStage() {
+    return invocationStage;
   }
 
   public InvocationContext putLocalContext(String key, Object value) {

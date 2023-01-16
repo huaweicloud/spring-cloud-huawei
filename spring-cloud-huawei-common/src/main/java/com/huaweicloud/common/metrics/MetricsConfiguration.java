@@ -34,6 +34,11 @@ public class MetricsConfiguration {
   }
 
   @Bean
+  public InvocationMetricsLogs invocationMetricsLogs(MeterRegistry meterRegistry, MetricsProperties metricsProperties) {
+    return new InvocationMetricsLogs(meterRegistry, metricsProperties);
+  }
+
+  @Bean
   @ConditionalOnMissingBean
   public MeterRegistry meterRegistry() {
     return new SimpleMeterRegistry();
