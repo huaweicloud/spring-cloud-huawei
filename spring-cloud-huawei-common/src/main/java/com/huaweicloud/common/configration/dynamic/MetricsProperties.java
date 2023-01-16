@@ -17,19 +17,31 @@
 
 package com.huaweicloud.common.configration.dynamic;
 
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
+
 public class MetricsProperties {
-  private int maxMethodCount = 1000;
+  private int maxMetricsCount = 2000;
 
   private String includePattern;
 
   private String excludePattern;
 
-  public int getMaxMethodCount() {
-    return maxMethodCount;
+  private Duration distributionStatisticExpiry = Duration.ofMillis(Long.MAX_VALUE);
+
+  private List<Integer> serviceLevelObjectives = Arrays.asList(10, 20, 50, 100, 500, 2000, 60000);
+
+  private boolean logsEnabled = true;
+
+  private Duration logsInterval = Duration.ofMinutes(5);
+
+  public int getMaxMetricsCount() {
+    return maxMetricsCount;
   }
 
-  public void setMaxMethodCount(int maxMethodCount) {
-    this.maxMethodCount = maxMethodCount;
+  public void setMaxMetricsCount(int maxMetricsCount) {
+    this.maxMetricsCount = maxMetricsCount;
   }
 
   public String getIncludePattern() {
@@ -46,5 +58,37 @@ public class MetricsProperties {
 
   public void setExcludePattern(String excludePattern) {
     this.excludePattern = excludePattern;
+  }
+
+  public Duration getDistributionStatisticExpiry() {
+    return distributionStatisticExpiry;
+  }
+
+  public void setDistributionStatisticExpiry(Duration distributionStatisticExpiry) {
+    this.distributionStatisticExpiry = distributionStatisticExpiry;
+  }
+
+  public List<Integer> getServiceLevelObjectives() {
+    return serviceLevelObjectives;
+  }
+
+  public void setServiceLevelObjectives(List<Integer> serviceLevelObjectives) {
+    this.serviceLevelObjectives = serviceLevelObjectives;
+  }
+
+  public boolean isLogsEnabled() {
+    return logsEnabled;
+  }
+
+  public void setLogsEnabled(boolean logsEnabled) {
+    this.logsEnabled = logsEnabled;
+  }
+
+  public Duration getLogsInterval() {
+    return logsInterval;
+  }
+
+  public void setLogsInterval(Duration logsInterval) {
+    this.logsInterval = logsInterval;
   }
 }
