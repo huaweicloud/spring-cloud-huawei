@@ -116,8 +116,6 @@ public class GovernanceProperties {
 
     private CircuitBreaker circuitBreaker = new CircuitBreaker();
 
-    private InvocationMetrics invocationMetrics = new InvocationMetrics();
-
     public RateLimiting getRateLimiting() {
       return rateLimiting;
     }
@@ -150,15 +148,6 @@ public class GovernanceProperties {
     public void setCircuitBreaker(CircuitBreaker circuitBreaker) {
       this.circuitBreaker = circuitBreaker;
     }
-
-    public InvocationMetrics getInvocationMetrics() {
-      return invocationMetrics;
-    }
-
-    public void setInvocationMetrics(
-        InvocationMetrics invocationMetrics) {
-      this.invocationMetrics = invocationMetrics;
-    }
   }
 
   public static class Webmvc {
@@ -169,8 +158,6 @@ public class GovernanceProperties {
     private Bulkhead bulkhead = new Bulkhead();
 
     private CircuitBreaker circuitBreaker = new CircuitBreaker();
-
-    private InvocationMetrics invocationMetrics = new InvocationMetrics();
 
     public RateLimiting getRateLimiting() {
       return rateLimiting;
@@ -187,15 +174,6 @@ public class GovernanceProperties {
     public void setIdentifierRateLimiting(
         IdentifierRateLimiting identifierRateLimiting) {
       this.identifierRateLimiting = identifierRateLimiting;
-    }
-
-    public InvocationMetrics getInvocationMetrics() {
-      return invocationMetrics;
-    }
-
-    public void setInvocationMetrics(
-        InvocationMetrics invocationMetrics) {
-      this.invocationMetrics = invocationMetrics;
     }
 
     public Bulkhead getBulkhead() {
@@ -297,18 +275,6 @@ public class GovernanceProperties {
 
   public static class IdentifierRateLimiting {
     private int order = WEB_FILTER_IDENTIFIER_RATE_LIMITING_ORDER;
-
-    public int getOrder() {
-      return order;
-    }
-
-    public void setOrder(int order) {
-      this.order = order;
-    }
-  }
-
-  public static class InvocationMetrics {
-    private int order = WEB_FILTER_INVOCATION_METRICS_ORDER;
 
     public int getOrder() {
       return order;
