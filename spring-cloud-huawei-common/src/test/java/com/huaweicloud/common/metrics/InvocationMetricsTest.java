@@ -19,15 +19,17 @@ package com.huaweicloud.common.metrics;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.huaweicloud.common.configration.dynamic.MetricsProperties;
+import com.huaweicloud.common.context.InvocationStage;
 
+import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 
 public class InvocationMetricsTest {
@@ -36,65 +38,94 @@ public class InvocationMetricsTest {
     MeterRegistry meterRegistry = new SimpleMeterRegistry();
     MetricsProperties metricsProperties = new MetricsProperties();
     InvocationMetrics metrics = new InvocationMetrics(meterRegistry, metricsProperties);
-    metrics.recordFailedCall("/hello", 1, TimeUnit.SECONDS);
-    metrics.recordFailedCall("/hello", 1, TimeUnit.SECONDS);
-    metrics.recordSuccessfulCall("/hello", 2, TimeUnit.SECONDS);
-    metrics.recordSuccessfulCall("/hello", 2, TimeUnit.SECONDS);
-    metrics.recordSuccessfulCall("/hello", 1, TimeUnit.SECONDS);
+    metrics.recordInvocationDistribution("/hello", InvocationStage.STAGE_ALL, 500, TimeUnit.MILLISECONDS.toNanos(1));
+    metrics.recordInvocationDistribution("/hello", InvocationStage.STAGE_ALL, 500, TimeUnit.MILLISECONDS.toNanos(1));
+    metrics.recordInvocationDistribution("/hello", InvocationStage.STAGE_ALL, 200, TimeUnit.MILLISECONDS.toNanos(2));
+    metrics.recordInvocationDistribution("/hello", InvocationStage.STAGE_ALL, 200, TimeUnit.MILLISECONDS.toNanos(2));
+    metrics.recordInvocationDistribution("/hello", InvocationStage.STAGE_ALL, 200, TimeUnit.MILLISECONDS.toNanos(1));
 
     List<Meter> meters = meterRegistry.getMeters();
-    Assertions.assertEquals(2, meters.size());
+    AtomicInteger count = new AtomicInteger(0);
     for (Meter meter : meters) {
-      Assertions.assertEquals(InvocationMetrics.METRICS_CALLS, meter.getId().getName());
+      if (!InvocationMetrics.METRICS_CALLS.equals(meter.getId().getName())) {
+        continue;
+      }
+      count.incrementAndGet();
       Assertions.assertEquals("/hello", meter.getId().getTag(InvocationMetrics.TAG_NAME));
-
-      Timer timer = (Timer) meter;
-
-      if (meter.getId().getTag(InvocationMetrics.TAG_KIND).equals(InvocationMetrics.CALLS_TAG_SUCCESSFUL)) {
-        Assertions.assertEquals(3, timer.count());
-        Assertions.assertEquals(5, ((Double) timer.totalTime(TimeUnit.SECONDS)).intValue());
-      } else if (meter.getId().getTag(InvocationMetrics.TAG_KIND).equals(InvocationMetrics.CALLS_TAG_FAILED)) {
-        Assertions.assertEquals(2, timer.count());
-        Assertions.assertEquals(2, ((Double) timer.totalTime(TimeUnit.SECONDS)).intValue());
+      DistributionSummary summary = (DistributionSummary) meter;
+      if (Integer.parseInt(meter.getId().getTag(InvocationMetrics.TAG_STATUS)) == 200) {
+        Assertions.assertEquals(3, summary.count());
+        Assertions.assertEquals(5, TimeUnit.NANOSECONDS.toMillis(Double.valueOf(summary.totalAmount()).longValue()));
+      } else if (Integer.parseInt(meter.getId().getTag(InvocationMetrics.TAG_STATUS)) == 500) {
+        Assertions.assertEquals(2, summary.count());
+        Assertions.assertEquals(2, TimeUnit.NANOSECONDS.toMillis(Double.valueOf(summary.totalAmount()).longValue()));
       } else {
         Assertions.fail();
       }
     }
+    Assertions.assertEquals(2, count.get());
   }
 
   @Test
   public void testMetricsIncludePattern() {
+    for (int i = 0; i < 5; i++) {
+      testMetricsIncludePatternImpl();
+    }
+  }
+
+  private void testMetricsIncludePatternImpl() {
     MeterRegistry meterRegistry = new SimpleMeterRegistry();
     MetricsProperties metricsProperties = new MetricsProperties();
     metricsProperties.setIncludePattern("/hello.*");
-    metricsProperties.setMaxMethodCount(1);
+    metricsProperties.setMaxMetricsCount(4);
     InvocationMetrics metrics = new InvocationMetrics(meterRegistry, metricsProperties);
-    metrics.recordFailedCall("/hello", 1, TimeUnit.SECONDS);
-    metrics.recordFailedCall("/hello", 1, TimeUnit.SECONDS);
-    metrics.recordSuccessfulCall("/hello", 2, TimeUnit.SECONDS);
-    metrics.recordSuccessfulCall("/hello", 2, TimeUnit.SECONDS);
-    metrics.recordSuccessfulCall("/hello", 1, TimeUnit.SECONDS);
-    metrics.recordSuccessfulCall("/wrong", 1, TimeUnit.SECONDS);
-    metrics.recordFailedCall("/wrong", 1, TimeUnit.SECONDS);
-    metrics.recordSuccessfulCall("/hello/exceed", 1, TimeUnit.SECONDS);
+    metrics.recordInvocationDistribution("/hello", InvocationStage.STAGE_ALL, 500, TimeUnit.MILLISECONDS.toNanos(1));
+    metrics.recordInvocationDistribution("/hello", InvocationStage.STAGE_ALL, 500, TimeUnit.MILLISECONDS.toNanos(1));
+    metrics.recordInvocationDistribution("/hello", InvocationStage.STAGE_ALL, 200, TimeUnit.MILLISECONDS.toNanos(2));
+    metrics.recordInvocationDistribution("/hello", InvocationStage.STAGE_ALL, 200, TimeUnit.MILLISECONDS.toNanos(2));
+    metrics.recordInvocationDistribution("/hello", InvocationStage.STAGE_ALL, 200, TimeUnit.MILLISECONDS.toNanos(1));
+    metrics.recordInvocationDistribution("/wrong", InvocationStage.STAGE_ALL, 200, TimeUnit.MILLISECONDS.toNanos(1));
+    metrics.recordInvocationDistribution("/wrong", InvocationStage.STAGE_ALL, 500, TimeUnit.MILLISECONDS.toNanos(1));
+    metrics.recordInvocationDistribution("/hello/other", InvocationStage.STAGE_ALL, 200,
+        TimeUnit.MILLISECONDS.toNanos(2));
+    metrics.recordInvocationDistribution("/hello/other", InvocationStage.STAGE_ALL, 500,
+        TimeUnit.MILLISECONDS.toNanos(1));
+    metrics.recordInvocationDistribution("/hello/exceed", InvocationStage.STAGE_ALL, 200,
+        TimeUnit.MILLISECONDS.toNanos(1));
+    metrics.recordInvocationDistribution("/hello/exceed", InvocationStage.STAGE_ALL, 500,
+        TimeUnit.MILLISECONDS.toNanos(1));
 
     List<Meter> meters = meterRegistry.getMeters();
-    Assertions.assertEquals(2, meters.size());
+    int count = 0;
     for (Meter meter : meters) {
-      Assertions.assertEquals(InvocationMetrics.METRICS_CALLS, meter.getId().getName());
-      Assertions.assertEquals("/hello", meter.getId().getTag(InvocationMetrics.TAG_NAME));
+      if (!InvocationMetrics.METRICS_CALLS.equals(meter.getId().getName())) {
+        continue;
+      }
+      count++;
 
-      Timer timer = (Timer) meter;
+      DistributionSummary summary = (DistributionSummary) meter;
 
-      if (meter.getId().getTag(InvocationMetrics.TAG_KIND).equals(InvocationMetrics.CALLS_TAG_SUCCESSFUL)) {
-        Assertions.assertEquals(3, timer.count());
-        Assertions.assertEquals(5, ((Double) timer.totalTime(TimeUnit.SECONDS)).intValue());
-      } else if (meter.getId().getTag(InvocationMetrics.TAG_KIND).equals(InvocationMetrics.CALLS_TAG_FAILED)) {
-        Assertions.assertEquals(2, timer.count());
-        Assertions.assertEquals(2, ((Double) timer.totalTime(TimeUnit.SECONDS)).intValue());
+      if (Integer.parseInt(meter.getId().getTag(InvocationMetrics.TAG_STATUS)) == 200
+          && "/hello".equals(meter.getId().getTag(InvocationMetrics.TAG_NAME))) {
+        Assertions.assertEquals(3, summary.count());
+        Assertions.assertEquals(5, TimeUnit.NANOSECONDS.toMillis(Double.valueOf(summary.totalAmount()).longValue()));
+      } else if (Integer.parseInt(meter.getId().getTag(InvocationMetrics.TAG_STATUS)) == 500
+          && "/hello".equals(meter.getId().getTag(InvocationMetrics.TAG_NAME))) {
+        Assertions.assertEquals(2, summary.count());
+        Assertions.assertEquals(2, TimeUnit.NANOSECONDS.toMillis(Double.valueOf(summary.totalAmount()).longValue()));
+      } else if (Integer.parseInt(meter.getId().getTag(InvocationMetrics.TAG_STATUS)) == 200
+          && "/hello/other".equals(meter.getId().getTag(InvocationMetrics.TAG_NAME))) {
+        Assertions.assertEquals(1, summary.count());
+        Assertions.assertEquals(2, TimeUnit.NANOSECONDS.toMillis(Double.valueOf(summary.totalAmount()).longValue()));
+      } else if (Integer.parseInt(meter.getId().getTag(InvocationMetrics.TAG_STATUS)) == 500
+          && "/hello/other".equals(meter.getId().getTag(InvocationMetrics.TAG_NAME))) {
+        Assertions.assertEquals(1, summary.count());
+        Assertions.assertEquals(1, TimeUnit.NANOSECONDS.toMillis(Double.valueOf(summary.totalAmount()).longValue()));
       } else {
         Assertions.fail();
       }
     }
+
+    Assertions.assertEquals(4, count);
   }
 }

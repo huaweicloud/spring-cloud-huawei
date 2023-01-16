@@ -55,7 +55,7 @@ public class DataFactory {
 
   public DataFactory(List<MonitorDataProvider> dataProviders, MonitorDataPublisher monitorDataPublisher,
       DashboardProperties dashboardProperties) {
-    ThreadFactory threadFactory = new DefaultThreadFactory("monitor-datafactory");
+    ThreadFactory threadFactory = new DefaultThreadFactory("dashboard", true);
     executorService = Executors.newScheduledThreadPool(CORE_SIZE, threadFactory);
     this.dataProviders = dataProviders;
     this.monitorDataPublisher = monitorDataPublisher;
