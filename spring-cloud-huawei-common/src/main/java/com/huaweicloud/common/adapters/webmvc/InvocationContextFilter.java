@@ -83,10 +83,8 @@ public class InvocationContextFilter implements Filter {
   }
 
   private String buildOperation(HttpServletRequest request) {
-    StringBuilder sb = new StringBuilder();
-    sb.append(request.getMethod());
-    sb.append(" ");
-    sb.append(request.getRequestURI());
-    return sb.toString();
+    return request.getMethod()
+        + " "
+        + request.getRequestURI();
   }
 }

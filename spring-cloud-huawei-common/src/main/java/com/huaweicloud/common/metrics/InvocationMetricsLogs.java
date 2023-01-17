@@ -87,18 +87,11 @@ public class InvocationMetricsLogs {
   }
 
   /**
-   * [status] [operation] [state] [tps] [average/max] [0,1)  [1,10) [10,100) [100,1000) [1000,)
+   * [status] [operation] [stage] [requests/cycle/tps] [average] [0, 10) [10,20) [20,50) [50,100) [100,500) [500,2000) [2000,60000)
    * 200:
-   *    GET /hello:
-   *       all:
-   * 	        10 2/3 2 2 3 0 0
-   *       consumer:
-   * 	        10 2/3 2 2 3 0 0
-   *    POST /login:
-   *       all:
-   * 	        10 2/3 2 2 3 0 0
-   *       consumer:
-   * 	        10 2/3 2 2 3 0 0
+   *   POST /provider/benchmark/load:
+   *     2002/300/6 9 1655 307 39 0 0 1 0  all
+   *     2002/300/6 5 1911 81 9 0 0 1 0  gateway
    */
   private void pollInvocationMetrics() {
     List<Meter> meters = this.meterRegistry.getMeters();
