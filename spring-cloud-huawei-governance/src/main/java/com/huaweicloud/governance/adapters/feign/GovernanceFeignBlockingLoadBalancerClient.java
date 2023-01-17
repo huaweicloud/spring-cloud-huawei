@@ -59,12 +59,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 
-import com.huaweicloud.common.access.AccessLogLogger;
-import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.common.context.InvocationStage;
 import com.huaweicloud.common.event.EventManager;
+import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadFullException;
@@ -116,15 +116,13 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
 
   private final ContextProperties contextProperties;
 
-  private final AccessLogLogger accessLogLogger;
-
   public GovernanceFeignBlockingLoadBalancerClient(RetryHandler retryHandler,
       FaultInjectionHandler faultInjectionHandler,
       InstanceIsolationHandler instanceIsolationHandler,
       InstanceBulkheadHandler instanceBulkheadHandler,
       Client delegate, LoadBalancerClient loadBalancerClient,
       LoadBalancerProperties properties, LoadBalancerClientFactory loadBalancerClientFactory,
-      ContextProperties contextProperties, AccessLogLogger accessLogLogger) {
+      ContextProperties contextProperties) {
     this.retryHandler = retryHandler;
     this.faultInjectionHandler = faultInjectionHandler;
     this.instanceIsolationHandler = instanceIsolationHandler;
@@ -134,7 +132,6 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
     this.properties = properties;
     this.loadBalancerClientFactory = loadBalancerClientFactory;
     this.contextProperties = contextProperties;
-    this.accessLogLogger = accessLogLogger;
   }
 
   @Override
@@ -149,23 +146,13 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
     }
 
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
-    long begin = System.currentTimeMillis();
+    context.getInvocationStage().recordStageBegin(InvocationStage.STAGE_FEIGN);
     try {
       Response response = decorateWithFault(request, options, originalUri, governanceRequest);
-      accessLogLogger.log(context, "Feign",
-          governanceRequest.getUri(),
-          null,
-          request.requestTemplate().feignTarget().name(),
-          response.status(),
-          System.currentTimeMillis() - begin);
+      context.getInvocationStage().recordStageEnd(InvocationStage.STAGE_FEIGN);
       return response;
     } catch (Throwable error) {
-      accessLogLogger.log(context, "Feign(" + error.getClass().getName() + ")",
-          governanceRequest.getUri(),
-          null,
-          request.requestTemplate().feignTarget().name(),
-          -1,
-          System.currentTimeMillis() - begin);
+      context.getInvocationStage().recordStageEnd(InvocationStage.STAGE_FEIGN);
       throw error;
     }
   }

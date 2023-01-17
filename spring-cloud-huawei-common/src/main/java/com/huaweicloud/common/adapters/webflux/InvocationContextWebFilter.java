@@ -20,6 +20,7 @@ package com.huaweicloud.common.adapters.webflux;
 import org.springframework.boot.web.reactive.filter.OrderedWebFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
 
@@ -63,13 +64,18 @@ public class InvocationContextWebFilter implements OrderedWebFilter {
     InvocationStage stage = context.getInvocationStage();
     stage.begin(buildId(exchange.getRequest(), context));
 
-    return chain.filter(exchange).doOnSuccess(v -> postProcess(exchange))
-        .doOnError(e -> postProcess(exchange));
+    return chain.filter(exchange).doOnSuccess(v -> postProcess(exchange, null))
+        .doOnError(e -> postProcess(exchange, e));
   }
 
-  private void postProcess(ServerWebExchange exchange) {
-    InvocationStage stage = ((InvocationContext) exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY))
+  private void postProcess(ServerWebExchange exchange, Throwable e) {
+    InvocationStage stage = ((InvocationContext) exchange
+        .getAttribute(InvocationContextHolder.ATTRIBUTE_KEY))
         .getInvocationStage();
+    if (e instanceof ResponseStatusException) {
+      stage.finish(((ResponseStatusException) e).getRawStatusCode());
+      return;
+    }
     stage.finish(exchange.getResponse().getStatusCode() == null ? -1 : exchange.getResponse().getStatusCode().value());
   }
 
