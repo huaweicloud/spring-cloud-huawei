@@ -43,11 +43,15 @@ public class WebClientMetricsExchangeFilterFunction implements ExchangeFilterFun
   public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
     InvocationContext context = request.attribute(InvocationContextHolder.ATTRIBUTE_KEY).isPresent() ?
         (InvocationContext) request.attribute(InvocationContextHolder.ATTRIBUTE_KEY).get() : new InvocationContext();
-    context.getInvocationStage().recordStageBegin(InvocationStage.STAGE_WEB_CLIENT);
+    String stageName = context.getInvocationStage().recordStageBegin(stageId(request));
     return next.exchange(request).doOnSuccess(response -> {
-      context.getInvocationStage().recordStageEnd(InvocationStage.STAGE_WEB_CLIENT);
+      context.getInvocationStage().recordStageEnd(stageName);
     }).doOnError(error -> {
-      context.getInvocationStage().recordStageEnd(InvocationStage.STAGE_WEB_CLIENT);
+      context.getInvocationStage().recordStageEnd(stageName);
     });
+  }
+
+  private String stageId(ClientRequest request) {
+    return InvocationStage.STAGE_WEB_CLIENT + " " + request.method().name() + " " + request.url().getPath();
   }
 }

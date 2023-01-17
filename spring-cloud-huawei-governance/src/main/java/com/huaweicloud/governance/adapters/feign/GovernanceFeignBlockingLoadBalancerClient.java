@@ -131,19 +131,23 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
     final URI originalUri = URI.create(request.url());
 
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
-    context.getInvocationStage().recordStageBegin(InvocationStage.STAGE_FEIGN);
+    String stageName = context.getInvocationStage().recordStageBegin(stageId(originalUri, request));
 
     GovernanceRequest governanceRequest = convert(request);
     governanceRequest.setServiceName(originalUri.getHost());
 
     try {
       Response response = decorateWithFault(request, options, originalUri, governanceRequest);
-      context.getInvocationStage().recordStageEnd(InvocationStage.STAGE_FEIGN);
+      context.getInvocationStage().recordStageEnd(stageName);
       return response;
     } catch (Throwable error) {
-      context.getInvocationStage().recordStageEnd(InvocationStage.STAGE_FEIGN);
+      context.getInvocationStage().recordStageEnd(stageName);
       throw error;
     }
+  }
+
+  private String stageId(URI uri, Request request) {
+    return InvocationStage.STAGE_FEIGN + " " + request.httpMethod().name() + " " + uri.getPath();
   }
 
   private Response decorateWithFault(Request request, Options options, URI originalUri,
