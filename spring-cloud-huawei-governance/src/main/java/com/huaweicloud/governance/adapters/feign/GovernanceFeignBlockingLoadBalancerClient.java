@@ -59,12 +59,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 
-import com.huaweicloud.common.access.AccessLogLogger;
-import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
-import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.common.context.InvocationStage;
 import com.huaweicloud.common.event.EventManager;
+import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadFullException;
@@ -80,7 +79,7 @@ import feign.Request.Options;
 import feign.Response;
 
 /**
- * Support for retry, fault injection and instance isolation for FeignBlockingLoadBalancerClient.
+ * Support for retry, fault injection and instance isolation, metrics for FeignBlockingLoadBalancerClient.
  *
  * NOTICE: this class is copied from
  *    #org.springframework.cloud.openfeign.loadbalancer.FeignBlockingLoadBalancerClient
@@ -112,17 +111,12 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
 
   private final InstanceBulkheadHandler instanceBulkheadHandler;
 
-  private final ContextProperties contextProperties;
-
-  private final AccessLogLogger accessLogLogger;
-
   public GovernanceFeignBlockingLoadBalancerClient(RetryHandler retryHandler,
       FaultInjectionHandler faultInjectionHandler,
       InstanceIsolationHandler instanceIsolationHandler,
       InstanceBulkheadHandler instanceBulkheadHandler,
       Client delegate, LoadBalancerClient loadBalancerClient,
-      LoadBalancerClientFactory loadBalancerClientFactory,
-      ContextProperties contextProperties, AccessLogLogger accessLogLogger) {
+      LoadBalancerClientFactory loadBalancerClientFactory) {
     this.retryHandler = retryHandler;
     this.faultInjectionHandler = faultInjectionHandler;
     this.instanceIsolationHandler = instanceIsolationHandler;
@@ -130,39 +124,24 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
     this.delegate = delegate;
     this.loadBalancerClient = loadBalancerClient;
     this.loadBalancerClientFactory = loadBalancerClientFactory;
-    this.contextProperties = contextProperties;
-    this.accessLogLogger = accessLogLogger;
   }
 
   @Override
   public Response execute(Request request, Request.Options options) {
     final URI originalUri = URI.create(request.url());
 
+    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
+    context.getInvocationStage().recordStageBegin(InvocationStage.STAGE_FEIGN);
+
     GovernanceRequest governanceRequest = convert(request);
     governanceRequest.setServiceName(originalUri.getHost());
 
-    if (!contextProperties.isEnableTraceInfo()) {
-      return decorateWithFault(request, options, originalUri, governanceRequest);
-    }
-
-    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
-    long begin = System.currentTimeMillis();
     try {
       Response response = decorateWithFault(request, options, originalUri, governanceRequest);
-      accessLogLogger.log(context, "Feign",
-          governanceRequest.getUri(),
-          null,
-          request.requestTemplate().feignTarget().name(),
-          response.status(),
-          System.currentTimeMillis() - begin);
+      context.getInvocationStage().recordStageEnd(InvocationStage.STAGE_FEIGN);
       return response;
     } catch (Throwable error) {
-      accessLogLogger.log(context, "Feign(" + error.getClass().getName() + ")",
-          governanceRequest.getUri(),
-          null,
-          request.requestTemplate().feignTarget().name(),
-          -1,
-          System.currentTimeMillis() - begin);
+      context.getInvocationStage().recordStageEnd(InvocationStage.STAGE_FEIGN);
       throw error;
     }
   }

@@ -25,45 +25,28 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
-import com.huaweicloud.common.access.AccessLogLogger;
-import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.common.context.InvocationStage;
 
-public class AccessLogClientHttpRequestInterceptor implements
+public class MetricsClientHttpRequestInterceptor implements
     ClientHttpRequestInterceptor, Ordered {
-  private final ContextProperties contextProperties;
 
-  private final AccessLogLogger accessLogLogger;
+  public MetricsClientHttpRequestInterceptor() {
 
-  public AccessLogClientHttpRequestInterceptor(ContextProperties contextProperties,
-      AccessLogLogger accessLogLogger) {
-    this.contextProperties = contextProperties;
-    this.accessLogLogger = accessLogLogger;
   }
 
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
       throws IOException {
-    if (!contextProperties.isEnableTraceInfo()) {
-      return execution.execute(request, body);
-    }
-
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
-    String url = request.getURI().getPath();
-    String target = request.getURI().getHost() + ":" + request.getURI().getPort();
-
-    long begin = System.currentTimeMillis();
+    context.getInvocationStage().recordStageBegin(InvocationStage.STAGE_REST_TEMPLATE);
     try {
       ClientHttpResponse response = execution.execute(request, body);
-      accessLogLogger.log(context, "RestTemplate", url,
-          null, target, response.getRawStatusCode(),
-          System.currentTimeMillis() - begin);
+      context.getInvocationStage().recordStageEnd(InvocationStage.STAGE_REST_TEMPLATE);
       return response;
     } catch (Throwable error) {
-      accessLogLogger.log(context, "RestTemplate(" + error.getClass().getName() + ")", url,
-          null, target, -1,
-          System.currentTimeMillis() - begin);
+      context.getInvocationStage().recordStageEnd(InvocationStage.STAGE_REST_TEMPLATE);
       throw error;
     }
   }
