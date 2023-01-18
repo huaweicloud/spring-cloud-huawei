@@ -33,7 +33,7 @@ import org.springframework.web.client.RestTemplate;
 public class OrderControllerIT {
   final String url = "http://127.0.0.1:9098";
 
-  final int pricePort = 9090;
+  final String pricePort = "9090";
 
   final RestTemplate template = new RestTemplate();
 
@@ -81,7 +81,7 @@ public class OrderControllerIT {
     List result = template.getForObject(url + "/instances", List.class);
     assertThat(result.size()).isEqualTo(1);
     Map instance = (Map) result.get(0);
-    assertThat(instance.get("port")).isEqualTo(pricePort);
+    assertThat(instance.get("port").toString()).isEqualTo(pricePort);
   }
 
   @Test

@@ -85,13 +85,19 @@ public class InvocationStage {
     return System.nanoTime();
   }
 
-  public void recordStageBegin(String stageName) {
-    Stage stage = stages.computeIfAbsent(stageName, key -> new Stage());
+  public String recordStageBegin(String stageName) {
+    String realStageName = stageName;
+    if (stages.get(stageName) != null) {
+      realStageName = realStageName + "@";
+    }
+    Stage stage = new Stage();
     stage.beginTime = System.nanoTime();
+    stages.put(realStageName, stage);
+    return realStageName;
   }
 
   public void recordStageEnd(String stageName) {
-    Stage stage = stages.computeIfAbsent(stageName, key -> new Stage());
+    Stage stage = stages.get(stageName);
     stage.endTime = nanoTime();
   }
 

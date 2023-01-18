@@ -40,15 +40,19 @@ public class MetricsClientHttpRequestInterceptor implements
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
       throws IOException {
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
-    context.getInvocationStage().recordStageBegin(InvocationStage.STAGE_REST_TEMPLATE);
+    String stageName = context.getInvocationStage().recordStageBegin(stageId(request));
     try {
       ClientHttpResponse response = execution.execute(request, body);
-      context.getInvocationStage().recordStageEnd(InvocationStage.STAGE_REST_TEMPLATE);
+      context.getInvocationStage().recordStageEnd(stageName);
       return response;
     } catch (Throwable error) {
-      context.getInvocationStage().recordStageEnd(InvocationStage.STAGE_REST_TEMPLATE);
+      context.getInvocationStage().recordStageEnd(stageName);
       throw error;
     }
+  }
+
+  private String stageId(HttpRequest request) {
+    return InvocationStage.STAGE_REST_TEMPLATE + " " + request.getMethod().name() + " " + request.getURI().getPath();
   }
 
   @Override
