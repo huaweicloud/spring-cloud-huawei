@@ -39,10 +39,10 @@ public class GatewayMetricsGlobalFilter implements GlobalFilter, Ordered {
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
     InvocationContext context = exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY);
-    context.getInvocationStage().recordStageBegin(InvocationStage.STAGE_GATEWAY);
+    String stageName = context.getInvocationStage().recordStageBegin(InvocationStage.STAGE_GATEWAY);
     return chain.filter(exchange).doOnSuccess(v ->
-        context.getInvocationStage().recordStageEnd(InvocationStage.STAGE_GATEWAY)).doOnError(error ->
-        context.getInvocationStage().recordStageEnd(InvocationStage.STAGE_GATEWAY));
+        context.getInvocationStage().recordStageEnd(stageName)).doOnError(error ->
+        context.getInvocationStage().recordStageEnd(stageName));
   }
 
   @Override
