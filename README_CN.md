@@ -25,6 +25,13 @@ Spring Cloud Huawei的目的是为了让开发者更加方便、高效的使用S
 * 2020.0.x(包括)之前的版本使用springfox生成swagger. 2021.0.x(包括)之后的版本使用
     springdoc生成swagger.
 
+## 如何使用
+
+1. [快速入门和开发指南](https://github.com/huaweicloud/spring-cloud-huawei/wiki)
+2. [例子](https://github.com/huaweicloud/spring-cloud-huawei-samples)
+3. [CSE帮助文档][CSE Developer Guide]
+4. [ServiceStage帮助文档][ServiceStage]
+
 ## 功能模块
 
 * **spring-cloud-starter-huawei-discovery:**
@@ -51,16 +58,13 @@ Spring Cloud Huawei的目的是为了让开发者更加方便、高效的使用S
 * **spring-cloud-starter-huawei-jasypt:**
     * 支持使用[配置文件加密方案][Profile encryption scheme]
     * 实现服务配置文件识别加密标记功能.
-
-## 如何使用
-
-1. [快速入门和开发指南](https://github.com/huaweicloud/spring-cloud-huawei/wiki)
-2. [例子](https://github.com/huaweicloud/spring-cloud-huawei-samples)
-3. [CSE帮助文档][CSE]
+    
 
 [ServiceStage]: https://support.huaweicloud.com/usermanual-servicestage/servicestage_user_0400.html
 
 [CSE]: https://support.huaweicloud.com/cse/index.html
+
+[CSE Developer Guide]: https://support.huaweicloud.com/devg-cse/cse_devg_0002.html
 
 [SERVICECOMB]: https://servicecomb.apache.org/cn/developers/
 
