@@ -42,6 +42,10 @@ public class MetricsController {
 
   private List<InvocationStage> stages = new ArrayList<>();
 
+  private int counter = 0;
+
+  private int metricsCounter = 0;
+
   @Autowired
   public MetricsController(RestTemplate restTemplate, MetricsFeignService feignService) {
     this.restTemplate = restTemplate;
@@ -54,12 +58,18 @@ public class MetricsController {
     if (event.getInvocationStage().getId().contains("/order/metrics")
         && !event.getInvocationStage().getId().contains("InvocationStage")) {
       stages.add(event.getInvocationStage());
+      metricsCounter++;
     }
   }
 
   // event process should be very fast, so do not check if event processed
   @GetMapping("/testInvocationStage")
-  public String testInvocationStage() {
+  public String testInvocationStage() throws Exception {
+    int sleep = 0;
+    while (sleep <= 3000 && metricsCounter != counter) {
+      Thread.sleep(20);
+      sleep = sleep + 20;
+    }
     StringBuilder result = new StringBuilder();
     result.append("size=").append(stages.size());
     for (int i = 0; i < stages.size(); i++) {
@@ -75,22 +85,27 @@ public class MetricsController {
   @GetMapping("/clearInvocationStage")
   public String clearInvocationStage() {
     stages.clear();
+    metricsCounter = 0;
+    counter = 0;
     return "success";
   }
 
   @GetMapping("/testRestTemplate")
   public String testRestTemplate(@RequestParam("name") String name) {
+    counter++;
     return restTemplate.getForObject("http://price/price/metrics/testGet?name={1}", String.class, name)
         + restTemplate.postForObject("http://price/price/metrics/testPost", name, String.class);
   }
 
   @PostMapping("/testFeign")
   public String testFeign(@RequestBody String name) {
+    counter++;
     return feignService.testGet(name) + feignService.testPost(name);
   }
 
   @PostMapping("/testFeignAndRestTemplate")
   public String testFeignAndRestTemplate(@RequestBody String name) {
+    counter++;
     return restTemplate.getForObject("http://price/price/metrics/testGet?name={1}", String.class, name)
         + restTemplate.getForObject("http://price/price/metrics/testGet?name={1}", String.class, name)
         + feignService.testPost(name) + feignService.testPost(name);
