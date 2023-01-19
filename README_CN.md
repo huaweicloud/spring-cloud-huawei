@@ -9,8 +9,8 @@ Spring Cloud Huawei的目的是为了让开发者更加方便、高效的使用S
 
 | 分支        | 最新版本            | 编译使用 Spring Cloud版本 | 编译使用 Spring Boot版本 |
 |-----------|-----------------|---------------------|-------------------|
-| master    | 1.10.7-2021.0.x | 2021.0.5            | 2.6.13            | 
-| 2020.0.x  | 1.10.7-2020.0.x | 2020.0.6            | 2.5.14            |
+| master    | 1.10.8-2021.0.x | 2021.0.5            | 2.6.13            | 
+| 2020.0.x  | 1.10.8-2020.0.x | 2020.0.6            | 2.5.14            |
 | Hoxton    | 1.9.3-Hoxton    | Hoxton.SR9          | 2.3.5.RELEASE     |
 | Greenwich | 1.6.1-Greenwich | Greenwich.SR6       | 2.1.6-RELEASE     |
 | Finchley  | 1.6.1-Finchley  | 2.0.4.RELEASE       | 2.0.9.RELEASE     |
