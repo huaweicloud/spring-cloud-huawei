@@ -8,13 +8,13 @@ Spring Cloud Huawei的目的是为了让开发者更加方便、高效的使用S
 ## 支持的版本列表
 
 | 分支        | 最新版本            | 编译使用 Spring Cloud版本 | 编译使用 Spring Boot版本 |
-|-----------|-----------------|---------------------|--------------------|
-| master    | 1.10.5-2021.0.x | 2021.0.3            | 2.6.7              | 
-| 2020.0.x  | 1.10.5-2020.0.x | 2020.0.5            | 2.5.12             |
-| Hoxton    | 1.9.3-Hoxton    | Hoxton.SR9          | 2.3.5.RELEASE      |
-| Greenwich | 1.6.1-Greenwich | Greenwich.SR6       | 2.1.6-RELEASE      |
-| Finchley  | 1.6.1-Finchley  | 2.0.4.RELEASE       | 2.0.9.RELEASE      |
-| Edgware   | 1.2.0-Edgware   | 1.3.6.RELEASE       | 1.5.22.RELEASE     |
+|-----------|-----------------|---------------------|-------------------|
+| master    | 1.10.8-2021.0.x | 2021.0.5            | 2.6.13            | 
+| 2020.0.x  | 1.10.8-2020.0.x | 2020.0.6            | 2.5.14            |
+| Hoxton    | 1.9.3-Hoxton    | Hoxton.SR9          | 2.3.5.RELEASE     |
+| Greenwich | 1.6.1-Greenwich | Greenwich.SR6       | 2.1.6-RELEASE     |
+| Finchley  | 1.6.1-Finchley  | 2.0.4.RELEASE       | 2.0.9.RELEASE     |
+| Edgware   | 1.2.0-Edgware   | 1.3.6.RELEASE       | 1.5.22.RELEASE    |
 
 ***注意：***
 * 使用`Spring Cloud Huawei`时可以使用兼容的`Spring Cloud`版本。详细信息可参考 https://spring.io/projects/spring-cloud。
