@@ -17,7 +17,7 @@
 package com.huaweicloud.governance.adapters.webclient;
 
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
-import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.springframework.core.Ordered;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -43,14 +43,14 @@ public class InstanceIsolationExchangeFilterFunction implements ExchangeFilterFu
 
   @Override
   public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
-    GovernanceRequest governanceRequest = WebClientUtils.createGovernanceRequest(request);
+    GovernanceRequestExtractor governanceRequest = WebClientUtils.createGovernanceRequest(request);
 
     Mono<ClientResponse> toRun = Mono.defer(() -> next.exchange(request));
 
     return addInstanceIsolation(governanceRequest, toRun);
   }
 
-  private Mono<ClientResponse> addInstanceIsolation(GovernanceRequest governanceRequest,
+  private Mono<ClientResponse> addInstanceIsolation(GovernanceRequestExtractor governanceRequest,
       Mono<ClientResponse> toRun) {
     CircuitBreaker circuitBreaker = isolationHandler.getActuator(governanceRequest);
     if (circuitBreaker == null) {

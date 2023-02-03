@@ -14,55 +14,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.huaweicloud.governance.adapters.feign;
 
-package com.huaweicloud.governance.adapters.webclient;
+import java.net.URI;
+import java.util.Collection;
 
 import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.web.reactive.function.client.ClientRequest;
 
-import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
+import feign.Request;
 
-public final class WebClientUtils {
-  private WebClientUtils() {
+public class FeignUtils {
+  private FeignUtils() {
 
   }
 
-  public static GovernanceRequestExtractor createGovernanceRequest(ClientRequest request) {
+  public static GovernanceRequestExtractor convert(Request request, URI uri, String instanceId) {
     return new GovernanceRequestExtractor() {
       @Override
       public String apiPath() {
-        return request.url().getPath();
+        return uri.getPath();
       }
 
       @Override
       public String method() {
-        return request.method().name();
+        return request.httpMethod().name();
       }
 
       @Override
       public String header(String key) {
-        return request.headers().getFirst(key);
+        Collection<String> headerValue = request.headers().get(key);
+        if (headerValue != null && !headerValue.isEmpty()) {
+          return headerValue.iterator().next();
+        }
+        return null;
       }
 
       @Override
       public String instanceId() {
-        ServiceInstance serviceInstance = (ServiceInstance) request.attributes()
-            .get(RetryContext.RETRY_SERVICE_INSTANCE);
-        if (serviceInstance != null) {
-          return serviceInstance.getInstanceId();
-        }
-        return null;
+        return instanceId;
       }
 
       @Override
       public String serviceName() {
-        ServiceInstance serviceInstance = (ServiceInstance) request.attributes()
-            .get(RetryContext.RETRY_SERVICE_INSTANCE);
-        if (serviceInstance != null) {
-          return serviceInstance.getServiceId();
-        }
-        return null;
+        return uri.getHost();
       }
 
       @Override

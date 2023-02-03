@@ -18,7 +18,7 @@
 package com.huaweicloud.governance.adapters.webclient;
 
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
-import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.apache.servicecomb.governance.processor.injection.Fault;
 import org.apache.servicecomb.governance.processor.injection.FaultInjectionDecorators;
 import org.apache.servicecomb.governance.processor.injection.FaultInjectionDecorators.FaultInjectionDecorateCheckedSupplier;
@@ -57,7 +57,7 @@ public class FaultInjectionExchangeFilterFunction implements ExchangeFilterFunct
 
   @Override
   public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
-    GovernanceRequest governanceRequest = WebClientUtils.createGovernanceRequest(request);
+    GovernanceRequestExtractor governanceRequest = WebClientUtils.createGovernanceRequest(request);
     Fault fault = faultInjectionHandler.getActuator(governanceRequest);
     if (fault != null) {
       FaultInjectionDecorateCheckedSupplier<Object> ds =

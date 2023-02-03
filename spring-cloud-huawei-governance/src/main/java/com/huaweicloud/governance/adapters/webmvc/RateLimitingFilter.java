@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
-import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +56,7 @@ public class RateLimitingFilter implements Filter {
       return;
     }
 
-    GovernanceRequest governanceRequest = WebMvcUtils.convert((HttpServletRequest) request);
+    GovernanceRequestExtractor governanceRequest = WebMvcUtils.convert((HttpServletRequest) request);
     try {
       RateLimiter rateLimiter = rateLimitingHandler.getActuator(governanceRequest);
       if (rateLimiter != null) {

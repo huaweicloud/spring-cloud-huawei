@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.servicecomb.governance.handler.BulkheadHandler;
-import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +57,7 @@ public class BulkheadFilter implements Filter {
       return;
     }
 
-    GovernanceRequest governanceRequest = WebMvcUtils.convert((HttpServletRequest) request);
+    GovernanceRequestExtractor governanceRequest = WebMvcUtils.convert((HttpServletRequest) request);
     try {
       Bulkhead bulkhead = bulkheadHandler.getActuator(governanceRequest);
       if (bulkhead != null) {
