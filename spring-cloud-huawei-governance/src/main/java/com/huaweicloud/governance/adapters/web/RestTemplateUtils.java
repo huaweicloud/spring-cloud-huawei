@@ -17,29 +17,58 @@
 
 package com.huaweicloud.governance.adapters.web;
 
-import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.springframework.http.HttpRequest;
 
-import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 
 public final class RestTemplateUtils {
   private RestTemplateUtils() {
 
   }
 
-  public static GovernanceRequest createGovernanceRequest(HttpRequest request) {
-    GovernanceRequest governanceRequest = new GovernanceRequest();
-    governanceRequest.setUri(request.getURI().getPath());
-    governanceRequest.setMethod(request.getMethod().name());
-    governanceRequest.setHeaders(request.getHeaders().toSingleValueMap());
+  public static GovernanceRequestExtractor createGovernanceRequest(HttpRequest request) {
+    return new GovernanceRequestExtractor() {
+      @Override
+      public String apiPath() {
+        return request.getURI().getPath();
+      }
 
-    RetryContext retryContext = InvocationContextHolder.getOrCreateInvocationContext()
-        .getLocalContext(RetryContext.RETRY_CONTEXT);
-    if (retryContext != null && retryContext.getLastServer() != null) {
-      governanceRequest.setServiceName(retryContext.getLastServer().getServiceId());
-      governanceRequest.setInstanceId(retryContext.getLastServer().getInstanceId());
-    }
-    return governanceRequest;
+      @Override
+      public String method() {
+        return request.getMethod().name();
+      }
+
+      @Override
+      public String header(String key) {
+        return request.getHeaders().getFirst(key);
+      }
+
+      @Override
+      public String instanceId() {
+        RetryContext retryContext = InvocationContextHolder.getOrCreateInvocationContext()
+            .getLocalContext(RetryContext.RETRY_CONTEXT);
+        if (retryContext != null && retryContext.getLastServer() != null) {
+          return retryContext.getLastServer().getInstanceId();
+        }
+        return null;
+      }
+
+      @Override
+      public String serviceName() {
+        RetryContext retryContext = InvocationContextHolder.getOrCreateInvocationContext()
+            .getLocalContext(RetryContext.RETRY_CONTEXT);
+        if (retryContext != null && retryContext.getLastServer() != null) {
+          return retryContext.getLastServer().getServiceId();
+        }
+        return null;
+      }
+
+      @Override
+      public Object sourceRequest() {
+        return request;
+      }
+    };
   }
 }

@@ -20,7 +20,7 @@ package com.huaweicloud.governance.adapters.gateway;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
-import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.apache.servicecomb.governance.processor.injection.Fault;
 import org.apache.servicecomb.governance.processor.injection.FaultInjectionDecorators;
 import org.apache.servicecomb.governance.processor.injection.FaultInjectionDecorators.FaultInjectionDecorateCheckedSupplier;
@@ -45,7 +45,7 @@ public class FaultInjectionGlobalFilter implements GlobalFilter, Ordered {
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-    GovernanceRequest governanceRequest = GatewayUtils.createConsumerGovernanceRequest(exchange);
+    GovernanceRequestExtractor governanceRequest = GatewayUtils.createConsumerGovernanceRequest(exchange);
     Fault fault = faultInjectionHandler.getActuator(governanceRequest);
     if (fault != null) {
       FaultInjectionDecorateCheckedSupplier<Object> ds =

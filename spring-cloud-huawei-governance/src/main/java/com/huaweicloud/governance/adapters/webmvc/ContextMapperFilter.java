@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.governance.handler.MapperHandler;
-import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.apache.servicecomb.governance.processor.mapping.Mapper;
 import org.springframework.util.CollectionUtils;
 
@@ -51,7 +51,7 @@ public class ContextMapperFilter implements Filter {
       return;
     }
 
-    GovernanceRequest governanceRequest = WebMvcUtils.convert((HttpServletRequest) request);
+    GovernanceRequestExtractor governanceRequest = WebMvcUtils.convert((HttpServletRequest) request);
     Mapper mapper = mapperHandler.getActuator(governanceRequest);
     if (mapper == null || CollectionUtils.isEmpty(mapper.target())) {
       chain.doFilter(request, response);
@@ -64,11 +64,11 @@ public class ContextMapperFilter implements Filter {
         return;
       }
       if ("$U".equals(v)) {
-        context.putContext(k, governanceRequest.getUri());
+        context.putContext(k, governanceRequest.apiPath());
       } else if ("$M".equals(v)) {
-        context.putContext(k, governanceRequest.getMethod());
+        context.putContext(k, governanceRequest.method());
       } else if (v.startsWith("$H{") && v.endsWith("}")) {
-        context.putContext(k, governanceRequest.getHeader(v.substring(3, v.length() - 1)));
+        context.putContext(k, governanceRequest.header(v.substring(3, v.length() - 1)));
       } else {
         context.putContext(k, v);
       }

@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.governance.handler.MapperHandler;
-import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.apache.servicecomb.governance.processor.mapping.Mapper;
 import org.springframework.boot.web.reactive.filter.OrderedWebFilter;
 import org.springframework.core.Ordered;
@@ -42,7 +42,7 @@ public class ContextMapperWebFilter implements OrderedWebFilter {
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-    GovernanceRequest governanceRequest = WebFluxUtils.createProviderGovernanceRequest(exchange);
+    GovernanceRequestExtractor governanceRequest = WebFluxUtils.createProviderGovernanceRequest(exchange);
     Mapper mapper = mapperHandler.getActuator(governanceRequest);
     if (mapper == null || CollectionUtils.isEmpty(mapper.target())) {
       return chain.filter(exchange);
@@ -54,11 +54,11 @@ public class ContextMapperWebFilter implements OrderedWebFilter {
         return;
       }
       if ("$U".equals(v)) {
-        context.putContext(k, governanceRequest.getUri());
+        context.putContext(k, governanceRequest.apiPath());
       } else if ("$M".equals(v)) {
-        context.putContext(k, governanceRequest.getMethod());
+        context.putContext(k, governanceRequest.method());
       } else if (v.startsWith("$H{") && v.endsWith("}")) {
-        context.putContext(k, governanceRequest.getHeader(v.substring(3, v.length() - 1)));
+        context.putContext(k, governanceRequest.header(v.substring(3, v.length() - 1)));
       } else {
         context.putContext(k, v);
       }
