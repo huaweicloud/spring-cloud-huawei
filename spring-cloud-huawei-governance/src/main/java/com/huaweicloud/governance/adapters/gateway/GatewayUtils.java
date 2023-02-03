@@ -17,7 +17,7 @@
 
 package com.huaweicloud.governance.adapters.gateway;
 
-import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.Response;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
@@ -32,18 +32,47 @@ public final class GatewayUtils {
    * Create GovernanceRequest from ServerWebExchange.
    * In gateway, after ReactiveLoadBalancerClientFilter we can get target service name and instance id.
    */
-  public static GovernanceRequest createConsumerGovernanceRequest(ServerWebExchange exchange) {
-    GovernanceRequest request = new GovernanceRequest();
-    request.setHeaders(exchange.getRequest().getHeaders().toSingleValueMap());
-    request.setMethod(exchange.getRequest().getMethodValue());
-    request.setUri(exchange.getRequest().getURI().getPath());
+  public static GovernanceRequestExtractor createConsumerGovernanceRequest(ServerWebExchange exchange) {
+    return new GovernanceRequestExtractor() {
+      @Override
+      public String apiPath() {
+        return exchange.getRequest().getURI().getPath();
+      }
 
-    Response<ServiceInstance> response = exchange.getAttribute(
-        ServerWebExchangeUtils.GATEWAY_LOADBALANCER_RESPONSE_ATTR);
-    if (response != null && response.hasServer()) {
-      request.setServiceName(response.getServer().getServiceId());
-      request.setInstanceId(response.getServer().getInstanceId());
-    }
-    return request;
+      @Override
+      public String method() {
+        return exchange.getRequest().getMethodValue();
+      }
+
+      @Override
+      public String header(String key) {
+        return exchange.getRequest().getHeaders().getFirst(key);
+      }
+
+      @Override
+      public String instanceId() {
+        Response<ServiceInstance> response = exchange.getAttribute(
+            ServerWebExchangeUtils.GATEWAY_LOADBALANCER_RESPONSE_ATTR);
+        if (response != null && response.hasServer()) {
+          return response.getServer().getInstanceId();
+        }
+        return null;
+      }
+
+      @Override
+      public String serviceName() {
+        Response<ServiceInstance> response = exchange.getAttribute(
+            ServerWebExchangeUtils.GATEWAY_LOADBALANCER_RESPONSE_ATTR);
+        if (response != null && response.hasServer()) {
+          return response.getServer().getServiceId();
+        }
+        return null;
+      }
+
+      @Override
+      public Object sourceRequest() {
+        return exchange;
+      }
+    };
   }
 }
