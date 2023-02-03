@@ -18,7 +18,7 @@
 package com.huaweicloud.governance.adapters.web;
 
 import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
-import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -48,7 +48,7 @@ public class BulkheadClientHttpRequestInterceptor implements ClientHttpRequestIn
 
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) {
-    GovernanceRequest governanceRequest = RestTemplateUtils.createGovernanceRequest(request);
+    GovernanceRequestExtractor governanceRequest = RestTemplateUtils.createGovernanceRequest(request);
     try {
       Bulkhead bulkhead = instanceBulkheadHandler.getActuator(governanceRequest);
       if (bulkhead == null) {
@@ -61,7 +61,7 @@ public class BulkheadClientHttpRequestInterceptor implements ClientHttpRequestIn
     } catch (Throwable e) {
       if (e instanceof BulkheadFullException) {
         // when instance isolated, request to pull instances.
-        LOG.warn("instance bulkhead is full [{}]", governanceRequest.getInstanceId());
+        LOG.warn("instance bulkhead is full [{}]", governanceRequest.instanceId());
         return new FallbackClientHttpResponse(503, "instance bulkhead is full.");
       }
       throw new RuntimeException(e);

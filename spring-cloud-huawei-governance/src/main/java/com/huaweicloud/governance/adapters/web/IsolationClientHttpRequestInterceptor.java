@@ -18,7 +18,7 @@
 package com.huaweicloud.governance.adapters.web;
 
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
-import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.apache.servicecomb.governance.policy.CircuitBreakerPolicy;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.PullInstanceEvent;
 import org.slf4j.Logger;
@@ -51,7 +51,7 @@ public class IsolationClientHttpRequestInterceptor implements ClientHttpRequestI
 
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) {
-    GovernanceRequest governanceRequest = RestTemplateUtils.createGovernanceRequest(request);
+    GovernanceRequestExtractor governanceRequest = RestTemplateUtils.createGovernanceRequest(request);
     try {
       CircuitBreakerPolicy circuitBreakerPolicy = instanceIsolationHandler.matchPolicy(governanceRequest);
       if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
@@ -72,7 +72,7 @@ public class IsolationClientHttpRequestInterceptor implements ClientHttpRequestI
     } catch (Throwable e) {
       if (e instanceof CallNotPermittedException) {
         // when instance isolated, request to pull instances.
-        LOG.warn("instance isolated [{}]", governanceRequest.getInstanceId());
+        LOG.warn("instance isolated [{}]", governanceRequest.instanceId());
         EventManager.post(new PullInstanceEvent());
         return new FallbackClientHttpResponse(503, "instance isolated");
       }

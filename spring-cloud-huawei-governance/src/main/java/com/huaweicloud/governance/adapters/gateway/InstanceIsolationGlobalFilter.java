@@ -18,7 +18,7 @@
 package com.huaweicloud.governance.adapters.gateway;
 
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
-import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.apache.servicecomb.governance.policy.CircuitBreakerPolicy;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.PullInstanceEvent;
 import org.slf4j.Logger;
@@ -49,7 +49,7 @@ public class InstanceIsolationGlobalFilter implements GlobalFilter, Ordered {
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-    GovernanceRequest governanceRequest = GatewayUtils.createConsumerGovernanceRequest(exchange);
+    GovernanceRequestExtractor governanceRequest = GatewayUtils.createConsumerGovernanceRequest(exchange);
 
     Mono<Void> toRun = chain.filter(exchange);
 
@@ -64,7 +64,7 @@ public class InstanceIsolationGlobalFilter implements GlobalFilter, Ordered {
     return toRun;
   }
 
-  private Mono<Void> addInstanceIsolation(ServerWebExchange exchange, GovernanceRequest governanceRequest,
+  private Mono<Void> addInstanceIsolation(ServerWebExchange exchange, GovernanceRequestExtractor governanceRequest,
       Mono<Void> toRun) {
     CircuitBreaker circuitBreaker = isolationHandler.getActuator(governanceRequest);
     Mono<Void> mono = toRun;

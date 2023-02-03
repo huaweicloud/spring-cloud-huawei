@@ -21,13 +21,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.servicecomb.governance.handler.LoadBalanceHandler;
-import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.apache.servicecomb.governance.processor.loadbanlance.LoadBalance;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.loadbalancer.DefaultRequestContext;
 import org.springframework.cloud.client.loadbalancer.DefaultResponse;
 import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.client.loadbalancer.RequestData;
@@ -48,8 +45,6 @@ import reactor.core.publisher.Mono;
  * load balancers to support retry on same and on next
  */
 public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalancer {
-  private static final Logger LOGGER = LoggerFactory.getLogger(RetryAwareLoadBalancer.class);
-
   private final String serviceId;
 
   private final ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider;
@@ -72,7 +67,7 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
   @SuppressWarnings("rawtypes")
   public Mono<Response<ServiceInstance>> choose(Request request) {
     InvocationContext context = getOrCreateInvocationContext(request);
-    GovernanceRequest governanceRequest = convert(request);
+    GovernanceRequestExtractor governanceRequest = LoadBalancerUtils.convert(request, serviceId);
     LoadBalance loadBalance = loadBalanceHandler.getActuator(governanceRequest);
     String rule = loadBalance != null ? loadBalance.getRule() : loadBalancerProperties.getRule();
     if (context.getLocalContext(RetryContext.RETRY_CONTEXT) == null) {
@@ -114,34 +109,5 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
       }
     }
     return InvocationContextHolder.getOrCreateInvocationContext();
-  }
-
-  @SuppressWarnings("rawtypes")
-  private GovernanceRequest convert(Request request) {
-    GovernanceRequest governanceRequest = new GovernanceRequest();
-    Object context = request.getContext();
-    if (context instanceof DefaultRequestContext) {
-      Object clientRequest = ((DefaultRequestContext) context).getClientRequest();
-      if (clientRequest instanceof RequestData) {
-        RequestData requestData = (RequestData) clientRequest;
-        governanceRequest.setUri(requestData.getUrl().getPath());
-        governanceRequest.setMethod(requestData.getHttpMethod().name());
-        governanceRequest.setHeaders(requestData.getHeaders().toSingleValueMap());
-        governanceRequest.setServiceName(serviceId);
-      } else if (clientRequest instanceof DecorateLoadBalancerRequest) {
-        DecorateLoadBalancerRequest requestData = (DecorateLoadBalancerRequest) clientRequest;
-        governanceRequest.setUri((requestData.getRequest().getURI().getPath()));
-        governanceRequest.setMethod(requestData.getRequest().getMethod().name());
-        governanceRequest.setHeaders(
-            requestData.getRequest().getHeaders().toSingleValueMap());
-        String serviceName = requestData.getRequest().getURI().getHost();
-        governanceRequest.setServiceName(serviceName);
-      } else {
-        LOGGER.warn("not implemented client request {}.", clientRequest == null ? null : clientRequest.getClass());
-      }
-    } else {
-      LOGGER.warn("not implemented context {}.", context == null ? null : context.getClass());
-    }
-    return governanceRequest;
   }
 }

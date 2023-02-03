@@ -19,7 +19,7 @@ package com.huaweicloud.governance.adapters.webclient;
 import java.util.Optional;
 
 import org.apache.servicecomb.governance.handler.RetryHandler;
-import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.apache.servicecomb.governance.policy.RetryPolicy;
 import org.springframework.core.Ordered;
 import org.springframework.web.reactive.function.client.ClientRequest;
@@ -27,10 +27,10 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeFunction;
 
-import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 
 import io.github.resilience4j.reactor.retry.RetryOperator;
 import io.github.resilience4j.retry.Retry;
@@ -49,14 +49,14 @@ public class RetryExchangeFilterFunction implements ExchangeFilterFunction, Orde
 
   @Override
   public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
-    GovernanceRequest governanceRequest = WebClientUtils.createGovernanceRequest(request);
+    GovernanceRequestExtractor governanceRequest = WebClientUtils.createGovernanceRequest(request);
 
     Mono<ClientResponse> toRun = Mono.defer(() -> next.exchange(request));
 
     return addRetry(request, governanceRequest, toRun);
   }
 
-  private Mono<ClientResponse> addRetry(ClientRequest request, GovernanceRequest governanceRequest,
+  private Mono<ClientResponse> addRetry(ClientRequest request, GovernanceRequestExtractor governanceRequest,
       Mono<ClientResponse> toRun) {
     Retry retry = retryHandler.getActuator(governanceRequest);
     if (retry == null) {

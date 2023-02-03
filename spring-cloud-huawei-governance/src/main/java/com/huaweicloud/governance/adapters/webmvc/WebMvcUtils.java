@@ -19,11 +19,10 @@ package com.huaweicloud.governance.adapters.webmvc;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.common.util.HeaderUtil;
 
 public class WebMvcUtils {
   private WebMvcUtils() {
@@ -33,13 +32,38 @@ public class WebMvcUtils {
   /**
    * Create a GovernanceRequest from HttpServletRequest
    */
-  public static GovernanceRequest convert(HttpServletRequest request) {
-    GovernanceRequest govHttpRequest = new GovernanceRequest();
-    govHttpRequest.setHeaders(HeaderUtil.getHeaders(request));
-    govHttpRequest.setMethod(request.getMethod());
-    govHttpRequest.setUri(request.getRequestURI());
-    govHttpRequest.setServiceName(InvocationContextHolder
-        .getOrCreateInvocationContext().getContext(InvocationContext.CONTEXT_MICROSERVICE_NAME));
-    return govHttpRequest;
+  public static GovernanceRequestExtractor convert(HttpServletRequest request) {
+    return new GovernanceRequestExtractor() {
+      @Override
+      public String apiPath() {
+        return request.getRequestURI();
+      }
+
+      @Override
+      public String method() {
+        return request.getMethod();
+      }
+
+      @Override
+      public String header(String key) {
+        return request.getHeader(key);
+      }
+
+      @Override
+      public String instanceId() {
+        return null;
+      }
+
+      @Override
+      public String serviceName() {
+        return InvocationContextHolder
+            .getOrCreateInvocationContext().getContext(InvocationContext.CONTEXT_MICROSERVICE_NAME);
+      }
+
+      @Override
+      public Object sourceRequest() {
+        return request;
+      }
+    };
   }
 }
