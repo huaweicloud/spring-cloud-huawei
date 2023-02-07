@@ -15,22 +15,16 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.common.access;
+package com.huaweicloud.common.context;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+public class InvocationFinishEvent {
+  private final InvocationStage invocationStage;
 
-import com.huaweicloud.common.configration.dynamic.ContextProperties;
-
-@Configuration
-public class AccessLogConfiguration {
-  @Bean
-  public AccessLogLogger accessLogLogger(ContextProperties contextProperties) {
-    return new AccessLogLogger(contextProperties);
+  public InvocationFinishEvent(InvocationStage invocationStage) {
+    this.invocationStage = invocationStage;
   }
 
-  @Bean
-  public AccessLogSubscriber accessLogSubscriber(ContextProperties contextProperties, AccessLogLogger accessLogLogger) {
-    return new AccessLogSubscriber(contextProperties, accessLogLogger);
+  public InvocationStage getInvocationStage() {
+    return this.invocationStage;
   }
 }

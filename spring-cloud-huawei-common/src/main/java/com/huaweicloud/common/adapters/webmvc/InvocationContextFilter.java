@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.common.context.InvocationStage;
 
 public class InvocationContextFilter implements Filter {
   private final ContextProperties contextProperties;
@@ -60,6 +61,30 @@ public class InvocationContextFilter implements Filter {
       context.putContext(InvocationContext.CONTEXT_TRACE_ID, InvocationContext.generateTraceId());
     }
 
-    chain.doFilter(request, response);
+    InvocationStage stage = context.getInvocationStage();
+    stage.begin(buildId((HttpServletRequest) request, context));
+    try {
+      chain.doFilter(request, response);
+    } finally {
+      stage.finish(((HttpServletResponse) response).getStatus());
+    }
+  }
+
+  private String buildId(HttpServletRequest request, InvocationContext context) {
+    if (contextProperties.isUseContextOperationForMetrics()) {
+      if (context.getContext(InvocationContext.CONTEXT_OPERATION_ID) != null) {
+        return context.getContext(InvocationContext.CONTEXT_OPERATION_ID);
+      }
+      String id = buildOperation(request);
+      context.putContext(InvocationContext.CONTEXT_OPERATION_ID, id);
+      return id;
+    }
+    return buildOperation(request);
+  }
+
+  private String buildOperation(HttpServletRequest request) {
+    return request.getMethod()
+        + " "
+        + request.getRequestURI();
   }
 }

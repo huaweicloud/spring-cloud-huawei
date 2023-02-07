@@ -18,7 +18,7 @@
 package com.huaweicloud.governance.adapters.gateway;
 
 import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
-import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -45,7 +45,7 @@ public class InstanceBulkheadGlobalFilter implements GlobalFilter, Ordered {
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-    GovernanceRequest governanceRequest = GatewayUtils.createConsumerGovernanceRequest(exchange);
+    GovernanceRequestExtractor governanceRequest = GatewayUtils.createConsumerGovernanceRequest(exchange);
 
     Mono<Void> toRun = chain.filter(exchange);
 
@@ -53,14 +53,14 @@ public class InstanceBulkheadGlobalFilter implements GlobalFilter, Ordered {
     return toRun;
   }
 
-  private Mono<Void> addInstanceBulkhead(GovernanceRequest governanceRequest,
+  private Mono<Void> addInstanceBulkhead(GovernanceRequestExtractor governanceRequest,
       Mono<Void> toRun) {
     Bulkhead bulkhead = instanceBulkheadHandler.getActuator(governanceRequest);
     Mono<Void> mono = toRun;
     if (bulkhead != null) {
       mono = toRun.transformDeferred(BulkheadOperator.of(bulkhead))
           .onErrorResume(BulkheadFullException.class, (t) -> {
-            LOGGER.error("bulkhead is full [{}]", governanceRequest.getInstanceId());
+            LOGGER.error("bulkhead is full [{}]", governanceRequest.instanceId());
             return Mono.error(new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
                 "bulkhead is full.", t));
           });

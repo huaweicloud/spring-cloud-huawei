@@ -17,6 +17,9 @@
 
 package com.huaweicloud.common.access;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,43 +31,78 @@ public class AccessLogLogger {
 
   private final ContextProperties contextProperties;
 
+  private final String format;
+
   public AccessLogLogger(ContextProperties contextProperties) {
     this.contextProperties = contextProperties;
+
+    format = initializeFormat(contextProperties);
   }
 
-  public void log(InvocationContext context, String event,
-      String request, String source, String target, int status, long time) {
-    log(String.format("%1$s|%2$s|%3$s|%4$s|%5$d|%6$1d|%7$s",
-        context.getContext(InvocationContext.CONTEXT_TRACE_ID),
-        event,
-        source == null ? "" : source,
-        target == null ? "" : target,
-        status,
-        time,
-        request));
+  private String initializeFormat(ContextProperties contextProperties) {
+    final String format;
+    StringBuilder result = new StringBuilder();
+    result.append("|");
+
+    if (contextProperties.getTraceContexts() != null) {
+      for (int i = 0; i < contextProperties.getTraceContexts().size(); i++) {
+        result.append("{}|");
+      }
+    }
+    result.append("{}|{}|{}|{}|");
+
+    format = result.toString();
+    return format;
   }
 
-  private void log(String format, Object... arguments) {
+  public void log(InvocationContext context,
+      String request, int status, long time) {
+    if (!this.contextProperties.isEnableTraceInfo()) {
+      return;
+    }
+
     if (this.contextProperties.getTraceLevel() == null) {
-      LOGGER.info(format, arguments);
+      LOGGER.info(format,
+          buildArguments(context, request, status, time));
       return;
     }
 
     if ("WARN".equals(this.contextProperties.getTraceLevel())) {
-      LOGGER.warn(format, arguments);
+      LOGGER.warn(format,
+          buildArguments(context, request, status, time));
       return;
     }
 
     if ("ERROR".equals(this.contextProperties.getTraceLevel())) {
-      LOGGER.error(format, arguments);
+      LOGGER.error(format,
+          buildArguments(context, request, status, time));
       return;
     }
 
     if ("DEBUG".equals(this.contextProperties.getTraceLevel())) {
-      LOGGER.debug(format, arguments);
+      LOGGER.debug(format,
+          buildArguments(context, request, status, time));
       return;
     }
 
-    LOGGER.info(format, arguments);
+    LOGGER.info(format,
+        buildArguments(context, request, status, time));
+  }
+
+  private Object[] buildArguments(InvocationContext context,
+      String request, int status, long time) {
+    List<Object> result = new ArrayList<>(10);
+
+    if (contextProperties.getTraceContexts() != null) {
+      for (String item : contextProperties.getTraceContexts()) {
+        result.add(context.getContext(item) == null ? "" : context.getContext(item));
+      }
+    }
+    result.add(context.getContext(InvocationContext.CONTEXT_TRACE_ID));
+    result.add(status);
+    result.add(time);
+    result.add(request);
+
+    return result.toArray(new Object[0]);
   }
 }

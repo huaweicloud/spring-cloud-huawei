@@ -27,9 +27,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.huaweicloud.common.access.AccessLogLogger;
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
-import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.common.event.ClosedEventListener;
 import com.huaweicloud.common.metrics.InvocationMetrics;
 
@@ -64,19 +62,6 @@ public class WebMvcConfiguration {
   }
 
   @Bean
-  public FilterRegistrationBean<InvocationMetricsFilter> invocationMetricsFilter(
-      InvocationMetrics invocationMetrics, GovernanceProperties governanceProperties) {
-    FilterRegistrationBean<InvocationMetricsFilter> registrationBean
-        = new FilterRegistrationBean<>();
-
-    registrationBean.setFilter(new InvocationMetricsFilter(invocationMetrics));
-    registrationBean.addUrlPatterns("/*");
-    registrationBean.setOrder(governanceProperties.getWebmvc().getInvocationMetrics().getOrder());
-
-    return registrationBean;
-  }
-
-  @Bean
   public FilterRegistrationBean<InvocationContextFilter> invocationContextFilter(
       ContextProperties contextProperties) {
     FilterRegistrationBean<InvocationContextFilter> registrationBean
@@ -85,19 +70,6 @@ public class WebMvcConfiguration {
     registrationBean.setFilter(new InvocationContextFilter(contextProperties));
     registrationBean.addUrlPatterns("/*");
     registrationBean.setOrder(Integer.MIN_VALUE);
-
-    return registrationBean;
-  }
-
-  @Bean
-  public FilterRegistrationBean<AccessLogFilter> accessLogFilter(
-      ContextProperties contextProperties, AccessLogLogger accessLogLogger) {
-    FilterRegistrationBean<AccessLogFilter> registrationBean
-        = new FilterRegistrationBean<>();
-
-    registrationBean.setFilter(new AccessLogFilter(contextProperties, accessLogLogger));
-    registrationBean.addUrlPatterns("/*");
-    registrationBean.setOrder(Integer.MIN_VALUE + 1);
 
     return registrationBean;
   }

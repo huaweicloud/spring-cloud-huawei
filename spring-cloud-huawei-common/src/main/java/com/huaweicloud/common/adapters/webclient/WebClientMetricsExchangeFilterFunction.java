@@ -23,22 +23,14 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.ExchangeFunction;
 
-import com.huaweicloud.common.access.AccessLogLogger;
-import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.common.context.InvocationStage;
 
 import reactor.core.publisher.Mono;
 
-public class AccessLogExchangeFilterFunction implements ExchangeFilterFunction, Ordered {
-  private final ContextProperties contextProperties;
-
-  private final AccessLogLogger accessLogLogger;
-
-  public AccessLogExchangeFilterFunction(
-      ContextProperties contextProperties, AccessLogLogger accessLogLogger) {
-    this.contextProperties = contextProperties;
-    this.accessLogLogger = accessLogLogger;
+public class WebClientMetricsExchangeFilterFunction implements ExchangeFilterFunction, Ordered {
+  public WebClientMetricsExchangeFilterFunction() {
   }
 
   @Override
@@ -49,23 +41,17 @@ public class AccessLogExchangeFilterFunction implements ExchangeFilterFunction, 
 
   @Override
   public Mono<ClientResponse> filter(ClientRequest request, ExchangeFunction next) {
-    if (!contextProperties.isEnableTraceInfo()) {
-      return next.exchange(request);
-    }
-
     InvocationContext context = request.attribute(InvocationContextHolder.ATTRIBUTE_KEY).isPresent() ?
         (InvocationContext) request.attribute(InvocationContextHolder.ATTRIBUTE_KEY).get() : new InvocationContext();
-    String url = request.url().getPath();
-    String target = request.url().getHost() + ":" + request.url().getPort();
-    long begin = System.currentTimeMillis();
+    String stageName = context.getInvocationStage().recordStageBegin(stageId(request));
     return next.exchange(request).doOnSuccess(response -> {
-      accessLogLogger.log(context, "WebClient", url,
-          null, target, response.rawStatusCode(),
-          System.currentTimeMillis() - begin);
+      context.getInvocationStage().recordStageEnd(stageName);
     }).doOnError(error -> {
-      accessLogLogger.log(context, "WebClient(" + error.getClass().getName() + ")", url,
-          null, target, -1,
-          System.currentTimeMillis() - begin);
+      context.getInvocationStage().recordStageEnd(stageName);
     });
+  }
+
+  private String stageId(ClientRequest request) {
+    return InvocationStage.STAGE_WEB_CLIENT + " " + request.method().name() + " " + request.url().getPath();
   }
 }

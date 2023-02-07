@@ -22,7 +22,7 @@ import java.net.URI;
 
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
-import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.apache.servicecomb.governance.policy.RetryPolicy;
 import org.apache.servicecomb.governance.processor.injection.Fault;
 import org.apache.servicecomb.governance.processor.injection.FaultInjectionDecorators;
@@ -39,10 +39,10 @@ import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import com.huaweicloud.common.adapters.loadbalancer.RetryContext;
 import com.huaweicloud.common.adapters.web.FallbackClientHttpResponse;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 
 import io.github.resilience4j.decorators.Decorators;
 import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
@@ -108,7 +108,7 @@ public class GovernanceRestTemplate extends RestTemplate {
   private ClientHttpResponse executeWithFault(URI url, @Nullable HttpMethod method,
       @Nullable RequestCallback requestCallback,
       ClientHttpRequest request) {
-    GovernanceRequest governanceRequest = RestTemplateUtils.createGovernanceRequest(request);
+    GovernanceRequestExtractor governanceRequest = RestTemplateUtils.createGovernanceRequest(request);
 
     try {
       FallbackClientHttpResponse result = addFault(governanceRequest);
@@ -123,7 +123,7 @@ public class GovernanceRestTemplate extends RestTemplate {
   }
 
   private ClientHttpResponse executeWithRetry(URI url, HttpMethod method, RequestCallback requestCallback,
-      ClientHttpRequest request, GovernanceRequest governanceRequest) {
+      ClientHttpRequest request, GovernanceRequestExtractor governanceRequest) {
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
 
     try {
@@ -167,7 +167,7 @@ public class GovernanceRestTemplate extends RestTemplate {
     }
   }
 
-  private FallbackClientHttpResponse addFault(GovernanceRequest governanceRequest) {
+  private FallbackClientHttpResponse addFault(GovernanceRequestExtractor governanceRequest) {
     Fault fault = faultInjectionHandler.getActuator(governanceRequest);
     if (fault != null) {
       FaultInjectionDecorateCheckedSupplier<Object> faultInjectionDecorateCheckedSupplier =

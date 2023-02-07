@@ -14,23 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.huaweicloud.sample;
 
-package com.huaweicloud.common.access;
+public interface Constant {
+  String orderServiceUrl = "http://127.0.0.1:9098";
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+  String priceServiceUrl = "http://127.0.0.1:9090";
 
-import com.huaweicloud.common.configration.dynamic.ContextProperties;
-
-@Configuration
-public class AccessLogConfiguration {
-  @Bean
-  public AccessLogLogger accessLogLogger(ContextProperties contextProperties) {
-    return new AccessLogLogger(contextProperties);
-  }
-
-  @Bean
-  public AccessLogSubscriber accessLogSubscriber(ContextProperties contextProperties, AccessLogLogger accessLogLogger) {
-    return new AccessLogSubscriber(contextProperties, accessLogLogger);
-  }
+  String gatewayServiceUrl = "http://127.0.0.1:10088";
 }

@@ -20,6 +20,7 @@ package com.huaweicloud.servicecomb.dashboard;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
@@ -30,13 +31,14 @@ import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 
 import com.huaweicloud.common.configration.dynamic.DashboardProperties;
+import com.huaweicloud.common.context.InvocationStage;
 import com.huaweicloud.common.metrics.InvocationMetrics;
 import com.huaweicloud.servicecomb.dashboard.model.MonitorDataProvider;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
+import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
 
 public class InvocationMonitorDataProvider implements MonitorDataProvider {
   public static final String NAME_PROVIDER = "Provider.";
@@ -86,7 +88,8 @@ public class InvocationMonitorDataProvider implements MonitorDataProvider {
     Map<String, GovernanceData> metricsData = new HashMap<>();
 
     for (Meter meter : meters) {
-      if (!meter.getId().getName().startsWith(InvocationMetrics.METRICS_PREFIX)) {
+      if (!(InvocationMetrics.METRICS_CALLS.equals(meter.getId().getName())
+          && InvocationStage.STAGE_ALL.equals(meter.getId().getTag(InvocationMetrics.TAG_STAGE)))) {
         continue;
       }
 
@@ -104,17 +107,15 @@ public class InvocationMonitorDataProvider implements MonitorDataProvider {
         return obj;
       });
 
-      if (InvocationMetrics.METRICS_CALLS.equals(meter.getId().getName())) {
-        Timer timer = (Timer) meter;
-        if (InvocationMetrics.CALLS_TAG_SUCCESSFUL.equals(meter.getId().getTag(InvocationMetrics.TAG_KIND))) {
-          governanceData.setSuccessfulCalls(timer.count());
-        } else if (InvocationMetrics.CALLS_TAG_FAILED.equals(meter.getId().getTag(InvocationMetrics.TAG_KIND))) {
-          governanceData.setFailedCalls(timer.count());
-        } else {
-          continue;
-        }
-        governanceData.setTotalTime(timer.totalTime(TimeUnit.MILLISECONDS) + governanceData.getTotalTime());
+      DistributionSummary summary = (DistributionSummary) meter;
+      if (Integer.parseInt(Objects.requireNonNull(meter.getId().getTag(InvocationMetrics.TAG_STATUS))) / 100 == 5) {
+        // HTTP 5xx error, this module does not include spring-web
+        governanceData.setFailedCalls(summary.count());
+      } else {
+        governanceData.setSuccessfulCalls(summary.count());
       }
+      governanceData.setTotalTime(TimeUnit.NANOSECONDS.toMillis(Double.valueOf(summary.totalAmount()).longValue())
+          + governanceData.getTotalTime());
     }
 
     if (lastMetricsData == null) {

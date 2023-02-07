@@ -18,7 +18,7 @@
 package com.huaweicloud.governance.adapters.webflux;
 
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
-import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.reactive.filter.OrderedWebFilter;
@@ -48,14 +48,14 @@ public class RateLimitingWebFilter implements OrderedWebFilter {
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-    GovernanceRequest governanceRequest = WebFluxUtils.createProviderGovernanceRequest(exchange);
+    GovernanceRequestExtractor governanceRequest = WebFluxUtils.createProviderGovernanceRequest(exchange);
 
     Mono<Void> toRun = chain.filter(exchange);
 
     return addRateLimiter(governanceRequest, toRun);
   }
 
-  private Mono<Void> addRateLimiter(GovernanceRequest governanceRequest, Mono<Void> toRun) {
+  private Mono<Void> addRateLimiter(GovernanceRequestExtractor governanceRequest, Mono<Void> toRun) {
     RateLimiter rateLimiter = rateLimitingHandler.getActuator(governanceRequest);
     Mono<Void> mono = toRun;
     if (rateLimiter != null) {

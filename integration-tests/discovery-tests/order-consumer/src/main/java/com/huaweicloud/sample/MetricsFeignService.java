@@ -14,23 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.huaweicloud.sample;
 
-package com.huaweicloud.common.access;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+@FeignClient(name = "price", contextId = "metricsFeignService", path = "/price/metrics")
+public interface MetricsFeignService {
+  @GetMapping("/testGet")
+  String testGet(@RequestParam("name") String name);
 
-import com.huaweicloud.common.configration.dynamic.ContextProperties;
-
-@Configuration
-public class AccessLogConfiguration {
-  @Bean
-  public AccessLogLogger accessLogLogger(ContextProperties contextProperties) {
-    return new AccessLogLogger(contextProperties);
-  }
-
-  @Bean
-  public AccessLogSubscriber accessLogSubscriber(ContextProperties contextProperties, AccessLogLogger accessLogLogger) {
-    return new AccessLogSubscriber(contextProperties, accessLogLogger);
-  }
+  @PostMapping("/testPost")
+  String testPost(@RequestBody String name);
 }

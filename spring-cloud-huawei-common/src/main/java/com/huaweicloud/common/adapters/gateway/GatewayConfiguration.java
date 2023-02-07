@@ -23,7 +23,6 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.huaweicloud.common.access.AccessLogLogger;
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
 
 @Configuration
@@ -37,7 +36,7 @@ public class GatewayConfiguration {
   }
 
   @Bean
-  public GlobalFilter accessLogGlobalFilter(ContextProperties contextProperties, AccessLogLogger accessLogLogger) {
-    return new AccessLogGlobalFilter(contextProperties, accessLogLogger);
+  public GlobalFilter gatewayMetricsGlobalFilter() {
+    return new GatewayMetricsGlobalFilter();
   }
 }

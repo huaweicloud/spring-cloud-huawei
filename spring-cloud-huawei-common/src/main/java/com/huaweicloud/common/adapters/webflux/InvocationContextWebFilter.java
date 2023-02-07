@@ -19,12 +19,15 @@ package com.huaweicloud.common.adapters.webflux;
 
 import org.springframework.boot.web.reactive.filter.OrderedWebFilter;
 import org.springframework.core.Ordered;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
 
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.common.context.InvocationStage;
 
 import reactor.core.publisher.Mono;
 
@@ -58,6 +61,41 @@ public class InvocationContextWebFilter implements OrderedWebFilter {
 
     exchange.getAttributes().put(InvocationContextHolder.ATTRIBUTE_KEY, context);
 
-    return chain.filter(exchange);
+    InvocationStage stage = context.getInvocationStage();
+    stage.begin(buildId(exchange.getRequest(), context));
+
+    return chain.filter(exchange).doOnSuccess(v -> postProcess(exchange, null))
+        .doOnError(e -> postProcess(exchange, e));
+  }
+
+  private void postProcess(ServerWebExchange exchange, Throwable e) {
+    InvocationStage stage = ((InvocationContext) exchange
+        .getAttribute(InvocationContextHolder.ATTRIBUTE_KEY))
+        .getInvocationStage();
+    if (e instanceof ResponseStatusException) {
+      stage.finish(((ResponseStatusException) e).getRawStatusCode());
+      return;
+    }
+    stage.finish(exchange.getResponse().getStatusCode() == null ? -1 : exchange.getResponse().getStatusCode().value());
+  }
+
+  private String buildId(ServerHttpRequest request, InvocationContext context) {
+    if (contextProperties.isUseContextOperationForMetrics()) {
+      if (context.getContext(InvocationContext.CONTEXT_OPERATION_ID) != null) {
+        return context.getContext(InvocationContext.CONTEXT_OPERATION_ID);
+      }
+      String id = buildOperation(request);
+      context.putContext(InvocationContext.CONTEXT_OPERATION_ID, id);
+      return id;
+    }
+    return buildOperation(request);
+  }
+
+  private String buildOperation(ServerHttpRequest request) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(request.getMethod());
+    sb.append(" ");
+    sb.append(request.getURI().getPath());
+    return sb.toString();
   }
 }

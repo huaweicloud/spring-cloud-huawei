@@ -17,9 +17,7 @@
 package com.huaweicloud.governance.adapters.feign;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +30,7 @@ import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
-import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.apache.servicecomb.governance.policy.CircuitBreakerPolicy;
 import org.apache.servicecomb.governance.policy.RetryPolicy;
 import org.apache.servicecomb.governance.processor.injection.Fault;
@@ -59,12 +57,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
 
-import com.huaweicloud.common.access.AccessLogLogger;
-import com.huaweicloud.common.adapters.loadbalancer.RetryContext;
-import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.common.context.InvocationStage;
 import com.huaweicloud.common.event.EventManager;
+import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadFullException;
@@ -114,17 +111,12 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
 
   private final InstanceBulkheadHandler instanceBulkheadHandler;
 
-  private final ContextProperties contextProperties;
-
-  private final AccessLogLogger accessLogLogger;
-
   public GovernanceFeignBlockingLoadBalancerClient(RetryHandler retryHandler,
       FaultInjectionHandler faultInjectionHandler,
       InstanceIsolationHandler instanceIsolationHandler,
       InstanceBulkheadHandler instanceBulkheadHandler,
       Client delegate, LoadBalancerClient loadBalancerClient,
-      LoadBalancerProperties properties, LoadBalancerClientFactory loadBalancerClientFactory,
-      ContextProperties contextProperties, AccessLogLogger accessLogLogger) {
+      LoadBalancerProperties properties, LoadBalancerClientFactory loadBalancerClientFactory) {
     this.retryHandler = retryHandler;
     this.faultInjectionHandler = faultInjectionHandler;
     this.instanceIsolationHandler = instanceIsolationHandler;
@@ -133,46 +125,31 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
     this.loadBalancerClient = loadBalancerClient;
     this.properties = properties;
     this.loadBalancerClientFactory = loadBalancerClientFactory;
-    this.contextProperties = contextProperties;
-    this.accessLogLogger = accessLogLogger;
   }
 
   @Override
   public Response execute(Request request, Request.Options options) {
     final URI originalUri = URI.create(request.url());
 
-    GovernanceRequest governanceRequest = convert(request);
-    governanceRequest.setServiceName(originalUri.getHost());
-
-    if (!contextProperties.isEnableTraceInfo()) {
-      return decorateWithFault(request, options, originalUri, governanceRequest);
-    }
-
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
-    long begin = System.currentTimeMillis();
+    String stageName = context.getInvocationStage().recordStageBegin(stageId(originalUri, request));
     try {
-      Response response = decorateWithFault(request, options, originalUri, governanceRequest);
-      accessLogLogger.log(context, "Feign",
-          governanceRequest.getUri(),
-          null,
-          request.requestTemplate().feignTarget().name(),
-          response.status(),
-          System.currentTimeMillis() - begin);
+      Response response = decorateWithFault(request, options, originalUri);
+      context.getInvocationStage().recordStageEnd(stageName);
       return response;
     } catch (Throwable error) {
-      accessLogLogger.log(context, "Feign(" + error.getClass().getName() + ")",
-          governanceRequest.getUri(),
-          null,
-          request.requestTemplate().feignTarget().name(),
-          -1,
-          System.currentTimeMillis() - begin);
+      context.getInvocationStage().recordStageEnd(stageName);
       throw error;
     }
   }
 
-  private Response decorateWithFault(Request request, Options options, URI originalUri,
-      GovernanceRequest governanceRequest) {
+  private String stageId(URI uri, Request request) {
+    return InvocationStage.STAGE_FEIGN + " " + request.httpMethod().name() + " " + uri.getPath();
+  }
+
+  private Response decorateWithFault(Request request, Options options, URI originalUri) {
     // add Fault
+    GovernanceRequestExtractor governanceRequest = FeignUtils.convert(request, originalUri, null);
     Fault fault = faultInjectionHandler.getActuator(governanceRequest);
     if (fault != null) {
       FaultInjectionDecorateCheckedSupplier<Object> faultInjectionDecorateCheckedSupplier =
@@ -198,14 +175,14 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
   }
 
   private Response decorateWithRetry(Request request, Options options, URI originalUri,
-      GovernanceRequest governanceRequest) {
+      GovernanceRequestExtractor governanceRequest) {
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
     Retry retry = retryHandler.getActuator(governanceRequest);
     if (retry == null) {
       // when retry not enabled and Isolation enabled, we need get instance from RetryContext
       RetryContext retryContext = new RetryContext(0);
       context.putLocalContext(RetryContext.RETRY_CONTEXT, retryContext);
-      return doExecute(originalUri, request, options, governanceRequest);
+      return doExecute(originalUri, request, options);
     }
 
     CheckedFunction0<Response> next = () -> {
@@ -218,7 +195,7 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
           response.close();
         }
       }
-      Response response = doExecute(originalUri, request, options, governanceRequest);
+      Response response = doExecute(originalUri, request, options);
       context.putLocalContext(CONTEXT_LAST_RESPONSE, response);
       return response;
     };
@@ -236,14 +213,14 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
     }
   }
 
-  private void addRetryContext(GovernanceRequest governanceRequest) {
+  private void addRetryContext(GovernanceRequestExtractor governanceRequest) {
     RetryPolicy retryPolicy = retryHandler.matchPolicy(governanceRequest);
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
     RetryContext retryContext = new RetryContext(retryPolicy.getRetryOnSame());
     context.putLocalContext(RetryContext.RETRY_CONTEXT, retryContext);
   }
 
-  private Response doExecute(URI originalUri, Request request, Options options, GovernanceRequest governanceRequest) {
+  private Response doExecute(URI originalUri, Request request, Options options) {
     String serviceId = originalUri.getHost();
     Assert.state(serviceId != null, "Request URI does not contain a valid hostname: " + originalUri);
     String hint = getHint(serviceId);
@@ -269,7 +246,7 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
           .body(message, StandardCharsets.UTF_8).build();
     }
 
-    governanceRequest.setInstanceId(instance.getInstanceId());
+    GovernanceRequestExtractor governanceRequest = FeignUtils.convert(request, originalUri, instance.getInstanceId());
 
     String reconstructedUrl = loadBalancerClient.reconstructURI(instance, originalUri).toString();
     Request newRequest = buildRequest(request, reconstructedUrl);
@@ -331,7 +308,8 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
         requestHeaders, null, new HashMap<>());
   }
 
-  private Response executeWithLoadBalancerLifecycleProcessing(GovernanceRequest governanceRequest, Client feignClient,
+  private Response executeWithLoadBalancerLifecycleProcessing(GovernanceRequestExtractor governanceRequest,
+      Client feignClient,
       Request.Options options,
       Request feignRequest, org.springframework.cloud.client.loadbalancer.Request lbRequest,
       org.springframework.cloud.client.loadbalancer.Response<ServiceInstance> lbResponse,
@@ -341,7 +319,7 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
         supportedLifecycleProcessors);
   }
 
-  private Response executeWithInstanceIsolation(GovernanceRequest governanceRequest, Client feignClient,
+  private Response executeWithInstanceIsolation(GovernanceRequestExtractor governanceRequest, Client feignClient,
       Options options,
       Request feignRequest, org.springframework.cloud.client.loadbalancer.Request lbRequest,
       org.springframework.cloud.client.loadbalancer.Response<ServiceInstance> lbResponse,
@@ -376,7 +354,7 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
     } catch (Throwable e) {
       if (e instanceof CallNotPermittedException) {
         // when instance isolated, request to pull instances.
-        LOG.error("instance isolated [{}]", governanceRequest.getInstanceId());
+        LOG.error("instance isolated [{}]", governanceRequest.instanceId());
         EventManager.post(new PullInstanceEvent());
         return Response.builder().status(503).reason("instance isolated.").request(feignRequest).build();
       }
@@ -385,7 +363,8 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
     }
   }
 
-  private Response executeWithInstanceBulkhead(GovernanceRequest governanceRequest, Client feignClient, Options options,
+  private Response executeWithInstanceBulkhead(GovernanceRequestExtractor governanceRequest, Client feignClient,
+      Options options,
       Request feignRequest, org.springframework.cloud.client.loadbalancer.Request lbRequest,
       org.springframework.cloud.client.loadbalancer.Response<ServiceInstance> lbResponse,
       Set<LoadBalancerLifecycle> supportedLifecycleProcessors) {
@@ -408,27 +387,11 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
       return dcs.get();
     } catch (Throwable e) {
       if (e instanceof BulkheadFullException) {
-        LOG.error("instance bulkhead is full [{}]", governanceRequest.getInstanceId());
+        LOG.error("instance bulkhead is full [{}]", governanceRequest.instanceId());
         return Response.builder().status(503).reason("instance bulkhead is full.").request(feignRequest).build();
       }
 
       throw new RuntimeException(e);
-    }
-  }
-
-  private GovernanceRequest convert(Request request) {
-    GovernanceRequest governanceRequest = new GovernanceRequest();
-    try {
-      URL url = new URL(request.url());
-      governanceRequest.setUri(url.getPath());
-      governanceRequest.setMethod(request.httpMethod().name());
-      Map<String, String> headers = new HashMap<>(request.headers().size());
-      request.headers().forEach((k, v) -> headers.put(k, v.iterator().next()));
-      governanceRequest.setHeaders(headers);
-      governanceRequest.setServiceName(URI.create(request.url()).getHost());
-      return governanceRequest;
-    } catch (MalformedURLException e) {
-      return governanceRequest;
     }
   }
 }

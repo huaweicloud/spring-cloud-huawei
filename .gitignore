@@ -25,6 +25,7 @@
 hs_err_pid*
 
 .idea/
+.run/
 *.iml
 *.ipr
 *.iws

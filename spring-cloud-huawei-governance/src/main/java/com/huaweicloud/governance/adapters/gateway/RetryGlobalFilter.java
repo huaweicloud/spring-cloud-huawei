@@ -18,7 +18,7 @@
 package com.huaweicloud.governance.adapters.gateway;
 
 import org.apache.servicecomb.governance.handler.RetryHandler;
-import org.apache.servicecomb.governance.marker.GovernanceRequest;
+import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
@@ -26,7 +26,7 @@ import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.huaweicloud.common.adapters.loadbalancer.RetryContext;
+import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 
 import io.github.resilience4j.reactor.retry.RetryOperator;
 import io.github.resilience4j.retry.Retry;
@@ -44,14 +44,15 @@ public class RetryGlobalFilter implements GlobalFilter, Ordered {
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-    GovernanceRequest governanceRequest = GatewayUtils.createConsumerGovernanceRequest(exchange);
+    GovernanceRequestExtractor governanceRequest = GatewayUtils.createConsumerGovernanceRequest(exchange);
 
     Mono<Void> toRun = chain.filter(exchange);
 
     return addRetry(exchange, governanceRequest, toRun);
   }
 
-  private Mono<Void> addRetry(ServerWebExchange exchange, GovernanceRequest governanceRequest, Mono<Void> toRun) {
+  private Mono<Void> addRetry(ServerWebExchange exchange, GovernanceRequestExtractor governanceRequest,
+      Mono<Void> toRun) {
     Retry retry = retryHandler.getActuator(governanceRequest);
     if (retry == null) {
       return toRun;

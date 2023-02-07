@@ -17,7 +17,7 @@
 
 package com.huaweicloud.common.metrics;
 
-import java.util.Map;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -27,10 +27,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.eventbus.Subscribe;
 import com.huaweicloud.common.configration.dynamic.MetricsProperties;
+import com.huaweicloud.common.context.InvocationFinishEvent;
+import com.huaweicloud.common.context.InvocationStage;
+import com.huaweicloud.common.event.EventManager;
 
+import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
 
 /**
  * Invocation metrics maintains metrics for `the execution of an operation` of a microservice.
@@ -41,94 +46,103 @@ import io.micrometer.core.instrument.Timer;
 public class InvocationMetrics {
   private static final Logger LOGGER = LoggerFactory.getLogger(InvocationMetrics.class);
 
-  public static final String CONTEXT_TIME = "x-m-start";
-
-  public static final String CONTEXT_OPERATION = "x-m-operation";
+  public static final String TAGS_SEPARATOR = "@";
 
   public static final String METRICS_PREFIX = "metrics.invocation.";
 
-  public static final String TAG_KIND = "kind";
-
   public static final String TAG_NAME = "name";
 
-  // calls: Timer
+  public static final String TAG_STAGE = "stage";
+
+  public static final String TAG_STATUS = "status";
+
   public static final String METRICS_CALLS = METRICS_PREFIX + "calls";
-
-  public static final String CALLS_TAG_FAILED = "failed";
-
-  public static final String CALLS_TAG_SUCCESSFUL = "successful";
 
   private final MeterRegistry meterRegistry;
 
   private final MetricsProperties metricsProperties;
 
-  private final Pattern includePatter;
+  private final Pattern includePattern;
 
-  private final Pattern excludePatter;
+  private final Pattern excludePattern;
 
-  private final ConcurrentMap<String, Timer> successfulCalls = new ConcurrentHashMap<>();
-
-  private final ConcurrentMap<String, Timer> failedCalls = new ConcurrentHashMap<>();
+  private final ConcurrentMap<String, DistributionSummary> invocationDistribution = new ConcurrentHashMap<>();
 
   public InvocationMetrics(MeterRegistry meterRegistry, MetricsProperties metricsProperties) {
     this.meterRegistry = meterRegistry;
     this.metricsProperties = metricsProperties;
     if (StringUtils.isNotEmpty(metricsProperties.getExcludePattern())) {
-      excludePatter = Pattern.compile(metricsProperties.getIncludePattern());
+      excludePattern = Pattern.compile(metricsProperties.getIncludePattern());
     } else {
-      excludePatter = null;
+      excludePattern = null;
     }
     if (StringUtils.isNotEmpty(metricsProperties.getIncludePattern())) {
-      includePatter = Pattern.compile(metricsProperties.getIncludePattern());
+      includePattern = Pattern.compile(metricsProperties.getIncludePattern());
     } else {
-      includePatter = null;
+      includePattern = null;
     }
+
+    EventManager.getEventBoundedAsyncEventBus().register(this);
   }
 
-  public void recordSuccessfulCall(String name, long amount, TimeUnit timeUnit) {
-    if (byPassMethod(name, successfulCalls)) {
+  @Subscribe
+  public void onInvocationFinishEvent(InvocationFinishEvent event) {
+    InvocationStage stage = event.getInvocationStage();
+    recordInvocationDistribution(stage.getId(), InvocationStage.STAGE_ALL,
+        stage.getStatusCode(),
+        stage.getEndTime() - stage.getBeginTime());
+
+    stage.getStages().forEach((k, v) -> recordInvocationDistribution(stage.getId(), k,
+        stage.getStatusCode(),
+        v.getEndTime() - v.getBeginTime()));
+  }
+
+  @VisibleForTesting
+  void recordInvocationDistribution(String id, String stage, int statusCode, double amount) {
+    if (byPassMethod(id, stage, statusCode)) {
       return;
     }
-    Timer timer = getOrCreateSuccessfulCalls("Total number of successful calls", name);
-    timer.record(amount, timeUnit);
+    DistributionSummary summary = getOrCreateInvocationDistribution(id, stage, statusCode);
+    summary.record(amount);
   }
 
-  private boolean byPassMethod(String name, Map<String, Timer> group) {
-    if (excludePatter != null && excludePatter.matcher(name).matches()) {
+  private boolean byPassMethod(String id, String stage, int statusCode) {
+    if (excludePattern != null && excludePattern.matcher(id).matches()) {
       return true;
     }
-    if (includePatter != null && !includePatter.matcher(name).matches()) {
+    if (includePattern != null && !includePattern.matcher(id).matches()) {
       return true;
     }
-    if (group.size() >= metricsProperties.getMaxMethodCount()
-        && !group.containsKey(name)) {
-      LOGGER.warn("metrics method exceed count {}", metricsProperties.getMaxMethodCount());
+    if (invocationDistribution.size() >= metricsProperties.getMaxMetricsCount()
+        && !invocationDistribution.containsKey(buildName(id, stage, statusCode))) {
+      LOGGER.warn("metrics count size exceed count {}",
+          metricsProperties.getMaxMetricsCount());
       return true;
     }
     return false;
   }
 
-  public void recordFailedCall(String name, long amount, TimeUnit timeUnit) {
-    if (byPassMethod(name, failedCalls)) {
-      return;
+  private DistributionSummary getOrCreateInvocationDistribution(String id, String stage, int statusCode) {
+    return invocationDistribution.computeIfAbsent(buildName(id, stage, statusCode),
+        key -> DistributionSummary.builder(METRICS_CALLS)
+            .description("invocation distribution")
+            .tag(TAG_NAME, id)
+            .tag(TAG_STAGE, stage)
+            .tag(TAG_STATUS, Integer.toString(statusCode))
+            .distributionStatisticExpiry(metricsProperties.getDistributionStatisticExpiry())
+            .serviceLevelObjectives(toDoubleArray(metricsProperties.getServiceLevelObjectives()))
+            .register(meterRegistry));
+  }
+
+  private String buildName(String id, String stage, int statusCode) {
+    return id + TAGS_SEPARATOR + stage + TAGS_SEPARATOR + statusCode;
+  }
+
+  private double[] toDoubleArray(List<Integer> distribution) {
+    double[] result = new double[distribution.size()];
+    for (int i = 0; i < result.length; i++) {
+      result[i] = ((Long) TimeUnit.MILLISECONDS.toNanos(distribution.get(i))).doubleValue();
     }
-    Timer timer = getOrCreateFailedCalls("Total number of failed calls", name);
-    timer.record(amount, timeUnit);
-  }
-
-  private Timer getOrCreateSuccessfulCalls(String description, String name) {
-    return successfulCalls.computeIfAbsent(name, key -> Timer.builder(METRICS_CALLS)
-        .description(description)
-        .tag(TAG_NAME, key)
-        .tag(TAG_KIND, CALLS_TAG_SUCCESSFUL)
-        .register(meterRegistry));
-  }
-
-  private Timer getOrCreateFailedCalls(String description, String name) {
-    return failedCalls.computeIfAbsent(name, key -> Timer.builder(METRICS_CALLS)
-        .description(description)
-        .tag(TAG_NAME, key)
-        .tag(TAG_KIND, CALLS_TAG_FAILED)
-        .register(meterRegistry));
+    return result;
   }
 }

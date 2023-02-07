@@ -17,6 +17,7 @@
 package com.huaweicloud.common.configration.dynamic;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class ContextProperties {
@@ -34,11 +35,15 @@ public class ContextProperties {
 
   private String traceLevel;
 
+  private List<String> traceContexts;
+
   private int waitTimeForShutDownInMillis = 3000;
 
   private Map<String, String> headerContextMapper = Collections.emptyMap();
 
   private Map<String, String> queryContextMapper = Collections.emptyMap();
+
+  private boolean useContextOperationForMetrics = false;
 
   public boolean isEnableTraceInfo() {
     return enableTraceInfo;
@@ -78,5 +83,21 @@ public class ContextProperties {
 
   public void setTraceLevel(String traceLevel) {
     this.traceLevel = traceLevel;
+  }
+
+  public List<String> getTraceContexts() {
+    return traceContexts;
+  }
+
+  public void setTraceContexts(List<String> traceContexts) {
+    this.traceContexts = traceContexts;
+  }
+
+  public boolean isUseContextOperationForMetrics() {
+    return useContextOperationForMetrics;
+  }
+
+  public void setUseContextOperationForMetrics(boolean useContextOperationForMetrics) {
+    this.useContextOperationForMetrics = useContextOperationForMetrics;
   }
 }

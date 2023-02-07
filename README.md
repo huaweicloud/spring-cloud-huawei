@@ -10,8 +10,8 @@ Spring Cloud Huawei is a framework that makes it easier and productive to develo
 
 | Branch    | Spring Cloud Huawei Latest Version | Compiled Spring Cloud Version | Compiled Spring Boot Version |
 |-----------|------------------------------------|-------------------------------|------------------------------|
-| master    | 1.10.5-2021.0.x                    | 2021.0.3                      | 2.6.7                        | 
-| 2020.0.x  | 1.10.5-2020.0.x                    | 2020.0.5                      | 2.5.12                       |
+| master    | 1.10.8-2021.0.x                    | 2021.0.5                      | 2.6.13                       | 
+| 2020.0.x  | 1.10.8-2020.0.x                    | 2020.0.6                      | 2.5.14                       |
 | Hoxton    | 1.9.3-Hoxton                       | Hoxton.SR9                    | 2.3.5.RELEASE                |
 | Greenwich | 1.6.1-Greenwich                    | Greenwich.SR6                 | 2.1.6-RELEASE                |
 | Finchley  | 1.6.1-Finchley                     | 2.0.4.RELEASE                 | 2.0.9.RELEASE                |
@@ -25,6 +25,13 @@ Spring Cloud Huawei is a framework that makes it easier and productive to develo
   Spring Cloud Loadbalancer are supported.
 * Before 2020.0.x(include)， springfox is used for swagger generation. After 2021.0.x(include),
   springdoc is used for swagger generation. 
+
+## How to use
+
+1. [Quick Start and Developer Guide](https://github.com/huaweicloud/spring-cloud-huawei/wiki)
+2. [Samples](https://github.com/huaweicloud/spring-cloud-huawei-samples)
+3. [CSE Guide][CSE Developer Guide]
+4. [ServiceStage Guide][ServiceStage]
 
 ## Modules
 
@@ -55,14 +62,10 @@ Spring Cloud Huawei is a framework that makes it easier and productive to develo
      * Support for use [Profile encryption scheme][Profile encryption scheme].
      * Implements the function of identifying encryption mark in service configuration file
 
-## How to use
-
-1. [Quick Start and Developer Guide](https://github.com/huaweicloud/spring-cloud-huawei/wiki)
-2. [Samples](https://github.com/huaweicloud/spring-cloud-huawei-samples)
-3. [ServiceStage Guide][ServiceStage]
 
 [ServiceStage]: https://support.huaweicloud.com/intl/en-us/productdesc-servicestage/ss_productdesc_0001.html
 [CSE]: https://www.huaweicloud.com/intl/en-us/product/cse.html
+[CSE Developer Guide]: https://support.huaweicloud.com/intl/en-us/devg-cse/cse_devg_0002.html
 [SERVICECOMB]: https://servicecomb.apache.org/developers/
 [Service Registry]: https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0017.html
 [Configuration Center]: https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0018.html

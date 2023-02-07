@@ -23,11 +23,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.server.WebFilter;
 
-import com.huaweicloud.common.access.AccessLogLogger;
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
-import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.common.event.ClosedEventListener;
-import com.huaweicloud.common.metrics.InvocationMetrics;
 
 @Configuration
 @ConditionalOnWebApplication(type = Type.REACTIVE)
@@ -35,17 +32,6 @@ public class WebFluxConfiguration {
   @Bean
   public WebFilter invocationContextWebFilter(ContextProperties contextProperties) {
     return new InvocationContextWebFilter(contextProperties);
-  }
-
-  @Bean
-  public WebFilter accessLogWebFilter(ContextProperties contextProperties, AccessLogLogger accessLogLogger) {
-    return new AccessLogWebFilter(contextProperties, accessLogLogger);
-  }
-
-  @Bean
-  public WebFilter invocationMetricsWebFilter(InvocationMetrics invocationMetrics,
-      GovernanceProperties governanceProperties) {
-    return new InvocationMetricsWebFilter(invocationMetrics, governanceProperties);
   }
 
   @Bean
