@@ -89,6 +89,11 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/loadbalance"
+    serviceName-retry: |
+      matches:
+        - apiPath:
+            prefix: "/serviceNameRetry"
+          serviceName: price
   rateLimiting:
     demo-rateLimiting: |
       rate: 10
@@ -101,6 +106,8 @@ servicecomb:
       maxAttempts: 3
     demo-retry-more: |
       maxAttempts: 6
+    serviceName-retry: |
+      maxAttempts: 3
   circuitBreaker:
     demo-circuitBreaker: |
       minimumNumberOfCalls: 10
