@@ -74,6 +74,20 @@ public class GovernanceController {
     return "failed result";
   }
 
+  @RequestMapping("/serviceNameRetry")
+  public String serviceNameRetry(HttpServletResponse response, @RequestParam(name = "invocationID") String invocationID) {
+    retryTimes.putIfAbsent(invocationID, 0);
+    retryTimes.put(invocationID, retryTimes.get(invocationID) + 1);
+
+    int retry = retryTimes.get(invocationID);
+
+    if (retry == 3) {
+      return "try times: " + retry;
+    }
+    response.setStatus(502);
+    return "failed result";
+  }
+
   @RequestMapping("/gateway/retry")
   public String gatewayRetry(HttpServletResponse response, @RequestParam(name = "invocationID") String invocationID) {
     retryTimes.putIfAbsent(invocationID, 0);
