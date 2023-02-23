@@ -60,6 +60,14 @@ public class GovernanceControllerIT {
   }
 
   @Test
+  public void testServiceNameRetry() {
+    String invocationID = UUID.randomUUID().toString();
+    String result = template.getForObject(orderServiceUrl + "/govern/serviceNameRetry?invocationID={1}", String.class,
+            invocationID);
+    assertThat(result).isEqualTo("try times: 3");
+  }
+
+  @Test
   public void testRetryFeign() {
     String invocationID = UUID.randomUUID().toString();
     String result = template.getForObject(orderServiceUrl + "/govern/retryFeign?invocationID={1}", String.class,
@@ -75,6 +83,14 @@ public class GovernanceControllerIT {
           invocationID);
       assertThat(result).isEqualTo("try times: 6");
     }
+  }
+
+  @Test
+  public void testServiceNameRetryFeign() {
+    String invocationID = UUID.randomUUID().toString();
+    String result = template.getForObject(orderServiceUrl + "/govern/serviceNameRetryFeign?invocationID={1}", String.class,
+            invocationID);
+    assertThat(result).isEqualTo("try times: 3");
   }
 
   @Test

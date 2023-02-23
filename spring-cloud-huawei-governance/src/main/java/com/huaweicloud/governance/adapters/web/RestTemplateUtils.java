@@ -62,7 +62,7 @@ public final class RestTemplateUtils {
         if (retryContext != null && retryContext.getLastServer() != null) {
           return retryContext.getLastServer().getServiceId();
         }
-        return null;
+        return request.getURI().getHost();
       }
 
       @Override
