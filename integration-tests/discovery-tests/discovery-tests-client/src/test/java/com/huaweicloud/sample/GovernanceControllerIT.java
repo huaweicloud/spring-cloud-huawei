@@ -60,6 +60,14 @@ public class GovernanceControllerIT {
   }
 
   @Test
+  public void testServiceNameRetry() {
+    String invocationID = UUID.randomUUID().toString();
+    String result = template.getForObject(orderServiceUrl + "/govern/serviceNameRetry?invocationID={1}", String.class,
+            invocationID);
+    assertThat(result).isEqualTo("try times: 3");
+  }
+
+  @Test
   public void testRetryFeign() {
     String invocationID = UUID.randomUUID().toString();
     String result = template.getForObject(orderServiceUrl + "/govern/retryFeign?invocationID={1}", String.class,
@@ -75,6 +83,14 @@ public class GovernanceControllerIT {
           invocationID);
       assertThat(result).isEqualTo("try times: 6");
     }
+  }
+
+  @Test
+  public void testServiceNameRetryFeign() {
+    String invocationID = UUID.randomUUID().toString();
+    String result = template.getForObject(orderServiceUrl + "/govern/serviceNameRetryFeign?invocationID={1}", String.class,
+            invocationID);
+    assertThat(result).isEqualTo("try times: 3");
   }
 
   @Test
@@ -349,5 +365,19 @@ public class GovernanceControllerIT {
     latch.await(20, TimeUnit.SECONDS);
     Assertions.assertTrue(expectedFailed.get());
     Assertions.assertFalse(notExpectedFailed.get());
+  }
+  @Test
+  public void testServiceFaultInjectionConsumerRestTemplate() {
+    // spring decoder not properly decode json null and here will get string `null`
+    Assertions.assertEquals("null",
+            template.getForObject(orderServiceUrl + "/govern/serviceFaultInjectionRestTemplate", String.class));
+  }
+
+
+  @Test
+  public void testServiceNameFaultInjectionConsumerFeign() {
+    // spring decoder not properly decode json null and here will get string `null`
+    Assertions.assertEquals("null",
+            template.getForObject(orderServiceUrl + "/govern/serviceNameFaultInjectionFeign", String.class));
   }
 }

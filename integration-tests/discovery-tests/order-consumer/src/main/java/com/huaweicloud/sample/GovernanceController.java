@@ -81,9 +81,19 @@ public class GovernanceController {
     return restTemplate.getForObject("http://price/faultInjection", String.class);
   }
 
+  @RequestMapping("/serviceFaultInjectionRestTemplate")
+  public String serviceFaultInjectionRestTemplate() {
+    return restTemplate.getForObject("http://price/serviceNameFaultInjection", String.class);
+  }
+
   @RequestMapping("/faultInjectionFeign")
   public String faultInjectionFeign() {
     return feignService.faultInjection();
+  }
+
+  @RequestMapping("/serviceNameFaultInjectionFeign")
+  public String serviceNameFaultInjectionFeign() {
+    return feignService.serviceNameFaultInjection();
   }
 
   @RequestMapping("/faultInjectionRestTemplateModel")
@@ -106,6 +116,11 @@ public class GovernanceController {
     return restTemplate.getForObject("http://price/retryMore?invocationID={1}", String.class, invocationID);
   }
 
+  @RequestMapping("/serviceNameRetry")
+  public String serviceNameRetry(@RequestParam(name = "invocationID") String invocationID) {
+    return restTemplate.getForObject("http://price/serviceNameRetry?invocationID={1}", String.class, invocationID);
+  }
+
   @RequestMapping("/retryFeign")
   public String retryFeign(@RequestParam(name = "invocationID") String invocationID) {
     return feignService.retry(invocationID);
@@ -114,6 +129,11 @@ public class GovernanceController {
   @RequestMapping("/retryFeignMore")
   public String retryFeignMore(@RequestParam(name = "invocationID") String invocationID) {
     return feignService.retryMore(invocationID);
+  }
+
+  @RequestMapping("/serviceNameRetryFeign")
+  public String serviceNameRetryFeign(@RequestParam(name = "invocationID") String invocationID) {
+    return feignService.serviceNameRetry(invocationID);
   }
 
   @GetMapping(

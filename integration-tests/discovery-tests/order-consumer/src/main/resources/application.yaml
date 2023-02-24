@@ -89,6 +89,16 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/loadbalance"
+    serviceName-retry: |
+      matches:
+        - apiPath:
+            prefix: "/serviceNameRetry"
+          serviceName: price
+    serviceName-faultInjection: |
+      matches:
+        - apiPath:
+            prefix: "/serviceNameFaultInjection"
+          serviceName: price
   rateLimiting:
     demo-rateLimiting: |
       rate: 10
@@ -101,6 +111,8 @@ servicecomb:
       maxAttempts: 3
     demo-retry-more: |
       maxAttempts: 6
+    serviceName-retry: |
+      maxAttempts: 3
   circuitBreaker:
     demo-circuitBreaker: |
       minimumNumberOfCalls: 10
@@ -129,6 +141,10 @@ servicecomb:
       maxWaitDuration: 100
   faultInjection:
     faultInjection: |
+      fallbackType: ReturnNull
+      type: abort
+      percentage: 100
+    serviceName-faultInjection: |
       fallbackType: ReturnNull
       type: abort
       percentage: 100

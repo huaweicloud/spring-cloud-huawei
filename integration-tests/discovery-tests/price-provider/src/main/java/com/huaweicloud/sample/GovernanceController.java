@@ -41,6 +41,11 @@ public class GovernanceController {
     return "success";
   }
 
+  @RequestMapping("/serviceNameFaultInjection")
+  public String serviceNameFaultInjection() {
+    return "success";
+  }
+
   @RequestMapping("/faultInjectionModel")
   public PojoModel faultInjectionModel() {
     return new PojoModel(2, "hello");
@@ -71,6 +76,20 @@ public class GovernanceController {
       return "try times: " + retry;
     }
     response.setStatus(503);
+    return "failed result";
+  }
+
+  @RequestMapping("/serviceNameRetry")
+  public String serviceNameRetry(HttpServletResponse response, @RequestParam(name = "invocationID") String invocationID) {
+    retryTimes.putIfAbsent(invocationID, 0);
+    retryTimes.put(invocationID, retryTimes.get(invocationID) + 1);
+
+    int retry = retryTimes.get(invocationID);
+
+    if (retry == 3) {
+      return "try times: " + retry;
+    }
+    response.setStatus(502);
     return "failed result";
   }
 

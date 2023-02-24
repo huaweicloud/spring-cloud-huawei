@@ -35,9 +35,16 @@ public interface FeignService {
   @RequestMapping("/retryMore")
   String retryMore(@RequestParam(name = "invocationID") String invocationID);
 
+  @RequestMapping("/serviceNameRetry")
+  String serviceNameRetry(@RequestParam(name = "invocationID") String invocationID);
+
   @RequestMapping(value = "/faultInjection", produces = "application/json")
   @ResponseBody
   String faultInjection();
+
+  @RequestMapping(value = "/serviceNameFaultInjection", produces = "application/json")
+  @ResponseBody
+  String serviceNameFaultInjection();
 
   @RequestMapping(value = "/faultInjectionModel", produces = "application/json")
   @ResponseBody
