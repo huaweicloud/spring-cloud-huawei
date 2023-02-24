@@ -158,11 +158,17 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
         if (result != faultObject) {
           Map<String, Collection<String>> headers = new HashMap<>();
           headers.put("Content-Type", Arrays.asList("application/json"));
+          if (result == null) {
+            return Response.builder().status(200)
+                    .request(request)
+                    .headers(headers)
+                    .build();
+          }
           return Response.builder().status(200)
-              .request(request)
-              .headers(headers)
-              .body(HttpUtils.serialize(result).getBytes(
-                  StandardCharsets.UTF_8)).build();
+                  .request(request)
+                  .headers(headers)
+                  .body(HttpUtils.serialize(result).getBytes(
+                          StandardCharsets.UTF_8)).build();
         }
       } catch (Throwable e) {
         throw new RuntimeException(e);
