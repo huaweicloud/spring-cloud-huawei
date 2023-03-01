@@ -17,8 +17,6 @@
 
 package com.huaweicloud.governance.adapters.gateway;
 
-import java.nio.charset.StandardCharsets;
-
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.apache.servicecomb.governance.processor.injection.Fault;
@@ -33,6 +31,8 @@ import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.web.server.ServerWebExchange;
 
 import reactor.core.publisher.Mono;
+
+import java.nio.charset.StandardCharsets;
 
 public class FaultInjectionGlobalFilter implements GlobalFilter, Ordered {
   private final FaultInjectionHandler faultInjectionHandler;
@@ -54,9 +54,13 @@ public class FaultInjectionGlobalFilter implements GlobalFilter, Ordered {
       try {
         Object result = ds.get();
         if (result != faultObject) {
-          DataBuffer dataBuffer = exchange.getResponse().bufferFactory().allocateBuffer()
-              .write(HttpUtils.serialize(result).getBytes(
-                  StandardCharsets.UTF_8));
+          DataBuffer dataBuffer;
+          if (result == null) {
+            dataBuffer = exchange.getResponse().bufferFactory().allocateBuffer();
+          } else {
+            dataBuffer = exchange.getResponse().bufferFactory().allocateBuffer()
+                    .write(HttpUtils.serialize(result).getBytes(StandardCharsets.UTF_8));
+          }
           return exchange.getResponse().writeWith(Mono.just(dataBuffer));
         }
       } catch (Throwable e) {

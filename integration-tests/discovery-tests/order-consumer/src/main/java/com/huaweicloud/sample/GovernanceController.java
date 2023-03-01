@@ -81,9 +81,19 @@ public class GovernanceController {
     return restTemplate.getForObject("http://price/faultInjection", String.class);
   }
 
+  @RequestMapping("/serviceFaultInjectionRestTemplate")
+  public String serviceFaultInjectionRestTemplate() {
+    return restTemplate.getForObject("http://price/serviceNameFaultInjection", String.class);
+  }
+
   @RequestMapping("/faultInjectionFeign")
   public String faultInjectionFeign() {
     return feignService.faultInjection();
+  }
+
+  @RequestMapping("/serviceNameFaultInjectionFeign")
+  public String serviceNameFaultInjectionFeign() {
+    return feignService.serviceNameFaultInjection();
   }
 
   @RequestMapping("/faultInjectionRestTemplateModel")

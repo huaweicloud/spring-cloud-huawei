@@ -114,6 +114,10 @@ servicecomb:
       matches:
         - apiPath:
             prefix: "/testWebClientFaultInjectionReturnNull"
+    routeFaultInjectionNull: |
+      matches:
+        - apiPath:
+            prefix: "/routeFaultInjectionNull"
   retry:
     gatewayRetry: |
       maxAttempts: 2
@@ -186,6 +190,10 @@ servicecomb:
       percentage: 100
       fallbackType: ThrowException
     testWebClientFaultInjectionReturnNull: |
+      type: abort
+      percentage: 100
+      fallbackType: ReturnNull
+    routeFaultInjectionNull: |
       type: abort
       percentage: 100
       fallbackType: ReturnNull
