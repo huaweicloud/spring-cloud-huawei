@@ -123,16 +123,23 @@ public class GatewayIT {
   }
 
   @Test
+  public void testFaultInjectionReturnNullGateway() {
+    long begin = System.currentTimeMillis();
+    String result = template.getForObject(url + "/price/routeFaultInjectionNull", String.class);
+    Assertions.assertEquals(null, result);
+  }
+
+  @Test
   public void testFaultInjectionConsumerRestTemplate() {
     // spring decoder not properly decode json null and here will get string `null`
-    Assertions.assertEquals("null",
+    Assertions.assertEquals(null,
         template.getForObject(url + "/order/govern/faultInjectionRestTemplate", String.class));
   }
 
   @Test
   public void testFaultInjectionConsumerFeign() {
     // spring decoder not properly decode json null and here will get string `null`
-    Assertions.assertEquals("null",
+    Assertions.assertEquals(null,
         template.getForObject(url + "/order/govern/faultInjectionFeign", String.class));
   }
 
