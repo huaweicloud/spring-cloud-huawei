@@ -176,6 +176,9 @@ public class GovernanceRestTemplate extends RestTemplate {
       try {
         Object result = faultInjectionDecorateCheckedSupplier.get();
         if (result != faultObject) {
+          if (result == null) {
+            return new FallbackClientHttpResponse(200);
+          }
           return new FallbackClientHttpResponse(200, HttpUtils.serialize(result), "application/json");
         }
       } catch (Throwable e) {

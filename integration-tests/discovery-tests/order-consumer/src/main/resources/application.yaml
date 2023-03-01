@@ -94,6 +94,11 @@ servicecomb:
         - apiPath:
             prefix: "/serviceNameRetry"
           serviceName: price
+    serviceName-faultInjection: |
+      matches:
+        - apiPath:
+            prefix: "/serviceNameFaultInjection"
+          serviceName: price
   rateLimiting:
     demo-rateLimiting: |
       rate: 10
@@ -136,6 +141,10 @@ servicecomb:
       maxWaitDuration: 100
   faultInjection:
     faultInjection: |
+      fallbackType: ReturnNull
+      type: abort
+      percentage: 100
+    serviceName-faultInjection: |
       fallbackType: ReturnNull
       type: abort
       percentage: 100

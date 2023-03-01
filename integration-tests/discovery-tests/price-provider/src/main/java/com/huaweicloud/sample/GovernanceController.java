@@ -41,6 +41,16 @@ public class GovernanceController {
     return "success";
   }
 
+  @RequestMapping("/routeFaultInjectionNull")
+  public String routeFaultInjectionNull() {
+    return "success";
+  }
+
+  @RequestMapping("/serviceNameFaultInjection")
+  public String serviceNameFaultInjection() {
+    return "success";
+  }
+
   @RequestMapping("/faultInjectionModel")
   public PojoModel faultInjectionModel() {
     return new PojoModel(2, "hello");

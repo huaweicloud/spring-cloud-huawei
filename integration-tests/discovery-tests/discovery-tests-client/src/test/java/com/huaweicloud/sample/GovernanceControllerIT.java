@@ -366,4 +366,18 @@ public class GovernanceControllerIT {
     Assertions.assertTrue(expectedFailed.get());
     Assertions.assertFalse(notExpectedFailed.get());
   }
+  @Test
+  public void testServiceFaultInjectionConsumerRestTemplate() {
+    // spring decoder not properly decode json null and here will get string `null`
+    Assertions.assertEquals(null,
+            template.getForObject(orderServiceUrl + "/govern/serviceFaultInjectionRestTemplate", String.class));
+  }
+
+
+  @Test
+  public void testServiceNameFaultInjectionConsumerFeign() {
+    // spring decoder not properly decode json null and here will get string `null`
+    Assertions.assertEquals(null,
+            template.getForObject(orderServiceUrl + "/govern/serviceNameFaultInjectionFeign", String.class));
+  }
 }

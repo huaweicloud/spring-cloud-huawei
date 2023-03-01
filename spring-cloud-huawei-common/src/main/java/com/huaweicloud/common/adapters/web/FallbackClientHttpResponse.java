@@ -43,6 +43,12 @@ public class FallbackClientHttpResponse extends AbstractClientHttpResponse {
     this.contentType = contentType;
   }
 
+  public FallbackClientHttpResponse(int code) {
+    this.code = code;
+    this.message = null;
+    this.contentType = "application/json";
+  }
+
   @Override
   public int getRawStatusCode() {
     return this.code;
@@ -50,7 +56,10 @@ public class FallbackClientHttpResponse extends AbstractClientHttpResponse {
 
   @Override
   public String getStatusText() {
-    return this.message;
+    if (message == null) {
+      return "";
+    }
+    return message;
   }
 
   @Override
@@ -60,6 +69,9 @@ public class FallbackClientHttpResponse extends AbstractClientHttpResponse {
 
   @Override
   public InputStream getBody() {
+    if (message == null) {
+      return new ByteArrayInputStream(new byte[0]);
+    }
     return new ByteArrayInputStream(this.message.getBytes(StandardCharsets.UTF_8));
   }
 

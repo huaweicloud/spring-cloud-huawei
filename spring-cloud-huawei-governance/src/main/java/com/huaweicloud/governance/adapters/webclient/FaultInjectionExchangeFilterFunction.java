@@ -66,9 +66,14 @@ public class FaultInjectionExchangeFilterFunction implements ExchangeFilterFunct
       try {
         Object result = ds.get();
         if (result != faultObject) {
+          if (result == null) {
+            return Mono.just(ClientResponse.create(HttpStatus.OK)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .build());
+          }
           return Mono.just(ClientResponse.create(HttpStatus.OK)
-              .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-              .body(HttpUtils.serialize(result)).build());
+                  .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                  .body(HttpUtils.serialize(result)).build());
         }
       } catch (Throwable e) {
         return Mono.error(e);
