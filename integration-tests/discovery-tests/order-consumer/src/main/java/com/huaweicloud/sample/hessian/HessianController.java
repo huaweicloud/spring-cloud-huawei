@@ -36,7 +36,15 @@ public class HessianController {
     testChildBase();
     testGenericBase();
     testGenericChildBase();
+    testNonSerializableModel();
     return "success";
+  }
+
+  private void testNonSerializableModel() {
+    NonSerializableModel model = new NonSerializableModel();
+    model.setAge("age");
+    NonSerializableModel result = hessianService.nonSerializableModel(model);
+    check("age", result.getAge(), "wrong NonSerializableModel");
   }
 
   private void testGenericChildBase() {

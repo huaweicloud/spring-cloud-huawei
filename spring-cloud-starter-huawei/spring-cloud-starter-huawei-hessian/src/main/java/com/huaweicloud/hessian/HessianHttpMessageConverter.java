@@ -17,8 +17,6 @@
 
 package com.huaweicloud.hessian;
 
-import org.apache.dubbo.common.serialize.hessian2.Hessian2ObjectInput;
-import org.apache.dubbo.common.serialize.hessian2.Hessian2ObjectOutput;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
