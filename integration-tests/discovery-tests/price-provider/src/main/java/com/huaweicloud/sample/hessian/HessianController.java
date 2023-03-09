@@ -32,4 +32,9 @@ public class HessianController implements HessianService {
   public Generic<Base> generic(Generic<Base> b) {
     return b;
   }
+
+  @Override
+  public NonSerializableModel nonSerializableModel(NonSerializableModel b) {
+    return b;
+  }
 }
