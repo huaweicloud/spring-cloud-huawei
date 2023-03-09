@@ -28,4 +28,8 @@ public interface HessianService {
   @PostMapping(path = "generic", consumes = "x-application/hessian2",
       produces = "x-application/hessian2")
   Generic<Base> generic(@RequestBody Generic<Base> b);
+
+  @PostMapping(path = "nonSerializableModel", consumes = "x-application/hessian2",
+      produces = "x-application/hessian2")
+  NonSerializableModel nonSerializableModel(@RequestBody NonSerializableModel b);
 }
