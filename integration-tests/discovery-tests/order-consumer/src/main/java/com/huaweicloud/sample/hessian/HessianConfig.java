@@ -25,4 +25,12 @@ public class HessianConfig {
   @FeignClient(name = "price", contextId = "hessianService", path = "/hessian")
   public interface HessianServiceExt extends HessianService {
   }
+
+  @FeignClient(name = "price", contextId = "childService", path = "/hessian/child")
+  public interface IChildServiceExt extends IChildService {
+  }
+
+  @FeignClient(name = "price", contextId = "childServiceBase", path = "/hessian/baseChild")
+  public interface IChildBaseServiceExt extends IChildBaseService {
+  }
 }

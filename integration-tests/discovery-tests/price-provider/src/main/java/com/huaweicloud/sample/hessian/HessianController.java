@@ -37,4 +37,9 @@ public class HessianController implements HessianService {
   public NonSerializableModel nonSerializableModel(NonSerializableModel b) {
     return b;
   }
+
+  @Override
+  public NonSerializableModel[] nonSerializableModelArray(NonSerializableModel[] b) {
+    return b;
+  }
 }

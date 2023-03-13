@@ -16,6 +16,9 @@
  */
 package com.huaweicloud.sample;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
@@ -26,6 +29,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -179,5 +183,23 @@ public class OrderController {
   @PostMapping("/testPostModelFeign")
   public PojoModel testPostModelFeign(@RequestBody PojoModel model) {
     return feignService.testPostModel(model);
+  }
+
+  @PostMapping("/testHeaderWithJsonWrong")
+  public String testHeaderWithJsonWrong(@RequestHeader String model) {
+    return feignService.testHeaderWithJsonWrong(model);
+  }
+
+  @PostMapping("/testHeaderWithJsonCorrect")
+  public String testHeaderWithJsonCorrect(@RequestHeader String model) {
+    return feignService.testHeaderWithJsonCorrect(model);
+  }
+
+  public static String encodeHeader(String header) {
+    try {
+      return URLEncoder.encode(header, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      return header;
+    }
   }
 }

@@ -18,8 +18,10 @@
 package com.huaweicloud.sample.hessian;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,6 +32,12 @@ public class HessianController {
   @Autowired
   private HessianService hessianService;
 
+  @Autowired
+  private IChildService childService;
+
+  @Autowired
+  private IChildBaseService childBaseService;
+
   @RequestMapping("/testHessian")
   public String testHessian() {
     testBase();
@@ -37,7 +45,49 @@ public class HessianController {
     testGenericBase();
     testGenericChildBase();
     testNonSerializableModel();
+    testNonSerializableModelArray();
+    testInterfaceInheritanceList();
+    testInterfaceInheritance();
+    testProviderImplementsBase();
     return "success";
+  }
+
+  private void testProviderImplementsBase() {
+    NonSerializableModel model = new NonSerializableModel();
+    model.setAge("age");
+
+    List<NonSerializableModel> resultList = childBaseService.queryList(Arrays.asList(model));
+    check(1 + "", resultList.size() + "", "wrong NonSerializableModel");
+    check("age", resultList.get(0).getAge(), "wrong NonSerializableModel");
+
+    // TODO : this test case not supported now, should support later
+//    NonSerializableModel[] result = childBaseService.query(new NonSerializableModel[] {model});
+//    check(1 + "", result.length + "", "wrong NonSerializableModel");
+//    check("age", result[0].getAge(), "wrong NonSerializableModel");
+  }
+
+  private void testInterfaceInheritance() {
+    NonSerializableModel model = new NonSerializableModel();
+    model.setAge("age");
+    NonSerializableModel[] result = childService.query(new NonSerializableModel[] {model});
+    check(1 + "", result.length + "", "wrong NonSerializableModel");
+    check("age", result[0].getAge(), "wrong NonSerializableModel");
+  }
+
+  private void testInterfaceInheritanceList() {
+    NonSerializableModel model = new NonSerializableModel();
+    model.setAge("age");
+    List<NonSerializableModel> result = childService.queryList(Arrays.asList(model));
+    check(1 + "", result.size() + "", "wrong NonSerializableModel");
+    check("age", result.get(0).getAge(), "wrong NonSerializableModel");
+  }
+
+  private void testNonSerializableModelArray() {
+    NonSerializableModel model = new NonSerializableModel();
+    model.setAge("age");
+    NonSerializableModel[] result = hessianService.nonSerializableModelArray(new NonSerializableModel[] {model});
+    check(1 + "", result.length + "", "wrong NonSerializableModel");
+    check("age", result[0].getAge(), "wrong NonSerializableModel");
   }
 
   private void testNonSerializableModel() {

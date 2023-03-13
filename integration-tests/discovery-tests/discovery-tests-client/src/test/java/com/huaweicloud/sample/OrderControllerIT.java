@@ -97,4 +97,20 @@ public class OrderControllerIT {
     assertThat(pojoModel.getName()).isEqualTo("hello");
     assertThat(pojoModel.getNum()).isEqualTo(2);
   }
+
+  @Test
+  public void testHeaderWithJson() throws Exception {
+    // feign need encode requests with value {}
+    String v = "{\"name\": {\"age\": \"22\"}}";
+
+    URLCodec codec = new URLCodec("UTF-8");
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("model", codec.encode(v));
+    HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+    String result = template.exchange(url + "/testHeaderWithJsonWrong", HttpMethod.POST, entity, String.class)
+        .getBody();
+    // Feign will keep response encoded and need request encode, this is quit inconvenient
+    assertThat(result).isEqualTo(codec.encode(v));
+  }
 }

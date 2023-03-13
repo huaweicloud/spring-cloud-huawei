@@ -32,4 +32,8 @@ public interface HessianService {
   @PostMapping(path = "nonSerializableModel", consumes = "x-application/hessian2",
       produces = "x-application/hessian2")
   NonSerializableModel nonSerializableModel(@RequestBody NonSerializableModel b);
+
+  @PostMapping(path = "nonSerializableModelArray", consumes = "x-application/hessian2",
+      produces = "x-application/hessian2")
+  NonSerializableModel[] nonSerializableModelArray(@RequestBody NonSerializableModel[] b);
 }
