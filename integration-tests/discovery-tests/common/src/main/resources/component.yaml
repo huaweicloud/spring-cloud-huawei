@@ -16,38 +16,8 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 
-server:
-  port: 9098
-
-spring:
-  application:
-    name: order
-  cloud:
-    servicecomb:
-      service:
-        name: order
-        version: 0.0.1
-        properties:
-          x-test: value
-          x-test2: value2
-      instance:
-        initialStatus: UP
-        properties:
-          x-test: value
-          x-test2: value2
-      discovery:
-        enabled: true
-        address: http://127.0.0.1:30100
-      config:
-        enabled: true
-        serverType: kie
-        serverAddr: http://127.0.0.1:30110
-        firstPullRequired: false
-
-      # testing servicecomb swagger generation
-      swagger:
-        enableJavaChassisAdapter: true
+x-component-order: 0
 
 test:
   value:
-    bootstrapOverride: "orderBootstrapOverride"
+    componentOverride: "componentOverride"

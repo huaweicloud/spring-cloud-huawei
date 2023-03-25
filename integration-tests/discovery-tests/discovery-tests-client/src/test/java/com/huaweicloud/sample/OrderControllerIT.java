@@ -38,6 +38,12 @@ public class OrderControllerIT {
   final RestTemplate template = new RestTemplate();
 
   @Test
+  public void testComponentPropertySourceWork() {
+    String result = template.getForObject(url + "/order/component/testComponentPropertySourceWork", String.class);
+    assertThat(result).isEqualTo("success");
+  }
+
+  @Test
   public void testGetOrder() {
     String result = template.getForObject(url + "/order?id=hello", String.class);
     assertThat(result).isEqualTo("hello");
