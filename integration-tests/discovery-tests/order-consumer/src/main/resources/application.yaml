@@ -154,3 +154,6 @@ servicecomb:
     demo-loadbalance_feign: |
       rule: Random
 
+test:
+  value:
+    applicationOverride: "orderApplicationOverride"
