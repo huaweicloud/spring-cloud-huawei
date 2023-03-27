@@ -35,6 +35,9 @@ public class FeignAddServiceNameContext implements RequestInterceptor, Ordered {
 
   @Override
   public void apply(RequestTemplate requestTemplate) {
+    if (this.registration == null) {
+      return;
+    }
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
     context.putContext(InvocationContext.CONTEXT_MICROSERVICE_NAME, registration.getServiceId());
     context.putContext(InvocationContext.CONTEXT_INSTANCE_ID, registration.getInstanceId());

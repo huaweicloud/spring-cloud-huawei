@@ -40,6 +40,9 @@ public class RestTemplateAddServiceNameContext implements
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
       throws IOException {
+    if (this.registration == null) {
+      return execution.execute(request, body);
+    }
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
     context.putContext(InvocationContext.CONTEXT_MICROSERVICE_NAME, registration.getServiceId());
     context.putContext(InvocationContext.CONTEXT_INSTANCE_ID, registration.getInstanceId());

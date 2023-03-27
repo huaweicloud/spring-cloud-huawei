@@ -17,6 +17,7 @@
 
 package com.huaweicloud.servicecomb.discovery.context;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +29,8 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
     "org.springframework.web.client.RestTemplate"})
 public class RestTemplateContextConfiguration {
   @Bean
-  public ClientHttpRequestInterceptor restTemplateAddServiceNameContext(Registration registration) {
+  public ClientHttpRequestInterceptor restTemplateAddServiceNameContext(
+      @Autowired(required = false) Registration registration) {
     return new RestTemplateAddServiceNameContext(registration);
   }
 }

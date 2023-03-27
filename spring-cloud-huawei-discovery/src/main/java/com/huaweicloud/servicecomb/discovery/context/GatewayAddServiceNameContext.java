@@ -38,6 +38,9 @@ public class GatewayAddServiceNameContext implements GlobalFilter, Ordered {
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+    if (this.registration == null) {
+      return chain.filter(exchange);
+    }
     InvocationContext context = exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY);
     context.putContext(InvocationContext.CONTEXT_MICROSERVICE_NAME, registration.getServiceId());
     context.putContext(InvocationContext.CONTEXT_INSTANCE_ID, registration.getInstanceId());
