@@ -17,19 +17,19 @@
 
 package com.huaweicloud.servicecomb.discovery.context;
 
+import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.core.Ordered;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 
 public class FeignAddServiceNameContext implements RequestInterceptor, Ordered {
-  private final ServiceCombRegistration registration;
+  private final Registration registration;
 
-  public FeignAddServiceNameContext(ServiceCombRegistration registration) {
+  public FeignAddServiceNameContext(Registration registration) {
     this.registration = registration;
   }
 

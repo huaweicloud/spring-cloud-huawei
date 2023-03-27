@@ -37,6 +37,7 @@ import org.springframework.core.Ordered;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.governance.authentication.provider.BlackWhiteListProperties;
 import com.huaweicloud.governance.authentication.provider.ProviderAuthPreHandlerInterceptor;
+import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
 
 @Configuration
 @ConditionalOnWebApplication(type = Type.SERVLET)
@@ -133,6 +134,7 @@ public class WebMvcConfiguration {
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED,
       havingValue = "true")
+  @ConditionalOnServiceCombDiscoveryEnabled
   public ProviderAuthPreHandlerInterceptor providerAuthPreHandlerInterceptor(ServiceCenterClient client,
       BlackWhiteListProperties blackWhiteListProperties) {
     return new ProviderAuthPreHandlerInterceptor(client, blackWhiteListProperties);

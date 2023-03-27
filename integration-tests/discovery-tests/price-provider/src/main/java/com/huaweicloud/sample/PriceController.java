@@ -19,8 +19,6 @@ package com.huaweicloud.sample;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.servicecomb.service.center.client.model.Microservice;
-import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,39 +29,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 @RestController
-@ConditionalOnServiceCombDiscoveryEnabled
 public class PriceController {
   @Autowired
   private Configuration configuration;
-
-  @Autowired
-  private ServiceCombRegistration serviceCombRegistration;
-
-  @RequestMapping("/testMicroserviceInfoCorrect")
-  public boolean testMicroserviceInfoCorrect() {
-    Microservice microservice = serviceCombRegistration.getMicroservice();
-    assertTrue(microservice.getAppId().equals("default"));
-    assertTrue(microservice.getServiceName().equals("price"));
-    assertTrue(microservice.getVersion().equals("0.0.1"));
-    assertTrue(microservice.getProperties().get("x-test").equals("value"));
-    assertTrue(microservice.getProperties().get("x-test2").equals("value2"));
-
-    MicroserviceInstance microserviceInstance = serviceCombRegistration.getMicroserviceInstance();
-    assertTrue(microserviceInstance.getProperties().get("x-test").equals("value"));
-    assertTrue(microserviceInstance.getProperties().get("x-test2").equals("value2"));
-    assertTrue(microserviceInstance.getStatus() == null);
-    return true;
-  }
-
-  private void assertTrue(boolean t) {
-    if (!t) {
-      throw new RuntimeException();
-    }
-  }
 
   @RequestMapping("/price")
   public String sayHello(@RequestParam("id") String id) {

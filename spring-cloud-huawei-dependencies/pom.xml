@@ -47,6 +47,7 @@
     <annotations.version>3.0.1</annotations.version>
     <dubbo.hessian.version>2.7.22</dubbo.hessian.version>
     <springdoc.version>1.6.8</springdoc.version>
+    <spring.cloud.alibaba.version>2021.0.5.0</spring.cloud.alibaba.version>
   </properties>
 
   <dependencyManagement>
@@ -169,6 +170,16 @@
         <groupId>org.apache.dubbo</groupId>
         <artifactId>dubbo-serialization-hessian2</artifactId>
         <version>${dubbo.hessian.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.alibaba.cloud</groupId>
+        <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        <version>${spring.cloud.alibaba.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.alibaba.cloud</groupId>
+        <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        <version>${spring.cloud.alibaba.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

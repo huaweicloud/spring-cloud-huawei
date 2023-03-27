@@ -20,9 +20,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.servicecomb.service.center.client.model.Microservice;
-import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
-import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.MediaType;
@@ -38,11 +35,8 @@ import org.springframework.web.client.RestTemplate;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 @RestController
-@ConditionalOnServiceCombDiscoveryEnabled
 public class OrderController {
 
   private final DiscoveryClient discoveryClient;
@@ -51,15 +45,11 @@ public class OrderController {
 
   private final FeignService feignService;
 
-  private final ServiceCombRegistration serviceCombRegistration;
-
   @Autowired
-  public OrderController(DiscoveryClient discoveryClient, RestTemplate restTemplate, FeignService feignService,
-      ServiceCombRegistration serviceCombRegistration) {
+  public OrderController(DiscoveryClient discoveryClient, RestTemplate restTemplate, FeignService feignService) {
     this.discoveryClient = discoveryClient;
     this.restTemplate = restTemplate;
     this.feignService = feignService;
-    this.serviceCombRegistration = serviceCombRegistration;
   }
 
   @GetMapping("/testContextMapper")
@@ -74,28 +64,6 @@ public class OrderController {
   @RequestMapping("/instances")
   public Object instances() {
     return discoveryClient.getInstances("price");
-  }
-
-  @RequestMapping("/testMicroserviceInfoCorrect")
-  public boolean testMicroserviceInfoCorrect() {
-    Microservice microservice = serviceCombRegistration.getMicroservice();
-    assertTrue(microservice.getAppId().equals("default"));
-    assertTrue(microservice.getServiceName().equals("order"));
-    assertTrue(microservice.getVersion().equals("0.0.1"));
-    assertTrue(microservice.getProperties().get("x-test").equals("value"));
-    assertTrue(microservice.getProperties().get("x-test2").equals("value2"));
-
-    MicroserviceInstance microserviceInstance = serviceCombRegistration.getMicroserviceInstance();
-    assertTrue(microserviceInstance.getProperties().get("x-test").equals("value"));
-    assertTrue(microserviceInstance.getProperties().get("x-test2").equals("value2"));
-    assertTrue(microserviceInstance.getStatus() == MicroserviceInstanceStatus.UP);
-    return true;
-  }
-
-  private void assertTrue(boolean t) {
-    if (!t) {
-      throw new RuntimeException();
-    }
   }
 
   @RequestMapping("/order")

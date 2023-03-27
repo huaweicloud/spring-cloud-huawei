@@ -17,6 +17,7 @@
 
 package com.huaweicloud.servicecomb.discovery.context;
 
+import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
@@ -25,14 +26,13 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 import reactor.core.publisher.Mono;
 
 public class GatewayAddServiceNameContext implements GlobalFilter, Ordered {
-  private final ServiceCombRegistration registration;
+  private final Registration registration;
 
-  public GatewayAddServiceNameContext(ServiceCombRegistration registration) {
+  public GatewayAddServiceNameContext(Registration registration) {
     this.registration = registration;
   }
 

@@ -19,6 +19,7 @@ package com.huaweicloud.servicecomb.discovery.context;
 
 import java.io.IOException;
 
+import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -27,13 +28,12 @@ import org.springframework.http.client.ClientHttpResponse;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 public class RestTemplateAddServiceNameContext implements
     ClientHttpRequestInterceptor, Ordered {
-  private final ServiceCombRegistration registration;
+  private final Registration registration;
 
-  public RestTemplateAddServiceNameContext(ServiceCombRegistration registration) {
+  public RestTemplateAddServiceNameContext(Registration registration) {
     this.registration = registration;
   }
 
