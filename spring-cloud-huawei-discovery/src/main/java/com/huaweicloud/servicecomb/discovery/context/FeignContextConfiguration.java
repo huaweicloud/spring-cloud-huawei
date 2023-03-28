@@ -17,19 +17,17 @@
 
 package com.huaweicloud.servicecomb.discovery.context;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
-
 @Configuration
 @ConditionalOnClass(name = {"feign.RequestInterceptor"})
-@ConditionalOnServiceCombDiscoveryEnabled
 public class FeignContextConfiguration {
   @Bean
-  public FeignAddServiceNameContext feignAddServiceNameContext(ServiceCombRegistration registration) {
+  public FeignAddServiceNameContext feignAddServiceNameContext(@Autowired(required = false) Registration registration) {
     return new FeignAddServiceNameContext(registration);
   }
 }

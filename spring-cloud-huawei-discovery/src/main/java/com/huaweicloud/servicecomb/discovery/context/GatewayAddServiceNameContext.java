@@ -17,6 +17,7 @@
 
 package com.huaweicloud.servicecomb.discovery.context;
 
+import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
@@ -25,19 +26,21 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 import reactor.core.publisher.Mono;
 
 public class GatewayAddServiceNameContext implements GlobalFilter, Ordered {
-  private final ServiceCombRegistration registration;
+  private final Registration registration;
 
-  public GatewayAddServiceNameContext(ServiceCombRegistration registration) {
+  public GatewayAddServiceNameContext(Registration registration) {
     this.registration = registration;
   }
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+    if (this.registration == null) {
+      return chain.filter(exchange);
+    }
     InvocationContext context = exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY);
     context.putContext(InvocationContext.CONTEXT_MICROSERVICE_NAME, registration.getServiceId());
     context.putContext(InvocationContext.CONTEXT_INSTANCE_ID, registration.getInstanceId());
