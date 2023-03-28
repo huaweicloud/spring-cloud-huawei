@@ -35,7 +35,6 @@ import com.huaweicloud.common.configration.dynamic.DashboardProperties;
 import com.huaweicloud.servicecomb.dashboard.model.MonitorDataProvider;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
-import io.github.resilience4j.micrometer.tagged.CircuitBreakerMetricNames;
 import io.github.resilience4j.micrometer.tagged.TagNames;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Gauge;
@@ -116,7 +115,7 @@ public class GovernanceMonitorDataProvider implements MonitorDataProvider {
         return obj;
       });
 
-      if (CircuitBreakerMetricNames.DEFAULT_CIRCUIT_BREAKER_CALLS.equals(meter.getId().getName())) {
+      if (checkMetricsIdName(".calls", meter)) {
         Timer timer = (Timer) meter;
         if ("successful".equals(meter.getId().getTag(TagNames.KIND))) {
           governanceData.setSuccessfulCalls(timer.count());
@@ -129,19 +128,19 @@ public class GovernanceMonitorDataProvider implements MonitorDataProvider {
         continue;
       }
 
-      if (CircuitBreakerMetricNames.DEFAULT_CIRCUIT_BREAKER_FAILURE_RATE.equals(meter.getId().getName())) {
+      if (checkMetricsIdName(".failure.rate", meter)) {
         Gauge gauge = (Gauge) meter;
         governanceData.setFailureRate(gauge.value());
         continue;
       }
 
-      if (CircuitBreakerMetricNames.DEFAULT_CIRCUIT_BREAKER_SLOW_CALL_RATE.equals(meter.getId().getName())) {
+      if (checkMetricsIdName(".slow.call.rate", meter)) {
         Gauge gauge = (Gauge) meter;
         governanceData.setSlowRate(gauge.value());
         continue;
       }
 
-      if (CircuitBreakerMetricNames.DEFAULT_CIRCUIT_BREAKER_STATE.equals(meter.getId().getName())) {
+      if (checkMetricsIdName(".state", meter)) {
         Gauge gauge = (Gauge) meter;
         String state = gauge.getId().getTag("state");
         if ("open".equals(state)) {
@@ -150,7 +149,7 @@ public class GovernanceMonitorDataProvider implements MonitorDataProvider {
         continue;
       }
 
-      if (CircuitBreakerMetricNames.DEFAULT_CIRCUIT_BREAKER_NOT_PERMITTED_CALLS.equals(meter.getId().getName())) {
+      if (checkMetricsIdName(".not.permitted.calls", meter)) {
         Counter counter = (Counter) meter;
         governanceData.setShortCircuitedCalls(doubleToLong(counter.count()));
       }
@@ -202,5 +201,10 @@ public class GovernanceMonitorDataProvider implements MonitorDataProvider {
 
   private long doubleToLong(Double d) {
     return d.longValue();
+  }
+
+  private boolean checkMetricsIdName(String key, Meter meter) {
+    return (InstanceIsolationProperties.MATCH_INSTANCE_ISOLATION_KEY + key).equals(meter.getId().getName())
+        || (CircuitBreakerProperties.MATCH_CIRCUITBREAKER_KEY + key).equals(meter.getId().getName());
   }
 }
