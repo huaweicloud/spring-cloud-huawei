@@ -24,10 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.governance.authentication.AuthHandlerBoot;
-import com.huaweicloud.governance.authentication.Const;
-import com.huaweicloud.governance.authentication.provider.BlackWhiteListProperties;
-import com.huaweicloud.governance.authentication.provider.ProviderAuthPreHandlerInterceptor;
+import com.huaweicloud.servicecomb.discovery.authentication.AuthHandlerBoot;
+import com.huaweicloud.servicecomb.discovery.authentication.Const;
+import com.huaweicloud.servicecomb.discovery.authentication.provider.BlackWhiteListProperties;
+import com.huaweicloud.servicecomb.discovery.authentication.provider.ProviderAuthPreHandlerInterceptor;
 
 @RestController
 public class AuthController {

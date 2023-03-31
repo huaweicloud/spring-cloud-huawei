@@ -1,0 +1,207 @@
+#
+## ---------------------------------------------------------------------------
+##
+## Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+##
+## Licensed under the Apache License, Version 2.0 (the "License");
+## you may not use this file except in compliance with the License.
+## You may obtain a copy of the License at
+##
+##      http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+## ---------------------------------------------------------------------------
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lowerCaseServiceId: true
+      routes:
+        - id: price
+          uri: lb://price
+          predicates:
+            - Path=/gateway/**
+          filters:
+            - name: Retry
+              args:
+                retries: 3
+                series: SERVER_ERROR
+      httpclient:
+        connect-timeout: 1000
+        response-timeout: 3s
+
+    servicecomb:
+      context:
+        headerContextMapper:
+          header-context: x-header-context
+
+servicecomb:
+  matchGroup:
+    allOperation: |
+      matches:
+        - apiPath:
+            prefix: "/"
+    # rate limiting apiPath have service name
+    demo-rateLimiting: |
+      matches:
+        - apiPath:
+            exact: "/order/govern/rateLimiting"
+    demo-identifierRateLimiting: |
+      matches:
+        - apiPath:
+            exact: "/identifierRateLimiting"
+    testCircuitBreaker: |
+      matches:
+        - apiPath:
+            exact: "/testCircuitBreaker"
+    testCircuitBreakerErrorCode: |
+      matches:
+        - apiPath:
+            exact: "/testCircuitBreakerErrorCode"
+    testBulkhead: |
+      matches:
+        - apiPath:
+            exact: "/testBulkhead"
+    # retry, instance isolation, fault injection and instance bulkhead apiPath do not have service name
+    gatewayRetry: |
+      matches:
+        - apiPath:
+            exact: "/govern/gatewayRetry"
+    gatewayRetryMore: |
+      matches:
+        - apiPath:
+            exact: "/govern/gatewayRetryMore"
+    gatewayIsolationForceOpenFeign: |
+      matches:
+        - apiPath:
+            prefix: "/govern/gatewayIsolationForceOpenFeign"
+    testGatewayIsolationErrorCode: |
+      matches:
+        - apiPath:
+            prefix: "/govern/testGatewayIsolationErrorCode"
+    gatewayInstanceBulkhead: |
+      matches:
+        - apiPath:
+            exact: "/govern/gatewayInstanceBulkhead"
+    faultInjection: |
+      matches:
+        - apiPath:
+            prefix: "/faultInjection"
+    testWebClientRetry: |
+      matches:
+        - apiPath:
+            prefix: "/testWebClientRetry"
+    testWebClientBulkhead: |
+      matches:
+        - apiPath:
+            prefix: "/testWebClientBulkhead"
+    testWebClientInstanceIsolation: |
+      matches:
+        - apiPath:
+            prefix: "/testWebClientInstanceIsolation"
+    testWebClientFaultInjectionThrowException: |
+      matches:
+        - apiPath:
+            prefix: "/testWebClientFaultInjectionThrowException"
+    testWebClientFaultInjectionReturnNull: |
+      matches:
+        - apiPath:
+            prefix: "/testWebClientFaultInjectionReturnNull"
+    routeFaultInjectionNull: |
+      matches:
+        - apiPath:
+            prefix: "/routeFaultInjectionNull"
+  retry:
+    gatewayRetry: |
+      maxAttempts: 2
+      retryOnSame: 0
+    gatewayRetryMore: |
+      maxAttempts: 5
+      retryOnSame: 1
+    testWebClientRetry: |
+      maxAttempts: 2
+      retryOnSame: 1
+  rateLimiting:
+    demo-rateLimiting: |
+      rate: 10
+  circuitBreaker:
+    testCircuitBreaker: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      slidingWindowType: COUNT_BASED
+      failureRateThreshold: 20
+      waitDurationInOpenState: 1000
+      permittedNumberOfCallsInHalfOpenState: 10
+    testCircuitBreakerErrorCode: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      slidingWindowType: COUNT_BASED
+      failureRateThreshold: 20
+      waitDurationInOpenState: 1000
+      permittedNumberOfCallsInHalfOpenState: 10
+  bulkhead:
+    testBulkhead: |
+      maxConcurrentCalls: 2
+      maxWaitDuration: 100
+  identifierRateLimiting:
+    demo-identifierRateLimiting: |
+      rate: 2
+      identifier: user-id
+  instanceIsolation:
+    testGatewayIsolationErrorCode: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      slidingWindowType: COUNT_BASED
+      failureRateThreshold: 20
+      waitDurationInOpenState: 1000
+      permittedNumberOfCallsInHalfOpenState: 10
+      order: 2
+    gatewayIsolationForceOpenFeign: |
+      forceOpen: true
+      order: 1
+    testWebClientInstanceIsolation: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      slidingWindowType: COUNT_BASED
+      failureRateThreshold: 20
+      waitDurationInOpenState: 1000
+      permittedNumberOfCallsInHalfOpenState: 10
+  instanceBulkhead:
+    gatewayInstanceBulkhead: |
+      maxConcurrentCalls: 2
+      maxWaitDuration: 100
+    testWebClientBulkhead: |
+      maxConcurrentCalls: 2
+      maxWaitDuration: 100
+  faultInjection:
+    faultInjection: |
+      type: delay
+      delayTime: 1000
+      percentage: 100
+    testWebClientFaultInjectionThrowException: |
+      type: abort
+      percentage: 100
+      fallbackType: ThrowException
+    testWebClientFaultInjectionReturnNull: |
+      type: abort
+      percentage: 100
+      fallbackType: ReturnNull
+    routeFaultInjectionNull: |
+      type: abort
+      percentage: 100
+      fallbackType: ReturnNull
+management:
+  endpoint:
+    gateway:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: gateway

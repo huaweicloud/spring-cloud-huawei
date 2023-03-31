@@ -22,22 +22,16 @@ import org.apache.servicecomb.governance.handler.CircuitBreakerHandler;
 import org.apache.servicecomb.governance.handler.IdentifierRateLimitingHandler;
 import org.apache.servicecomb.governance.handler.MapperHandler;
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
-import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
-import com.huaweicloud.governance.authentication.provider.BlackWhiteListProperties;
-import com.huaweicloud.governance.authentication.provider.ProviderAuthPreHandlerInterceptor;
-import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
 
 @Configuration
 @ConditionalOnWebApplication(type = Type.SERVLET)
@@ -120,23 +114,5 @@ public class WebMvcConfiguration {
     registrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
 
     return registrationBean;
-  }
-
-  @Bean
-  @RefreshScope
-  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED,
-      havingValue = "true")
-  @ConfigurationProperties(GovernanceProperties.WEBMVC_PUBLICKEY_ACCSSCONTROL)
-  public BlackWhiteListProperties blackWhiteListProperties() {
-    return new BlackWhiteListProperties();
-  }
-
-  @Bean
-  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED,
-      havingValue = "true")
-  @ConditionalOnServiceCombDiscoveryEnabled
-  public ProviderAuthPreHandlerInterceptor providerAuthPreHandlerInterceptor(ServiceCenterClient client,
-      BlackWhiteListProperties blackWhiteListProperties) {
-    return new ProviderAuthPreHandlerInterceptor(client, blackWhiteListProperties);
   }
 }

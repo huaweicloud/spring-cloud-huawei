@@ -100,10 +100,6 @@
       <artifactId>spring-cloud-gateway-server</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-huawei-discovery</artifactId>
-    </dependency>
     <!-- end extensions module -->
   </dependencies>
 </project>

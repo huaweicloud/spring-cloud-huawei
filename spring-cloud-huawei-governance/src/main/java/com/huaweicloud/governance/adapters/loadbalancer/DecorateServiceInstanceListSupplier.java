@@ -42,7 +42,7 @@ public class DecorateServiceInstanceListSupplier implements ServiceInstanceListS
     this.delegate = delegate;
   }
 
-  @Autowired
+  @Autowired(required = false)
   public void setFilters(List<ServiceInstanceFilter> filters) {
     this.filters = filters;
   }

@@ -34,6 +34,7 @@
     <module>docker-build-config</module>
     <module>docker-run-config</module>
     <module>discovery-tests</module>
+    <module>discovery-nacos-tests</module>
     <module>mesh-tests</module>
     <module>cse-v1</module>
     <module>cse-v2</module>

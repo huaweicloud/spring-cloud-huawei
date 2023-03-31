@@ -45,10 +45,6 @@
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-governance</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-router</artifactId>
-    </dependency>
 
     <dependency>
       <groupId>com.huaweicloud</groupId>

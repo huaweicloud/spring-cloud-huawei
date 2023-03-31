@@ -127,6 +127,21 @@
       </dependency>
       <dependency>
         <groupId>com.huaweicloud</groupId>
+        <artifactId>spring-cloud-starter-huawei-nacos</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.huaweicloud</groupId>
+        <artifactId>spring-cloud-starter-huawei-nacos-gateway</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.huaweicloud</groupId>
+        <artifactId>spring-cloud-starter-huawei-nacos-webflux</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.huaweicloud</groupId>
         <artifactId>spring-cloud-starter-huawei-jasypt</artifactId>
         <version>${project.version}</version>
       </dependency>
