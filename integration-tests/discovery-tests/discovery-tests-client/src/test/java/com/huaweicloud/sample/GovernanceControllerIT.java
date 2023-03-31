@@ -380,4 +380,16 @@ public class GovernanceControllerIT {
     Assertions.assertEquals(null,
             template.getForObject(orderServiceUrl + "/govern/serviceNameFaultInjectionFeign", String.class));
   }
+
+  @Test
+  public void testFeignFaultInjection() {
+    Assertions.assertEquals(null,
+        template.getForObject(orderServiceUrl + "/govern/testFeignFaultInjection?name=tom", String.class));
+  }
+
+  @Test
+  public void testTemplateFaultInjection() {
+    Assertions.assertEquals(null,
+        template.getForObject(orderServiceUrl + "/govern/testTemplateFaultInjection?name=tom", String.class));
+  }
 }
