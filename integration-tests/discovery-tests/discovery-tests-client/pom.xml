@@ -53,7 +53,7 @@
               <images>
 
                 <image>
-                  <name>servicecomb/service-center</name>
+                  <name>servicecomb/service-center:2.0.0</name>
                   <alias>service-center</alias>
                   <run>
                     <wait>

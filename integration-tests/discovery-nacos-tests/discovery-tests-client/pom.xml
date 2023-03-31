@@ -80,8 +80,14 @@
                   <alias>nacos-price-provider-test</alias>
                   <run>
                     <env>
+                      <JAVA_OPTS>
+                        -Dspring.cloud.nacos.discovery.server-addr=http://nacos-server:8848 -Dspring.cloud.nacos.config.server-addr=http://nacos-server:8848
+                      </JAVA_OPTS>
                       <JAR_PATH>/maven/nacos-price-provider-test-${project.version}.jar</JAR_PATH>
                     </env>
+                    <links>
+                      <link>nacos-server:nacos-server</link>
+                    </links>
                     <wait>
                       <log>Started PriceApplication</log>
                       <tcp>
@@ -105,8 +111,14 @@
                   <alias>nacos-order-consumer-test</alias>
                   <run>
                     <env>
+                      <JAVA_OPTS>
+                        -Dspring.cloud.nacos.discovery.server-addr=http://nacos-server:8848 -Dspring.cloud.nacos.config.server-addr=http://nacos-server:8848
+                      </JAVA_OPTS>
                       <JAR_PATH>/maven/nacos-order-consumer-test-${project.version}.jar</JAR_PATH>
                     </env>
+                    <links>
+                      <link>nacos-server:nacos-server</link>
+                    </links>
                     <wait>
                       <log>Started PriceApplication</log>
                       <tcp>
@@ -130,8 +142,14 @@
                   <alias>wnacos-ebflux-provider-test</alias>
                   <run>
                     <env>
+                      <JAVA_OPTS>
+                        -Dspring.cloud.nacos.discovery.server-addr=http://nacos-server:8848 -Dspring.cloud.nacos.config.server-addr=http://nacos-server:8848
+                      </JAVA_OPTS>
                       <JAR_PATH>/maven/nacos-webflux-provider-test-${project.version}.jar</JAR_PATH>
                     </env>
+                    <links>
+                      <link>nacos-server:nacos-server</link>
+                    </links>
                     <wait>
                       <log>Started PriceApplication</log>
                       <tcp>
@@ -155,8 +173,14 @@
                   <alias>nacos-account-provider-test</alias>
                   <run>
                     <env>
+                      <JAVA_OPTS>
+                        -Dspring.cloud.nacos.discovery.server-addr=http://nacos-server:8848 -Dspring.cloud.nacos.config.server-addr=http://nacos-server:8848
+                      </JAVA_OPTS>
                       <JAR_PATH>/maven/nacos-account-provider-test-${project.version}.jar</JAR_PATH>
                     </env>
+                    <links>
+                      <link>nacos-server:nacos-server</link>
+                    </links>
                     <wait>
                       <log>Started PriceApplication</log>
                       <tcp>
@@ -180,8 +204,14 @@
                   <alias>nacos-discovery-gateway-test</alias>
                   <run>
                     <env>
+                      <JAVA_OPTS>
+                        -Dspring.cloud.nacos.discovery.server-addr=http://nacos-server:8848 -Dspring.cloud.nacos.config.server-addr=http://nacos-server:8848
+                      </JAVA_OPTS>
                       <JAR_PATH>/maven/nacos-discovery-gateway-test-${project.version}.jar</JAR_PATH>
                     </env>
+                    <links>
+                      <link>nacos-server:nacos-server</link>
+                    </links>
                     <wait>
                       <log>Started PriceApplication</log>
                       <tcp>
