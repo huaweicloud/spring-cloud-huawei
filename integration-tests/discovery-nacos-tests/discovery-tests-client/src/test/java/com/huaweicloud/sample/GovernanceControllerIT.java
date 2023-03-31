@@ -63,7 +63,7 @@ public class GovernanceControllerIT {
   public void testServiceNameRetry() {
     String invocationID = UUID.randomUUID().toString();
     String result = template.getForObject(orderServiceUrl + "/govern/serviceNameRetry?invocationID={1}", String.class,
-            invocationID);
+        invocationID);
     assertThat(result).isEqualTo("try times: 3");
   }
 
@@ -88,25 +88,24 @@ public class GovernanceControllerIT {
   @Test
   public void testServiceNameRetryFeign() {
     String invocationID = UUID.randomUUID().toString();
-    String result = template.getForObject(orderServiceUrl + "/govern/serviceNameRetryFeign?invocationID={1}", String.class,
-            invocationID);
+    String result = template.getForObject(orderServiceUrl + "/govern/serviceNameRetryFeign?invocationID={1}",
+        String.class,
+        invocationID);
     assertThat(result).isEqualTo("try times: 3");
   }
 
-  // TODO: Nacos instance governance support https://github.com/alibaba/nacos/issues/10223
-//  @Test
-//  public void testIsolationForceOpen() {
-//    Assertions.assertThrows(HttpServerErrorException.class,
-//        () -> template.getForObject(orderServiceUrl + "/govern/isolationForceOpen", String.class));
-//  }
+  @Test
+  public void testIsolationForceOpen() {
+    Assertions.assertThrows(HttpServerErrorException.class,
+        () -> template.getForObject(orderServiceUrl + "/govern/isolationForceOpen", String.class));
+  }
 
-  // TODO: Nacos instance governance support https://github.com/alibaba/nacos/issues/10223
-//  @Test
-//  public void testIsolationForceOpenFeign() {
-//    // exceptions thrown by feign is catch by spring mvc and will throw of error 500
-//    Assertions.assertThrows(HttpServerErrorException.class,
-//        () -> template.getForObject(orderServiceUrl + "/govern/isolationForceOpenFeign", String.class));
-//  }
+  @Test
+  public void testIsolationForceOpenFeign() {
+    // exceptions thrown by feign is catch by spring mvc and will throw of error 500
+    Assertions.assertThrows(HttpServerErrorException.class,
+        () -> template.getForObject(orderServiceUrl + "/govern/isolationForceOpenFeign", String.class));
+  }
 
   @Test
   public void testCircuitBreaker() throws Exception {
@@ -247,7 +246,7 @@ public class GovernanceControllerIT {
     Assertions.assertFalse(notExpectedFailed.get());
   }
 
-  // TODO: Nacos discovery not setting service name and instance id to invocation context
+  // TODO: Nacos discovery context support service name and instance id
 //  @Test
 //  public void testRateLimitingForServiceOrder() throws Exception {
 //    CountDownLatch latch = new CountDownLatch(100);
@@ -334,7 +333,7 @@ public class GovernanceControllerIT {
     Assertions.assertTrue(successCount.get() >= 2);
   }
 
-  // TODO: Nacos discovery not setting service name and instance id to invocation context
+  // TODO: Nacos discovery context support service name and instance id
 //  @Test
 //  public void testIdentifierRateLimitingService() throws Exception {
 //    CountDownLatch latch = new CountDownLatch(100);
@@ -370,18 +369,18 @@ public class GovernanceControllerIT {
 //    Assertions.assertTrue(expectedFailed.get());
 //    Assertions.assertFalse(notExpectedFailed.get());
 //  }
+
   @Test
   public void testServiceFaultInjectionConsumerRestTemplate() {
     // spring decoder not properly decode json null and here will get string `null`
     Assertions.assertEquals(null,
-            template.getForObject(orderServiceUrl + "/govern/serviceFaultInjectionRestTemplate", String.class));
+        template.getForObject(orderServiceUrl + "/govern/serviceFaultInjectionRestTemplate", String.class));
   }
-
 
   @Test
   public void testServiceNameFaultInjectionConsumerFeign() {
     // spring decoder not properly decode json null and here will get string `null`
     Assertions.assertEquals(null,
-            template.getForObject(orderServiceUrl + "/govern/serviceNameFaultInjectionFeign", String.class));
+        template.getForObject(orderServiceUrl + "/govern/serviceNameFaultInjectionFeign", String.class));
   }
 }

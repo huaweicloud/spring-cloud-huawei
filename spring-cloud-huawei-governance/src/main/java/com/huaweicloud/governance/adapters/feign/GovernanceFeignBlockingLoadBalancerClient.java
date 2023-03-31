@@ -61,6 +61,7 @@ import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.common.context.InvocationStage;
 import com.huaweicloud.common.event.EventManager;
+import com.huaweicloud.governance.adapters.InstanceIDAdapter;
 import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
@@ -250,7 +251,8 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
           .body(message, StandardCharsets.UTF_8).build();
     }
 
-    GovernanceRequestExtractor governanceRequest = FeignUtils.convert(request, originalUri, instance.getInstanceId());
+    GovernanceRequestExtractor governanceRequest = FeignUtils.convert(request, originalUri,
+        InstanceIDAdapter.instanceId(instance));
 
     String reconstructedUrl = loadBalancerClient.reconstructURI(instance, originalUri).toString();
     Request newRequest = buildRequest(request, reconstructedUrl);

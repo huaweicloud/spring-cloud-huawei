@@ -21,6 +21,7 @@ import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.springframework.http.HttpRequest;
 
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.governance.adapters.InstanceIDAdapter;
 import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 
 public final class RestTemplateUtils {
@@ -50,7 +51,7 @@ public final class RestTemplateUtils {
         RetryContext retryContext = InvocationContextHolder.getOrCreateInvocationContext()
             .getLocalContext(RetryContext.RETRY_CONTEXT);
         if (retryContext != null && retryContext.getLastServer() != null) {
-          return retryContext.getLastServer().getInstanceId();
+          return InstanceIDAdapter.instanceId(retryContext.getLastServer());
         }
         return null;
       }

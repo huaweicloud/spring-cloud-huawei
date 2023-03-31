@@ -21,6 +21,7 @@ import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.web.reactive.function.client.ClientRequest;
 
+import com.huaweicloud.governance.adapters.InstanceIDAdapter;
 import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 
 public final class WebClientUtils {
@@ -50,7 +51,7 @@ public final class WebClientUtils {
         ServiceInstance serviceInstance = (ServiceInstance) request.attributes()
             .get(RetryContext.RETRY_SERVICE_INSTANCE);
         if (serviceInstance != null) {
-          return serviceInstance.getInstanceId();
+          return InstanceIDAdapter.instanceId(serviceInstance);
         }
         return null;
       }

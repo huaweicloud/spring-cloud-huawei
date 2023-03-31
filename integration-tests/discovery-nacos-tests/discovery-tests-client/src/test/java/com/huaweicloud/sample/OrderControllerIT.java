@@ -56,7 +56,7 @@ public class OrderControllerIT {
     assertThat(result.size()).isGreaterThanOrEqualTo(1);
   }
 
-  // TODO: Nacos instance governance support https://github.com/alibaba/nacos/issues/10223
+  // TODO: Nacos discovery context support service name and instance id
 //  @Test
 //  public void testInvocationContext() {
 //    HttpHeaders headers = new HttpHeaders();

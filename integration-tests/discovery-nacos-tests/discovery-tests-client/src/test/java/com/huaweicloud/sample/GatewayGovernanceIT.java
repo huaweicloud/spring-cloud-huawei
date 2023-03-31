@@ -58,45 +58,44 @@ public class GatewayGovernanceIT {
     }
   }
 
-  // TODO: Nacos instance governance support https://github.com/alibaba/nacos/issues/10223
-//  @Test
-//  public void testGatewayIsolationErrorCodeWorking() throws Exception {
-//    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
-//    AtomicLong successCount = new AtomicLong(0);
-//    AtomicLong failCount = new AtomicLong(0);
-//    AtomicLong rejectedCount = new AtomicLong(0);
-//
-//    for (int i = 0; i < 100; i++) {
-//      try {
-//        HttpHeaders headers = new HttpHeaders();
-//        HttpEntity<Void> entity = new HttpEntity<>(headers);
-//        String result = template.exchange(url + "/order/govern/testGatewayIsolationErrorCode",
-//            HttpMethod.GET, entity,
-//            String.class).getBody();
-//        if (!"ok".equals(result)) {
-//          notExpectedFailed.set(true);
-//        } else {
-//          successCount.getAndIncrement();
-//        }
-//      } catch (Exception e) {
-//        if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 503) {
-//          if ("fail".equals(((HttpServerErrorException) e).getResponseBodyAsString())) {
-//            failCount.getAndIncrement();
-//          } else {
-//            rejectedCount.getAndIncrement();
-//          }
-//        } else {
-//          notExpectedFailed.set(true);
-//        }
-//      }
-//    }
-//
-//    Assertions.assertFalse(notExpectedFailed.get());
-//    Assertions.assertEquals(100, rejectedCount.get() + successCount.get() + failCount.get());
-//    Assertions.assertTrue(rejectedCount.get() >= 80);
-//    Assertions.assertTrue(successCount.get() >= 6);
-//    Assertions.assertTrue(failCount.get() >= 3);
-//  }
+  @Test
+  public void testGatewayIsolationErrorCodeWorking() throws Exception {
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+    AtomicLong successCount = new AtomicLong(0);
+    AtomicLong failCount = new AtomicLong(0);
+    AtomicLong rejectedCount = new AtomicLong(0);
+
+    for (int i = 0; i < 100; i++) {
+      try {
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        String result = template.exchange(url + "/order/govern/testGatewayIsolationErrorCode",
+            HttpMethod.GET, entity,
+            String.class).getBody();
+        if (!"ok".equals(result)) {
+          notExpectedFailed.set(true);
+        } else {
+          successCount.getAndIncrement();
+        }
+      } catch (Exception e) {
+        if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 503) {
+          if ("fail".equals(((HttpServerErrorException) e).getResponseBodyAsString())) {
+            failCount.getAndIncrement();
+          } else {
+            rejectedCount.getAndIncrement();
+          }
+        } else {
+          notExpectedFailed.set(true);
+        }
+      }
+    }
+
+    Assertions.assertFalse(notExpectedFailed.get());
+    Assertions.assertEquals(100, rejectedCount.get() + successCount.get() + failCount.get());
+    Assertions.assertTrue(rejectedCount.get() >= 80);
+    Assertions.assertTrue(successCount.get() >= 6);
+    Assertions.assertTrue(failCount.get() >= 3);
+  }
 
   @Test
   public void testCircuitBreakerWorking() throws Exception {
