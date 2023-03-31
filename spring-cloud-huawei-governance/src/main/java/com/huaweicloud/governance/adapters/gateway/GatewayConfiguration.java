@@ -29,7 +29,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
-import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
 
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory"})
@@ -66,12 +65,5 @@ public class GatewayConfiguration {
       havingValue = "true", matchIfMissing = true)
   public GlobalFilter retryGlobalFilter(RetryHandler retryHandler) {
     return new RetryGlobalFilter(retryHandler);
-  }
-
-  @Bean
-  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED,
-      havingValue = "true")
-  public GatewayAddTokenContext gatewayAddTokenContext(RSAConsumerTokenManager authenticationTokenManager) {
-    return new GatewayAddTokenContext(authenticationTokenManager);
   }
 }

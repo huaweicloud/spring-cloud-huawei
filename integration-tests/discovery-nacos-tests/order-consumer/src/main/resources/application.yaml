@@ -1,0 +1,159 @@
+#
+## ---------------------------------------------------------------------------
+##
+## Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+##
+## Licensed under the Apache License, Version 2.0 (the "License");
+## you may not use this file except in compliance with the License.
+## You may obtain a copy of the License at
+##
+##      http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+## ---------------------------------------------------------------------------
+
+spring:
+  cloud:
+    servicecomb:
+      context:
+        queryContextMapper:
+          query-context: x-query-context
+      loadbalancer.price:
+        retryOnSame: 1
+      webmvc:
+        publicKey:
+          consumerEnabled: true
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 1000
+        readTimeout: 30000
+
+servicecomb:
+  matchGroup:
+    allOperation: |
+      matches:
+        - apiPath:
+            prefix: "/"
+    isolationForceOpen: |
+      matches:
+        - apiPath:
+            prefix: "/isolationForceOpen"
+    feignInstanceBulkhead: |
+      matches:
+        - apiPath:
+            exact: "/feignInstanceBulkhead"
+    restTemplateInstanceBulkhead: |
+      matches:
+        - apiPath:
+            exact: "/restTemplateInstanceBulkhead"
+    faultInjection: |
+      matches:
+        - apiPath:
+            prefix: "/faultInjection"
+    demo-rateLimiting: |
+      matches:
+        - apiPath:
+            exact: "/govern/hello"
+    demo-identifierRateLimiting: |
+      matches:
+        - apiPath:
+            exact: "/govern/identifierRateLimiting"
+    demo-retry: |
+      matches:
+        - apiPath:
+            prefix: "/retry"
+    demo-retry-more: |
+      matches:
+        - apiPath:
+            prefix: "/retryMore"
+    demo-circuitBreaker: |
+      matches:
+        - apiPath:
+            exact: "/govern/circuitBreaker"
+    demo-bulkhead: |
+      matches:
+        - apiPath:
+            exact: "/govern/bulkhead"
+    demo-loadbalance: |
+      matches:
+        - apiPath:
+            exact: "/priceBalance"
+    demo-loadbalance_feign: |
+      matches:
+        - apiPath:
+            exact: "/loadbalance"
+    serviceName-retry: |
+      matches:
+        - apiPath:
+            prefix: "/serviceNameRetry"
+          serviceName: price
+    serviceName-faultInjection: |
+      matches:
+        - apiPath:
+            prefix: "/serviceNameFaultInjection"
+          serviceName: price
+  rateLimiting:
+    demo-rateLimiting: |
+      rate: 10
+  identifierRateLimiting:
+    demo-identifierRateLimiting: |
+      rate: 2
+      identifier: user-name
+  retry:
+    demo-retry: |
+      maxAttempts: 3
+    demo-retry-more: |
+      maxAttempts: 6
+    serviceName-retry: |
+      maxAttempts: 3
+  circuitBreaker:
+    demo-circuitBreaker: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      failureRateThreshold: 20
+      recordFailureStatus:
+        - 500
+        - 502
+        - 503
+  bulkhead:
+    demo-bulkhead: |
+      maxConcurrentCalls: 5
+  instanceIsolation:
+    #    allOperation: |
+    #      minimumNumberOfCalls: 10
+    #      slidingWindowSize: 10
+    #      failureRateThreshold: 20
+    isolationForceOpen: |
+      forceOpen: true
+  instanceBulkhead:
+    feignInstanceBulkhead: |
+      maxConcurrentCalls: 2
+      maxWaitDuration: 100
+    restTemplateInstanceBulkhead: |
+      maxConcurrentCalls: 2
+      maxWaitDuration: 100
+  faultInjection:
+    faultInjection: |
+      fallbackType: ReturnNull
+      type: abort
+      percentage: 100
+    serviceName-faultInjection: |
+      fallbackType: ReturnNull
+      type: abort
+      percentage: 100
+  loadbalance:
+    demo-loadbalance: |
+      rule: RoundRobin
+    demo-loadbalance_feign: |
+      rule: Random
+
+test:
+  value:
+    applicationOverride: "orderApplicationOverride"

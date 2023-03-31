@@ -24,4 +24,7 @@ com.huaweicloud.servicecomb.discovery.discovery.ServiceCombReactiveDiscoveryClie
 com.huaweicloud.servicecomb.discovery.context.FeignContextConfiguration, \
 com.huaweicloud.servicecomb.discovery.context.RestTemplateContextConfiguration, \
 com.huaweicloud.servicecomb.discovery.context.GatewayContextConfiguration,\
-com.huaweicloud.mesh.discovery.MeshDiscoveryAutoConfiguration
+com.huaweicloud.mesh.discovery.MeshDiscoveryAutoConfiguration,\
+com.huaweicloud.servicecomb.discovery.adapters.feign.FeignConfiguration,\
+com.huaweicloud.servicecomb.discovery.adapters.gateway.GatewayConfiguration,\
+com.huaweicloud.servicecomb.discovery.adapters.web.WebConfiguration

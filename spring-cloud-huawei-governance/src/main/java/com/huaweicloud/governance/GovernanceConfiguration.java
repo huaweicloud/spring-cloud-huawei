@@ -28,20 +28,12 @@ import org.apache.servicecomb.governance.handler.ext.AbstractInstanceIsolationEx
 import org.apache.servicecomb.governance.handler.ext.AbstractRetryExtension;
 import org.apache.servicecomb.governance.properties.MapperProperties;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.common.event.ConfigRefreshEvent;
-import com.huaweicloud.governance.authentication.AuthHandlerBoot;
-import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
-import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 @Configuration
 @ComponentScan(basePackages = {"org.apache.servicecomb.governance"})
@@ -80,21 +72,5 @@ public class GovernanceConfiguration {
   @Bean
   public AbstractInstanceIsolationExtension instanceIsolationExtension(List<StatusCodeExtractor> statusCodeExtractors) {
     return new SpringCloudInstanceIsolationExtension(statusCodeExtractors);
-  }
-
-  @Bean
-  @ConditionalOnExpression("${" + GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED + ":true}"
-      + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":true}")
-  @ConditionalOnServiceCombDiscoveryEnabled
-  public ApplicationListener<ApplicationEvent> authHandlerBoot(ServiceCombRegistration registration) {
-    return new AuthHandlerBoot(registration);
-  }
-
-  @Bean
-  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED,
-      havingValue = "true")
-  @ConditionalOnServiceCombDiscoveryEnabled
-  public RSAConsumerTokenManager authenticationTokenManager(ServiceCombRegistration registration) {
-    return new RSAConsumerTokenManager(registration);
   }
 }
