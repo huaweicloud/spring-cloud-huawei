@@ -44,77 +44,75 @@ public class WebClientGovernanceIT {
     }
   }
 
-  // TODO: Nacos instance governance support https://github.com/alibaba/nacos/issues/10223
-//  @Test
-//  public void testWebClientInstanceBulkhead() throws Exception {
-//    CountDownLatch latch = new CountDownLatch(9);
-//    AtomicBoolean expectedFailed = new AtomicBoolean(false);
-//    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
-//    AtomicLong successCount = new AtomicLong(0);
-//
-//    for (int i = 0; i < 3; i++) {
-//      for (int j = 0; j < 3; j++) {
-//        String name = "t-" + i + "-" + j;
-//        new Thread(name) {
-//          public void run() {
-//            try {
-//              String result = template.getForObject(url + "/testWebClientBulkhead", String.class);
-//              if (!"OK".equals(result)) {
-//                notExpectedFailed.set(true);
-//              } else {
-//                successCount.getAndIncrement();
-//              }
-//            } catch (Exception e) {
-//              if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 500) {
-//                expectedFailed.set(true);
-//              } else {
-//                notExpectedFailed.set(true);
-//              }
-//            }
-//            latch.countDown();
-//          }
-//        }.start();
-//      }
-//      Thread.sleep(100);
-//    }
-//
-//    latch.await(20, TimeUnit.SECONDS);
-//    Assertions.assertTrue(expectedFailed.get());
-//    Assertions.assertFalse(notExpectedFailed.get());
-//    Assertions.assertTrue(successCount.get() >= 2);
-//  }
+  @Test
+  public void testWebClientInstanceBulkhead() throws Exception {
+    CountDownLatch latch = new CountDownLatch(9);
+    AtomicBoolean expectedFailed = new AtomicBoolean(false);
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+    AtomicLong successCount = new AtomicLong(0);
 
-  // TODO: Nacos instance governance support https://github.com/alibaba/nacos/issues/10223
-//  @Test
-//  public void testWebClientInstanceIsolation() throws Exception {
-//    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
-//    AtomicLong successCount = new AtomicLong(0);
-//    AtomicLong rejectedCount = new AtomicLong(0);
-//
-//    for (int i = 0; i < 100; i++) {
-//      try {
-//        String invocationID = UUID.randomUUID().toString();
-//        String result = template.getForObject(url + "/testWebClientInstanceIsolation?invocationID={1}", String.class,
-//            invocationID);
-//        if (!"ok".equals(result)) {
-//          notExpectedFailed.set(true);
-//        } else {
-//          successCount.getAndIncrement();
-//        }
-//      } catch (Exception e) {
-//        if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 500) {
-//          rejectedCount.getAndIncrement();
-//        } else {
-//          notExpectedFailed.set(true);
-//        }
-//      }
-//    }
-//
-//    Assertions.assertFalse(notExpectedFailed.get());
-//    Assertions.assertEquals(100, rejectedCount.get() + successCount.get());
-//    Assertions.assertTrue(rejectedCount.get() >= 80);
-//    Assertions.assertTrue(successCount.get() >= 6);
-//  }
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        String name = "t-" + i + "-" + j;
+        new Thread(name) {
+          public void run() {
+            try {
+              String result = template.getForObject(url + "/testWebClientBulkhead", String.class);
+              if (!"OK".equals(result)) {
+                notExpectedFailed.set(true);
+              } else {
+                successCount.getAndIncrement();
+              }
+            } catch (Exception e) {
+              if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 500) {
+                expectedFailed.set(true);
+              } else {
+                notExpectedFailed.set(true);
+              }
+            }
+            latch.countDown();
+          }
+        }.start();
+      }
+      Thread.sleep(100);
+    }
+
+    latch.await(20, TimeUnit.SECONDS);
+    Assertions.assertTrue(expectedFailed.get());
+    Assertions.assertFalse(notExpectedFailed.get());
+    Assertions.assertTrue(successCount.get() >= 2);
+  }
+
+  @Test
+  public void testWebClientInstanceIsolation() throws Exception {
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+    AtomicLong successCount = new AtomicLong(0);
+    AtomicLong rejectedCount = new AtomicLong(0);
+
+    for (int i = 0; i < 100; i++) {
+      try {
+        String invocationID = UUID.randomUUID().toString();
+        String result = template.getForObject(url + "/testWebClientInstanceIsolation?invocationID={1}", String.class,
+            invocationID);
+        if (!"ok".equals(result)) {
+          notExpectedFailed.set(true);
+        } else {
+          successCount.getAndIncrement();
+        }
+      } catch (Exception e) {
+        if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 500) {
+          rejectedCount.getAndIncrement();
+        } else {
+          notExpectedFailed.set(true);
+        }
+      }
+    }
+
+    Assertions.assertFalse(notExpectedFailed.get());
+    Assertions.assertEquals(100, rejectedCount.get() + successCount.get());
+    Assertions.assertTrue(rejectedCount.get() >= 80);
+    Assertions.assertTrue(successCount.get() >= 6);
+  }
 
   @Test
   public void testWebClientFaultInjection() {

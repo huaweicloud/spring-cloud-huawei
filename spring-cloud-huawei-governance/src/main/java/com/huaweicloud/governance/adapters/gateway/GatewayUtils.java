@@ -23,6 +23,8 @@ import org.springframework.cloud.client.loadbalancer.Response;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.huaweicloud.governance.adapters.InstanceIDAdapter;
+
 public final class GatewayUtils {
   private GatewayUtils() {
 
@@ -54,7 +56,7 @@ public final class GatewayUtils {
         Response<ServiceInstance> response = exchange.getAttribute(
             ServerWebExchangeUtils.GATEWAY_LOADBALANCER_RESPONSE_ATTR);
         if (response != null && response.hasServer()) {
-          return response.getServer().getInstanceId();
+          return InstanceIDAdapter.instanceId(response.getServer());
         }
         return null;
       }

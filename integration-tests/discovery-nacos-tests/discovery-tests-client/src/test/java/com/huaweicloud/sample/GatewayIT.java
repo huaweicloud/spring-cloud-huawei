@@ -110,12 +110,11 @@ public class GatewayIT {
     assertThat(result).isEqualTo("try times: 3");
   }
 
-  // TODO: Nacos instance governance support https://github.com/alibaba/nacos/issues/10223
-//  @Test
-//  public void gatewayIsolationForceOpenFeign() {
-//    Assertions.assertThrows(HttpServerErrorException.class,
-//        () -> template.getForObject(url + "/order/govern/gatewayIsolationForceOpenFeign", String.class));
-//  }
+  @Test
+  public void gatewayIsolationForceOpenFeign() {
+    Assertions.assertThrows(HttpServerErrorException.class,
+        () -> template.getForObject(url + "/order/govern/gatewayIsolationForceOpenFeign", String.class));
+  }
 
   @Test
   public void testFaultInjectionGateway() {
@@ -198,123 +197,120 @@ public class GatewayIT {
     Assertions.assertTrue(successCount.get() >= 10);
   }
 
-  // TODO: Nacos instance governance support https://github.com/alibaba/nacos/issues/10223
-//  @Test
-//  public void testGatewayInstanceBulkhead() throws Exception {
-//    CountDownLatch latch = new CountDownLatch(9);
-//    AtomicBoolean expectedFailed = new AtomicBoolean(false);
-//    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
-//    AtomicLong successCount = new AtomicLong(0);
-//
-//    for (int i = 0; i < 3; i++) {
-//      for (int j = 0; j < 3; j++) {
-//        String name = "t-" + i + "-" + j;
-//        new Thread(name) {
-//          public void run() {
-//            try {
-//              String result = template.getForObject(url + "/order/govern/gatewayInstanceBulkhead", String.class);
-//              if (!"gatewayInstanceBulkhead".equals(result)) {
-//                notExpectedFailed.set(true);
-//              } else {
-//                successCount.getAndIncrement();
-//              }
-//            } catch (Exception e) {
-//              if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 503) {
-//                expectedFailed.set(true);
-//              } else {
-//                notExpectedFailed.set(true);
-//              }
-//            }
-//            latch.countDown();
-//          }
-//        }.start();
-//      }
-//      Thread.sleep(100);
-//    }
-//
-//    latch.await(20, TimeUnit.SECONDS);
-//    Assertions.assertTrue(expectedFailed.get());
-//    Assertions.assertFalse(notExpectedFailed.get());
-//    Assertions.assertTrue(successCount.get() >= 2);
-//  }
+  @Test
+  public void testGatewayInstanceBulkhead() throws Exception {
+    CountDownLatch latch = new CountDownLatch(9);
+    AtomicBoolean expectedFailed = new AtomicBoolean(false);
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+    AtomicLong successCount = new AtomicLong(0);
 
-  // TODO: Nacos instance governance support https://github.com/alibaba/nacos/issues/10223
-//  @Test
-//  public void testFeignInstanceBulkhead() throws Exception {
-//    CountDownLatch latch = new CountDownLatch(9);
-//    AtomicBoolean expectedFailed = new AtomicBoolean(false);
-//    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
-//    AtomicLong successCount = new AtomicLong(0);
-//
-//    for (int i = 0; i < 3; i++) {
-//      for (int j = 0; j < 3; j++) {
-//        String name = "t-" + i + "-" + j;
-//        new Thread(name) {
-//          public void run() {
-//            try {
-//              String result = template.getForObject(url + "/order/govern/feignInstanceBulkhead", String.class);
-//              if (!"success".equals(result)) {
-//                notExpectedFailed.set(true);
-//              } else {
-//                successCount.getAndIncrement();
-//              }
-//            } catch (Exception e) {
-//              if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 503) {
-//                expectedFailed.set(true);
-//              } else {
-//                notExpectedFailed.set(true);
-//              }
-//            }
-//            latch.countDown();
-//          }
-//        }.start();
-//      }
-//      Thread.sleep(100);
-//    }
-//
-//    latch.await(20, TimeUnit.SECONDS);
-//    Assertions.assertTrue(expectedFailed.get());
-//    Assertions.assertFalse(notExpectedFailed.get());
-//    Assertions.assertTrue(successCount.get() >= 2);
-//  }
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        String name = "t-" + i + "-" + j;
+        new Thread(name) {
+          public void run() {
+            try {
+              String result = template.getForObject(url + "/order/govern/gatewayInstanceBulkhead", String.class);
+              if (!"gatewayInstanceBulkhead".equals(result)) {
+                notExpectedFailed.set(true);
+              } else {
+                successCount.getAndIncrement();
+              }
+            } catch (Exception e) {
+              if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 503) {
+                expectedFailed.set(true);
+              } else {
+                notExpectedFailed.set(true);
+              }
+            }
+            latch.countDown();
+          }
+        }.start();
+      }
+      Thread.sleep(100);
+    }
 
-  // TODO: Nacos instance governance support https://github.com/alibaba/nacos/issues/10223
-//  @Test
-//  public void testRestTemplateInstanceBulkhead() throws Exception {
-//    CountDownLatch latch = new CountDownLatch(9);
-//    AtomicBoolean expectedFailed = new AtomicBoolean(false);
-//    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
-//    AtomicLong successCount = new AtomicLong(0);
-//
-//    for (int i = 0; i < 3; i++) {
-//      for (int j = 0; j < 3; j++) {
-//        String name = "t-" + i + "-" + j;
-//        new Thread(name) {
-//          public void run() {
-//            try {
-//              String result = template.getForObject(url + "/order/govern/restTemplateInstanceBulkhead", String.class);
-//              if (!"success".equals(result)) {
-//                notExpectedFailed.set(true);
-//              } else {
-//                successCount.getAndIncrement();
-//              }
-//            } catch (Exception e) {
-//              if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 503) {
-//                expectedFailed.set(true);
-//              } else {
-//                notExpectedFailed.set(true);
-//              }
-//            }
-//            latch.countDown();
-//          }
-//        }.start();
-//      }
-//      Thread.sleep(100);
-//    }
-//
-//    latch.await(20, TimeUnit.SECONDS);
-//    Assertions.assertTrue(expectedFailed.get());
-//    Assertions.assertFalse(notExpectedFailed.get());
-//    Assertions.assertTrue(successCount.get() >= 2);
-//  }
+    latch.await(20, TimeUnit.SECONDS);
+    Assertions.assertTrue(expectedFailed.get());
+    Assertions.assertFalse(notExpectedFailed.get());
+    Assertions.assertTrue(successCount.get() >= 2);
+  }
+
+  @Test
+  public void testFeignInstanceBulkhead() throws Exception {
+    CountDownLatch latch = new CountDownLatch(9);
+    AtomicBoolean expectedFailed = new AtomicBoolean(false);
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+    AtomicLong successCount = new AtomicLong(0);
+
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        String name = "t-" + i + "-" + j;
+        new Thread(name) {
+          public void run() {
+            try {
+              String result = template.getForObject(url + "/order/govern/feignInstanceBulkhead", String.class);
+              if (!"success".equals(result)) {
+                notExpectedFailed.set(true);
+              } else {
+                successCount.getAndIncrement();
+              }
+            } catch (Exception e) {
+              if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 503) {
+                expectedFailed.set(true);
+              } else {
+                notExpectedFailed.set(true);
+              }
+            }
+            latch.countDown();
+          }
+        }.start();
+      }
+      Thread.sleep(100);
+    }
+
+    latch.await(20, TimeUnit.SECONDS);
+    Assertions.assertTrue(expectedFailed.get());
+    Assertions.assertFalse(notExpectedFailed.get());
+    Assertions.assertTrue(successCount.get() >= 2);
+  }
+
+  @Test
+  public void testRestTemplateInstanceBulkhead() throws Exception {
+    CountDownLatch latch = new CountDownLatch(9);
+    AtomicBoolean expectedFailed = new AtomicBoolean(false);
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+    AtomicLong successCount = new AtomicLong(0);
+
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        String name = "t-" + i + "-" + j;
+        new Thread(name) {
+          public void run() {
+            try {
+              String result = template.getForObject(url + "/order/govern/restTemplateInstanceBulkhead", String.class);
+              if (!"success".equals(result)) {
+                notExpectedFailed.set(true);
+              } else {
+                successCount.getAndIncrement();
+              }
+            } catch (Exception e) {
+              if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 503) {
+                expectedFailed.set(true);
+              } else {
+                notExpectedFailed.set(true);
+              }
+            }
+            latch.countDown();
+          }
+        }.start();
+      }
+      Thread.sleep(100);
+    }
+
+    latch.await(20, TimeUnit.SECONDS);
+    Assertions.assertTrue(expectedFailed.get());
+    Assertions.assertFalse(notExpectedFailed.get());
+    Assertions.assertTrue(successCount.get() >= 2);
+  }
 }
