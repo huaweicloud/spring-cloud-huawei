@@ -53,9 +53,13 @@
               <images>
 
                 <image>
-                  <name>nacos/nacos-server:2.2.1</name>
+                  <name>nacos/nacos-server:v2.1.2-slim</name>
                   <alias>nacos-server</alias>
                   <run>
+                    <env>
+                      <MODE>standalone</MODE>
+                      <PREFER_HOST_MODE>hostname</PREFER_HOST_MODE>
+                    </env>
                     <wait>
                       <log>Tomcat started on port</log>
                       <tcp>
