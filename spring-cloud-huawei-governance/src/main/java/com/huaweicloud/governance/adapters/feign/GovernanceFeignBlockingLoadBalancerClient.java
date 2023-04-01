@@ -61,7 +61,7 @@ import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.common.context.InvocationStage;
 import com.huaweicloud.common.event.EventManager;
-import com.huaweicloud.governance.adapters.InstanceIDAdapter;
+import com.huaweicloud.common.disovery.InstanceIDAdapter;
 import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 
 import io.github.resilience4j.bulkhead.Bulkhead;

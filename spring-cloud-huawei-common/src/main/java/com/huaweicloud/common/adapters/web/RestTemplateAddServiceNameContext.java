@@ -15,41 +15,43 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.servicecomb.discovery.context;
+package com.huaweicloud.common.adapters.web;
+
+import java.io.IOException;
 
 import org.springframework.cloud.client.serviceregistry.Registration;
-import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.cloud.gateway.filter.GlobalFilter;
-import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
 import org.springframework.core.Ordered;
-import org.springframework.web.server.ServerWebExchange;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.common.disovery.InstanceIDAdapter;
 
-import reactor.core.publisher.Mono;
-
-public class GatewayAddServiceNameContext implements GlobalFilter, Ordered {
+public class RestTemplateAddServiceNameContext implements
+    ClientHttpRequestInterceptor, Ordered {
   private final Registration registration;
 
-  public GatewayAddServiceNameContext(Registration registration) {
+  public RestTemplateAddServiceNameContext(Registration registration) {
     this.registration = registration;
   }
 
   @Override
-  public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+  public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
+      throws IOException {
     if (this.registration == null) {
-      return chain.filter(exchange);
+      return execution.execute(request, body);
     }
-    InvocationContext context = exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY);
+    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
     context.putContext(InvocationContext.CONTEXT_MICROSERVICE_NAME, registration.getServiceId());
-    context.putContext(InvocationContext.CONTEXT_INSTANCE_ID, registration.getInstanceId());
-    return chain.filter(exchange);
+    context.putContext(InvocationContext.CONTEXT_INSTANCE_ID, InstanceIDAdapter.instanceId(registration));
+    return execution.execute(request, body);
   }
 
   @Override
   public int getOrder() {
-    // this filter executed after ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER
-    return ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER + 20;
+    return Ordered.HIGHEST_PRECEDENCE + 1;
   }
 }

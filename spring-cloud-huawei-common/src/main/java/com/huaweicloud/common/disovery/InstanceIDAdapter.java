@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.governance.adapters;
+package com.huaweicloud.common.disovery;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.serviceregistry.Registration;
 
 /**
  * Some registrations like Nacos do not support instance id. Need this adapter to generate instance id.
@@ -29,6 +30,15 @@ public final class InstanceIDAdapter {
       return result;
     }
     result = serviceInstance.getHost() + ":" + serviceInstance.getPort();
+    return result.replaceAll("[^0-9a-zA-Z]", "-");
+  }
+
+  public static String instanceId(Registration registration) {
+    String result = registration.getInstanceId();
+    if (StringUtils.isNotEmpty(result)) {
+      return result;
+    }
+    result = registration.getHost() + ":" + registration.getPort();
     return result.replaceAll("[^0-9a-zA-Z]", "-");
   }
 }

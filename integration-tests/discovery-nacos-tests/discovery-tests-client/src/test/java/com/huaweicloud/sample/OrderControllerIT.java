@@ -56,26 +56,24 @@ public class OrderControllerIT {
     assertThat(result.size()).isGreaterThanOrEqualTo(1);
   }
 
-  // TODO: Nacos discovery context support service name and instance id
-//  @Test
-//  public void testInvocationContext() {
-//    HttpHeaders headers = new HttpHeaders();
-//    headers.add("x-invocation-context", "{\"test01\":\"test01\"}");
-//    HttpEntity<Void> entity = new HttpEntity<>(headers);
-//    String result = template.exchange(url + "/invocationContext", HttpMethod.GET, entity, String.class).getBody();
-//    assertThat(result).isEqualTo("success");
-//  }
+  @Test
+  public void testInvocationContext() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("x-invocation-context", "{\"test01\":\"test01\"}");
+    HttpEntity<Void> entity = new HttpEntity<>(headers);
+    String result = template.exchange(url + "/invocationContext", HttpMethod.GET, entity, String.class).getBody();
+    assertThat(result).isEqualTo("success");
+  }
 
-  // TODO: Nacos instance governance support https://github.com/alibaba/nacos/issues/10223
-//  @Test
-//  public void testInvocationContextFeign() throws Exception {
-//    URLCodec codec = new URLCodec("UTF-8");
-//    HttpHeaders headers = new HttpHeaders();
-//    headers.add("x-invocation-context", codec.encode("{\"test01\":\"test01\"}"));
-//    HttpEntity<Void> entity = new HttpEntity<>(headers);
-//    String result = template.exchange(url + "/invocationContextFeign", HttpMethod.GET, entity, String.class).getBody();
-//    assertThat(result).isEqualTo("success");
-//  }
+  @Test
+  public void testInvocationContextFeign() throws Exception {
+    URLCodec codec = new URLCodec("UTF-8");
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("x-invocation-context", codec.encode("{\"test01\":\"test01\"}"));
+    HttpEntity<Void> entity = new HttpEntity<>(headers);
+    String result = template.exchange(url + "/invocationContextFeign", HttpMethod.GET, entity, String.class).getBody();
+    assertThat(result).isEqualTo("success");
+  }
 
   @Test
   @SuppressWarnings({"rawtypes", "unchecked"})

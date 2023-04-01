@@ -26,6 +26,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor;
 import org.springframework.cloud.client.loadbalancer.RestTemplateCustomizer;
+import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -61,6 +62,12 @@ public class WebConfiguration {
   @Bean
   public ClientHttpRequestInterceptor serializeContextClientHttpRequestInterceptor() {
     return new SerializeContextClientHttpRequestInterceptor();
+  }
+
+  @Bean
+  public ClientHttpRequestInterceptor restTemplateAddServiceNameContext(
+      @Autowired(required = false) Registration registration) {
+    return new RestTemplateAddServiceNameContext(registration);
   }
 
   @Bean

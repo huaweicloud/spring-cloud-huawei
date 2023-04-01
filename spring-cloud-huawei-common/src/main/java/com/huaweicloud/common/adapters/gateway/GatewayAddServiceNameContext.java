@@ -15,36 +15,42 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.servicecomb.discovery.context;
+package com.huaweicloud.common.adapters.gateway;
 
 import org.springframework.cloud.client.serviceregistry.Registration;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
 import org.springframework.core.Ordered;
+import org.springframework.web.server.ServerWebExchange;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.common.disovery.InstanceIDAdapter;
 
-import feign.RequestInterceptor;
-import feign.RequestTemplate;
+import reactor.core.publisher.Mono;
 
-public class FeignAddServiceNameContext implements RequestInterceptor, Ordered {
+public class GatewayAddServiceNameContext implements GlobalFilter, Ordered {
   private final Registration registration;
 
-  public FeignAddServiceNameContext(Registration registration) {
+  public GatewayAddServiceNameContext(Registration registration) {
     this.registration = registration;
   }
 
   @Override
-  public void apply(RequestTemplate requestTemplate) {
+  public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
     if (this.registration == null) {
-      return;
+      return chain.filter(exchange);
     }
-    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
+    InvocationContext context = exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY);
     context.putContext(InvocationContext.CONTEXT_MICROSERVICE_NAME, registration.getServiceId());
-    context.putContext(InvocationContext.CONTEXT_INSTANCE_ID, registration.getInstanceId());
+    context.putContext(InvocationContext.CONTEXT_INSTANCE_ID, InstanceIDAdapter.instanceId(registration));
+    return chain.filter(exchange);
   }
 
   @Override
   public int getOrder() {
-    return Ordered.HIGHEST_PRECEDENCE + 1;
+    // this filter executed after ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER
+    return ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER + 20;
   }
 }
