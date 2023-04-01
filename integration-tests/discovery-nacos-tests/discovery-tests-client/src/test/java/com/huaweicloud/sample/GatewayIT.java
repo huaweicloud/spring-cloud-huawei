@@ -81,26 +81,24 @@ public class GatewayIT {
     assertThat(result).isEqualTo("hello");
   }
 
-  // TODO: Nacos instance governance support https://github.com/alibaba/nacos/issues/10223
-//  @Test
-//  public void testInvocationContext() {
-//    HttpHeaders headers = new HttpHeaders();
-//    headers.add("x-invocation-context", "{\"test01\":\"test01\"}");
-//    HttpEntity<Void> entity = new HttpEntity<>(headers);
-//    String result = template.exchange(url + "/order/invocationContext", HttpMethod.GET, entity, String.class).getBody();
-//    assertThat(result).isEqualTo("success");
-//  }
+  @Test
+  public void testInvocationContext() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("x-invocation-context", "{\"test01\":\"test01\"}");
+    HttpEntity<Void> entity = new HttpEntity<>(headers);
+    String result = template.exchange(url + "/order/invocationContext", HttpMethod.GET, entity, String.class).getBody();
+    assertThat(result).isEqualTo("success");
+  }
 
-  // TODO: Nacos instance governance support https://github.com/alibaba/nacos/issues/10223
-//  @Test
-//  public void testinvocationContextGateway() {
-//    HttpHeaders headers = new HttpHeaders();
-//    headers.add("x-invocation-context", "{\"test01\":\"test01\"}");
-//    HttpEntity<Void> entity = new HttpEntity<>(headers);
-//    String result = template.exchange(url + "/order/invocationContextGateway", HttpMethod.GET, entity, String.class)
-//        .getBody();
-//    assertThat(result).isEqualTo("success");
-//  }
+  @Test
+  public void testinvocationContextGateway() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("x-invocation-context", "{\"test01\":\"test01\"}");
+    HttpEntity<Void> entity = new HttpEntity<>(headers);
+    String result = template.exchange(url + "/order/invocationContextGateway", HttpMethod.GET, entity, String.class)
+        .getBody();
+    assertThat(result).isEqualTo("success");
+  }
 
   @Test
   public void testRetry() {

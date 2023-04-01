@@ -15,38 +15,33 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.servicecomb.discovery.context;
-
-import java.io.IOException;
+package com.huaweicloud.common.adapters.feign;
 
 import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.core.Ordered;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.client.ClientHttpRequestExecution;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.ClientHttpResponse;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.common.disovery.InstanceIDAdapter;
 
-public class RestTemplateAddServiceNameContext implements
-    ClientHttpRequestInterceptor, Ordered {
+import feign.RequestInterceptor;
+import feign.RequestTemplate;
+
+public class FeignAddServiceNameContext implements RequestInterceptor, Ordered {
   private final Registration registration;
 
-  public RestTemplateAddServiceNameContext(Registration registration) {
+  public FeignAddServiceNameContext(Registration registration) {
     this.registration = registration;
   }
 
   @Override
-  public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
-      throws IOException {
+  public void apply(RequestTemplate requestTemplate) {
     if (this.registration == null) {
-      return execution.execute(request, body);
+      return;
     }
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
     context.putContext(InvocationContext.CONTEXT_MICROSERVICE_NAME, registration.getServiceId());
-    context.putContext(InvocationContext.CONTEXT_INSTANCE_ID, registration.getInstanceId());
-    return execution.execute(request, body);
+    context.putContext(InvocationContext.CONTEXT_INSTANCE_ID, InstanceIDAdapter.instanceId(registration));
   }
 
   @Override

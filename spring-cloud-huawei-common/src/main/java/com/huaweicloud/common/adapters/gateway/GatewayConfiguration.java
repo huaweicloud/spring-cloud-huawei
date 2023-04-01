@@ -17,8 +17,10 @@
 
 package com.huaweicloud.common.adapters.gateway;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,5 +40,10 @@ public class GatewayConfiguration {
   @Bean
   public GlobalFilter gatewayMetricsGlobalFilter() {
     return new GatewayMetricsGlobalFilter();
+  }
+
+  @Bean
+  public GlobalFilter gatewayAddServiceNameContext(@Autowired(required = false) Registration registration) {
+    return new GatewayAddServiceNameContext(registration);
   }
 }

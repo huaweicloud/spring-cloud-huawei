@@ -19,8 +19,10 @@ package com.huaweicloud.common.adapters.feign;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -47,5 +49,10 @@ public class FeignConfiguration {
   @Bean
   public RequestInterceptor serializeContextOrderedRequestInterceptor() {
     return new SerializeContextOrderedRequestInterceptor();
+  }
+
+  @Bean
+  public FeignAddServiceNameContext feignAddServiceNameContext(@Autowired(required = false) Registration registration) {
+    return new FeignAddServiceNameContext(registration);
   }
 }

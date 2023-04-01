@@ -23,7 +23,7 @@ import org.springframework.cloud.client.loadbalancer.Response;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.huaweicloud.governance.adapters.InstanceIDAdapter;
+import com.huaweicloud.common.disovery.InstanceIDAdapter;
 
 public final class GatewayUtils {
   private GatewayUtils() {
