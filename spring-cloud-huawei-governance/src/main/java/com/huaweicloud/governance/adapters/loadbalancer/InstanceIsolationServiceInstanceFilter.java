@@ -28,6 +28,7 @@ import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.core.Ordered;
 
 import com.google.common.eventbus.Subscribe;
+import com.huaweicloud.common.disovery.InstanceIDAdapter;
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.governance.event.InstanceIsolatedEvent;
 
@@ -63,7 +64,7 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
     }
     List<ServiceInstance> result = new ArrayList<>(instances.size());
     for (ServiceInstance serviceInstance : instances) {
-      Long duration = isolatedInstances.get(serviceInstance.getInstanceId());
+      Long duration = isolatedInstances.get(InstanceIDAdapter.instanceId(serviceInstance));
       if (duration == null) {
         result.add(serviceInstance);
         continue;
@@ -74,7 +75,7 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
       }
 
       synchronized (lock) {
-        isolatedInstances.remove(serviceInstance.getInstanceId());
+        isolatedInstances.remove(InstanceIDAdapter.instanceId(serviceInstance));
       }
       result.add(serviceInstance);
     }
