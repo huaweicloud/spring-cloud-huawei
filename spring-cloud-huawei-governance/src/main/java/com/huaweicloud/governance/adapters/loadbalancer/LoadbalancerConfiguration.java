@@ -47,4 +47,9 @@ public class LoadbalancerConfiguration {
   public LoadBalancerRequestFactory loadBalancerRequestFactory(LoadBalancerClient loadBalancerClient) {
     return new DecorateLoadBalancerRequestFactory(loadBalancerClient, this.transformers);
   }
+
+  @Bean
+  public InstanceIsolationServiceInstanceFilter instanceIsolationServiceInstanceFilter() {
+    return new InstanceIsolationServiceInstanceFilter();
+  }
 }
