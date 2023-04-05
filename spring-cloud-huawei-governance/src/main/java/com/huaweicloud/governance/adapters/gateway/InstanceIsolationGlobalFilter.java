@@ -17,10 +17,11 @@
 
 package com.huaweicloud.governance.adapters.gateway;
 
+import java.time.Duration;
+
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.apache.servicecomb.governance.policy.CircuitBreakerPolicy;
-import org.apache.servicecomb.service.center.client.DiscoveryEvents.PullInstanceEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -32,6 +33,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.huaweicloud.common.event.EventManager;
+import com.huaweicloud.governance.event.InstanceIsolatedEvent;
 
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -66,6 +68,12 @@ public class InstanceIsolationGlobalFilter implements GlobalFilter, Ordered {
 
   private Mono<Void> addInstanceIsolation(ServerWebExchange exchange, GovernanceRequestExtractor governanceRequest,
       Mono<Void> toRun) {
+    CircuitBreakerPolicy circuitBreakerPolicy = isolationHandler.matchPolicy(governanceRequest);
+    if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
+      return Mono.error(new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
+          "Policy " + circuitBreakerPolicy.getName() + " forced open and deny requests"));
+    }
+
     CircuitBreaker circuitBreaker = isolationHandler.getActuator(governanceRequest);
     Mono<Void> mono = toRun;
     if (circuitBreaker != null) {
@@ -74,8 +82,9 @@ public class InstanceIsolationGlobalFilter implements GlobalFilter, Ordered {
           .transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
           .then()
           .onErrorResume(CallNotPermittedException.class, (t) -> {
-            LOGGER.error("instance isolated [{}]", t.getMessage());
-            EventManager.post(new PullInstanceEvent());
+            LOGGER.error("instance isolated [{}], [{}]", governanceRequest.instanceId(), t.getMessage());
+            EventManager.post(new InstanceIsolatedEvent(governanceRequest.instanceId(),
+                Duration.parse(circuitBreakerPolicy.getWaitDurationInOpenState())));
             return Mono.error(new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
                 "instance isolated.", t));
           });

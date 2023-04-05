@@ -17,10 +17,12 @@
 
 package com.huaweicloud.governance.adapters.web;
 
+import java.io.IOException;
+import java.time.Duration;
+
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.apache.servicecomb.governance.policy.CircuitBreakerPolicy;
-import org.apache.servicecomb.service.center.client.DiscoveryEvents.PullInstanceEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -31,6 +33,7 @@ import org.springframework.http.client.ClientHttpResponse;
 
 import com.huaweicloud.common.adapters.web.FallbackClientHttpResponse;
 import com.huaweicloud.common.event.EventManager;
+import com.huaweicloud.governance.event.InstanceIsolatedEvent;
 
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -50,34 +53,39 @@ public class IsolationClientHttpRequestInterceptor implements ClientHttpRequestI
   }
 
   @Override
-  public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) {
+  public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
+      throws IOException {
     GovernanceRequestExtractor governanceRequest = RestTemplateUtils.createGovernanceRequest(request);
-    try {
-      CircuitBreakerPolicy circuitBreakerPolicy = instanceIsolationHandler.matchPolicy(governanceRequest);
-      if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
-        return new FallbackClientHttpResponse(503,
-            "Policy " + circuitBreakerPolicy.getName() + " forced open and deny requests");
-      }
 
-      if (circuitBreakerPolicy != null && !circuitBreakerPolicy.isForceClosed()) {
-        CircuitBreaker circuitBreaker = instanceIsolationHandler.getActuator(governanceRequest);
-        if (circuitBreaker != null) {
-          CheckedFunction0<ClientHttpResponse> next = () -> execution.execute(request, body);
-          DecorateCheckedSupplier<ClientHttpResponse> dcs = Decorators.ofCheckedSupplier(next);
-          dcs.withCircuitBreaker(circuitBreaker);
+    CircuitBreakerPolicy circuitBreakerPolicy = instanceIsolationHandler.matchPolicy(governanceRequest);
+    if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
+      return new FallbackClientHttpResponse(503,
+          "Policy " + circuitBreakerPolicy.getName() + " forced open and deny requests");
+    }
+
+    if (circuitBreakerPolicy != null && !circuitBreakerPolicy.isForceClosed()) {
+      CircuitBreaker circuitBreaker = instanceIsolationHandler.getActuator(governanceRequest);
+      if (circuitBreaker != null) {
+        CheckedFunction0<ClientHttpResponse> next = () -> execution.execute(request, body);
+        DecorateCheckedSupplier<ClientHttpResponse> dcs = Decorators.ofCheckedSupplier(next);
+        dcs.withCircuitBreaker(circuitBreaker);
+        try {
           return dcs.get();
+        } catch (Throwable e) {
+          if (e instanceof CallNotPermittedException) {
+            LOG.error("instance isolated [{}], [{}]", governanceRequest.instanceId(), e.getMessage());
+            EventManager.post(new InstanceIsolatedEvent(governanceRequest.instanceId(),
+                Duration.parse(circuitBreakerPolicy.getWaitDurationInOpenState())));
+            return new FallbackClientHttpResponse(503, "instance isolated");
+          }
+          if (e instanceof RuntimeException) {
+            throw (RuntimeException) e;
+          }
+          throw new RuntimeException(e);
         }
       }
-      return execution.execute(request, body);
-    } catch (Throwable e) {
-      if (e instanceof CallNotPermittedException) {
-        // when instance isolated, request to pull instances.
-        LOG.warn("instance isolated [{}]", governanceRequest.instanceId());
-        EventManager.post(new PullInstanceEvent());
-        return new FallbackClientHttpResponse(503, "instance isolated");
-      }
-      throw new RuntimeException(e);
     }
+    return execution.execute(request, body);
   }
 
   @Override

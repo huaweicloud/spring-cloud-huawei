@@ -19,6 +19,7 @@ package com.huaweicloud.governance.adapters.feign;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,7 +38,6 @@ import org.apache.servicecomb.governance.processor.injection.Fault;
 import org.apache.servicecomb.governance.processor.injection.FaultInjectionDecorators;
 import org.apache.servicecomb.governance.processor.injection.FaultInjectionDecorators.FaultInjectionDecorateCheckedSupplier;
 import org.apache.servicecomb.http.client.common.HttpUtils;
-import org.apache.servicecomb.service.center.client.DiscoveryEvents.PullInstanceEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
@@ -60,9 +60,10 @@ import org.springframework.util.Assert;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.common.context.InvocationStage;
-import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.common.disovery.InstanceIDAdapter;
+import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
+import com.huaweicloud.governance.event.InstanceIsolatedEvent;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadFullException;
@@ -161,15 +162,15 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
           headers.put("Content-Type", Arrays.asList("application/json"));
           if (result == null) {
             return Response.builder().status(200)
-                    .request(request)
-                    .headers(headers)
-                    .build();
+                .request(request)
+                .headers(headers)
+                .build();
           }
           return Response.builder().status(200)
-                  .request(request)
-                  .headers(headers)
-                  .body(HttpUtils.serialize(result).getBytes(
-                          StandardCharsets.UTF_8)).build();
+              .request(request)
+              .headers(headers)
+              .body(HttpUtils.serialize(result).getBytes(
+                  StandardCharsets.UTF_8)).build();
         }
       } catch (Throwable e) {
         throw new RuntimeException(e);
@@ -336,42 +337,47 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
       org.springframework.cloud.client.loadbalancer.Response<ServiceInstance> lbResponse,
       Set<LoadBalancerLifecycle> supportedLifecycleProcessors, boolean useRawStatusCodes) {
 
-    try {
-      CircuitBreakerPolicy circuitBreakerPolicy = instanceIsolationHandler.matchPolicy(governanceRequest);
-      if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
-        return Response.builder().status(503)
-            .reason("Policy " + circuitBreakerPolicy.getName() + " forced open and deny requests").request(feignRequest)
-            .build();
+    CircuitBreakerPolicy circuitBreakerPolicy = instanceIsolationHandler.matchPolicy(governanceRequest);
+    if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
+      return Response.builder().status(503)
+          .reason("Policy " + circuitBreakerPolicy.getName() + " forced open and deny requests").request(feignRequest)
+          .build();
+    }
+
+    if (circuitBreakerPolicy != null && !circuitBreakerPolicy.isForceClosed()) {
+      CircuitBreaker circuitBreaker = instanceIsolationHandler.getActuator(governanceRequest);
+      if (circuitBreaker == null) {
+        return executeWithInstanceBulkhead(governanceRequest, feignClient, options, feignRequest, lbRequest,
+            lbResponse, supportedLifecycleProcessors, useRawStatusCodes);
       }
 
-      if (circuitBreakerPolicy != null && !circuitBreakerPolicy.isForceClosed()) {
-        CircuitBreaker circuitBreaker = instanceIsolationHandler.getActuator(governanceRequest);
-        if (circuitBreaker == null) {
-          return executeWithInstanceBulkhead(governanceRequest, feignClient, options, feignRequest, lbRequest,
-              lbResponse, supportedLifecycleProcessors, useRawStatusCodes);
+      CheckedFunction0<Response> next = () -> executeWithInstanceBulkhead(governanceRequest, feignClient, options,
+          feignRequest, lbRequest, lbResponse,
+          supportedLifecycleProcessors, useRawStatusCodes);
+
+      DecorateCheckedSupplier<Response> dcs = Decorators.ofCheckedSupplier(next);
+      dcs.withCircuitBreaker(circuitBreaker);
+
+      try {
+        return dcs.get();
+      } catch (Throwable e) {
+        if (e instanceof CallNotPermittedException) {
+          // when instance isolated, request to pull instances.
+          LOG.error("instance isolated [{}], [{}]", governanceRequest.instanceId(), e.getMessage());
+          EventManager.post(new InstanceIsolatedEvent(governanceRequest.instanceId(),
+              Duration.parse(circuitBreakerPolicy.getWaitDurationInOpenState())));
+          return Response.builder().status(503).reason("instance isolated.").request(feignRequest).build();
         }
 
-        CheckedFunction0<Response> next = () -> executeWithInstanceBulkhead(governanceRequest, feignClient, options,
-            feignRequest, lbRequest, lbResponse,
-            supportedLifecycleProcessors, useRawStatusCodes);
-
-        DecorateCheckedSupplier<Response> dcs = Decorators.ofCheckedSupplier(next);
-        dcs.withCircuitBreaker(circuitBreaker);
-        return dcs.get();
+        if (e instanceof RuntimeException) {
+          throw (RuntimeException) e;
+        }
+        throw new RuntimeException(e);
       }
-
-      return executeWithInstanceBulkhead(governanceRequest, feignClient, options, feignRequest, lbRequest,
-          lbResponse, supportedLifecycleProcessors, useRawStatusCodes);
-    } catch (Throwable e) {
-      if (e instanceof CallNotPermittedException) {
-        // when instance isolated, request to pull instances.
-        LOG.error("instance isolated [{}]", governanceRequest.instanceId());
-        EventManager.post(new PullInstanceEvent());
-        return Response.builder().status(503).reason("instance isolated.").request(feignRequest).build();
-      }
-
-      throw new RuntimeException(e);
     }
+
+    return executeWithInstanceBulkhead(governanceRequest, feignClient, options, feignRequest, lbRequest,
+        lbResponse, supportedLifecycleProcessors, useRawStatusCodes);
   }
 
   private Response executeWithInstanceBulkhead(GovernanceRequestExtractor governanceRequest, Client feignClient,
