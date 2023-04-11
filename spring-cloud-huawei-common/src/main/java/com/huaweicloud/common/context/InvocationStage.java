@@ -109,7 +109,9 @@ public class InvocationStage {
   public void finish(int statusCode) {
     this.statusCode = statusCode;
     this.endTime = nanoTime();
-    EventManager.getEventBoundedAsyncEventBus().post(new InvocationFinishEvent(this));
+    InvocationFinishEvent event = new InvocationFinishEvent(this);
+    EventManager.getEventBoundedAsyncEventBus().post(event);
+    EventManager.getEventBus().post(event);
   }
 
   public InvocationContext getInvocationContext() {

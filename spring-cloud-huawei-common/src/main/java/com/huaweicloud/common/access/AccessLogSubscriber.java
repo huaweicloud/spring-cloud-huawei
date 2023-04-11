@@ -35,7 +35,11 @@ public class AccessLogSubscriber {
   public AccessLogSubscriber(ContextProperties contextProperties, AccessLogLogger accessLogLogger) {
     this.contextProperties = contextProperties;
     this.accessLogLogger = accessLogLogger;
-    EventManager.getEventBoundedAsyncEventBus().register(this);
+    if (contextProperties.isEnableAsyncTrace()) {
+      EventManager.getEventBoundedAsyncEventBus().register(this);
+    } else {
+      EventManager.getEventBus().register(this);
+    }
   }
 
   @Subscribe
