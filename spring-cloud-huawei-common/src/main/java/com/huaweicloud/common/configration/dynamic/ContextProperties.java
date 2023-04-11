@@ -33,6 +33,8 @@ public class ContextProperties {
 
   private boolean enableTraceInfo = true;
 
+  private boolean enableAsyncTrace = false;
+
   private String traceLevel;
 
   private List<String> traceContexts;
@@ -51,6 +53,14 @@ public class ContextProperties {
 
   public void setEnableTraceInfo(boolean enableTraceInfo) {
     this.enableTraceInfo = enableTraceInfo;
+  }
+
+  public boolean isEnableAsyncTrace() {
+    return enableAsyncTrace;
+  }
+
+  public void setEnableAsyncTrace(boolean enableAsyncTrace) {
+    this.enableAsyncTrace = enableAsyncTrace;
   }
 
   public int getWaitTimeForShutDownInMillis() {
