@@ -39,11 +39,11 @@
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-huawei-config</artifactId>
+      <artifactId>spring-cloud-huawei-service-engine-config</artifactId>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-huawei-dashboard</artifactId>
+      <artifactId>spring-cloud-huawei-service-engine-dashboard</artifactId>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
@@ -51,7 +51,7 @@
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-huawei-discovery</artifactId>
+      <artifactId>spring-cloud-huawei-service-engine-discovery</artifactId>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>

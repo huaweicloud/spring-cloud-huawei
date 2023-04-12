@@ -17,14 +17,9 @@
 
 package com.huaweicloud.common;
 
-import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.huaweicloud.common.configration.bootstrap.BootstrapProperties;
-import com.huaweicloud.common.configration.bootstrap.ServiceCombAkSkProperties;
-import com.huaweicloud.common.transport.AkSkRequestAuthHeaderProvider;
-import com.huaweicloud.common.transport.RBACRequestAuthHeaderProvider;
 import com.huaweicloud.common.util.Cipher;
 import com.huaweicloud.common.util.ShaAKSKCipher;
 
@@ -33,15 +28,5 @@ public class CommonConfiguration {
   @Bean
   public Cipher shaAKSKCipher() {
     return new ShaAKSKCipher();
-  }
-
-  @Bean
-  public AuthHeaderProvider akSkRequestAuthHeaderProvider(ServiceCombAkSkProperties serviceCombAkSkProperties) {
-    return new AkSkRequestAuthHeaderProvider(serviceCombAkSkProperties);
-  }
-
-  @Bean
-  public AuthHeaderProvider rbacRequestAuthHeaderProvider(BootstrapProperties bootstrapProperties) {
-    return new RBACRequestAuthHeaderProvider(bootstrapProperties);
   }
 }

@@ -31,7 +31,7 @@
   <dependencies>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-core</artifactId>
+      <artifactId>spring-cloud-starter-huawei-service-engine-core</artifactId>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
@@ -55,7 +55,7 @@
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-dashboard</artifactId>
+      <artifactId>spring-cloud-starter-huawei-service-engine-dashboard</artifactId>
     </dependency>
     <dependency>
       <groupId>io.github.openfeign</groupId>

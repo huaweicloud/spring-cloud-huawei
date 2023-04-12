@@ -27,9 +27,7 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -38,16 +36,6 @@ import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.UrlResource;
 
-import com.huaweicloud.common.configration.bootstrap.BootstrapProperties;
-import com.huaweicloud.common.configration.bootstrap.ConfigBootstrapProperties;
-import com.huaweicloud.common.configration.bootstrap.DiscoveryBootstrapProperties;
-import com.huaweicloud.common.configration.bootstrap.InstanceProperties;
-import com.huaweicloud.common.configration.bootstrap.MicroserviceProperties;
-import com.huaweicloud.common.configration.bootstrap.ServiceCombAkSkProperties;
-import com.huaweicloud.common.configration.bootstrap.ServiceCombRBACProperties;
-import com.huaweicloud.common.configration.bootstrap.ServiceCombSSLProperties;
-
-@Configuration
 public class BootstrapPropertiesConfiguration {
   public static final String COMPONENT_YML_NAME = "component.yml";
 
@@ -56,60 +44,6 @@ public class BootstrapPropertiesConfiguration {
   public static final String COMPONENT_PROPERTY_SOURCE_NAME = "component-property-source";
 
   public static final String COMPONENT_ORDER_KEY = "x-component-order";
-
-  @Bean
-  @ConfigurationProperties("spring.cloud.servicecomb.service")
-  public MicroserviceProperties microserviceProperties() {
-    return new MicroserviceProperties();
-  }
-
-  @Bean
-  @ConfigurationProperties("spring.cloud.servicecomb.instance")
-  public InstanceProperties instanceProperties() {
-    return new InstanceProperties();
-  }
-
-  @Bean
-  @ConfigurationProperties("spring.cloud.servicecomb.credentials")
-  public ServiceCombAkSkProperties serviceCombAkSkProperties() {
-    return new ServiceCombAkSkProperties();
-  }
-
-  @Bean
-  @ConfigurationProperties("spring.cloud.servicecomb.credentials.account")
-  public ServiceCombRBACProperties serviceCombRBACProperties() {
-    return new ServiceCombRBACProperties();
-  }
-
-  @Bean
-  @ConfigurationProperties("spring.cloud.servicecomb.ssl")
-  public ServiceCombSSLProperties serviceCombSSLProperties() {
-    return new ServiceCombSSLProperties();
-  }
-
-  @Bean
-  @ConfigurationProperties("spring.cloud.servicecomb.discovery")
-  public DiscoveryBootstrapProperties discoveryBootstrapProperties() {
-    return new DiscoveryBootstrapProperties();
-  }
-
-  @Bean
-  @ConfigurationProperties("spring.cloud.servicecomb.config")
-  public ConfigBootstrapProperties configBootstrapProperties() {
-    return new ConfigBootstrapProperties();
-  }
-
-  @Bean
-  public BootstrapProperties bootstrapProperties(MicroserviceProperties microserviceProperties,
-      InstanceProperties instanceProperties,
-      DiscoveryBootstrapProperties discoveryBootstrapProperties,
-      ConfigBootstrapProperties configBootstrapProperties,
-      ServiceCombSSLProperties serviceCombSSLProperties,
-      ServiceCombAkSkProperties serviceCombAkSkProperties,
-      ServiceCombRBACProperties serviceCombRBACProperties) {
-    return new BootstrapProperties(microserviceProperties, instanceProperties, discoveryBootstrapProperties,
-        configBootstrapProperties, serviceCombSSLProperties, serviceCombAkSkProperties, serviceCombRBACProperties);
-  }
 
   @Bean
   public PropertySourcesPlaceholderConfigurer componentYamlPropertySourcesPlaceholderConfigurer() {

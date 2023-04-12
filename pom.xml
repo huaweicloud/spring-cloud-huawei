@@ -44,17 +44,16 @@
   </properties>
 
   <modules>
-    <module>spring-cloud-huawei-dependencies</module>
+    <!-- modules sorted by logic dependency -->
     <module>spring-cloud-huawei-bom</module>
+    <module>spring-cloud-huawei-dependencies</module>
     <module>spring-cloud-huawei-parents</module>
     <module>spring-cloud-huawei-common</module>
-    <module>spring-cloud-huawei-discovery</module>
-    <module>spring-cloud-starter-huawei</module>
-    <module>spring-cloud-huawei-config</module>
+    <module>spring-cloud-huawei-governance</module>
     <module>spring-cloud-huawei-router</module>
     <module>spring-cloud-huawei-swagger</module>
-    <module>spring-cloud-huawei-governance</module>
-    <module>spring-cloud-huawei-dashboard</module>
+    <module>spring-cloud-huawei-service-engine</module>
+    <module>spring-cloud-starter-huawei</module>
   </modules>
 
   <licenses>

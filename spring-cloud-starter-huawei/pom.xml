@@ -38,7 +38,6 @@
     <module>spring-cloud-starter-huawei-core</module>
     <module>spring-cloud-starter-huawei-jasypt</module>
     <module>spring-cloud-starter-huawei-hessian</module>
-    <module>spring-cloud-starter-huawei-actuator</module>
     <module>spring-cloud-starter-huawei-dashboard</module>
     <module>spring-cloud-starter-huawei-service-engine</module>
     <module>spring-cloud-starter-huawei-service-engine-gateway</module>
