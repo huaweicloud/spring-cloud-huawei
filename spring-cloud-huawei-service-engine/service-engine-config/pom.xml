@@ -26,7 +26,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>spring-cloud-huawei-service-engine-config</artifactId>
-  <name>Spring Cloud Huawei::Config</name>
+  <name>Spring Cloud Huawei::Service Engine Config</name>
 
   <dependencies>
     <dependency>

@@ -17,6 +17,7 @@
 ## ---------------------------------------------------------------------------
 
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
+  com.huaweicloud.common.configration.BootstrapPropertiesConfiguration,\
   com.huaweicloud.common.CommonConfiguration
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.huaweicloud.common.event.EventConfiguration,\
