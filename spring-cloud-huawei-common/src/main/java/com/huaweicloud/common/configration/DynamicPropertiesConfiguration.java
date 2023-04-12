@@ -23,7 +23,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
-import com.huaweicloud.common.configration.dynamic.DashboardProperties;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.common.configration.dynamic.HttpClientProperties;
 import com.huaweicloud.common.configration.dynamic.LoadBalancerProperties;
@@ -59,12 +58,6 @@ public class DynamicPropertiesConfiguration {
     return new HttpClientProperties();
   }
 
-  @Bean
-  @RefreshScope
-  @ConfigurationProperties("spring.cloud.servicecomb.dashboard")
-  public DashboardProperties dashboardProperties() {
-    return new DashboardProperties();
-  }
 
   @Bean
   @RefreshScope

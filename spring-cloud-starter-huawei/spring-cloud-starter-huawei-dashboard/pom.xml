@@ -24,13 +24,13 @@
     <version>1.11.0-2021.0.x-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>spring-cloud-starter-huawei-dashboard</artifactId>
-  <name>Spring Cloud Huawei::Starter::Dashboard</name>
+  <artifactId>spring-cloud-starter-huawei-service-engine-dashboard</artifactId>
+  <name>Spring Cloud Huawei::Starter::Service Engine Dashboard</name>
 
   <dependencies>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-huawei-dashboard</artifactId>
+      <artifactId>spring-cloud-huawei-service-engine-dashboard</artifactId>
     </dependency>
   </dependencies>
 </project>

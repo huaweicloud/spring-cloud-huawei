@@ -25,13 +25,13 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>spring-cloud-starter-huawei-config</artifactId>
-  <name>Spring Cloud Huawei::Starter::Config</name>
+  <artifactId>spring-cloud-starter-huawei-service-engine-config</artifactId>
+  <name>Spring Cloud Huawei::Starter::Service Engine Config</name>
 
   <dependencies>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-huawei-config</artifactId>
+      <artifactId>spring-cloud-huawei-service-engine-config</artifactId>
     </dependency>
   </dependencies>
 </project>
