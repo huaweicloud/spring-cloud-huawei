@@ -23,7 +23,7 @@ import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.huaweicloud.common.configration.bootstrap.BootstrapProperties;
+import com.huaweicloud.service.engine.common.configration.bootstrap.BootstrapProperties;
 
 /**
  * bootstrap 配置信息。 由于使用 ContextRefresher 刷新配置， 会重新加载所有 bootstrap 的 bean， 因此配置中心的

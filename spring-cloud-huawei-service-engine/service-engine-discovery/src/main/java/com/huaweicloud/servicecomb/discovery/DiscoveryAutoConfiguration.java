@@ -35,7 +35,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.ServiceCombSSLProperties;
-import com.huaweicloud.service.engine.common.configration.dynamic.GovernanceProperties;
+import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.service.engine.common.disovery.ServiceCenterUtils;
 import com.huaweicloud.servicecomb.discovery.authentication.AuthHandlerBoot;
 import com.huaweicloud.servicecomb.discovery.authentication.consumer.RSAConsumerTokenManager;

@@ -22,7 +22,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.huaweicloud.service.engine.common.configration.dynamic.GovernanceProperties;
+import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
 import com.huaweicloud.servicecomb.discovery.authentication.consumer.FeignAddTokenContext;
 import com.huaweicloud.servicecomb.discovery.authentication.consumer.RSAConsumerTokenManager;

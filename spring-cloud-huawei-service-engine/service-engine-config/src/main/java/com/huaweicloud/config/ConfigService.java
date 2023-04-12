@@ -42,12 +42,12 @@ import org.apache.servicecomb.http.client.common.HttpTransportFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.huaweicloud.common.configration.bootstrap.BootstrapProperties;
-import com.huaweicloud.common.configration.bootstrap.ConfigBootstrapProperties;
-import com.huaweicloud.common.configration.bootstrap.ServiceCombAkSkProperties;
-import com.huaweicloud.common.configration.bootstrap.ServiceCombSSLProperties;
+import com.huaweicloud.service.engine.common.configration.bootstrap.BootstrapProperties;
+import com.huaweicloud.service.engine.common.configration.bootstrap.ConfigBootstrapProperties;
+import com.huaweicloud.service.engine.common.configration.bootstrap.ServiceCombAkSkProperties;
+import com.huaweicloud.service.engine.common.configration.bootstrap.ServiceCombSSLProperties;
 import com.huaweicloud.common.event.EventManager;
-import com.huaweicloud.common.transport.TransportUtils;
+import com.huaweicloud.service.engine.common.transport.TransportUtils;
 import com.huaweicloud.common.util.URLUtil;
 
 public class ConfigService {
