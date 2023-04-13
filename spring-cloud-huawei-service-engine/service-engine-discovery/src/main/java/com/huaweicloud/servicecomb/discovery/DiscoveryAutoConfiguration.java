@@ -19,30 +19,23 @@ package com.huaweicloud.servicecomb.discovery;
 
 import java.util.List;
 
+import com.huaweicloud.authentication.ServicecombInstanceService;
+import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
+import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
+import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.ServiceCenterWatch;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.ServiceCombSSLProperties;
-import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.service.engine.common.disovery.ServiceCenterUtils;
-import com.huaweicloud.servicecomb.discovery.authentication.AuthHandlerBoot;
-import com.huaweicloud.servicecomb.discovery.authentication.consumer.RSAConsumerTokenManager;
-import com.huaweicloud.servicecomb.discovery.authentication.provider.BlackWhiteListProperties;
-import com.huaweicloud.servicecomb.discovery.authentication.provider.ProviderAuthPreHandlerInterceptor;
 import com.huaweicloud.servicecomb.discovery.discovery.DiscoveryProperties;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 @Configuration
 @ConditionalOnServiceCombDiscoveryEnabled
@@ -66,35 +59,9 @@ public class DiscoveryAutoConfiguration {
 
   @Bean
   @ConditionalOnExpression("${" + GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED + ":true}"
-      + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":true}")
-  @ConditionalOnServiceCombDiscoveryEnabled
-  public ApplicationListener<ApplicationEvent> authHandlerBoot(ServiceCombRegistration registration) {
-    return new AuthHandlerBoot(registration);
-  }
-
-  @Bean
-  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED,
-      havingValue = "true")
-  @ConditionalOnServiceCombDiscoveryEnabled
-  public RSAConsumerTokenManager authenticationTokenManager(ServiceCombRegistration registration) {
-    return new RSAConsumerTokenManager(registration);
-  }
-
-  @Bean
-  @RefreshScope
-  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED,
-      havingValue = "true")
-  @ConfigurationProperties(GovernanceProperties.WEBMVC_PUBLICKEY_ACCSSCONTROL)
-  public BlackWhiteListProperties blackWhiteListProperties() {
-    return new BlackWhiteListProperties();
-  }
-
-  @Bean
-  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED,
-      havingValue = "true")
-  @ConditionalOnServiceCombDiscoveryEnabled
-  public ProviderAuthPreHandlerInterceptor providerAuthPreHandlerInterceptor(ServiceCenterClient client,
-      BlackWhiteListProperties blackWhiteListProperties) {
-    return new ProviderAuthPreHandlerInterceptor(client, blackWhiteListProperties);
+          + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":true}")
+  public MicroserviceInstanceService microserviceInstanceService(ServiceCombRegistration registration,
+                                                                 ServiceCenterClient client) {
+    return new ServicecombInstanceService(registration, client);
   }
 }

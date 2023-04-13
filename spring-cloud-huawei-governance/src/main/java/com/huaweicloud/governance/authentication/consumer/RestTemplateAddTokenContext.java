@@ -15,13 +15,11 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.servicecomb.discovery.authentication.consumer;
-
-import org.springframework.http.HttpRequest;
+package com.huaweicloud.governance.authentication.consumer;
 
 import com.huaweicloud.common.adapters.web.PreClientHttpRequestInterceptor;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.servicecomb.discovery.authentication.consumer.RSAConsumerTokenManager;
+import org.springframework.http.HttpRequest;
 
 public class RestTemplateAddTokenContext implements PreClientHttpRequestInterceptor {
 

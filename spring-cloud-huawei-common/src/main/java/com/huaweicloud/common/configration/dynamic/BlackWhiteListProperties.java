@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.servicecomb.discovery.authentication.provider;
+package com.huaweicloud.common.configration.dynamic;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BlackWhiteListProperties {
 
-  static class ConfigurationItem {
-    static final String CATEGORY_PROPERTY = "property";
+  public static class ConfigurationItem {
+    public static final String CATEGORY_PROPERTY = "property";
 
     private String category;
 

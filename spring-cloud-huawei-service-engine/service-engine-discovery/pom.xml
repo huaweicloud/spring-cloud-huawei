@@ -77,6 +77,10 @@
       <artifactId>spring-cloud-gateway-server</artifactId>
       <scope>provided</scope>
     </dependency>
-    <!-- end extensions module -->
+      <dependency>
+          <groupId>com.huaweicloud</groupId>
+          <artifactId>spring-cloud-huawei-governance</artifactId>
+      </dependency>
+      <!-- end extensions module -->
   </dependencies>
 </project>

@@ -15,26 +15,25 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.servicecomb.discovery.adapters.feign;
+package com.huaweicloud.governance.authentication.adapters.gateway;
 
+import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
+import com.huaweicloud.governance.authentication.consumer.GatewayAddTokenContext;
+import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
-import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
-import com.huaweicloud.servicecomb.discovery.authentication.consumer.FeignAddTokenContext;
-import com.huaweicloud.servicecomb.discovery.authentication.consumer.RSAConsumerTokenManager;
-
 @Configuration
-@ConditionalOnClass(name = {"org.springframework.cloud.openfeign.loadbalancer.FeignBlockingLoadBalancerClient"})
-public class FeignConfiguration {
+@ConditionalOnClass(name = {"org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory"})
+@ConditionalOnProperty(value = GovernanceProperties.GATEWAY_GOVERNANCE_ENABLED,
+    havingValue = "true", matchIfMissing = true)
+public class GatewayConfiguration {
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED,
       havingValue = "true")
-  @ConditionalOnServiceCombDiscoveryEnabled
-  public FeignAddTokenContext feignAddTokenContext(RSAConsumerTokenManager authenticationTokenManager) {
-    return new FeignAddTokenContext(authenticationTokenManager);
+  public GatewayAddTokenContext gatewayAddTokenContext(RSAConsumerTokenManager authenticationTokenManager) {
+    return new GatewayAddTokenContext(authenticationTokenManager);
   }
 }

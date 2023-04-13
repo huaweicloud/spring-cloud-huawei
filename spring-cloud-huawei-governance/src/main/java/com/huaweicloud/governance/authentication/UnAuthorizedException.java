@@ -15,11 +15,14 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.servicecomb.discovery.authentication;
+package com.huaweicloud.governance.authentication;
 
-public class Const {
+public class UnAuthorizedException extends RuntimeException {
 
-  public static final String AUTH_TOKEN = "x-auth-token";
+  private static final long serialVersionUID = 3822873429842984609L;
 
-  public static final String INSTANCE_PUBKEY_PRO = "publickey";
+  public UnAuthorizedException(String message) {
+    super(message);
+  }
+
 }
