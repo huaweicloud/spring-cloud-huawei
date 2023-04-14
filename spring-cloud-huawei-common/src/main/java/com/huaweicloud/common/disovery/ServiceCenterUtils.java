@@ -45,7 +45,7 @@ public class ServiceCenterUtils {
       addresses = URLUtil.dealMultiUrl(discoveryProperties.getAddress());
     }
     LOGGER.info("initialize discovery server={}", addresses.toString());
-    return new AddressManager("default", addresses, EventManager.getEventBus());
+    return new AddressManager("default", addresses);
   }
 
   // add other headers needed for registration by new ServiceCenterClient(...)
