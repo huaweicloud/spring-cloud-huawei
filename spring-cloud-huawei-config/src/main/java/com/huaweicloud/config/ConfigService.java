@@ -103,7 +103,7 @@ public class ConfigService {
     }
     LOGGER
         .info("initialize config server type={}, address={}.", configProperties.getServerType(), addresses.toString());
-    return new AddressManager(serviceCombAkSkProperties.getProject(), addresses, EventManager.getEventBus());
+    return new AddressManager(serviceCombAkSkProperties.getProject(), addresses);
   }
 
   private HttpTransport createHttpTransport(boolean sslEnabled,
@@ -158,7 +158,7 @@ public class ConfigService {
   }
 
   private KieAddressManager createKieAddressManager(List<String> addresses) {
-    return new KieAddressManager(addresses, EventManager.getEventBus());
+    return new KieAddressManager(addresses);
   }
 
   private KieAddressManager configKieAddressManager(ServiceCombConfigProperties configProperties) {
