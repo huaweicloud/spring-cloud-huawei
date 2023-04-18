@@ -27,6 +27,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.MDC;
+
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
@@ -61,12 +63,15 @@ public class InvocationContextFilter implements Filter {
       context.putContext(InvocationContext.CONTEXT_TRACE_ID, InvocationContext.generateTraceId());
     }
 
+    // Add MDC
+    MDC.put(InvocationContext.CONTEXT_TRACE_ID, context.getContext(InvocationContext.CONTEXT_TRACE_ID));
     InvocationStage stage = context.getInvocationStage();
     stage.begin(buildId((HttpServletRequest) request, context));
     try {
       chain.doFilter(request, response);
     } finally {
       stage.finish(((HttpServletResponse) response).getStatus());
+      MDC.remove(InvocationContext.CONTEXT_TRACE_ID);
     }
   }
 
