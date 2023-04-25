@@ -25,50 +25,54 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>spring-cloud-starter-huawei-nacos</artifactId>
-  <name>Spring Cloud Huawei::Starter::Nacos</name>
-
+  <artifactId>spring-cloud-starter-huawei-nacos-router</artifactId>
+  <name>Spring Cloud Huawei::Starter::Nacos Router</name>
+  <properties>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
+  </properties>
   <dependencies>
+<!--    <dependency>-->
+<!--      <groupId>com.huaweicloud</groupId>-->
+<!--      <artifactId>spring-cloud-huawei-common</artifactId>-->
+<!--    </dependency>-->
     <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-bootstrap</artifactId>
+      <groupId>com.huaweicloud</groupId>
+      <artifactId>spring-cloud-huawei-governance</artifactId>
     </dependency>
     <dependency>
       <groupId>com.alibaba.cloud</groupId>
       <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
     </dependency>
+    <!-- begin extensions module -->
     <dependency>
-      <groupId>com.alibaba.cloud</groupId>
-      <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-governance</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-jasypt</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-hessian</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webflux</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-nacos-router</artifactId>
+      <groupId>org.springframework.retry</groupId>
+      <artifactId>spring-retry</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>io.github.openfeign</groupId>
-      <artifactId>feign-httpclient</artifactId>
+      <artifactId>feign-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-openfeign</artifactId>
+      <artifactId>spring-cloud-gateway-server</artifactId>
+      <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
+    <!-- end extensions module -->
   </dependencies>
 </project>

@@ -36,6 +36,16 @@ feign:
         readTimeout: 30000
 
 servicecomb:
+  routeRule:
+    price: |                              # 服务名
+      - precedence: 2                        # 优先级，数字越大，优先级越高。
+        route:                               # 路由规则
+          - weight: 20                       # 权重值
+            tags:
+              version: 1.0.0                 # 实例标记。满足标记条件的实例放到这一组。
+          - weight: 80                       # 权重值
+            tags:
+              version: 2.0.0                 # 实例标记。满足标记条件的实例放到这一组。
   matchGroup:
     allOperation: |
       matches:

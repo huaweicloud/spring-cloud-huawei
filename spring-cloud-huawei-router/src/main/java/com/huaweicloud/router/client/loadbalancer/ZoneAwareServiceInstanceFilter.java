@@ -17,9 +17,9 @@
 
 package com.huaweicloud.router.client.loadbalancer;
 
+import com.huaweicloud.common.disovery.Instance;
+import com.huaweicloud.common.instance.ServiceCombServiceInstance;
 import com.huaweicloud.governance.adapters.loadbalancer.ServiceInstanceFilter;
-import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,20 +34,20 @@ import java.util.List;
 
 public class ZoneAwareServiceInstanceFilter implements ServiceInstanceFilter {
 
-  private ServiceCombRegistration serviceCombRegistration;
+  private Instance instance;
 
   @Value("${spring.cloud.servicecomb.discovery.denyCrossZoneLoadBalancing:false}")
   private boolean denyCrossZoneLoadBalancing;
 
   @Autowired
-  public void setServiceCombRegistration(ServiceCombRegistration serviceCombRegistration) {
-    this.serviceCombRegistration = serviceCombRegistration;
+  public void setServiceCombRegistration(Instance instance) {
+    this.instance = instance;
   }
 
   @Override
   public List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances,
       Request<?> request) {
-    MicroserviceInstance mySelf = serviceCombRegistration.getMicroserviceInstance();
+    MicroserviceInstance mySelf = instance.getMicroserviceInstance();
     return zoneAwareDiscoveryFilter(mySelf, instances);
   }
 

@@ -48,7 +48,7 @@ import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBoo
 import com.huaweicloud.service.engine.common.configration.bootstrap.MicroserviceProperties;
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
-import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
+import com.huaweicloud.common.instance.ServiceCombServiceInstance;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationEventPublisherAware {

@@ -31,6 +31,7 @@ spring:
         metadata:
           x-test: value
           x-test2: value2
+          version: 0.0.1
       config:
         enabled: true
         server-addr: http://127.0.0.1:8848

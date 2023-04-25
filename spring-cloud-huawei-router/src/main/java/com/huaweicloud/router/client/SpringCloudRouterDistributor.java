@@ -20,7 +20,7 @@ import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.cloud.client.ServiceInstance;
 
-import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
+import com.huaweicloud.common.instance.ServiceCombServiceInstance;
 
 public class SpringCloudRouterDistributor extends
     AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> {

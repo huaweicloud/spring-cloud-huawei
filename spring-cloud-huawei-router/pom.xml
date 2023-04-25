@@ -32,7 +32,7 @@
   <dependencies>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-huawei-service-engine-discovery</artifactId>
+      <artifactId>spring-cloud-huawei-common</artifactId>
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>

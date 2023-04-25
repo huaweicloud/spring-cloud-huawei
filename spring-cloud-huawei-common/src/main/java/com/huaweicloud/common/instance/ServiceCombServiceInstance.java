@@ -15,7 +15,7 @@
   * limitations under the License.
   */
 
-package com.huaweicloud.servicecomb.discovery.client.model;
+package com.huaweicloud.common.instance;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -90,10 +90,10 @@ public class ServiceCombServiceInstance implements ServiceInstance {
     Map<String, String> map = new HashMap<>();
     map.putAll(this.microserviceInstance.getProperties());
     if (this.microserviceInstance.getStatus() != null) {
-      map.put(DiscoveryConstants.INSTANCE_STATUS, this.microserviceInstance.getStatus().name());
+      map.put("status", this.microserviceInstance.getStatus().name());
     }
     if (this.microserviceInstance.getDataCenterInfo() != null) {
-      map.put(DiscoveryConstants.INSTANCE_ZONE, this.microserviceInstance.getDataCenterInfo().getAvailableZone());
+      map.put("zone", this.microserviceInstance.getDataCenterInfo().getAvailableZone());
     }
     return map;
   }

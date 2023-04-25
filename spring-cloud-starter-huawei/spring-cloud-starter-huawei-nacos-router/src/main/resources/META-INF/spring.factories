@@ -15,27 +15,6 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
-server:
-  port: 9090
 
-spring:
-  application:
-    name: price
-  cloud:
-    nacos:
-      discovery:
-        enabled: true
-        server-addr: http://127.0.0.1:8848
-        service: ${spring.application.name}
-        metadata:
-          x-test: value
-          x-test2: value2
-          version: 3.0.0
-      config:
-        enabled: true
-        server-addr: http://127.0.0.1:8848
-        service: ${spring.application.name}
-
-      # testing access log
-      context:
-        traceContexts: x-microservice-name,x-instance-id
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.huaweicloud.router.client.RouterClientAutoConfiguration
