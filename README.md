@@ -3,8 +3,19 @@
 
 # Spring Cloud Huawei [查看中文文档](README_CN.md)
 
-Spring Cloud Huawei is a framework that makes it easier and productive to develop microservices with Spring Cloud. Spring Cloud Huawei using 
-[Apache ServiceComb][SERVICECOMB] and [CSE][CSE] registry (servicecomb-service-center) and config (servicecomb-kie).
+Spring Cloud Huawei is a framework that makes it easier and productive to develop microservices with Spring Cloud. 
+
+Spring Cloud Huawei supports 
+[Apache ServiceComb][SERVICECOMB] and [Nacos][NACOS] as discovery, registration and configuration management service. 
+
+Spring Cloud Huawei provides a large number of out-of-the-box service governance capabilities, enabling developers to quickly build resilient and reliable microservice applications.
+
+| Service | CSE(ServiceComb)           | CSE(Nacos)     |
+|--|----------------------------|----------------|
+| Discovery and Registration | servicecomb-service-center |
+| Configuration Management | servicecomb-kie            | nacos          |
+
+CSE[CSE] provides commercial versions of ServiceComb and Nacos.
 
 ## Supported version
 
@@ -13,9 +24,7 @@ Spring Cloud Huawei is a framework that makes it easier and productive to develo
 | master    | 1.10.8-2021.0.x                    | 2021.0.5                      | 2.6.13                       | 
 | 2020.0.x  | 1.10.8-2020.0.x                    | 2020.0.6                      | 2.5.14                       |
 | Hoxton    | 1.9.3-Hoxton                       | Hoxton.SR9                    | 2.3.5.RELEASE                |
-| Greenwich | 1.6.1-Greenwich                    | Greenwich.SR6                 | 2.1.6-RELEASE                |
-| Finchley  | 1.6.1-Finchley                     | 2.0.4.RELEASE                 | 2.0.9.RELEASE                |
-| Edgware   | 1.2.0-Edgware                      | 1.3.6.RELEASE                 | 1.5.22.RELEASE               |
+| Greenwich | 1.6.3-Greenwich                    | Greenwich.SR6                 | 2.1.6-RELEASE                |
 
 ***Notice：***
 * You can use `Spring Cloud` compatible version to use `Spring Cloud Huawei`. See https://spring.io/projects/spring-cloud for more details.
@@ -33,40 +42,11 @@ Spring Cloud Huawei is a framework that makes it easier and productive to develo
 3. [CSE Guide][CSE Developer Guide]
 4. [ServiceStage Guide][ServiceStage]
 
-## Modules
-
- * **spring-cloud-starter-huawei-discovery:**
-     * Support for use [servicecomb-service-center](https://github.com/apache/servicecomb-service-center)
-     * Support for use [CSE][CSE] as [Service Registry][Service Registry]
-     * Implements DiscoveryClient, ReactiveDiscoveryClient
-     * Implements ServiceRegistry
-     
- * **spring-cloud-starter-huawei-config:**
-     * Support for use [servicecomb-kie](https://github.com/apache/servicecomb-kie)
-     * Support for use [CSE][CSE] as [Configuration Center][Configuration Center]
-     * Implements PropertySource
-     * Implements @RefreshScope
-
- * **spring-cloud-starter-huawei-governance:**
-     * Support for use [Request Marker-based Governance][Request Marker-based Governance]
-     * Implements retry for FeignClient and RestTemplate
-     * Implements rate limiter, circuit breaker, and bulkhead for Servlet Web MVC
-
- * **spring-cloud-starter-huawei-router:**
-     * Support for use [ServiceStage][ServiceStage] [Canary release features][Canary release features].
-
- * **spring-cloud-starter-huawei-swagger:**
-     * Automatically swagger document generation and registration. 
-
-* **spring-cloud-starter-huawei-jasypt:**
-     * Support for use [Profile encryption scheme][Profile encryption scheme].
-     * Implements the function of identifying encryption mark in service configuration file
-
-
 [ServiceStage]: https://support.huaweicloud.com/intl/en-us/productdesc-servicestage/ss_productdesc_0001.html
 [CSE]: https://www.huaweicloud.com/intl/en-us/product/cse.html
 [CSE Developer Guide]: https://support.huaweicloud.com/intl/en-us/devg-cse/cse_devg_0002.html
 [SERVICECOMB]: https://servicecomb.apache.org/developers/
+[NACOS]: https://nacos.io/zh-cn/index.html
 [Service Registry]: https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0017.html
 [Configuration Center]: https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0018.html
 [Request Marker-based Governance]: https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0020.html
