@@ -14,7 +14,7 @@ Spring Cloud Huawei提供了大量开箱即用的服务治理能力，让开发�
 | 注册中心  | servicecomb-service-center | nacos          |
 | 配置中心  | servicecomb-kie            | nacos          |
 
-CSE[CSE] 提供了 ServiceComb 和 Nacos 的商业版本。
+[CSE][CSE] 提供了 ServiceComb 和 Nacos 的商业版本。
 
 ## 支持的版本列表
 

@@ -12,10 +12,10 @@ Spring Cloud Huawei provides a large number of out-of-the-box service governance
 
 | Service | CSE(ServiceComb)           | CSE(Nacos)     |
 |--|----------------------------|----------------|
-| Discovery and Registration | servicecomb-service-center |
+| Discovery and Registration | servicecomb-service-center | nacos          |
 | Configuration Management | servicecomb-kie            | nacos          |
 
-CSE[CSE] provides commercial versions of ServiceComb and Nacos.
+[CSE][CSE] provides commercial versions of ServiceComb and Nacos.
 
 ## Supported version
 
