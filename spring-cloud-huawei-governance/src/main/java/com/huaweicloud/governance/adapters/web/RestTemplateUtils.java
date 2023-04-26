@@ -58,11 +58,6 @@ public final class RestTemplateUtils {
 
       @Override
       public String serviceName() {
-        RetryContext retryContext = InvocationContextHolder.getOrCreateInvocationContext()
-            .getLocalContext(RetryContext.RETRY_CONTEXT);
-        if (retryContext != null && retryContext.getLastServer() != null) {
-          return retryContext.getLastServer().getServiceId();
-        }
         return request.getURI().getHost();
       }
 

@@ -75,4 +75,7 @@ public interface FeignService {
   @PostMapping("/testHeaderWithJson")
   @Headers("model: {model}")
   public String testHeaderWithJsonCorrect(@Param("model") String model);
+
+  @PostMapping("/testFeignFaultInjection")
+  public String testFaultInjection();
 }

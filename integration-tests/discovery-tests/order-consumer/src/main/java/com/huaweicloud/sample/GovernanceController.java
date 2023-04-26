@@ -36,6 +36,8 @@ public class GovernanceController {
 
   private final FeignService feignService;
 
+  private final WebfluxService webfluxService;
+
   private int count = 0;
 
   private int gatewayIsolationCounter = 0;
@@ -45,9 +47,11 @@ public class GovernanceController {
   private int retryCounterMore = 0;
 
   @Autowired
-  public GovernanceController(RestTemplate restTemplate, FeignService feignService) {
+  public GovernanceController(RestTemplate restTemplate, FeignService feignService,
+      WebfluxService webfluxService) {
     this.restTemplate = restTemplate;
     this.feignService = feignService;
+    this.webfluxService = webfluxService;
   }
 
   @RequestMapping("/hello")
@@ -231,5 +235,17 @@ public class GovernanceController {
   @RequestMapping("/loadbalance")
   public String loadbalance() {
     return feignService.loadbalabce();
+  }
+
+  @GetMapping("/testFeignFaultInjection")
+  public String testFeignFaultInjection(@RequestParam String name) {
+    webfluxService.sayHello(name);
+    return feignService.testFaultInjection();
+  }
+
+  @GetMapping("/testTemplateFaultInjection")
+  public String testTemplateFaultInjection(@RequestParam String name) {
+    restTemplate.getForObject("http://webflux/sayHello?name=tom", String.class);
+    return restTemplate.getForObject("http://price/faultInjection", String.class);
   }
 }

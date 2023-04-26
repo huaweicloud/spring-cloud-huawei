@@ -85,7 +85,7 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/priceBalance"
-    demo-loadbalance_feign: |
+    demo-loadbalance-feign: |
       matches:
         - apiPath:
             exact: "/loadbalance"
@@ -98,6 +98,11 @@ servicecomb:
       matches:
         - apiPath:
             prefix: "/serviceNameFaultInjection"
+          serviceName: price
+    serviceName-faultInjection-feign: |
+      matches:
+        - apiPath:
+            prefix: "/testFeignFaultInjection"
           serviceName: price
   rateLimiting:
     demo-rateLimiting: |
@@ -148,10 +153,14 @@ servicecomb:
       fallbackType: ReturnNull
       type: abort
       percentage: 100
+    serviceName-faultInjection-feign: |
+      fallbackType: ReturnNull
+      type: abort
+      percentage: 100
   loadbalance:
     demo-loadbalance: |
       rule: RoundRobin
-    demo-loadbalance_feign: |
+    demo-loadbalance-feign: |
       rule: Random
 
 test:

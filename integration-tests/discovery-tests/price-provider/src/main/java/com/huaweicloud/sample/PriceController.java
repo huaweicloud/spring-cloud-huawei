@@ -95,4 +95,9 @@ public class PriceController {
   public String testHeaderWithJson(@RequestHeader("model") String model) {
     return model;
   }
+
+  @PostMapping("/testFeignFaultInjection")
+  public String testFeignFaultInjection() {
+    return "ok";
+  }
 }
