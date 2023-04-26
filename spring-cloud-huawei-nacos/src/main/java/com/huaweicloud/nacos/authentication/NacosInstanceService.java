@@ -43,8 +43,6 @@ public class NacosInstanceService implements MicroserviceInstanceService {
 
     private final NacosRegistration registration;
 
-    private String publickey = "";
-
     public NacosInstanceService(NacosDiscoveryProperties properties, NacosRegistration registration,
         NacosServiceDiscovery serviceDiscovery) {
         this.properties = properties;
@@ -54,7 +52,6 @@ public class NacosInstanceService implements MicroserviceInstanceService {
 
     @Override
     public void setPublickey(String publicKeyEncoded) {
-        publickey = publicKeyEncoded;
         properties.getMetadata().put(Const.INSTANCE_PUBKEY_PRO, publicKeyEncoded);
     }
 
