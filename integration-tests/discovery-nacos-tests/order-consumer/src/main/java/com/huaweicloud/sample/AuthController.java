@@ -40,6 +40,6 @@ public class AuthController {
     if (applicationContext.containsBean("providerAuthHandler") || !applicationContext.containsBean("authHandlerBoot")) {
       return null;
     }
-    return restTemplate.getForObject("http://account-app.account/checkToken", String.class);
+    return restTemplate.getForObject("http://account/checkToken", String.class);
   }
 }

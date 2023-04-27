@@ -54,5 +54,9 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-webflux</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.huaweicloud</groupId>
+      <artifactId>spring-cloud-huawei-nacos</artifactId>
+    </dependency>
   </dependencies>
 </project>

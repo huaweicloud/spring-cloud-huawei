@@ -15,17 +15,15 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.servicecomb.discovery.adapters.web;
+package com.huaweicloud.governance.authentication.adapters.web;
 
+import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
+import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
+import com.huaweicloud.governance.authentication.consumer.RestTemplateAddTokenContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
-import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
-import com.huaweicloud.servicecomb.discovery.authentication.consumer.RSAConsumerTokenManager;
-import com.huaweicloud.servicecomb.discovery.authentication.consumer.RestTemplateAddTokenContext;
 
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.http.client.ClientHttpRequestInterceptor",
@@ -34,7 +32,6 @@ public class WebConfiguration {
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED,
       havingValue = "true")
-  @ConditionalOnServiceCombDiscoveryEnabled
   public RestTemplateAddTokenContext restTemplateAddTokenContext(RSAConsumerTokenManager authenticationTokenManager) {
     return new RestTemplateAddTokenContext(authenticationTokenManager);
   }

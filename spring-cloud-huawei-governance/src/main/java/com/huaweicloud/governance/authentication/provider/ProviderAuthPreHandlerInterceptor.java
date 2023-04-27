@@ -15,24 +15,22 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.servicecomb.discovery.authentication.provider;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.servicecomb.service.center.client.ServiceCenterClient;
+package com.huaweicloud.governance.authentication.provider;
 
 import com.huaweicloud.common.adapters.webmvc.PreHandlerInterceptor;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.servicecomb.discovery.authentication.Const;
-import com.huaweicloud.servicecomb.discovery.authentication.UnAuthorizedException;
+import com.huaweicloud.governance.authentication.Const;
+import com.huaweicloud.governance.authentication.UnAuthorizedException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class ProviderAuthPreHandlerInterceptor implements PreHandlerInterceptor {
 
   private final RSAProviderTokenManager authenticationTokenManager;
 
-  public ProviderAuthPreHandlerInterceptor(ServiceCenterClient client, BlackWhiteListProperties blackWhiteListProperties) {
-    authenticationTokenManager = new RSAProviderTokenManager(client, blackWhiteListProperties);
+  public ProviderAuthPreHandlerInterceptor(AccessController accessController) {
+    authenticationTokenManager = new RSAProviderTokenManager(accessController);
   }
 
   @Override

@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.servicecomb.discovery.authentication.consumer;
+package com.huaweicloud.governance.authentication.consumer;
 
 import com.huaweicloud.common.adapters.feign.OrderedRequestInterceptor;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.servicecomb.discovery.authentication.consumer.RSAConsumerTokenManager;
 
 public class FeignAddTokenContext implements OrderedRequestInterceptor {
 

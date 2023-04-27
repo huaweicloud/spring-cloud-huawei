@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.servicecomb.discovery.authentication;
+package com.huaweicloud.governance.authentication;
 
 
 /**

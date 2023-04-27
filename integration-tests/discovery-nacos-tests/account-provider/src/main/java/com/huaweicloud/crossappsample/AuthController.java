@@ -17,6 +17,8 @@
 package com.huaweicloud.crossappsample;
 
 import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
+import com.huaweicloud.common.context.InvocationContext;
+import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.governance.authentication.AuthHandlerBoot;
 import com.huaweicloud.governance.authentication.Const;
 import com.huaweicloud.governance.authentication.provider.ProviderAuthPreHandlerInterceptor;
@@ -25,9 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.huaweicloud.common.context.InvocationContext;
-import com.huaweicloud.common.context.InvocationContextHolder;
 
 @RestController
 public class AuthController {

@@ -54,6 +54,7 @@
     <module>spring-cloud-huawei-swagger</module>
     <module>spring-cloud-huawei-service-engine</module>
     <module>spring-cloud-starter-huawei</module>
+    <module>spring-cloud-huawei-nacos</module>
   </modules>
 
   <licenses>

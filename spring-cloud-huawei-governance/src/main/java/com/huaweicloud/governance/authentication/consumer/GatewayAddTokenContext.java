@@ -15,18 +15,15 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.servicecomb.discovery.authentication.consumer;
+package com.huaweicloud.governance.authentication.consumer;
 
+import com.huaweicloud.common.context.InvocationContext;
+import com.huaweicloud.common.context.InvocationContextHolder;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
 import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
-
-import com.huaweicloud.common.context.InvocationContext;
-import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.servicecomb.discovery.authentication.consumer.RSAConsumerTokenManager;
-
 import reactor.core.publisher.Mono;
 
 public class GatewayAddTokenContext implements GlobalFilter, Ordered {

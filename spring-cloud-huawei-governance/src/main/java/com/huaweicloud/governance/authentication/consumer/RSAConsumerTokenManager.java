@@ -15,21 +15,20 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.servicecomb.discovery.authentication.consumer;
+package com.huaweicloud.governance.authentication.consumer;
 
-import java.security.PrivateKey;
-import java.util.Optional;
-
+import com.huaweicloud.common.context.InvocationContext;
+import com.huaweicloud.governance.authentication.Const;
+import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
+import com.huaweicloud.governance.authentication.RsaAuthenticationToken;
+import com.huaweicloud.governance.authentication.UnAuthorizedException;
 import org.apache.servicecomb.foundation.common.utils.RSAUtils;
 import org.apache.servicecomb.foundation.token.RSAKeypair4Auth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.huaweicloud.common.context.InvocationContext;
-import com.huaweicloud.servicecomb.discovery.authentication.Const;
-import com.huaweicloud.servicecomb.discovery.authentication.RsaAuthenticationToken;
-import com.huaweicloud.servicecomb.discovery.authentication.UnAuthorizedException;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
+import java.security.PrivateKey;
+import java.util.Optional;
 
 public class RSAConsumerTokenManager {
 
@@ -39,10 +38,10 @@ public class RSAConsumerTokenManager {
 
   private RsaAuthenticationToken token;
 
-  private final ServiceCombRegistration registration;
+  private final MicroserviceInstanceService instanceService;
 
-  public RSAConsumerTokenManager(ServiceCombRegistration registration) {
-    this.registration = registration;
+  public RSAConsumerTokenManager(MicroserviceInstanceService instanceService) {
+    this.instanceService = instanceService;
   }
 
   public String getToken() {
@@ -59,8 +58,8 @@ public class RSAConsumerTokenManager {
 
   public String createToken() {
     PrivateKey privateKey = RSAKeypair4Auth.INSTANCE.getPrivateKey();
-    String instanceId = registration.getMicroserviceInstance().getInstanceId();
-    String serviceId = registration.getMicroservice().getServiceId();
+    String instanceId = instanceService.getInstanceId();
+    String serviceId = instanceService.getServiceId();
 
     if (instanceId == null || serviceId == null) {
       LOGGER.error("service not ready when create token.");
