@@ -24,6 +24,7 @@ import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
 import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
 import com.huaweicloud.governance.authentication.provider.AccessController;
 import com.huaweicloud.governance.authentication.provider.ProviderAuthPreHandlerInterceptor;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -35,12 +36,12 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnExpression("${" + GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED + ":false}"
-        + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":false}")
+    + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":false}")
 public class AuthenticationAutoConfiguration {
   @Bean
   @RefreshScope
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED,
-          havingValue = "true")
+      havingValue = "true")
   @ConfigurationProperties(GovernanceProperties.WEBMVC_PUBLICKEY_ACCSSCONTROL)
   public BlackWhiteListProperties blackWhiteListProperties() {
     return new BlackWhiteListProperties();
@@ -69,9 +70,9 @@ public class AuthenticationAutoConfiguration {
 
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED,
-          havingValue = "true")
+      havingValue = "true")
   public AccessController accessController(MicroserviceInstanceService instanceService,
-    BlackWhiteListProperties blackWhiteListProperties) {
+      BlackWhiteListProperties blackWhiteListProperties) {
     return new AccessController(instanceService, blackWhiteListProperties);
   }
 }

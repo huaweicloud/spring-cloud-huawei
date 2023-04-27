@@ -19,78 +19,75 @@ import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
 import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Add black / white list control to service access
  */
-public class AccessController{
-    BlackWhiteListProperties blackWhiteListProperties;
+public class AccessController {
+  BlackWhiteListProperties blackWhiteListProperties;
 
-    private final MicroserviceInstanceService instanceService;
+  private final MicroserviceInstanceService instanceService;
 
-    public AccessController(MicroserviceInstanceService instanceService,
-                            BlackWhiteListProperties blackWhiteListProperties) {
-        this.instanceService = instanceService;
-        this.blackWhiteListProperties = blackWhiteListProperties;
+  public AccessController(MicroserviceInstanceService instanceService,
+      BlackWhiteListProperties blackWhiteListProperties) {
+    this.instanceService = instanceService;
+    this.blackWhiteListProperties = blackWhiteListProperties;
+  }
+
+  public boolean isAllowed(String serviceId, String instanceId) {
+    return whiteAllowed(serviceId, instanceId) && !blackDenied(serviceId, instanceId);
+  }
+
+  public String getPublicKeyFromInstance(String instanceId, String serviceId) {
+    return instanceService.getPublicKeyFromInstance(instanceId, serviceId);
+  }
+
+  private boolean whiteAllowed(String serviceId, String instanceId) {
+    if (blackWhiteListProperties == null || blackWhiteListProperties.getWhite().isEmpty()) {
+      return true;
     }
+    return matchFound(serviceId, instanceId, blackWhiteListProperties.getWhite());
+  }
 
-    public boolean isAllowed(String serviceId, String instanceId) {
-        return whiteAllowed(serviceId, instanceId) && !blackDenied(serviceId, instanceId);
+  private boolean blackDenied(String serviceId, String instanceId) {
+    if (blackWhiteListProperties == null || blackWhiteListProperties.getBlack().isEmpty()) {
+      return false;
     }
+    return matchFound(serviceId, instanceId, blackWhiteListProperties.getBlack());
+  }
 
-    public String getPublicKeyFromInstance(String instanceId, String serviceId) {
-        return instanceService.getPublicKeyFromInstance(instanceId, serviceId);
-    }
-
-    private boolean whiteAllowed(String serviceId, String instanceId) {
-        if (blackWhiteListProperties == null || blackWhiteListProperties.getWhite().isEmpty()) {
-            return true;
+  private boolean matchFound(String serviceId, String instanceId,
+      List<BlackWhiteListProperties.ConfigurationItem> ruleList) {
+    for (BlackWhiteListProperties.ConfigurationItem item : ruleList) {
+      if (BlackWhiteListProperties.ConfigurationItem.CATEGORY_PROPERTY.equals(item.getCategory())) {
+        // as Servicecomb, we support to configure properties, e.g. serviceName, appId, environment, alias, version and so on, also support key in properties.
+        // as Nacos, only support key in metaData.
+        if (matchMicroserviceProperties(serviceId, instanceId, item)) {
+          return true;
         }
-        return matchFound(serviceId, instanceId, blackWhiteListProperties.getWhite());
+      }
     }
+    return false;
+  }
 
-    private boolean blackDenied(String serviceId, String instanceId) {
-        if (blackWhiteListProperties == null || blackWhiteListProperties.getBlack().isEmpty()) {
-            return false;
-        }
-        return matchFound(serviceId, instanceId, blackWhiteListProperties.getBlack());
+  private boolean matchMicroserviceProperties(String serviceId, String instanceId,
+      BlackWhiteListProperties.ConfigurationItem item) {
+    String propertyValue = instanceService.getPropertyValue(serviceId, instanceId, item.getPropertyName());
+    if (StringUtils.isEmpty(propertyValue)) {
+      return false;
     }
+    return isPatternMatch(propertyValue, item.getRule());
+  }
 
-    private boolean matchFound(String serviceId, String instanceId,
-        List<BlackWhiteListProperties.ConfigurationItem> ruleList) {
-        for (BlackWhiteListProperties.ConfigurationItem item : ruleList) {
-            if (BlackWhiteListProperties.ConfigurationItem.CATEGORY_PROPERTY.equals(item.getCategory())) {
-                // as Servicecomb, we support to configure properties, e.g. serviceName, appId, environment, alias, version and so on, also support key in properties.
-                // as Nacos, only support key in metaData.
-                if (matchMicroserviceProperties(serviceId, instanceId, item)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+  private boolean isPatternMatch(String value, String pattern) {
+    if (pattern.startsWith("*")) {
+      return value.endsWith(pattern.substring(1));
     }
-
-    private boolean matchMicroserviceProperties(String serviceId, String instanceId,
-        BlackWhiteListProperties.ConfigurationItem item) {
-        Map<String, String> properties = instanceService.getProperties(serviceId, instanceId, item.getPropertyName());
-        for (Entry<String, String> entry : properties.entrySet()) {
-            if (!entry.getKey().equals(item.getPropertyName())) {
-                continue;
-            }
-            return isPatternMatch(entry.getValue(), item.getRule());
-        }
-        return false;
+    if (pattern.endsWith("*")) {
+      return value.startsWith(pattern.substring(0, pattern.length() - 1));
     }
-
-    private boolean isPatternMatch(String value, String pattern) {
-        if (pattern.startsWith("*")) {
-            return value.endsWith(pattern.substring(1));
-        }
-        if (pattern.endsWith("*")) {
-            return value.startsWith(pattern.substring(0, pattern.length() - 1));
-        }
-        return value.equals(pattern);
-    }
+    return value.equals(pattern);
+  }
 }

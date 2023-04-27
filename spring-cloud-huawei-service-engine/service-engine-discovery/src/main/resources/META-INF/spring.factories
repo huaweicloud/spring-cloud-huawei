@@ -15,7 +15,6 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
-
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 com.huaweicloud.servicecomb.discovery.DiscoveryAutoConfiguration,\
 com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryClientConfiguration,\

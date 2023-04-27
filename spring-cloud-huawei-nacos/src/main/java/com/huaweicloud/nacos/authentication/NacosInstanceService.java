@@ -26,88 +26,88 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.huaweicloud.common.disovery.InstanceIDAdapter;
 import com.huaweicloud.governance.authentication.Const;
 import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
 
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class NacosInstanceService implements MicroserviceInstanceService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NacosInstanceService.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(NacosInstanceService.class);
 
-    private final NacosDiscoveryProperties properties;
+  private final NacosDiscoveryProperties properties;
 
-    private final NacosServiceDiscovery serviceDiscovery;
+  private final NacosServiceDiscovery serviceDiscovery;
 
-    private final NacosRegistration registration;
+  private final NacosRegistration registration;
 
-    public NacosInstanceService(NacosDiscoveryProperties properties, NacosRegistration registration,
-        NacosServiceDiscovery serviceDiscovery) {
-        this.properties = properties;
-        this.registration = registration;
-        this.serviceDiscovery = serviceDiscovery;
+  public NacosInstanceService(NacosDiscoveryProperties properties, NacosRegistration registration,
+      NacosServiceDiscovery serviceDiscovery) {
+    this.properties = properties;
+    this.registration = registration;
+    this.serviceDiscovery = serviceDiscovery;
+  }
+
+  @Override
+  public void setPublickey(String publicKeyEncoded) {
+    properties.getMetadata().put(Const.INSTANCE_PUBKEY_PRO, publicKeyEncoded);
+  }
+
+  @Override
+  public String getInstanceId() {
+    return InstanceIDAdapter.instanceId(registration);
+  }
+
+  @Override
+  public String getServiceId() {
+    return registration.getServiceId();
+  }
+
+  @Override
+  public String getPublicKeyFromInstance(String instanceId, String serviceId) {
+    return getPropertyValue(serviceId, instanceId, Const.INSTANCE_PUBKEY_PRO);
+  }
+
+  @Override
+  public String getPropertyValue(String serviceId, String instanceId, String propertyName) {
+    ServiceInstance serviceInstance = getMicroservice(serviceId, instanceId);
+    if (instances != null) {
+      if ("serviceName".equals(propertyName)) {
+        return serviceInstance.getServiceId();
+      }
+      return serviceInstance.getMetadata().get(propertyName);
+    } else {
+      LOGGER.error("not instance found {}-{}, maybe attack", instanceId, serviceId);
+      return "";
     }
+  }
 
-    @Override
-    public void setPublickey(String publicKeyEncoded) {
-        properties.getMetadata().put(Const.INSTANCE_PUBKEY_PRO, publicKeyEncoded);
-    }
-
-    @Override
-    public String getInstanceId() {
-        return InstanceIDAdapter.instanceId(registration);
-    }
-
-    @Override
-    public String getServiceId() {
-        return registration.getServiceId();
-    }
-
-    @Override
-    public String getPublicKeyFromInstance(String instanceId, String serviceId) {
-        ServiceInstance instances = getMicroservice(serviceId, instanceId);
-        if (instances != null) {
-            return instances.getMetadata().get(Const.INSTANCE_PUBKEY_PRO);
-        } else {
-            LOGGER.error("not instance found {}-{}, maybe attack", instanceId, serviceId);
-            return "";
+  private ServiceInstance getMicroservice(String serviceId, String instanceId) {
+    try {
+      String key = String.format("%s@%s", serviceId, instanceId);
+      return instances.get(key, () -> {
+        ServiceInstance serviceInstance = serviceDiscovery.getInstances(serviceId)
+            .stream()
+            .filter(instance -> InstanceIDAdapter.instanceId(instance).equals(instanceId))
+            .findAny()
+            .get();
+        if (serviceInstance == null) {
+          throw new IllegalArgumentException("service id not exists.");
         }
+        return serviceInstance;
+      });
+    } catch (ExecutionException | UncheckedExecutionException e) {
+      LOGGER.error("get microservice instance from nacos failed, {}, {}",
+          String.format("%s@%s", serviceId, instanceId),
+          e.getMessage());
+      return null;
     }
+  }
 
-    @Override
-    public Map<String, String> getProperties(String serviceId, String instanceId, String propertyName) {
-        ServiceInstance serviceInstance = getMicroservice(serviceId, instanceId);
-        Map<String, String> properties = serviceInstance.getMetadata();
-        properties.put("serviceName", serviceInstance.getServiceId());
-        return properties;
-    }
-
-    private ServiceInstance getMicroservice(String serviceId, String instanceId) {
-        try {
-            String key = String.format("%s@%s", serviceId, instanceId);
-            return instances.get(key, () -> {
-                ServiceInstance serviceInstance = serviceDiscovery.getInstances(serviceId)
-                        .stream()
-                        .filter(instance -> InstanceIDAdapter.instanceId(instance).equals(instanceId))
-                        .findAny()
-                        .get();
-                if (serviceInstance == null) {
-                    throw new IllegalArgumentException("service id not exists.");
-                }
-                return serviceInstance;
-            });
-        } catch (ExecutionException | UncheckedExecutionException e) {
-            LOGGER.error("get microservice instance from nacos failed, {}, {}",
-                    String.format("%s@%s", serviceId, instanceId),
-                    e.getMessage());
-            return null;
-        }
-    }
-
-    private static final Cache<String, ServiceInstance> instances = CacheBuilder.newBuilder()
-            .maximumSize(1000)
-            .expireAfterAccess(30, TimeUnit.MINUTES)
-            .build();
+  private static final Cache<String, ServiceInstance> instances = CacheBuilder.newBuilder()
+      .maximumSize(1000)
+      .expireAfterAccess(30, TimeUnit.MINUTES)
+      .build();
 }

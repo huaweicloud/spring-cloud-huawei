@@ -17,19 +17,17 @@
 
 package com.huaweicloud.governance.authentication;
 
-import java.util.Map;
-
 /**
  * microservice instance service
  */
 public interface MicroserviceInstanceService {
-    void setPublickey(String publicKeyEncoded);
+  void setPublickey(String publicKeyEncoded);
 
-    String getInstanceId();
+  String getInstanceId();
 
-    String getServiceId();
+  String getServiceId();
 
-    String getPublicKeyFromInstance(String instanceId, String serviceId);
+  String getPublicKeyFromInstance(String instanceId, String serviceId);
 
-    Map<String, String> getProperties(String serviceId, String instanceId, String propertyName);
+  String getPropertyValue(String serviceId, String instanceId, String propertyName);
 }
