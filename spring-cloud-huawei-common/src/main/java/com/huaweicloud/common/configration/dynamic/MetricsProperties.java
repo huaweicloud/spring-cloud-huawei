@@ -34,7 +34,7 @@ public class MetricsProperties {
 
   private boolean logsEnabled = true;
 
-  private Duration logsInterval = Duration.ofMinutes(5);
+  private Duration logsInterval = Duration.ofMinutes(15);
 
   public int getMaxMetricsCount() {
     return maxMetricsCount;

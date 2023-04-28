@@ -160,7 +160,7 @@ public class InvocationMetricsLogs {
         logsBuilder.append(":\n");
 
         operationValue.forEach((stageKey, stageValue) -> {
-          if (stageValue.cycleCount == 0) {
+          if (stageValue.lastCount == 0) {
             return;
           }
           logsBuilder.append("    ");
@@ -177,7 +177,8 @@ public class InvocationMetricsLogs {
 
   private String formatMetricsData(MetricsData stageValue) {
     StringBuilder data = new StringBuilder();
-    data.append(stageValue.cycleCount).append("/");
+    data.append("(").append(stageValue.cycleCount)
+        .append("/").append(stageValue.lastCount).append(")").append("/");
     data.append(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - lastTime)).append("/");
     data.append(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - lastTime) > 0
         ? stageValue.cycleCount /
@@ -185,8 +186,13 @@ public class InvocationMetricsLogs {
     data.append(" ");
     data.append(stageValue.cycleCount > 0 ? nanosToMillis(stageValue.cycleAmount) / stageValue.cycleCount : 0);
     data.append(" ");
-    for (Double item : stageValue.cycleDistribution) {
-      data.append(item.intValue()).append(" ");
+    for (int i = 0; i < stageValue.cycleDistribution.length; i++) {
+      data.append("(")
+          .append(((Double) stageValue.cycleDistribution[i]).intValue())
+          .append("/")
+          .append(((Double) stageValue.lastDistribution[i]).intValue())
+          .append(")")
+          .append(" ");
     }
     return data.toString();
   }
