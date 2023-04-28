@@ -41,7 +41,7 @@
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-service-engine-gateway</artifactId>
+      <artifactId>spring-cloud-starter-huawei-mesh-gateway</artifactId>
     </dependency>
     <dependency>
       <groupId>io.github.resilience4j</groupId>

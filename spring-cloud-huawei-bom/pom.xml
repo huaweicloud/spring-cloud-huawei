@@ -144,6 +144,21 @@
       </dependency>
       <dependency>
         <groupId>com.huaweicloud</groupId>
+        <artifactId>spring-cloud-starter-huawei-mesh</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.huaweicloud</groupId>
+        <artifactId>spring-cloud-starter-huawei-mesh-gateway</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.huaweicloud</groupId>
+        <artifactId>spring-cloud-starter-huawei-mesh-webflux</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.huaweicloud</groupId>
         <artifactId>spring-cloud-starter-huawei-jasypt</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -155,6 +170,11 @@
       <dependency>
         <groupId>com.huaweicloud</groupId>
         <artifactId>spring-cloud-huawei-nacos</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.huaweicloud</groupId>
+        <artifactId>spring-cloud-huawei-mesh</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>

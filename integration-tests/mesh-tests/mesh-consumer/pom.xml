@@ -35,7 +35,7 @@
     </dependency>
     <dependency>
       <groupId>com.huaweicloud</groupId>
-      <artifactId>spring-cloud-starter-huawei-service-engine</artifactId>
+      <artifactId>spring-cloud-starter-huawei-mesh</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
