@@ -24,26 +24,6 @@ spring:
     # 微服务名称。 微服务名称定义好以后，后续不能变更。
     name: mesh-provider
   cloud:
-    servicecomb:
-      # 微服务的基本信息
-      service:
-        # 微服务名称，和spring.application.name保持一致。
-        name: ${spring.application.name}
-        # 微服务版本号，本示例使用ServiceStage环境变量。建议保留这种配置方式，
-        # 部署的时候，不用手工修改版本号，防止契约注册失败。
-        version: ${CAS_INSTANCE_VERSION:0.0.1}
-        # 应用名称。默认情况下只有应用名称相同的微服务之间才可以相互发现。
-        application: ${CAS_APPLICATION_NAME:mesh-application}
-        # 环境名称。只有环境名称相同的微服务之间才可以相互发现。
-        # 可以取值 development, testing, acceptance, production
-        environment: production
-
-      # 禁用ServiceComb注册发现和配置
-      discovery:
-        enabled: false
-      config:
-        enabled: false
-
     # mesh-provider 不启用注册发现
     discovery:
       client:

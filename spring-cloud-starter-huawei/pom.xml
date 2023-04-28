@@ -45,6 +45,9 @@
     <module>spring-cloud-starter-huawei-nacos</module>
     <module>spring-cloud-starter-huawei-nacos-gateway</module>
     <module>spring-cloud-starter-huawei-nacos-webflux</module>
+    <module>spring-cloud-starter-huawei-mesh</module>
+    <module>spring-cloud-starter-huawei-mesh-gateway</module>
+    <module>spring-cloud-starter-huawei-mesh-webflux</module>
   </modules>
 
 </project>
