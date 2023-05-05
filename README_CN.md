@@ -18,12 +18,12 @@ Spring Cloud Huawei提供了大量开箱即用的服务治理能力，让开发�
 
 ## 支持的版本列表
 
-| 分支        | 最新版本            | 编译使用 Spring Cloud版本 | 编译使用 Spring Boot版本 |
-|-----------|-----------------|---------------------|-------------------|
-| master    | 1.10.8-2021.0.x | 2021.0.5            | 2.6.13            | 
-| 2020.0.x  | 1.10.8-2020.0.x | 2020.0.6            | 2.5.14            |
-| Hoxton    | 1.9.3-Hoxton    | Hoxton.SR9          | 2.3.5.RELEASE     |
-| Greenwich | 1.6.3-Greenwich | Greenwich.SR6       | 2.1.6-RELEASE     |
+| 分支        | 最新版本             | 编译使用 Spring Cloud版本 | 编译使用 Spring Boot版本 |
+|-----------|------------------|---------------------|-------------------|
+| master    | 1.10.13-2021.0.x | 2021.0.5            | 2.7.10            | 
+| 2020.0.x  | 1.10.8-2020.0.x  | 2020.0.6            | 2.5.14            |
+| Hoxton    | 1.9.3-Hoxton     | Hoxton.SR9          | 2.3.5.RELEASE     |
+| Greenwich | 1.6.3-Greenwich  | Greenwich.SR6       | 2.1.6-RELEASE     |
 
 ***注意：***
 * 使用`Spring Cloud Huawei`时可以使用兼容的`Spring Cloud`版本。详细信息可参考 https://spring.io/projects/spring-cloud。
