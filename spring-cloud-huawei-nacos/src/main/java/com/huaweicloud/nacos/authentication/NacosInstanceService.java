@@ -18,15 +18,19 @@
 package com.huaweicloud.nacos.authentication;
 
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
+import com.alibaba.cloud.nacos.NacosServiceInstance;
 import com.alibaba.cloud.nacos.discovery.NacosServiceDiscovery;
 import com.alibaba.cloud.nacos.registry.NacosRegistration;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.huaweicloud.common.disovery.InstanceIDAdapter;
+import com.huaweicloud.common.instance.Instance;
 import com.huaweicloud.governance.authentication.Const;
 import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
 
+import org.apache.servicecomb.service.center.client.model.Microservice;
+import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
@@ -34,7 +38,7 @@ import org.springframework.cloud.client.ServiceInstance;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class NacosInstanceService implements MicroserviceInstanceService {
+public class NacosInstanceService implements MicroserviceInstanceService, Instance {
   private static final Logger LOGGER = LoggerFactory.getLogger(NacosInstanceService.class);
 
   private final NacosDiscoveryProperties properties;
@@ -110,4 +114,22 @@ public class NacosInstanceService implements MicroserviceInstanceService {
       .maximumSize(1000)
       .expireAfterAccess(30, TimeUnit.MINUTES)
       .build();
+
+  @Override
+  public MicroserviceInstance getMicroserviceInstance() {
+    //not implements but implement in ServiceCombServiceInstance
+    return null;
+  }
+
+  @Override
+  public MicroserviceInstance getMicroserviceInstance(ServiceInstance serviceInstance) {
+    NacosServiceInstance nacosServiceInstance = (NacosServiceInstance) serviceInstance;
+    MicroserviceInstance microserviceInstance = new MicroserviceInstance();
+    Microservice microservice = new Microservice();
+    microservice.setServiceName(nacosServiceInstance.getServiceId());
+    microserviceInstance.setMicroservice(microservice);
+    microserviceInstance.setVersion(nacosServiceInstance.getMetadata().get("version"));
+    microserviceInstance.setProperties(nacosServiceInstance.getMetadata());
+    return microserviceInstance;
+  }
 }

@@ -140,5 +140,9 @@
       <artifactId>spring-cloud-starter-bootstrap</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.servicecomb</groupId>
+      <artifactId>service-center-client</artifactId>
+    </dependency>
   </dependencies>
 </project>

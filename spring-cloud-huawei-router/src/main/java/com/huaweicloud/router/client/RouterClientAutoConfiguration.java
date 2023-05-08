@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.common.instance.Instance;
 import com.huaweicloud.router.client.loadbalancer.CanaryServiceInstanceFilter;
 import com.huaweicloud.router.client.loadbalancer.ZoneAwareServiceInstanceFilter;
 
@@ -37,8 +38,8 @@ import com.huaweicloud.router.client.loadbalancer.ZoneAwareServiceInstanceFilter
 @AutoConfigureAfter(LoadBalancerClientConfiguration.class)
 public class RouterClientAutoConfiguration {
   @Bean
-  public AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor() {
-    return new SpringCloudRouterDistributor();
+  public AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor(Instance instance) {
+    return new SpringCloudRouterDistributor(instance);
   }
 
   @Bean
