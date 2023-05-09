@@ -18,6 +18,7 @@ package com.huaweicloud.authentication;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
+import com.huaweicloud.governance.authentication.instance.CommonInstance;
 import com.huaweicloud.governance.authentication.Const;
 import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
@@ -27,8 +28,11 @@ import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.client.ServiceInstance;
 
 import java.beans.PropertyDescriptor;
+import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -61,6 +65,36 @@ public class ServicecombInstanceService implements MicroserviceInstanceService {
   }
 
   @Override
+  public String getHost() {
+    //not implement
+    return null;
+  }
+
+  @Override
+  public int getPort() {
+    //not implement
+    return 0;
+  }
+
+  @Override
+  public boolean isSecure() {
+    //not implement
+    return false;
+  }
+
+  @Override
+  public URI getUri() {
+    //not implement
+    return null;
+  }
+
+  @Override
+  public Map<String, String> getMetadata() {
+    //not implement
+    return null;
+  }
+
+  @Override
   public String getPublicKeyFromInstance(String instanceId, String serviceId) {
     MicroserviceInstance instances = getOrCreate(serviceId, instanceId);
     if (instances != null) {
@@ -83,6 +117,28 @@ public class ServicecombInstanceService implements MicroserviceInstanceService {
       LOGGER.warn("can't find property name: {} in microservice field.", propertyName);
     }
     return microservice.getProperties().get(propertyName);
+  }
+
+  @Override
+  public CommonInstance getMicroserviceInstance() {
+    return null;
+  }
+
+  @Override
+  public CommonInstance getMicroserviceInstance(ServiceInstance serviceInstance) {
+    return null;
+  }
+
+  @Override
+  public String getAvailableZone() {
+    //not implement
+    return null;
+  }
+
+  @Override
+  public String getRegion() {
+    //not implement
+    return null;
   }
 
   private Microservice getMicroservice(String serviceId) {

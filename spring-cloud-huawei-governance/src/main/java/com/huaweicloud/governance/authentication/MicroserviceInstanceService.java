@@ -17,17 +17,31 @@
 
 package com.huaweicloud.governance.authentication;
 
+import org.springframework.cloud.client.ServiceInstance;
+
+import com.huaweicloud.governance.authentication.instance.CommonInstance;
+
 /**
  * microservice instance service
  */
-public interface MicroserviceInstanceService {
+public interface MicroserviceInstanceService extends ServiceInstance {
   void setPublickey(String publicKeyEncoded);
 
+  @Override
   String getInstanceId();
 
+  @Override
   String getServiceId();
 
   String getPublicKeyFromInstance(String instanceId, String serviceId);
 
   String getPropertyValue(String serviceId, String instanceId, String propertyName);
+
+  CommonInstance getMicroserviceInstance();
+
+  CommonInstance getMicroserviceInstance(ServiceInstance serviceInstance);
+
+  String getAvailableZone();
+
+  String getRegion();
 }

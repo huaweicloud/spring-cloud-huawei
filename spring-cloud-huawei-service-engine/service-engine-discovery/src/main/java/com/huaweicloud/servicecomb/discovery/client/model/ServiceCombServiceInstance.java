@@ -25,9 +25,10 @@ import org.apache.servicecomb.foundation.common.net.URIEndpointObject;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.cloud.client.ServiceInstance;
 
-import com.huaweicloud.common.instance.Instance;
+import com.huaweicloud.governance.authentication.instance.CommonInstance;
+import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
 
-public class ServiceCombServiceInstance implements ServiceInstance, Instance {
+public class ServiceCombServiceInstance implements ServiceInstance, MicroserviceInstanceService {
   private final URIEndpointObject uriEndpointObject;
 
   private final MicroserviceInstance microserviceInstance;
@@ -43,8 +44,18 @@ public class ServiceCombServiceInstance implements ServiceInstance, Instance {
     }
   }
 
-  public MicroserviceInstance getMicroserviceInstance() {
-    return this.microserviceInstance;
+  @Override
+  public CommonInstance getMicroserviceInstance() {
+    CommonInstance commonInstance = new CommonInstance();
+    commonInstance.setServiceName(this.microserviceInstance.getServiceName());
+    commonInstance.setVersion(this.microserviceInstance.getVersion());
+    commonInstance.setProperties(this.microserviceInstance.getProperties());
+    return commonInstance;
+  }
+
+  @Override
+  public void setPublickey(String publicKeyEncoded) {
+
   }
 
   @Override
@@ -53,14 +64,34 @@ public class ServiceCombServiceInstance implements ServiceInstance, Instance {
   }
 
   @Override
-  public MicroserviceInstance getMicroserviceInstance(ServiceInstance serviceInstance) {
+  public CommonInstance getMicroserviceInstance(ServiceInstance serviceInstance) {
     //not implements but implement in NacosServiceInstance
     return null;
   }
 
   @Override
+  public String getAvailableZone() {
+    return microserviceInstance.getDataCenterInfo().getAvailableZone();
+  }
+
+  @Override
+  public String getRegion() {
+    return microserviceInstance.getDataCenterInfo().getRegion();
+  }
+
+  @Override
   public String getServiceId() {
     return this.microserviceInstance.getServiceName();
+  }
+
+  @Override
+  public String getPublicKeyFromInstance(String instanceId, String serviceId) {
+    return null;
+  }
+
+  @Override
+  public String getPropertyValue(String serviceId, String instanceId, String propertyName) {
+    return null;
   }
 
   @Override

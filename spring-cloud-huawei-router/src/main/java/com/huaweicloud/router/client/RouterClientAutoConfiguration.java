@@ -18,7 +18,6 @@ package com.huaweicloud.router.client;
 
 import org.apache.servicecomb.router.RouterFilter;
 import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
-import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -28,7 +27,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import com.huaweicloud.common.instance.Instance;
+import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
+import com.huaweicloud.governance.authentication.instance.CommonInstance;
 import com.huaweicloud.router.client.loadbalancer.CanaryServiceInstanceFilter;
 import com.huaweicloud.router.client.loadbalancer.ZoneAwareServiceInstanceFilter;
 
@@ -38,14 +38,23 @@ import com.huaweicloud.router.client.loadbalancer.ZoneAwareServiceInstanceFilter
 @AutoConfigureAfter(LoadBalancerClientConfiguration.class)
 public class RouterClientAutoConfiguration {
   @Bean
-  public AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor(Instance instance) {
+  @ConditionalOnProperty(prefix = "spring.cloud.servicecomb", name = "discovery")
+  public AbstractRouterDistributor<ServiceInstance, CommonInstance> routerDistributorCse(
+      MicroserviceInstanceService instance) {
     return new SpringCloudRouterDistributor(instance);
+  }
+
+  @Bean
+  @ConditionalOnProperty(prefix = "spring.cloud.nacos", name = "discovery")
+  public AbstractRouterDistributor<ServiceInstance, CommonInstance> routerDistributorNacos(
+      MicroserviceInstanceService instance) {
+    return new NacosRouterDistributor(instance);
   }
 
   @Bean
   @ConditionalOnMissingBean(CanaryServiceInstanceFilter.class)
   public CanaryServiceInstanceFilter canaryServiceInstanceFilter(
-      AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor, RouterFilter routerFilter) {
+      AbstractRouterDistributor<ServiceInstance, CommonInstance> routerDistributor, RouterFilter routerFilter) {
     return new CanaryServiceInstanceFilter(routerDistributor, routerFilter);
   }
 

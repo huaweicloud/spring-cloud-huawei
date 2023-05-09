@@ -25,20 +25,20 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.huaweicloud.common.disovery.InstanceIDAdapter;
-import com.huaweicloud.common.instance.Instance;
+import com.huaweicloud.governance.authentication.instance.CommonInstance;
 import com.huaweicloud.governance.authentication.Const;
 import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
 
-import org.apache.servicecomb.service.center.client.model.Microservice;
-import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
 
+import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class NacosInstanceService implements MicroserviceInstanceService, Instance {
+public class NacosInstanceService implements MicroserviceInstanceService {
   private static final Logger LOGGER = LoggerFactory.getLogger(NacosInstanceService.class);
 
   private final NacosDiscoveryProperties properties;
@@ -67,6 +67,36 @@ public class NacosInstanceService implements MicroserviceInstanceService, Instan
   @Override
   public String getServiceId() {
     return registration.getServiceId();
+  }
+
+  @Override
+  public String getHost() {
+    //not implement
+    return null;
+  }
+
+  @Override
+  public int getPort() {
+    //not implement
+    return 0;
+  }
+
+  @Override
+  public boolean isSecure() {
+    //not implement
+    return false;
+  }
+
+  @Override
+  public URI getUri() {
+    //not implement
+    return null;
+  }
+
+  @Override
+  public Map<String, String> getMetadata() {
+    //not implement
+    return null;
   }
 
   @Override
@@ -116,20 +146,30 @@ public class NacosInstanceService implements MicroserviceInstanceService, Instan
       .build();
 
   @Override
-  public MicroserviceInstance getMicroserviceInstance() {
+  public CommonInstance getMicroserviceInstance() {
     //not implements but implement in ServiceCombServiceInstance
     return null;
   }
 
   @Override
-  public MicroserviceInstance getMicroserviceInstance(ServiceInstance serviceInstance) {
+  public CommonInstance getMicroserviceInstance(ServiceInstance serviceInstance) {
     NacosServiceInstance nacosServiceInstance = (NacosServiceInstance) serviceInstance;
-    MicroserviceInstance microserviceInstance = new MicroserviceInstance();
-    Microservice microservice = new Microservice();
-    microservice.setServiceName(nacosServiceInstance.getServiceId());
-    microserviceInstance.setMicroservice(microservice);
-    microserviceInstance.setVersion(nacosServiceInstance.getMetadata().get("version"));
-    microserviceInstance.setProperties(nacosServiceInstance.getMetadata());
-    return microserviceInstance;
+    CommonInstance commonInstance = new CommonInstance();
+    commonInstance.setServiceName(nacosServiceInstance.getServiceId());
+    commonInstance.setVersion(nacosServiceInstance.getMetadata().get("version"));
+    commonInstance.setProperties(nacosServiceInstance.getMetadata());
+    return commonInstance;
+  }
+
+  @Override
+  public String getAvailableZone() {
+    //not implement
+    return null;
+  }
+
+  @Override
+  public String getRegion() {
+    //not implement
+    return null;
   }
 }
