@@ -33,7 +33,7 @@ import com.huaweicloud.governance.authentication.instance.CommonInstance;
 import com.huaweicloud.router.client.loadbalancer.CanaryServiceInstanceFilter;
 import com.huaweicloud.router.client.loadbalancer.ZoneAwareServiceInstanceFilter;
 
-
+@Configuration
 @ConditionalOnRouterEnabled
 @ComponentScan(basePackages = {"org.apache.servicecomb.router"})
 @AutoConfigureAfter(LoadBalancerClientConfiguration.class)
