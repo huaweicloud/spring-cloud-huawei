@@ -38,14 +38,14 @@ import com.huaweicloud.router.client.loadbalancer.ZoneAwareServiceInstanceFilter
 @AutoConfigureAfter(LoadBalancerClientConfiguration.class)
 public class RouterClientAutoConfiguration {
   @Bean
-  @ConditionalOnProperty(prefix = "spring.cloud.servicecomb", name = "discovery")
+  @ConditionalOnProperty(prefix = "spring.cloud.servicecomb.discovery", name = "serviceName")
   public AbstractRouterDistributor<ServiceInstance, CommonInstance> routerDistributorCse(
       MicroserviceInstanceService instance) {
     return new SpringCloudRouterDistributor(instance);
   }
 
   @Bean
-  @ConditionalOnProperty(prefix = "spring.cloud.nacos", name = "discovery")
+  @ConditionalOnProperty(prefix = "spring.cloud.nacos.discovery", name = "service")
   public AbstractRouterDistributor<ServiceInstance, CommonInstance> routerDistributorNacos(
       MicroserviceInstanceService instance) {
     return new NacosRouterDistributor(instance);
