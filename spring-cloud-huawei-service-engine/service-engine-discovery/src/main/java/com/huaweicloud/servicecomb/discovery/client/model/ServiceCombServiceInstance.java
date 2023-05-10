@@ -71,12 +71,18 @@ public class ServiceCombServiceInstance implements ServiceInstance, Microservice
 
   @Override
   public String getAvailableZone() {
-    return microserviceInstance.getDataCenterInfo().getAvailableZone();
+    if (microserviceInstance.getDataCenterInfo()!=null){
+      return microserviceInstance.getDataCenterInfo().getAvailableZone();
+    }
+    return null;
   }
 
   @Override
   public String getRegion() {
-    return microserviceInstance.getDataCenterInfo().getRegion();
+    if (microserviceInstance.getDataCenterInfo()!=null){
+      return microserviceInstance.getDataCenterInfo().getRegion();
+    }
+    return null;
   }
 
   @Override
