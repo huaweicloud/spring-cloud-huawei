@@ -30,19 +30,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
 
 import java.beans.PropertyDescriptor;
-import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class ServicecombInstanceServiceInstance implements GovernaceServiceInstance {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ServicecombInstanceServiceInstance.class);
+public class ServicecombInstanceService implements GovernaceServiceInstance {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ServicecombInstanceService.class);
 
   private final GovernaceCombRegistration registration;
 
   private final ServiceCenterClient client;
 
-  public ServicecombInstanceServiceInstance(GovernaceCombRegistration registration, ServiceCenterClient client) {
+  public ServicecombInstanceService(GovernaceCombRegistration registration, ServiceCenterClient client) {
     this.registration = registration;
     this.client = client;
   }

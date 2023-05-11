@@ -19,7 +19,7 @@ package com.huaweicloud.servicecomb.discovery;
 
 import java.util.List;
 
-import com.huaweicloud.authentication.ServicecombInstanceServiceInstance;
+import com.huaweicloud.authentication.ServicecombInstanceService;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
 import com.huaweicloud.servicecomb.discovery.registry.GovernaceCombRegistration;
@@ -62,6 +62,6 @@ public class DiscoveryAutoConfiguration {
           + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":true}")
   public GovernaceServiceInstance microserviceInstanceService(GovernaceCombRegistration registration,
                                                                  ServiceCenterClient client) {
-    return new ServicecombInstanceServiceInstance(registration, client);
+    return new ServicecombInstanceService(registration, client);
   }
 }
