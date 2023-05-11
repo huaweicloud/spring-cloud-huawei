@@ -17,6 +17,10 @@
 
 package com.huaweicloud.nacos;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 import com.alibaba.cloud.nacos.ConditionalOnNacosDiscoveryEnabled;
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
 import com.alibaba.cloud.nacos.NacosServiceInstance;
@@ -25,11 +29,6 @@ import com.alibaba.cloud.nacos.registry.NacosRegistration;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
 import com.huaweicloud.nacos.authentication.NacosInstanceServiceInstance;
-
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 
 @Configuration
 @ConditionalOnNacosDiscoveryEnabled
