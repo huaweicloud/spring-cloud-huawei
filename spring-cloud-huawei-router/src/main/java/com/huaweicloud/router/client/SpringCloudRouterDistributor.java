@@ -18,17 +18,16 @@ import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 
-import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
-import com.huaweicloud.governance.authentication.instance.CommonInstance;
+import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
 
 public class SpringCloudRouterDistributor extends
-    AbstractRouterDistributor<ServiceInstance, CommonInstance> {
+    AbstractRouterDistributor<ServiceInstance, ServiceInstance> {
 
   @Autowired
-  public SpringCloudRouterDistributor(MicroserviceInstanceService instance) {
-    init(server -> instance.getMicroserviceInstance(),
-        CommonInstance::getVersion,
-        CommonInstance::getServiceName,
-        CommonInstance::getProperties);
+  public SpringCloudRouterDistributor(GovernaceServiceInstance instance) {
+    init(server -> server,
+        server ->instance.getVersion(server),
+        server ->instance.getServiceName(server),
+        server ->instance.getProperties(server));
   }
 }

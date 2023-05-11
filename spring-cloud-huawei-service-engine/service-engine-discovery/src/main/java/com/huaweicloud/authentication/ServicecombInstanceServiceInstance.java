@@ -18,10 +18,9 @@ package com.huaweicloud.authentication;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
-import com.huaweicloud.governance.authentication.instance.CommonInstance;
 import com.huaweicloud.governance.authentication.Const;
-import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
+import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
+import com.huaweicloud.servicecomb.discovery.registry.GovernaceCombRegistration;
 
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.model.Microservice;
@@ -36,14 +35,14 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class ServicecombInstanceService implements MicroserviceInstanceService {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ServicecombInstanceService.class);
+public class ServicecombInstanceServiceInstance implements GovernaceServiceInstance {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ServicecombInstanceServiceInstance.class);
 
-  private final ServiceCombRegistration registration;
+  private final GovernaceCombRegistration registration;
 
   private final ServiceCenterClient client;
 
-  public ServicecombInstanceService(ServiceCombRegistration registration, ServiceCenterClient client) {
+  public ServicecombInstanceServiceInstance(GovernaceCombRegistration registration, ServiceCenterClient client) {
     this.registration = registration;
     this.client = client;
   }
@@ -61,37 +60,7 @@ public class ServicecombInstanceService implements MicroserviceInstanceService {
 
   @Override
   public String getServiceId() {
-    return registration.getMicroservice().getServiceId();
-  }
-
-  @Override
-  public String getHost() {
-    //not implement
-    return null;
-  }
-
-  @Override
-  public int getPort() {
-    //not implement
-    return 0;
-  }
-
-  @Override
-  public boolean isSecure() {
-    //not implement
-    return false;
-  }
-
-  @Override
-  public URI getUri() {
-    //not implement
-    return null;
-  }
-
-  @Override
-  public Map<String, String> getMetadata() {
-    //not implement
-    return null;
+    return registration.getMicroserviceInstance().getServiceId();
   }
 
   @Override
@@ -120,12 +89,17 @@ public class ServicecombInstanceService implements MicroserviceInstanceService {
   }
 
   @Override
-  public CommonInstance getMicroserviceInstance() {
+  public String getVersion(ServiceInstance serviceInstance) {
     return null;
   }
 
   @Override
-  public CommonInstance getMicroserviceInstance(ServiceInstance serviceInstance) {
+  public String getServiceName(ServiceInstance serviceInstance) {
+    return null;
+  }
+
+  @Override
+  public Map<String, String> getProperties(ServiceInstance serviceInstance) {
     return null;
   }
 

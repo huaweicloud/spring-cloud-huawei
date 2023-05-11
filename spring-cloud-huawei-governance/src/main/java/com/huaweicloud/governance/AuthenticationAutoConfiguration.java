@@ -20,7 +20,7 @@ package com.huaweicloud.governance;
 import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.governance.authentication.AuthHandlerBoot;
-import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
+import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
 import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
 import com.huaweicloud.governance.authentication.provider.AccessController;
 import com.huaweicloud.governance.authentication.provider.ProviderAuthPreHandlerInterceptor;
@@ -50,14 +50,14 @@ public class AuthenticationAutoConfiguration {
   @Bean
   @ConditionalOnExpression("${" + GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED + ":true}"
       + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":true}")
-  public ApplicationListener<ApplicationEvent> authHandlerBoot(MicroserviceInstanceService instanceService) {
+  public ApplicationListener<ApplicationEvent> authHandlerBoot(GovernaceServiceInstance instanceService) {
     return new AuthHandlerBoot(instanceService);
   }
 
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED,
       havingValue = "true")
-  public RSAConsumerTokenManager authenticationTokenManager(MicroserviceInstanceService instanceService) {
+  public RSAConsumerTokenManager authenticationTokenManager(GovernaceServiceInstance instanceService) {
     return new RSAConsumerTokenManager(instanceService);
   }
 
@@ -71,7 +71,7 @@ public class AuthenticationAutoConfiguration {
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED,
       havingValue = "true")
-  public AccessController accessController(MicroserviceInstanceService instanceService,
+  public AccessController accessController(GovernaceServiceInstance instanceService,
       BlackWhiteListProperties blackWhiteListProperties) {
     return new AccessController(instanceService, blackWhiteListProperties);
   }

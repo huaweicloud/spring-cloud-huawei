@@ -26,10 +26,8 @@ import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClientConfi
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 
-import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
-import com.huaweicloud.governance.authentication.instance.CommonInstance;
+import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
 import com.huaweicloud.router.client.loadbalancer.CanaryServiceInstanceFilter;
 import com.huaweicloud.router.client.loadbalancer.ZoneAwareServiceInstanceFilter;
 
@@ -39,24 +37,15 @@ import com.huaweicloud.router.client.loadbalancer.ZoneAwareServiceInstanceFilter
 @AutoConfigureAfter(LoadBalancerClientConfiguration.class)
 public class RouterClientAutoConfiguration {
   @Bean
-  @ConditionalOnMissingBean(NacosRouterDistributor.class)
-  public AbstractRouterDistributor<ServiceInstance, CommonInstance> routerDistributorServicecomb(
-      MicroserviceInstanceService instance) {
+  public AbstractRouterDistributor<ServiceInstance, ServiceInstance> routerDistributorServicecomb(
+      GovernaceServiceInstance instance) {
     return new SpringCloudRouterDistributor(instance);
-  }
-
-  @Bean
-  @ConditionalOnProperty(prefix = "spring.cloud.nacos.discovery", name = "service")
-  @Primary
-  public AbstractRouterDistributor<ServiceInstance, CommonInstance> routerDistributorNacos(
-      MicroserviceInstanceService instance) {
-    return new NacosRouterDistributor(instance);
   }
 
   @Bean
   @ConditionalOnMissingBean(CanaryServiceInstanceFilter.class)
   public CanaryServiceInstanceFilter canaryServiceInstanceFilter(
-      AbstractRouterDistributor<ServiceInstance, CommonInstance> routerDistributor, RouterFilter routerFilter) {
+      AbstractRouterDistributor<ServiceInstance, GovernaceServiceInstance> routerDistributor, RouterFilter routerFilter) {
     return new CanaryServiceInstanceFilter(routerDistributor, routerFilter);
   }
 

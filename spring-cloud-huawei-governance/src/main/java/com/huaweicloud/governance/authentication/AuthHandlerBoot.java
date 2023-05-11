@@ -31,9 +31,9 @@ import org.springframework.context.ApplicationListener;
  */
 public class AuthHandlerBoot implements ApplicationListener<ApplicationEvent> {
 
-  private final MicroserviceInstanceService instanceService;
+  private final GovernaceServiceInstance instanceService;
 
-  public AuthHandlerBoot(MicroserviceInstanceService instanceService) {
+  public AuthHandlerBoot(GovernaceServiceInstance instanceService) {
     this.instanceService = instanceService;
   }
 

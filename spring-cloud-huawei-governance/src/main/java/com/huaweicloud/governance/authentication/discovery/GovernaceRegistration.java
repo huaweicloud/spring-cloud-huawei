@@ -17,8 +17,12 @@
 
 package com.huaweicloud.governance.authentication.discovery;
 
-import com.huaweicloud.governance.authentication.instance.CommonInstance;
+import org.springframework.cloud.client.serviceregistry.Registration;
 
-public interface ServiceRegistration {
-  CommonInstance getCommonInstance();
+
+public interface GovernaceRegistration extends Registration {
+
+  String getRegion();
+
+  String getAvailableZone();
 }

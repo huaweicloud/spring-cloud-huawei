@@ -34,21 +34,21 @@ import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.CollectionUtils;
 
-import com.huaweicloud.governance.adapters.loadbalancer.DecorateLoadBalancerRequest;
-import com.huaweicloud.governance.adapters.loadbalancer.ServiceInstanceFilter;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.governance.authentication.instance.CommonInstance;
+import com.huaweicloud.governance.adapters.loadbalancer.DecorateLoadBalancerRequest;
+import com.huaweicloud.governance.adapters.loadbalancer.ServiceInstanceFilter;
+import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
 
 public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
   private static final Logger LOGGER = LoggerFactory.getLogger(CanaryServiceInstanceFilter.class);
 
-  private final AbstractRouterDistributor<ServiceInstance, CommonInstance> routerDistributor;
+  private final AbstractRouterDistributor<ServiceInstance, GovernaceServiceInstance> routerDistributor;
 
   private final RouterFilter routerFilter;
 
   @Autowired
-  public CanaryServiceInstanceFilter(AbstractRouterDistributor<ServiceInstance, CommonInstance> routerDistributor,
+  public CanaryServiceInstanceFilter(AbstractRouterDistributor<ServiceInstance, GovernaceServiceInstance> routerDistributor,
       RouterFilter routerFilter) {
     this.routerDistributor = routerDistributor;
     this.routerFilter = routerFilter;

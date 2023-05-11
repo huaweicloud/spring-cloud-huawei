@@ -19,11 +19,12 @@ package com.huaweicloud.nacos;
 
 import com.alibaba.cloud.nacos.ConditionalOnNacosDiscoveryEnabled;
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
+import com.alibaba.cloud.nacos.NacosServiceInstance;
 import com.alibaba.cloud.nacos.discovery.NacosServiceDiscovery;
 import com.alibaba.cloud.nacos.registry.NacosRegistration;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
-import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
-import com.huaweicloud.nacos.authentication.NacosInstanceService;
+import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
+import com.huaweicloud.nacos.authentication.NacosInstanceServiceInstance;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
@@ -35,8 +36,9 @@ public class AnthenAutoConfiguration {
   @Bean
   @ConditionalOnExpression("${" + GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED + ":true}"
       + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":true}")
-  public MicroserviceInstanceService microserviceInstanceService(NacosDiscoveryProperties properties,
+  public GovernaceServiceInstance microserviceInstanceService(NacosServiceInstance nacosServiceInstance,
+      NacosDiscoveryProperties properties,
       NacosServiceDiscovery serviceDiscovery, NacosRegistration registration) {
-    return new NacosInstanceService(properties, registration, serviceDiscovery);
+    return new NacosInstanceServiceInstance(nacosServiceInstance, properties, registration, serviceDiscovery);
   }
 }

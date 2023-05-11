@@ -15,22 +15,33 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.router.client;
+package com.huaweicloud.governance.authentication;
 
-import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Map;
+
 import org.springframework.cloud.client.ServiceInstance;
 
-import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
-import com.huaweicloud.governance.authentication.instance.CommonInstance;
+/**
+ * microservice instance service
+ */
+public interface GovernaceServiceInstance {
+  void setPublickey(String publicKeyEncoded);
 
-public class NacosRouterDistributor extends AbstractRouterDistributor<ServiceInstance, CommonInstance> {
+  String getInstanceId();
 
-  @Autowired
-  public NacosRouterDistributor(MicroserviceInstanceService instance) {
-    init(server -> instance.getMicroserviceInstance(server),
-        CommonInstance::getVersion,
-        CommonInstance::getServiceName,
-        CommonInstance::getProperties);
-  }
+  String getServiceId();
+
+  String getPublicKeyFromInstance(String instanceId, String serviceId);
+
+  String getPropertyValue(String serviceId, String instanceId, String propertyName);
+
+  String getVersion(ServiceInstance serviceInstance);
+
+  String getServiceName(ServiceInstance serviceInstance);
+
+  Map<String, String> getProperties(ServiceInstance serviceInstance);
+
+  String getAvailableZone();
+
+  String getRegion();
 }

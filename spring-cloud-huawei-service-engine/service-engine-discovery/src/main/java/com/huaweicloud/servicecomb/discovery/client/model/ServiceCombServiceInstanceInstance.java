@@ -25,15 +25,14 @@ import org.apache.servicecomb.foundation.common.net.URIEndpointObject;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.cloud.client.ServiceInstance;
 
-import com.huaweicloud.governance.authentication.instance.CommonInstance;
-import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
+import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
 
-public class ServiceCombServiceInstance implements ServiceInstance, MicroserviceInstanceService {
+public class ServiceCombServiceInstanceInstance implements ServiceInstance, GovernaceServiceInstance {
   private final URIEndpointObject uriEndpointObject;
 
   private final MicroserviceInstance microserviceInstance;
 
-  public ServiceCombServiceInstance(MicroserviceInstance microserviceInstance) {
+  public ServiceCombServiceInstanceInstance(MicroserviceInstance microserviceInstance) {
     this.microserviceInstance = microserviceInstance;
     String endpoint = this.microserviceInstance.getEndpoints().stream().filter(e -> e.startsWith("rest://"))
         .findFirst().orElse(null);
@@ -42,15 +41,6 @@ public class ServiceCombServiceInstance implements ServiceInstance, Microservice
     } else {
       this.uriEndpointObject = null;
     }
-  }
-
-  @Override
-  public CommonInstance getMicroserviceInstance() {
-    CommonInstance commonInstance = new CommonInstance();
-    commonInstance.setServiceName(this.microserviceInstance.getServiceName());
-    commonInstance.setVersion(this.microserviceInstance.getVersion());
-    commonInstance.setProperties(this.microserviceInstance.getProperties());
-    return commonInstance;
   }
 
   @Override
@@ -64,14 +54,23 @@ public class ServiceCombServiceInstance implements ServiceInstance, Microservice
   }
 
   @Override
-  public CommonInstance getMicroserviceInstance(ServiceInstance serviceInstance) {
-    //not implements but implement in NacosServiceInstance
-    return null;
+  public String getVersion(ServiceInstance serviceInstance) {
+    return this.microserviceInstance.getVersion();
+  }
+
+  @Override
+  public String getServiceName(ServiceInstance serviceInstance) {
+    return this.microserviceInstance.getServiceName();
+  }
+
+  @Override
+  public Map<String, String> getProperties(ServiceInstance serviceInstance) {
+    return this.microserviceInstance.getProperties();
   }
 
   @Override
   public String getAvailableZone() {
-    if (microserviceInstance.getDataCenterInfo()!=null){
+    if (microserviceInstance.getDataCenterInfo() != null) {
       return microserviceInstance.getDataCenterInfo().getAvailableZone();
     }
     return null;
@@ -79,7 +78,7 @@ public class ServiceCombServiceInstance implements ServiceInstance, Microservice
 
   @Override
   public String getRegion() {
-    if (microserviceInstance.getDataCenterInfo()!=null){
+    if (microserviceInstance.getDataCenterInfo() != null) {
       return microserviceInstance.getDataCenterInfo().getRegion();
     }
     return null;

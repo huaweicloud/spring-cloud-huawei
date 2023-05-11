@@ -17,6 +17,15 @@
 
 package com.huaweicloud.nacos.authentication;
 
+import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cloud.client.ServiceInstance;
+
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
 import com.alibaba.cloud.nacos.NacosServiceInstance;
 import com.alibaba.cloud.nacos.discovery.NacosServiceDiscovery;
@@ -25,21 +34,13 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.huaweicloud.common.disovery.InstanceIDAdapter;
-import com.huaweicloud.governance.authentication.instance.CommonInstance;
 import com.huaweicloud.governance.authentication.Const;
-import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
+import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cloud.client.ServiceInstance;
+public class NacosInstanceServiceInstance implements GovernaceServiceInstance, ServiceInstance {
+  private static final Logger LOGGER = LoggerFactory.getLogger(NacosInstanceServiceInstance.class);
 
-import java.net.URI;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-public class NacosInstanceService implements MicroserviceInstanceService {
-  private static final Logger LOGGER = LoggerFactory.getLogger(NacosInstanceService.class);
+  private final NacosServiceInstance nacosServiceInstance;
 
   private final NacosDiscoveryProperties properties;
 
@@ -47,8 +48,10 @@ public class NacosInstanceService implements MicroserviceInstanceService {
 
   private final NacosRegistration registration;
 
-  public NacosInstanceService(NacosDiscoveryProperties properties, NacosRegistration registration,
+  public NacosInstanceServiceInstance(NacosServiceInstance nacosServiceInstance,
+      NacosDiscoveryProperties properties, NacosRegistration registration,
       NacosServiceDiscovery serviceDiscovery) {
+    this.nacosServiceInstance = nacosServiceInstance;
     this.properties = properties;
     this.registration = registration;
     this.serviceDiscovery = serviceDiscovery;
@@ -96,7 +99,7 @@ public class NacosInstanceService implements MicroserviceInstanceService {
   @Override
   public Map<String, String> getMetadata() {
     //not implement
-    return null;
+    return nacosServiceInstance.getMetadata();
   }
 
   @Override
@@ -146,19 +149,18 @@ public class NacosInstanceService implements MicroserviceInstanceService {
       .build();
 
   @Override
-  public CommonInstance getMicroserviceInstance() {
-    //not implements but implement in ServiceCombServiceInstance
-    return null;
+  public String getVersion(ServiceInstance serviceInstance) {
+    return serviceInstance.getMetadata().getOrDefault("version", "0.0.1");
   }
 
   @Override
-  public CommonInstance getMicroserviceInstance(ServiceInstance serviceInstance) {
-    NacosServiceInstance nacosServiceInstance = (NacosServiceInstance) serviceInstance;
-    CommonInstance commonInstance = new CommonInstance();
-    commonInstance.setServiceName(nacosServiceInstance.getServiceId());
-    commonInstance.setVersion(nacosServiceInstance.getMetadata().get("version"));
-    commonInstance.setProperties(nacosServiceInstance.getMetadata());
-    return commonInstance;
+  public String getServiceName(ServiceInstance serviceInstance) {
+    return serviceInstance.getServiceId();
+  }
+
+  @Override
+  public Map<String, String> getProperties(ServiceInstance serviceInstance) {
+    return serviceInstance.getMetadata();
   }
 
   @Override

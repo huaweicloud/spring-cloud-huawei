@@ -18,9 +18,8 @@
 package com.huaweicloud.router.client.loadbalancer;
 
 import com.huaweicloud.governance.adapters.loadbalancer.ServiceInstanceFilter;
-import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
-import com.huaweicloud.governance.authentication.discovery.ServiceRegistration;
-import com.huaweicloud.governance.authentication.instance.CommonInstance;
+import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
+import com.huaweicloud.governance.authentication.discovery.GovernaceRegistration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,20 +33,20 @@ import java.util.List;
 
 public class ZoneAwareServiceInstanceFilter implements ServiceInstanceFilter {
 
-  private ServiceRegistration registration;
+  private GovernaceRegistration registration;
 
   @Value("${spring.cloud.servicecomb.discovery.denyCrossZoneLoadBalancing:false}")
   private boolean denyCrossZoneLoadBalancing;
 
   @Autowired
-  public void setServiceCombRegistration(ServiceRegistration registration) {
+  public void setServiceCombRegistration(GovernaceRegistration registration) {
     this.registration = registration;
   }
 
   @Override
   public List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances,
       Request<?> request) {
-    CommonInstance mySelf = registration.getCommonInstance();
+    GovernaceRegistration mySelf = registration;
     return zoneAwareDiscoveryFilter(mySelf, instances);
   }
 
@@ -56,11 +55,12 @@ public class ZoneAwareServiceInstanceFilter implements ServiceInstanceFilter {
     return -2;
   }
 
-  private List<ServiceInstance> zoneAwareDiscoveryFilter(CommonInstance mySelf, List<ServiceInstance> instances) {
+  private List<ServiceInstance> zoneAwareDiscoveryFilter(GovernaceRegistration mySelf,
+      List<ServiceInstance> instances) {
     List<ServiceInstance> regionAndAZMatchList = new ArrayList<>();
     List<ServiceInstance> regionMatchList = new ArrayList<>();
     instances.forEach(serviceInstance -> {
-      MicroserviceInstanceService instance = (MicroserviceInstanceService) serviceInstance;
+      GovernaceServiceInstance instance = (GovernaceServiceInstance) serviceInstance;
       if (regionAndAZMatch(mySelf, instance.getAvailableZone(), instance.getRegion())) {
         regionAndAZMatchList.add(serviceInstance);
       } else if (regionMatch(mySelf, instance.getRegion())) {
@@ -80,17 +80,17 @@ public class ZoneAwareServiceInstanceFilter implements ServiceInstanceFilter {
     }
   }
 
-  private boolean regionAndAZMatch(CommonInstance myself, String availableZone, String region) {
-    if (myself.getCenterData() != null) {
-      return myself.getCenterData().getRegion().equals(region) &&
-          myself.getCenterData().getAvailableZone().equals(availableZone);
+  private boolean regionAndAZMatch(GovernaceRegistration myself, String availableZone, String region) {
+    if (myself.getRegion() != null && myself.getAvailableZone() != null) {
+      return myself.getRegion().equals(region) &&
+          myself.getAvailableZone().equals(availableZone);
     }
     return false;
   }
 
-  private boolean regionMatch(CommonInstance myself, String region) {
-    if (myself.getCenterData() != null) {
-      return myself.getCenterData().getRegion().equals(region);
+  private boolean regionMatch(GovernaceRegistration myself, String region) {
+    if (myself.getRegion() != null) {
+      return myself.getRegion().equals(region);
     }
     return false;
   }

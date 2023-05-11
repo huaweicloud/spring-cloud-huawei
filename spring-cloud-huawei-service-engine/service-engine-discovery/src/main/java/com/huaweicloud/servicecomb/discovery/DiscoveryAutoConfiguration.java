@@ -19,10 +19,10 @@ package com.huaweicloud.servicecomb.discovery;
 
 import java.util.List;
 
-import com.huaweicloud.authentication.ServicecombInstanceService;
+import com.huaweicloud.authentication.ServicecombInstanceServiceInstance;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
-import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
+import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
+import com.huaweicloud.servicecomb.discovery.registry.GovernaceCombRegistration;
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.ServiceCenterWatch;
@@ -60,8 +60,8 @@ public class DiscoveryAutoConfiguration {
   @Bean
   @ConditionalOnExpression("${" + GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED + ":true}"
           + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":true}")
-  public MicroserviceInstanceService microserviceInstanceService(ServiceCombRegistration registration,
+  public GovernaceServiceInstance microserviceInstanceService(GovernaceCombRegistration registration,
                                                                  ServiceCenterClient client) {
-    return new ServicecombInstanceService(registration, client);
+    return new ServicecombInstanceServiceInstance(registration, client);
   }
 }

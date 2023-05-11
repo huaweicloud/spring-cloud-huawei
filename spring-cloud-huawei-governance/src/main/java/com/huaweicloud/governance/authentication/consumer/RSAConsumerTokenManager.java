@@ -19,7 +19,7 @@ package com.huaweicloud.governance.authentication.consumer;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.governance.authentication.Const;
-import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
+import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
 import com.huaweicloud.governance.authentication.RsaAuthenticationToken;
 import com.huaweicloud.governance.authentication.UnAuthorizedException;
 import org.apache.servicecomb.foundation.common.utils.RSAUtils;
@@ -38,9 +38,9 @@ public class RSAConsumerTokenManager {
 
   private RsaAuthenticationToken token;
 
-  private final MicroserviceInstanceService instanceService;
+  private final GovernaceServiceInstance instanceService;
 
-  public RSAConsumerTokenManager(MicroserviceInstanceService instanceService) {
+  public RSAConsumerTokenManager(GovernaceServiceInstance instanceService) {
     this.instanceService = instanceService;
   }
 

@@ -48,8 +48,8 @@ import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBoo
 import com.huaweicloud.service.engine.common.configration.bootstrap.MicroserviceProperties;
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
-import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
+import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstanceInstance;
+import com.huaweicloud.servicecomb.discovery.registry.GovernaceCombRegistration;
 
 public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationEventPublisherAware {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombDiscoveryClient.class);
@@ -62,7 +62,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
 
   private final ServiceCenterDiscovery serviceCenterDiscovery;
 
-  private final ServiceCombRegistration serviceCombRegistration;
+  private final GovernaceCombRegistration serviceCombRegistration;
 
   private ApplicationEventPublisher applicationEventPublisher;
 
@@ -71,7 +71,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
   private final List<String> serviceIds = new ArrayList<>();
 
   public ServiceCombDiscoveryClient(BootstrapProperties bootstrapProperties,
-      ServiceCenterClient serviceCenterClient, ServiceCombRegistration serviceCombRegistration) {
+      ServiceCenterClient serviceCenterClient, GovernaceCombRegistration serviceCombRegistration) {
     this.discoveryProperties = bootstrapProperties.getDiscoveryBootstrapProperties();
     this.microserviceProperties = bootstrapProperties.getMicroserviceProperties();
     this.serviceCenterClient = serviceCenterClient;
@@ -133,7 +133,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
       return Collections.emptyList();
     }
     return instances.stream().filter(instance -> !MicroserviceInstanceStatus.DOWN.equals(instance.getStatus()))
-        .map(ServiceCombServiceInstance::new).collect(Collectors.toList());
+        .map(ServiceCombServiceInstanceInstance::new).collect(Collectors.toList());
   }
 
   @Override

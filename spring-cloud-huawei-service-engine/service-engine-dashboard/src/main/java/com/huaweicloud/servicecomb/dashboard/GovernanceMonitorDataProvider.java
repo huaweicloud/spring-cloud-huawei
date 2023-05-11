@@ -33,7 +33,7 @@ import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 
 import com.huaweicloud.service.engine.common.configration.dynamic.DashboardProperties;
 import com.huaweicloud.servicecomb.dashboard.model.MonitorDataProvider;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
+import com.huaweicloud.servicecomb.discovery.registry.GovernaceCombRegistration;
 
 import io.github.resilience4j.micrometer.tagged.TagNames;
 import io.micrometer.core.instrument.Counter;
@@ -52,13 +52,13 @@ public class GovernanceMonitorDataProvider implements MonitorDataProvider {
 
   private final MeterRegistry meterRegistry;
 
-  private final ServiceCombRegistration registration;
+  private final GovernaceCombRegistration registration;
 
   private final DashboardProperties dashboardProperties;
 
   private Map<String, GovernanceData> lastMetricsData;
 
-  public GovernanceMonitorDataProvider(MeterRegistry meterRegistry, ServiceCombRegistration registration,
+  public GovernanceMonitorDataProvider(MeterRegistry meterRegistry, GovernaceCombRegistration registration,
       DashboardProperties dashboardProperties) {
     this.meterRegistry = meterRegistry;
     this.registration = registration;

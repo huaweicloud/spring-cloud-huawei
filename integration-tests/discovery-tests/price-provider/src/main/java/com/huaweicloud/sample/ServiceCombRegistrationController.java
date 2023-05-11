@@ -23,13 +23,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
+import com.huaweicloud.servicecomb.discovery.registry.GovernaceCombRegistration;
 
 @RestController
 @ConditionalOnServiceCombDiscoveryEnabled
 public class ServiceCombRegistrationController {
   @Autowired
-  private ServiceCombRegistration serviceCombRegistration;
+  private GovernaceCombRegistration serviceCombRegistration;
 
   @RequestMapping("/testMicroserviceInfoCorrect")
   public boolean testMicroserviceInfoCorrect() {
