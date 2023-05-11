@@ -45,7 +45,7 @@ public class RouterClientAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean(CanaryServiceInstanceFilter.class)
   public CanaryServiceInstanceFilter canaryServiceInstanceFilter(
-      AbstractRouterDistributor<ServiceInstance, GovernaceServiceInstance> routerDistributor, RouterFilter routerFilter) {
+      AbstractRouterDistributor<ServiceInstance, ServiceInstance> routerDistributor, RouterFilter routerFilter) {
     return new CanaryServiceInstanceFilter(routerDistributor, routerFilter);
   }
 

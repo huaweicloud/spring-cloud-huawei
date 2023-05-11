@@ -29,6 +29,7 @@ import com.huaweicloud.nacos.authentication.NacosInstanceServiceInstance;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 
 @Configuration
 @ConditionalOnNacosDiscoveryEnabled
@@ -40,5 +41,10 @@ public class AnthenAutoConfiguration {
       NacosDiscoveryProperties properties,
       NacosServiceDiscovery serviceDiscovery, NacosRegistration registration) {
     return new NacosInstanceServiceInstance(nacosServiceInstance, properties, registration, serviceDiscovery);
+  }
+
+  @Bean
+  public NacosServiceInstance nacosServiceInstance(){
+    return new NacosServiceInstance();
   }
 }

@@ -38,17 +38,16 @@ import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.governance.adapters.loadbalancer.DecorateLoadBalancerRequest;
 import com.huaweicloud.governance.adapters.loadbalancer.ServiceInstanceFilter;
-import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
 
 public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
   private static final Logger LOGGER = LoggerFactory.getLogger(CanaryServiceInstanceFilter.class);
 
-  private final AbstractRouterDistributor<ServiceInstance, GovernaceServiceInstance> routerDistributor;
+  private final AbstractRouterDistributor<ServiceInstance, ServiceInstance> routerDistributor;
 
   private final RouterFilter routerFilter;
 
   @Autowired
-  public CanaryServiceInstanceFilter(AbstractRouterDistributor<ServiceInstance, GovernaceServiceInstance> routerDistributor,
+  public CanaryServiceInstanceFilter(AbstractRouterDistributor<ServiceInstance, ServiceInstance> routerDistributor,
       RouterFilter routerFilter) {
     this.routerDistributor = routerDistributor;
     this.routerFilter = routerFilter;
