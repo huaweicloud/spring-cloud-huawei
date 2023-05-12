@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.governance.authentication.discovery;
+package com.huaweicloud.common.registration;
 
 import org.springframework.cloud.client.serviceregistry.Registration;
 

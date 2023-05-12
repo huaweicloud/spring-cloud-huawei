@@ -25,7 +25,7 @@ import org.apache.servicecomb.foundation.common.net.URIEndpointObject;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.cloud.client.ServiceInstance;
 
-import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
+import com.huaweicloud.common.governance.GovernaceServiceInstance;
 
 public class ServiceCombServiceInstanceInstance implements ServiceInstance, GovernaceServiceInstance {
   private final URIEndpointObject uriEndpointObject;

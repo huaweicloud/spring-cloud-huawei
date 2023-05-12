@@ -23,6 +23,8 @@ import org.springframework.cloud.client.discovery.event.InstancePreRegisteredEve
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
+import com.huaweicloud.common.governance.GovernaceServiceInstance;
+
 /**
  *
  * initialize public and private key pair when system boot before registry instance to service center

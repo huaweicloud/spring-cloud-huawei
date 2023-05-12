@@ -21,7 +21,7 @@ import java.util.List;
 
 import com.huaweicloud.authentication.ServicecombInstanceService;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
-import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
+import com.huaweicloud.common.governance.GovernaceServiceInstance;
 import com.huaweicloud.servicecomb.discovery.registry.GovernaceCombRegistration;
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;

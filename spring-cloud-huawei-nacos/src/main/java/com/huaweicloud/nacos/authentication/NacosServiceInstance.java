@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
 
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
-import com.alibaba.cloud.nacos.NacosServiceInstance;
 import com.alibaba.cloud.nacos.discovery.NacosServiceDiscovery;
 import com.alibaba.cloud.nacos.registry.NacosRegistration;
 import com.google.common.cache.Cache;
@@ -35,12 +34,12 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.huaweicloud.common.disovery.InstanceIDAdapter;
 import com.huaweicloud.governance.authentication.Const;
-import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
+import com.huaweicloud.common.governance.GovernaceServiceInstance;
 
-public class NacosInstanceServiceInstance implements GovernaceServiceInstance, ServiceInstance {
-  private static final Logger LOGGER = LoggerFactory.getLogger(NacosInstanceServiceInstance.class);
+public class NacosServiceInstance implements GovernaceServiceInstance, ServiceInstance {
+  private static final Logger LOGGER = LoggerFactory.getLogger(NacosServiceInstance.class);
 
-  private final NacosServiceInstance nacosServiceInstance;
+  private final com.alibaba.cloud.nacos.NacosServiceInstance nacosServiceInstance;
 
   private final NacosDiscoveryProperties properties;
 
@@ -48,7 +47,7 @@ public class NacosInstanceServiceInstance implements GovernaceServiceInstance, S
 
   private final NacosRegistration registration;
 
-  public NacosInstanceServiceInstance(NacosServiceInstance nacosServiceInstance,
+  public NacosServiceInstance(com.alibaba.cloud.nacos.NacosServiceInstance nacosServiceInstance,
       NacosDiscoveryProperties properties, NacosRegistration registration,
       NacosServiceDiscovery serviceDiscovery) {
     this.nacosServiceInstance = nacosServiceInstance;
@@ -74,31 +73,26 @@ public class NacosInstanceServiceInstance implements GovernaceServiceInstance, S
 
   @Override
   public String getHost() {
-    //not implement
-    return null;
+    return nacosServiceInstance.getHost();
   }
 
   @Override
   public int getPort() {
-    //not implement
-    return 0;
+    return nacosServiceInstance.getPort();
   }
 
   @Override
   public boolean isSecure() {
-    //not implement
-    return false;
+    return nacosServiceInstance.isSecure();
   }
 
   @Override
   public URI getUri() {
-    //not implement
-    return null;
+    return nacosServiceInstance.getUri();
   }
 
   @Override
   public Map<String, String> getMetadata() {
-    //not implement
     return nacosServiceInstance.getMetadata();
   }
 

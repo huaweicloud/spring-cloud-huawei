@@ -20,7 +20,7 @@ package com.huaweicloud.governance;
 import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.governance.authentication.AuthHandlerBoot;
-import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
+import com.huaweicloud.common.governance.GovernaceServiceInstance;
 import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
 import com.huaweicloud.governance.authentication.provider.AccessController;
 import com.huaweicloud.governance.authentication.provider.ProviderAuthPreHandlerInterceptor;

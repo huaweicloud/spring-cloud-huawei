@@ -16,7 +16,7 @@
 package com.huaweicloud.governance.authentication.provider;
 
 import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
-import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
+import com.huaweicloud.common.governance.GovernaceServiceInstance;
 
 import java.util.List;
 

@@ -19,7 +19,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.huaweicloud.governance.authentication.Const;
-import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
+import com.huaweicloud.common.governance.GovernaceServiceInstance;
 import com.huaweicloud.servicecomb.discovery.registry.GovernaceCombRegistration;
 
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;

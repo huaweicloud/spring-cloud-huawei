@@ -18,7 +18,7 @@ import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 
-import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
+import com.huaweicloud.common.governance.GovernaceServiceInstance;
 
 public class SpringCloudRouterDistributor extends
     AbstractRouterDistributor<ServiceInstance, ServiceInstance> {

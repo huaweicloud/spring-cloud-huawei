@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.governance.authentication;
+package com.huaweicloud.common.governance;
 
 import java.util.Map;
 

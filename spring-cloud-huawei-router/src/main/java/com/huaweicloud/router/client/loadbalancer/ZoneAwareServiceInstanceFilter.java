@@ -18,8 +18,8 @@
 package com.huaweicloud.router.client.loadbalancer;
 
 import com.huaweicloud.governance.adapters.loadbalancer.ServiceInstanceFilter;
-import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
-import com.huaweicloud.governance.authentication.discovery.GovernaceRegistration;
+import com.huaweicloud.common.governance.GovernaceServiceInstance;
+import com.huaweicloud.common.registration.GovernaceRegistration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

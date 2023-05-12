@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 
-import com.huaweicloud.governance.authentication.discovery.GovernaceRegistration;
+import com.huaweicloud.common.registration.GovernaceRegistration;
 import com.huaweicloud.service.engine.common.configration.bootstrap.BootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
 import com.huaweicloud.servicecomb.discovery.discovery.DiscoveryProperties;

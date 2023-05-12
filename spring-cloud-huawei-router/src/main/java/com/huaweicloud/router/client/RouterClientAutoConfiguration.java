@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import com.huaweicloud.governance.authentication.GovernaceServiceInstance;
+import com.huaweicloud.common.governance.GovernaceServiceInstance;
 import com.huaweicloud.router.client.loadbalancer.CanaryServiceInstanceFilter;
 import com.huaweicloud.router.client.loadbalancer.ZoneAwareServiceInstanceFilter;
 
