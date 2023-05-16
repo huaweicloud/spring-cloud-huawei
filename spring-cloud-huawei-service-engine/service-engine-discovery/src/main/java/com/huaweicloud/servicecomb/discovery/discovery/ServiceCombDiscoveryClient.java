@@ -48,7 +48,7 @@ import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBoo
 import com.huaweicloud.service.engine.common.configration.bootstrap.MicroserviceProperties;
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
-import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstanceInstance;
+import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
 import com.huaweicloud.servicecomb.discovery.registry.GovernaceCombRegistration;
 
 public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationEventPublisherAware {
@@ -133,7 +133,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
       return Collections.emptyList();
     }
     return instances.stream().filter(instance -> !MicroserviceInstanceStatus.DOWN.equals(instance.getStatus()))
-        .map(ServiceCombServiceInstanceInstance::new).collect(Collectors.toList());
+        .map(ServiceCombServiceInstance::new).collect(Collectors.toList());
   }
 
   @Override

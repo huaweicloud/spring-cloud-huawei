@@ -27,12 +27,12 @@ import org.springframework.cloud.client.ServiceInstance;
 
 import com.huaweicloud.common.governance.GovernaceServiceInstance;
 
-public class ServiceCombServiceInstanceInstance implements ServiceInstance, GovernaceServiceInstance {
+public class ServiceCombServiceInstance implements ServiceInstance, GovernaceServiceInstance {
   private final URIEndpointObject uriEndpointObject;
 
   private final MicroserviceInstance microserviceInstance;
 
-  public ServiceCombServiceInstanceInstance(MicroserviceInstance microserviceInstance) {
+  public ServiceCombServiceInstance(MicroserviceInstance microserviceInstance) {
     this.microserviceInstance = microserviceInstance;
     String endpoint = this.microserviceInstance.getEndpoints().stream().filter(e -> e.startsWith("rest://"))
         .findFirst().orElse(null);
