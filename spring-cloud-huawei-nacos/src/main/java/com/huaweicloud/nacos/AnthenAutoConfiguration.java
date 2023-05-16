@@ -40,9 +40,4 @@ public class AnthenAutoConfiguration {
       NacosServiceDiscovery serviceDiscovery, NacosRegistration registration) {
     return new NacosServiceInstance(properties, registration, serviceDiscovery);
   }
-
-  @Bean
-  public com.alibaba.cloud.nacos.NacosServiceInstance nacosServiceInstance() {
-    return new com.alibaba.cloud.nacos.NacosServiceInstance();
-  }
 }
