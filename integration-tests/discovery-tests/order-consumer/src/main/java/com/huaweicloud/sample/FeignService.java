@@ -16,7 +16,10 @@
  */
 package com.huaweicloud.sample;
 
+import java.util.Date;
+
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -78,4 +81,9 @@ public interface FeignService {
 
   @PostMapping("/testFeignFaultInjection")
   public String testFaultInjection();
+
+
+  @GetMapping("/testDateRequestParam")
+  public String testDateRequestParam(@RequestParam(required = false, value = "currentDate")
+     Date currentDate);
 }

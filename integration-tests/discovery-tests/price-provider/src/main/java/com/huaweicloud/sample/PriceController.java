@@ -16,10 +16,14 @@
  */
 package com.huaweicloud.sample;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -99,5 +103,12 @@ public class PriceController {
   @PostMapping("/testFeignFaultInjection")
   public String testFeignFaultInjection() {
     return "ok";
+  }
+
+  @GetMapping("/testDateRequestParam")
+  public String testDateRequestParam(
+      @RequestParam(required = false, value = "currentDate")  Date currentDate) {
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+    return simpleDateFormat.format(currentDate);
   }
 }
