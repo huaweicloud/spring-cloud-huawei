@@ -36,14 +36,13 @@ public class AnthenAutoConfiguration {
   @ConditionalOnExpression("${" + GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED + ":true}"
       + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":true}")
   public GovernaceServiceInstance microserviceInstanceService(
-      com.alibaba.cloud.nacos.NacosServiceInstance nacosServiceInstance,
       NacosDiscoveryProperties properties,
       NacosServiceDiscovery serviceDiscovery, NacosRegistration registration) {
-    return new NacosServiceInstance(nacosServiceInstance, properties, registration, serviceDiscovery);
+    return new NacosServiceInstance(properties, registration, serviceDiscovery);
   }
 
   @Bean
-  public com.alibaba.cloud.nacos.NacosServiceInstance nacosServiceInstance(){
+  public com.alibaba.cloud.nacos.NacosServiceInstance nacosServiceInstance() {
     return new com.alibaba.cloud.nacos.NacosServiceInstance();
   }
 }

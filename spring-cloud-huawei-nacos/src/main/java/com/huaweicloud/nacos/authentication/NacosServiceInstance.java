@@ -47,10 +47,9 @@ public class NacosServiceInstance implements GovernaceServiceInstance, ServiceIn
 
   private final NacosRegistration registration;
 
-  public NacosServiceInstance(com.alibaba.cloud.nacos.NacosServiceInstance nacosServiceInstance,
-      NacosDiscoveryProperties properties, NacosRegistration registration,
+  public NacosServiceInstance(NacosDiscoveryProperties properties, NacosRegistration registration,
       NacosServiceDiscovery serviceDiscovery) {
-    this.nacosServiceInstance = nacosServiceInstance;
+    this.nacosServiceInstance = createInstance(properties);
     this.properties = properties;
     this.registration = registration;
     this.serviceDiscovery = serviceDiscovery;
@@ -167,5 +166,11 @@ public class NacosServiceInstance implements GovernaceServiceInstance, ServiceIn
   public String getRegion() {
     //not implement
     return null;
+  }
+
+  private com.alibaba.cloud.nacos.NacosServiceInstance createInstance(NacosDiscoveryProperties properties) {
+    com.alibaba.cloud.nacos.NacosServiceInstance nacosServiceInstance = new com.alibaba.cloud.nacos.NacosServiceInstance();
+    nacosServiceInstance.setMetadata(properties.getMetadata());
+    return nacosServiceInstance;
   }
 }
