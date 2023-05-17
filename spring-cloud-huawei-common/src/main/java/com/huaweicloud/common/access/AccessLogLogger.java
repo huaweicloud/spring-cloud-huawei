@@ -31,15 +31,51 @@ public class AccessLogLogger {
 
   private final ContextProperties contextProperties;
 
-  private final String format;
-
   public AccessLogLogger(ContextProperties contextProperties) {
     this.contextProperties = contextProperties;
-
-    format = initializeFormat(contextProperties);
   }
 
-  private String initializeFormat(ContextProperties contextProperties) {
+  public void log(InvocationContext context,
+      String request, int status, long time) {
+    if (!this.contextProperties.isEnableTraceInfo()) {
+      return;
+    }
+
+    if (this.contextProperties.getTraceLevel() == null) {
+      LOGGER.info(buildFormat(),
+          buildArguments(context, request, status, time));
+      return;
+    }
+
+    if ("INFO".equals(this.contextProperties.getTraceLevel())) {
+      LOGGER.warn(buildFormat(),
+          buildArguments(context, request, status, time));
+      return;
+    }
+
+    if ("WARN".equals(this.contextProperties.getTraceLevel())) {
+      LOGGER.warn(buildFormat(),
+          buildArguments(context, request, status, time));
+      return;
+    }
+
+    if ("ERROR".equals(this.contextProperties.getTraceLevel())) {
+      LOGGER.error(buildFormat(),
+          buildArguments(context, request, status, time));
+      return;
+    }
+
+    if ("DEBUG".equals(this.contextProperties.getTraceLevel())) {
+      LOGGER.debug(buildFormat(),
+          buildArguments(context, request, status, time));
+      return;
+    }
+
+    LOGGER.info(buildFormat(),
+        buildArguments(context, request, status, time));
+  }
+
+  private String buildFormat() {
     final String format;
     StringBuilder result = new StringBuilder();
     result.append("|");
@@ -53,40 +89,6 @@ public class AccessLogLogger {
 
     format = result.toString();
     return format;
-  }
-
-  public void log(InvocationContext context,
-      String request, int status, long time) {
-    if (!this.contextProperties.isEnableTraceInfo()) {
-      return;
-    }
-
-    if (this.contextProperties.getTraceLevel() == null) {
-      LOGGER.info(format,
-          buildArguments(context, request, status, time));
-      return;
-    }
-
-    if ("WARN".equals(this.contextProperties.getTraceLevel())) {
-      LOGGER.warn(format,
-          buildArguments(context, request, status, time));
-      return;
-    }
-
-    if ("ERROR".equals(this.contextProperties.getTraceLevel())) {
-      LOGGER.error(format,
-          buildArguments(context, request, status, time));
-      return;
-    }
-
-    if ("DEBUG".equals(this.contextProperties.getTraceLevel())) {
-      LOGGER.debug(format,
-          buildArguments(context, request, status, time));
-      return;
-    }
-
-    LOGGER.info(format,
-        buildArguments(context, request, status, time));
   }
 
   private Object[] buildArguments(InvocationContext context,
