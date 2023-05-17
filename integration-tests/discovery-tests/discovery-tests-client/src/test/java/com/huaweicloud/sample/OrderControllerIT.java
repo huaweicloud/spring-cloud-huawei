@@ -119,4 +119,10 @@ public class OrderControllerIT {
     // Feign will keep response encoded and need request encode, this is quit inconvenient
     assertThat(result).isEqualTo(codec.encode(v));
   }
+
+  @Test
+  public void testDateRequestParam() throws Exception {
+    String result = template.getForObject(url + "/testDateRequestParam", String.class);
+    assertThat(result).isEqualTo("2020-03-04 20:00:00+0800");
+  }
 }
