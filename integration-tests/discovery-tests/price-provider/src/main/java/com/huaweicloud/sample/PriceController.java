@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,6 +111,7 @@ public class PriceController {
   public String testDateRequestParam(
       @RequestParam(required = false, value = "currentDate")  Date currentDate) {
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ", Locale.CHINA);
+    simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
     return simpleDateFormat.format(currentDate);
   }
 }

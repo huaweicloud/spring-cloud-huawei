@@ -19,6 +19,8 @@ package com.huaweicloud.sample.hessian;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 
@@ -55,7 +57,8 @@ public class DateFormatConfiguration {
   public static class DateToStringConverter implements Converter<Date, String> {
     @Override
     public String convert(Date source) {
-      SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
+      SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN, Locale.CHINA);
+      simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
       return simpleDateFormat.format(source);
     }
   }
@@ -64,7 +67,8 @@ public class DateFormatConfiguration {
     @Override
     public Date convert(String source) {
       try {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN, Locale.CHINA);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
         return simpleDateFormat.parse(source);
       } catch (ParseException e) {
         return null;
