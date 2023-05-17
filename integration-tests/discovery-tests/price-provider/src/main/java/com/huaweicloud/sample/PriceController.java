@@ -19,6 +19,7 @@ package com.huaweicloud.sample;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,7 +109,7 @@ public class PriceController {
   @GetMapping("/testDateRequestParam")
   public String testDateRequestParam(
       @RequestParam(required = false, value = "currentDate")  Date currentDate) {
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ", Locale.CHINA);
     return simpleDateFormat.format(currentDate);
   }
 }

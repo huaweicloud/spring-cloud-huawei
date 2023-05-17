@@ -21,6 +21,7 @@ import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,7 +169,7 @@ public class OrderController {
 
   @GetMapping("/testDateRequestParam")
   public String testDateRequestParam() throws ParseException {
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ", Locale.CHINA);
     Date currentDate = simpleDateFormat.parse("2020-03-04 20:00:00+0800");
     return feignService.testDateRequestParam(currentDate);
   }
