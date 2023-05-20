@@ -21,7 +21,6 @@ package com.huaweicloud.config.client;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.servicecomb.config.common.ConfigConverter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +29,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 
-import com.huaweicloud.service.engine.common.configration.bootstrap.ConfigBootstrapProperties;
 import com.huaweicloud.config.ServiceCombConfigPropertySource;
 import com.huaweicloud.config.ServiceCombPropertySourceLocator;
 
@@ -42,18 +40,11 @@ public class ServiceCombPropertySourceLocatorTest {
 
   @Test
   public void locate() {
-    ConfigBootstrapProperties configBootstrapProperties = new ConfigBootstrapProperties();
-    configBootstrapProperties.setEnabled(true);
-    configBootstrapProperties.setServerAddr("http://ddd");
-
     Map<String, Object> sources = new HashMap<>();
     sources.put("test", "tt");
     sources.put("test2", "tt");
-    ConfigConverter configConverter = new ConfigConverter(null);
-    configConverter.updateData(sources);
 
-    ServiceCombPropertySourceLocator serviceCombPropertySourceLocator = new ServiceCombPropertySourceLocator(
-        configConverter);
+    ServiceCombPropertySourceLocator serviceCombPropertySourceLocator = new ServiceCombPropertySourceLocator(sources);
     PropertySource<?> result = serviceCombPropertySourceLocator.locate(environment);
     Assertions.assertEquals(result.getName(), ServiceCombConfigPropertySource.NAME);
   }
