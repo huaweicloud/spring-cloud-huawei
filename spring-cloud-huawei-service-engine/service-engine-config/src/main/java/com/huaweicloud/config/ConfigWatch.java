@@ -1,19 +1,19 @@
 /*
 
-  * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+ * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
 
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  */
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package com.huaweicloud.config;
 
@@ -28,7 +28,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 
 import com.google.common.eventbus.Subscribe;
-import com.huaweicloud.common.event.ConfigRefreshEvent;
 import com.huaweicloud.common.event.EventManager;
 
 public class ConfigWatch implements ApplicationEventPublisherAware {
@@ -57,10 +56,6 @@ public class ConfigWatch implements ApplicationEventPublisherAware {
     updatedKey.addAll(event.getAdded().keySet());
     updatedKey.addAll(event.getUpdated().keySet());
     updatedKey.addAll(event.getDeleted().keySet());
-    ConfigRefreshEvent configRefreshEvent = new ConfigRefreshEvent(this, updatedKey);
-    // publish RefreshEvent first to make sure spring bean refreshed
-    applicationEventPublisher.publishEvent(new RefreshEvent(this, configRefreshEvent, "Config refreshed"));
-    // then invoke service listeners
-    applicationEventPublisher.publishEvent(configRefreshEvent);
+    applicationEventPublisher.publishEvent(new RefreshEvent(this, updatedKey, "Config refreshed"));
   }
 }

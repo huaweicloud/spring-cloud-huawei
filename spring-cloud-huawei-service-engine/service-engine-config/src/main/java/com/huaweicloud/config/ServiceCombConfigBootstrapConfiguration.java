@@ -37,6 +37,6 @@ public class ServiceCombConfigBootstrapConfiguration {
       List<AuthHeaderProvider> authHeaderProviders) {
     ConfigService.getInstance()
         .init(bootstrapProperties, authHeaderProviders);
-    return new ServiceCombPropertySourceLocator(ConfigService.getInstance().getConfigConverter());
+    return new ServiceCombPropertySourceLocator(ConfigService.getInstance().getConfigConverter().getCurrentData());
   }
 }

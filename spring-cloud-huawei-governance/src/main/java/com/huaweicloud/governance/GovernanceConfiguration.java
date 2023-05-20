@@ -16,7 +16,6 @@
  */
 package com.huaweicloud.governance;
 
-import java.util.HashSet;
 import java.util.List;
 
 import org.apache.servicecomb.governance.MicroserviceMeta;
@@ -28,12 +27,11 @@ import org.apache.servicecomb.governance.handler.ext.AbstractInstanceIsolationEx
 import org.apache.servicecomb.governance.handler.ext.AbstractRetryExtension;
 import org.apache.servicecomb.governance.properties.MapperProperties;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-
-import com.huaweicloud.common.event.ConfigRefreshEvent;
 
 @Configuration
 @ComponentScan(basePackages = {"org.apache.servicecomb.governance"})
@@ -49,9 +47,9 @@ public class GovernanceConfiguration {
   }
 
   @Bean
-  public ApplicationListener<ConfigRefreshEvent> governanceApplicationListener() {
-    return configRefreshEvent -> GovernanceEventManager
-        .post(new GovernanceConfigurationChangedEvent(new HashSet<>(configRefreshEvent.getChange())));
+  public ApplicationListener<EnvironmentChangeEvent> governanceApplicationListener() {
+    return environmentChangeEvent -> GovernanceEventManager
+        .post(new GovernanceConfigurationChangedEvent(environmentChangeEvent.getKeys()));
   }
 
   @Bean
