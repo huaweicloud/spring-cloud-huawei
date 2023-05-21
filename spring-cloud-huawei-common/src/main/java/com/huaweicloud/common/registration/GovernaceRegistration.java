@@ -15,19 +15,14 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.governance.authentication;
+package com.huaweicloud.common.registration;
 
-/**
- * microservice instance service
- */
-public interface MicroserviceInstanceService {
-  void setPublickey(String publicKeyEncoded);
+import org.springframework.cloud.client.serviceregistry.Registration;
 
-  String getInstanceId();
 
-  String getServiceId();
+public interface GovernaceRegistration extends Registration {
 
-  String getPublicKeyFromInstance(String instanceId, String serviceId);
+  String getRegion();
 
-  String getPropertyValue(String serviceId, String instanceId, String propertyName);
+  String getAvailableZone();
 }

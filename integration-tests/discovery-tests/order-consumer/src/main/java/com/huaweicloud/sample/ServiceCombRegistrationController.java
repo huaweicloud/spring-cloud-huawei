@@ -24,16 +24,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
+import com.huaweicloud.servicecomb.discovery.registry.GovernaceCombRegistration;
 
 @RestController
 @ConditionalOnServiceCombDiscoveryEnabled
 public class ServiceCombRegistrationController {
-  private final ServiceCombRegistration serviceCombRegistration;
+  private final GovernaceCombRegistration serviceCombRegistration;
 
   @Autowired
   public ServiceCombRegistrationController(
-      ServiceCombRegistration serviceCombRegistration) {
+      GovernaceCombRegistration serviceCombRegistration) {
     this.serviceCombRegistration = serviceCombRegistration;
   }
 

@@ -39,7 +39,7 @@ import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
 import com.huaweicloud.common.util.Type;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
+import com.huaweicloud.servicecomb.discovery.registry.GovernaceCombRegistration;
 
 public class ServiceAddressManager {
 
@@ -59,7 +59,7 @@ public class ServiceAddressManager {
 
   public ServiceAddressManager(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCenterClient serviceCenterClient,
-      ServiceCombRegistration serviceCombRegistration) {
+      GovernaceCombRegistration serviceCombRegistration) {
     this.discoveryProperties = discoveryProperties;
     this.serviceCenterClient = serviceCenterClient;
     this.myselfInstance = serviceCombRegistration.getMicroserviceInstance();

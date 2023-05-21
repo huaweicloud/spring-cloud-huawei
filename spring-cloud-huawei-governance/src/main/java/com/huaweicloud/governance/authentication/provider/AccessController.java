@@ -16,7 +16,7 @@
 package com.huaweicloud.governance.authentication.provider;
 
 import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
-import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
+import com.huaweicloud.common.governance.GovernaceServiceInstance;
 
 import java.util.List;
 
@@ -28,9 +28,9 @@ import org.apache.commons.lang.StringUtils;
 public class AccessController {
   BlackWhiteListProperties blackWhiteListProperties;
 
-  private final MicroserviceInstanceService instanceService;
+  private final GovernaceServiceInstance instanceService;
 
-  public AccessController(MicroserviceInstanceService instanceService,
+  public AccessController(GovernaceServiceInstance instanceService,
       BlackWhiteListProperties blackWhiteListProperties) {
     this.instanceService = instanceService;
     this.blackWhiteListProperties = blackWhiteListProperties;

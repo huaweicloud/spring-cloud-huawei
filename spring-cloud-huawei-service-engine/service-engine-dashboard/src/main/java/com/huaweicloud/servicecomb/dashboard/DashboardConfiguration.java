@@ -29,7 +29,7 @@ import com.huaweicloud.service.engine.common.configration.bootstrap.ServiceCombS
 import com.huaweicloud.service.engine.common.configration.dynamic.DashboardProperties;
 import com.huaweicloud.servicecomb.dashboard.model.MonitorDataProvider;
 import com.huaweicloud.servicecomb.dashboard.model.MonitorDataPublisher;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
+import com.huaweicloud.servicecomb.discovery.registry.GovernaceCombRegistration;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
@@ -52,14 +52,14 @@ public class DashboardConfiguration {
 
   @Bean
   public MonitorDataProvider governanceMonitorDataProvider(MeterRegistry meterRegistry,
-      ServiceCombRegistration registration,
+      GovernaceCombRegistration registration,
       DashboardProperties dashboardProperties) {
     return new GovernanceMonitorDataProvider(meterRegistry, registration, dashboardProperties);
   }
 
   @Bean
   public MonitorDataProvider invocationMonitorDataProvider(MeterRegistry meterRegistry,
-      ServiceCombRegistration registration,
+      GovernaceCombRegistration registration,
       DashboardProperties dashboardProperties) {
     return new InvocationMonitorDataProvider(meterRegistry, registration, dashboardProperties);
   }

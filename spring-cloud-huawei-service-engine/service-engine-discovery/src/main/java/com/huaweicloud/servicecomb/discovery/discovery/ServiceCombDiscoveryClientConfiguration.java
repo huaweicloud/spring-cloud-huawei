@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Configuration;
 import com.huaweicloud.service.engine.common.configration.bootstrap.BootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
 import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
+import com.huaweicloud.servicecomb.discovery.registry.GovernaceCombRegistration;
 
 @Configuration
 @ConditionalOnServiceCombDiscoveryEnabled
@@ -36,13 +36,13 @@ public class ServiceCombDiscoveryClientConfiguration {
   @Bean
   public DiscoveryClient serviceCombDiscoveryClient(
       BootstrapProperties bootstrapProperties, ServiceCenterClient serviceCenterClient,
-      ServiceCombRegistration serviceCombRegistration) {
+      GovernaceCombRegistration serviceCombRegistration) {
     return new ServiceCombDiscoveryClient(bootstrapProperties, serviceCenterClient, serviceCombRegistration);
   }
 
   @Bean
   public ServiceAddressManager serviceAddressManager(DiscoveryBootstrapProperties discoveryProperties,
-      ServiceCenterClient serviceCenterClient, ServiceCombRegistration serviceCombRegistration) {
+      ServiceCenterClient serviceCenterClient, GovernaceCombRegistration serviceCombRegistration) {
     return new ServiceAddressManager(discoveryProperties, serviceCenterClient, serviceCombRegistration);
   }
 }

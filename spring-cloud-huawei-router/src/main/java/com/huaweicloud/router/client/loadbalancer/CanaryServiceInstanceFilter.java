@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.apache.servicecomb.router.RouterFilter;
 import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
-import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,20 +34,20 @@ import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.CollectionUtils;
 
-import com.huaweicloud.governance.adapters.loadbalancer.DecorateLoadBalancerRequest;
-import com.huaweicloud.governance.adapters.loadbalancer.ServiceInstanceFilter;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.governance.adapters.loadbalancer.DecorateLoadBalancerRequest;
+import com.huaweicloud.governance.adapters.loadbalancer.ServiceInstanceFilter;
 
 public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
   private static final Logger LOGGER = LoggerFactory.getLogger(CanaryServiceInstanceFilter.class);
 
-  private final AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor;
+  private final AbstractRouterDistributor<ServiceInstance, ServiceInstance> routerDistributor;
 
   private final RouterFilter routerFilter;
 
   @Autowired
-  public CanaryServiceInstanceFilter(AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor,
+  public CanaryServiceInstanceFilter(AbstractRouterDistributor<ServiceInstance, ServiceInstance> routerDistributor,
       RouterFilter routerFilter) {
     this.routerDistributor = routerDistributor;
     this.routerFilter = routerFilter;

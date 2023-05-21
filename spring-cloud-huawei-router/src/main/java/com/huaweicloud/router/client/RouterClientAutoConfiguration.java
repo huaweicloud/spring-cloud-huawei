@@ -18,7 +18,6 @@ package com.huaweicloud.router.client;
 
 import org.apache.servicecomb.router.RouterFilter;
 import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
-import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -28,6 +27,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.common.governance.GovernaceServiceInstance;
 import com.huaweicloud.router.client.loadbalancer.CanaryServiceInstanceFilter;
 import com.huaweicloud.router.client.loadbalancer.ZoneAwareServiceInstanceFilter;
 
@@ -37,14 +37,15 @@ import com.huaweicloud.router.client.loadbalancer.ZoneAwareServiceInstanceFilter
 @AutoConfigureAfter(LoadBalancerClientConfiguration.class)
 public class RouterClientAutoConfiguration {
   @Bean
-  public AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor() {
-    return new SpringCloudRouterDistributor();
+  public AbstractRouterDistributor<ServiceInstance, ServiceInstance> routerDistributorServicecomb(
+      GovernaceServiceInstance instance) {
+    return new SpringCloudRouterDistributor(instance);
   }
 
   @Bean
   @ConditionalOnMissingBean(CanaryServiceInstanceFilter.class)
   public CanaryServiceInstanceFilter canaryServiceInstanceFilter(
-      AbstractRouterDistributor<ServiceInstance, MicroserviceInstance> routerDistributor, RouterFilter routerFilter) {
+      AbstractRouterDistributor<ServiceInstance, ServiceInstance> routerDistributor, RouterFilter routerFilter) {
     return new CanaryServiceInstanceFilter(routerDistributor, routerFilter);
   }
 

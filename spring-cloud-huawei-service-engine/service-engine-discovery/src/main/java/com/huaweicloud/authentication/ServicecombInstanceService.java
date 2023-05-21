@@ -19,27 +19,29 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.huaweicloud.governance.authentication.Const;
-import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
+import com.huaweicloud.common.governance.GovernaceServiceInstance;
+import com.huaweicloud.servicecomb.discovery.registry.GovernaceCombRegistration;
 
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.client.ServiceInstance;
 
 import java.beans.PropertyDescriptor;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class ServicecombInstanceService implements MicroserviceInstanceService {
+public class ServicecombInstanceService implements GovernaceServiceInstance {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServicecombInstanceService.class);
 
-  private final ServiceCombRegistration registration;
+  private final GovernaceCombRegistration registration;
 
   private final ServiceCenterClient client;
 
-  public ServicecombInstanceService(ServiceCombRegistration registration, ServiceCenterClient client) {
+  public ServicecombInstanceService(GovernaceCombRegistration registration, ServiceCenterClient client) {
     this.registration = registration;
     this.client = client;
   }
@@ -57,7 +59,7 @@ public class ServicecombInstanceService implements MicroserviceInstanceService {
 
   @Override
   public String getServiceId() {
-    return registration.getMicroservice().getServiceId();
+    return registration.getMicroserviceInstance().getServiceId();
   }
 
   @Override
@@ -83,6 +85,33 @@ public class ServicecombInstanceService implements MicroserviceInstanceService {
       LOGGER.warn("can't find property name: {} in microservice field.", propertyName);
     }
     return microservice.getProperties().get(propertyName);
+  }
+
+  @Override
+  public String getVersion(ServiceInstance serviceInstance) {
+    return null;
+  }
+
+  @Override
+  public String getServiceName(ServiceInstance serviceInstance) {
+    return null;
+  }
+
+  @Override
+  public Map<String, String> getProperties(ServiceInstance serviceInstance) {
+    return null;
+  }
+
+  @Override
+  public String getAvailableZone() {
+    //not implement
+    return null;
+  }
+
+  @Override
+  public String getRegion() {
+    //not implement
+    return null;
   }
 
   private Microservice getMicroservice(String serviceId) {

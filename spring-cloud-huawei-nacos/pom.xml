@@ -38,6 +38,10 @@
             <groupId>com.huaweicloud</groupId>
             <artifactId>spring-cloud-huawei-governance</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.huaweicloud</groupId>
+            <artifactId>spring-cloud-huawei-router</artifactId>
+        </dependency>
     </dependencies>
     
 </project>

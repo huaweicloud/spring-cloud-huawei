@@ -17,6 +17,15 @@
 
 package com.huaweicloud.nacos.authentication;
 
+import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cloud.client.ServiceInstance;
+
 import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
 import com.alibaba.cloud.nacos.discovery.NacosServiceDiscovery;
 import com.alibaba.cloud.nacos.registry.NacosRegistration;
@@ -25,17 +34,12 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.huaweicloud.common.disovery.InstanceIDAdapter;
 import com.huaweicloud.governance.authentication.Const;
-import com.huaweicloud.governance.authentication.MicroserviceInstanceService;
+import com.huaweicloud.common.governance.GovernaceServiceInstance;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cloud.client.ServiceInstance;
+public class NacosServiceInstance implements GovernaceServiceInstance, ServiceInstance {
+  private static final Logger LOGGER = LoggerFactory.getLogger(NacosServiceInstance.class);
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-public class NacosInstanceService implements MicroserviceInstanceService {
-  private static final Logger LOGGER = LoggerFactory.getLogger(NacosInstanceService.class);
+  private final com.alibaba.cloud.nacos.NacosServiceInstance nacosServiceInstance;
 
   private final NacosDiscoveryProperties properties;
 
@@ -43,8 +47,9 @@ public class NacosInstanceService implements MicroserviceInstanceService {
 
   private final NacosRegistration registration;
 
-  public NacosInstanceService(NacosDiscoveryProperties properties, NacosRegistration registration,
+  public NacosServiceInstance(NacosDiscoveryProperties properties, NacosRegistration registration,
       NacosServiceDiscovery serviceDiscovery) {
+    this.nacosServiceInstance = createInstance(properties);
     this.properties = properties;
     this.registration = registration;
     this.serviceDiscovery = serviceDiscovery;
@@ -63,6 +68,31 @@ public class NacosInstanceService implements MicroserviceInstanceService {
   @Override
   public String getServiceId() {
     return registration.getServiceId();
+  }
+
+  @Override
+  public String getHost() {
+    return nacosServiceInstance.getHost();
+  }
+
+  @Override
+  public int getPort() {
+    return nacosServiceInstance.getPort();
+  }
+
+  @Override
+  public boolean isSecure() {
+    return nacosServiceInstance.isSecure();
+  }
+
+  @Override
+  public URI getUri() {
+    return nacosServiceInstance.getUri();
+  }
+
+  @Override
+  public Map<String, String> getMetadata() {
+    return nacosServiceInstance.getMetadata();
   }
 
   @Override
@@ -110,4 +140,37 @@ public class NacosInstanceService implements MicroserviceInstanceService {
       .maximumSize(1000)
       .expireAfterAccess(30, TimeUnit.MINUTES)
       .build();
+
+  @Override
+  public String getVersion(ServiceInstance serviceInstance) {
+    return serviceInstance.getMetadata().getOrDefault("version", "0.0.1");
+  }
+
+  @Override
+  public String getServiceName(ServiceInstance serviceInstance) {
+    return serviceInstance.getServiceId();
+  }
+
+  @Override
+  public Map<String, String> getProperties(ServiceInstance serviceInstance) {
+    return serviceInstance.getMetadata();
+  }
+
+  @Override
+  public String getAvailableZone() {
+    //not implement
+    return null;
+  }
+
+  @Override
+  public String getRegion() {
+    //not implement
+    return null;
+  }
+
+  private com.alibaba.cloud.nacos.NacosServiceInstance createInstance(NacosDiscoveryProperties properties) {
+    com.alibaba.cloud.nacos.NacosServiceInstance nacosServiceInstance = new com.alibaba.cloud.nacos.NacosServiceInstance();
+    nacosServiceInstance.setMetadata(properties.getMetadata());
+    return nacosServiceInstance;
+  }
 }
