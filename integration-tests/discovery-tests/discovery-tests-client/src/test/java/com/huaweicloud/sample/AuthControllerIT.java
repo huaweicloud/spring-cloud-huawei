@@ -17,10 +17,10 @@
 
 package com.huaweicloud.sample;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestTemplate;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class AuthControllerIT {
 
@@ -33,13 +33,13 @@ public class AuthControllerIT {
   final RestTemplate template = new RestTemplate();
 
   @Test
-  public void testCheckTokenSucesssFromGateway() {
+  public void testCheckTokenSuccessFromGateway() {
     String result = template.getForObject(gatewayUrl + "/order/checkToken", String.class);
     assertThat(result).isEqualTo("success");
   }
 
   @Test
-  public void testCheckTokenSucesssFromConsumer() {
+  public void testCheckTokenSuccessFromConsumer() {
     String result = template.getForObject(orderServiceUrl + "/checkToken", String.class);
     assertThat(result).isEqualTo("success");
   }
@@ -54,5 +54,4 @@ public class AuthControllerIT {
     }
     assertThat(exception).isEqualTo(true);
   }
-
 }

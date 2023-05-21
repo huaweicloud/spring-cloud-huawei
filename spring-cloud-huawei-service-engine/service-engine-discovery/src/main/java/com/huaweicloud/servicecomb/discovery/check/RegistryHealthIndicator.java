@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.health.check;
+package com.huaweicloud.servicecomb.discovery.check;
 
 import com.google.common.eventbus.Subscribe;
 import com.huaweicloud.common.event.EventManager;

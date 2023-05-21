@@ -32,11 +32,7 @@
     <module>nacos-canary-gateway</module>
     <module>nacos-canary-consumer</module>
     <module>nacos-canary-provider</module>
+    <module>nacos-canary-provider-beta</module>
   </modules>
-
-  <properties>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
-  </properties>
 
 </project>

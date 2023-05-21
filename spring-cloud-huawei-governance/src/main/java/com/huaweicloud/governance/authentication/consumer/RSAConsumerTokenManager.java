@@ -17,18 +17,20 @@
 
 package com.huaweicloud.governance.authentication.consumer;
 
-import com.huaweicloud.common.context.InvocationContext;
-import com.huaweicloud.governance.authentication.Const;
-import com.huaweicloud.common.governance.GovernaceServiceInstance;
-import com.huaweicloud.governance.authentication.RsaAuthenticationToken;
-import com.huaweicloud.governance.authentication.UnAuthorizedException;
+import java.security.PrivateKey;
+import java.util.Optional;
+
 import org.apache.servicecomb.foundation.common.utils.RSAUtils;
 import org.apache.servicecomb.foundation.token.RSAKeypair4Auth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.client.serviceregistry.Registration;
 
-import java.security.PrivateKey;
-import java.util.Optional;
+import com.huaweicloud.common.context.InvocationContext;
+import com.huaweicloud.governance.authentication.AuthenticationAdapter;
+import com.huaweicloud.governance.authentication.Const;
+import com.huaweicloud.governance.authentication.RsaAuthenticationToken;
+import com.huaweicloud.governance.authentication.UnAuthorizedException;
 
 public class RSAConsumerTokenManager {
 
@@ -38,10 +40,13 @@ public class RSAConsumerTokenManager {
 
   private RsaAuthenticationToken token;
 
-  private final GovernaceServiceInstance instanceService;
+  private final Registration instanceService;
 
-  public RSAConsumerTokenManager(GovernaceServiceInstance instanceService) {
+  private final AuthenticationAdapter adapter;
+
+  public RSAConsumerTokenManager(Registration instanceService, AuthenticationAdapter adapter) {
     this.instanceService = instanceService;
+    this.adapter = adapter;
   }
 
   public String getToken() {
@@ -58,8 +63,8 @@ public class RSAConsumerTokenManager {
 
   public String createToken() {
     PrivateKey privateKey = RSAKeypair4Auth.INSTANCE.getPrivateKey();
-    String instanceId = instanceService.getInstanceId();
-    String serviceId = instanceService.getServiceId();
+    String instanceId = this.adapter.getInstanceId(instanceService);
+    String serviceId = this.adapter.getServiceId(instanceService);
 
     if (instanceId == null || serviceId == null) {
       LOGGER.error("service not ready when create token.");

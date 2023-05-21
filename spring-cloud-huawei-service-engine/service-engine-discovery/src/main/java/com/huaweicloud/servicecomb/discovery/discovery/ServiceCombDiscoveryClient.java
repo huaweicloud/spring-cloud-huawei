@@ -49,7 +49,7 @@ import com.huaweicloud.service.engine.common.configration.bootstrap.Microservice
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
 import com.huaweicloud.servicecomb.discovery.client.model.ServiceCombServiceInstance;
-import com.huaweicloud.servicecomb.discovery.registry.GovernaceCombRegistration;
+import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationEventPublisherAware {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombDiscoveryClient.class);
@@ -62,7 +62,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
 
   private final ServiceCenterDiscovery serviceCenterDiscovery;
 
-  private final GovernaceCombRegistration serviceCombRegistration;
+  private final ServiceCombRegistration serviceCombRegistration;
 
   private ApplicationEventPublisher applicationEventPublisher;
 
@@ -71,7 +71,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
   private final List<String> serviceIds = new ArrayList<>();
 
   public ServiceCombDiscoveryClient(BootstrapProperties bootstrapProperties,
-      ServiceCenterClient serviceCenterClient, GovernaceCombRegistration serviceCombRegistration) {
+      ServiceCenterClient serviceCenterClient, ServiceCombRegistration serviceCombRegistration) {
     this.discoveryProperties = bootstrapProperties.getDiscoveryBootstrapProperties();
     this.microserviceProperties = bootstrapProperties.getMicroserviceProperties();
     this.serviceCenterClient = serviceCenterClient;

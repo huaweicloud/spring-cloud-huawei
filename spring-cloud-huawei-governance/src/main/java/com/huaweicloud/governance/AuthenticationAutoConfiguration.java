@@ -17,22 +17,23 @@
 
 package com.huaweicloud.governance;
 
-import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
-import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
-import com.huaweicloud.governance.authentication.AuthHandlerBoot;
-import com.huaweicloud.common.governance.GovernaceServiceInstance;
-import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
-import com.huaweicloud.governance.authentication.provider.AccessController;
-import com.huaweicloud.governance.authentication.provider.ProviderAuthPreHandlerInterceptor;
-
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
+import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
+import com.huaweicloud.governance.authentication.AuthHandlerBoot;
+import com.huaweicloud.governance.authentication.AuthenticationAdapter;
+import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
+import com.huaweicloud.governance.authentication.provider.AccessController;
+import com.huaweicloud.governance.authentication.provider.ProviderAuthPreHandlerInterceptor;
 
 @Configuration
 @ConditionalOnExpression("${" + GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED + ":false}"
@@ -50,15 +51,17 @@ public class AuthenticationAutoConfiguration {
   @Bean
   @ConditionalOnExpression("${" + GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED + ":true}"
       + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":true}")
-  public ApplicationListener<ApplicationEvent> authHandlerBoot(GovernaceServiceInstance instanceService) {
-    return new AuthHandlerBoot(instanceService);
+  public ApplicationListener<ApplicationEvent> authHandlerBoot(Registration registration,
+      AuthenticationAdapter adapter) {
+    return new AuthHandlerBoot(registration, adapter);
   }
 
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED,
       havingValue = "true")
-  public RSAConsumerTokenManager authenticationTokenManager(GovernaceServiceInstance instanceService) {
-    return new RSAConsumerTokenManager(instanceService);
+  public RSAConsumerTokenManager authenticationTokenManager(Registration instanceService,
+      AuthenticationAdapter adapter) {
+    return new RSAConsumerTokenManager(instanceService, adapter);
   }
 
   @Bean
@@ -71,8 +74,8 @@ public class AuthenticationAutoConfiguration {
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED,
       havingValue = "true")
-  public AccessController accessController(GovernaceServiceInstance instanceService,
+  public AccessController accessController(AuthenticationAdapter authenticationAdapter,
       BlackWhiteListProperties blackWhiteListProperties) {
-    return new AccessController(instanceService, blackWhiteListProperties);
+    return new AccessController(authenticationAdapter, blackWhiteListProperties);
   }
 }

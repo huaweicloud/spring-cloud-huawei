@@ -17,37 +17,36 @@
 
 package com.huaweicloud.router.client.loadbalancer;
 
-import com.huaweicloud.governance.adapters.loadbalancer.ServiceInstanceFilter;
-import com.huaweicloud.common.governance.GovernaceServiceInstance;
-import com.huaweicloud.common.registration.GovernaceRegistration;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.loadbalancer.Request;
-import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.loadbalancer.Request;
+import org.springframework.cloud.client.serviceregistry.Registration;
+import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
+
+import com.huaweicloud.governance.adapters.loadbalancer.ServiceInstanceFilter;
+
 public class ZoneAwareServiceInstanceFilter implements ServiceInstanceFilter {
 
-  private GovernaceRegistration registration;
+  private final Registration registration;
+
+  private final ZoneAwareFilterAdapter adapter;
 
   @Value("${spring.cloud.servicecomb.discovery.denyCrossZoneLoadBalancing:false}")
   private boolean denyCrossZoneLoadBalancing;
 
-  @Autowired
-  public void setServiceCombRegistration(GovernaceRegistration registration) {
+  public ZoneAwareServiceInstanceFilter(Registration registration, ZoneAwareFilterAdapter adapter) {
     this.registration = registration;
+    this.adapter = adapter;
   }
 
   @Override
   public List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances,
       Request<?> request) {
-    GovernaceRegistration mySelf = registration;
-    return zoneAwareDiscoveryFilter(mySelf, instances);
+    return zoneAwareDiscoveryFilter(instances);
   }
 
   @Override
@@ -55,15 +54,13 @@ public class ZoneAwareServiceInstanceFilter implements ServiceInstanceFilter {
     return -2;
   }
 
-  private List<ServiceInstance> zoneAwareDiscoveryFilter(GovernaceRegistration mySelf,
-      List<ServiceInstance> instances) {
+  private List<ServiceInstance> zoneAwareDiscoveryFilter(List<ServiceInstance> instances) {
     List<ServiceInstance> regionAndAZMatchList = new ArrayList<>();
     List<ServiceInstance> regionMatchList = new ArrayList<>();
     instances.forEach(serviceInstance -> {
-      GovernaceServiceInstance instance = (GovernaceServiceInstance) serviceInstance;
-      if (regionAndAZMatch(mySelf, instance.getAvailableZone(), instance.getRegion())) {
+      if (regionAndAZMatch(this.adapter.getAvailableZone(serviceInstance), this.adapter.getRegion(serviceInstance))) {
         regionAndAZMatchList.add(serviceInstance);
-      } else if (regionMatch(mySelf, instance.getRegion())) {
+      } else if (regionMatch(this.adapter.getRegion(serviceInstance))) {
         regionMatchList.add(serviceInstance);
       }
     });
@@ -80,17 +77,17 @@ public class ZoneAwareServiceInstanceFilter implements ServiceInstanceFilter {
     }
   }
 
-  private boolean regionAndAZMatch(GovernaceRegistration myself, String availableZone, String region) {
-    if (myself.getRegion() != null && myself.getAvailableZone() != null) {
-      return myself.getRegion().equals(region) &&
-          myself.getAvailableZone().equals(availableZone);
+  private boolean regionAndAZMatch(String availableZone, String region) {
+    if (adapter.getRegion(registration) != null && adapter.getAvailableZone(registration) != null) {
+      return adapter.getRegion(registration).equals(region) &&
+          adapter.getAvailableZone(registration).equals(availableZone);
     }
     return false;
   }
 
-  private boolean regionMatch(GovernaceRegistration myself, String region) {
-    if (myself.getRegion() != null) {
-      return myself.getRegion().equals(region);
+  private boolean regionMatch(String region) {
+    if (adapter.getRegion(registration) != null) {
+      return adapter.getRegion(registration).equals(region);
     }
     return false;
   }

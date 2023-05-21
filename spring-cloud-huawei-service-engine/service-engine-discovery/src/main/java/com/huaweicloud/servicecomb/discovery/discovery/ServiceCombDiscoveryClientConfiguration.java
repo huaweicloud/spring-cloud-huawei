@@ -20,29 +20,28 @@ package com.huaweicloud.servicecomb.discovery.discovery;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.cloud.client.CommonsClientAutoConfiguration;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.service.engine.common.configration.bootstrap.BootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
 import com.huaweicloud.servicecomb.discovery.ConditionalOnServiceCombDiscoveryEnabled;
-import com.huaweicloud.servicecomb.discovery.registry.GovernaceCombRegistration;
+import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 @Configuration
 @ConditionalOnServiceCombDiscoveryEnabled
 @AutoConfigureBefore({CommonsClientAutoConfiguration.class})
 public class ServiceCombDiscoveryClientConfiguration {
   @Bean
-  public DiscoveryClient serviceCombDiscoveryClient(
+  public ServiceCombDiscoveryClient serviceCombDiscoveryClient(
       BootstrapProperties bootstrapProperties, ServiceCenterClient serviceCenterClient,
-      GovernaceCombRegistration serviceCombRegistration) {
+      ServiceCombRegistration serviceCombRegistration) {
     return new ServiceCombDiscoveryClient(bootstrapProperties, serviceCenterClient, serviceCombRegistration);
   }
 
   @Bean
   public ServiceAddressManager serviceAddressManager(DiscoveryBootstrapProperties discoveryProperties,
-      ServiceCenterClient serviceCenterClient, GovernaceCombRegistration serviceCombRegistration) {
+      ServiceCenterClient serviceCenterClient, ServiceCombRegistration serviceCombRegistration) {
     return new ServiceAddressManager(discoveryProperties, serviceCenterClient, serviceCombRegistration);
   }
 }

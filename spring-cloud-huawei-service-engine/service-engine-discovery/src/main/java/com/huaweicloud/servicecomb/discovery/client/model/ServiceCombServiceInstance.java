@@ -25,9 +25,7 @@ import org.apache.servicecomb.foundation.common.net.URIEndpointObject;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.cloud.client.ServiceInstance;
 
-import com.huaweicloud.common.governance.GovernaceServiceInstance;
-
-public class ServiceCombServiceInstance implements ServiceInstance, GovernaceServiceInstance {
+public class ServiceCombServiceInstance implements ServiceInstance {
   private final URIEndpointObject uriEndpointObject;
 
   private final MicroserviceInstance microserviceInstance;
@@ -43,9 +41,8 @@ public class ServiceCombServiceInstance implements ServiceInstance, GovernaceSer
     }
   }
 
-  @Override
-  public void setPublickey(String publicKeyEncoded) {
-
+  public MicroserviceInstance getMicroserviceInstance() {
+    return this.microserviceInstance;
   }
 
   @Override
@@ -53,51 +50,12 @@ public class ServiceCombServiceInstance implements ServiceInstance, GovernaceSer
     return this.microserviceInstance.getInstanceId();
   }
 
-  @Override
-  public String getVersion(ServiceInstance serviceInstance) {
-    return this.microserviceInstance.getVersion();
-  }
-
-  @Override
-  public String getServiceName(ServiceInstance serviceInstance) {
-    return this.microserviceInstance.getServiceName();
-  }
-
-  @Override
-  public Map<String, String> getProperties(ServiceInstance serviceInstance) {
-    return this.microserviceInstance.getProperties();
-  }
-
-  @Override
-  public String getAvailableZone() {
-    if (microserviceInstance.getDataCenterInfo() != null) {
-      return microserviceInstance.getDataCenterInfo().getAvailableZone();
-    }
-    return null;
-  }
-
-  @Override
-  public String getRegion() {
-    if (microserviceInstance.getDataCenterInfo() != null) {
-      return microserviceInstance.getDataCenterInfo().getRegion();
-    }
-    return null;
-  }
 
   @Override
   public String getServiceId() {
     return this.microserviceInstance.getServiceName();
   }
 
-  @Override
-  public String getPublicKeyFromInstance(String instanceId, String serviceId) {
-    return null;
-  }
-
-  @Override
-  public String getPropertyValue(String serviceId, String instanceId, String propertyName) {
-    return null;
-  }
 
   @Override
   public String getHost() {

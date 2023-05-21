@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
+import org.springframework.cloud.client.serviceregistry.Registration;
 
 import com.huaweicloud.common.registration.GovernaceRegistration;
 import com.huaweicloud.service.engine.common.configration.bootstrap.BootstrapProperties;
@@ -35,7 +36,7 @@ import com.huaweicloud.servicecomb.discovery.discovery.MicroserviceHandler;
  * Spring Cloud Registration的注册过程要求 serviceId 是预先分配好的，service center的注册过程 serviceId 是注册成功
  * 分配的， 两个过程不一样。因此 Registration 只是一个空的实现， 不能够使用， 相关信息在 ServiceRegistry 的实现里面提供。
  */
-public class GovernaceCombRegistration implements GovernaceRegistration {
+public class ServiceCombRegistration implements Registration {
 
   private final Microservice microservice;
 
@@ -43,7 +44,7 @@ public class GovernaceCombRegistration implements GovernaceRegistration {
 
   private final DiscoveryBootstrapProperties discoveryBootstrapProperties;
 
-  public GovernaceCombRegistration(BootstrapProperties bootstrapProperties,
+  public ServiceCombRegistration(BootstrapProperties bootstrapProperties,
       DiscoveryProperties discoveryProperties) {
     this.discoveryBootstrapProperties = bootstrapProperties.getDiscoveryBootstrapProperties();
     this.microservice = MicroserviceHandler.createMicroservice(bootstrapProperties);
@@ -97,21 +98,5 @@ public class GovernaceCombRegistration implements GovernaceRegistration {
   @Override
   public Map<String, String> getMetadata() {
     throw new IllegalStateException("not supported");
-  }
-
-  @Override
-  public String getRegion() {
-    if (microserviceInstance.getDataCenterInfo() == null) {
-      return null;
-    }
-    return microserviceInstance.getDataCenterInfo().getRegion();
-  }
-
-  @Override
-  public String getAvailableZone() {
-    if (microserviceInstance.getDataCenterInfo() == null) {
-      return null;
-    }
-    return microserviceInstance.getDataCenterInfo().getAvailableZone();
   }
 }

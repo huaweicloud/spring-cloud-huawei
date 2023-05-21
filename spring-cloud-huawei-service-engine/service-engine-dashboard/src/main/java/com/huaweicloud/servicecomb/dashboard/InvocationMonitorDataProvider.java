@@ -34,7 +34,7 @@ import com.huaweicloud.service.engine.common.configration.dynamic.DashboardPrope
 import com.huaweicloud.common.context.InvocationStage;
 import com.huaweicloud.common.metrics.InvocationMetrics;
 import com.huaweicloud.servicecomb.dashboard.model.MonitorDataProvider;
-import com.huaweicloud.servicecomb.discovery.registry.GovernaceCombRegistration;
+import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.Meter;
@@ -45,13 +45,13 @@ public class InvocationMonitorDataProvider implements MonitorDataProvider {
 
   private final MeterRegistry meterRegistry;
 
-  private final GovernaceCombRegistration registration;
+  private final ServiceCombRegistration registration;
 
   private final DashboardProperties dashboardProperties;
 
   private Map<String, GovernanceData> lastMetricsData;
 
-  public InvocationMonitorDataProvider(MeterRegistry meterRegistry, GovernaceCombRegistration registration,
+  public InvocationMonitorDataProvider(MeterRegistry meterRegistry, ServiceCombRegistration registration,
       DashboardProperties dashboardProperties) {
     this.meterRegistry = meterRegistry;
     this.registration = registration;
