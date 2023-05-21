@@ -28,11 +28,11 @@
   <artifactId>discovery-canary-test</artifactId>
   <packaging>pom</packaging>
   <modules>
-    <module>nacos-tests-client</module>
     <module>nacos-canary-gateway</module>
     <module>nacos-canary-consumer</module>
     <module>nacos-canary-provider</module>
     <module>nacos-canary-provider-beta</module>
+    <module>nacos-tests-client</module>
   </modules>
 
 </project>
