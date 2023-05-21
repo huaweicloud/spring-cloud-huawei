@@ -15,42 +15,28 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <groupId>com.huaweicloud</groupId>
-    <artifactId>spring-cloud-huawei-parents</artifactId>
+    <artifactId>discovery-servicecomb-tests</artifactId>
     <version>1.11.0-2021.0.x-SNAPSHOT</version>
-    <relativePath>../spring-cloud-huawei-parents</relativePath>
   </parent>
-
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>integration-tests</artifactId>
-  <name>Spring Cloud Huawei::Integration Tests</name>
-  <packaging>pom</packaging>
 
-  <modules>
-    <module>docker-build-config</module>
-    <module>docker-run-config</module>
-    <module>discovery-servicecomb-tests</module>
-    <module>discovery-nacos-tests</module>
-    <module>canary-serivcecomb-tests</module>
-    <module>canary-nacos-tests</module>
-    <module>mesh-tests</module>
-    <module>cse-v1</module>
-    <module>cse-v2</module>
-  </modules>
+  <artifactId>discovery-tests-common</artifactId>
+  <name>Integration Tests::Discovery ServiceComb Tests::Common</name>
 
   <dependencies>
     <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <scope>test</scope>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-openfeign-core</artifactId>
     </dependency>
   </dependencies>
+
 </project>
