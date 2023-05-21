@@ -49,7 +49,7 @@ import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
 
 public class ServiceCombServiceRegistry implements
-    ServiceRegistry<GovernaceCombRegistration>, ApplicationContextAware {
+    ServiceRegistry<ServiceCombRegistration>, ApplicationContextAware {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombServiceRegistry.class);
 
   // use bean name to avoid cyclic dependencies for swagger
@@ -63,7 +63,7 @@ public class ServiceCombServiceRegistry implements
 
   private ServiceCenterWatch watch;
 
-  private GovernaceCombRegistration serviceCombRegistration;
+  private ServiceCombRegistration serviceCombRegistration;
 
   private final ServiceCenterConfiguration serviceCenterConfiguration;
 
@@ -99,7 +99,7 @@ public class ServiceCombServiceRegistry implements
   }
 
   @Override
-  public void register(GovernaceCombRegistration registration) {
+  public void register(ServiceCombRegistration registration) {
     serviceCombRegistration = registration;
     serviceCenterRegistration = new ServiceCenterRegistration(serviceCenterClient, serviceCenterConfiguration,
         EventManager.getEventBus());
@@ -115,7 +115,7 @@ public class ServiceCombServiceRegistry implements
     serviceCenterRegistration.startRegistration();
   }
 
-  private void addSchemaInfo(GovernaceCombRegistration registration) {
+  private void addSchemaInfo(ServiceCombRegistration registration) {
 
     if (this.applicationContext.containsBean(SWAGGER_BEAN_NAME)) {
       ServiceCombSwaggerHandler serviceCombSwaggerHandler = this.applicationContext
@@ -134,7 +134,7 @@ public class ServiceCombServiceRegistry implements
   }
 
   @Override
-  public void deregister(GovernaceCombRegistration registration) {
+  public void deregister(ServiceCombRegistration registration) {
     unregisterService();
   }
 
@@ -144,7 +144,7 @@ public class ServiceCombServiceRegistry implements
   }
 
   @Override
-  public void setStatus(GovernaceCombRegistration registration, String status) {
+  public void setStatus(ServiceCombRegistration registration, String status) {
     try {
       serviceCenterClient.updateMicroserviceInstanceStatus(registration.getMicroserviceInstance().getServiceId(),
           registration.getMicroserviceInstance().getInstanceId(), MicroserviceInstanceStatus.valueOf(status));
@@ -155,7 +155,7 @@ public class ServiceCombServiceRegistry implements
 
   @Override
   @SuppressWarnings("unchecked")
-  public <T> T getStatus(GovernaceCombRegistration registration) {
+  public <T> T getStatus(ServiceCombRegistration registration) {
     try {
       MicroserviceInstance instance = serviceCenterClient
           .getMicroserviceInstance(registration.getMicroserviceInstance().getServiceId(),

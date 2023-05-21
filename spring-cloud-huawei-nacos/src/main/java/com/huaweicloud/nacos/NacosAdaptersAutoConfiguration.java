@@ -18,26 +18,33 @@
 package com.huaweicloud.nacos;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.alibaba.cloud.nacos.ConditionalOnNacosDiscoveryEnabled;
-import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
-import com.alibaba.cloud.nacos.discovery.NacosServiceDiscovery;
-import com.alibaba.cloud.nacos.registry.NacosRegistration;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
-import com.huaweicloud.common.governance.GovernaceServiceInstance;
-import com.huaweicloud.nacos.authentication.NacosServiceInstance;
+import com.huaweicloud.nacos.authentication.NacosAuthenticationAdapter;
+import com.huaweicloud.nacos.loadbalancer.NacosCanaryFilterAdapter;
+import com.huaweicloud.nacos.loadbalancer.NacosZoneAwareFilterAdapter;
 
 @Configuration
 @ConditionalOnNacosDiscoveryEnabled
-public class AnthenAutoConfiguration {
+public class NacosAdaptersAutoConfiguration {
   @Bean
   @ConditionalOnExpression("${" + GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED + ":true}"
       + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":true}")
-  public GovernaceServiceInstance microserviceInstanceService(
-      NacosDiscoveryProperties properties,
-      NacosServiceDiscovery serviceDiscovery, NacosRegistration registration) {
-    return new NacosServiceInstance(properties, registration, serviceDiscovery);
+  public NacosAuthenticationAdapter nacosAuthenticationAdapter(DiscoveryClient discoveryClient) {
+    return new NacosAuthenticationAdapter(discoveryClient);
+  }
+
+  @Bean
+  public NacosCanaryFilterAdapter nacosCanaryFilterAdapter() {
+    return new NacosCanaryFilterAdapter();
+  }
+
+  @Bean
+  public NacosZoneAwareFilterAdapter nacosZoneAwareFilterAdapter() {
+    return new NacosZoneAwareFilterAdapter();
   }
 }

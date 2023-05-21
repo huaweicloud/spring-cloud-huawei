@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.health.check;
+package com.huaweicloud.servicecomb.discovery.check;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;

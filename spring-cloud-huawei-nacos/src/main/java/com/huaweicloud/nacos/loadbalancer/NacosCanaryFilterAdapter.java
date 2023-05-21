@@ -1,5 +1,7 @@
 /*
+
  * Copyright (C) 2020-2022 Huawei Technologies Co., Ltd. All rights reserved.
+
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,22 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.huaweicloud.router.client;
+package com.huaweicloud.nacos.loadbalancer;
 
-import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Map;
+
 import org.springframework.cloud.client.ServiceInstance;
 
-import com.huaweicloud.common.governance.GovernaceServiceInstance;
+import com.huaweicloud.router.client.loadbalancer.CanaryFilterAdapter;
 
-public class SpringCloudRouterDistributor extends
-    AbstractRouterDistributor<ServiceInstance, ServiceInstance> {
+public class NacosCanaryFilterAdapter implements CanaryFilterAdapter {
 
-  @Autowired
-  public SpringCloudRouterDistributor(GovernaceServiceInstance instance) {
-    init(server -> server,
-        server ->instance.getVersion(server),
-        server ->instance.getServiceName(server),
-        server ->instance.getProperties(server));
+  public static final String VERSION = "version";
+
+  @Override
+  public String getVersion(ServiceInstance serviceInstance) {
+    return serviceInstance.getMetadata().getOrDefault(VERSION, "0.0.1");
+  }
+
+  @Override
+  public String getServiceName(ServiceInstance serviceInstance) {
+    return serviceInstance.getServiceId();
+  }
+
+  @Override
+  public Map<String, String> getProperties(ServiceInstance serviceInstance) {
+    return serviceInstance.getMetadata();
   }
 }

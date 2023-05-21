@@ -20,4 +20,4 @@ com.huaweicloud.servicecomb.discovery.DiscoveryAutoConfiguration,\
 com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryClientConfiguration,\
 com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistryAutoConfiguration, \
 com.huaweicloud.servicecomb.discovery.discovery.ServiceCombReactiveDiscoveryClientConfiguration, \
-com.huaweicloud.health.check.RegistryHealthIndicatorConfiguration
+com.huaweicloud.servicecomb.discovery.check.RegistryHealthIndicatorConfiguration

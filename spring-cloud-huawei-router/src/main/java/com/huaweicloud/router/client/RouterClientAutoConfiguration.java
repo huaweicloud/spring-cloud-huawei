@@ -22,13 +22,16 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClientConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import com.huaweicloud.common.governance.GovernaceServiceInstance;
+import com.huaweicloud.router.client.loadbalancer.CanaryFilterAdapter;
 import com.huaweicloud.router.client.loadbalancer.CanaryServiceInstanceFilter;
+import com.huaweicloud.router.client.loadbalancer.SpringCloudRouterDistributor;
+import com.huaweicloud.router.client.loadbalancer.ZoneAwareFilterAdapter;
 import com.huaweicloud.router.client.loadbalancer.ZoneAwareServiceInstanceFilter;
 
 @Configuration
@@ -37,9 +40,9 @@ import com.huaweicloud.router.client.loadbalancer.ZoneAwareServiceInstanceFilter
 @AutoConfigureAfter(LoadBalancerClientConfiguration.class)
 public class RouterClientAutoConfiguration {
   @Bean
-  public AbstractRouterDistributor<ServiceInstance, ServiceInstance> routerDistributorServicecomb(
-      GovernaceServiceInstance instance) {
-    return new SpringCloudRouterDistributor(instance);
+  public AbstractRouterDistributor<ServiceInstance, ServiceInstance> springCloudRouterDistributor(
+      CanaryFilterAdapter adapter) {
+    return new SpringCloudRouterDistributor(adapter);
   }
 
   @Bean
@@ -52,7 +55,8 @@ public class RouterClientAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean(ZoneAwareServiceInstanceFilter.class)
   @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.enabledZoneAware", havingValue = "true")
-  public ZoneAwareServiceInstanceFilter zoneAwareServiceInstanceFilter() {
-    return new ZoneAwareServiceInstanceFilter();
+  public ZoneAwareServiceInstanceFilter zoneAwareServiceInstanceFilter(Registration registration,
+      ZoneAwareFilterAdapter adapter) {
+    return new ZoneAwareServiceInstanceFilter(registration, adapter);
   }
 }

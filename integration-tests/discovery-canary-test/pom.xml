@@ -28,15 +28,11 @@
   <artifactId>discovery-canary-test</artifactId>
   <packaging>pom</packaging>
   <modules>
-    <module>nacos-tests-client</module>
     <module>nacos-canary-gateway</module>
     <module>nacos-canary-consumer</module>
     <module>nacos-canary-provider</module>
+    <module>nacos-canary-provider-beta</module>
+    <module>nacos-tests-client</module>
   </modules>
-
-  <properties>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
-  </properties>
 
 </project>

@@ -25,12 +25,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>nacos-canary-provider</artifactId>
+  <artifactId>nacos-canary-provider-test</artifactId>
 
-  <properties>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
-  </properties>
   <dependencies>
     <dependency>
       <groupId>com.huaweicloud</groupId>
@@ -63,4 +59,37 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>docker</id>
+      <properties>
+        <server.port>9091</server.port>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>io.fabric8</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.commonjava.maven.plugins</groupId>
+            <artifactId>directory-maven-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>com.github.odavid.maven.plugins</groupId>
+            <artifactId>mixin-maven-plugin</artifactId>
+            <configuration>
+              <mixins>
+                <mixin>
+                  <groupId>com.huaweicloud</groupId>
+                  <artifactId>docker-build-config</artifactId>
+                  <version>${project.version}</version>
+                </mixin>
+              </mixins>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

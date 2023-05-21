@@ -56,9 +56,9 @@ public class ServiceCombRegistryAutoConfiguration {
 
   @Bean
   @ConditionalOnBean(AutoServiceRegistrationProperties.class)
-  public GovernaceCombRegistration serviceCombRegistration(DiscoveryProperties discoveryProperties,
+  public ServiceCombRegistration serviceCombRegistration(DiscoveryProperties discoveryProperties,
       BootstrapProperties bootstrapProperties) {
-    return new GovernaceCombRegistration(bootstrapProperties, discoveryProperties);
+    return new ServiceCombRegistration(bootstrapProperties, discoveryProperties);
   }
 
   @Bean
@@ -66,7 +66,7 @@ public class ServiceCombRegistryAutoConfiguration {
   public ServiceCombAutoServiceRegistration serviceCombAutoServiceRegistration(
       ServiceCombServiceRegistry registry,
       AutoServiceRegistrationProperties autoServiceRegistrationProperties,
-      GovernaceCombRegistration registration) {
+      ServiceCombRegistration registration) {
     return new ServiceCombAutoServiceRegistration(registry,
         autoServiceRegistrationProperties, registration);
   }

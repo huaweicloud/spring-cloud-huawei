@@ -19,10 +19,6 @@ package com.huaweicloud.servicecomb.discovery;
 
 import java.util.List;
 
-import com.huaweicloud.authentication.ServicecombInstanceService;
-import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
-import com.huaweicloud.common.governance.GovernaceServiceInstance;
-import com.huaweicloud.servicecomb.discovery.registry.GovernaceCombRegistration;
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.ServiceCenterWatch;
@@ -32,10 +28,14 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.ServiceCombSSLProperties;
 import com.huaweicloud.service.engine.common.disovery.ServiceCenterUtils;
+import com.huaweicloud.servicecomb.discovery.authentication.ServiceCombAuthenticationAdapter;
 import com.huaweicloud.servicecomb.discovery.discovery.DiscoveryProperties;
+import com.huaweicloud.servicecomb.discovery.loadbalancer.ServiceCombCanaryFilterAdapter;
+import com.huaweicloud.servicecomb.discovery.loadbalancer.ServiceCombZoneAwareFilterAdapter;
 
 @Configuration
 @ConditionalOnServiceCombDiscoveryEnabled
@@ -59,9 +59,18 @@ public class DiscoveryAutoConfiguration {
 
   @Bean
   @ConditionalOnExpression("${" + GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED + ":true}"
-          + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":true}")
-  public GovernaceServiceInstance microserviceInstanceService(GovernaceCombRegistration registration,
-                                                                 ServiceCenterClient client) {
-    return new ServicecombInstanceService(registration, client);
+      + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":true}")
+  public ServiceCombAuthenticationAdapter serviceCombAuthenticationAdapter(ServiceCenterClient serviceCenterClient) {
+    return new ServiceCombAuthenticationAdapter(serviceCenterClient);
+  }
+
+  @Bean
+  public ServiceCombCanaryFilterAdapter serviceCombCanaryFilterAdapter() {
+    return new ServiceCombCanaryFilterAdapter();
+  }
+
+  @Bean
+  public ServiceCombZoneAwareFilterAdapter serviceCombZoneAwareFilterAdapter() {
+    return new ServiceCombZoneAwareFilterAdapter();
   }
 }

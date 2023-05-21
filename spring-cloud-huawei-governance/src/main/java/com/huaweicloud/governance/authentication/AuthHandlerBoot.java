@@ -20,10 +20,9 @@ import org.apache.servicecomb.foundation.common.utils.RSAKeyPairEntry;
 import org.apache.servicecomb.foundation.common.utils.RSAUtils;
 import org.apache.servicecomb.foundation.token.RSAKeypair4Auth;
 import org.springframework.cloud.client.discovery.event.InstancePreRegisteredEvent;
+import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-
-import com.huaweicloud.common.governance.GovernaceServiceInstance;
 
 /**
  *
@@ -33,10 +32,13 @@ import com.huaweicloud.common.governance.GovernaceServiceInstance;
  */
 public class AuthHandlerBoot implements ApplicationListener<ApplicationEvent> {
 
-  private final GovernaceServiceInstance instanceService;
+  private final Registration registration;
 
-  public AuthHandlerBoot(GovernaceServiceInstance instanceService) {
-    this.instanceService = instanceService;
+  private final AuthenticationAdapter adapter;
+
+  public AuthHandlerBoot(Registration registration, AuthenticationAdapter adapter) {
+    this.registration = registration;
+    this.adapter = adapter;
   }
 
   @Override
@@ -46,7 +48,7 @@ public class AuthHandlerBoot implements ApplicationListener<ApplicationEvent> {
       RSAKeypair4Auth.INSTANCE.setPrivateKey(rsaKeyPairEntry.getPrivateKey());
       RSAKeypair4Auth.INSTANCE.setPublicKey(rsaKeyPairEntry.getPublicKey());
       RSAKeypair4Auth.INSTANCE.setPublicKeyEncoded(rsaKeyPairEntry.getPublicKeyEncoded());
-      instanceService.setPublickey(rsaKeyPairEntry.getPublicKeyEncoded());
+      adapter.setPublicKey(registration, rsaKeyPairEntry.getPublicKeyEncoded());
     }
   }
 }

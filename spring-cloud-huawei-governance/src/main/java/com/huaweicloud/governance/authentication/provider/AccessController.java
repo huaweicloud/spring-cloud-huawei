@@ -15,12 +15,12 @@
 
 package com.huaweicloud.governance.authentication.provider;
 
-import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
-import com.huaweicloud.common.governance.GovernaceServiceInstance;
-
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+
+import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
+import com.huaweicloud.governance.authentication.AuthenticationAdapter;
 
 /**
  * Add black / white list control to service access
@@ -28,11 +28,11 @@ import org.apache.commons.lang.StringUtils;
 public class AccessController {
   BlackWhiteListProperties blackWhiteListProperties;
 
-  private final GovernaceServiceInstance instanceService;
+  private final AuthenticationAdapter authenticationAdapter;
 
-  public AccessController(GovernaceServiceInstance instanceService,
+  public AccessController(AuthenticationAdapter authenticationAdapter,
       BlackWhiteListProperties blackWhiteListProperties) {
-    this.instanceService = instanceService;
+    this.authenticationAdapter = authenticationAdapter;
     this.blackWhiteListProperties = blackWhiteListProperties;
   }
 
@@ -41,7 +41,7 @@ public class AccessController {
   }
 
   public String getPublicKeyFromInstance(String instanceId, String serviceId) {
-    return instanceService.getPublicKeyFromInstance(instanceId, serviceId);
+    return authenticationAdapter.getPublicKeyFromInstance(instanceId, serviceId);
   }
 
   private boolean whiteAllowed(String serviceId, String instanceId) {
@@ -74,7 +74,7 @@ public class AccessController {
 
   private boolean matchMicroserviceProperties(String serviceId, String instanceId,
       BlackWhiteListProperties.ConfigurationItem item) {
-    String propertyValue = instanceService.getPropertyValue(serviceId, instanceId, item.getPropertyName());
+    String propertyValue = authenticationAdapter.getPropertyValue(serviceId, instanceId, item.getPropertyName());
     if (StringUtils.isEmpty(propertyValue)) {
       return false;
     }
