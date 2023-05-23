@@ -17,6 +17,8 @@
 
 package com.huaweicloud.common.transport;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -32,7 +34,8 @@ public class ClientTransportConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public HttpClient transportHttpClient(HttpClientProperties httpClientProperties) {
-    PoolingHttpClientConnectionManager pool = new PoolingHttpClientConnectionManager();
+    PoolingHttpClientConnectionManager pool = new PoolingHttpClientConnectionManager(
+        httpClientProperties.getConnectionTimeToLiveInMilliSeconds(), TimeUnit.MILLISECONDS);
     pool.setDefaultMaxPerRoute(httpClientProperties.getPoolSizePerRoute());
     pool.setMaxTotal(httpClientProperties.getPoolSizeMax());
     return HttpClientBuilder.create()
@@ -42,6 +45,8 @@ public class ClientTransportConfiguration {
             .setConnectionRequestTimeout(httpClientProperties.getConnectionRequestTimeoutInMilliSeconds())
             .setSocketTimeout(httpClientProperties.getReadTimeoutInMilliSeconds())
             .build())
+        .evictExpiredConnections().evictIdleConnections(
+            httpClientProperties.getConnectionIdleTimeoutInMilliSeconds(), TimeUnit.MILLISECONDS)
         .build();
   }
 }

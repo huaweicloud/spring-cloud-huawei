@@ -22,6 +22,10 @@ public class HttpClientProperties {
 
   private int readTimeoutInMilliSeconds = 30000;
 
+  private int connectionIdleTimeoutInMilliSeconds = 30000;
+
+  private int connectionTimeToLiveInMilliSeconds = -1;
+
   private int poolSizePerRoute = 50;
 
   private int poolSizeMax = 5000;
@@ -64,5 +68,21 @@ public class HttpClientProperties {
 
   public void setPoolSizeMax(int poolSizeMax) {
     this.poolSizeMax = poolSizeMax;
+  }
+
+  public int getConnectionIdleTimeoutInMilliSeconds() {
+    return connectionIdleTimeoutInMilliSeconds;
+  }
+
+  public void setConnectionIdleTimeoutInMilliSeconds(int connectionIdleTimeoutInMilliSeconds) {
+    this.connectionIdleTimeoutInMilliSeconds = connectionIdleTimeoutInMilliSeconds;
+  }
+
+  public int getConnectionTimeToLiveInMilliSeconds() {
+    return connectionTimeToLiveInMilliSeconds;
+  }
+
+  public void setConnectionTimeToLiveInMilliSeconds(int connectionTimeToLiveInMilliSeconds) {
+    this.connectionTimeToLiveInMilliSeconds = connectionTimeToLiveInMilliSeconds;
   }
 }
