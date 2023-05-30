@@ -44,7 +44,7 @@ public class GatewayIT {
     HttpHeaders headers = new HttpHeaders();
     headers.add("header-context", "h1");
     HttpEntity<Void> entity = new HttpEntity<>(headers);
-    String result = template.exchange(url + "/order/testContextMapper/?query-context=q1", HttpMethod.GET, entity,
+    String result = template.exchange(url + "/order/testContextMapper?query-context=q1", HttpMethod.GET, entity,
         String.class).getBody();
     assertThat(result).isEqualTo("q1h1q1");
   }
