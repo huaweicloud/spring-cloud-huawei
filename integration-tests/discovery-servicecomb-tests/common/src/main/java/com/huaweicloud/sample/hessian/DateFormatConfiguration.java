@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignFormatterRegistrar;

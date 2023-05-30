@@ -41,7 +41,7 @@ public final class WebFluxUtils {
 
       @Override
       public String method() {
-        return exchange.getRequest().getMethodValue();
+        return exchange.getRequest().getMethod().name();
       }
 
       @Override

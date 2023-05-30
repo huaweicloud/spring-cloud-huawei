@@ -54,7 +54,8 @@ public class GatewayGovernanceIT {
                 successCount.getAndIncrement();
               }
             } catch (Exception e) {
-              if (e instanceof HttpClientErrorException && ((HttpClientErrorException) e).getRawStatusCode() == 429) {
+              if (e instanceof HttpClientErrorException
+                  && ((HttpClientErrorException) e).getStatusCode().value() == 429) {
                 expectedFailed.set(true);
               } else {
                 notExpectedFailed.set(true);
@@ -92,10 +93,11 @@ public class GatewayGovernanceIT {
                 notExpectedFailed.set(true);
               }
             } catch (Exception e) {
-              if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 502) {
+              if (e instanceof HttpServerErrorException
+                  && ((HttpServerErrorException) e).getStatusCode().value() == 502) {
                 expectedFailed502.set(true);
               } else if (e instanceof HttpServerErrorException
-                  && ((HttpServerErrorException) e).getRawStatusCode() == 503) {
+                  && ((HttpServerErrorException) e).getStatusCode().value() == 503) {
                 expectedFailed503.set(true);
                 failedCount.getAndIncrement();
               } else {
@@ -136,7 +138,8 @@ public class GatewayGovernanceIT {
                 successCount.getAndIncrement();
               }
             } catch (Exception e) {
-              if (e instanceof HttpClientErrorException && ((HttpClientErrorException) e).getRawStatusCode() == 429) {
+              if (e instanceof HttpClientErrorException
+                  && ((HttpClientErrorException) e).getStatusCode().value() == 429) {
                 expectedFailed.set(true);
               } else {
                 notExpectedFailed.set(true);

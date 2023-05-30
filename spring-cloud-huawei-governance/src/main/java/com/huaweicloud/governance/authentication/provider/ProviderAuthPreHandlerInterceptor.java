@@ -22,8 +22,8 @@ import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.governance.authentication.Const;
 import com.huaweicloud.governance.authentication.UnAuthorizedException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class ProviderAuthPreHandlerInterceptor implements PreHandlerInterceptor {
 

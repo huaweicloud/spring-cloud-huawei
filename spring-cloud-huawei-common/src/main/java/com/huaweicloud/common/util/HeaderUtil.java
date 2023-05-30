@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.net.URLCodec;
 import org.apache.commons.lang3.StringUtils;

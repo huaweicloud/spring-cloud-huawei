@@ -18,13 +18,15 @@
 package com.huaweicloud.common.adapters.web;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.client.AbstractClientHttpResponse;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.client.ClientHttpResponse;
 
-public class FallbackClientHttpResponse extends AbstractClientHttpResponse {
+public class FallbackClientHttpResponse implements ClientHttpResponse {
   private final int code;
 
   private final String message;
@@ -50,6 +52,12 @@ public class FallbackClientHttpResponse extends AbstractClientHttpResponse {
   }
 
   @Override
+  public HttpStatusCode getStatusCode() throws IOException {
+    return HttpStatusCode.valueOf(this.code);
+  }
+
+  @Override
+  @SuppressWarnings("deprecation")
   public int getRawStatusCode() {
     return this.code;
   }

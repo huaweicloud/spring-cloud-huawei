@@ -35,7 +35,7 @@ public class NetUtilTest {
   @Test
   public void getPort() {
     Integer port = NetUtil.getPort("http://127.0.0.1:30103/#!/sc/f1532d0479261777281fe3d94b15c463f8b6fcf7/instance");
-    Assertions.assertEquals(port, new Integer(30103));
+    Assertions.assertEquals(port, Integer.valueOf(30103));
   }
 
   @Test

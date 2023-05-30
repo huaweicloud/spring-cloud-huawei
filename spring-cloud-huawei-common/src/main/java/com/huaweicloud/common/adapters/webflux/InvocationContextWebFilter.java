@@ -73,7 +73,7 @@ public class InvocationContextWebFilter implements OrderedWebFilter {
         .getAttribute(InvocationContextHolder.ATTRIBUTE_KEY))
         .getInvocationStage();
     if (e instanceof ResponseStatusException) {
-      stage.finish(((ResponseStatusException) e).getRawStatusCode());
+      stage.finish(((ResponseStatusException) e).getStatusCode().value());
       return;
     }
     stage.finish(exchange.getResponse().getStatusCode() == null ? -1 : exchange.getResponse().getStatusCode().value());

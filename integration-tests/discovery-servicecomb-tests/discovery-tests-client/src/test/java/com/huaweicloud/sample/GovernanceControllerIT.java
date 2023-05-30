@@ -312,7 +312,7 @@ public class GovernanceControllerIT {
                 successCount.getAndIncrement();
               }
             } catch (Exception e) {
-              if (e instanceof HttpClientErrorException && ((HttpClientErrorException) e).getRawStatusCode() == 429) {
+              if (e instanceof HttpClientErrorException && ((HttpClientErrorException) e).getStatusCode().value() == 429) {
                 expectedFailed.set(true);
               } else {
                 notExpectedFailed.set(true);

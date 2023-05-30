@@ -33,8 +33,8 @@
   <name>Spring Cloud Huawei::Dependencies</name>
 
   <properties>
-    <feign-core.version>11.10</feign-core.version>
-    <httpclient.version>4.5.9</httpclient.version>
+    <feign-core.version>12.3</feign-core.version>
+    <httpclient.version>5.2.1</httpclient.version>
     <jackson.version>2.14.2</jackson.version>
     <commons-io.version>2.7</commons-io.version>
     <jmockit.version>1.36</jmockit.version>
@@ -46,12 +46,27 @@
     <jasypt.version>3.0.4</jasypt.version>
     <annotations.version>3.0.1</annotations.version>
     <dubbo.hessian.version>2.7.22</dubbo.hessian.version>
-    <springdoc.version>1.6.8</springdoc.version>
+    <springdoc.version>2.1.0</springdoc.version>
     <spring.cloud.alibaba.version>2021.0.5.0</spring.cloud.alibaba.version>
+    <resilience4j.versioin>1.7.0</resilience4j.versioin>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      <!-- TODO update later -->
+      <dependency>
+        <groupId>io.github.resilience4j</groupId>
+        <artifactId>resilience4j-bom</artifactId>
+        <version>${resilience4j.versioin}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents.client5</groupId>
+        <artifactId>httpclient5</artifactId>
+        <version>${httpclient.version}</version>
+      </dependency>
+
       <!-- core dependencies of spring cloud huawei, put it in the begging -->
       <dependency>
         <groupId>org.springframework</groupId>
@@ -87,11 +102,10 @@
       <!-- swagger -->
       <dependency>
         <groupId>org.springdoc</groupId>
-        <artifactId>springdoc-openapi-ui</artifactId>
+        <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
         <version>${springdoc.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
       </dependency>
+
       <!-- servicecomb -->
       <dependency>
         <groupId>org.apache.servicecomb</groupId>
@@ -114,7 +128,7 @@
       </dependency>
       <dependency>
         <groupId>io.github.openfeign</groupId>
-        <artifactId>feign-httpclient</artifactId>
+        <artifactId>feign-hc5</artifactId>
         <version>${feign-core.version}</version>
       </dependency>
       <dependency>

@@ -45,8 +45,9 @@ spring:
         firstPullRequired: false
 
       # testing servicecomb swagger generation
+      # TODO： need upgrade service comb api to support jarkata api
       swagger:
-        enableJavaChassisAdapter: true
+        enableJavaChassisAdapter: false
 
 test:
   value:

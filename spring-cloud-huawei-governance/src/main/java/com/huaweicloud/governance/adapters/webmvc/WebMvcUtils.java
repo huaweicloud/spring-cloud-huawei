@@ -17,7 +17,7 @@
 
 package com.huaweicloud.governance.adapters.webmvc;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 
