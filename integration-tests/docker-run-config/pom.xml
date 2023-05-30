@@ -36,8 +36,9 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.codehaus.gmaven</groupId>
-            <artifactId>gmaven-plugin</artifactId>
+            <groupId>org.codehaus.gmavenplus</groupId>
+            <artifactId>gmavenplus-plugin</artifactId>
+            <version>2.1.0</version>
             <executions>
               <execution>
                 <id>add-default-properties</id>
@@ -46,10 +47,12 @@
                   <goal>execute</goal>
                 </goals>
                 <configuration>
-                  <source>
-                    project.properties.setProperty('docker.hostname', 'localhost')
-                    log.info("Docker hostname is " + project.properties['docker.hostname'])
-                  </source>
+                  <scripts>
+                    <script>
+                      project.properties.setProperty('docker.hostname', 'localhost')
+                      log.info("Docker hostname is " + project.properties['docker.hostname'])
+                    </script>
+                  </scripts>
                 </configuration>
               </execution>
             </executions>
@@ -57,7 +60,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-failsafe-plugin</artifactId>
-            <version>2.19.1</version>
+            <version>3.0.0</version>
             <configuration>
             </configuration>
             <executions>
