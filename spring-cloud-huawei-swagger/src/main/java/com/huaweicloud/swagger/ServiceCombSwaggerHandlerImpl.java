@@ -25,29 +25,21 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import org.apache.servicecomb.swagger.SwaggerUtils;
-import org.apache.servicecomb.swagger.generator.springmvc.SpringmvcSwaggerGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.utils.Constants;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 
-import io.swagger.models.Swagger;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 
-public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler, ApplicationContextAware {
+public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombSwaggerHandlerImpl.class);
 
@@ -56,11 +48,6 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler,
   private Map<String, String> swaggerContent = new HashMap<>();
 
   private Map<String, String> swaggerSummary = new HashMap<>();
-
-  private ApplicationContext applicationContext;
-
-  @Value("${spring.cloud.servicecomb.swagger.enableJavaChassisAdapter:false}")
-  protected boolean withJavaChassis;
 
   private OpenApiResourceWrapper openApiResource;
 
@@ -71,11 +58,6 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler,
 
   @Override
   public void init(String appName, String serviceName) {
-    if (withJavaChassis) {
-      runJavaChassisScanner();
-      return;
-    }
-
     runSpringDocScanner();
   }
 
@@ -93,22 +75,6 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler,
     this.swaggerContent = calcSchemaContent();
 
     this.swaggerSummary = calcSchemaSummary();
-  }
-
-  private void runJavaChassisScanner() {
-    Map<String, Object> controllers = applicationContext.getBeansWithAnnotation(RestController.class);
-    controllers.forEach((k, v) -> {
-      try {
-        SpringmvcSwaggerGenerator generator = new SpringmvcSwaggerGenerator(v.getClass());
-        Swagger swagger = generator.generate();
-        swaggerContent.put(k, SwaggerUtils.swaggerToString(swagger));
-        LOGGER.info("generate servicecomb compatible swagger for bean [{}] success.", k);
-      } catch (Exception e) {
-        LOGGER.info("generate servicecomb compatible swagger for bean [{}] failed, message is [{}].", k,
-            e.getMessage());
-      }
-    });
-    swaggerSummary = calcSchemaSummary();
   }
 
   private Map<String, String> calcSchemaContent() {
@@ -172,10 +138,5 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler,
 
   private static String calcSchemaSummary(String schemaContent) {
     return Hashing.sha256().newHasher().putString(schemaContent, Charsets.UTF_8).hash().toString();
-  }
-
-  @Override
-  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-    this.applicationContext = applicationContext;
   }
 }

@@ -37,10 +37,6 @@ spring:
         serverAddr: http://127.0.0.1:30110
         firstPullRequired: false
 
-      # testing spring cloud swagger generation
-      swagger:
-        enableJavaChassisAdapter: false
-
       webmvc:
         publicKey:
           providerEnabled: true

@@ -44,11 +44,6 @@ spring:
         serverAddr: http://127.0.0.1:30110
         firstPullRequired: false
 
-      # testing servicecomb swagger generation
-      # TODO： need upgrade service comb api to support jarkata api
-      swagger:
-        enableJavaChassisAdapter: false
-
 test:
   value:
     bootstrapOverride: "orderBootstrapOverride"
