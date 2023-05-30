@@ -32,11 +32,12 @@ if [ "$1" == "install" ]; then
         exit 1
     fi
 
-    mvn clean package findbugs:findbugs -Pit -Dmaven.test.skip=true  -Dmaven.javadoc.skip=true
-    if [ $? != 0 ]; then
-        echo "${red}Execute find bugs failed.${reset}"
-        exit 1
-    fi
+#  TODO: findbugs not support jdk17 and may need upgrade to spotbugs
+#    mvn clean package findbugs:findbugs -Pit -Dmaven.test.skip=true  -Dmaven.javadoc.skip=true
+#    if [ $? != 0 ]; then
+#        echo "${red}Execute find bugs failed.${reset}"
+#        exit 1
+#    fi
 
     mvn clean install -Pit -Pdocker -Dmaven.javadoc.skip=true -Dcheckstyle.skip=false -Drat.skip=false
     if [ $? == 0 ]; then
