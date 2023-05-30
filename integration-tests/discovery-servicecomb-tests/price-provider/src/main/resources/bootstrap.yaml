@@ -44,10 +44,6 @@ spring:
         serverAddr: http://127.0.0.1:30110
         firstPullRequired: false
 
-      # testing spring cloud swagger generation
-      swagger:
-        enableJavaChassisAdapter: false
-
       # testing access log
       context:
         traceContexts: x-microservice-name,x-instance-id

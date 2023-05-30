@@ -30,10 +30,6 @@ import org.springframework.context.annotation.Lazy;
 
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 
-/**
- * @Author GuoYl123
- * @Date 2019/12/17
- **/
 @Configuration
 public class SwaggerConfiguration {
 
@@ -44,7 +40,7 @@ public class SwaggerConfiguration {
   }
 
   @Bean
-  OpenApiResourceWrapper openApiResourceWrapper(ObjectFactory<OpenAPIService> openAPIBuilderObjectFactory,
+  public OpenApiResourceWrapper openApiResourceWrapper(ObjectFactory<OpenAPIService> openAPIBuilderObjectFactory,
       AbstractRequestService requestBuilder,
       GenericResponseService responseBuilder, OperationService operationParser,
       SpringDocConfigProperties springDocConfigProperties,
