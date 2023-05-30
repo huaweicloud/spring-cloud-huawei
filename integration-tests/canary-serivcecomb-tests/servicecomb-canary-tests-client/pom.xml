@@ -67,36 +67,6 @@
                 </image>
 
                 <image>
-                  <name>servicecomb-canary-consumer-test:${project.version}</name>
-                  <alias>servicecomb-canary-consumer-test</alias>
-                  <run>
-                    <env>
-                      <JAVA_OPTS>
-                        -Dspring.cloud.servicecomb.discovery.address=http://sc.servicecomb.io:30100
-                      </JAVA_OPTS>
-                      <JAR_PATH>/maven/servicecomb-canary-consumer-test-${project.version}.jar</JAR_PATH>
-                    </env>
-                    <links>
-                      <link>service-center:sc.servicecomb.io</link>
-                    </links>
-                    <wait>
-                      <log>Started PriceApplication</log>
-                      <tcp>
-                        <ports>
-                          <port>9098</port>
-                        </ports>
-                      </tcp>
-                      <time>120000</time>
-                    </wait>
-                    <ports>
-                      <port>9098:9098</port>
-                    </ports>
-                    <dependsOn>
-                      <container>service-center</container>
-                    </dependsOn>
-                  </run>
-                </image>
-                <image>
                   <name>servicecomb-canary-provider-test:${project.version}</name>
                   <alias>servicecomb-canary-provider-test</alias>
                   <run>
@@ -110,7 +80,7 @@
                       <link>service-center:sc.servicecomb.io</link>
                     </links>
                     <wait>
-                      <log>Started PriceApplication</log>
+                      <log>.* Started ProviderApplication .*</log>
                       <tcp>
                         <ports>
                           <port>9091</port>
@@ -141,7 +111,7 @@
                       <link>service-center:sc.servicecomb.io</link>
                     </links>
                     <wait>
-                      <log>Started PriceApplication</log>
+                      <log>.* Started ProviderApplication .*</log>
                       <tcp>
                         <ports>
                           <port>9092</port>
@@ -154,6 +124,39 @@
                     </ports>
                     <dependsOn>
                       <container>service-center</container>
+                    </dependsOn>
+                  </run>
+                </image>
+
+                <image>
+                  <name>servicecomb-canary-consumer-test:${project.version}</name>
+                  <alias>servicecomb-canary-consumer-test</alias>
+                  <run>
+                    <env>
+                      <JAVA_OPTS>
+                        -Dspring.cloud.servicecomb.discovery.address=http://sc.servicecomb.io:30100
+                      </JAVA_OPTS>
+                      <JAR_PATH>/maven/servicecomb-canary-consumer-test-${project.version}.jar</JAR_PATH>
+                    </env>
+                    <links>
+                      <link>service-center:sc.servicecomb.io</link>
+                    </links>
+                    <wait>
+                      <log>.* Started ConsumerApplication .*</log>
+                      <tcp>
+                        <ports>
+                          <port>9098</port>
+                        </ports>
+                      </tcp>
+                      <time>120000</time>
+                    </wait>
+                    <ports>
+                      <port>9098:9098</port>
+                    </ports>
+                    <dependsOn>
+                      <container>service-center</container>
+                      <container>servicecomb-canary-provider-beta-test</container>
+                      <container>servicecomb-canary-provider-test</container>
                     </dependsOn>
                   </run>
                 </image>
@@ -172,7 +175,7 @@
                       <link>service-center:sc.servicecomb.io</link>
                     </links>
                     <wait>
-                      <log>Started PriceApplication</log>
+                      <log>.* Started GatewayApplication .*</log>
                       <tcp>
                         <ports>
                           <port>10088</port>

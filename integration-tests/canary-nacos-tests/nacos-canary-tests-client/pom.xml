@@ -56,7 +56,7 @@
                       <PREFER_HOST_MODE>hostname</PREFER_HOST_MODE>
                     </env>
                     <wait>
-                      <log>Tomcat started on port</log>
+                      <log>.* Tomcat started on port .*</log>
                       <tcp>
                         <ports>
                           <port>8848</port>
@@ -70,37 +70,6 @@
                   </run>
                 </image>
 
-                <image>
-                  <name>nacos-canary-consumer-test:${project.version}</name>
-                  <alias>nacos-canary-consumer-test</alias>
-                  <run>
-                    <env>
-                      <JAVA_OPTS>
-                        -Dspring.cloud.nacos.discovery.server-addr=http://nacos-server:8848
-                        -Dspring.cloud.nacos.config.server-addr=http://nacos-server:8848
-                      </JAVA_OPTS>
-                      <JAR_PATH>/maven/nacos-canary-consumer-test-${project.version}.jar</JAR_PATH>
-                    </env>
-                    <links>
-                      <link>nacos-server:nacos-server</link>
-                    </links>
-                    <wait>
-                      <log>Started PriceApplication</log>
-                      <tcp>
-                        <ports>
-                          <port>9098</port>
-                        </ports>
-                      </tcp>
-                      <time>120000</time>
-                    </wait>
-                    <ports>
-                      <port>9098:9098</port>
-                    </ports>
-                    <dependsOn>
-                      <container>nacos-server</container>
-                    </dependsOn>
-                  </run>
-                </image>
                 <image>
                   <name>nacos-canary-provider-test:${project.version}</name>
                   <alias>nacos-canary-provider-test</alias>
@@ -116,7 +85,7 @@
                       <link>nacos-server:nacos-server</link>
                     </links>
                     <wait>
-                      <log>Started PriceApplication</log>
+                      <log>.* Started ProviderApplication .*</log>
                       <tcp>
                         <ports>
                           <port>9091</port>
@@ -148,7 +117,7 @@
                       <link>nacos-server:nacos-server</link>
                     </links>
                     <wait>
-                      <log>Started PriceApplication</log>
+                      <log>.* Started ProviderApplication .*</log>
                       <tcp>
                         <ports>
                           <port>9092</port>
@@ -161,6 +130,40 @@
                     </ports>
                     <dependsOn>
                       <container>nacos-server</container>
+                    </dependsOn>
+                  </run>
+                </image>
+
+                <image>
+                  <name>nacos-canary-consumer-test:${project.version}</name>
+                  <alias>nacos-canary-consumer-test</alias>
+                  <run>
+                    <env>
+                      <JAVA_OPTS>
+                        -Dspring.cloud.nacos.discovery.server-addr=http://nacos-server:8848
+                        -Dspring.cloud.nacos.config.server-addr=http://nacos-server:8848
+                      </JAVA_OPTS>
+                      <JAR_PATH>/maven/nacos-canary-consumer-test-${project.version}.jar</JAR_PATH>
+                    </env>
+                    <links>
+                      <link>nacos-server:nacos-server</link>
+                    </links>
+                    <wait>
+                      <log>.* Started ConsumerApplication .*</log>
+                      <tcp>
+                        <ports>
+                          <port>9098</port>
+                        </ports>
+                      </tcp>
+                      <time>120000</time>
+                    </wait>
+                    <ports>
+                      <port>9098:9098</port>
+                    </ports>
+                    <dependsOn>
+                      <container>nacos-server</container>
+                      <container>nacos-canary-provider-beta-test</container>
+                      <container>nacos-canary-provider-test</container>
                     </dependsOn>
                   </run>
                 </image>
@@ -180,7 +183,7 @@
                       <link>nacos-server:nacos-server</link>
                     </links>
                     <wait>
-                      <log>Started PriceApplication</log>
+                      <log>.* Started GatewayApplication .*</log>
                       <tcp>
                         <ports>
                           <port>10088</port>
