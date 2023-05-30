@@ -37,7 +37,6 @@
     <httpclient.version>5.2.1</httpclient.version>
     <jackson.version>2.14.2</jackson.version>
     <commons-io.version>2.7</commons-io.version>
-    <jmockit.version>1.36</jmockit.version>
     <guava.version>31.1-jre</guava.version>
     <snakeyaml.version>1.32</snakeyaml.version>
     <commons-configuration.version>1.10</commons-configuration.version>
@@ -140,11 +139,6 @@
         <groupId>org.yaml</groupId>
         <artifactId>snakeyaml</artifactId>
         <version>${snakeyaml.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jmockit</groupId>
-        <artifactId>jmockit</artifactId>
-        <version>${jmockit.version}</version>
       </dependency>
       <dependency>
         <groupId>com.google.code.findbugs</groupId>
