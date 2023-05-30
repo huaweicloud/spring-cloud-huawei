@@ -176,7 +176,8 @@ public class GatewayIT {
                 successCount.getAndIncrement();
               }
             } catch (Exception e) {
-              if (e instanceof HttpClientErrorException && ((HttpClientErrorException) e).getRawStatusCode() == 429) {
+              if (e instanceof HttpClientErrorException
+                  && ((HttpClientErrorException) e).getStatusCode().value() == 429) {
                 expectedFailed.set(true);
               } else {
                 notExpectedFailed.set(true);
@@ -215,7 +216,8 @@ public class GatewayIT {
                 successCount.getAndIncrement();
               }
             } catch (Exception e) {
-              if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 503) {
+              if (e instanceof HttpServerErrorException
+                  && ((HttpServerErrorException) e).getStatusCode().value() == 503) {
                 expectedFailed.set(true);
               } else {
                 notExpectedFailed.set(true);
@@ -254,7 +256,8 @@ public class GatewayIT {
                 successCount.getAndIncrement();
               }
             } catch (Exception e) {
-              if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 503) {
+              if (e instanceof HttpServerErrorException
+                  && ((HttpServerErrorException) e).getStatusCode().value() == 503) {
                 expectedFailed.set(true);
               } else {
                 notExpectedFailed.set(true);
@@ -293,7 +296,8 @@ public class GatewayIT {
                 successCount.getAndIncrement();
               }
             } catch (Exception e) {
-              if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 503) {
+              if (e instanceof HttpServerErrorException
+                  && ((HttpServerErrorException) e).getStatusCode().value() == 503) {
                 expectedFailed.set(true);
               } else {
                 notExpectedFailed.set(true);

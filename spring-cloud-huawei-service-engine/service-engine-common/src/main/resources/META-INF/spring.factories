@@ -19,5 +19,3 @@
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
   com.huaweicloud.service.engine.common.configration.BootstrapPropertiesConfiguration,\
   com.huaweicloud.service.engine.common.CommonConfiguration
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.huaweicloud.service.engine.common.configration.DynamicPropertiesConfiguration

@@ -41,10 +41,6 @@
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-mesh</artifactId>
     </dependency>
-    <dependency>
-      <groupId>io.swagger.core.v3</groupId>
-      <artifactId>swagger-core</artifactId>
-    </dependency>
   </dependencies>
 
   <build>

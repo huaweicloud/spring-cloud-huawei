@@ -32,7 +32,7 @@
   <dependencies>
     <dependency>
       <groupId>org.springdoc</groupId>
-      <artifactId>springdoc-openapi-ui</artifactId>
+      <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.servicecomb</groupId>

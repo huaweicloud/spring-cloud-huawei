@@ -74,7 +74,7 @@ public class GovernanceRestTemplate extends RestTemplate {
   @SuppressWarnings("PMD.UseTryWithResources")
   @Nullable
   @Override
-  protected <T> T doExecute(URI url, @Nullable HttpMethod method, @Nullable RequestCallback requestCallback,
+  protected <T> T doExecute(URI url, @Nullable String uriTemplate, @Nullable HttpMethod method, @Nullable RequestCallback requestCallback,
       @Nullable ResponseExtractor<T> responseExtractor) throws RestClientException {
 
     Assert.notNull(url, "URI is required");

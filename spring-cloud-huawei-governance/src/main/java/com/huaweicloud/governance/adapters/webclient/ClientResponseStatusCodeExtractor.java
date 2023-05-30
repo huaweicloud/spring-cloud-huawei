@@ -28,6 +28,6 @@ public class ClientResponseStatusCodeExtractor implements StatusCodeExtractor {
 
   @Override
   public String extractStatusCode(Object response) {
-    return String.valueOf(((ClientResponse) response).rawStatusCode());
+    return String.valueOf(((ClientResponse) response).statusCode().value());
   }
 }

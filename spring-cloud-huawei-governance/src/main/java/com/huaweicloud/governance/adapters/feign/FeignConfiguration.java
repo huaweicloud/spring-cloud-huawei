@@ -17,7 +17,9 @@
 
 package com.huaweicloud.governance.adapters.feign;
 
-import org.apache.http.client.HttpClient;
+import java.util.List;
+
+import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
 import org.apache.servicecomb.governance.handler.InstanceIsolationHandler;
@@ -26,11 +28,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
+import org.springframework.cloud.openfeign.loadbalancer.LoadBalancerFeignRequestTransformer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import feign.Client;
-import feign.httpclient.ApacheHttpClient;
+import feign.hc5.ApacheHttp5Client;
 
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.cloud.openfeign.loadbalancer.FeignBlockingLoadBalancerClient"})
@@ -44,12 +47,13 @@ public class FeignConfiguration {
       InstanceBulkheadHandler instanceBulkheadHandler,
       LoadBalancerClient loadBalancerClient,
       HttpClient transportHttpClient,
-      LoadBalancerClientFactory loadBalancerClientFactory) {
+      LoadBalancerClientFactory loadBalancerClientFactory,
+      List<LoadBalancerFeignRequestTransformer> transformers) {
     return new GovernanceFeignBlockingLoadBalancerClient(
         retryHandler, faultInjectionHandler, instanceIsolationHandler,
         instanceBulkheadHandler,
-        new ApacheHttpClient(transportHttpClient), loadBalancerClient,
-        loadBalancerClientFactory);
+        new ApacheHttp5Client(transportHttpClient), loadBalancerClient,
+        loadBalancerClientFactory, transformers);
   }
 
   @Bean

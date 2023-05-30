@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,9 +53,11 @@ import org.springframework.cloud.client.loadbalancer.RequestData;
 import org.springframework.cloud.client.loadbalancer.RequestDataContext;
 import org.springframework.cloud.client.loadbalancer.ResponseData;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
+import org.springframework.cloud.openfeign.loadbalancer.LoadBalancerFeignRequestTransformer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.util.Assert;
 
 import com.huaweicloud.common.context.InvocationContext;
@@ -111,12 +114,15 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
 
   private final InstanceBulkheadHandler instanceBulkheadHandler;
 
+  private final List<LoadBalancerFeignRequestTransformer> transformers;
+
   public GovernanceFeignBlockingLoadBalancerClient(RetryHandler retryHandler,
       FaultInjectionHandler faultInjectionHandler,
       InstanceIsolationHandler instanceIsolationHandler,
       InstanceBulkheadHandler instanceBulkheadHandler,
       Client delegate, LoadBalancerClient loadBalancerClient,
-      LoadBalancerClientFactory loadBalancerClientFactory) {
+      LoadBalancerClientFactory loadBalancerClientFactory,
+      List<LoadBalancerFeignRequestTransformer> transformers) {
     this.retryHandler = retryHandler;
     this.faultInjectionHandler = faultInjectionHandler;
     this.instanceIsolationHandler = instanceIsolationHandler;
@@ -124,6 +130,7 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
     this.delegate = delegate;
     this.loadBalancerClient = loadBalancerClient;
     this.loadBalancerClientFactory = loadBalancerClientFactory;
+    this.transformers = transformers;
   }
 
   @Override
@@ -256,16 +263,25 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
         InstanceIDAdapter.instanceId(instance));
 
     String reconstructedUrl = loadBalancerClient.reconstructURI(instance, originalUri).toString();
-    Request newRequest = buildRequest(request, reconstructedUrl);
-    LoadBalancerProperties loadBalancerProperties = loadBalancerClientFactory.getProperties(serviceId);
+    Request newRequest = buildRequest(request, reconstructedUrl, instance);
     return executeWithLoadBalancerLifecycleProcessing(governanceRequest, delegate, options, newRequest, lbRequest,
         lbResponse,
-        supportedLifecycleProcessors, loadBalancerProperties.isUseRawStatusCodeInResponseData());
+        supportedLifecycleProcessors);
   }
 
   protected Request buildRequest(Request request, String reconstructedUrl) {
     return Request.create(request.httpMethod(), reconstructedUrl, request.headers(), request.body(),
         request.charset(), request.requestTemplate());
+  }
+
+  protected Request buildRequest(Request request, String reconstructedUrl, ServiceInstance instance) {
+    Request newRequest = buildRequest(request, reconstructedUrl);
+    if (transformers != null) {
+      for (LoadBalancerFeignRequestTransformer transformer : transformers) {
+        newRequest = transformer.transformRequest(newRequest, instance);
+      }
+    }
+    return newRequest;
   }
 
   // Visible for Sleuth instrumentation
@@ -280,18 +296,25 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
     return hintPropertyValue != null ? hintPropertyValue : defaultHint;
   }
 
-  private Response executeWithLoadBalancerLifecycleProcessing(Client feignClient, Request.Options options,
+  static Response executeWithLoadBalancerLifecycleProcessing(Client feignClient, Request.Options options,
       Request feignRequest, org.springframework.cloud.client.loadbalancer.Request lbRequest,
       org.springframework.cloud.client.loadbalancer.Response<ServiceInstance> lbResponse,
-      Set<LoadBalancerLifecycle> supportedLifecycleProcessors, boolean loadBalanced, boolean useRawStatusCodes)
-      throws IOException {
+      Set<LoadBalancerLifecycle> supportedLifecycleProcessors) throws IOException {
+    return executeWithLoadBalancerLifecycleProcessing(feignClient, options, feignRequest, lbRequest, lbResponse,
+        supportedLifecycleProcessors, true);
+  }
+
+  static Response executeWithLoadBalancerLifecycleProcessing(Client feignClient, Request.Options options,
+      Request feignRequest, org.springframework.cloud.client.loadbalancer.Request lbRequest,
+      org.springframework.cloud.client.loadbalancer.Response<ServiceInstance> lbResponse,
+      Set<LoadBalancerLifecycle> supportedLifecycleProcessors, boolean loadBalanced) throws IOException {
     supportedLifecycleProcessors.forEach(lifecycle -> lifecycle.onStartRequest(lbRequest, lbResponse));
     try {
       Response response = feignClient.execute(feignRequest, options);
       if (loadBalanced) {
         supportedLifecycleProcessors.forEach(
             lifecycle -> lifecycle.onComplete(new CompletionContext<>(CompletionContext.Status.SUCCESS,
-                lbRequest, lbResponse, buildResponseData(response, useRawStatusCodes))));
+                lbRequest, lbResponse, buildResponseData(response))));
       }
       return response;
     } catch (Exception exception) {
@@ -303,20 +326,17 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
     }
   }
 
-  static ResponseData buildResponseData(Response response, boolean useRawStatusCodes) {
+  static ResponseData buildResponseData(Response response) {
     HttpHeaders responseHeaders = new HttpHeaders();
     response.headers().forEach((key, value) -> responseHeaders.put(key, new ArrayList<>(value)));
-    if (useRawStatusCodes) {
-      return new ResponseData(responseHeaders, null, buildRequestData(response.request()), response.status());
-    }
-    return new ResponseData(HttpStatus.resolve(response.status()), responseHeaders, null,
+    return new ResponseData(HttpStatusCode.valueOf(response.status()), responseHeaders, null,
         buildRequestData(response.request()));
   }
 
   static RequestData buildRequestData(Request request) {
     HttpHeaders requestHeaders = new HttpHeaders();
     request.headers().forEach((key, value) -> requestHeaders.put(key, new ArrayList<>(value)));
-    return new RequestData(HttpMethod.resolve(request.httpMethod().name()), URI.create(request.url()),
+    return new RequestData(HttpMethod.valueOf(request.httpMethod().name()), URI.create(request.url()),
         requestHeaders, null, new HashMap<>());
   }
 
@@ -325,17 +345,17 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
       Request.Options options,
       Request feignRequest, org.springframework.cloud.client.loadbalancer.Request lbRequest,
       org.springframework.cloud.client.loadbalancer.Response<ServiceInstance> lbResponse,
-      Set<LoadBalancerLifecycle> supportedLifecycleProcessors, boolean useRawStatusCodes) {
+      Set<LoadBalancerLifecycle> supportedLifecycleProcessors) {
 
     return executeWithInstanceIsolation(governanceRequest, feignClient, options, feignRequest, lbRequest, lbResponse,
-        supportedLifecycleProcessors, useRawStatusCodes);
+        supportedLifecycleProcessors);
   }
 
   private Response executeWithInstanceIsolation(GovernanceRequestExtractor governanceRequest, Client feignClient,
       Options options,
       Request feignRequest, org.springframework.cloud.client.loadbalancer.Request lbRequest,
       org.springframework.cloud.client.loadbalancer.Response<ServiceInstance> lbResponse,
-      Set<LoadBalancerLifecycle> supportedLifecycleProcessors, boolean useRawStatusCodes) {
+      Set<LoadBalancerLifecycle> supportedLifecycleProcessors) {
 
     CircuitBreakerPolicy circuitBreakerPolicy = instanceIsolationHandler.matchPolicy(governanceRequest);
     if (circuitBreakerPolicy != null && circuitBreakerPolicy.isForceOpen()) {
@@ -348,12 +368,12 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
       CircuitBreaker circuitBreaker = instanceIsolationHandler.getActuator(governanceRequest);
       if (circuitBreaker == null) {
         return executeWithInstanceBulkhead(governanceRequest, feignClient, options, feignRequest, lbRequest,
-            lbResponse, supportedLifecycleProcessors, useRawStatusCodes);
+            lbResponse, supportedLifecycleProcessors);
       }
 
       CheckedFunction0<Response> next = () -> executeWithInstanceBulkhead(governanceRequest, feignClient, options,
           feignRequest, lbRequest, lbResponse,
-          supportedLifecycleProcessors, useRawStatusCodes);
+          supportedLifecycleProcessors);
 
       DecorateCheckedSupplier<Response> dcs = Decorators.ofCheckedSupplier(next);
       dcs.withCircuitBreaker(circuitBreaker);
@@ -377,26 +397,26 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
     }
 
     return executeWithInstanceBulkhead(governanceRequest, feignClient, options, feignRequest, lbRequest,
-        lbResponse, supportedLifecycleProcessors, useRawStatusCodes);
+        lbResponse, supportedLifecycleProcessors);
   }
 
   private Response executeWithInstanceBulkhead(GovernanceRequestExtractor governanceRequest, Client feignClient,
       Options options,
       Request feignRequest, org.springframework.cloud.client.loadbalancer.Request lbRequest,
       org.springframework.cloud.client.loadbalancer.Response<ServiceInstance> lbResponse,
-      Set<LoadBalancerLifecycle> supportedLifecycleProcessors, boolean useRawStatusCodes) {
+      Set<LoadBalancerLifecycle> supportedLifecycleProcessors) {
 
     try {
       Bulkhead bulkhead = instanceBulkheadHandler.getActuator(governanceRequest);
       if (bulkhead == null) {
         return executeWithLoadBalancerLifecycleProcessing(feignClient, options,
             feignRequest, lbRequest, lbResponse,
-            supportedLifecycleProcessors, true, useRawStatusCodes);
+            supportedLifecycleProcessors, true);
       }
 
       CheckedFunction0<Response> next = () -> executeWithLoadBalancerLifecycleProcessing(feignClient, options,
           feignRequest, lbRequest, lbResponse,
-          supportedLifecycleProcessors, true, useRawStatusCodes);
+          supportedLifecycleProcessors, true);
 
       DecorateCheckedSupplier<Response> dcs = Decorators.ofCheckedSupplier(next);
 

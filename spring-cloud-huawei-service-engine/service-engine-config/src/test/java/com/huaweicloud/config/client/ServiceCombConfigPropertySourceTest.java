@@ -25,12 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import com.huaweicloud.config.ServiceCombConfigPropertySource;
 
-import mockit.MockUp;
-
-public class ServiceCombConfigPropertySourceTest extends MockUp<ServiceCombConfigPropertySource> {
-
-  private final Map<String, Object> properties = new HashMap<>();
-
+public class ServiceCombConfigPropertySourceTest {
   @Test
   public void getPropertyNames() {
     Map<String, Object> sources = new HashMap<>();

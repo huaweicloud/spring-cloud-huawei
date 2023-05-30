@@ -15,5 +15,5 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.huaweicloud.nacos.NacosAdaptersAutoConfiguration
+
+com.huaweicloud.router.client.RouterClientAutoConfiguration

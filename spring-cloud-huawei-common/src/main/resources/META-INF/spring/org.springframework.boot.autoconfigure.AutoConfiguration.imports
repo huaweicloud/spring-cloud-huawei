@@ -15,9 +15,15 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.huaweicloud.servicecomb.discovery.DiscoveryAutoConfiguration,\
-com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryClientConfiguration,\
-com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistryAutoConfiguration, \
-com.huaweicloud.servicecomb.discovery.discovery.ServiceCombReactiveDiscoveryClientConfiguration, \
-com.huaweicloud.servicecomb.discovery.check.RegistryHealthIndicatorConfiguration
+
+com.huaweicloud.common.event.EventConfiguration
+com.huaweicloud.common.adapters.web.WebConfiguration
+com.huaweicloud.common.adapters.webmvc.WebMvcConfiguration
+com.huaweicloud.common.adapters.feign.FeignConfiguration
+com.huaweicloud.common.adapters.gateway.GatewayConfiguration
+com.huaweicloud.common.adapters.webclient.WebClientConfiguration
+com.huaweicloud.common.adapters.webflux.WebFluxConfiguration
+com.huaweicloud.common.access.AccessLogConfiguration
+com.huaweicloud.common.configration.DynamicPropertiesConfiguration
+com.huaweicloud.common.transport.ClientTransportConfiguration
+com.huaweicloud.common.metrics.MetricsConfiguration

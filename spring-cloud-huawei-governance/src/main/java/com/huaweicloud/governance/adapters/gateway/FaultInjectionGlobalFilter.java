@@ -56,9 +56,9 @@ public class FaultInjectionGlobalFilter implements GlobalFilter, Ordered {
         if (result != faultObject) {
           DataBuffer dataBuffer;
           if (result == null) {
-            dataBuffer = exchange.getResponse().bufferFactory().allocateBuffer();
+            dataBuffer = exchange.getResponse().bufferFactory().allocateBuffer(256);
           } else {
-            dataBuffer = exchange.getResponse().bufferFactory().allocateBuffer()
+            dataBuffer = exchange.getResponse().bufferFactory().allocateBuffer(256)
                     .write(HttpUtils.serialize(result).getBytes(StandardCharsets.UTF_8));
           }
           return exchange.getResponse().writeWith(Mono.just(dataBuffer));

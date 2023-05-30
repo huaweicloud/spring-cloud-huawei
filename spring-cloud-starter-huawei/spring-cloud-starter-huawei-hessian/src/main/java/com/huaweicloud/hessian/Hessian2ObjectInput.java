@@ -110,6 +110,7 @@ public class Hessian2ObjectInput implements ObjectInput, Cleanable {
   }
 
   @Override
+  @Deprecated
   public Object readObject() throws IOException {
     return mH2i.readObject();
   }
@@ -132,7 +133,7 @@ public class Hessian2ObjectInput implements ObjectInput, Cleanable {
 
   @Override
   public void cleanup() {
-    if(mH2i != null) {
+    if (mH2i != null) {
       mH2i.reset();
     }
   }

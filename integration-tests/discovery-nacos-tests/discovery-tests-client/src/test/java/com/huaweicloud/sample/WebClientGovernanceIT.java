@@ -64,7 +64,7 @@ public class WebClientGovernanceIT {
                 successCount.getAndIncrement();
               }
             } catch (Exception e) {
-              if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 500) {
+              if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getStatusCode().value() == 500) {
                 expectedFailed.set(true);
               } else {
                 notExpectedFailed.set(true);
@@ -100,7 +100,7 @@ public class WebClientGovernanceIT {
           successCount.getAndIncrement();
         }
       } catch (Exception e) {
-        if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getRawStatusCode() == 500) {
+        if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getStatusCode().value() == 500) {
           rejectedCount.getAndIncrement();
         } else {
           notExpectedFailed.set(true);

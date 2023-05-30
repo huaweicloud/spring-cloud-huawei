@@ -19,10 +19,13 @@ package com.huaweicloud.common.transport;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.core5.util.TimeValue;
+import org.apache.hc.core5.util.Timeout;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,19 +37,23 @@ public class ClientTransportConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public HttpClient transportHttpClient(HttpClientProperties httpClientProperties) {
-    PoolingHttpClientConnectionManager pool = new PoolingHttpClientConnectionManager(
-        httpClientProperties.getConnectionTimeToLiveInMilliSeconds(), TimeUnit.MILLISECONDS);
+    PoolingHttpClientConnectionManager pool = new PoolingHttpClientConnectionManager();
     pool.setDefaultMaxPerRoute(httpClientProperties.getPoolSizePerRoute());
     pool.setMaxTotal(httpClientProperties.getPoolSizeMax());
+    pool.setDefaultConnectionConfig(ConnectionConfig.custom()
+        .setConnectTimeout(httpClientProperties.getConnectTimeoutInMilliSeconds(), TimeUnit.MILLISECONDS)
+        .setSocketTimeout(httpClientProperties.getReadTimeoutInMilliSeconds(), TimeUnit.MILLISECONDS)
+        .build());
     return HttpClientBuilder.create()
         .setConnectionManager(pool)
         .setDefaultRequestConfig(RequestConfig.custom()
-            .setConnectTimeout(httpClientProperties.getConnectTimeoutInMilliSeconds())
-            .setConnectionRequestTimeout(httpClientProperties.getConnectionRequestTimeoutInMilliSeconds())
-            .setSocketTimeout(httpClientProperties.getReadTimeoutInMilliSeconds())
+            .setConnectionKeepAlive(
+                TimeValue.of(httpClientProperties.getConnectionTimeToLiveInMilliSeconds(), TimeUnit.MILLISECONDS))
+            .setConnectionRequestTimeout(
+                Timeout.of(httpClientProperties.getConnectionRequestTimeoutInMilliSeconds(), TimeUnit.MILLISECONDS))
             .build())
         .evictExpiredConnections().evictIdleConnections(
-            httpClientProperties.getConnectionIdleTimeoutInMilliSeconds(), TimeUnit.MILLISECONDS)
+            TimeValue.of(httpClientProperties.getConnectionIdleTimeoutInMilliSeconds(), TimeUnit.MILLISECONDS))
         .build();
   }
 }
