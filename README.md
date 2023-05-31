@@ -21,19 +21,21 @@ Spring Cloud Huawei provides a large number of out-of-the-box service governance
 
 | Branch    | Spring Cloud Huawei Latest Version | Compiled Spring Cloud Version | Compiled Spring Boot Version |
 |-----------|------------------------------------|-------------------------------|------------------------------|
-| master    | 1.11.0-2021.0.x                    | 2021.0.5                      | 2.7.10                       | 
+| master    | 1.11.0-2022.0.x                    | 2022.0.2                      | 3.0.7                       | 
+| 2021.0.x  | 1.11.0-2021.0.x                    | 2021.0.5                      | 2.7.10                       | 
 | 2020.0.x  | 1.10.8-2020.0.x                    | 2020.0.6                      | 2.5.14                       |
 | Hoxton    | 1.9.3-Hoxton                       | Hoxton.SR9                    | 2.3.5.RELEASE                |
 | Greenwich | 1.6.3-Greenwich                    | Greenwich.SR6                 | 2.1.6-RELEASE                |
 
 ***Notice：***
 * You can use `Spring Cloud` compatible version to use `Spring Cloud Huawei`. See https://spring.io/projects/spring-cloud for more details.
-* Spring Cloud Edgeware, Finchley, Greenwich, Hoxton have all reached end of life status and
+* Spring Cloud Edgeware, Finchley, Greenwich, Hoxton, 2020.0.x have all reached end of life status and
   suggest not for production use. Check [Spring Cloud Releases][Spring Cloud Releases] for details.
-* Before Hoxton(include), Netfix OSS like Ribbon, Hystrix are supported. After 2020.0.x(include),
+* Before Hoxton(include), Netfix OSS like Ribbon, Hystrix are supported. After 2020.0.x(**include**),
   Spring Cloud Loadbalancer are supported.
 * Before 2020.0.x(include)， springfox is used for swagger generation. After 2021.0.x(include),
   springdoc is used for swagger generation. 
+* After 2022.0.x(include), JDK 17+ is needed to run.
 
 ## How to use
 
