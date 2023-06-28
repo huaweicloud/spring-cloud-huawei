@@ -18,7 +18,6 @@ package com.huaweicloud.swagger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,33 +25,22 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import org.apache.servicecomb.swagger.SwaggerUtils;
-import org.apache.servicecomb.swagger.generator.springmvc.SpringmvcSwaggerGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.Constants;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 
-import io.swagger.models.Info;
-import io.swagger.models.Path;
-import io.swagger.models.Swagger;
 import io.swagger.v3.core.util.Yaml;
-import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.Paths;
 
-public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler, ApplicationContextAware {
+public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombSwaggerHandlerImpl.class);
 
@@ -64,11 +52,6 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler,
 
   private Map<String, String> swaggerSummary = new HashMap<>();
 
-  private ApplicationContext applicationContext;
-
-  @Value("${spring.cloud.servicecomb.swagger.enableJavaChassisAdapter:true}")
-  protected boolean withJavaChassis;
-
   private OpenApiResourceWrapper openApiResource;
 
   @Autowired
@@ -78,11 +61,6 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler,
 
   @Override
   public void init(String appName, String serviceName) {
-    if (withJavaChassis) {
-      runJavaChassisScanner(serviceName);
-      return;
-    }
-
     runSpringDocScanner(serviceName);
   }
 
@@ -99,42 +77,6 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler,
     this.swaggerContent = calcSchemaContent();
 
     this.swaggerSummary = calcSchemaSummary();
-  }
-
-  private void runJavaChassisScanner(String serviceName) {
-    Map<String, Object> controllers = applicationContext.getBeansWithAnnotation(RestController.class);
-    Swagger swaggerMerge = new Swagger();
-    controllers.forEach((k, v) -> {
-      try {
-        SpringmvcSwaggerGenerator generator = new SpringmvcSwaggerGenerator(v.getClass());
-        Swagger swagger = generator.generate();
-        if (swaggerMerge.getPaths() == null) {
-          Info info = new Info().version("1.0.0");
-          info.setTitle("swagger definition for " + serviceName);
-          swaggerMerge.setInfo(info);
-          swaggerMerge.setPaths(swagger.getPaths());
-          swaggerMerge.setBasePath(swagger.getBasePath());
-          swaggerMerge.setConsumes(swagger.getConsumes());
-          swaggerMerge.setProduces(swagger.getProduces());
-          swaggerMerge.setPaths(convertWithTags(swagger.getPaths(), k));
-        } else {
-          swaggerMerge.getPaths().putAll(convertWithTags(swagger.getPaths(), k));
-        }
-        LOGGER.info("generate servicecomb compatible swagger for bean [{}] success.", k);
-      } catch (Exception e) {
-        LOGGER.info("generate servicecomb compatible swagger for bean [{}] failed, message is [{}].", k,
-            e.getMessage());
-      }
-    });
-    swaggerContent.put(serviceName, SwaggerUtils.swaggerToString(swaggerMerge));
-    swaggerSummary = calcSchemaSummary();
-  }
-
-  private Map<String, Path> convertWithTags(Map<String, Path> paths, String className) {
-    paths.entrySet().forEach((entry) -> {
-      entry.getValue().getVendorExtensions().put("schemaId", className);
-    });
-    return paths;
   }
 
   private Map<String, String> calcSchemaContent() {
@@ -205,10 +147,5 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler,
 
   private static String calcSchemaSummary(String schemaContent) {
     return Hashing.sha256().newHasher().putString(schemaContent, Charsets.UTF_8).hash().toString();
-  }
-
-  @Override
-  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-    this.applicationContext = applicationContext;
   }
 }
