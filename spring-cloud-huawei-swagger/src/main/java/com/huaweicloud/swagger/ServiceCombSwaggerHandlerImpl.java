@@ -38,12 +38,15 @@ import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.Paths;
 
 public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCombSwaggerHandlerImpl.class);
 
   private Map<String, OpenAPI> swaggerMap = new HashMap<>();
+
+  private List<OpenAPI> openAPIList = new ArrayList<>();
 
   private Map<String, String> swaggerContent = new HashMap<>();
 
@@ -58,19 +61,18 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
 
   @Override
   public void init(String appName, String serviceName) {
-    runSpringDocScanner();
+    runSpringDocScanner(serviceName);
   }
 
-  private void runSpringDocScanner() {
+  private void runSpringDocScanner(String serviceName) {
     SpringMvcOpenApiResource mvcOpenApiResource = openApiResource.createOpenApiResource(Constants.DEFAULT_GROUP_NAME);
     Set<String> set = mvcOpenApiResource.getControllers();
     set.forEach(key -> {
       SpringMvcOpenApiResource beanOpenApiResource = openApiResource.createOpenApiResource(key);
       beanOpenApiResource.clearCache();
-      swaggerMap.put(key, beanOpenApiResource.getOpenAPI());
+      openAPIList.add(beanOpenApiResource.getOpenAPI());
     });
-
-    renameOperations(swaggerMap);
+    renameOperations(serviceName, openAPIList);
 
     this.swaggerContent = calcSchemaContent();
 
@@ -109,8 +111,13 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
         .collect(Collectors.toMap(Entry::getKey, entry -> calcSchemaSummary(entry.getValue())));
   }
 
-  private void renameOperations(Map<String, OpenAPI> swaggerMap) {
-    swaggerMap.forEach((key, openApi) -> {
+  private void renameOperations(String serviceName, List<OpenAPI> openAPIList) {
+    OpenAPI openAPIMerge = new OpenAPI();
+    openAPIMerge.servers(openAPIList.get(0).getServers());
+    openAPIMerge.setInfo(openAPIList.get(0).getInfo());
+    openAPIMerge.setComponents(openAPIList.get(0).getComponents());
+    openAPIMerge.setPaths(new Paths());
+    openAPIList.forEach((openApi) -> {
       openApi.getPaths().forEach((operationID, pathItem) -> {
         AtomicInteger index = new AtomicInteger(0);
         setOperationId(operationID, pathItem.getGet(), index);
@@ -122,7 +129,9 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
         setOperationId(operationID, pathItem.getPatch(), index);
         setOperationId(operationID, pathItem.getTrace(), index);
       });
+      openAPIMerge.getPaths().putAll(openApi.getPaths());
     });
+    swaggerMap.put(serviceName, openAPIMerge);
   }
 
   private void setOperationId(String operationID, Operation operation, AtomicInteger index) {
