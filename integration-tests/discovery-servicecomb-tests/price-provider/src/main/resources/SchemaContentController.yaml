@@ -24,6 +24,54 @@ servers:
   - url: /
     description: Generated server url
 paths:
+  /testPostModel:
+    post:
+      tags:
+        - price-controller
+      operationId: /testPostModel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PojoModel'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PojoModel'
+  /testHeaderWithJson:
+    post:
+      tags:
+        - price-controller
+      operationId: /testHeaderWithJson
+      parameters:
+        - name: model
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /testFeignFaultInjection:
+    post:
+      tags:
+        - price-controller
+      operationId: /testFeignFaultInjection
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
   /stringRequestBody:
     post:
       tags:
@@ -60,6 +108,188 @@ paths:
             '*/*':
               schema:
                 type: string
+  /price/metrics/testPost:
+    post:
+      tags:
+        - metrics-controller
+      operationId: /price/metrics/testPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /hessian/nonSerializableModel:
+    post:
+      tags:
+        - hessian-controller
+      operationId: /hessian/nonSerializableModel
+      requestBody:
+        content:
+          x-application/hessian2:
+            schema:
+              $ref: '#/components/schemas/NonSerializableModel'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            x-application/hessian2:
+              schema:
+                $ref: '#/components/schemas/NonSerializableModel'
+  /hessian/nonSerializableModelArray:
+    post:
+      tags:
+        - hessian-controller
+      operationId: /hessian/nonSerializableModelArray
+      requestBody:
+        content:
+          x-application/hessian2:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/NonSerializableModel'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            x-application/hessian2:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NonSerializableModel'
+  /hessian/generic:
+    post:
+      tags:
+        - hessian-controller
+      operationId: /hessian/generic
+      requestBody:
+        content:
+          x-application/hessian2:
+            schema:
+              $ref: '#/components/schemas/GenericBase'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            x-application/hessian2:
+              schema:
+                $ref: '#/components/schemas/GenericBase'
+  /hessian/child/query:
+    post:
+      tags:
+        - hessian-child-controller
+      operationId: /hessian/child/query
+      requestBody:
+        content:
+          x-application/hessian2:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/NonSerializableModel'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            x-application/hessian2:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NonSerializableModel'
+  /hessian/child/queryList:
+    post:
+      tags:
+        - hessian-child-controller
+      operationId: /hessian/child/queryList
+      requestBody:
+        content:
+          x-application/hessian2:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/NonSerializableModel'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            x-application/hessian2:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NonSerializableModel'
+  /hessian/base:
+    post:
+      tags:
+        - hessian-controller
+      operationId: /hessian/base
+      requestBody:
+        content:
+          x-application/hessian2:
+            schema:
+              $ref: '#/components/schemas/Base'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            x-application/hessian2:
+              schema:
+                $ref: '#/components/schemas/Base'
+  /hessian/baseChild/query:
+    post:
+      tags:
+        - hessian-base-child-controller
+      operationId: /hessian/baseChild/query
+      requestBody:
+        content:
+          x-application/hessian2:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/NonSerializableModel'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            x-application/hessian2:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NonSerializableModel'
+  /hessian/baseChild/queryList:
+    post:
+      tags:
+        - hessian-base-child-controller
+      operationId: /hessian/baseChild/queryList
+      requestBody:
+        content:
+          x-application/hessian2:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/NonSerializableModel'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            x-application/hessian2:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NonSerializableModel'
   /danglingPattern/**:
     post:
       tags:
@@ -71,6 +301,589 @@ paths:
             schema:
               type: string
         required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /testDateRequestParam:
+    get:
+      tags:
+        - price-controller
+      operationId: /testDateRequestParam
+      parameters:
+        - name: currentDate
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /restTemplateInstanceBulkhead:
+    get:
+      tags:
+        - governance-controller
+      operationId: /restTemplateInstanceBulkhead
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /rate/testRateLimitForService:
+    get:
+      tags:
+        - governance-controller
+      operationId: /rate/testRateLimitForService
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /rate/identifierRateLimitingService:
+    get:
+      tags:
+        - governance-controller
+      operationId: /rate/identifierRateLimitingService
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /price/metrics/testInvocationStage:
+    get:
+      tags:
+        - metrics-controller
+      operationId: /price/metrics/testInvocationStage
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /price/metrics/testGet:
+    get:
+      tags:
+        - metrics-controller
+      operationId: /price/metrics/testGet
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /price/metrics/clearInvocationStage:
+    get:
+      tags:
+        - metrics-controller
+      operationId: /price/metrics/clearInvocationStage
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /feignInstanceBulkhead:
+    get:
+      tags:
+        - governance-controller
+      operationId: /feignInstanceBulkhead
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /testWebMvcInvocationContext:
+    get:
+      tags:
+        - price-controller
+      operationId: /testWebMvcInvocationContext
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+        - price-controller
+      operationId: /testWebMvcInvocationContext_1
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+        - price-controller
+      operationId: /testWebMvcInvocationContext_2
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+        - price-controller
+      operationId: /testWebMvcInvocationContext_3
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    options:
+      tags:
+        - price-controller
+      operationId: /testWebMvcInvocationContext_4
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    head:
+      tags:
+        - price-controller
+      operationId: /testWebMvcInvocationContext_5
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+        - price-controller
+      operationId: /testWebMvcInvocationContext_6
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /testSchemaGenerator:
+    get:
+      tags:
+        - schema-controller
+      operationId: /testSchemaGenerator
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+        - schema-controller
+      operationId: /testSchemaGenerator_1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+        - schema-controller
+      operationId: /testSchemaGenerator_2
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+        - schema-controller
+      operationId: /testSchemaGenerator_3
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    options:
+      tags:
+        - schema-controller
+      operationId: /testSchemaGenerator_4
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    head:
+      tags:
+        - schema-controller
+      operationId: /testSchemaGenerator_5
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+        - schema-controller
+      operationId: /testSchemaGenerator_6
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /testMicroserviceInfoCorrect:
+    get:
+      tags:
+        - service-comb-registration-controller
+      operationId: /testMicroserviceInfoCorrect
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: boolean
+    put:
+      tags:
+        - service-comb-registration-controller
+      operationId: /testMicroserviceInfoCorrect_1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: boolean
+    post:
+      tags:
+        - service-comb-registration-controller
+      operationId: /testMicroserviceInfoCorrect_2
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: boolean
+    delete:
+      tags:
+        - service-comb-registration-controller
+      operationId: /testMicroserviceInfoCorrect_3
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: boolean
+    options:
+      tags:
+        - service-comb-registration-controller
+      operationId: /testMicroserviceInfoCorrect_4
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: boolean
+    head:
+      tags:
+        - service-comb-registration-controller
+      operationId: /testMicroserviceInfoCorrect_5
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: boolean
+    patch:
+      tags:
+        - service-comb-registration-controller
+      operationId: /testMicroserviceInfoCorrect_6
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: boolean
+  /serviceNameRetry:
+    get:
+      tags:
+        - governance-controller
+      operationId: /serviceNameRetry
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+        - governance-controller
+      operationId: /serviceNameRetry_1
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+        - governance-controller
+      operationId: /serviceNameRetry_2
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+        - governance-controller
+      operationId: /serviceNameRetry_3
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    options:
+      tags:
+        - governance-controller
+      operationId: /serviceNameRetry_4
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    head:
+      tags:
+        - governance-controller
+      operationId: /serviceNameRetry_5
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+        - governance-controller
+      operationId: /serviceNameRetry_6
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /serviceNameFaultInjection:
+    get:
+      tags:
+        - governance-controller
+      operationId: /serviceNameFaultInjection
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+        - governance-controller
+      operationId: /serviceNameFaultInjection_1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+        - governance-controller
+      operationId: /serviceNameFaultInjection_2
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+        - governance-controller
+      operationId: /serviceNameFaultInjection_3
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    options:
+      tags:
+        - governance-controller
+      operationId: /serviceNameFaultInjection_4
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    head:
+      tags:
+        - governance-controller
+      operationId: /serviceNameFaultInjection_5
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+        - governance-controller
+      operationId: /serviceNameFaultInjection_6
       responses:
         "200":
           description: OK
@@ -198,4 +1011,1332 @@ paths:
             '*/*':
               schema:
                 type: string
-components: {}
+  /routeFaultInjectionNull:
+    get:
+      tags:
+        - governance-controller
+      operationId: /routeFaultInjectionNull
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+        - governance-controller
+      operationId: /routeFaultInjectionNull_1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+        - governance-controller
+      operationId: /routeFaultInjectionNull_2
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+        - governance-controller
+      operationId: /routeFaultInjectionNull_3
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    options:
+      tags:
+        - governance-controller
+      operationId: /routeFaultInjectionNull_4
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    head:
+      tags:
+        - governance-controller
+      operationId: /routeFaultInjectionNull_5
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+        - governance-controller
+      operationId: /routeFaultInjectionNull_6
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /retry:
+    get:
+      tags:
+        - governance-controller
+      operationId: /retry
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+        - governance-controller
+      operationId: /retry_1
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+        - governance-controller
+      operationId: /retry_2
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+        - governance-controller
+      operationId: /retry_3
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    options:
+      tags:
+        - governance-controller
+      operationId: /retry_4
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    head:
+      tags:
+        - governance-controller
+      operationId: /retry_5
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+        - governance-controller
+      operationId: /retry_6
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /retryMore:
+    get:
+      tags:
+        - governance-controller
+      operationId: /retryMore
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+        - governance-controller
+      operationId: /retryMore_1
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+        - governance-controller
+      operationId: /retryMore_2
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+        - governance-controller
+      operationId: /retryMore_3
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    options:
+      tags:
+        - governance-controller
+      operationId: /retryMore_4
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    head:
+      tags:
+        - governance-controller
+      operationId: /retryMore_5
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+        - governance-controller
+      operationId: /retryMore_6
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /price:
+    get:
+      tags:
+        - price-controller
+      operationId: /price
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+        - price-controller
+      operationId: /price_1
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+        - price-controller
+      operationId: /price_2
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+        - price-controller
+      operationId: /price_3
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    options:
+      tags:
+        - price-controller
+      operationId: /price_4
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    head:
+      tags:
+        - price-controller
+      operationId: /price_5
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+        - price-controller
+      operationId: /price_6
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /priceBalance:
+    get:
+      tags:
+        - price-controller
+      operationId: /priceBalance
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+        - price-controller
+      operationId: /priceBalance_1
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+        - price-controller
+      operationId: /priceBalance_2
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+        - price-controller
+      operationId: /priceBalance_3
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    options:
+      tags:
+        - price-controller
+      operationId: /priceBalance_4
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    head:
+      tags:
+        - price-controller
+      operationId: /priceBalance_5
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+        - price-controller
+      operationId: /priceBalance_6
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /loadbalance:
+    get:
+      tags:
+        - governance-controller
+      operationId: /loadbalance
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+        - governance-controller
+      operationId: /loadbalance_1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+        - governance-controller
+      operationId: /loadbalance_2
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+        - governance-controller
+      operationId: /loadbalance_3
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    options:
+      tags:
+        - governance-controller
+      operationId: /loadbalance_4
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    head:
+      tags:
+        - governance-controller
+      operationId: /loadbalance_5
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+        - governance-controller
+      operationId: /loadbalance_6
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /isolationForceOpen:
+    get:
+      tags:
+        - governance-controller
+      operationId: /isolationForceOpen
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+        - governance-controller
+      operationId: /isolationForceOpen_1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+        - governance-controller
+      operationId: /isolationForceOpen_2
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+        - governance-controller
+      operationId: /isolationForceOpen_3
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    options:
+      tags:
+        - governance-controller
+      operationId: /isolationForceOpen_4
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    head:
+      tags:
+        - governance-controller
+      operationId: /isolationForceOpen_5
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+        - governance-controller
+      operationId: /isolationForceOpen_6
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /invocationContext:
+    get:
+      tags:
+        - price-controller
+      operationId: /invocationContext
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+        - price-controller
+      operationId: /invocationContext_1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+        - price-controller
+      operationId: /invocationContext_2
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+        - price-controller
+      operationId: /invocationContext_3
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    options:
+      tags:
+        - price-controller
+      operationId: /invocationContext_4
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    head:
+      tags:
+        - price-controller
+      operationId: /invocationContext_5
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+        - price-controller
+      operationId: /invocationContext_6
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /hello:
+    get:
+      tags:
+        - governance-controller
+      operationId: /hello
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+        - governance-controller
+      operationId: /hello_1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+        - governance-controller
+      operationId: /hello_2
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+        - governance-controller
+      operationId: /hello_3
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    options:
+      tags:
+        - governance-controller
+      operationId: /hello_4
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    head:
+      tags:
+        - governance-controller
+      operationId: /hello_5
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+        - governance-controller
+      operationId: /hello_6
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /gateway/retry:
+    get:
+      tags:
+        - governance-controller
+      operationId: /gateway/retry
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+        - governance-controller
+      operationId: /gateway/retry_1
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+        - governance-controller
+      operationId: /gateway/retry_2
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+        - governance-controller
+      operationId: /gateway/retry_3
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    options:
+      tags:
+        - governance-controller
+      operationId: /gateway/retry_4
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    head:
+      tags:
+        - governance-controller
+      operationId: /gateway/retry_5
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+        - governance-controller
+      operationId: /gateway/retry_6
+      parameters:
+        - name: invocationID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /faultInjection:
+    get:
+      tags:
+        - governance-controller
+      operationId: /faultInjection
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+        - governance-controller
+      operationId: /faultInjection_1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+        - governance-controller
+      operationId: /faultInjection_2
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+        - governance-controller
+      operationId: /faultInjection_3
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    options:
+      tags:
+        - governance-controller
+      operationId: /faultInjection_4
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    head:
+      tags:
+        - governance-controller
+      operationId: /faultInjection_5
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+        - governance-controller
+      operationId: /faultInjection_6
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /faultInjectionModel:
+    get:
+      tags:
+        - governance-controller
+      operationId: /faultInjectionModel
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PojoModel'
+    put:
+      tags:
+        - governance-controller
+      operationId: /faultInjectionModel_1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PojoModel'
+    post:
+      tags:
+        - governance-controller
+      operationId: /faultInjectionModel_2
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PojoModel'
+    delete:
+      tags:
+        - governance-controller
+      operationId: /faultInjectionModel_3
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PojoModel'
+    options:
+      tags:
+        - governance-controller
+      operationId: /faultInjectionModel_4
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PojoModel'
+    head:
+      tags:
+        - governance-controller
+      operationId: /faultInjectionModel_5
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PojoModel'
+    patch:
+      tags:
+        - governance-controller
+      operationId: /faultInjectionModel_6
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PojoModel'
+  /configuration:
+    get:
+      tags:
+        - price-controller
+      operationId: /configuration
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+        - price-controller
+      operationId: /configuration_1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+        - price-controller
+      operationId: /configuration_2
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+        - price-controller
+      operationId: /configuration_3
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    options:
+      tags:
+        - price-controller
+      operationId: /configuration_4
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    head:
+      tags:
+        - price-controller
+      operationId: /configuration_5
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+        - price-controller
+      operationId: /configuration_6
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /circuitBreaker:
+    get:
+      tags:
+        - governance-controller
+      operationId: /circuitBreaker
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+        - governance-controller
+      operationId: /circuitBreaker_1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+        - governance-controller
+      operationId: /circuitBreaker_2
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+        - governance-controller
+      operationId: /circuitBreaker_3
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    options:
+      tags:
+        - governance-controller
+      operationId: /circuitBreaker_4
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    head:
+      tags:
+        - governance-controller
+      operationId: /circuitBreaker_5
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    patch:
+      tags:
+        - governance-controller
+      operationId: /circuitBreaker_6
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+components:
+  schemas:
+    PojoModel:
+      type: object
+      properties:
+        num:
+          type: integer
+          format: int32
+        name:
+          type: string
+    NonSerializableModel:
+      type: object
+      properties:
+        age:
+          type: string
+    Base:
+      type: object
+      properties:
+        name:
+          type: string
+    GenericBase:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Base'

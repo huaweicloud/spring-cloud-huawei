@@ -52,13 +52,14 @@ public class SchemaController {
     assertThat(schemaContents.size()).isEqualTo(schemas.size());
     assertThat(schemaContents.size()).isEqualTo(schemaSummary.size());
 
-    String priceSchema = schemaContents.get("price");
-    OpenAPI swagger = Yaml.mapper().readValue(priceSchema, OpenAPI.class);
-    // 契约接口数为当前服务所有接口数，如果有接口增加，比较值相应改变
-    if (swagger.getPaths().size() == 43) {
+    String a1 = schemaContents.get("price");
+    String a2 = readFile("SchemaContentController.yaml");
+    OpenAPI swagger2 = Yaml.mapper().readValue(a2, OpenAPI.class);
+    OpenAPI swagger1 = Yaml.mapper().readValue(a1, OpenAPI.class);
+    if (swagger1.equals(swagger2)) {
       return "success";
     } else {
-      return priceSchema;
+      return a1;
     }
   }
 
