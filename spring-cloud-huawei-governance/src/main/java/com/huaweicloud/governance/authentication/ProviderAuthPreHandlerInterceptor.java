@@ -15,12 +15,14 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.governance.authentication.provider;
+package com.huaweicloud.governance.authentication;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.huaweicloud.common.adapters.webmvc.PreHandlerInterceptor;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.governance.authentication.Const;
-import com.huaweicloud.governance.authentication.UnAuthorizedException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,8 +31,8 @@ public class ProviderAuthPreHandlerInterceptor implements PreHandlerInterceptor 
 
   private final RSAProviderTokenManager authenticationTokenManager;
 
-  public ProviderAuthPreHandlerInterceptor(AccessController accessController) {
-    authenticationTokenManager = new RSAProviderTokenManager(accessController);
+  public ProviderAuthPreHandlerInterceptor(List<AccessController> accessControllers) {
+    authenticationTokenManager = new RSAProviderTokenManager(accessControllers);
   }
 
   @Override
@@ -38,9 +40,10 @@ public class ProviderAuthPreHandlerInterceptor implements PreHandlerInterceptor 
     String token = InvocationContextHolder
         .getOrCreateInvocationContext()
         .getContext(Const.AUTH_TOKEN);
-    if (null == token || !authenticationTokenManager.valid(token)) {
-      throw new UnAuthorizedException("UNAUTHORIZED.");
-    }
+    Map<String, String> requestMap = new HashMap<>();
+    requestMap.put("uri", request.getRequestURI());
+    requestMap.put("method", request.getMethod());
+    authenticationTokenManager.valid(token, requestMap);
     return true;
   }
 }
