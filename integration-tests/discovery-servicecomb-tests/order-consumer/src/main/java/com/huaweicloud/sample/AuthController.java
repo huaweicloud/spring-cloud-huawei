@@ -48,6 +48,6 @@ public class AuthController {
     if (applicationContext.containsBean("providerAuthHandler") || !applicationContext.containsBean("authHandlerBoot")) {
       return null;
     }
-    return restTemplate.getForObject("http://account/checkTokenSecurity", String.class);
+    return restTemplate.getForObject("http://account-app.account/checkTokenSecurity", String.class);
   }
 }
