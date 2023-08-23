@@ -107,6 +107,11 @@ public class GovernanceProperties {
   public static final String REST_TEMPLATE_INSTANCE_BULKHEAD_ENABLED =
       PREFIX + "." + "restTemplate.instanceBulkhead.enabled";
 
+  public static final String WEBMVC_PUBLICKEY_SECURITY_POLICY_ENABLED =
+      PREFIX + "." + "webmvc.publicKey.securityPolicyEnabled";
+
+  public static final String WEBMVC_PUBLICKEY_ACLS = PREFIX + "." + "webmvc.public-key.acls";
+
   public static class Gateway {
     private RateLimiting rateLimiting = new RateLimiting();
 

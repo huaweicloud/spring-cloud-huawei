@@ -39,8 +39,20 @@ public class AuthControllerIT {
   }
 
   @Test
+  public void testCheckTokenSecuritySucesssFromGateway() {
+    String result = template.getForObject(gatewayUrl + "/order/checkTokenSecurity", String.class);
+    assertThat(result).isEqualTo("success");
+  }
+
+  @Test
   public void testCheckTokenSucesssFromConsumer() {
     String result = template.getForObject(orderServiceUrl + "/checkToken", String.class);
+    assertThat(result).isEqualTo("success");
+  }
+
+  @Test
+  public void testCheckTokenSecuritySucesssFromConsumer() {
+    String result = template.getForObject(orderServiceUrl + "/checkTokenSecurity", String.class);
     assertThat(result).isEqualTo("success");
   }
 
@@ -55,4 +67,14 @@ public class AuthControllerIT {
     assertThat(exception).isEqualTo(true);
   }
 
+  @Test
+  public void testCheckTokenSecurityFailFromOther() {
+    boolean exception = false;
+    try {
+      template.getForObject(accountServiceUrl + "/checkTokenSecurity", String.class);
+    } catch (Exception e) {
+      exception = true;
+    }
+    assertThat(exception).isEqualTo(true);
+  }
 }

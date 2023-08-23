@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.governance.authentication.provider;
+package com.huaweicloud.governance.authentication;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.huaweicloud.governance.authentication.RsaAuthenticationToken;
+
 import org.apache.servicecomb.foundation.common.utils.RSAUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +29,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class RSAProviderTokenManager {
@@ -39,40 +41,45 @@ public class RSAProviderTokenManager {
       .expireAfterAccess(getExpiredTime(), TimeUnit.MILLISECONDS)
       .build();
 
-  private final AccessController accessController;
+  private final List<AccessController> accessControllers;
 
-  public RSAProviderTokenManager(AccessController accessController) {
-    this.accessController = accessController;
+  public RSAProviderTokenManager(List<AccessController> accessControllers) {
+    this.accessControllers = accessControllers;
   }
 
-  public boolean valid(String token) {
+  public void valid(String token, Map<String, String> requestMap) throws Exception{
     try {
+      if (null == token) {
+        LOGGER.error("token is null, perhaps you need to set auth handler at consumer");
+        throw new UnAuthorizedException("UNAUTHORIZED.");
+      }
       RsaAuthenticationToken rsaToken = RsaAuthenticationToken.fromStr(token);
       if (null == rsaToken) {
         LOGGER.error("token format is error, perhaps you need to set auth handler at consumer");
-        return false;
+        throw new UnAuthorizedException("UNAUTHORIZED.");
       }
       if (tokenExpired(rsaToken)) {
         LOGGER.error("token is expired");
-        return false;
+        throw new UnAuthorizedException("UNAUTHORIZED.");
       }
-
-      if (validatedToken.asMap().containsKey(rsaToken)) {
-        return accessController.isAllowed(rsaToken.getServiceId(), rsaToken.getInstanceId());
+      boolean isAllow = true;
+      for (AccessController accessController : accessControllers) {
+        if (validatedToken.asMap().containsKey(rsaToken)) {
+          isAllow = accessController.isAllowed(rsaToken.getServiceId(), rsaToken.getInstanceId(), requestMap);
+        } else if (isValidToken(rsaToken, accessController) && !tokenExpired(rsaToken)) {
+          validatedToken.put(rsaToken, true);
+          isAllow = accessController.isAllowed(rsaToken.getServiceId(), rsaToken.getInstanceId(), requestMap);
+        }
+        if (!isAllow) {
+          throw new UnAuthorizedException(accessController.interceptMessage());
+        }
       }
-
-      if (isValidToken(rsaToken) && !tokenExpired(rsaToken)) {
-        validatedToken.put(rsaToken, true);
-        return accessController.isAllowed(rsaToken.getServiceId(), rsaToken.getInstanceId());
-      }
-      return false;
     } catch (InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException | SignatureException e) {
       LOGGER.error("verify error", e);
-      return false;
     }
   }
 
-  public boolean isValidToken(RsaAuthenticationToken rsaToken)
+  public boolean isValidToken(RsaAuthenticationToken rsaToken, AccessController accessController)
       throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, SignatureException {
     String sign = rsaToken.getSign();
     String content = rsaToken.plainToken();
@@ -95,5 +102,4 @@ public class RSAProviderTokenManager {
   Cache<RsaAuthenticationToken, Boolean> getValidatedToken() {
     return validatedToken;
   }
-
 }

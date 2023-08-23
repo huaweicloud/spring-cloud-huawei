@@ -19,7 +19,6 @@ package com.huaweicloud.crossappsample;
 import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
 import com.huaweicloud.governance.authentication.AuthHandlerBoot;
 import com.huaweicloud.governance.authentication.Const;
-import com.huaweicloud.governance.authentication.provider.ProviderAuthPreHandlerInterceptor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -28,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.governance.authentication.ProviderAuthPreHandlerInterceptor;
+import com.huaweicloud.governance.authentication.securityPolicy.SecurityPolicyProperties;
 
 @RestController
 public class AuthController {
@@ -56,4 +57,21 @@ public class AuthController {
     return "success";
   }
 
+  @RequestMapping("/checkTokenSecurity")
+  public String checkTokenSecurity() {
+    SecurityPolicyProperties securityPolicyProperties = applicationContext.getBean(SecurityPolicyProperties.class);
+    ProviderAuthPreHandlerInterceptor interceptor = applicationContext.getBean(ProviderAuthPreHandlerInterceptor.class);
+    AuthHandlerBoot authHandlerBoot = applicationContext.getBean(AuthHandlerBoot.class);
+    if (interceptor == null || authHandlerBoot == null || securityPolicyProperties == null
+        || securityPolicyProperties.getAction().getAllow().size() != 2
+        || securityPolicyProperties.getAction().getDeny().size() != 2) {
+      return null;
+    }
+
+    InvocationContext invocationContext = InvocationContextHolder.getOrCreateInvocationContext();
+    if (StringUtils.isEmpty(invocationContext.getContext(Const.AUTH_TOKEN))) {
+      return null;
+    }
+    return "success";
+  }
 }
