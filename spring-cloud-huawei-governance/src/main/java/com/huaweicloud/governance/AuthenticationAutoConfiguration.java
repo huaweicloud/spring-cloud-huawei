@@ -17,6 +17,8 @@
 
 package com.huaweicloud.governance;
 
+import java.util.List;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -29,15 +31,19 @@ import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
+import com.huaweicloud.governance.authentication.AccessController;
 import com.huaweicloud.governance.authentication.AuthHandlerBoot;
 import com.huaweicloud.governance.authentication.AuthenticationAdapter;
 import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
-import com.huaweicloud.governance.authentication.provider.AccessController;
-import com.huaweicloud.governance.authentication.provider.ProviderAuthPreHandlerInterceptor;
+import com.huaweicloud.governance.authentication.whiteBlack.WhiteBlackAccessController;
+import com.huaweicloud.governance.authentication.ProviderAuthPreHandlerInterceptor;
+import com.huaweicloud.governance.authentication.securityPolicy.SecurityPolicyAccessController;
+import com.huaweicloud.governance.authentication.securityPolicy.SecurityPolicyProperties;
 
 @Configuration
 @ConditionalOnExpression("${" + GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED + ":false}"
-    + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":false}")
+    + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":false}"
+    + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_SECURITY_POLICY_ENABLED + ":false}")
 public class AuthenticationAutoConfiguration {
   @Bean
   @RefreshScope
@@ -50,7 +56,8 @@ public class AuthenticationAutoConfiguration {
 
   @Bean
   @ConditionalOnExpression("${" + GovernanceProperties.WEBMVC_PUBLICKEY_CONSUMER_ENABLED + ":true}"
-      + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":true}")
+      + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":true}"
+      + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_SECURITY_POLICY_ENABLED + ":true}")
   public ApplicationListener<ApplicationEvent> authHandlerBoot(Registration registration,
       AuthenticationAdapter adapter) {
     return new AuthHandlerBoot(registration, adapter);
@@ -65,17 +72,34 @@ public class AuthenticationAutoConfiguration {
   }
 
   @Bean
-  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED,
-      havingValue = "true")
-  public ProviderAuthPreHandlerInterceptor providerAuthPreHandlerInterceptor(AccessController accessController) {
+  @ConditionalOnExpression("${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":false}"
+      + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_SECURITY_POLICY_ENABLED + ":false}")
+  public ProviderAuthPreHandlerInterceptor providerAuthPreHandlerInterceptor(List<AccessController> accessController) {
     return new ProviderAuthPreHandlerInterceptor(accessController);
   }
 
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED,
       havingValue = "true")
-  public AccessController accessController(AuthenticationAdapter authenticationAdapter,
+  public WhiteBlackAccessController whiteBlackAccessController(AuthenticationAdapter authenticationAdapter,
       BlackWhiteListProperties blackWhiteListProperties) {
-    return new AccessController(authenticationAdapter, blackWhiteListProperties);
+    return new WhiteBlackAccessController(authenticationAdapter, blackWhiteListProperties);
+  }
+
+  @Bean
+  @RefreshScope
+  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_SECURITY_POLICY_ENABLED,
+      havingValue = "true")
+  @ConfigurationProperties(GovernanceProperties.WEBMVC_PUBLICKEY_ACLS)
+  public SecurityPolicyProperties securityPolicyProperties() {
+    return new SecurityPolicyProperties();
+  }
+
+  @Bean
+  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_SECURITY_POLICY_ENABLED,
+      havingValue = "true")
+  public SecurityPolicyAccessController securityPolicyAccessController(AuthenticationAdapter authenticationAdapter,
+      SecurityPolicyProperties securityPolicyProperties) {
+    return new SecurityPolicyAccessController(authenticationAdapter, securityPolicyProperties);
   }
 }

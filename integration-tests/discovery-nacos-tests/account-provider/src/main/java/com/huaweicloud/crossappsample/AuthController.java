@@ -21,7 +21,9 @@ import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.governance.authentication.AuthHandlerBoot;
 import com.huaweicloud.governance.authentication.Const;
-import com.huaweicloud.governance.authentication.provider.ProviderAuthPreHandlerInterceptor;
+import com.huaweicloud.governance.authentication.ProviderAuthPreHandlerInterceptor;
+import com.huaweicloud.governance.authentication.securityPolicy.SecurityPolicyProperties;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -40,9 +42,9 @@ public class AuthController {
 
   @RequestMapping("/checkToken")
   public String checkToken() {
+    BlackWhiteListProperties blackWhiteListProperties = applicationContext.getBean(BlackWhiteListProperties.class);
     ProviderAuthPreHandlerInterceptor interceptor = applicationContext.getBean(ProviderAuthPreHandlerInterceptor.class);
     AuthHandlerBoot authHandlerBoot = applicationContext.getBean(AuthHandlerBoot.class);
-    BlackWhiteListProperties blackWhiteListProperties = applicationContext.getBean(BlackWhiteListProperties.class);
     if (interceptor == null || authHandlerBoot == null || blackWhiteListProperties == null
         || blackWhiteListProperties.getBlack().size() != 2 || blackWhiteListProperties.getWhite().size() != 1) {
       return null;
@@ -55,4 +57,21 @@ public class AuthController {
     return "success";
   }
 
+  @RequestMapping("/checkTokenSecurity")
+  public String checkTokenSecurity() {
+    SecurityPolicyProperties securityPolicyProperties = applicationContext.getBean(SecurityPolicyProperties.class);
+    ProviderAuthPreHandlerInterceptor interceptor = applicationContext.getBean(ProviderAuthPreHandlerInterceptor.class);
+    AuthHandlerBoot authHandlerBoot = applicationContext.getBean(AuthHandlerBoot.class);
+    if (interceptor == null || authHandlerBoot == null || securityPolicyProperties == null
+        || securityPolicyProperties.getAction().getAllow().size() != 2
+        || securityPolicyProperties.getAction().getDeny().size() != 2) {
+      return null;
+    }
+
+    InvocationContext invocationContext = InvocationContextHolder.getOrCreateInvocationContext();
+    if (StringUtils.isEmpty(invocationContext.getContext(Const.AUTH_TOKEN))) {
+      return null;
+    }
+    return "success";
+  }
 }

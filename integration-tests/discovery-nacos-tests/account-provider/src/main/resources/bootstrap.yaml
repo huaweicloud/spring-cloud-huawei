@@ -52,3 +52,28 @@ spring:
               - category: property
                 propertyName: serviceName
                 rule: order*
+
+          securityPolicyEnabled: true
+          acls:
+            app: canary
+            mode: permissive
+            provider: account
+            action:
+              allow:
+                - id: 1
+                  method: GET
+                  consumer: order
+                  uri: /checkTokenSecurity
+                - id: 2
+                  method: GET
+                  consumer: order
+                  uri: /checkTokens
+              deny:
+                - id: 1
+                  method: GET
+                  consumer: order
+                  uri: /checkTokenProvider
+                - id: 2
+                  method: GET
+                  consumer: order
+                  uri: /checkTokens
