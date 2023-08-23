@@ -18,4 +18,4 @@
 
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
   com.huaweicloud.service.engine.common.configration.BootstrapPropertiesConfiguration,\
-  com.huaweicloud.service.engine.common.CommonConfiguration
+  com.huaweicloud.service.engine.common.EngineCommonConfiguration
