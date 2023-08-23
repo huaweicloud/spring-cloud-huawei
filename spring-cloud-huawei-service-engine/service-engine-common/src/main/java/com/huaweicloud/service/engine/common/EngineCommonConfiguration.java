@@ -27,7 +27,7 @@ import com.huaweicloud.service.engine.common.transport.AkSkRequestAuthHeaderProv
 import com.huaweicloud.service.engine.common.transport.RBACRequestAuthHeaderProvider;
 
 @Configuration
-public class CommonConfiguration {
+public class EngineCommonConfiguration {
   @Bean
   public AuthHeaderProvider akSkRequestAuthHeaderProvider(ServiceCombAkSkProperties serviceCombAkSkProperties) {
     return new AkSkRequestAuthHeaderProvider(serviceCombAkSkProperties);
