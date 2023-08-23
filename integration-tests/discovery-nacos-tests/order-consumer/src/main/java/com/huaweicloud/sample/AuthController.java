@@ -42,4 +42,12 @@ public class AuthController {
     }
     return restTemplate.getForObject("http://account/checkToken", String.class);
   }
+
+  @RequestMapping("/checkTokenSecurity")
+  public String checkTokenSecurity() {
+    if (applicationContext.containsBean("providerAuthHandler") || !applicationContext.containsBean("authHandlerBoot")) {
+      return null;
+    }
+    return restTemplate.getForObject("http://account/checkTokenSecurity", String.class);
+  }
 }

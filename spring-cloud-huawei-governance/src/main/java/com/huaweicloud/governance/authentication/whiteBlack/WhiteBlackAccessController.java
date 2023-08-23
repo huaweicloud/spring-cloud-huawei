@@ -13,35 +13,44 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.governance.authentication.provider;
+package com.huaweicloud.governance.authentication.whiteBlack;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
+import com.huaweicloud.governance.authentication.AccessController;
 import com.huaweicloud.governance.authentication.AuthenticationAdapter;
 
 /**
  * Add black / white list control to service access
  */
-public class AccessController {
+public class WhiteBlackAccessController implements AccessController {
   BlackWhiteListProperties blackWhiteListProperties;
 
   private final AuthenticationAdapter authenticationAdapter;
 
-  public AccessController(AuthenticationAdapter authenticationAdapter,
+  public WhiteBlackAccessController(AuthenticationAdapter authenticationAdapter,
       BlackWhiteListProperties blackWhiteListProperties) {
     this.authenticationAdapter = authenticationAdapter;
     this.blackWhiteListProperties = blackWhiteListProperties;
   }
 
-  public boolean isAllowed(String serviceId, String instanceId) {
+  @Override
+  public boolean isAllowed(String serviceId, String instanceId, Map<String, String> requestMap) {
     return whiteAllowed(serviceId, instanceId) && !blackDenied(serviceId, instanceId);
   }
 
+  @Override
   public String getPublicKeyFromInstance(String instanceId, String serviceId) {
     return authenticationAdapter.getPublicKeyFromInstance(instanceId, serviceId);
+  }
+
+  @Override
+  public String interceptMessage() {
+    return "UNAUTHORIZED BY WHITE BLACK";
   }
 
   private boolean whiteAllowed(String serviceId, String instanceId) {
