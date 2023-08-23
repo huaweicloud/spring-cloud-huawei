@@ -27,11 +27,11 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.huaweicloud.service.engine.common.CommonConfiguration;
+import com.huaweicloud.service.engine.common.EngineCommonConfiguration;
 import com.huaweicloud.service.engine.common.configration.bootstrap.ServiceCombAkSkProperties;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {CommonConfiguration.class, AkSkTestConfiguration.class})
+@SpringBootTest(classes = {EngineCommonConfiguration.class, AkSkTestConfiguration.class})
 @ContextConfiguration(initializers = ConfigDataApplicationContextInitializer.class)
 public class ServiceCombAkSkPropertiesTest {
   @Autowired
