@@ -44,11 +44,11 @@ public class SecurityPolicyAccessController implements AccessController {
 
   private boolean checkDeny(String serviceId, Map<String, String> requestMap) {
     if (securityPolicyProperties.matchDeny(serviceId, requestMap.get("uri"), requestMap.get("method"))) {
-      // Tolerance mode, black policy match allow passing
+      // permissive mode, black policy match allow passing
       if ("permissive".equals(securityPolicyProperties.getMode())) {
-        //TODO sending alarm message
-        LOGGER.info("permissive model deny alarm message, consumer id={}, method={}, uri={}", serviceId,
-            requestMap.get("uri"), requestMap.get("method"));
+        LOGGER.info("[autoauthz unauthorized request] consumer={}, provider={}, path={}, method={}, timestamp={}",
+            serviceId, securityPolicyProperties.getProvider(), requestMap.get("method"), requestMap.get("uri"),
+            System.currentTimeMillis());
         return false;
       } else {
         return true;
@@ -62,11 +62,11 @@ public class SecurityPolicyAccessController implements AccessController {
     if (securityPolicyProperties.matchAllow(serviceId, requestMap.get("uri"), requestMap.get("method"))) {
       return true;
     } else {
-      // Tolerance mode, white policy not match allow passing
+      // permissive mode, white policy not match allow passing
       if ("permissive".equals(securityPolicyProperties.getMode())) {
-        //TODO sending alarm message
-        LOGGER.info("permissive model allow alarm message, consumer id={}, method={}, uri={}", serviceId,
-            requestMap.get("uri"), requestMap.get("method"));
+        LOGGER.info("[autoauthz unauthorized request] consumer={}, provider={}, path={}, method={}, timestamp={}",
+            serviceId, securityPolicyProperties.getProvider(), requestMap.get("method"), requestMap.get("uri"),
+            System.currentTimeMillis());
         return true;
       } else {
         return false;
