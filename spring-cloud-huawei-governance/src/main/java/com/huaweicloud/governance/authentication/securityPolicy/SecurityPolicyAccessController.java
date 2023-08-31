@@ -47,7 +47,7 @@ public class SecurityPolicyAccessController implements AccessController {
       // permissive mode, black policy match allow passing
       if ("permissive".equals(securityPolicyProperties.getMode())) {
         LOGGER.info("[autoauthz unauthorized request] consumer={}, provider={}, path={}, method={}, timestamp={}",
-            serviceId, securityPolicyProperties.getProvider(), requestMap.get("method"), requestMap.get("uri"),
+            serviceId, securityPolicyProperties.getProvider(), requestMap.get("uri"), requestMap.get("method"),
             System.currentTimeMillis());
         return false;
       } else {
@@ -65,7 +65,7 @@ public class SecurityPolicyAccessController implements AccessController {
       // permissive mode, white policy not match allow passing
       if ("permissive".equals(securityPolicyProperties.getMode())) {
         LOGGER.info("[autoauthz unauthorized request] consumer={}, provider={}, path={}, method={}, timestamp={}",
-            serviceId, securityPolicyProperties.getProvider(), requestMap.get("method"), requestMap.get("uri"),
+            serviceId, securityPolicyProperties.getProvider(), requestMap.get("uri"), requestMap.get("method"),
             System.currentTimeMillis());
         return true;
       } else {
