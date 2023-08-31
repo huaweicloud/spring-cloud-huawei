@@ -16,6 +16,9 @@ package com.huaweicloud.governance.authentication.securityPolicy;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.huaweicloud.governance.authentication.AccessController;
 import com.huaweicloud.governance.authentication.AuthenticationAdapter;
 
@@ -23,6 +26,7 @@ import com.huaweicloud.governance.authentication.AuthenticationAdapter;
  * Add security policy list control to service access
  */
 public class SecurityPolicyAccessController implements AccessController {
+  private static final Logger LOGGER = LoggerFactory.getLogger(SecurityPolicyAccessController.class);
   private SecurityPolicyProperties securityPolicyProperties;
 
   private final AuthenticationAdapter authenticationAdapter;
@@ -39,10 +43,12 @@ public class SecurityPolicyAccessController implements AccessController {
   }
 
   private boolean checkDeny(String serviceId, Map<String, String> requestMap) {
-    // Forced mode, white policy not match or black policy match intercept
     if (securityPolicyProperties.matchDeny(serviceId, requestMap.get("uri"), requestMap.get("method"))) {
+      // permissive mode, black policy match allow passing
       if ("permissive".equals(securityPolicyProperties.getMode())) {
-        //TODO sending alarm message
+        LOGGER.info("[autoauthz unauthorized request] consumer={}, provider={}, path={}, method={}, timestamp={}",
+            serviceId, securityPolicyProperties.getProvider(), requestMap.get("method"), requestMap.get("uri"),
+            System.currentTimeMillis());
         return false;
       } else {
         return true;
@@ -53,12 +59,14 @@ public class SecurityPolicyAccessController implements AccessController {
   }
 
   private boolean checkAllow(String serviceId, Map<String, String> requestMap) {
-    // Tolerance mode, white policy not match or black policy match allow passing
     if (securityPolicyProperties.matchAllow(serviceId, requestMap.get("uri"), requestMap.get("method"))) {
       return true;
     } else {
+      // permissive mode, white policy not match allow passing
       if ("permissive".equals(securityPolicyProperties.getMode())) {
-        //TODO sending alarm message
+        LOGGER.info("[autoauthz unauthorized request] consumer={}, provider={}, path={}, method={}, timestamp={}",
+            serviceId, securityPolicyProperties.getProvider(), requestMap.get("method"), requestMap.get("uri"),
+            System.currentTimeMillis());
         return true;
       } else {
         return false;
