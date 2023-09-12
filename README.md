@@ -44,7 +44,7 @@ Spring Cloud Huawei provides a large number of out-of-the-box service governance
 3. [CSE Guide][CSE Developer Guide]
 4. [ServiceStage Guide][ServiceStage]
 
-[ServiceStage]: https://support.huaweicloud.com/intl/en-us/productdesc-servicestage/ss_productdesc_0001.html
+[ServiceStage]: https://support.huaweicloud.com/intl/en-us/usermanual-servicestage/servicestage_03_0001.html
 [CSE]: https://www.huaweicloud.com/intl/en-us/product/cse.html
 [CSE Developer Guide]: https://support.huaweicloud.com/intl/en-us/devg-cse/cse_devg_0002.html
 [SERVICECOMB]: https://servicecomb.apache.org/developers/
