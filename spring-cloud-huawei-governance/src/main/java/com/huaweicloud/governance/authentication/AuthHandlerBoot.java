@@ -16,9 +16,9 @@
  */
 package com.huaweicloud.governance.authentication;
 
-import org.apache.servicecomb.foundation.common.utils.RSAKeyPairEntry;
-import org.apache.servicecomb.foundation.common.utils.RSAUtils;
-import org.apache.servicecomb.foundation.token.RSAKeypair4Auth;
+import org.apache.servicecomb.foundation.common.utils.KeyPairEntry;
+import org.apache.servicecomb.foundation.common.utils.KeyPairUtils;
+import org.apache.servicecomb.foundation.token.Keypair4Auth;
 import org.springframework.cloud.client.discovery.event.InstancePreRegisteredEvent;
 import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.context.ApplicationEvent;
@@ -44,10 +44,10 @@ public class AuthHandlerBoot implements ApplicationListener<ApplicationEvent> {
   @Override
   public void onApplicationEvent(ApplicationEvent event) {
     if (event instanceof InstancePreRegisteredEvent) {
-      RSAKeyPairEntry rsaKeyPairEntry = RSAUtils.generateRSAKeyPair();
-      RSAKeypair4Auth.INSTANCE.setPrivateKey(rsaKeyPairEntry.getPrivateKey());
-      RSAKeypair4Auth.INSTANCE.setPublicKey(rsaKeyPairEntry.getPublicKey());
-      RSAKeypair4Auth.INSTANCE.setPublicKeyEncoded(rsaKeyPairEntry.getPublicKeyEncoded());
+      KeyPairEntry rsaKeyPairEntry = KeyPairUtils.generateRSAKeyPair();
+      Keypair4Auth.INSTANCE.setPrivateKey(rsaKeyPairEntry.getPrivateKey());
+      Keypair4Auth.INSTANCE.setPublicKey(rsaKeyPairEntry.getPublicKey());
+      Keypair4Auth.INSTANCE.setPublicKeyEncoded(rsaKeyPairEntry.getPublicKeyEncoded());
       adapter.setPublicKey(registration, rsaKeyPairEntry.getPublicKeyEncoded());
     }
   }
