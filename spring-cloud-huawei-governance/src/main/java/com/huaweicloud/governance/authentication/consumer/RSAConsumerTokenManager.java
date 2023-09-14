@@ -20,8 +20,8 @@ package com.huaweicloud.governance.authentication.consumer;
 import java.security.PrivateKey;
 import java.util.Optional;
 
-import org.apache.servicecomb.foundation.common.utils.RSAUtils;
-import org.apache.servicecomb.foundation.token.RSAKeypair4Auth;
+import org.apache.servicecomb.foundation.common.utils.KeyPairUtils;
+import org.apache.servicecomb.foundation.token.Keypair4Auth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.serviceregistry.Registration;
@@ -62,7 +62,7 @@ public class RSAConsumerTokenManager {
   }
 
   public String createToken() {
-    PrivateKey privateKey = RSAKeypair4Auth.INSTANCE.getPrivateKey();
+    PrivateKey privateKey = Keypair4Auth.INSTANCE.getPrivateKey();
     String instanceId = this.adapter.getInstanceId(instanceService);
     String serviceId = this.adapter.getServiceId(instanceService);
 
@@ -76,7 +76,7 @@ public class RSAConsumerTokenManager {
     long generateTime = System.currentTimeMillis();
     try {
       String plain = String.format("%s@%s@%s@%s", instanceId, serviceId, generateTime, randomCode);
-      String sign = RSAUtils.sign(plain, privateKey);
+      String sign = KeyPairUtils.sign(plain, privateKey);
       token = RsaAuthenticationToken.fromStr(String.format("%s@%s", plain, sign));
     } catch (Exception e) {
       LOGGER.error("create token error", e);
