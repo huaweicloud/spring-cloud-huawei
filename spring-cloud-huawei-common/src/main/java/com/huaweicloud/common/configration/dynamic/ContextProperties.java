@@ -47,6 +47,10 @@ public class ContextProperties {
 
   private boolean useContextOperationForMetrics = false;
 
+  private boolean addTraceIdForFeign = false;
+
+  private boolean addTraceIdForTemplate = false;
+
   public boolean isEnableTraceInfo() {
     return enableTraceInfo;
   }
@@ -109,5 +113,21 @@ public class ContextProperties {
 
   public void setUseContextOperationForMetrics(boolean useContextOperationForMetrics) {
     this.useContextOperationForMetrics = useContextOperationForMetrics;
+  }
+
+  public boolean isAddTraceIdForFeign() {
+    return addTraceIdForFeign;
+  }
+
+  public void setAddTraceIdForFeign(boolean addTraceIdForFeign) {
+    this.addTraceIdForFeign = addTraceIdForFeign;
+  }
+
+  public boolean isAddTraceIdForTemplate() {
+    return addTraceIdForTemplate;
+  }
+
+  public void setAddTraceIdForTemplate(boolean addTraceIdForTemplate) {
+    this.addTraceIdForTemplate = addTraceIdForTemplate;
   }
 }

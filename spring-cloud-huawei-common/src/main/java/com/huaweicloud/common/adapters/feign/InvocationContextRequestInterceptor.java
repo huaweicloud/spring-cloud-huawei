@@ -19,6 +19,7 @@ package com.huaweicloud.common.adapters.feign;
 
 import org.springframework.core.Ordered;
 
+import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 
@@ -26,11 +27,17 @@ import feign.RequestInterceptor;
 import feign.RequestTemplate;
 
 public class InvocationContextRequestInterceptor implements RequestInterceptor, Ordered {
-  public InvocationContextRequestInterceptor() {
+  private final ContextProperties contextProperties;
+
+  public InvocationContextRequestInterceptor(ContextProperties contextProperties) {
+    this.contextProperties = contextProperties;
   }
 
   @Override
   public void apply(RequestTemplate requestTemplate) {
+    if (!contextProperties.isAddTraceIdForFeign()) {
+      return;
+    }
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
     if (context.getContext(InvocationContext.CONTEXT_TRACE_ID) == null) {
       context.putContext(InvocationContext.CONTEXT_TRACE_ID, InvocationContext.generateTraceId());

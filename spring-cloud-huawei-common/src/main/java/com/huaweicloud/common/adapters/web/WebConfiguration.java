@@ -50,8 +50,8 @@ public class WebConfiguration {
   }
 
   @Bean
-  public ClientHttpRequestInterceptor invocationContextClientHttpRequestInterceptor() {
-    return new InvocationContextClientHttpRequestInterceptor();
+  public ClientHttpRequestInterceptor invocationContextClientHttpRequestInterceptor(ContextProperties contextProperties) {
+    return new InvocationContextClientHttpRequestInterceptor(contextProperties);
   }
 
   @Bean
