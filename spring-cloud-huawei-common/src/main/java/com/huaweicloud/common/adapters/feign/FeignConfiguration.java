@@ -42,8 +42,8 @@ public class FeignConfiguration {
   }
 
   @Bean
-  public RequestInterceptor invocationContextRequestInterceptor() {
-    return new InvocationContextRequestInterceptor();
+  public RequestInterceptor invocationContextRequestInterceptor(ContextProperties contextProperties) {
+    return new InvocationContextRequestInterceptor(contextProperties);
   }
 
   @Bean

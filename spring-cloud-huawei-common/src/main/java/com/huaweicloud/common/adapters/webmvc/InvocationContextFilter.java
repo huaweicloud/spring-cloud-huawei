@@ -19,6 +19,13 @@ package com.huaweicloud.common.adapters.webmvc;
 
 import java.io.IOException;
 
+import org.slf4j.MDC;
+
+import com.huaweicloud.common.configration.dynamic.ContextProperties;
+import com.huaweicloud.common.context.InvocationContext;
+import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.common.context.InvocationStage;
+
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -26,13 +33,6 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import org.slf4j.MDC;
-
-import com.huaweicloud.common.configration.dynamic.ContextProperties;
-import com.huaweicloud.common.context.InvocationContext;
-import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.common.context.InvocationStage;
 
 public class InvocationContextFilter implements Filter {
   private final ContextProperties contextProperties;
@@ -72,6 +72,7 @@ public class InvocationContextFilter implements Filter {
     } finally {
       stage.finish(((HttpServletResponse) response).getStatus());
       MDC.remove(InvocationContext.CONTEXT_TRACE_ID);
+      InvocationContextHolder.clearInvocationContext();
     }
   }
 
