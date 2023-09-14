@@ -42,12 +42,12 @@ import com.huaweicloud.governance.adapters.loadbalancer.ServiceInstanceFilter;
 public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
   private static final Logger LOGGER = LoggerFactory.getLogger(CanaryServiceInstanceFilter.class);
 
-  private final AbstractRouterDistributor<ServiceInstance, ServiceInstance> routerDistributor;
+  private final AbstractRouterDistributor<ServiceInstance> routerDistributor;
 
   private final RouterFilter routerFilter;
 
   @Autowired
-  public CanaryServiceInstanceFilter(AbstractRouterDistributor<ServiceInstance, ServiceInstance> routerDistributor,
+  public CanaryServiceInstanceFilter(AbstractRouterDistributor<ServiceInstance> routerDistributor,
       RouterFilter routerFilter) {
     this.routerDistributor = routerDistributor;
     this.routerFilter = routerFilter;

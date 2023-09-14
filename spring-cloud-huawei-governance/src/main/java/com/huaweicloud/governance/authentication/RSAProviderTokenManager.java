@@ -17,14 +17,6 @@
 
 package com.huaweicloud.governance.authentication;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-
-import org.apache.servicecomb.foundation.common.utils.RSAUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
@@ -32,6 +24,14 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.servicecomb.foundation.common.utils.KeyPairUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 public class RSAProviderTokenManager {
 
@@ -47,7 +47,7 @@ public class RSAProviderTokenManager {
     this.accessControllers = accessControllers;
   }
 
-  public void valid(String token, Map<String, String> requestMap) throws Exception{
+  public void valid(String token, Map<String, String> requestMap) throws Exception {
     try {
       if (null == token) {
         LOGGER.error("token is null, perhaps you need to set auth handler at consumer");
@@ -84,7 +84,7 @@ public class RSAProviderTokenManager {
     String sign = rsaToken.getSign();
     String content = rsaToken.plainToken();
     String publicKey = accessController.getPublicKeyFromInstance(rsaToken.getInstanceId(), rsaToken.getServiceId());
-    return RSAUtils.verify(publicKey, sign, content);
+    return KeyPairUtils.verify(publicKey, sign, content);
   }
 
   protected int getExpiredTime() {

@@ -40,7 +40,7 @@ import com.huaweicloud.router.client.loadbalancer.ZoneAwareServiceInstanceFilter
 @AutoConfigureAfter(LoadBalancerClientConfiguration.class)
 public class RouterClientAutoConfiguration {
   @Bean
-  public AbstractRouterDistributor<ServiceInstance, ServiceInstance> springCloudRouterDistributor(
+  public AbstractRouterDistributor<ServiceInstance> springCloudRouterDistributor(
       CanaryFilterAdapter adapter) {
     return new SpringCloudRouterDistributor(adapter);
   }
@@ -48,7 +48,7 @@ public class RouterClientAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean(CanaryServiceInstanceFilter.class)
   public CanaryServiceInstanceFilter canaryServiceInstanceFilter(
-      AbstractRouterDistributor<ServiceInstance, ServiceInstance> routerDistributor, RouterFilter routerFilter) {
+      AbstractRouterDistributor<ServiceInstance> routerDistributor, RouterFilter routerFilter) {
     return new CanaryServiceInstanceFilter(routerDistributor, routerFilter);
   }
 

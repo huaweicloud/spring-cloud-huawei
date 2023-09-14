@@ -19,12 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 
 public class SpringCloudRouterDistributor extends
-    AbstractRouterDistributor<ServiceInstance, ServiceInstance> {
+    AbstractRouterDistributor<ServiceInstance> {
 
   @Autowired
   public SpringCloudRouterDistributor(CanaryFilterAdapter adapter) {
-    init(server -> server,
-        server -> adapter.getVersion(server),
+    init(server -> adapter.getVersion(server),
         server -> adapter.getServiceName(server),
         server -> adapter.getProperties(server));
   }
