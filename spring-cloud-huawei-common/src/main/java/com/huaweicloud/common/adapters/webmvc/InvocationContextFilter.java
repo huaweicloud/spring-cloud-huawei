@@ -72,6 +72,7 @@ public class InvocationContextFilter implements Filter {
     } finally {
       stage.finish(((HttpServletResponse) response).getStatus());
       MDC.remove(InvocationContext.CONTEXT_TRACE_ID);
+      InvocationContextHolder.clearInvocationContext();
     }
   }
 

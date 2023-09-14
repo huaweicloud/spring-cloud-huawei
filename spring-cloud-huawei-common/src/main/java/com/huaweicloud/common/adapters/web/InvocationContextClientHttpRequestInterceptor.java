@@ -25,18 +25,24 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
+import com.huaweicloud.common.configration.dynamic.ContextProperties;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 
 public class InvocationContextClientHttpRequestInterceptor implements
     ClientHttpRequestInterceptor, Ordered {
+  private final ContextProperties contextProperties;
 
-  public InvocationContextClientHttpRequestInterceptor() {
+  public InvocationContextClientHttpRequestInterceptor(ContextProperties contextProperties) {
+    this.contextProperties = contextProperties;
   }
 
   @Override
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
       throws IOException {
+    if (!contextProperties.isAddTraceIdForTemplate()) {
+      return execution.execute(request, body);
+    }
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
     if (context.getContext(InvocationContext.CONTEXT_TRACE_ID) == null) {
       context.putContext(InvocationContext.CONTEXT_TRACE_ID, InvocationContext.generateTraceId());
