@@ -52,7 +52,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- TODO update later -->
       <dependency>
         <groupId>io.github.resilience4j</groupId>
         <artifactId>resilience4j-bom</artifactId>
@@ -67,13 +66,6 @@
       </dependency>
 
       <!-- core dependencies of spring cloud huawei, put it in the begging -->
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-framework-bom</artifactId>
-        <version>${spring.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
