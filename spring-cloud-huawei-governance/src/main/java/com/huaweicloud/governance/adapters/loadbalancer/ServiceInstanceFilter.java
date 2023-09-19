@@ -17,14 +17,19 @@
 
 package com.huaweicloud.governance.adapters.loadbalancer;
 
+import java.util.List;
+
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.core.Ordered;
 
-import java.util.List;
-
 public interface ServiceInstanceFilter extends Ordered {
+    int ZONE_AWARE_ORDER = -2;
+
+    int CANARY_ORDER = -1;
+
+    int AFFINITY_TAG_ORDER = 0;
 
     /**
      * filter service instance
