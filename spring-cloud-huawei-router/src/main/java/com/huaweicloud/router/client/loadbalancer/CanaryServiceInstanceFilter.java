@@ -94,6 +94,6 @@ public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
 
   @Override
   public int getOrder() {
-    return -1;
+    return CANARY_ORDER;
   }
 }

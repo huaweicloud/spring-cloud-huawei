@@ -51,7 +51,7 @@ public class ZoneAwareServiceInstanceFilter implements ServiceInstanceFilter {
 
   @Override
   public int getOrder() {
-    return -2;
+    return ZONE_AWARE_ORDER;
   }
 
   private List<ServiceInstance> zoneAwareDiscoveryFilter(List<ServiceInstance> instances) {
