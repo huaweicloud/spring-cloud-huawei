@@ -21,14 +21,11 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.env.Environment;
 
 import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
 import com.huaweicloud.governance.authentication.AccessController;
 import com.huaweicloud.governance.authentication.AuthenticationAdapter;
 import com.huaweicloud.governance.authentication.Const;
-import com.huaweicloud.governance.authentication.RSATokenCheckUtils;
-import com.huaweicloud.governance.authentication.RsaAuthenticationToken;
 import com.huaweicloud.governance.authentication.UnAuthorizedException;
 
 /**
@@ -41,26 +38,14 @@ public class WhiteBlackAccessController implements AccessController {
 
   private final AuthenticationAdapter authenticationAdapter;
 
-  private final Environment environment;
-
   public WhiteBlackAccessController(AuthenticationAdapter authenticationAdapter,
-      BlackWhiteListProperties blackWhiteListProperties, Environment environment) {
+      BlackWhiteListProperties blackWhiteListProperties) {
     this.authenticationAdapter = authenticationAdapter;
     this.blackWhiteListProperties = blackWhiteListProperties;
-    this.environment = environment;
   }
 
   @Override
-  public RsaAuthenticationToken validProcess(String token, String serviceName) throws Exception {
-    if (Boolean.parseBoolean(environment.getProperty(Const.AUTH_TOKEN_CHECK_ENABLED, "true"))) {
-      return RSATokenCheckUtils.checkTokenInfo(token);
-    } else {
-      return null;
-    }
-  }
-
-  @Override
-  public boolean isAllowed(Map<String, String> requestMap) {
+  public boolean isAllowed(Map<String, String> requestMap, boolean isNeedCheckServiceName) throws Exception {
     if ((blackWhiteListProperties.getBlack().size() > 0 || blackWhiteListProperties.getWhite().size() > 0)
       && (StringUtils.isEmpty(requestMap.get(Const.AUTH_SERVICE_ID))
         || StringUtils.isEmpty(requestMap.get(Const.AUTH_INSTANCE_ID)))) {

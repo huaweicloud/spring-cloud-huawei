@@ -38,8 +38,8 @@ spring:
         firstPullRequired: false
 
       webmvc:
-        tokenCheckEnabled: true
         publicKey:
+          tokenCheckEnabled: true
           providerEnabled: true
           accessControl:
             black:

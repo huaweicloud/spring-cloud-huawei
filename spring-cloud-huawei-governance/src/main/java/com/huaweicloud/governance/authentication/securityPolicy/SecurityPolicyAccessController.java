@@ -19,13 +19,10 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.env.Environment;
 
 import com.huaweicloud.governance.authentication.AccessController;
 import com.huaweicloud.governance.authentication.AuthenticationAdapter;
 import com.huaweicloud.governance.authentication.Const;
-import com.huaweicloud.governance.authentication.RSATokenCheckUtils;
-import com.huaweicloud.governance.authentication.RsaAuthenticationToken;
 import com.huaweicloud.governance.authentication.UnAuthorizedException;
 
 /**
@@ -38,31 +35,19 @@ public class SecurityPolicyAccessController implements AccessController {
 
   private final AuthenticationAdapter authenticationAdapter;
 
-  private final Environment environment;
-
   public SecurityPolicyAccessController(AuthenticationAdapter authenticationAdapter,
-      SecurityPolicyProperties securityPolicyProperties, Environment environment) {
+      SecurityPolicyProperties securityPolicyProperties) {
     this.authenticationAdapter = authenticationAdapter;
     this.securityPolicyProperties = securityPolicyProperties;
-    this.environment = environment;
   }
 
   @Override
-  public RsaAuthenticationToken validProcess(String token, String serviceName) throws Exception {
-    if (Boolean.parseBoolean(environment.getProperty(Const.AUTH_TOKEN_CHECK_ENABLED, "true"))) {
-      return RSATokenCheckUtils.checkTokenInfo(token);
-    } else {
-      if (StringUtils.isEmpty(serviceName)) {
-        LOGGER.info("consumer has no serviceName info in header, please set it for authentication");
-        throw new UnAuthorizedException("UNAUTHORIZED.");
-      }
-      return null;
-    }
-  }
-
-  @Override
-  public boolean isAllowed(Map<String, String> requestMap) {
+  public boolean isAllowed(Map<String, String> requestMap, boolean isNeedCheckServiceName) throws Exception {
     String serviceName = requestMap.get(Const.AUTH_SERVICE_NAME);
+    if (isNeedCheckServiceName && StringUtils.isEmpty(serviceName)) {
+      LOGGER.info("consumer has no serviceName info in header, please set it for authentication");
+      throw new UnAuthorizedException("UNAUTHORIZED.");
+    }
     if (StringUtils.isEmpty(serviceName)) {
       serviceName = authenticationAdapter.getServiceName(requestMap.get(Const.AUTH_SERVICE_ID));
     }

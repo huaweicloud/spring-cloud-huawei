@@ -20,11 +20,9 @@ import java.util.Map;
  * Add black / white list control to service access
  */
 public interface AccessController {
-  RsaAuthenticationToken validProcess(String token, String serviceName) throws Exception;
-
   String getPublicKeyFromInstance(String instanceId, String serviceId);
 
-  boolean isAllowed(Map<String, String> requestMap);
+  boolean isAllowed(Map<String, String> requestMap, boolean isNeedCheckServiceName) throws Exception;
 
   String interceptMessage();
 }

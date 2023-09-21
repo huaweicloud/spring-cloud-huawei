@@ -75,16 +75,17 @@ public class AuthenticationAutoConfiguration {
   @Bean
   @ConditionalOnExpression("${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":false}"
       + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_SECURITY_POLICY_ENABLED + ":false}")
-  public ProviderAuthPreHandlerInterceptor providerAuthPreHandlerInterceptor(List<AccessController> accessController) {
-    return new ProviderAuthPreHandlerInterceptor(accessController);
+  public ProviderAuthPreHandlerInterceptor providerAuthPreHandlerInterceptor(List<AccessController> accessController,
+      Environment environment) {
+    return new ProviderAuthPreHandlerInterceptor(accessController, environment);
   }
 
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED,
       havingValue = "true")
   public WhiteBlackAccessController whiteBlackAccessController(AuthenticationAdapter authenticationAdapter,
-      BlackWhiteListProperties blackWhiteListProperties, Environment environment) {
-    return new WhiteBlackAccessController(authenticationAdapter, blackWhiteListProperties, environment);
+      BlackWhiteListProperties blackWhiteListProperties) {
+    return new WhiteBlackAccessController(authenticationAdapter, blackWhiteListProperties);
   }
 
   @Bean
@@ -100,7 +101,7 @@ public class AuthenticationAutoConfiguration {
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_SECURITY_POLICY_ENABLED,
       havingValue = "true")
   public SecurityPolicyAccessController securityPolicyAccessController(AuthenticationAdapter authenticationAdapter,
-      SecurityPolicyProperties securityPolicyProperties, Environment environment) {
-    return new SecurityPolicyAccessController(authenticationAdapter, securityPolicyProperties, environment);
+      SecurityPolicyProperties securityPolicyProperties) {
+    return new SecurityPolicyAccessController(authenticationAdapter, securityPolicyProperties);
   }
 }

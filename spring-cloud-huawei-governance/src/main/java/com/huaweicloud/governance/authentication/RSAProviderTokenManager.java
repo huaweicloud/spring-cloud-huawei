@@ -21,33 +21,41 @@ import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 
 public class RSAProviderTokenManager {
   private static final Logger LOGGER = LoggerFactory.getLogger(RSAProviderTokenManager.class);
 
   private final List<AccessController> accessControllers;
 
-  public RSAProviderTokenManager(List<AccessController> accessControllers) {
+  private final Environment environment;
+
+  public RSAProviderTokenManager(List<AccessController> accessControllers, Environment environment) {
     this.accessControllers = accessControllers;
+    this.environment = environment;
   }
 
   public void valid(String token, Map<String, String> requestMap) throws Exception {
     try {
-      boolean isAllow = true;
+      RsaAuthenticationToken rsaToken = null;
+      if (environment.getProperty(Const.AUTH_TOKEN_CHECK_ENABLED, Boolean.class, true)) {
+        rsaToken = RSATokenCheckUtils.checkTokenInfo(token);
+      }
+      boolean isAllow;
       for (AccessController accessController : accessControllers) {
-        RsaAuthenticationToken rsaToken = accessController.validProcess(token, requestMap.get(Const.AUTH_SERVICE_NAME));
         if (rsaToken != null) {
           requestMap.put(Const.AUTH_SERVICE_ID, rsaToken.getServiceId());
           requestMap.put(Const.AUTH_INSTANCE_ID, rsaToken.getInstanceId());
           if (RSATokenCheckUtils.validTokenInfo(rsaToken,
               accessController.getPublicKeyFromInstance(rsaToken.getInstanceId(), rsaToken.getServiceId()))) {
-            isAllow = accessController.isAllowed(requestMap);
+            RSATokenCheckUtils.validatedToken.put(rsaToken, true);
+            isAllow = accessController.isAllowed(requestMap, false);
           } else {
             LOGGER.error("token is expired, restart service.");
             throw new UnAuthorizedException("UNAUTHORIZED.");
           }
         } else {
-          isAllow = accessController.isAllowed(requestMap);
+          isAllow = accessController.isAllowed(requestMap, true);
         }
         if (!isAllow) {
           throw new UnAuthorizedException(accessController.interceptMessage());

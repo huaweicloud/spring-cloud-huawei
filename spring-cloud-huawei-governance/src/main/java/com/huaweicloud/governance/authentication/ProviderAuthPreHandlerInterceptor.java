@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.core.env.Environment;
+
 import com.huaweicloud.common.adapters.webmvc.PreHandlerInterceptor;
 import com.huaweicloud.common.context.InvocationContextHolder;
 
@@ -31,8 +33,8 @@ public class ProviderAuthPreHandlerInterceptor implements PreHandlerInterceptor 
 
   private final RSAProviderTokenManager authenticationTokenManager;
 
-  public ProviderAuthPreHandlerInterceptor(List<AccessController> accessControllers) {
-    authenticationTokenManager = new RSAProviderTokenManager(accessControllers);
+  public ProviderAuthPreHandlerInterceptor(List<AccessController> accessControllers, Environment environment) {
+    authenticationTokenManager = new RSAProviderTokenManager(accessControllers, environment);
   }
 
   @Override

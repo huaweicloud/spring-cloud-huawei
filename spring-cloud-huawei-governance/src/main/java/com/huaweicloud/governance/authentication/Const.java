@@ -32,5 +32,5 @@ public class Const {
 
   public static final String AUTH_INSTANCE_ID = "instanceId";
 
-  public static final String AUTH_TOKEN_CHECK_ENABLED = "spring.cloud.servicecomb.webmvc.tokenCheckEnabled";
+  public static final String AUTH_TOKEN_CHECK_ENABLED = "spring.cloud.servicecomb.webmvc.publicKey.tokenCheckEnabled";
 }
