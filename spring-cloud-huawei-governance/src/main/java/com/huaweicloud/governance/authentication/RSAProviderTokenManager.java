@@ -38,7 +38,8 @@ public class RSAProviderTokenManager {
         accessController.valid(token, requestMap);
       }
     }catch(Exception e){
-        LOGGER.error("verify error", e);
-      }
+      LOGGER.error("verify error", e);
+      throw e;
     }
+  }
 }

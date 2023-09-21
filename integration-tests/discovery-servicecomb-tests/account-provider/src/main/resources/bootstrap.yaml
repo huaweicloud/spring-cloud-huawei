@@ -59,6 +59,7 @@ spring:
 
           securityPolicyEnabled: true
           acls:
+            tokenCheckEnabled: true
             app: canary
             mode: permissive
             provider: account
