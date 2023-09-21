@@ -25,6 +25,8 @@ import org.springframework.context.annotation.Configuration;
 import com.alibaba.cloud.nacos.ConditionalOnNacosDiscoveryEnabled;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.nacos.authentication.NacosAuthenticationAdapter;
+import com.huaweicloud.nacos.registry.MetadataNacosRegistrationCustomizer;
+import com.huaweicloud.nacos.loadbalancer.NacosAffinityTagFilterAdapter;
 import com.huaweicloud.nacos.loadbalancer.NacosCanaryFilterAdapter;
 import com.huaweicloud.nacos.loadbalancer.NacosZoneAwareFilterAdapter;
 
@@ -46,5 +48,15 @@ public class NacosAdaptersAutoConfiguration {
   @Bean
   public NacosZoneAwareFilterAdapter nacosZoneAwareFilterAdapter() {
     return new NacosZoneAwareFilterAdapter();
+  }
+
+  @Bean
+  public NacosAffinityTagFilterAdapter nacosAffinityTagFilterAdapter() {
+    return new NacosAffinityTagFilterAdapter();
+  }
+
+  @Bean
+  public MetadataNacosRegistrationCustomizer metadataNacosRegistrationCustomizer() {
+    return new MetadataNacosRegistrationCustomizer();
   }
 }

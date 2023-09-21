@@ -18,10 +18,10 @@
 package com.huaweicloud.servicecomb.discovery.discovery;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import org.apache.commons.configuration.EnvironmentConfiguration;
@@ -35,11 +35,11 @@ import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.apache.servicecomb.service.center.client.model.MicroserviceStatus;
 
+import com.huaweicloud.common.util.NetUtil;
 import com.huaweicloud.service.engine.common.configration.bootstrap.BootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.InstanceProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.MicroserviceProperties;
-import com.huaweicloud.common.util.NetUtil;
 import com.huaweicloud.servicecomb.discovery.client.model.DiscoveryConstants;
 
 public class MicroserviceHandler {
@@ -126,7 +126,7 @@ public class MicroserviceHandler {
     MicroserviceInstance microserviceInstance = new MicroserviceInstance();
     String hostName = StringUtils.isEmpty(discoveryBootstrapProperties.getHostname()) ? NetUtil.getLocalHost()
         : discoveryBootstrapProperties.getHostname();
-    microserviceInstance.setHostName(hostName);
+    microserviceInstance.setHostName(hostName.length() > 64 ? hostName.substring(0, 64) : hostName);
     if (null != discoveryBootstrapProperties.getDatacenter()) {
       microserviceInstance.setDataCenterInfo(discoveryBootstrapProperties.getDatacenter());
     }
@@ -202,7 +202,7 @@ public class MicroserviceHandler {
 
   private static Map<String, String> parseProps(String... value) {
     return Arrays.stream(value).map(v -> v.split(":"))
-            .filter(v -> v.length == 2)
-            .collect(Collectors.toMap(v -> v[0], v -> v[1]));
+        .filter(v -> v.length == 2)
+        .collect(Collectors.toMap(v -> v[0], v -> v[1]));
   }
 }

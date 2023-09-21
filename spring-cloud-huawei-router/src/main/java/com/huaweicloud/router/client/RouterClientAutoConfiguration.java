@@ -28,6 +28,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.router.client.loadbalancer.AffinityTagFilterAdapter;
+import com.huaweicloud.router.client.loadbalancer.AffinityTagServiceInstanceFilter;
 import com.huaweicloud.router.client.loadbalancer.CanaryFilterAdapter;
 import com.huaweicloud.router.client.loadbalancer.CanaryServiceInstanceFilter;
 import com.huaweicloud.router.client.loadbalancer.SpringCloudRouterDistributor;
@@ -58,5 +60,13 @@ public class RouterClientAutoConfiguration {
   public ZoneAwareServiceInstanceFilter zoneAwareServiceInstanceFilter(Registration registration,
       ZoneAwareFilterAdapter adapter) {
     return new ZoneAwareServiceInstanceFilter(registration, adapter);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean(AffinityTagServiceInstanceFilter.class)
+  @ConditionalOnProperty(value = "spring.cloud.servicecomb.discovery.enabledAffinityTag", havingValue = "true")
+  public AffinityTagServiceInstanceFilter affinityTagServiceInstanceFilter(Registration registration,
+      AffinityTagFilterAdapter adapter) {
+    return new AffinityTagServiceInstanceFilter(registration, adapter);
   }
 }
