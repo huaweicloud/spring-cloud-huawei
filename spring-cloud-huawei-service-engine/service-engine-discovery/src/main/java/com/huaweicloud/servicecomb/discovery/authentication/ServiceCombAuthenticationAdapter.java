@@ -97,6 +97,15 @@ public class ServiceCombAuthenticationAdapter implements AuthenticationAdapter {
     return microservice.getProperties().get(propertyName);
   }
 
+  @Override
+  public String getServiceName(String serviceId) {
+    Microservice microservice = getOrCreate(serviceId);
+    if (microservice != null) {
+      return microservice.getServiceName();
+    }
+    return serviceId;
+  }
+
   private Microservice getOrCreate(String serviceId) {
     try {
       return MICROSERVICE_CACHE.get(serviceId, () -> {

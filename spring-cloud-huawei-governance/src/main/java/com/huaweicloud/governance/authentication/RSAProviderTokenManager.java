@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RSAProviderTokenManager {
-
   private static final Logger LOGGER = LoggerFactory.getLogger(RSAProviderTokenManager.class);
 
   private final List<AccessController> accessControllers;
@@ -34,10 +33,27 @@ public class RSAProviderTokenManager {
 
   public void valid(String token, Map<String, String> requestMap) throws Exception {
     try {
+      boolean isAllow = true;
       for (AccessController accessController : accessControllers) {
-        accessController.valid(token, requestMap);
+        RsaAuthenticationToken rsaToken = accessController.validProcess(token, requestMap.get(Const.AUTH_SERVICE_NAME));
+        if (rsaToken != null) {
+          requestMap.put(Const.AUTH_SERVICE_ID, rsaToken.getServiceId());
+          requestMap.put(Const.AUTH_INSTANCE_ID, rsaToken.getInstanceId());
+          if (RSATokenCheckUtils.validTokenInfo(rsaToken,
+              accessController.getPublicKeyFromInstance(rsaToken.getInstanceId(), rsaToken.getServiceId()))) {
+            isAllow = accessController.isAllowed(requestMap);
+          } else {
+            LOGGER.error("token is expired, restart service.");
+            throw new UnAuthorizedException("UNAUTHORIZED.");
+          }
+        } else {
+          isAllow = accessController.isAllowed(requestMap);
+        }
+        if (!isAllow) {
+          throw new UnAuthorizedException(accessController.interceptMessage());
+        }
       }
-    }catch(Exception e){
+    } catch(Exception e) {
       LOGGER.error("verify error", e);
       throw e;
     }

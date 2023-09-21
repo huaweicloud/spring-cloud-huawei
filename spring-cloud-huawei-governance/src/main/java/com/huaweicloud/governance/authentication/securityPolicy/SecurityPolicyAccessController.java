@@ -19,6 +19,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 
 import com.huaweicloud.governance.authentication.AccessController;
 import com.huaweicloud.governance.authentication.AuthenticationAdapter;
@@ -37,47 +38,44 @@ public class SecurityPolicyAccessController implements AccessController {
 
   private final AuthenticationAdapter authenticationAdapter;
 
+  private final Environment environment;
+
   public SecurityPolicyAccessController(AuthenticationAdapter authenticationAdapter,
-      SecurityPolicyProperties securityPolicyProperties) {
+      SecurityPolicyProperties securityPolicyProperties, Environment environment) {
     this.authenticationAdapter = authenticationAdapter;
     this.securityPolicyProperties = securityPolicyProperties;
+    this.environment = environment;
   }
 
   @Override
-  public void valid(String token, Map<String, String> requestMap) throws Exception {
-    RsaAuthenticationToken rsaToken = checkTokenInfoOrServiceName(token);
-    boolean isAllow;
-    if (rsaToken == null) {
-      if (StringUtils.isEmpty(requestMap.get(Const.AUTH_SERVICE_ID))) {
+  public RsaAuthenticationToken validProcess(String token, String serviceName) throws Exception {
+    if (Boolean.parseBoolean(environment.getProperty(Const.AUTH_TOKEN_CHECK_ENABLED, "true"))) {
+      return RSATokenCheckUtils.checkTokenInfo(token);
+    } else {
+      if (StringUtils.isEmpty(serviceName)) {
         LOGGER.info("consumer has no serviceName info in header, please set it for authentication");
         throw new UnAuthorizedException("UNAUTHORIZED.");
       }
-      isAllow = isAllowed(requestMap.get(Const.AUTH_SERVICE_ID), requestMap);
-    } else {
-      if (RSATokenCheckUtils.validTokenInfo(rsaToken,getPublicKeyFromInstance(rsaToken.getInstanceId(),
-          rsaToken.getServiceId()))) {
-        isAllow = isAllowed(rsaToken.getServiceId(), requestMap);
-      } else {
-        LOGGER.error("token is expired, restart service.");
-        throw new UnAuthorizedException("UNAUTHORIZED.");
-      }
-    }
-    if (!isAllow) {
-      throw new UnAuthorizedException(interceptMessage());
+      return null;
     }
   }
 
-  protected boolean isAllowed(String serviceId, Map<String, String> requestMap) {
-    return checkAllow(serviceId, requestMap) && !checkDeny(serviceId, requestMap);
+  @Override
+  public boolean isAllowed(Map<String, String> requestMap) {
+    String serviceName = requestMap.get(Const.AUTH_SERVICE_NAME);
+    if (StringUtils.isEmpty(serviceName)) {
+      serviceName = authenticationAdapter.getServiceName(requestMap.get(Const.AUTH_SERVICE_ID));
+    }
+    return checkAllow(serviceName, requestMap) && !checkDeny(serviceName, requestMap);
   }
 
-  private boolean checkDeny(String serviceId, Map<String, String> requestMap) {
-    if (securityPolicyProperties.matchDeny(serviceId, requestMap.get(Const.AUTH_URI),
+  private boolean checkDeny(String serviceName, Map<String, String> requestMap) {
+    if (securityPolicyProperties.matchDeny(serviceName, requestMap.get(Const.AUTH_URI),
         requestMap.get(Const.AUTH_METHOD))) {
       // permissive mode, black policy match allow passing
       if ("permissive".equals(securityPolicyProperties.getMode())) {
         LOGGER.info("[autoauthz unauthorized request] consumer={}, provider={}, path={}, method={}, timestamp={}",
-            serviceId, securityPolicyProperties.getProvider(), requestMap.get(Const.AUTH_URI),
+            serviceName, securityPolicyProperties.getProvider(), requestMap.get(Const.AUTH_URI),
             requestMap.get(Const.AUTH_METHOD), System.currentTimeMillis());
         return false;
       } else {
@@ -88,15 +86,15 @@ public class SecurityPolicyAccessController implements AccessController {
     }
   }
 
-  private boolean checkAllow(String serviceId, Map<String, String> requestMap) {
-    if (securityPolicyProperties.matchAllow(serviceId, requestMap.get(Const.AUTH_URI),
+  private boolean checkAllow(String serviceName, Map<String, String> requestMap) {
+    if (securityPolicyProperties.matchAllow(serviceName, requestMap.get(Const.AUTH_URI),
         requestMap.get(Const.AUTH_METHOD))) {
       return true;
     } else {
       // permissive mode, white policy not match allow passing
       if ("permissive".equals(securityPolicyProperties.getMode())) {
         LOGGER.info("[autoauthz unauthorized request] consumer={}, provider={}, path={}, method={}, timestamp={}",
-            serviceId, securityPolicyProperties.getProvider(), requestMap.get(Const.AUTH_URI),
+            serviceName, securityPolicyProperties.getProvider(), requestMap.get(Const.AUTH_URI),
             requestMap.get(Const.AUTH_METHOD), System.currentTimeMillis());
         return true;
       } else {
@@ -105,18 +103,13 @@ public class SecurityPolicyAccessController implements AccessController {
     }
   }
 
-  private String getPublicKeyFromInstance(String instanceId, String serviceId) {
+  @Override
+  public String getPublicKeyFromInstance(String instanceId, String serviceId) {
     return authenticationAdapter.getPublicKeyFromInstance(instanceId, serviceId);
   }
 
-  private String interceptMessage() {
+  @Override
+  public String interceptMessage() {
     return "UNAUTHORIZED BY SECURITY POLICY";
-  }
-
-  private RsaAuthenticationToken checkTokenInfoOrServiceName(String token) throws Exception {
-    if (securityPolicyProperties.isTokenCheckEnabled()) {
-      return RSATokenCheckUtils.checkTokenInfo(token);
-    }
-    return null;
   }
 }

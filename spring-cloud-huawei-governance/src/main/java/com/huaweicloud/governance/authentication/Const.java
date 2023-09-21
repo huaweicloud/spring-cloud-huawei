@@ -27,4 +27,10 @@ public class Const {
   public static final String AUTH_METHOD = "method";
 
   public static final String AUTH_SERVICE_ID = "serviceId";
+
+  public static final String AUTH_SERVICE_NAME = "serviceName";
+
+  public static final String AUTH_INSTANCE_ID = "instanceId";
+
+  public static final String AUTH_TOKEN_CHECK_ENABLED = "spring.cloud.servicecomb.webmvc.tokenCheckEnabled";
 }

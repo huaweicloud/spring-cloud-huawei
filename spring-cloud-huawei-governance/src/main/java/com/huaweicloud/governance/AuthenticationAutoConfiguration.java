@@ -28,6 +28,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
@@ -82,8 +83,8 @@ public class AuthenticationAutoConfiguration {
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED,
       havingValue = "true")
   public WhiteBlackAccessController whiteBlackAccessController(AuthenticationAdapter authenticationAdapter,
-      BlackWhiteListProperties blackWhiteListProperties) {
-    return new WhiteBlackAccessController(authenticationAdapter, blackWhiteListProperties);
+      BlackWhiteListProperties blackWhiteListProperties, Environment environment) {
+    return new WhiteBlackAccessController(authenticationAdapter, blackWhiteListProperties, environment);
   }
 
   @Bean
@@ -99,7 +100,7 @@ public class AuthenticationAutoConfiguration {
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_PUBLICKEY_SECURITY_POLICY_ENABLED,
       havingValue = "true")
   public SecurityPolicyAccessController securityPolicyAccessController(AuthenticationAdapter authenticationAdapter,
-      SecurityPolicyProperties securityPolicyProperties) {
-    return new SecurityPolicyAccessController(authenticationAdapter, securityPolicyProperties);
+      SecurityPolicyProperties securityPolicyProperties, Environment environment) {
+    return new SecurityPolicyAccessController(authenticationAdapter, securityPolicyProperties, environment);
   }
 }

@@ -16,6 +16,7 @@
  */
 package com.huaweicloud.nacos.authentication;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -24,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.serviceregistry.Registration;
+import org.springframework.util.CollectionUtils;
 
 import com.alibaba.cloud.nacos.registry.NacosRegistration;
 import com.google.common.cache.Cache;
@@ -83,6 +85,15 @@ public class NacosAuthenticationAdapter implements AuthenticationAdapter {
       LOGGER.error("not instance found {}-{}, maybe attack", instanceId, serviceId);
       return "";
     }
+  }
+
+  @Override
+  public String getServiceName(String serviceId) {
+    List<ServiceInstance> instances = serviceDiscovery.getInstances(serviceId);
+    if (!CollectionUtils.isEmpty(instances)) {
+      instances.get(0).getServiceId();
+    }
+    return serviceId;
   }
 
   private ServiceInstance getServiceInstance(String serviceId, String instanceId) {

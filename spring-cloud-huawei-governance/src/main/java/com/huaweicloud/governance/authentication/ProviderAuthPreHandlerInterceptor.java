@@ -43,7 +43,7 @@ public class ProviderAuthPreHandlerInterceptor implements PreHandlerInterceptor 
     Map<String, String> requestMap = new HashMap<>();
     requestMap.put(Const.AUTH_URI, request.getRequestURI());
     requestMap.put(Const.AUTH_METHOD, request.getMethod());
-    requestMap.put(Const.AUTH_SERVICE_ID, request.getHeader(Const.AUTH_SERVICE_ID));
+    requestMap.put(Const.AUTH_SERVICE_NAME, request.getHeader(Const.AUTH_SERVICE_NAME));
     authenticationTokenManager.valid(token, requestMap);
     return true;
   }

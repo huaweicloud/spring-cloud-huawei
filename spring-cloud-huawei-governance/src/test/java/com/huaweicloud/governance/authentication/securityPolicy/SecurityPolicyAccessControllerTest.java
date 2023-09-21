@@ -22,8 +22,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.core.env.Environment;
 
 import com.huaweicloud.governance.authentication.AuthenticationAdapter;
 import com.huaweicloud.governance.authentication.securityPolicy.SecurityPolicyProperties.Action;
@@ -34,185 +36,154 @@ public class SecurityPolicyAccessControllerTest {
 
   private SecurityPolicyProperties securityPolicyProperties = new SecurityPolicyProperties();
 
+  private Map<String, String> requestMap = new HashMap<>();
+
+  private final Environment environment = Mockito.mock(Environment.class);
+
+  @BeforeEach
+  public void setUp() {
+    requestMap.put("serviceName", "order");
+    requestMap.put("method", "GET");
+  }
+
   @Test
-  public void testAllowPermissiveMatch() {
-    Map<String, String> requestMap = new HashMap<>();
+  public void testAllowPermissiveMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurityAllow");
-    requestMap.put("method", "GET");
-    requestMap.put("serviceId", "order");
     Assertions.assertTrue(getAllowAccessController("permissive")
-        .isAllowed("order", requestMap));
+        .isAllowed(requestMap));
   }
 
   @Test
-  public void testDenyPermissiveMatch() {
-    Map<String, String> requestMap = new HashMap<>();
+  public void testDenyPermissiveMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurityDeny");
-    requestMap.put("method", "GET");
     Assertions.assertTrue(getDenyAccessController("permissive")
-        .isAllowed("order", requestMap));
+        .isAllowed(requestMap));
   }
 
   @Test
-  public void testAllowPermissiveNotMatch() {
-    Map<String, String> requestMap = new HashMap<>();
+  public void testAllowPermissiveNotMatch() throws Exception {
     requestMap.put("uri", "/checkToken");
-    requestMap.put("method", "GET");
     Assertions.assertTrue(getAllowAccessController("permissive")
-        .isAllowed("order", requestMap));
+        .isAllowed(requestMap));
   }
 
   @Test
-  public void testDenyPermissiveNotMatch() {
-    Map<String, String> requestMap = new HashMap<>();
+  public void testDenyPermissiveNotMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurity");
-    requestMap.put("method", "GET");
     Assertions.assertTrue(getDenyAccessController("permissive")
-        .isAllowed("order", requestMap));
+        .isAllowed(requestMap));
   }
 
   @Test
-  public void testAllowEnforcingMatch() {
-    Map<String, String> requestMap = new HashMap<>();
+  public void testAllowEnforcingMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurityAllow");
-    requestMap.put("method", "GET");
     Assertions.assertTrue(getAllowAccessController("enforcing")
-        .isAllowed("order", requestMap));
+        .isAllowed(requestMap));
   }
 
   @Test
-  public void testDenyEnforcingMatch() {
-    Map<String, String> requestMap = new HashMap<>();
+  public void testDenyEnforcingMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurityDeny");
-    requestMap.put("method", "GET");
     Assertions.assertFalse(getDenyAccessController("enforcing")
-        .isAllowed("order", requestMap));
+        .isAllowed(requestMap));
   }
 
   @Test
-  public void testAllowEnforcingNotMatch() {
-    Map<String, String> requestMap = new HashMap<>();
+  public void testAllowEnforcingNotMatch() throws Exception {
     requestMap.put("uri", "/checkToken");
-    requestMap.put("method", "GET");
     Assertions.assertFalse(getAllowAccessController("enforcing")
-        .isAllowed("order", requestMap));
+        .isAllowed(requestMap));
   }
 
   @Test
-  public void testDenyEnforcingNotMatch() {
-    Map<String, String> requestMap = new HashMap<>();
+  public void testDenyEnforcingNotMatch() throws Exception {
     requestMap.put("uri", "/checkToken");
-    requestMap.put("method", "GET");
     Assertions.assertTrue(getDenyAccessController("enforcing")
-        .isAllowed("order", requestMap));
+        .isAllowed(requestMap));
   }
 
   @Test
-  public void testPermissiveBothMatch() {
-    Map<String, String> requestMap = new HashMap<>();
+  public void testPermissiveBothMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurityBoth");
-    requestMap.put("method", "GET");
     Assertions.assertTrue(getBothAccessController("permissive")
-        .isAllowed("order", requestMap));
+        .isAllowed(requestMap));
   }
 
   @Test
-  public void testPermissiveBothNotMatch() {
-    Map<String, String> requestMap = new HashMap<>();
+  public void testPermissiveBothNotMatch() throws Exception {
     requestMap.put("uri", "/checkToken");
-    requestMap.put("method", "GET");
     Assertions.assertTrue(getBothAccessController("permissive")
-        .isAllowed("order", requestMap));
+        .isAllowed(requestMap));
   }
 
   @Test
-  public void testPermissiveAllowMatchDenyNotMatch() {
-    Map<String, String> requestMap = new HashMap<>();
+  public void testPermissiveAllowMatchDenyNotMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurityAllow");
-    requestMap.put("method", "GET");
     Assertions.assertTrue(getBothAccessController("permissive")
-        .isAllowed("order", requestMap));
+        .isAllowed(requestMap));
   }
 
   @Test
-  public void testPermissiveAllowNotMatchDenyMatch() {
-    Map<String, String> requestMap = new HashMap<>();
+  public void testPermissiveAllowNotMatchDenyMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurityDeny");
-    requestMap.put("method", "GET");
     Assertions.assertTrue(getBothAccessController("permissive")
-        .isAllowed("order", requestMap));
+        .isAllowed(requestMap));
   }
 
   @Test
-  public void testEnforcingBothMatch() {
-    Map<String, String> requestMap = new HashMap<>();
+  public void testEnforcingBothMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurityBoth");
-    requestMap.put("method", "GET");
     Assertions.assertFalse(getBothAccessController("enforcing")
-        .isAllowed("order", requestMap));
+        .isAllowed(requestMap));
   }
 
   @Test
-  public void testEnforcingBothNotMatch() {
-    Map<String, String> requestMap = new HashMap<>();
+  public void testEnforcingBothNotMatch() throws Exception {
     requestMap.put("uri", "/checkToken");
-    requestMap.put("method", "GET");
     Assertions.assertFalse(getBothAccessController("enforcing")
-        .isAllowed("order", requestMap));
+        .isAllowed(requestMap));
   }
 
   @Test
-  public void testEnforcingAllowMatchDenyNotMatch() {
-    Map<String, String> requestMap = new HashMap<>();
+  public void testEnforcingAllowMatchDenyNotMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurityAllow");
-    requestMap.put("method", "GET");
     Assertions.assertTrue(getBothAccessController("enforcing")
-        .isAllowed("order", requestMap));
+        .isAllowed( requestMap));
   }
 
   @Test
-  public void testEnforcingAllowNotMatchDenyMatch() {
-    Map<String, String> requestMap = new HashMap<>();
+  public void testEnforcingAllowNotMatchDenyMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurityDeny");
-    requestMap.put("method", "GET");
     Assertions.assertFalse(getBothAccessController("enforcing")
-        .isAllowed("order", requestMap));
+        .isAllowed(requestMap));
   }
 
   @Test
-  public void testUriPrefixMatch() {
-    Map<String, String> requestMap = new HashMap<>();
+  public void testUriPrefixMatch() throws Exception {
     requestMap.put("uri", "/checkTokenPre/security/allow");
-    requestMap.put("method", "GET");
     Assertions.assertTrue(getAllowAccessController("enforcing")
-        .isAllowed("order", requestMap));
+        .isAllowed(requestMap));
   }
 
   @Test
-  public void testUriPrefixNotMatch() {
-    Map<String, String> requestMap = new HashMap<>();
+  public void testUriPrefixNotMatch() throws Exception {
     requestMap.put("uri", "/checkTokenPer/security/allow");
-    requestMap.put("method", "GET");
     Assertions.assertFalse(getAllowAccessController("enforcing")
-        .isAllowed("order", requestMap));
+        .isAllowed(requestMap));
   }
 
   @Test
-  public void testUriSuffixMatch() {
-    Map<String, String> requestMap = new HashMap<>();
+  public void testUriSuffixMatch() throws Exception {
     requestMap.put("uri", "/checkTokenPer/security/checkTokenSuf");
-    requestMap.put("method", "GET");
     Assertions.assertTrue(getAllowAccessController("enforcing")
-        .isAllowed("order", requestMap));
+        .isAllowed(requestMap));
   }
 
   @Test
-  public void testUriSuffixNotMatch() {
-    Map<String, String> requestMap = new HashMap<>();
+  public void testUriSuffixNotMatch() throws Exception {
     requestMap.put("uri", "/checkTokenPer/security/checkTokenSfu");
-    requestMap.put("method", "GET");
     Assertions.assertFalse(getAllowAccessController("enforcing")
-        .isAllowed("order", requestMap));
+        .isAllowed(requestMap));
   }
 
   private SecurityPolicyAccessController getAllowAccessController(String mode) {
@@ -220,7 +191,7 @@ public class SecurityPolicyAccessControllerTest {
     action.setAllow(buildAllow());
     securityPolicyProperties.setAction(action);
     securityPolicyProperties.setMode(mode);
-    return new SecurityPolicyAccessController(authenticationAdapter, securityPolicyProperties);
+    return new SecurityPolicyAccessController(authenticationAdapter, securityPolicyProperties, environment);
   }
 
   private SecurityPolicyAccessController getDenyAccessController(String mode) {
@@ -228,7 +199,7 @@ public class SecurityPolicyAccessControllerTest {
     action.setDeny(buildDeny());
     securityPolicyProperties.setAction(action);
     securityPolicyProperties.setMode(mode);
-    return new SecurityPolicyAccessController(authenticationAdapter, securityPolicyProperties);
+    return new SecurityPolicyAccessController(authenticationAdapter, securityPolicyProperties, environment);
   }
 
   private SecurityPolicyAccessController getBothAccessController(String mode) {
@@ -237,7 +208,7 @@ public class SecurityPolicyAccessControllerTest {
     action.setDeny(buildDeny());
     securityPolicyProperties.setAction(action);
     securityPolicyProperties.setMode(mode);
-    return new SecurityPolicyAccessController(authenticationAdapter, securityPolicyProperties);
+    return new SecurityPolicyAccessController(authenticationAdapter, securityPolicyProperties, environment);
   }
 
   private List<ConfigurationItem> buildDeny() {

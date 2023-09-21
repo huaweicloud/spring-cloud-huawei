@@ -26,4 +26,6 @@ public interface AuthenticationAdapter {
   String getPublicKeyFromInstance(String instanceId, String serviceId);
 
   String getPropertyValue(String serviceId, String instanceId, String propertyName);
+
+  String getServiceName(String serviceId);
 }
