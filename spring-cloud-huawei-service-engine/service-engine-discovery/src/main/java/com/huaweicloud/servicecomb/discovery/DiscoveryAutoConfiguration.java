@@ -34,6 +34,7 @@ import com.huaweicloud.service.engine.common.configration.bootstrap.ServiceCombS
 import com.huaweicloud.service.engine.common.disovery.ServiceCenterUtils;
 import com.huaweicloud.servicecomb.discovery.authentication.ServiceCombAuthenticationAdapter;
 import com.huaweicloud.servicecomb.discovery.discovery.DiscoveryProperties;
+import com.huaweicloud.servicecomb.discovery.loadbalancer.ServiceCombAffinityTagFilterAdapter;
 import com.huaweicloud.servicecomb.discovery.loadbalancer.ServiceCombCanaryFilterAdapter;
 import com.huaweicloud.servicecomb.discovery.loadbalancer.ServiceCombZoneAwareFilterAdapter;
 
@@ -72,5 +73,10 @@ public class DiscoveryAutoConfiguration {
   @Bean
   public ServiceCombZoneAwareFilterAdapter serviceCombZoneAwareFilterAdapter() {
     return new ServiceCombZoneAwareFilterAdapter();
+  }
+
+  @Bean
+  public ServiceCombAffinityTagFilterAdapter serviceCombAffinityTagFilterAdapter() {
+    return new ServiceCombAffinityTagFilterAdapter();
   }
 }
