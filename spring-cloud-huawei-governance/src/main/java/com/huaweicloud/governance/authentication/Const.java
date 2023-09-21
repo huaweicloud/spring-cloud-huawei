@@ -21,4 +21,10 @@ public class Const {
   public static final String AUTH_TOKEN = "x-auth-token";
 
   public static final String INSTANCE_PUBKEY_PRO = "publickey";
+
+  public static final String AUTH_URI = "uri";
+
+  public static final String AUTH_METHOD = "method";
+
+  public static final String AUTH_SERVICE_ID = "serviceId";
 }

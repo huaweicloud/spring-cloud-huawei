@@ -41,8 +41,9 @@ public class ProviderAuthPreHandlerInterceptor implements PreHandlerInterceptor 
         .getOrCreateInvocationContext()
         .getContext(Const.AUTH_TOKEN);
     Map<String, String> requestMap = new HashMap<>();
-    requestMap.put("uri", request.getRequestURI());
-    requestMap.put("method", request.getMethod());
+    requestMap.put(Const.AUTH_URI, request.getRequestURI());
+    requestMap.put(Const.AUTH_METHOD, request.getMethod());
+    requestMap.put(Const.AUTH_SERVICE_ID, request.getHeader(Const.AUTH_SERVICE_ID));
     authenticationTokenManager.valid(token, requestMap);
     return true;
   }

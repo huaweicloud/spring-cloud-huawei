@@ -20,10 +20,5 @@ import java.util.Map;
  * Add black / white list control to service access
  */
 public interface AccessController {
-
-  boolean isAllowed(String serviceId, String instanceId, Map<String, String> requestMap);
-
-  String getPublicKeyFromInstance(String instanceId, String serviceId);
-
-  String interceptMessage();
+  void valid(String token, Map<String, String> requestMap) throws Exception;
 }

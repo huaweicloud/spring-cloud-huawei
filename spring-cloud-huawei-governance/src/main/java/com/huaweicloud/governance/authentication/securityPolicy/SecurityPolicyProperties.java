@@ -104,6 +104,8 @@ public class SecurityPolicyProperties {
    */
   private Action action;
 
+  private boolean tokenCheckEnabled;
+
   public String getApp() {
     return app;
   }
@@ -134,6 +136,14 @@ public class SecurityPolicyProperties {
 
   public void setAction(Action action) {
     this.action = action;
+  }
+
+  public boolean isTokenCheckEnabled() {
+    return tokenCheckEnabled;
+  }
+
+  public void setTokenCheckEnabled(boolean tokenCheckEnabled) {
+    this.tokenCheckEnabled = tokenCheckEnabled;
   }
 
   public boolean matchAllow(String serviceId, String uri, String method) {

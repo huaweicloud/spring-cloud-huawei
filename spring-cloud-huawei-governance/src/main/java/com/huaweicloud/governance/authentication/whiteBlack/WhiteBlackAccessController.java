@@ -19,15 +19,22 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
 import com.huaweicloud.governance.authentication.AccessController;
 import com.huaweicloud.governance.authentication.AuthenticationAdapter;
+import com.huaweicloud.governance.authentication.RSATokenCheckUtils;
+import com.huaweicloud.governance.authentication.RsaAuthenticationToken;
+import com.huaweicloud.governance.authentication.UnAuthorizedException;
 
 /**
  * Add black / white list control to service access
  */
 public class WhiteBlackAccessController implements AccessController {
+  private static final Logger LOGGER = LoggerFactory.getLogger(WhiteBlackAccessController.class);
+
   BlackWhiteListProperties blackWhiteListProperties;
 
   private final AuthenticationAdapter authenticationAdapter;
@@ -39,17 +46,34 @@ public class WhiteBlackAccessController implements AccessController {
   }
 
   @Override
-  public boolean isAllowed(String serviceId, String instanceId, Map<String, String> requestMap) {
+  public void valid(String token, Map<String, String> requestMap) throws Exception {
+    RsaAuthenticationToken rsaToken = checkTokenInfoOrServiceName(token);
+    boolean isAllow;
+    if (RSATokenCheckUtils.validTokenInfo(rsaToken,getPublicKeyFromInstance(rsaToken.getInstanceId(),
+        rsaToken.getServiceId()))) {
+      isAllow = isAllowed(rsaToken.getServiceId(), rsaToken.getInstanceId());
+    } else {
+      LOGGER.error("token is expired, restart service.");
+      throw new UnAuthorizedException("UNAUTHORIZED.");
+    }
+    if (!isAllow) {
+      throw new UnAuthorizedException(interceptMessage());
+    }
+  }
+
+  private RsaAuthenticationToken checkTokenInfoOrServiceName(String token) throws Exception {
+    return RSATokenCheckUtils.checkTokenInfo(token);
+  }
+
+  private boolean isAllowed(String serviceId, String instanceId) {
     return whiteAllowed(serviceId, instanceId) && !blackDenied(serviceId, instanceId);
   }
 
-  @Override
-  public String getPublicKeyFromInstance(String instanceId, String serviceId) {
+  private String getPublicKeyFromInstance(String instanceId, String serviceId) {
     return authenticationAdapter.getPublicKeyFromInstance(instanceId, serviceId);
   }
 
-  @Override
-  public String interceptMessage() {
+  private String interceptMessage() {
     return "UNAUTHORIZED BY WHITE BLACK";
   }
 

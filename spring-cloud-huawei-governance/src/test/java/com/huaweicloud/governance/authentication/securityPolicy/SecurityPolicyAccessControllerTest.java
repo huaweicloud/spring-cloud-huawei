@@ -39,8 +39,9 @@ public class SecurityPolicyAccessControllerTest {
     Map<String, String> requestMap = new HashMap<>();
     requestMap.put("uri", "/checkTokenSecurityAllow");
     requestMap.put("method", "GET");
+    requestMap.put("serviceId", "order");
     Assertions.assertTrue(getAllowAccessController("permissive")
-        .isAllowed("order", "", requestMap));
+        .isAllowed("order", requestMap));
   }
 
   @Test
@@ -49,7 +50,7 @@ public class SecurityPolicyAccessControllerTest {
     requestMap.put("uri", "/checkTokenSecurityDeny");
     requestMap.put("method", "GET");
     Assertions.assertTrue(getDenyAccessController("permissive")
-        .isAllowed("order", "", requestMap));
+        .isAllowed("order", requestMap));
   }
 
   @Test
@@ -58,7 +59,7 @@ public class SecurityPolicyAccessControllerTest {
     requestMap.put("uri", "/checkToken");
     requestMap.put("method", "GET");
     Assertions.assertTrue(getAllowAccessController("permissive")
-        .isAllowed("order", "", requestMap));
+        .isAllowed("order", requestMap));
   }
 
   @Test
@@ -67,7 +68,7 @@ public class SecurityPolicyAccessControllerTest {
     requestMap.put("uri", "/checkTokenSecurity");
     requestMap.put("method", "GET");
     Assertions.assertTrue(getDenyAccessController("permissive")
-        .isAllowed("order", "", requestMap));
+        .isAllowed("order", requestMap));
   }
 
   @Test
@@ -76,7 +77,7 @@ public class SecurityPolicyAccessControllerTest {
     requestMap.put("uri", "/checkTokenSecurityAllow");
     requestMap.put("method", "GET");
     Assertions.assertTrue(getAllowAccessController("enforcing")
-        .isAllowed("order", "", requestMap));
+        .isAllowed("order", requestMap));
   }
 
   @Test
@@ -85,7 +86,7 @@ public class SecurityPolicyAccessControllerTest {
     requestMap.put("uri", "/checkTokenSecurityDeny");
     requestMap.put("method", "GET");
     Assertions.assertFalse(getDenyAccessController("enforcing")
-        .isAllowed("order", "", requestMap));
+        .isAllowed("order", requestMap));
   }
 
   @Test
@@ -94,7 +95,7 @@ public class SecurityPolicyAccessControllerTest {
     requestMap.put("uri", "/checkToken");
     requestMap.put("method", "GET");
     Assertions.assertFalse(getAllowAccessController("enforcing")
-        .isAllowed("order", "", requestMap));
+        .isAllowed("order", requestMap));
   }
 
   @Test
@@ -103,7 +104,7 @@ public class SecurityPolicyAccessControllerTest {
     requestMap.put("uri", "/checkToken");
     requestMap.put("method", "GET");
     Assertions.assertTrue(getDenyAccessController("enforcing")
-        .isAllowed("order", "", requestMap));
+        .isAllowed("order", requestMap));
   }
 
   @Test
@@ -112,7 +113,7 @@ public class SecurityPolicyAccessControllerTest {
     requestMap.put("uri", "/checkTokenSecurityBoth");
     requestMap.put("method", "GET");
     Assertions.assertTrue(getBothAccessController("permissive")
-        .isAllowed("order", "", requestMap));
+        .isAllowed("order", requestMap));
   }
 
   @Test
@@ -121,7 +122,7 @@ public class SecurityPolicyAccessControllerTest {
     requestMap.put("uri", "/checkToken");
     requestMap.put("method", "GET");
     Assertions.assertTrue(getBothAccessController("permissive")
-        .isAllowed("order", "", requestMap));
+        .isAllowed("order", requestMap));
   }
 
   @Test
@@ -130,7 +131,7 @@ public class SecurityPolicyAccessControllerTest {
     requestMap.put("uri", "/checkTokenSecurityAllow");
     requestMap.put("method", "GET");
     Assertions.assertTrue(getBothAccessController("permissive")
-        .isAllowed("order", "", requestMap));
+        .isAllowed("order", requestMap));
   }
 
   @Test
@@ -139,7 +140,7 @@ public class SecurityPolicyAccessControllerTest {
     requestMap.put("uri", "/checkTokenSecurityDeny");
     requestMap.put("method", "GET");
     Assertions.assertTrue(getBothAccessController("permissive")
-        .isAllowed("order", "", requestMap));
+        .isAllowed("order", requestMap));
   }
 
   @Test
@@ -148,7 +149,7 @@ public class SecurityPolicyAccessControllerTest {
     requestMap.put("uri", "/checkTokenSecurityBoth");
     requestMap.put("method", "GET");
     Assertions.assertFalse(getBothAccessController("enforcing")
-        .isAllowed("order", "", requestMap));
+        .isAllowed("order", requestMap));
   }
 
   @Test
@@ -157,7 +158,7 @@ public class SecurityPolicyAccessControllerTest {
     requestMap.put("uri", "/checkToken");
     requestMap.put("method", "GET");
     Assertions.assertFalse(getBothAccessController("enforcing")
-        .isAllowed("order", "", requestMap));
+        .isAllowed("order", requestMap));
   }
 
   @Test
@@ -166,7 +167,7 @@ public class SecurityPolicyAccessControllerTest {
     requestMap.put("uri", "/checkTokenSecurityAllow");
     requestMap.put("method", "GET");
     Assertions.assertTrue(getBothAccessController("enforcing")
-        .isAllowed("order", "", requestMap));
+        .isAllowed("order", requestMap));
   }
 
   @Test
@@ -175,7 +176,7 @@ public class SecurityPolicyAccessControllerTest {
     requestMap.put("uri", "/checkTokenSecurityDeny");
     requestMap.put("method", "GET");
     Assertions.assertFalse(getBothAccessController("enforcing")
-        .isAllowed("order", "", requestMap));
+        .isAllowed("order", requestMap));
   }
 
   @Test
@@ -184,7 +185,7 @@ public class SecurityPolicyAccessControllerTest {
     requestMap.put("uri", "/checkTokenPre/security/allow");
     requestMap.put("method", "GET");
     Assertions.assertTrue(getAllowAccessController("enforcing")
-        .isAllowed("order", "", requestMap));
+        .isAllowed("order", requestMap));
   }
 
   @Test
@@ -193,7 +194,7 @@ public class SecurityPolicyAccessControllerTest {
     requestMap.put("uri", "/checkTokenPer/security/allow");
     requestMap.put("method", "GET");
     Assertions.assertFalse(getAllowAccessController("enforcing")
-        .isAllowed("order", "", requestMap));
+        .isAllowed("order", requestMap));
   }
 
   @Test
@@ -202,7 +203,7 @@ public class SecurityPolicyAccessControllerTest {
     requestMap.put("uri", "/checkTokenPer/security/checkTokenSuf");
     requestMap.put("method", "GET");
     Assertions.assertTrue(getAllowAccessController("enforcing")
-        .isAllowed("order", "", requestMap));
+        .isAllowed("order", requestMap));
   }
 
   @Test
@@ -211,7 +212,7 @@ public class SecurityPolicyAccessControllerTest {
     requestMap.put("uri", "/checkTokenPer/security/checkTokenSfu");
     requestMap.put("method", "GET");
     Assertions.assertFalse(getAllowAccessController("enforcing")
-        .isAllowed("order", "", requestMap));
+        .isAllowed("order", requestMap));
   }
 
   private SecurityPolicyAccessController getAllowAccessController(String mode) {
