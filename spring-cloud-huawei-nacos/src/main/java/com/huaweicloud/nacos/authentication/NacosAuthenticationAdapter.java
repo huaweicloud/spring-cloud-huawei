@@ -91,7 +91,7 @@ public class NacosAuthenticationAdapter implements AuthenticationAdapter {
   public String getServiceName(String serviceId) {
     List<ServiceInstance> instances = serviceDiscovery.getInstances(serviceId);
     if (!CollectionUtils.isEmpty(instances)) {
-      instances.get(0).getServiceId();
+      return instances.get(0).getServiceId();
     }
     return serviceId;
   }
