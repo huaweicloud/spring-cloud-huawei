@@ -45,7 +45,7 @@ public class WhiteBlackAccessController implements AccessController {
   }
 
   @Override
-  public boolean isAllowed(Map<String, String> requestMap, boolean isNeedCheckServiceName) throws Exception {
+  public boolean isAllowed(Map<String, String> requestMap, String serviceName) throws Exception {
     if ((blackWhiteListProperties.getBlack().size() > 0 || blackWhiteListProperties.getWhite().size() > 0)
       && (StringUtils.isEmpty(requestMap.get(Const.AUTH_SERVICE_ID))
         || StringUtils.isEmpty(requestMap.get(Const.AUTH_INSTANCE_ID)))) {

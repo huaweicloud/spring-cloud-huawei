@@ -47,6 +47,7 @@ public class RSATokenCheckUtils {
       LOGGER.error("token is expired");
       throw new UnAuthorizedException("UNAUTHORIZED.");
     }
+    validatedToken.put(rsaToken, true);
     return rsaToken;
   }
 

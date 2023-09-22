@@ -42,16 +42,21 @@ public class SecurityPolicyAccessController implements AccessController {
   }
 
   @Override
-  public boolean isAllowed(Map<String, String> requestMap, boolean isNeedCheckServiceName) throws Exception {
-    String serviceName = requestMap.get(Const.AUTH_SERVICE_NAME);
-    if (isNeedCheckServiceName && StringUtils.isEmpty(serviceName)) {
+  public boolean isAllowed(Map<String, String> requestMap, String serviceName) throws Exception {
+    if (StringUtils.isEmpty(requestMap.get(Const.AUTH_SERVICE_ID)) && StringUtils.isEmpty(serviceName)) {
       LOGGER.info("consumer has no serviceName info in header, please set it for authentication");
       throw new UnAuthorizedException("UNAUTHORIZED.");
     }
     if (StringUtils.isEmpty(serviceName)) {
       serviceName = authenticationAdapter.getServiceName(requestMap.get(Const.AUTH_SERVICE_ID));
     }
-    return checkAllow(serviceName, requestMap) && !checkDeny(serviceName, requestMap);
+    if (checkAllow(serviceName, requestMap) && !checkDeny(serviceName, requestMap)) {
+      if (!StringUtils.isEmpty(requestMap.get(Const.ALARM_MESSAGE_KEY))) {
+        LOGGER.info(requestMap.get(Const.ALARM_MESSAGE_KEY));
+      }
+      return true;
+    }
+    return false;
   }
 
   private boolean checkDeny(String serviceName, Map<String, String> requestMap) {
@@ -59,9 +64,8 @@ public class SecurityPolicyAccessController implements AccessController {
         requestMap.get(Const.AUTH_METHOD))) {
       // permissive mode, black policy match allow passing
       if ("permissive".equals(securityPolicyProperties.getMode())) {
-        LOGGER.info("[autoauthz unauthorized request] consumer={}, provider={}, path={}, method={}, timestamp={}",
-            serviceName, securityPolicyProperties.getProvider(), requestMap.get(Const.AUTH_URI),
-            requestMap.get(Const.AUTH_METHOD), System.currentTimeMillis());
+        requestMap.put(Const.ALARM_MESSAGE_KEY, buildAlarmMessage(serviceName, requestMap.get(Const.AUTH_URI),
+            requestMap.get(Const.AUTH_METHOD)));
         return false;
       } else {
         return true;
@@ -71,6 +75,11 @@ public class SecurityPolicyAccessController implements AccessController {
     }
   }
 
+  private String buildAlarmMessage(String serviceName, String uri, String method) {
+    return String.format("[autoauthz unauthorized request] consumer=%s, provider=%s, path=%s, method=%s, timestamp=%d",
+        serviceName, securityPolicyProperties.getProvider(), uri, method, System.currentTimeMillis());
+  }
+
   private boolean checkAllow(String serviceName, Map<String, String> requestMap) {
     if (securityPolicyProperties.matchAllow(serviceName, requestMap.get(Const.AUTH_URI),
         requestMap.get(Const.AUTH_METHOD))) {
@@ -78,9 +87,8 @@ public class SecurityPolicyAccessController implements AccessController {
     } else {
       // permissive mode, white policy not match allow passing
       if ("permissive".equals(securityPolicyProperties.getMode())) {
-        LOGGER.info("[autoauthz unauthorized request] consumer={}, provider={}, path={}, method={}, timestamp={}",
-            serviceName, securityPolicyProperties.getProvider(), requestMap.get(Const.AUTH_URI),
-            requestMap.get(Const.AUTH_METHOD), System.currentTimeMillis());
+        requestMap.put(Const.ALARM_MESSAGE_KEY, buildAlarmMessage(serviceName, requestMap.get(Const.AUTH_URI),
+            requestMap.get(Const.AUTH_METHOD)));
         return true;
       } else {
         return false;

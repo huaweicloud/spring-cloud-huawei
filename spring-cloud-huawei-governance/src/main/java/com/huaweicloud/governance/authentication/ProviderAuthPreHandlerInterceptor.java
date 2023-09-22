@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.core.env.Environment;
 
 import com.huaweicloud.common.adapters.webmvc.PreHandlerInterceptor;
@@ -39,13 +40,15 @@ public class ProviderAuthPreHandlerInterceptor implements PreHandlerInterceptor 
 
   @Override
   public boolean handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-    String token = InvocationContextHolder
-        .getOrCreateInvocationContext()
-        .getContext(Const.AUTH_TOKEN);
+    String token = InvocationContextHolder.getOrCreateInvocationContext().getContext(Const.AUTH_TOKEN);
+    String serviceName = request.getHeader(Const.AUTH_SERVICE_NAME);
+    if (StringUtils.isEmpty(serviceName)) {
+      serviceName = InvocationContextHolder.getOrCreateInvocationContext().getContext(Const.AUTH_SERVICE_NAME);
+    }
     Map<String, String> requestMap = new HashMap<>();
     requestMap.put(Const.AUTH_URI, request.getRequestURI());
     requestMap.put(Const.AUTH_METHOD, request.getMethod());
-    requestMap.put(Const.AUTH_SERVICE_NAME, request.getHeader(Const.AUTH_SERVICE_NAME));
+    requestMap.put(Const.AUTH_SERVICE_NAME, serviceName);
     authenticationTokenManager.valid(token, requestMap);
     return true;
   }

@@ -37,9 +37,10 @@ public class SecurityPolicyAccessControllerTest {
 
   private Map<String, String> requestMap = new HashMap<>();
 
+  private final String serviceName = "order";
+
   @BeforeEach
   public void setUp() {
-    requestMap.put("serviceName", "order");
     requestMap.put("method", "GET");
   }
 
@@ -47,140 +48,140 @@ public class SecurityPolicyAccessControllerTest {
   public void testAllowPermissiveMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurityAllow");
     Assertions.assertTrue(getAllowAccessController("permissive")
-        .isAllowed(requestMap, false));
+        .isAllowed(requestMap, serviceName));
   }
 
   @Test
   public void testDenyPermissiveMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurityDeny");
     Assertions.assertTrue(getDenyAccessController("permissive")
-        .isAllowed(requestMap, false));
+        .isAllowed(requestMap, serviceName));
   }
 
   @Test
   public void testAllowPermissiveNotMatch() throws Exception {
     requestMap.put("uri", "/checkToken");
     Assertions.assertTrue(getAllowAccessController("permissive")
-        .isAllowed(requestMap, false));
+        .isAllowed(requestMap, serviceName));
   }
 
   @Test
   public void testDenyPermissiveNotMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurity");
     Assertions.assertTrue(getDenyAccessController("permissive")
-        .isAllowed(requestMap, false));
+        .isAllowed(requestMap, serviceName));
   }
 
   @Test
   public void testAllowEnforcingMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurityAllow");
     Assertions.assertTrue(getAllowAccessController("enforcing")
-        .isAllowed(requestMap, false));
+        .isAllowed(requestMap, serviceName));
   }
 
   @Test
   public void testDenyEnforcingMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurityDeny");
     Assertions.assertFalse(getDenyAccessController("enforcing")
-        .isAllowed(requestMap, false));
+        .isAllowed(requestMap, serviceName));
   }
 
   @Test
   public void testAllowEnforcingNotMatch() throws Exception {
     requestMap.put("uri", "/checkToken");
     Assertions.assertFalse(getAllowAccessController("enforcing")
-        .isAllowed(requestMap, false));
+        .isAllowed(requestMap, serviceName));
   }
 
   @Test
   public void testDenyEnforcingNotMatch() throws Exception {
     requestMap.put("uri", "/checkToken");
     Assertions.assertTrue(getDenyAccessController("enforcing")
-        .isAllowed(requestMap, false));
+        .isAllowed(requestMap, serviceName));
   }
 
   @Test
   public void testPermissiveBothMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurityBoth");
     Assertions.assertTrue(getBothAccessController("permissive")
-        .isAllowed(requestMap, false));
+        .isAllowed(requestMap, serviceName));
   }
 
   @Test
   public void testPermissiveBothNotMatch() throws Exception {
     requestMap.put("uri", "/checkToken");
     Assertions.assertTrue(getBothAccessController("permissive")
-        .isAllowed(requestMap, false));
+        .isAllowed(requestMap, serviceName));
   }
 
   @Test
   public void testPermissiveAllowMatchDenyNotMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurityAllow");
     Assertions.assertTrue(getBothAccessController("permissive")
-        .isAllowed(requestMap, false));
+        .isAllowed(requestMap, serviceName));
   }
 
   @Test
   public void testPermissiveAllowNotMatchDenyMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurityDeny");
     Assertions.assertTrue(getBothAccessController("permissive")
-        .isAllowed(requestMap, false));
+        .isAllowed(requestMap, serviceName));
   }
 
   @Test
   public void testEnforcingBothMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurityBoth");
     Assertions.assertFalse(getBothAccessController("enforcing")
-        .isAllowed(requestMap, false));
+        .isAllowed(requestMap, serviceName));
   }
 
   @Test
   public void testEnforcingBothNotMatch() throws Exception {
     requestMap.put("uri", "/checkToken");
     Assertions.assertFalse(getBothAccessController("enforcing")
-        .isAllowed(requestMap, false));
+        .isAllowed(requestMap, serviceName));
   }
 
   @Test
   public void testEnforcingAllowMatchDenyNotMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurityAllow");
     Assertions.assertTrue(getBothAccessController("enforcing")
-        .isAllowed( requestMap, false));
+        .isAllowed( requestMap, serviceName));
   }
 
   @Test
   public void testEnforcingAllowNotMatchDenyMatch() throws Exception {
     requestMap.put("uri", "/checkTokenSecurityDeny");
     Assertions.assertFalse(getBothAccessController("enforcing")
-        .isAllowed(requestMap, false));
+        .isAllowed(requestMap, serviceName));
   }
 
   @Test
   public void testUriPrefixMatch() throws Exception {
     requestMap.put("uri", "/checkTokenPre/security/allow");
     Assertions.assertTrue(getAllowAccessController("enforcing")
-        .isAllowed(requestMap, false));
+        .isAllowed(requestMap, serviceName));
   }
 
   @Test
   public void testUriPrefixNotMatch() throws Exception {
     requestMap.put("uri", "/checkTokenPer/security/allow");
     Assertions.assertFalse(getAllowAccessController("enforcing")
-        .isAllowed(requestMap, false));
+        .isAllowed(requestMap, serviceName));
   }
 
   @Test
   public void testUriSuffixMatch() throws Exception {
     requestMap.put("uri", "/checkTokenPer/security/checkTokenSuf");
     Assertions.assertTrue(getAllowAccessController("enforcing")
-        .isAllowed(requestMap, false));
+        .isAllowed(requestMap, serviceName));
   }
 
   @Test
   public void testUriSuffixNotMatch() throws Exception {
     requestMap.put("uri", "/checkTokenPer/security/checkTokenSfu");
     Assertions.assertFalse(getAllowAccessController("enforcing")
-        .isAllowed(requestMap, false));
+        .isAllowed(requestMap, serviceName));
   }
 
   private SecurityPolicyAccessController getAllowAccessController(String mode) {

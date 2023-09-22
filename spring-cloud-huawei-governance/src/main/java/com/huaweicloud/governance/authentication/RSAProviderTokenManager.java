@@ -38,8 +38,11 @@ public class RSAProviderTokenManager {
   public void valid(String token, Map<String, String> requestMap) throws Exception {
     try {
       RsaAuthenticationToken rsaToken = null;
-      if (environment.getProperty(Const.AUTH_TOKEN_CHECK_ENABLED, Boolean.class, true)) {
+      String serviceName = "";
+      if (environment.getProperty(Const.AUTH_TOKEN_CHECK_ENABLED, boolean.class, true)) {
         rsaToken = RSATokenCheckUtils.checkTokenInfo(token);
+      } else {
+        serviceName = requestMap.get(Const.AUTH_SERVICE_NAME);
       }
       boolean isAllow;
       for (AccessController accessController : accessControllers) {
@@ -48,14 +51,13 @@ public class RSAProviderTokenManager {
           requestMap.put(Const.AUTH_INSTANCE_ID, rsaToken.getInstanceId());
           if (RSATokenCheckUtils.validTokenInfo(rsaToken,
               accessController.getPublicKeyFromInstance(rsaToken.getInstanceId(), rsaToken.getServiceId()))) {
-            RSATokenCheckUtils.validatedToken.put(rsaToken, true);
-            isAllow = accessController.isAllowed(requestMap, false);
+            isAllow = accessController.isAllowed(requestMap, serviceName);
           } else {
             LOGGER.error("token is expired, restart service.");
             throw new UnAuthorizedException("UNAUTHORIZED.");
           }
         } else {
-          isAllow = accessController.isAllowed(requestMap, true);
+          isAllow = accessController.isAllowed(requestMap, serviceName);
         }
         if (!isAllow) {
           throw new UnAuthorizedException(accessController.interceptMessage());

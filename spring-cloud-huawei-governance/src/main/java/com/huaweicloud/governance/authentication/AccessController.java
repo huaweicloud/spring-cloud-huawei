@@ -22,7 +22,7 @@ import java.util.Map;
 public interface AccessController {
   String getPublicKeyFromInstance(String instanceId, String serviceId);
 
-  boolean isAllowed(Map<String, String> requestMap, boolean isNeedCheckServiceName) throws Exception;
+  boolean isAllowed(Map<String, String> requestMap, String serviceName) throws Exception;
 
   String interceptMessage();
 }
