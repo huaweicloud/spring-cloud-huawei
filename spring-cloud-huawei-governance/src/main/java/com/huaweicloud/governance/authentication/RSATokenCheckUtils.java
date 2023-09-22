@@ -19,12 +19,16 @@ package com.huaweicloud.governance.authentication;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.servicecomb.foundation.common.utils.KeyPairUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.huaweicloud.common.context.InvocationContextHolder;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 public class RSATokenCheckUtils {
   private static final Logger LOGGER = LoggerFactory.getLogger(RSATokenCheckUtils.class);
@@ -33,7 +37,11 @@ public class RSATokenCheckUtils {
       .expireAfterAccess(getExpiredTime(), TimeUnit.MILLISECONDS)
       .build();
 
-  public static RsaAuthenticationToken checkTokenInfo(String token) throws Exception {
+  public static RsaAuthenticationToken checkTokenInfo(HttpServletRequest request) throws Exception {
+    String token = request.getHeader(Const.AUTH_TOKEN);
+    if (StringUtils.isEmpty(token)) {
+      token = InvocationContextHolder.getOrCreateInvocationContext().getContext(Const.AUTH_TOKEN);
+    }
     if (null == token) {
       LOGGER.error("token is null, perhaps you need to set auth handler at consumer");
       throw new UnAuthorizedException("UNAUTHORIZED.");

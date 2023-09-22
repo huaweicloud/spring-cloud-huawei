@@ -53,11 +53,11 @@ public class SecurityPolicyAccessController implements AccessController {
   }
 
   private boolean checkDeny(String serviceName, AuthRequestExtractor extractor) {
-    if (securityPolicyProperties.matchDeny(serviceName, extractor.apiPath(), extractor.method())) {
+    if (securityPolicyProperties.matchDeny(serviceName, extractor.uri(), extractor.method())) {
       // permissive mode, black policy match allow passing
       if ("permissive".equals(securityPolicyProperties.getMode())) {
         LOGGER.info("[autoauthz unauthorized request] consumer={}, provider={}, path={}, method={}, timestamp={}",
-            serviceName, securityPolicyProperties.getProvider(), extractor.apiPath(), extractor.method(),
+            serviceName, securityPolicyProperties.getProvider(), extractor.uri(), extractor.method(),
             System.currentTimeMillis());
         return false;
       } else {
@@ -69,13 +69,13 @@ public class SecurityPolicyAccessController implements AccessController {
   }
 
   private boolean checkAllowAndDeny(String serviceName, AuthRequestExtractor extractor) {
-    if (securityPolicyProperties.matchAllow(serviceName, extractor.apiPath(), extractor.method())) {
+    if (securityPolicyProperties.matchAllow(serviceName, extractor.uri(), extractor.method())) {
       return !checkDeny(serviceName, extractor);
     } else {
       // permissive mode, white policy not match allow passing
       if ("permissive".equals(securityPolicyProperties.getMode())) {
         LOGGER.info("[autoauthz unauthorized request] consumer={}, provider={}, path={}, method={}, timestamp={}",
-            serviceName, securityPolicyProperties.getProvider(), extractor.apiPath(), extractor.method(),
+            serviceName, securityPolicyProperties.getProvider(), extractor.uri(), extractor.method(),
             System.currentTimeMillis());
         return true;
       } else {

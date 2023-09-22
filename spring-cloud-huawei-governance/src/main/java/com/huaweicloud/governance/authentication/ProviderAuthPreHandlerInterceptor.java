@@ -19,11 +19,9 @@ package com.huaweicloud.governance.authentication;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.core.env.Environment;
 
 import com.huaweicloud.common.adapters.webmvc.PreHandlerInterceptor;
-import com.huaweicloud.common.context.InvocationContextHolder;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,17 +36,7 @@ public class ProviderAuthPreHandlerInterceptor implements PreHandlerInterceptor 
 
   @Override
   public boolean handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-    String token = InvocationContextHolder.getOrCreateInvocationContext().getContext(Const.AUTH_TOKEN);
-    String serviceName = request.getHeader(Const.AUTH_SERVICE_NAME);
-    if (StringUtils.isEmpty(serviceName)) {
-      serviceName = InvocationContextHolder.getOrCreateInvocationContext().getContext(Const.AUTH_SERVICE_NAME);
-    }
-    AuthRequestExtractor extractor = new AuthRequestExtractor();
-    extractor.setToken(token);
-    extractor.setMethod(request.getMethod());
-    extractor.setServiceName(serviceName);
-    extractor.setApiPath(request.getRequestURI());
-    authenticationTokenManager.valid(extractor);
+    authenticationTokenManager.valid(request);
     return true;
   }
 }

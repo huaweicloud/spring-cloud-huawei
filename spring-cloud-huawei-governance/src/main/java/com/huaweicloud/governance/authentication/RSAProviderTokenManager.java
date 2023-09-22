@@ -22,6 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 public class RSAProviderTokenManager {
   private static final Logger LOGGER = LoggerFactory.getLogger(RSAProviderTokenManager.class);
 
@@ -34,17 +36,22 @@ public class RSAProviderTokenManager {
     this.environment = environment;
   }
 
-  public void valid(AuthRequestExtractor extractor) throws Exception {
+  public void valid(HttpServletRequest request) throws Exception {
     try {
       RsaAuthenticationToken rsaToken = null;
       if (environment.getProperty(Const.AUTH_TOKEN_CHECK_ENABLED, boolean.class, true)) {
-        rsaToken = RSATokenCheckUtils.checkTokenInfo(extractor.token());
+        rsaToken = RSATokenCheckUtils.checkTokenInfo(request);
+      }
+      AuthRequestExtractor extractor;
+      if (rsaToken != null) {
+        extractor = AuthRequestExtractorUtils.createAuthRequestExtractor(request, rsaToken.getServiceId(),
+            rsaToken.getInstanceId());
+      } else {
+        extractor = AuthRequestExtractorUtils.createAuthRequestExtractor(request, "", "");
       }
       boolean isAllow;
       for (AccessController accessController : accessControllers) {
         if (rsaToken != null) {
-          extractor.setServiceId(rsaToken.getServiceId());
-          extractor.setInstanceId(rsaToken.getInstanceId());
           if (RSATokenCheckUtils.validTokenInfo(rsaToken,
               accessController.getPublicKeyFromInstance(rsaToken.getInstanceId(), rsaToken.getServiceId()))) {
             isAllow = accessController.isAllowed(extractor);
