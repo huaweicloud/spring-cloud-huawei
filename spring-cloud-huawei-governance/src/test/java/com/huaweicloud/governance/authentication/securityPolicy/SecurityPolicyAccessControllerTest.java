@@ -17,15 +17,14 @@
 package com.huaweicloud.governance.authentication.securityPolicy;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.huaweicloud.governance.authentication.AuthRequestExtractor;
 import com.huaweicloud.governance.authentication.AuthenticationAdapter;
 import com.huaweicloud.governance.authentication.securityPolicy.SecurityPolicyProperties.Action;
 import com.huaweicloud.governance.authentication.securityPolicy.SecurityPolicyProperties.ConfigurationItem;
@@ -34,154 +33,152 @@ public class SecurityPolicyAccessControllerTest {
   private final AuthenticationAdapter authenticationAdapter = Mockito.mock(AuthenticationAdapter.class);
 
   private SecurityPolicyProperties securityPolicyProperties = new SecurityPolicyProperties();
-
-  private Map<String, String> requestMap = new HashMap<>();
-
-  private final String serviceName = "order";
+  private AuthRequestExtractor extractor = new AuthRequestExtractor();
 
   @BeforeEach
   public void setUp() {
-    requestMap.put("method", "GET");
+    extractor.setMethod("GET");
+    extractor.setServiceName("order");
   }
 
   @Test
   public void testAllowPermissiveMatch() throws Exception {
-    requestMap.put("uri", "/checkTokenSecurityAllow");
+    extractor.setApiPath("/checkTokenSecurityAllow");
     Assertions.assertTrue(getAllowAccessController("permissive")
-        .isAllowed(requestMap, serviceName));
+        .isAllowed(extractor));
   }
 
   @Test
   public void testDenyPermissiveMatch() throws Exception {
-    requestMap.put("uri", "/checkTokenSecurityDeny");
+    extractor.setApiPath("/checkTokenSecurityDeny");
     Assertions.assertTrue(getDenyAccessController("permissive")
-        .isAllowed(requestMap, serviceName));
+        .isAllowed(extractor));
   }
 
   @Test
   public void testAllowPermissiveNotMatch() throws Exception {
-    requestMap.put("uri", "/checkToken");
+    extractor.setApiPath("/checkToken");
     Assertions.assertTrue(getAllowAccessController("permissive")
-        .isAllowed(requestMap, serviceName));
+        .isAllowed(extractor));
   }
 
   @Test
   public void testDenyPermissiveNotMatch() throws Exception {
-    requestMap.put("uri", "/checkTokenSecurity");
+    extractor.setApiPath("/checkTokenSecurity");
     Assertions.assertTrue(getDenyAccessController("permissive")
-        .isAllowed(requestMap, serviceName));
+        .isAllowed(extractor));
   }
 
   @Test
   public void testAllowEnforcingMatch() throws Exception {
-    requestMap.put("uri", "/checkTokenSecurityAllow");
+    extractor.setApiPath("/checkTokenSecurityAllow");
     Assertions.assertTrue(getAllowAccessController("enforcing")
-        .isAllowed(requestMap, serviceName));
+        .isAllowed(extractor));
   }
 
   @Test
   public void testDenyEnforcingMatch() throws Exception {
-    requestMap.put("uri", "/checkTokenSecurityDeny");
+    extractor.setApiPath("/checkTokenSecurityDeny");
     Assertions.assertFalse(getDenyAccessController("enforcing")
-        .isAllowed(requestMap, serviceName));
+        .isAllowed(extractor));
   }
 
   @Test
   public void testAllowEnforcingNotMatch() throws Exception {
-    requestMap.put("uri", "/checkToken");
+    extractor.setApiPath("/checkToken");
     Assertions.assertFalse(getAllowAccessController("enforcing")
-        .isAllowed(requestMap, serviceName));
+        .isAllowed(extractor));
   }
 
   @Test
   public void testDenyEnforcingNotMatch() throws Exception {
-    requestMap.put("uri", "/checkToken");
+    extractor.setApiPath("/checkToken");
     Assertions.assertTrue(getDenyAccessController("enforcing")
-        .isAllowed(requestMap, serviceName));
+        .isAllowed(extractor));
   }
 
   @Test
   public void testPermissiveBothMatch() throws Exception {
-    requestMap.put("uri", "/checkTokenSecurityBoth");
+    extractor.setApiPath("/checkTokenSecurityBoth");
     Assertions.assertTrue(getBothAccessController("permissive")
-        .isAllowed(requestMap, serviceName));
+        .isAllowed(extractor));
   }
 
   @Test
   public void testPermissiveBothNotMatch() throws Exception {
-    requestMap.put("uri", "/checkToken");
+    extractor.setApiPath("/checkToken");
     Assertions.assertTrue(getBothAccessController("permissive")
-        .isAllowed(requestMap, serviceName));
+        .isAllowed(extractor));
   }
 
   @Test
   public void testPermissiveAllowMatchDenyNotMatch() throws Exception {
-    requestMap.put("uri", "/checkTokenSecurityAllow");
+    extractor.setApiPath("/checkTokenSecurityAllow");
     Assertions.assertTrue(getBothAccessController("permissive")
-        .isAllowed(requestMap, serviceName));
+        .isAllowed(extractor));
   }
 
   @Test
   public void testPermissiveAllowNotMatchDenyMatch() throws Exception {
-    requestMap.put("uri", "/checkTokenSecurityDeny");
+    extractor.setApiPath("/checkTokenSecurityDeny");
     Assertions.assertTrue(getBothAccessController("permissive")
-        .isAllowed(requestMap, serviceName));
+        .isAllowed(extractor));
   }
 
   @Test
   public void testEnforcingBothMatch() throws Exception {
-    requestMap.put("uri", "/checkTokenSecurityBoth");
+    extractor.setApiPath("/checkTokenSecurityBoth");
     Assertions.assertFalse(getBothAccessController("enforcing")
-        .isAllowed(requestMap, serviceName));
+        .isAllowed(extractor));
   }
 
   @Test
   public void testEnforcingBothNotMatch() throws Exception {
-    requestMap.put("uri", "/checkToken");
+    extractor.setApiPath("/checkToken");
     Assertions.assertFalse(getBothAccessController("enforcing")
-        .isAllowed(requestMap, serviceName));
+        .isAllowed(extractor));
   }
 
   @Test
   public void testEnforcingAllowMatchDenyNotMatch() throws Exception {
-    requestMap.put("uri", "/checkTokenSecurityAllow");
+    extractor.setApiPath("/checkTokenSecurityAllow");
     Assertions.assertTrue(getBothAccessController("enforcing")
-        .isAllowed( requestMap, serviceName));
+        .isAllowed(extractor));
   }
 
   @Test
   public void testEnforcingAllowNotMatchDenyMatch() throws Exception {
-    requestMap.put("uri", "/checkTokenSecurityDeny");
+    extractor.setApiPath("/checkTokenSecurityDeny");
     Assertions.assertFalse(getBothAccessController("enforcing")
-        .isAllowed(requestMap, serviceName));
+        .isAllowed(extractor));
   }
 
   @Test
   public void testUriPrefixMatch() throws Exception {
-    requestMap.put("uri", "/checkTokenPre/security/allow");
+    extractor.setApiPath("/checkTokenPre/security/allow");
     Assertions.assertTrue(getAllowAccessController("enforcing")
-        .isAllowed(requestMap, serviceName));
+        .isAllowed(extractor));
   }
 
   @Test
   public void testUriPrefixNotMatch() throws Exception {
-    requestMap.put("uri", "/checkTokenPer/security/allow");
+    extractor.setApiPath("/checkTokenPer/security/allow");
     Assertions.assertFalse(getAllowAccessController("enforcing")
-        .isAllowed(requestMap, serviceName));
+        .isAllowed(extractor));
   }
 
   @Test
   public void testUriSuffixMatch() throws Exception {
-    requestMap.put("uri", "/checkTokenPer/security/checkTokenSuf");
+    extractor.setApiPath("/checkTokenPer/security/checkTokenSuf");
     Assertions.assertTrue(getAllowAccessController("enforcing")
-        .isAllowed(requestMap, serviceName));
+        .isAllowed(extractor));
   }
 
   @Test
   public void testUriSuffixNotMatch() throws Exception {
-    requestMap.put("uri", "/checkTokenPer/security/checkTokenSfu");
+    extractor.setApiPath("/checkTokenPer/security/checkTokenSfu");
     Assertions.assertFalse(getAllowAccessController("enforcing")
-        .isAllowed(requestMap, serviceName));
+        .isAllowed(extractor));
   }
 
   private SecurityPolicyAccessController getAllowAccessController(String mode) {

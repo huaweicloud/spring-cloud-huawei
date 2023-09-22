@@ -16,7 +16,6 @@
 package com.huaweicloud.governance.authentication.whiteBlack;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -24,8 +23,8 @@ import org.slf4j.LoggerFactory;
 
 import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
 import com.huaweicloud.governance.authentication.AccessController;
+import com.huaweicloud.governance.authentication.AuthRequestExtractor;
 import com.huaweicloud.governance.authentication.AuthenticationAdapter;
-import com.huaweicloud.governance.authentication.Const;
 import com.huaweicloud.governance.authentication.UnAuthorizedException;
 
 /**
@@ -45,15 +44,14 @@ public class WhiteBlackAccessController implements AccessController {
   }
 
   @Override
-  public boolean isAllowed(Map<String, String> requestMap, String serviceName) throws Exception {
+  public boolean isAllowed(AuthRequestExtractor extractor) throws Exception {
     if ((blackWhiteListProperties.getBlack().size() > 0 || blackWhiteListProperties.getWhite().size() > 0)
-      && (StringUtils.isEmpty(requestMap.get(Const.AUTH_SERVICE_ID))
-        || StringUtils.isEmpty(requestMap.get(Const.AUTH_INSTANCE_ID)))) {
+      && (StringUtils.isEmpty(extractor.serviceId()) || StringUtils.isEmpty(extractor.instanceId()))) {
       LOGGER.info("please set spring.cloud.servicecomb.webmvc.tokenCheckEnabled config true.");
       throw new UnAuthorizedException("UNAUTHORIZED.");
     }
-    return whiteAllowed(requestMap.get(Const.AUTH_SERVICE_ID), requestMap.get(Const.AUTH_INSTANCE_ID))
-        && !blackDenied(requestMap.get(Const.AUTH_SERVICE_ID), requestMap.get(Const.AUTH_INSTANCE_ID));
+    return whiteAllowed(extractor.serviceId(), extractor.instanceId())
+        && !blackDenied(extractor.serviceId(), extractor.instanceId());
   }
 
   @Override

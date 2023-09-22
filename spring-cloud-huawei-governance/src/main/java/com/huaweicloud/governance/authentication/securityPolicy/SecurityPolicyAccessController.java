@@ -14,15 +14,13 @@
  */
 package com.huaweicloud.governance.authentication.securityPolicy;
 
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.huaweicloud.governance.authentication.AccessController;
+import com.huaweicloud.governance.authentication.AuthRequestExtractor;
 import com.huaweicloud.governance.authentication.AuthenticationAdapter;
-import com.huaweicloud.governance.authentication.Const;
 import com.huaweicloud.governance.authentication.UnAuthorizedException;
 
 /**
@@ -42,31 +40,25 @@ public class SecurityPolicyAccessController implements AccessController {
   }
 
   @Override
-  public boolean isAllowed(Map<String, String> requestMap, String serviceName) throws Exception {
-    String currentServiceName = serviceName;
-    if (StringUtils.isEmpty(requestMap.get(Const.AUTH_SERVICE_ID)) && StringUtils.isEmpty(currentServiceName)) {
+  public boolean isAllowed(AuthRequestExtractor extractor) throws Exception {
+    String currentServiceName = extractor.serviceName();
+    if (StringUtils.isEmpty(extractor.serviceId()) && StringUtils.isEmpty(currentServiceName)) {
       LOGGER.info("consumer has no serviceName info in header, please set it for authentication");
       throw new UnAuthorizedException("UNAUTHORIZED.");
     }
     if (StringUtils.isEmpty(currentServiceName)) {
-      currentServiceName = authenticationAdapter.getServiceName(requestMap.get(Const.AUTH_SERVICE_ID));
+      currentServiceName = authenticationAdapter.getServiceName(extractor.serviceId());
     }
-    if (checkAllow(currentServiceName, requestMap) && !checkDeny(currentServiceName, requestMap)) {
-      if (!StringUtils.isEmpty(requestMap.get(Const.ALARM_MESSAGE_KEY))) {
-        LOGGER.info(requestMap.get(Const.ALARM_MESSAGE_KEY));
-      }
-      return true;
-    }
-    return false;
+    return checkAllowAndDeny(currentServiceName, extractor);
   }
 
-  private boolean checkDeny(String serviceName, Map<String, String> requestMap) {
-    if (securityPolicyProperties.matchDeny(serviceName, requestMap.get(Const.AUTH_URI),
-        requestMap.get(Const.AUTH_METHOD))) {
+  private boolean checkDeny(String serviceName, AuthRequestExtractor extractor) {
+    if (securityPolicyProperties.matchDeny(serviceName, extractor.apiPath(), extractor.method())) {
       // permissive mode, black policy match allow passing
       if ("permissive".equals(securityPolicyProperties.getMode())) {
-        requestMap.put(Const.ALARM_MESSAGE_KEY, buildAlarmMessage(serviceName, requestMap.get(Const.AUTH_URI),
-            requestMap.get(Const.AUTH_METHOD)));
+        LOGGER.info("[autoauthz unauthorized request] consumer={}, provider={}, path={}, method={}, timestamp={}",
+            serviceName, securityPolicyProperties.getProvider(), extractor.apiPath(), extractor.method(),
+            System.currentTimeMillis());
         return false;
       } else {
         return true;
@@ -76,20 +68,15 @@ public class SecurityPolicyAccessController implements AccessController {
     }
   }
 
-  private String buildAlarmMessage(String serviceName, String uri, String method) {
-    return String.format("[autoauthz unauthorized request] consumer=%s, provider=%s, path=%s, method=%s, timestamp=%d",
-        serviceName, securityPolicyProperties.getProvider(), uri, method, System.currentTimeMillis());
-  }
-
-  private boolean checkAllow(String serviceName, Map<String, String> requestMap) {
-    if (securityPolicyProperties.matchAllow(serviceName, requestMap.get(Const.AUTH_URI),
-        requestMap.get(Const.AUTH_METHOD))) {
-      return true;
+  private boolean checkAllowAndDeny(String serviceName, AuthRequestExtractor extractor) {
+    if (securityPolicyProperties.matchAllow(serviceName, extractor.apiPath(), extractor.method())) {
+      return !checkDeny(serviceName, extractor);
     } else {
       // permissive mode, white policy not match allow passing
       if ("permissive".equals(securityPolicyProperties.getMode())) {
-        requestMap.put(Const.ALARM_MESSAGE_KEY, buildAlarmMessage(serviceName, requestMap.get(Const.AUTH_URI),
-            requestMap.get(Const.AUTH_METHOD)));
+        LOGGER.info("[autoauthz unauthorized request] consumer={}, provider={}, path={}, method={}, timestamp={}",
+            serviceName, securityPolicyProperties.getProvider(), extractor.apiPath(), extractor.method(),
+            System.currentTimeMillis());
         return true;
       } else {
         return false;

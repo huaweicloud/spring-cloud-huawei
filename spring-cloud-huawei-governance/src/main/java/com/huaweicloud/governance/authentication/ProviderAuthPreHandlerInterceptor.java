@@ -17,9 +17,7 @@
 
 package com.huaweicloud.governance.authentication;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.core.env.Environment;
@@ -45,11 +43,12 @@ public class ProviderAuthPreHandlerInterceptor implements PreHandlerInterceptor 
     if (StringUtils.isEmpty(serviceName)) {
       serviceName = InvocationContextHolder.getOrCreateInvocationContext().getContext(Const.AUTH_SERVICE_NAME);
     }
-    Map<String, String> requestMap = new HashMap<>();
-    requestMap.put(Const.AUTH_URI, request.getRequestURI());
-    requestMap.put(Const.AUTH_METHOD, request.getMethod());
-    requestMap.put(Const.AUTH_SERVICE_NAME, serviceName);
-    authenticationTokenManager.valid(token, requestMap);
+    AuthRequestExtractor extractor = new AuthRequestExtractor();
+    extractor.setToken(token);
+    extractor.setMethod(request.getMethod());
+    extractor.setServiceName(serviceName);
+    extractor.setApiPath(request.getRequestURI());
+    authenticationTokenManager.valid(extractor);
     return true;
   }
 }

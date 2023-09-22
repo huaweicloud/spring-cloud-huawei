@@ -18,7 +18,6 @@
 package com.huaweicloud.governance.authentication;
 
 import java.util.List;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -35,29 +34,26 @@ public class RSAProviderTokenManager {
     this.environment = environment;
   }
 
-  public void valid(String token, Map<String, String> requestMap) throws Exception {
+  public void valid(AuthRequestExtractor extractor) throws Exception {
     try {
       RsaAuthenticationToken rsaToken = null;
-      String serviceName = "";
       if (environment.getProperty(Const.AUTH_TOKEN_CHECK_ENABLED, boolean.class, true)) {
-        rsaToken = RSATokenCheckUtils.checkTokenInfo(token);
-      } else {
-        serviceName = requestMap.get(Const.AUTH_SERVICE_NAME);
+        rsaToken = RSATokenCheckUtils.checkTokenInfo(extractor.token());
       }
       boolean isAllow;
       for (AccessController accessController : accessControllers) {
         if (rsaToken != null) {
-          requestMap.put(Const.AUTH_SERVICE_ID, rsaToken.getServiceId());
-          requestMap.put(Const.AUTH_INSTANCE_ID, rsaToken.getInstanceId());
+          extractor.setServiceId(rsaToken.getServiceId());
+          extractor.setInstanceId(rsaToken.getInstanceId());
           if (RSATokenCheckUtils.validTokenInfo(rsaToken,
               accessController.getPublicKeyFromInstance(rsaToken.getInstanceId(), rsaToken.getServiceId()))) {
-            isAllow = accessController.isAllowed(requestMap, serviceName);
+            isAllow = accessController.isAllowed(extractor);
           } else {
             LOGGER.error("token is expired, restart service.");
             throw new UnAuthorizedException("UNAUTHORIZED.");
           }
         } else {
-          isAllow = accessController.isAllowed(requestMap, serviceName);
+          isAllow = accessController.isAllowed(extractor);
         }
         if (!isAllow) {
           throw new UnAuthorizedException(accessController.interceptMessage());
