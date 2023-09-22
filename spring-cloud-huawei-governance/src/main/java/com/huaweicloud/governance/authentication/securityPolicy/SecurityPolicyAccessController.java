@@ -43,14 +43,15 @@ public class SecurityPolicyAccessController implements AccessController {
 
   @Override
   public boolean isAllowed(Map<String, String> requestMap, String serviceName) throws Exception {
-    if (StringUtils.isEmpty(requestMap.get(Const.AUTH_SERVICE_ID)) && StringUtils.isEmpty(serviceName)) {
+    String currentServiceName = serviceName;
+    if (StringUtils.isEmpty(requestMap.get(Const.AUTH_SERVICE_ID)) && StringUtils.isEmpty(currentServiceName)) {
       LOGGER.info("consumer has no serviceName info in header, please set it for authentication");
       throw new UnAuthorizedException("UNAUTHORIZED.");
     }
-    if (StringUtils.isEmpty(serviceName)) {
-      serviceName = authenticationAdapter.getServiceName(requestMap.get(Const.AUTH_SERVICE_ID));
+    if (StringUtils.isEmpty(currentServiceName)) {
+      currentServiceName = authenticationAdapter.getServiceName(requestMap.get(Const.AUTH_SERVICE_ID));
     }
-    if (checkAllow(serviceName, requestMap) && !checkDeny(serviceName, requestMap)) {
+    if (checkAllow(currentServiceName, requestMap) && !checkDeny(currentServiceName, requestMap)) {
       if (!StringUtils.isEmpty(requestMap.get(Const.ALARM_MESSAGE_KEY))) {
         LOGGER.info(requestMap.get(Const.ALARM_MESSAGE_KEY));
       }
