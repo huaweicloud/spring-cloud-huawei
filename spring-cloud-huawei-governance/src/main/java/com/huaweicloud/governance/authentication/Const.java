@@ -21,4 +21,8 @@ public class Const {
   public static final String AUTH_TOKEN = "x-auth-token";
 
   public static final String INSTANCE_PUBKEY_PRO = "publickey";
+
+  public static final String AUTH_SERVICE_NAME = "serviceName";
+
+  public static final String AUTH_TOKEN_CHECK_ENABLED = "spring.cloud.servicecomb.webmvc.publicKey.tokenCheckEnabled";
 }

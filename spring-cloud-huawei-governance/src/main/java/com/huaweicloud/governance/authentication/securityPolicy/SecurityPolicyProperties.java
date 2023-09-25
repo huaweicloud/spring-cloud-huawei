@@ -136,27 +136,27 @@ public class SecurityPolicyProperties {
     this.action = action;
   }
 
-  public boolean matchAllow(String serviceId, String uri, String method) {
+  public boolean matchAllow(String serviceName, String uri, String method) {
     if (action.allow.isEmpty()) {
       return true;
     }
 
     for (ConfigurationItem item : action.allow) {
       if (checkUri(uri, item.getUri()) && method.equals(item.getMethod())
-          && item.getConsumer().equals(serviceId)) {
+          && item.getConsumer().equals(serviceName)) {
         return true;
       }
     }
     return false;
   }
 
-  public boolean matchDeny(String serviceId, String uri, String method) {
+  public boolean matchDeny(String serviceName, String uri, String method) {
     if (action.deny.isEmpty()) {
       return false;
     }
     for (ConfigurationItem item : action.deny) {
       if (checkUri(uri, item.getUri()) && method.equals(item.getMethod())
-          && item.getConsumer().equals(serviceId)) {
+          && item.getConsumer().equals(serviceName)) {
         return true;
       }
     }

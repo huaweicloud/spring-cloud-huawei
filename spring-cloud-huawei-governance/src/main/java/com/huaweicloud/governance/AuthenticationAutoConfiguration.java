@@ -28,6 +28,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
@@ -74,8 +75,9 @@ public class AuthenticationAutoConfiguration {
   @Bean
   @ConditionalOnExpression("${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":false}"
       + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_SECURITY_POLICY_ENABLED + ":false}")
-  public ProviderAuthPreHandlerInterceptor providerAuthPreHandlerInterceptor(List<AccessController> accessController) {
-    return new ProviderAuthPreHandlerInterceptor(accessController);
+  public ProviderAuthPreHandlerInterceptor providerAuthPreHandlerInterceptor(List<AccessController> accessController,
+      Environment environment, AuthenticationAdapter authenticationAdapter) {
+    return new ProviderAuthPreHandlerInterceptor(accessController, environment, authenticationAdapter);
   }
 
   @Bean

@@ -14,16 +14,11 @@
  */
 package com.huaweicloud.governance.authentication;
 
-import java.util.Map;
-
 /**
  * Add black / white list control to service access
  */
 public interface AccessController {
-
-  boolean isAllowed(String serviceId, String instanceId, Map<String, String> requestMap);
-
-  String getPublicKeyFromInstance(String instanceId, String serviceId);
+  boolean isAllowed(AuthRequestExtractor extractor) throws Exception;
 
   String interceptMessage();
 }
