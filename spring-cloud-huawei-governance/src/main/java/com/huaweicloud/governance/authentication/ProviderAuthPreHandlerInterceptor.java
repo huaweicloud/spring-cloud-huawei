@@ -17,12 +17,11 @@
 
 package com.huaweicloud.governance.authentication;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import org.springframework.core.env.Environment;
 
 import com.huaweicloud.common.adapters.webmvc.PreHandlerInterceptor;
-import com.huaweicloud.common.context.InvocationContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,19 +30,14 @@ public class ProviderAuthPreHandlerInterceptor implements PreHandlerInterceptor 
 
   private final RSAProviderTokenManager authenticationTokenManager;
 
-  public ProviderAuthPreHandlerInterceptor(List<AccessController> accessControllers) {
-    authenticationTokenManager = new RSAProviderTokenManager(accessControllers);
+  public ProviderAuthPreHandlerInterceptor(List<AccessController> accessControllers, Environment environment,
+      AuthenticationAdapter authenticationAdapter) {
+    authenticationTokenManager = new RSAProviderTokenManager(accessControllers, environment, authenticationAdapter);
   }
 
   @Override
   public boolean handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-    String token = InvocationContextHolder
-        .getOrCreateInvocationContext()
-        .getContext(Const.AUTH_TOKEN);
-    Map<String, String> requestMap = new HashMap<>();
-    requestMap.put("uri", request.getRequestURI());
-    requestMap.put("method", request.getMethod());
-    authenticationTokenManager.valid(token, requestMap);
+    authenticationTokenManager.valid(request);
     return true;
   }
 }

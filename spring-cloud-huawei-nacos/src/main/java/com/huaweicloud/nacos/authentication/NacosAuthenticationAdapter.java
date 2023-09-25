@@ -85,6 +85,11 @@ public class NacosAuthenticationAdapter implements AuthenticationAdapter {
     }
   }
 
+  @Override
+  public String getServiceName(String serviceId) {
+    return serviceId;
+  }
+
   private ServiceInstance getServiceInstance(String serviceId, String instanceId) {
     try {
       String key = String.format("%s@%s", serviceId, instanceId);
