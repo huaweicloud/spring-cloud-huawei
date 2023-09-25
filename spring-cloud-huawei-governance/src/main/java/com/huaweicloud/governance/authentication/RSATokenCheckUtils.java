@@ -59,10 +59,10 @@ public class RSATokenCheckUtils {
     if (validatedToken.asMap().containsKey(rsaToken)) {
       return rsaToken;
     }
-    if (isValidToken(rsaToken, authenticationAdapter) && !tokenExpired(rsaToken)) {
+    if (isValidToken(rsaToken, authenticationAdapter)) {
       validatedToken.put(rsaToken, true);
     } else {
-      LOGGER.error("token is expired, restart service.");
+      LOGGER.error("token authentication failed, check token info.");
       throw new UnAuthorizedException("UNAUTHORIZED.");
     }
     return rsaToken;
