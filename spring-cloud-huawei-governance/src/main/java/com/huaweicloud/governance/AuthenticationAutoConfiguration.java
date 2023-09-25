@@ -76,8 +76,8 @@ public class AuthenticationAutoConfiguration {
   @ConditionalOnExpression("${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":false}"
       + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_SECURITY_POLICY_ENABLED + ":false}")
   public ProviderAuthPreHandlerInterceptor providerAuthPreHandlerInterceptor(List<AccessController> accessController,
-      Environment environment) {
-    return new ProviderAuthPreHandlerInterceptor(accessController, environment);
+      Environment environment, AuthenticationAdapter authenticationAdapter) {
+    return new ProviderAuthPreHandlerInterceptor(accessController, environment, authenticationAdapter);
   }
 
   @Bean

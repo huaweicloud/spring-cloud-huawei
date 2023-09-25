@@ -85,11 +85,6 @@ public class SecurityPolicyAccessController implements AccessController {
   }
 
   @Override
-  public String getPublicKeyFromInstance(String instanceId, String serviceId) {
-    return authenticationAdapter.getPublicKeyFromInstance(instanceId, serviceId);
-  }
-
-  @Override
   public String interceptMessage() {
     return "UNAUTHORIZED BY SECURITY POLICY";
   }

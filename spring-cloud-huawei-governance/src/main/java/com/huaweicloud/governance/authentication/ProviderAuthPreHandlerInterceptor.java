@@ -30,8 +30,9 @@ public class ProviderAuthPreHandlerInterceptor implements PreHandlerInterceptor 
 
   private final RSAProviderTokenManager authenticationTokenManager;
 
-  public ProviderAuthPreHandlerInterceptor(List<AccessController> accessControllers, Environment environment) {
-    authenticationTokenManager = new RSAProviderTokenManager(accessControllers, environment);
+  public ProviderAuthPreHandlerInterceptor(List<AccessController> accessControllers, Environment environment,
+      AuthenticationAdapter authenticationAdapter) {
+    authenticationTokenManager = new RSAProviderTokenManager(accessControllers, environment, authenticationAdapter);
   }
 
   @Override

@@ -55,11 +55,6 @@ public class WhiteBlackAccessController implements AccessController {
   }
 
   @Override
-  public String getPublicKeyFromInstance(String instanceId, String serviceId) {
-    return authenticationAdapter.getPublicKeyFromInstance(instanceId, serviceId);
-  }
-
-  @Override
   public String interceptMessage() {
     return "UNAUTHORIZED BY WHITE BLACK";
   }

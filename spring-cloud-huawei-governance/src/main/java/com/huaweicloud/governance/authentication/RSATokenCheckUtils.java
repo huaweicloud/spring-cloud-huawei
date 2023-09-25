@@ -37,7 +37,8 @@ public class RSATokenCheckUtils {
       .expireAfterAccess(getExpiredTime(), TimeUnit.MILLISECONDS)
       .build();
 
-  public static RsaAuthenticationToken checkTokenInfo(HttpServletRequest request) throws Exception {
+  public static RsaAuthenticationToken checkTokenInfo(HttpServletRequest request,
+      AuthenticationAdapter authenticationAdapter) throws Exception {
     String token = request.getHeader(Const.AUTH_TOKEN);
     if (StringUtils.isEmpty(token)) {
       token = InvocationContextHolder.getOrCreateInvocationContext().getContext(Const.AUTH_TOKEN);
@@ -55,7 +56,15 @@ public class RSATokenCheckUtils {
       LOGGER.error("token is expired");
       throw new UnAuthorizedException("UNAUTHORIZED.");
     }
-    validatedToken.put(rsaToken, true);
+    if (validatedToken.asMap().containsKey(rsaToken)) {
+      return rsaToken;
+    }
+    if (isValidToken(rsaToken, authenticationAdapter) && !tokenExpired(rsaToken)) {
+      validatedToken.put(rsaToken, true);
+    } else {
+      LOGGER.error("token is expired, restart service.");
+      throw new UnAuthorizedException("UNAUTHORIZED.");
+    }
     return rsaToken;
   }
 
@@ -66,18 +75,15 @@ public class RSATokenCheckUtils {
     return now > expired;
   }
 
-  public static boolean isValidToken(RsaAuthenticationToken rsaToken, String publicKey) throws Exception {
+  public static boolean isValidToken(RsaAuthenticationToken rsaToken,
+      AuthenticationAdapter adapter) throws Exception {
     String sign = rsaToken.getSign();
     String content = rsaToken.plainToken();
+    String publicKey = adapter.getPublicKeyFromInstance(rsaToken.getInstanceId(), rsaToken.getServiceId());
     return KeyPairUtils.verify(publicKey, sign, content);
   }
 
   private static int getExpiredTime() {
     return 60 * 60 * 1000;
-  }
-
-  public static boolean validTokenInfo(RsaAuthenticationToken rsaToken, String publicKey) throws Exception {
-    return validatedToken.asMap().containsKey(rsaToken) ||
-      (isValidToken(rsaToken, publicKey) && !tokenExpired(rsaToken));
   }
 }

@@ -18,8 +18,6 @@ package com.huaweicloud.governance.authentication;
  * Add black / white list control to service access
  */
 public interface AccessController {
-  String getPublicKeyFromInstance(String instanceId, String serviceId);
-
   boolean isAllowed(AuthRequestExtractor extractor) throws Exception;
 
   String interceptMessage();

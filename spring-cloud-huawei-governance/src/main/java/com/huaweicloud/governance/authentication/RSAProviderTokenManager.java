@@ -31,16 +31,20 @@ public class RSAProviderTokenManager {
 
   private final Environment environment;
 
-  public RSAProviderTokenManager(List<AccessController> accessControllers, Environment environment) {
+  private final AuthenticationAdapter authenticationAdapter;
+
+  public RSAProviderTokenManager(List<AccessController> accessControllers, Environment environment,
+      AuthenticationAdapter authenticationAdapter) {
     this.accessControllers = accessControllers;
     this.environment = environment;
+    this.authenticationAdapter = authenticationAdapter;
   }
 
   public void valid(HttpServletRequest request) throws Exception {
     try {
       RsaAuthenticationToken rsaToken = null;
       if (environment.getProperty(Const.AUTH_TOKEN_CHECK_ENABLED, boolean.class, true)) {
-        rsaToken = RSATokenCheckUtils.checkTokenInfo(request);
+        rsaToken = RSATokenCheckUtils.checkTokenInfo(request, authenticationAdapter);
       }
       AuthRequestExtractor extractor;
       if (rsaToken != null) {
@@ -49,20 +53,8 @@ public class RSAProviderTokenManager {
       } else {
         extractor = AuthRequestExtractorUtils.createAuthRequestExtractor(request, "", "");
       }
-      boolean isAllow;
       for (AccessController accessController : accessControllers) {
-        if (rsaToken != null) {
-          if (RSATokenCheckUtils.validTokenInfo(rsaToken,
-              accessController.getPublicKeyFromInstance(rsaToken.getInstanceId(), rsaToken.getServiceId()))) {
-            isAllow = accessController.isAllowed(extractor);
-          } else {
-            LOGGER.error("token is expired, restart service.");
-            throw new UnAuthorizedException("UNAUTHORIZED.");
-          }
-        } else {
-          isAllow = accessController.isAllowed(extractor);
-        }
-        if (!isAllow) {
+        if (!accessController.isAllowed(extractor)) {
           throw new UnAuthorizedException(accessController.interceptMessage());
         }
       }
