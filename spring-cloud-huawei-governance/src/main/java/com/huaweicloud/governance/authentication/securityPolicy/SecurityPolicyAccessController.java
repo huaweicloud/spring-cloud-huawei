@@ -14,19 +14,21 @@
  */
 package com.huaweicloud.governance.authentication.securityPolicy;
 
-import java.util.Map;
-
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.huaweicloud.governance.authentication.AccessController;
+import com.huaweicloud.governance.authentication.AuthRequestExtractor;
 import com.huaweicloud.governance.authentication.AuthenticationAdapter;
+import com.huaweicloud.governance.authentication.UnAuthorizedException;
 
 /**
  * Add security policy list control to service access
  */
 public class SecurityPolicyAccessController implements AccessController {
   private static final Logger LOGGER = LoggerFactory.getLogger(SecurityPolicyAccessController.class);
+
   private SecurityPolicyProperties securityPolicyProperties;
 
   private final AuthenticationAdapter authenticationAdapter;
@@ -38,16 +40,24 @@ public class SecurityPolicyAccessController implements AccessController {
   }
 
   @Override
-  public boolean isAllowed(String serviceId, String instanceId, Map<String, String> requestMap) {
-    return checkAllow(serviceId, requestMap) && !checkDeny(serviceId, requestMap);
+  public boolean isAllowed(AuthRequestExtractor extractor) throws Exception {
+    String currentServiceName = extractor.serviceName();
+    if (StringUtils.isEmpty(extractor.serviceId()) && StringUtils.isEmpty(currentServiceName)) {
+      LOGGER.info("consumer has no serviceName info in header, please set it for authentication");
+      throw new UnAuthorizedException("UNAUTHORIZED.");
+    }
+    if (StringUtils.isEmpty(currentServiceName)) {
+      currentServiceName = authenticationAdapter.getServiceName(extractor.serviceId());
+    }
+    return checkAllowAndDeny(currentServiceName, extractor);
   }
 
-  private boolean checkDeny(String serviceId, Map<String, String> requestMap) {
-    if (securityPolicyProperties.matchDeny(serviceId, requestMap.get("uri"), requestMap.get("method"))) {
+  private boolean checkDeny(String serviceName, AuthRequestExtractor extractor) {
+    if (securityPolicyProperties.matchDeny(serviceName, extractor.uri(), extractor.method())) {
       // permissive mode, black policy match allow passing
       if ("permissive".equals(securityPolicyProperties.getMode())) {
         LOGGER.info("[autoauthz unauthorized request] consumer={}, provider={}, path={}, method={}, timestamp={}",
-            serviceId, securityPolicyProperties.getProvider(), requestMap.get("method"), requestMap.get("uri"),
+            serviceName, securityPolicyProperties.getProvider(), extractor.uri(), extractor.method(),
             System.currentTimeMillis());
         return false;
       } else {
@@ -58,25 +68,20 @@ public class SecurityPolicyAccessController implements AccessController {
     }
   }
 
-  private boolean checkAllow(String serviceId, Map<String, String> requestMap) {
-    if (securityPolicyProperties.matchAllow(serviceId, requestMap.get("uri"), requestMap.get("method"))) {
-      return true;
+  private boolean checkAllowAndDeny(String serviceName, AuthRequestExtractor extractor) {
+    if (securityPolicyProperties.matchAllow(serviceName, extractor.uri(), extractor.method())) {
+      return !checkDeny(serviceName, extractor);
     } else {
       // permissive mode, white policy not match allow passing
       if ("permissive".equals(securityPolicyProperties.getMode())) {
         LOGGER.info("[autoauthz unauthorized request] consumer={}, provider={}, path={}, method={}, timestamp={}",
-            serviceId, securityPolicyProperties.getProvider(), requestMap.get("method"), requestMap.get("uri"),
+            serviceName, securityPolicyProperties.getProvider(), extractor.uri(), extractor.method(),
             System.currentTimeMillis());
         return true;
       } else {
         return false;
       }
     }
-  }
-
-  @Override
-  public String getPublicKeyFromInstance(String instanceId, String serviceId) {
-    return authenticationAdapter.getPublicKeyFromInstance(instanceId, serviceId);
   }
 
   @Override

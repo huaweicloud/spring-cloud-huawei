@@ -22,6 +22,8 @@ spring:
       context:
         queryContextMapper:
           query-context: x-query-context
+        headerContextMapper:
+          serviceName: serviceName
       loadbalancer.price:
         retryOnSame: 1
       webmvc:

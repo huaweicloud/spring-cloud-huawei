@@ -17,89 +17,50 @@
 
 package com.huaweicloud.governance.authentication;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.servicecomb.foundation.common.utils.KeyPairUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class RSAProviderTokenManager {
-
   private static final Logger LOGGER = LoggerFactory.getLogger(RSAProviderTokenManager.class);
-
-  private final Cache<RsaAuthenticationToken, Boolean> validatedToken = CacheBuilder.newBuilder()
-      .expireAfterAccess(getExpiredTime(), TimeUnit.MILLISECONDS)
-      .build();
 
   private final List<AccessController> accessControllers;
 
-  public RSAProviderTokenManager(List<AccessController> accessControllers) {
+  private final Environment environment;
+
+  private final AuthenticationAdapter authenticationAdapter;
+
+  public RSAProviderTokenManager(List<AccessController> accessControllers, Environment environment,
+      AuthenticationAdapter authenticationAdapter) {
     this.accessControllers = accessControllers;
+    this.environment = environment;
+    this.authenticationAdapter = authenticationAdapter;
   }
 
-  public void valid(String token, Map<String, String> requestMap) throws Exception {
+  public void valid(HttpServletRequest request) throws Exception {
     try {
-      if (null == token) {
-        LOGGER.error("token is null, perhaps you need to set auth handler at consumer");
-        throw new UnAuthorizedException("UNAUTHORIZED.");
+      RsaAuthenticationToken rsaToken = null;
+      if (environment.getProperty(Const.AUTH_TOKEN_CHECK_ENABLED, boolean.class, true)) {
+        rsaToken = RSATokenCheckUtils.checkTokenInfo(request, authenticationAdapter);
       }
-      RsaAuthenticationToken rsaToken = RsaAuthenticationToken.fromStr(token);
-      if (null == rsaToken) {
-        LOGGER.error("token format is error, perhaps you need to set auth handler at consumer");
-        throw new UnAuthorizedException("UNAUTHORIZED.");
+      AuthRequestExtractor extractor;
+      if (rsaToken != null) {
+        extractor = AuthRequestExtractorUtils.createAuthRequestExtractor(request, rsaToken.getServiceId(),
+            rsaToken.getInstanceId());
+      } else {
+        extractor = AuthRequestExtractorUtils.createAuthRequestExtractor(request, "", "");
       }
-      if (tokenExpired(rsaToken)) {
-        LOGGER.error("token is expired");
-        throw new UnAuthorizedException("UNAUTHORIZED.");
-      }
-      boolean isAllow = true;
       for (AccessController accessController : accessControllers) {
-        if (validatedToken.asMap().containsKey(rsaToken)) {
-          isAllow = accessController.isAllowed(rsaToken.getServiceId(), rsaToken.getInstanceId(), requestMap);
-        } else if (isValidToken(rsaToken, accessController) && !tokenExpired(rsaToken)) {
-          validatedToken.put(rsaToken, true);
-          isAllow = accessController.isAllowed(rsaToken.getServiceId(), rsaToken.getInstanceId(), requestMap);
-        }
-        if (!isAllow) {
+        if (!accessController.isAllowed(extractor)) {
           throw new UnAuthorizedException(accessController.interceptMessage());
         }
       }
-    } catch (InvalidKeyException | NoSuchAlgorithmException | InvalidKeySpecException | SignatureException e) {
+    } catch(Exception e) {
       LOGGER.error("verify error", e);
+      throw e;
     }
-  }
-
-  public boolean isValidToken(RsaAuthenticationToken rsaToken, AccessController accessController)
-      throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, SignatureException {
-    String sign = rsaToken.getSign();
-    String content = rsaToken.plainToken();
-    String publicKey = accessController.getPublicKeyFromInstance(rsaToken.getInstanceId(), rsaToken.getServiceId());
-    return KeyPairUtils.verify(publicKey, sign, content);
-  }
-
-  protected int getExpiredTime() {
-    return 60 * 60 * 1000;
-  }
-
-  private boolean tokenExpired(RsaAuthenticationToken rsaToken) {
-    long generateTime = rsaToken.getGenerateTime();
-    long expired = generateTime + RsaAuthenticationToken.TOKEN_ACTIVE_TIME + 15 * 60 * 1000;
-    long now = System.currentTimeMillis();
-    return now > expired;
-  }
-
-  @VisibleForTesting
-  Cache<RsaAuthenticationToken, Boolean> getValidatedToken() {
-    return validatedToken;
   }
 }

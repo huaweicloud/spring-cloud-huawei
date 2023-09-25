@@ -39,6 +39,7 @@ spring:
 
       webmvc:
         publicKey:
+          tokenCheckEnabled: true
           providerEnabled: true
           accessControl:
             black:
