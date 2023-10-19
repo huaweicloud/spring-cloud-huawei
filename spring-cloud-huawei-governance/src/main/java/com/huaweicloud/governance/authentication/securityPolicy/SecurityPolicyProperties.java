@@ -137,7 +137,7 @@ public class SecurityPolicyProperties {
   }
 
   public boolean matchAllow(String serviceName, String uri, String method) {
-    if (action.allow.isEmpty()) {
+    if (action == null || action.allow.isEmpty()) {
       return true;
     }
 
@@ -151,7 +151,7 @@ public class SecurityPolicyProperties {
   }
 
   public boolean matchDeny(String serviceName, String uri, String method) {
-    if (action.deny.isEmpty()) {
+    if (action == null || action.deny.isEmpty()) {
       return false;
     }
     for (ConfigurationItem item : action.deny) {
