@@ -19,6 +19,7 @@ package com.huaweicloud.common.adapters.webmvc;
 
 import java.io.IOException;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.MDC;
 
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
@@ -54,9 +55,17 @@ public class InvocationContextFilter implements Filter {
         httpServletRequest.getHeader(InvocationContextHolder.SERIALIZE_KEY));
 
     contextProperties.getHeaderContextMapper()
-        .forEach((k, v) -> context.putContext(v, httpServletRequest.getHeader(k)));
+        .forEach((k, v) -> {
+          if (!StringUtils.isEmpty(httpServletRequest.getHeader(k))) {
+            context.putContext(v, httpServletRequest.getHeader(k));
+          }
+        });
     contextProperties.getQueryContextMapper()
-        .forEach((k, v) -> context.putContext(v, httpServletRequest.getParameter(k)));
+        .forEach((k, v) -> {
+          if (!StringUtils.isEmpty(httpServletRequest.getParameter(k))) {
+            context.putContext(v, httpServletRequest.getParameter(k));
+          }
+        });
 
     // copy or generate trace id
     if (context.getContext(InvocationContext.CONTEXT_TRACE_ID) == null) {
