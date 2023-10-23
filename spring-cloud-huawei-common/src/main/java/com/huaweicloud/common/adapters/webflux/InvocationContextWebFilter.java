@@ -17,6 +17,7 @@
 
 package com.huaweicloud.common.adapters.webflux;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.boot.web.reactive.filter.OrderedWebFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -51,13 +52,13 @@ public class InvocationContextWebFilter implements OrderedWebFilter {
     // copy external headers to context
     contextProperties.getHeaderContextMapper()
         .forEach((k, v) -> {
-          if (exchange.getRequest().getHeaders().getFirst(k) != null) {
+          if (!StringUtils.isEmpty(exchange.getRequest().getHeaders().getFirst(k))) {
             context.putContext(v, exchange.getRequest().getHeaders().getFirst(k));
           }
         });
     contextProperties.getQueryContextMapper()
         .forEach((k, v) -> {
-          if (exchange.getRequest().getQueryParams().getFirst(k) != null) {
+          if (!StringUtils.isEmpty(exchange.getRequest().getQueryParams().getFirst(k))) {
             context.putContext(v, exchange.getRequest().getQueryParams().getFirst(k));
           }
         });

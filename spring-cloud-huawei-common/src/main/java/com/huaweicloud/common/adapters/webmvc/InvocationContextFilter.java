@@ -19,6 +19,7 @@ package com.huaweicloud.common.adapters.webmvc;
 
 import java.io.IOException;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.MDC;
 
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
@@ -55,13 +56,13 @@ public class InvocationContextFilter implements Filter {
 
     contextProperties.getHeaderContextMapper()
         .forEach((k, v) -> {
-          if (httpServletRequest.getHeader(k) != null) {
+          if (!StringUtils.isEmpty(httpServletRequest.getHeader(k))) {
             context.putContext(v, httpServletRequest.getHeader(k));
           }
         });
     contextProperties.getQueryContextMapper()
         .forEach((k, v) -> {
-          if (httpServletRequest.getParameter(k) != null) {
+          if (!StringUtils.isEmpty(httpServletRequest.getParameter(k))) {
             context.putContext(v, httpServletRequest.getParameter(k));
           }
         });
