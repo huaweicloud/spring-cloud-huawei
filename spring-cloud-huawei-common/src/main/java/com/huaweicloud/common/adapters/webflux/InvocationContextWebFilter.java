@@ -50,9 +50,17 @@ public class InvocationContextWebFilter implements OrderedWebFilter {
 
     // copy external headers to context
     contextProperties.getHeaderContextMapper()
-        .forEach((k, v) -> context.putContext(v, exchange.getRequest().getHeaders().getFirst(k)));
+        .forEach((k, v) -> {
+          if (exchange.getRequest().getHeaders().getFirst(k) != null) {
+            context.putContext(v, exchange.getRequest().getHeaders().getFirst(k));
+          }
+        });
     contextProperties.getQueryContextMapper()
-        .forEach((k, v) -> context.putContext(v, exchange.getRequest().getQueryParams().getFirst(k)));
+        .forEach((k, v) -> {
+          if (exchange.getRequest().getQueryParams().getFirst(k) != null) {
+            context.putContext(v, exchange.getRequest().getQueryParams().getFirst(k));
+          }
+        });
 
     // copy or generate trace id
     if (context.getContext(InvocationContext.CONTEXT_TRACE_ID) == null) {
