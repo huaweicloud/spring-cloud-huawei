@@ -54,9 +54,17 @@ public class InvocationContextFilter implements Filter {
         httpServletRequest.getHeader(InvocationContextHolder.SERIALIZE_KEY));
 
     contextProperties.getHeaderContextMapper()
-        .forEach((k, v) -> context.putContext(v, httpServletRequest.getHeader(k)));
+        .forEach((k, v) -> {
+          if (httpServletRequest.getHeader(k) != null) {
+            context.putContext(v, httpServletRequest.getHeader(k));
+          }
+        });
     contextProperties.getQueryContextMapper()
-        .forEach((k, v) -> context.putContext(v, httpServletRequest.getParameter(k)));
+        .forEach((k, v) -> {
+          if (httpServletRequest.getParameter(k) != null) {
+            context.putContext(v, httpServletRequest.getParameter(k));
+          }
+        });
 
     // copy or generate trace id
     if (context.getContext(InvocationContext.CONTEXT_TRACE_ID) == null) {
