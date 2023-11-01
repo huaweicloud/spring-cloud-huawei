@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.alibaba.cloud.nacos.ConditionalOnNacosDiscoveryEnabled;
+import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
 import com.alibaba.cloud.nacos.registry.NacosAutoServiceRegistration;
 import com.alibaba.cloud.nacos.registry.NacosRegistration;
 import com.alibaba.cloud.nacos.registry.NacosServiceRegistry;
@@ -33,7 +34,9 @@ public class NacosGracefulAutoConfiguration {
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.NACOS_GRASEFUL_UPPER_DOWN, havingValue = "true")
   public NacosGracefulEndpoint nacosGracefulEndpoint(NacosServiceRegistry nacosServiceRegistry,
-      NacosRegistration nacosRegistration, NacosAutoServiceRegistration nacosAutoServiceRegistration) {
-    return new NacosGracefulEndpoint(nacosServiceRegistry, nacosRegistration, nacosAutoServiceRegistration);
+      NacosRegistration nacosRegistration, NacosAutoServiceRegistration nacosAutoServiceRegistration,
+      NacosDiscoveryProperties nacosDiscoveryProperties) {
+    return new NacosGracefulEndpoint(nacosServiceRegistry, nacosRegistration, nacosAutoServiceRegistration,
+        nacosDiscoveryProperties);
   }
 }

@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 
+import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
 import com.alibaba.cloud.nacos.registry.NacosAutoServiceRegistration;
 import com.alibaba.cloud.nacos.registry.NacosRegistration;
 import com.alibaba.cloud.nacos.registry.NacosServiceRegistry;
@@ -40,11 +41,14 @@ public class NacosGracefulEndpoint {
 
   private final NacosAutoServiceRegistration nacosAutoServiceRegistration;
 
+  private final NacosDiscoveryProperties nacosDiscoveryProperties;
+
   public NacosGracefulEndpoint(NacosServiceRegistry nacosServiceRegistry, NacosRegistration nacosRegistration,
-      NacosAutoServiceRegistration nacosAutoServiceRegistration) {
+      NacosAutoServiceRegistration nacosAutoServiceRegistration, NacosDiscoveryProperties nacosDiscoveryProperties) {
     this.nacosServiceRegistry = nacosServiceRegistry;
     this.nacosRegistration = nacosRegistration;
     this.nacosAutoServiceRegistration = nacosAutoServiceRegistration;
+    this.nacosDiscoveryProperties = nacosDiscoveryProperties;
   }
 
   @WriteOperation
@@ -53,6 +57,7 @@ public class NacosGracefulEndpoint {
       return;
     }
     if (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status)) {
+      nacosDiscoveryProperties.setRegisterEnabled(true);
       nacosAutoServiceRegistration.start();
     } else if (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status)) {
       nacosServiceRegistry.deregister(nacosRegistration);

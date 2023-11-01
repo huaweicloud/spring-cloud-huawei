@@ -32,6 +32,7 @@ import com.huaweicloud.servicecomb.discovery.registry.ServiceCombServiceRegistry
 @Endpoint(id = "servicecombGraceful")
 public class ServicecombGracefulEndpoint {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServicecombGracefulEndpoint.class);
+
   private final ServiceCombServiceRegistry serviceCombServiceRegistry;
 
   private final ServiceCombRegistration serviceCombRegistration;
