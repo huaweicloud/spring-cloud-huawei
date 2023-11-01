@@ -21,3 +21,4 @@ com.huaweicloud.servicecomb.discovery.discovery.ServiceCombDiscoveryClientConfig
 com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistryAutoConfiguration
 com.huaweicloud.servicecomb.discovery.discovery.ServiceCombReactiveDiscoveryClientConfiguration
 com.huaweicloud.servicecomb.discovery.check.RegistryHealthIndicatorConfiguration
+com.huaweicloud.servicecomb.discovery.graceful.ServicecombGracefulAutoConfiguration
