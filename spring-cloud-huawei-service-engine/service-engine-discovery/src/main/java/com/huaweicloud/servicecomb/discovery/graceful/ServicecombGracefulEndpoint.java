@@ -29,7 +29,7 @@ import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombServiceRegistry;
 
-@Endpoint(id = "service-registry")
+@Endpoint(id = "servicecomb-service-registry")
 public class ServicecombGracefulEndpoint {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServicecombGracefulEndpoint.class);
 
