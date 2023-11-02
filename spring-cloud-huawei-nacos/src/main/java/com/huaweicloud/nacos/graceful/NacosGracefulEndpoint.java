@@ -31,7 +31,7 @@ import com.alibaba.cloud.nacos.registry.NacosRegistration;
 import com.alibaba.cloud.nacos.registry.NacosServiceRegistry;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 
-@Endpoint(id = "nacosGraceful")
+@Endpoint(id = "service-registry")
 public class NacosGracefulEndpoint {
   private static final Logger LOGGER = LoggerFactory.getLogger(NacosGracefulEndpoint.class);
 
