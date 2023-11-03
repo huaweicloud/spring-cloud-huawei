@@ -17,6 +17,8 @@
 
 package com.huaweicloud.nacos.graceful;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang.StringUtils;
@@ -43,6 +45,8 @@ public class NacosGracefulEndpoint {
 
   private final NacosDiscoveryProperties nacosDiscoveryProperties;
 
+  private final AtomicBoolean isRegistry = new AtomicBoolean();
+
   public NacosGracefulEndpoint(NacosServiceRegistry nacosServiceRegistry, NacosRegistration nacosRegistration,
       NacosAutoServiceRegistration nacosAutoServiceRegistration, NacosDiscoveryProperties nacosDiscoveryProperties) {
     this.nacosServiceRegistry = nacosServiceRegistry;
@@ -56,13 +60,14 @@ public class NacosGracefulEndpoint {
     if (StringUtils.isEmpty(status)) {
       return;
     }
-    if (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status)) {
+    if (!isRegistry.get() && GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status)) {
       nacosDiscoveryProperties.setRegisterEnabled(true);
       nacosAutoServiceRegistration.start();
-    } else if (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status)) {
+      isRegistry.getAndSet(true);
+    } else if (isRegistry.get() && GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status)) {
       nacosServiceRegistry.deregister(nacosRegistration);
     } else {
-      LOGGER.warn("status input " + status + " is not a valid value.");
+      LOGGER.warn("operation not allow, status: " + status);
     }
   }
 }

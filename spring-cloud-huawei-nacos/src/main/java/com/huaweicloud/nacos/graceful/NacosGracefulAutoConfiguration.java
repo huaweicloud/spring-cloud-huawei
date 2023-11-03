@@ -17,6 +17,7 @@
 
 package com.huaweicloud.nacos.graceful;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +31,7 @@ import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 
 @Configuration
 @ConditionalOnNacosDiscoveryEnabled
+@ConditionalOnClass(name = {"org.springframework.boot.actuate.endpoint.annotation.Endpoint"})
 public class NacosGracefulAutoConfiguration {
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.NACOS_GRASEFUL_UPPER_DOWN, havingValue = "true")

@@ -17,6 +17,7 @@
 
 package com.huaweicloud.servicecomb.discovery.graceful;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,7 @@ import com.huaweicloud.servicecomb.discovery.registry.ServiceCombServiceRegistry
 
 @Configuration
 @ConditionalOnServiceCombDiscoveryEnabled
+@ConditionalOnClass(name = {"org.springframework.boot.actuate.endpoint.annotation.Endpoint"})
 public class ServicecombGracefulAutoConfiguration {
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.SERVICECOMB_GRASEFUL_UPPER_DOWN, havingValue = "true")
