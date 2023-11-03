@@ -60,14 +60,13 @@ public class NacosGracefulEndpoint {
     if (StringUtils.isEmpty(status)) {
       return;
     }
-    if (!isRegistry.get() && GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status)) {
+    if (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status) && !isRegistry.getAndSet(true)) {
       nacosDiscoveryProperties.setRegisterEnabled(true);
       nacosAutoServiceRegistration.start();
-      isRegistry.getAndSet(true);
-    } else if (isRegistry.get() && GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status)) {
+    } else if (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status) && isRegistry.get()) {
       nacosServiceRegistry.deregister(nacosRegistration);
     } else {
-      LOGGER.warn("operation not allow, status: " + status);
+      LOGGER.warn("operation is not allowed, status: " + status);
     }
   }
 }
