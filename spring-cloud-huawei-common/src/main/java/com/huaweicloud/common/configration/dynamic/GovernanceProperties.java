@@ -112,6 +112,14 @@ public class GovernanceProperties {
 
   public static final String WEBMVC_PUBLICKEY_ACLS = PREFIX + "." + "webmvc.public-key.acls";
 
+  public static final String SERVICECOMB_GRASEFUL_UPPER_DOWN = PREFIX + "." + "graceful.servicecombEngine.enabled";
+
+  public static final String NACOS_GRASEFUL_UPPER_DOWN = PREFIX + "." + "graceful.nacosEngine.enabled";
+
+  public static final String GRASEFUL_STATUS_UPPER = "UP";
+
+  public static final String GRASEFUL_STATUS_DOWN = "DOWN";
+
   public static class Gateway {
     private RateLimiting rateLimiting = new RateLimiting();
 
