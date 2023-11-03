@@ -16,4 +16,5 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.huaweicloud.nacos.NacosAdaptersAutoConfiguration
+  com.huaweicloud.nacos.NacosAdaptersAutoConfiguration,\
+  com.huaweicloud.nacos.graceful.NacosGracefulAutoConfiguration
