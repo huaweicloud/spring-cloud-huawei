@@ -42,6 +42,15 @@ public class RSAProviderTokenManager {
     this.authenticationAdapter = authenticationAdapter;
   }
 
+  /**
+   * 1.tokenCheckEnabled is true or request headers has no serviceName, use serviceId and instanceId for authenration
+   * in token.
+   * 2.tokenCheckEnabled is false and request headers has serviceName, use serviceName for authenration in request
+   * header.
+   * 
+   * @param request
+   * @throws Exception
+   */
   public void valid(HttpServletRequest request) throws Exception {
     try {
       AuthRequestExtractor extractor;
