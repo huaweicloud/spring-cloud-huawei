@@ -18,6 +18,8 @@
 package com.huaweicloud.governance.authentication;
 
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -42,12 +44,10 @@ public class RSAProviderTokenManager {
 
   public void valid(HttpServletRequest request) throws Exception {
     try {
-      RsaAuthenticationToken rsaToken = null;
-      if (environment.getProperty(Const.AUTH_TOKEN_CHECK_ENABLED, boolean.class, true)) {
-        rsaToken = RSATokenCheckUtils.checkTokenInfo(request, authenticationAdapter);
-      }
       AuthRequestExtractor extractor;
-      if (rsaToken != null) {
+      if (environment.getProperty(Const.AUTH_TOKEN_CHECK_ENABLED, boolean.class, true)
+          || StringUtils.isEmpty(request.getHeader(Const.AUTH_SERVICE_NAME))) {
+        RsaAuthenticationToken rsaToken = RSATokenCheckUtils.checkTokenInfo(request, authenticationAdapter);
         extractor = AuthRequestExtractorUtils.createAuthRequestExtractor(request, rsaToken.getServiceId(),
             rsaToken.getInstanceId());
       } else {
