@@ -43,7 +43,7 @@ public class RSAProviderTokenManager {
   }
 
   /**
-   * 1.tokenCheckEnabled is true or request headers has no serviceName, use serviceId and instanceId for authenticaation
+   * 1.tokenCheckEnabled is true or request headers has no serviceName, use serviceId and instanceId for authentication
    * in token.
    * 2.tokenCheckEnabled is false and request headers has serviceName, use serviceName for authentication in request
    * header.
