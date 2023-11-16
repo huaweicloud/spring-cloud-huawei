@@ -25,15 +25,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class NacosCrossGroupServiceConfig {
   private boolean enabled;
 
-  private Map<String, String> groupServiceMapping = new HashMap<>();
-
-  public Map<String, String> getGroupServiceMapping() {
-    return groupServiceMapping;
+  public Map<String, String> getServiceGroupMappings() {
+    return serviceGroupMappings;
   }
 
-  public void setGroupServiceMapping(Map<String, String> groupServiceMapping) {
-    this.groupServiceMapping = groupServiceMapping;
+  public void setServiceGroupMappings(Map<String, String> serviceGroupMappings) {
+    this.serviceGroupMappings = serviceGroupMappings;
   }
+
+  private Map<String, String> serviceGroupMappings = new HashMap<>();
 
   public boolean isEnabled() {
     return enabled;

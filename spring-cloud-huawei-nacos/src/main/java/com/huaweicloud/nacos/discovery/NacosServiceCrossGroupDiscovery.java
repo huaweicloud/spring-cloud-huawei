@@ -26,12 +26,12 @@ import com.alibaba.cloud.nacos.discovery.NacosServiceDiscovery;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 
-public class NacosServiceDiscoveryExtends extends NacosServiceDiscovery {
+public class NacosServiceCrossGroupDiscovery extends NacosServiceDiscovery {
   private final NacosServiceManager nacosServiceManager;
 
   private final NacosCrossGroupServiceConfig nacosCrossGroupServiceConfig;
 
-  public NacosServiceDiscoveryExtends(NacosDiscoveryProperties discoveryProperties,
+  public NacosServiceCrossGroupDiscovery(NacosDiscoveryProperties discoveryProperties,
       NacosServiceManager nacosServiceManager, NacosCrossGroupServiceConfig nacosCrossGroupServiceConfig) {
     super(discoveryProperties, nacosServiceManager);
     this.nacosServiceManager = nacosServiceManager;
@@ -40,8 +40,8 @@ public class NacosServiceDiscoveryExtends extends NacosServiceDiscovery {
 
   @Override
   public List<ServiceInstance> getInstances(String serviceId) throws NacosException {
-    if (nacosCrossGroupServiceConfig.getGroupServiceMapping().containsKey(serviceId)) {
-      String group = nacosCrossGroupServiceConfig.getGroupServiceMapping().get(serviceId);
+    if (nacosCrossGroupServiceConfig.getServiceGroupMappings().containsKey(serviceId)) {
+      String group = nacosCrossGroupServiceConfig.getServiceGroupMappings().get(serviceId);
       List<Instance> instances = nacosServiceManager.getNamingService().selectInstances(serviceId, group, true);
       return hostToServiceInstanceList(instances, serviceId);
     }

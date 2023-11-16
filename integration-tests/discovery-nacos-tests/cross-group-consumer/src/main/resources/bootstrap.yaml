@@ -26,7 +26,7 @@ spring:
     servicecomb:
       cross-group:
         enabled: true
-        groupServiceMapping:
+        service-group-mappings:
           price: DEFAULT_GROUP
     nacos:
       discovery:
