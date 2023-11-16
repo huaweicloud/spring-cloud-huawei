@@ -32,7 +32,7 @@ import com.alibaba.cloud.nacos.discovery.NacosDiscoveryAutoConfiguration;
 @ConditionalOnProperty(value = "spring.cloud.servicecomb.cross-group.enabled", havingValue = "true")
 public class NacosCrossGroupAutoConfiguration {
   @Bean
-  public NacosServiceCrossGroupDiscovery nacosServiceDiscoveryExtends(NacosDiscoveryProperties discoveryProperties,
+  public NacosServiceCrossGroupDiscovery nacosServiceCrossGroupDiscovery(NacosDiscoveryProperties discoveryProperties,
       NacosServiceManager nacosServiceManager, NacosCrossGroupServiceConfig nacosCrossGroupServiceConfig) {
     return new NacosServiceCrossGroupDiscovery(discoveryProperties, nacosServiceManager, nacosCrossGroupServiceConfig);
   }
