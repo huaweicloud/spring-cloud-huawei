@@ -137,8 +137,9 @@ public class SecurityPolicyProperties {
   }
 
   public boolean matchAllow(String serviceName, String uri, String method) {
+    // If have no allow policy, intercept requests.
     if (action == null || action.allow.isEmpty()) {
-      return true;
+      return false;
     }
 
     for (ConfigurationItem item : action.allow) {

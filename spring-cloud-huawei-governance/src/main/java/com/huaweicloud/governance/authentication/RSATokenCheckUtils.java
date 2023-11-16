@@ -38,8 +38,8 @@ public class RSATokenCheckUtils {
       .build();
 
   public static RsaAuthenticationToken checkTokenInfo(HttpServletRequest request,
-      AuthenticationAdapter authenticationAdapter) throws Exception {
-    String token = request.getHeader(Const.AUTH_TOKEN);
+      AuthenticationAdapter authenticationAdapter, String headerTokenKey) throws Exception {
+    String token = request.getHeader(headerTokenKey);
     if (StringUtils.isEmpty(token)) {
       token = InvocationContextHolder.getOrCreateInvocationContext().getContext(Const.AUTH_TOKEN);
     }

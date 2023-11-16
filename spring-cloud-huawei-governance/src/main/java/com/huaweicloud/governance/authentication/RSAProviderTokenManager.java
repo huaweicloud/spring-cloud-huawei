@@ -56,7 +56,10 @@ public class RSAProviderTokenManager {
       AuthRequestExtractor extractor;
       if (environment.getProperty(Const.AUTH_TOKEN_CHECK_ENABLED, boolean.class, true)
           || StringUtils.isEmpty(request.getHeader(Const.AUTH_SERVICE_NAME))) {
-        RsaAuthenticationToken rsaToken = RSATokenCheckUtils.checkTokenInfo(request, authenticationAdapter);
+        String headerTokenKey = environment.getProperty(Const.AUTH_TOKEN_HEADER_KEY, String.class,
+            "X-SM-Token");
+        RsaAuthenticationToken rsaToken = RSATokenCheckUtils.checkTokenInfo(request, authenticationAdapter,
+            headerTokenKey);
         extractor = AuthRequestExtractorUtils.createAuthRequestExtractor(request, rsaToken.getServiceId(),
             rsaToken.getInstanceId());
       } else {
