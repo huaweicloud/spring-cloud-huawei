@@ -99,6 +99,9 @@ public class ExtendedSpringDecoder implements Decoder {
     @Override
     public void close() {
       try {
+        if (response.body() == null) {
+          return;
+        }
         response.body().close();
       } catch (IOException ex) {
         // Ignore exception on close...
@@ -107,6 +110,9 @@ public class ExtendedSpringDecoder implements Decoder {
 
     @Override
     public InputStream getBody() throws IOException {
+      if (response.body() == null) {
+        return null;
+      }
       return response.body().asInputStream();
     }
 
