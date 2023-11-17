@@ -107,6 +107,9 @@ public class ExtendedSpringDecoder implements Decoder {
 
     @Override
     public InputStream getBody() throws IOException {
+      if (response.body() == null) {
+        return null;
+      }
       return response.body().asInputStream();
     }
 
