@@ -16,6 +16,33 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 
-com.huaweicloud.nacos.NacosAdaptersAutoConfiguration
-com.huaweicloud.nacos.graceful.NacosGracefulAutoConfiguration
-com.huaweicloud.nacos.discovery.NacosCrossGroupAutoConfiguration
+server:
+  port: 9001
+
+spring:
+  application:
+    name: cross-group-consumer
+  cloud:
+    servicecomb:
+      cross-group:
+        enabled: true
+        service-group-mappings:
+          price: DEFAULT_GROUP
+    nacos:
+      discovery:
+        enabled: true
+        server-addr: http://127.0.0.1:8848
+        service: ${spring.application.name}
+        metadata:
+          x-test: value
+          x-test2: value2
+        group: CROSS_GROUP
+      config:
+        group: CROSS_GROUP
+        enabled: true
+        server-addr: http://127.0.0.1:8848
+        service: ${spring.application.name}
+
+test:
+  value:
+    bootstrapOverride: "orderBootstrapOverride"

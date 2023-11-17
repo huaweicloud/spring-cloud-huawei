@@ -200,6 +200,37 @@
                 </image>
 
                 <image>
+                  <name>nacos-cross-group-consumer-test:${project.version}</name>
+                  <alias>nacos-cross-group-consumer-test</alias>
+                  <run>
+                    <env>
+                      <JAVA_OPTS>
+                        -Dspring.cloud.nacos.discovery.server-addr=http://nacos-server:8848 -Dspring.cloud.nacos.config.server-addr=http://nacos-server:8848
+                      </JAVA_OPTS>
+                      <JAR_PATH>/maven/nacos-cross-group-consumer-test-${project.version}.jar</JAR_PATH>
+                    </env>
+                    <links>
+                      <link>nacos-server:nacos-server</link>
+                    </links>
+                    <wait>
+                      <log>Started PriceApplication</log>
+                      <tcp>
+                        <ports>
+                          <port>9001</port>
+                        </ports>
+                      </tcp>
+                      <time>120000</time>
+                    </wait>
+                    <ports>
+                      <port>9001:9001</port>
+                    </ports>
+                    <dependsOn>
+                      <container>nacos-server</container>
+                    </dependsOn>
+                  </run>
+                </image>
+
+                <image>
                   <name>nacos-discovery-gateway-test:${project.version}</name>
                   <alias>nacos-discovery-gateway-test</alias>
                   <run>
