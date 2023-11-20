@@ -33,6 +33,7 @@
     <module>gateway</module>
     <module>price-provider</module>
     <module>order-consumer</module>
+    <module>cross-group-consumer</module>
     <module>account-provider</module>
     <module>webflux-provider</module>
     <module>discovery-tests-client</module>
