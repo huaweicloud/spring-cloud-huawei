@@ -155,7 +155,7 @@ public class ConfigService {
 
     queryConfigurationsRequest = createQueryConfigurationsRequest(bootstrapProperties);
     QueryConfigurationsResponse response = configCenterClient
-        .queryConfigurations(queryConfigurationsRequest);
+        .queryConfigurations(queryConfigurationsRequest, addressManager.address());
     if (response.isChanged()) {
       configConverter.updateData(response.getConfigurations());
     }
@@ -163,7 +163,7 @@ public class ConfigService {
     ConfigCenterConfiguration configCenterConfiguration = createConfigCenterConfiguration(
         bootstrapProperties.getConfigBootstrapProperties());
     ConfigCenterManager configCenterManager = new ConfigCenterManager(configCenterClient, EventManager.getEventBus(),
-        configConverter, configCenterConfiguration);
+        configConverter, configCenterConfiguration, addressManager);
     configCenterManager.setQueryConfigurationsRequest(queryConfigurationsRequest);
     configCenterManager.startConfigCenterManager();
   }
@@ -222,7 +222,7 @@ public class ConfigService {
     KieConfiguration kieConfiguration = createKieConfiguration(bootstrapProperties);
     KieClient kieClient = new KieClient(kieAddressManager, httpTransport, kieConfiguration);
     KieConfigManager kieConfigManager = new KieConfigManager(kieClient, EventManager.getEventBus(), kieConfiguration,
-        configConverter);
+        configConverter, kieAddressManager);
     kieConfigManager.firstPull();
     kieConfigManager.startConfigKieManager();
   }
