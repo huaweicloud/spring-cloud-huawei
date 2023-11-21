@@ -23,8 +23,8 @@ spring:
     nacos:
       config:
         shared-configs:
-          - data-id: security.yaml
-            group: DEFAULT_GROUP
+          - data-id: cse-app-security-${spring.application.name}.yaml
+            group: cse-app-security-group
             refresh: true
 
 
