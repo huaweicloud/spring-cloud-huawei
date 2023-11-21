@@ -55,9 +55,9 @@ public class SecurityPolicyAccessController implements AccessController {
   private boolean checkDeny(String serviceName, AuthRequestExtractor extractor) {
     if (securityPolicyProperties.matchDeny(serviceName, extractor.uri(), extractor.method())) {
       // both permissive and enforcing model need print logs(send alarm info).
-      LOGGER.warn("[autoauthz suspicious request] mode={}, consumer={}, provider={}, path={}, method={}, timestamp={}",
-          securityPolicyProperties.getMode(), serviceName, securityPolicyProperties.getProvider(), extractor.uri(),
-          extractor.method(), System.currentTimeMillis());
+      LOGGER.warn("[autoauthz unauthorized request] mode={}, consumer={}, provider={}, path={}, method={},"
+          + "timestamp={}", securityPolicyProperties.getMode(), serviceName, securityPolicyProperties.getProvider(),
+          extractor.uri(), extractor.method(), System.currentTimeMillis());
       // permissive mode, black policy match allow passing
       return !"permissive".equals(securityPolicyProperties.getMode());
     } else {
@@ -70,9 +70,9 @@ public class SecurityPolicyAccessController implements AccessController {
       return !checkDeny(serviceName, extractor);
     } else {
       // both permissive and enforcing model need print logs(send alarm info).
-      LOGGER.warn("[autoauthz suspicious request] mode={}, consumer={}, provider={}, path={}, method={}, timestamp={}",
-          securityPolicyProperties.getMode(), serviceName, securityPolicyProperties.getProvider(), extractor.uri(),
-          extractor.method(), System.currentTimeMillis());
+      LOGGER.warn("[autoauthz unauthorized request] mode={}, consumer={}, provider={}, path={}, method={},"
+          + "timestamp={}", securityPolicyProperties.getMode(), serviceName, securityPolicyProperties.getProvider(),
+          extractor.uri(), extractor.method(), System.currentTimeMillis());
       // permissive mode, white policy not match allow passing
       return "permissive".equals(securityPolicyProperties.getMode());
     }
