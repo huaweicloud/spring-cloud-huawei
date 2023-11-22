@@ -25,4 +25,6 @@ public class Const {
   public static final String AUTH_SERVICE_NAME = "serviceName";
 
   public static final String AUTH_TOKEN_CHECK_ENABLED = "spring.cloud.servicecomb.webmvc.publicKey.tokenCheckEnabled";
+
+  public static final String AUTH_TOKEN_HEADER_KEY = "spring.cloud.servicecomb.webmvc.publicKey.headerTokenKey";
 }
