@@ -462,8 +462,8 @@ public class SecurityPolicyAccessControllerTest {
 
   @Test
   public void testDenyEnforcingNotMatch() throws Exception {
-    AuthRequestExtractor extractor = createAuthRequestExtractor("/checkToken");
-    Assertions.assertTrue(getDenyAccessController("enforcing")
+    AuthRequestExtractor extractor = createAuthRequestExtractor("/checkTokenSecurityAllow");
+    Assertions.assertTrue(getBothAccessController("enforcing")
         .isAllowed(extractor));
   }
 

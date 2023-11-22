@@ -42,12 +42,24 @@ public class RSAProviderTokenManager {
     this.authenticationAdapter = authenticationAdapter;
   }
 
+  /**
+   * 1.tokenCheckEnabled is true or request headers has no serviceName, use serviceId and instanceId for authentication
+   * in token.
+   * 2.tokenCheckEnabled is false and request headers has serviceName, use serviceName for authentication in request
+   * header.
+   *
+   * @param request
+   * @throws Exception
+   */
   public void valid(HttpServletRequest request) throws Exception {
     try {
       AuthRequestExtractor extractor;
       if (environment.getProperty(Const.AUTH_TOKEN_CHECK_ENABLED, boolean.class, true)
           || StringUtils.isEmpty(request.getHeader(Const.AUTH_SERVICE_NAME))) {
-        RsaAuthenticationToken rsaToken = RSATokenCheckUtils.checkTokenInfo(request, authenticationAdapter);
+        String headerTokenKey = environment.getProperty(Const.AUTH_TOKEN_HEADER_KEY, String.class,
+            "X-SM-Token");
+        RsaAuthenticationToken rsaToken = RSATokenCheckUtils.checkTokenInfo(request, authenticationAdapter,
+            headerTokenKey);
         extractor = AuthRequestExtractorUtils.createAuthRequestExtractor(request, rsaToken.getServiceId(),
             rsaToken.getInstanceId());
       } else {
