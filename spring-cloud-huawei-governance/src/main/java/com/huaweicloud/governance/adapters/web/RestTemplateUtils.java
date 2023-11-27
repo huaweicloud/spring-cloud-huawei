@@ -18,6 +18,7 @@
 package com.huaweicloud.governance.adapters.web;
 
 import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
+import org.springframework.cloud.client.loadbalancer.ServiceRequestWrapper;
 import org.springframework.http.HttpRequest;
 
 import com.huaweicloud.common.context.InvocationContextHolder;
@@ -58,6 +59,9 @@ public final class RestTemplateUtils {
 
       @Override
       public String serviceName() {
+        if (request instanceof ServiceRequestWrapper) {
+          return ((ServiceRequestWrapper) request).getRequest().getURI().getHost();
+        }
         return request.getURI().getHost();
       }
 
