@@ -21,8 +21,8 @@ Spring Cloud Huawei provides a large number of out-of-the-box service governance
 
 | Branch    | Spring Cloud Huawei Latest Version | Compiled Spring Cloud Version | Compiled Spring Boot Version |
 |-----------|------------------------------------|-------------------------------|------------------------------|
-| master    | 1.11.1-2022.0.x                    | 2022.0.3                      | 3.0.10                       | 
-| 2021.0.x  | 1.11.1-2021.0.x                    | 2021.0.8                      | 2.7.15                       | 
+| master    | 1.11.3-2022.0.x                    | 2022.0.3                      | 3.1.5                        | 
+| 2021.0.x  | 1.11.3-2021.0.x                    | 2021.0.8                      | 2.7.17                       | 
 | 2020.0.x  | 1.10.8-2020.0.x                    | 2020.0.6                      | 2.5.14                       |
 | Hoxton    | 1.9.3-Hoxton                       | Hoxton.SR9                    | 2.3.5.RELEASE                |
 | Greenwich | 1.6.3-Greenwich                    | Greenwich.SR6                 | 2.1.6-RELEASE                |
