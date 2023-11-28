@@ -16,15 +16,5 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 
-x-component-order: 100
-
-spring:
-  cloud:
-    nacos:
-      config:
-        shared-configs:
-          - data-id: cse-app-security-${spring.application.name}.yaml
-            group: cse-app-security-group
-            refresh: true
-
-
+org.springframework.cloud.bootstrap.BootstrapConfiguration=\
+  com.huaweicloud.nacos.NacosAdaptersBootstrapConfiguration
