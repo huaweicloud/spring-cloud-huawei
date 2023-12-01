@@ -49,6 +49,7 @@ public class SecurityPolicyAccessController implements AccessController {
     if (StringUtils.isEmpty(currentServiceName)) {
       currentServiceName = authenticationAdapter.getServiceName(extractor.serviceId());
     }
+    // mode is null, see not set policy, all request allow.
     if (StringUtils.isEmpty(securityPolicyProperties.getMode())) {
       return true;
     }
