@@ -551,6 +551,19 @@ public class SecurityPolicyAccessControllerTest {
         .isAllowed(extractor));
   }
 
+  @Test
+  public void testPolicyIsNull() throws Exception {
+    AuthRequestExtractor extractor = createAuthRequestExtractor("/checkTokenPer/security/checkTokenSfu");
+    Assertions.assertTrue(getNoSettingAccessController()
+        .isAllowed(extractor));
+  }
+
+  private SecurityPolicyAccessController getNoSettingAccessController() {
+    securityPolicyProperties.setAction(null);
+    securityPolicyProperties.setMode(null);
+    return new SecurityPolicyAccessController(authenticationAdapter, securityPolicyProperties);
+  }
+
   private SecurityPolicyAccessController getAllowAccessController(String mode) {
     Action action = new Action();
     action.setAllow(buildAllow());
