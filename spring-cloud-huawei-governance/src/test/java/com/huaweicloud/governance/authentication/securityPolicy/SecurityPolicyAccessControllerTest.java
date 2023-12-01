@@ -34,6 +34,7 @@ import org.mockito.Mockito;
 import com.huaweicloud.governance.authentication.AuthRequestExtractor;
 import com.huaweicloud.governance.authentication.AuthRequestExtractorUtils;
 import com.huaweicloud.governance.authentication.AuthenticationAdapter;
+import com.huaweicloud.governance.authentication.Const;
 import com.huaweicloud.governance.authentication.securityPolicy.SecurityPolicyProperties.Action;
 import com.huaweicloud.governance.authentication.securityPolicy.SecurityPolicyProperties.ConfigurationItem;
 
@@ -552,6 +553,19 @@ public class SecurityPolicyAccessControllerTest {
     AuthRequestExtractor extractor = createAuthRequestExtractor("/checkTokenPer/security/checkTokenSfu");
     Assertions.assertFalse(getAllowAccessController("enforcing")
         .isAllowed(extractor));
+  }
+
+  @Test
+  public void testPolicyIsNull() throws Exception {
+    AuthRequestExtractor extractor = createAuthRequestExtractor("/checkTokenPer/security/checkTokenSfu");
+    Assertions.assertTrue(getNoSettingAccessController()
+        .isAllowed(extractor));
+  }
+
+  private SecurityPolicyAccessController getNoSettingAccessController() {
+    securityPolicyProperties.setAction(null);
+    securityPolicyProperties.setMode(null);
+    return new SecurityPolicyAccessController(authenticationAdapter, securityPolicyProperties);
   }
 
   private SecurityPolicyAccessController getAllowAccessController(String mode) {

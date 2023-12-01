@@ -14,7 +14,7 @@
  */
 package com.huaweicloud.governance.authentication.securityPolicy;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +48,9 @@ public class SecurityPolicyAccessController implements AccessController {
     }
     if (StringUtils.isEmpty(currentServiceName)) {
       currentServiceName = authenticationAdapter.getServiceName(extractor.serviceId());
+    }
+    if (StringUtils.isEmpty(securityPolicyProperties.getMode())) {
+      return true;
     }
     return checkAllowAndDeny(currentServiceName, extractor);
   }
