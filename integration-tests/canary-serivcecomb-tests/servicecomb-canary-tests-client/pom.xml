@@ -162,6 +162,40 @@
                 </image>
 
                 <image>
+                  <name>servicecomb-canary-consumer-gateway-test:${project.version}</name>
+                  <alias>servicecomb-canary-consumer-gateway-test</alias>
+                  <run>
+                    <env>
+                      <JAVA_OPTS>
+                        -Dspring.cloud.servicecomb.discovery.address=http://sc.servicecomb.io:30100
+                      </JAVA_OPTS>
+                      <JAR_PATH>/maven/servicecomb-canary-consumer-gateway-test-${project.version}.jar</JAR_PATH>
+                    </env>
+                    <links>
+                      <link>service-center:sc.servicecomb.io</link>
+                    </links>
+                    <wait>
+                      <log>.* Started ConsumerApplication .*</log>
+                      <tcp>
+                        <ports>
+                          <port>9097</port>
+                        </ports>
+                      </tcp>
+                      <time>120000</time>
+                    </wait>
+                    <ports>
+                      <port>9097:9097</port>
+                    </ports>
+                    <dependsOn>
+                      <container>service-center</container>
+                      <container>servicecomb-canary-provider-beta-test</container>
+                      <container>servicecomb-canary-provider-test</container>
+                      <container>servicecomb-canary-gateway-test</container>
+                    </dependsOn>
+                  </run>
+                </image>
+
+                <image>
                   <name>servicecomb-canary-gateway-test:${project.version}</name>
                   <alias>servicecomb-canary-gateway-test</alias>
                   <run>

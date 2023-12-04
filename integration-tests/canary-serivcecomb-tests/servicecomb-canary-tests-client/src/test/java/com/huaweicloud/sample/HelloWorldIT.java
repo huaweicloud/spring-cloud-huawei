@@ -75,4 +75,42 @@ public class HelloWorldIT {
     double ratio = oldCount / (float) (oldCount + newCount);
     assertThat(ratio).isBetween(0.1, 0.3);
   }
+
+  @Test
+  public void testConsumerGatewayHelloWorldCanary() {
+    for (int i = 0; i < 10; i++) {
+      MultiValueMap<String, String> headers = new HttpHeaders();
+      headers.add("canary", "old");
+      HttpEntity<Object> entity = new HttpEntity<>(headers);
+      String result = template
+          .exchange(Config.CUNSUMER_GATEWAY_URL + "/sayHelloConsumerGateway?name=World",
+              HttpMethod.GET, entity, String.class).getBody();
+      assertThat(result).startsWith("hello");
+    }
+  }
+
+  @Test
+  public void testHeaderConsumerGatewayHelloWorldCanary() {
+    int oldCount = 0;
+    int newCount = 0;
+
+    for (int i = 0; i < 20; i++) {
+      MultiValueMap<String, String> headers = new HttpHeaders();
+      headers.add("canary", "new");
+      HttpEntity<Object> entity = new HttpEntity<>(headers);
+      String result = template
+          .exchange(Config.CUNSUMER_GATEWAY_URL + "/sayHelloConsumerGateway?name=World", HttpMethod.GET, entity, String.class).getBody();
+      if (result.startsWith("hello")) {
+        oldCount++;
+      } else if (result.startsWith("beta")) {
+        newCount++;
+      } else {
+        Assertions.fail("not expected result testHelloWorldCanary");
+        return;
+      }
+    }
+
+    double ratio = oldCount / (float) (oldCount + newCount);
+    assertThat(ratio).isBetween(0.1, 0.3);
+  }
 }

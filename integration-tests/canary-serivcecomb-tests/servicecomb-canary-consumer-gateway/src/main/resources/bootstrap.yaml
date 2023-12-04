@@ -17,24 +17,16 @@
 ## ---------------------------------------------------------------------------
 
 server:
-  port: 10088
+  port: 9097
 
 spring:
   application:
-    name: discovery-gateway
+    name: canary-consumer-gateway
   cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-          lowerCaseServiceId: false
-      routes:
-        - id: canary-provider
-          uri: lb://canary-provider
-          predicates:
-            - Path=/sayHelloConsumerGateway/**
-
     servicecomb:
+      context:
+        headerContextMapper:
+          canary: canary
       discovery:
         enabled: true
         address: http://127.0.0.1:30100
@@ -48,5 +40,3 @@ spring:
         serverType: kie
         serverAddr: http://127.0.0.1:30110
         firstPullRequired: false
-
-
