@@ -16,15 +16,12 @@
  */
 package com.huaweicloud.router.client;
 
-import org.apache.servicecomb.router.RouterFilter;
 import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.serviceregistry.Registration;
-import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClientConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -33,8 +30,6 @@ import org.springframework.context.annotation.Configuration;
 import com.huaweicloud.router.client.loadbalancer.AffinityTagFilterAdapter;
 import com.huaweicloud.router.client.loadbalancer.AffinityTagServiceInstanceFilter;
 import com.huaweicloud.router.client.loadbalancer.CanaryFilterAdapter;
-import com.huaweicloud.router.client.loadbalancer.CanaryServiceInstanceFilter;
-import com.huaweicloud.router.client.loadbalancer.GatewayCanaryServiceInstanceFilter;
 import com.huaweicloud.router.client.loadbalancer.SpringCloudRouterDistributor;
 import com.huaweicloud.router.client.loadbalancer.ZoneAwareFilterAdapter;
 import com.huaweicloud.router.client.loadbalancer.ZoneAwareServiceInstanceFilter;
@@ -48,20 +43,6 @@ public class RouterClientAutoConfiguration {
   public AbstractRouterDistributor<ServiceInstance> springCloudRouterDistributor(
       CanaryFilterAdapter adapter) {
     return new SpringCloudRouterDistributor(adapter);
-  }
-
-  @Bean
-  @ConditionalOnBean(AbstractGatewayFilterFactory.class)
-  public GatewayCanaryServiceInstanceFilter gatewayCanaryServiceInstanceFilter(
-      AbstractRouterDistributor<ServiceInstance> routerDistributor, RouterFilter routerFilter) {
-    return new GatewayCanaryServiceInstanceFilter(routerDistributor, routerFilter);
-  }
-
-  @Bean
-  @ConditionalOnMissingBean(GatewayCanaryServiceInstanceFilter.class)
-  public CanaryServiceInstanceFilter canaryServiceInstanceFilter(
-      AbstractRouterDistributor<ServiceInstance> routerDistributor, RouterFilter routerFilter) {
-    return new CanaryServiceInstanceFilter(routerDistributor, routerFilter);
   }
 
   @Bean
