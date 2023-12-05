@@ -20,9 +20,8 @@ package com.huaweicloud.router.client.loadbalancer.webflux;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
 import org.springframework.cloud.gateway.config.GatewayLoadBalancerProperties;
 import org.springframework.cloud.gateway.config.GatewayReactiveLoadBalancerClientAutoConfiguration;
 import org.springframework.cloud.gateway.config.conditional.ConditionalOnEnabledGlobalFilter;
@@ -32,7 +31,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnWebApplication(type = Type.REACTIVE)
+@ConditionalOnClass(name = {"org.springframework.cloud.gateway.filter.GlobalFilter"})
 @AutoConfigureBefore(GatewayReactiveLoadBalancerClientAutoConfiguration.class)
 @AutoConfigureAfter(LoadBalancerAutoConfiguration.class)
 public class ReactiveLoadBalancerClientConfiguration {
