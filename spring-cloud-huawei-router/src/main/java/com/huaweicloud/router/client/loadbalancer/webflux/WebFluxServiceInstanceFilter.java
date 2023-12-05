@@ -23,25 +23,20 @@ import org.apache.servicecomb.router.RouterFilter;
 import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.loadbalancer.DefaultRequestContext;
 import org.springframework.cloud.client.loadbalancer.Request;
+import org.springframework.cloud.client.loadbalancer.RequestData;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.governance.adapters.loadbalancer.ServiceInstanceFilter;
 import com.huaweicloud.router.client.loadbalancer.RouterServiceInstanceFilter;
 
-import reactor.core.publisher.Mono;
-
-public class WebFluxServiceInstanceFilter implements ServiceInstanceFilter, WebFilter {
+public class WebFluxServiceInstanceFilter implements ServiceInstanceFilter {
   private final AbstractRouterDistributor<ServiceInstance> routerDistributor;
 
   private final RouterFilter routerFilter;
-
-  private InvocationContext invocationContext;
 
   @Autowired
   public WebFluxServiceInstanceFilter(
@@ -53,6 +48,15 @@ public class WebFluxServiceInstanceFilter implements ServiceInstanceFilter, WebF
   @Override
   public List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances,
       Request<?> request) {
+    Object context = request.getContext();
+    InvocationContext invocationContext = InvocationContextHolder.getOrCreateInvocationContext();
+    if (context instanceof DefaultRequestContext) {
+      Object clientRequest = ((DefaultRequestContext) context).getClientRequest();
+      if (clientRequest instanceof RequestData) {
+        invocationContext = (InvocationContext)((RequestData) clientRequest).getAttributes()
+            .get(InvocationContextHolder.ATTRIBUTE_KEY);
+      }
+    }
     return RouterServiceInstanceFilter
         .filterInstance(invocationContext, instances, request, routerFilter, routerDistributor);
   }
@@ -60,11 +64,5 @@ public class WebFluxServiceInstanceFilter implements ServiceInstanceFilter, WebF
   @Override
   public int getOrder() {
     return CANARY_ORDER;
-  }
-
-  @Override
-  public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-    invocationContext = exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY);
-    return chain.filter(exchange);
   }
 }

@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Configuration;
 public class WebFluxConfiguration {
   @Bean
   @ConditionalOnMissingBean(WebFluxServiceInstanceFilter.class)
-  public WebFluxServiceInstanceFilter gatewayCanaryServiceInstanceFilter(
+  public WebFluxServiceInstanceFilter webFluxServiceInstanceFilter(
       AbstractRouterDistributor<ServiceInstance> routerDistributor, RouterFilter routerFilter) {
     return new WebFluxServiceInstanceFilter(routerDistributor, routerFilter);
   }

@@ -19,3 +19,4 @@
 com.huaweicloud.router.client.RouterClientAutoConfiguration
 com.huaweicloud.router.client.loadbalancer.webflux.WebFluxConfiguration
 com.huaweicloud.router.client.loadbalancer.webmvc.WebMvcConfiguration
+com.huaweicloud.router.client.loadbalancer.webflux.ReactiveLoadBalancerClientConfiguration

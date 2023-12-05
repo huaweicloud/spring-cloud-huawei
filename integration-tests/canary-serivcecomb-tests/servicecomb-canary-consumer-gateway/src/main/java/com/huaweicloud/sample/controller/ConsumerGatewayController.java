@@ -26,27 +26,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.huaweicloud.sample.service.ConsumerGatewayFeignService;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 public class ConsumerGatewayController {
 
-  private final RestTemplate restTemplate;
-
   @Autowired
-  public ConsumerGatewayController(RestTemplate restTemplate) {
-    this.restTemplate = restTemplate;
-  }
+  private ConsumerGatewayFeignService service;
 
   @GetMapping("/sayHelloConsumerGateway")
-  public String sayHelloCanary(@RequestParam("name") String name, HttpServletRequest request) {
-    MultiValueMap<String, String> headers = new HttpHeaders();
-    headers.add("canary", request.getHeader("canary"));
-    HttpEntity<Object> entity = new HttpEntity<>(headers);
-    String result = restTemplate
-        .exchange("http://discovery-gateway/sayHelloConsumerGateway?name=" + name, HttpMethod.GET, entity,
-            String.class).getBody();
-    // 组合请求头与请求体参数
-    return result;
+  public String sayHelloCanary(@RequestParam("name") String name) {
+    return service.sayHelloConsumerGateway(name);
   }
 }
