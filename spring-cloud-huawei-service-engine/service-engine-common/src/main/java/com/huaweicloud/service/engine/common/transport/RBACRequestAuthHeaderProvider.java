@@ -87,9 +87,9 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
     this.serviceCombRBACProperties = bootstrapProperties.getServiceCombRBACProperties();
     this.microserviceProperties = bootstrapProperties.getMicroserviceProperties();
 
-    EventManager.getEventBus().register(this);
-
     if (enabled()) {
+      EventManager.getEventBus().register(this);
+
       executorService = Executors.newFixedThreadPool(1, t -> new Thread(t, "rbac-executor"));
       cache = CacheBuilder.newBuilder()
           .maximumSize(1)
