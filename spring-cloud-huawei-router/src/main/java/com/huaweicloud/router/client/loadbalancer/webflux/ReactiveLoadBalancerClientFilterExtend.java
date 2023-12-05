@@ -52,6 +52,10 @@ import org.springframework.web.server.ServerWebExchange;
 
 import reactor.core.publisher.Mono;
 
+/**
+ * replace ReactiveLoadBalancerClientFilter to build RequestData with attributes
+ * so that router can get invocationContext from requestData attributes
+ */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class ReactiveLoadBalancerClientFilterExtend extends ReactiveLoadBalancerClientFilter {
 
@@ -87,6 +91,8 @@ public class ReactiveLoadBalancerClientFilterExtend extends ReactiveLoadBalancer
 		Set<LoadBalancerLifecycle> supportedLifecycleProcessors = LoadBalancerLifecycleValidator
 				.getSupportedLifecycleProcessors(clientFactory.getInstances(serviceId, LoadBalancerLifecycle.class),
 						RequestDataContext.class, ResponseData.class, ServiceInstance.class);
+		// different from ReactiveLoadBalancerClientFilter, just add attributes to build requestData that can get
+		// attribute in custom ReactiveLoadBalancer
 		DefaultRequest<RequestDataContext> lbRequest = new DefaultRequest<>(
 				new RequestDataContext(new RequestData(exchange.getRequest(), exchange.getAttributes()), getHint(serviceId)));
 		return choose(lbRequest, serviceId, supportedLifecycleProcessors).doOnNext(response -> {

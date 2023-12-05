@@ -53,8 +53,10 @@ public class WebFluxServiceInstanceFilter implements ServiceInstanceFilter {
     if (context instanceof DefaultRequestContext) {
       Object clientRequest = ((DefaultRequestContext) context).getClientRequest();
       if (clientRequest instanceof RequestData) {
-        invocationContext = (InvocationContext)((RequestData) clientRequest).getAttributes()
-            .get(InvocationContextHolder.ATTRIBUTE_KEY);
+        if (((RequestData) clientRequest).getAttributes().get(InvocationContextHolder.ATTRIBUTE_KEY) != null) {
+          invocationContext = (InvocationContext)((RequestData) clientRequest).getAttributes()
+              .get(InvocationContextHolder.ATTRIBUTE_KEY);
+        }
       }
     }
     return RouterServiceInstanceFilter
