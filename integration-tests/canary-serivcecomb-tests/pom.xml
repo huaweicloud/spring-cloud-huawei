@@ -30,7 +30,6 @@
 
   <modules>
     <module>servicecomb-canary-gateway</module>
-    <module>servicecomb-canary-consumer-gateway</module>
     <module>servicecomb-canary-consumer</module>
     <module>servicecomb-canary-provider</module>
     <module>servicecomb-canary-provider-beta</module>

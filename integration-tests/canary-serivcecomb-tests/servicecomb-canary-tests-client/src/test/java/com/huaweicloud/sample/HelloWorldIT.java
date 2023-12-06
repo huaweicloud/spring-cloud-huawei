@@ -77,29 +77,22 @@ public class HelloWorldIT {
   }
 
   @Test
-  public void testConsumerGatewayHelloWorldCanary() {
+  public void testContextSayHelloCanary() {
     for (int i = 0; i < 10; i++) {
-      MultiValueMap<String, String> headers = new HttpHeaders();
-      headers.add("canary", "old");
-      HttpEntity<Object> entity = new HttpEntity<>(headers);
       String result = template
-          .exchange(Config.CUNSUMER_GATEWAY_URL + "/sayHelloConsumerGateway?name=World",
-              HttpMethod.GET, entity, String.class).getBody();
+          .getForObject(Config.GATEWAY_URL + "/canary-provider/contextSayHelloCanary?canary=old", String.class);
       assertThat(result).startsWith("hello");
     }
   }
 
   @Test
-  public void testHeaderConsumerGatewayHelloWorldCanary() {
+  public void testHeaderContextSayHelloCanary() {
     int oldCount = 0;
     int newCount = 0;
 
     for (int i = 0; i < 20; i++) {
-      MultiValueMap<String, String> headers = new HttpHeaders();
-      headers.add("canary", "new");
-      HttpEntity<Object> entity = new HttpEntity<>(headers);
       String result = template
-          .exchange(Config.CUNSUMER_GATEWAY_URL + "/sayHelloConsumerGateway?name=World", HttpMethod.GET, entity, String.class).getBody();
+          .getForObject(Config.GATEWAY_URL + "/canary-provider/contextSayHelloCanary?canary=new", String.class);
       if (result.startsWith("hello")) {
         oldCount++;
       } else if (result.startsWith("beta")) {

@@ -49,7 +49,7 @@ public class WebFluxServiceInstanceFilter implements ServiceInstanceFilter {
   public List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances,
       Request<?> request) {
     Object context = request.getContext();
-    InvocationContext invocationContext = InvocationContextHolder.getOrCreateInvocationContext();
+    InvocationContext invocationContext = null;
     if (context instanceof DefaultRequestContext) {
       Object clientRequest = ((DefaultRequestContext) context).getClientRequest();
       if (clientRequest instanceof RequestData) {

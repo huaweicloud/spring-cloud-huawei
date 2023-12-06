@@ -28,13 +28,11 @@ spring:
         locator:
           enabled: true
           lowerCaseServiceId: false
-      routes:
-        - id: canary-provider
-          uri: lb://canary-provider
-          predicates:
-            - Path=/sayHelloConsumerGateway/**
 
     servicecomb:
+      context:
+        queryContextMapper:
+          canary: canary
       discovery:
         enabled: true
         address: http://127.0.0.1:30100

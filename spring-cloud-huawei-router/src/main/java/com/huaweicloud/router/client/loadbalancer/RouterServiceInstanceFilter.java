@@ -43,8 +43,13 @@ public class RouterServiceInstanceFilter {
     if (CollectionUtils.isEmpty(instances)) {
       return instances;
     }
-    // headers from invocation context
-    Map<String, String> canaryHeaders = new HashMap<>(invocationContext.getContext());
+    Map<String, String> canaryHeaders;
+    if (invocationContext == null) {
+      canaryHeaders = new HashMap<>();
+    } else {
+      // headers from invocation context
+      canaryHeaders = new HashMap<>(invocationContext.getContext());
+    }
     // headers from current request
     String targetServiceName = instances.get(0).getServiceId();
     Object context = request.getContext();

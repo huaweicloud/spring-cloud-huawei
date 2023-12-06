@@ -19,6 +19,4 @@ package com.huaweicloud.sample;
 
 public interface Config {
   String GATEWAY_URL = "http://localhost:10088";
-
-  String CUNSUMER_GATEWAY_URL = "http://localhost:9097";
 }
