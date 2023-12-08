@@ -23,6 +23,7 @@ import org.apache.servicecomb.governance.handler.IdentifierRateLimitingHandler;
 import org.apache.servicecomb.governance.handler.MapperHandler;
 import org.apache.servicecomb.governance.handler.RateLimitingHandler;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
@@ -114,5 +115,11 @@ public class WebMvcConfiguration {
     registrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
 
     return registrationBean;
+  }
+
+  @Bean
+  @ConditionalOnMissingBean(HttpServletResponseStatusCodeExtractor.class)
+  public HttpServletResponseStatusCodeExtractor httpServletResponseStatusCodeExtractor() {
+    return new HttpServletResponseStatusCodeExtractor();
   }
 }
