@@ -75,4 +75,35 @@ public class HelloWorldIT {
     double ratio = oldCount / (float) (oldCount + newCount);
     assertThat(ratio).isBetween(0.1, 0.3);
   }
+
+  @Test
+  public void testContextSayHelloCanary() {
+    for (int i = 0; i < 10; i++) {
+      String result = template
+          .getForObject(Config.GATEWAY_URL + "/canary-provider/contextSayHelloCanary?canary=old", String.class);
+      assertThat(result).startsWith("hello");
+    }
+  }
+
+  @Test
+  public void testHeaderContextSayHelloCanary() {
+    int oldCount = 0;
+    int newCount = 0;
+
+    for (int i = 0; i < 20; i++) {
+      String result = template
+          .getForObject(Config.GATEWAY_URL + "/canary-provider/contextSayHelloCanary?canary=new", String.class);
+      if (result.startsWith("hello")) {
+        oldCount++;
+      } else if (result.startsWith("beta")) {
+        newCount++;
+      } else {
+        Assertions.fail("not expected result testHelloWorldCanary");
+        return;
+      }
+    }
+
+    double ratio = oldCount / (float) (oldCount + newCount);
+    assertThat(ratio).isBetween(0.1, 0.3);
+  }
 }
