@@ -16,7 +16,6 @@
  */
 package com.huaweicloud.router.client;
 
-import org.apache.servicecomb.router.RouterFilter;
 import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,7 +30,6 @@ import org.springframework.context.annotation.Configuration;
 import com.huaweicloud.router.client.loadbalancer.AffinityTagFilterAdapter;
 import com.huaweicloud.router.client.loadbalancer.AffinityTagServiceInstanceFilter;
 import com.huaweicloud.router.client.loadbalancer.CanaryFilterAdapter;
-import com.huaweicloud.router.client.loadbalancer.CanaryServiceInstanceFilter;
 import com.huaweicloud.router.client.loadbalancer.SpringCloudRouterDistributor;
 import com.huaweicloud.router.client.loadbalancer.ZoneAwareFilterAdapter;
 import com.huaweicloud.router.client.loadbalancer.ZoneAwareServiceInstanceFilter;
@@ -45,13 +43,6 @@ public class RouterClientAutoConfiguration {
   public AbstractRouterDistributor<ServiceInstance> springCloudRouterDistributor(
       CanaryFilterAdapter adapter) {
     return new SpringCloudRouterDistributor(adapter);
-  }
-
-  @Bean
-  @ConditionalOnMissingBean(CanaryServiceInstanceFilter.class)
-  public CanaryServiceInstanceFilter canaryServiceInstanceFilter(
-      AbstractRouterDistributor<ServiceInstance> routerDistributor, RouterFilter routerFilter) {
-    return new CanaryServiceInstanceFilter(routerDistributor, routerFilter);
   }
 
   @Bean
