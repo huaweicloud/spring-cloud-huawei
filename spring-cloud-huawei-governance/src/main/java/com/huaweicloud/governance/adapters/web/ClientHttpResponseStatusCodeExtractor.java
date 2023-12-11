@@ -19,14 +19,23 @@ package com.huaweicloud.governance.adapters.web;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.http.client.ClientHttpResponse;
 
+import com.huaweicloud.governance.adapters.GovernanceHeaderStatusUtils;
 import com.huaweicloud.governance.StatusCodeExtractor;
 
 public class ClientHttpResponseStatusCodeExtractor implements StatusCodeExtractor {
   private static final Logger LOGGER = LoggerFactory.getLogger(ClientHttpResponseStatusCodeExtractor.class);
+
+  private final Environment environment;
+
+  public ClientHttpResponseStatusCodeExtractor(Environment environment) {
+    this.environment = environment;
+  }
 
   @Override
   public boolean canProcess(Object response) {
@@ -37,6 +46,10 @@ public class ClientHttpResponseStatusCodeExtractor implements StatusCodeExtracto
   public String extractStatusCode(Object response) {
     int status = 0;
     try {
+      String statusHeaderKey = GovernanceHeaderStatusUtils.getStatusHeaderKey(environment);
+      if (!StringUtils.isEmpty(((ClientHttpResponse) response).getHeaders().getFirst(statusHeaderKey))) {
+        return ((ClientHttpResponse) response).getHeaders().getFirst(statusHeaderKey);
+      }
       status = ((ClientHttpResponse) response).getStatusCode().value();
     } catch (IOException e) {
       LOGGER.error("unexpected exception", e);

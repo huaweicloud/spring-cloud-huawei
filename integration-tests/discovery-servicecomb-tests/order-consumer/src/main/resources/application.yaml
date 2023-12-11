@@ -104,6 +104,10 @@ servicecomb:
         - apiPath:
             prefix: "/testFeignFaultInjection"
           serviceName: price
+    testIsolationResponseHeader: |
+      matches:
+        - apiPath:
+            prefix: "/testIsolationResponseHeader"
   rateLimiting:
     demo-rateLimiting: |
       rate: 10
@@ -137,6 +141,13 @@ servicecomb:
     #      failureRateThreshold: 20
     isolationForceOpen: |
       forceOpen: true
+    testIsolationResponseHeader: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      slidingWindowType: COUNT_BASED
+      failureRateThreshold: 20
+      waitDurationInOpenState: 1000
+      permittedNumberOfCallsInHalfOpenState: 10
   instanceBulkhead:
     feignInstanceBulkhead: |
       maxConcurrentCalls: 2

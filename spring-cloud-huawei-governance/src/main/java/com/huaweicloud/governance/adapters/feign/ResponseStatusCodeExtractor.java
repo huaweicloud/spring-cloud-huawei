@@ -17,11 +17,21 @@
 
 package com.huaweicloud.governance.adapters.feign;
 
+import org.springframework.core.env.Environment;
+import org.springframework.util.CollectionUtils;
+
 import com.huaweicloud.governance.StatusCodeExtractor;
+import com.huaweicloud.governance.adapters.GovernanceHeaderStatusUtils;
 
 import feign.Response;
 
 public class ResponseStatusCodeExtractor implements StatusCodeExtractor {
+  private final Environment environment;
+
+  public ResponseStatusCodeExtractor(Environment environment) {
+    this.environment = environment;
+  }
+
   @Override
   public boolean canProcess(Object response) {
     return response instanceof Response;
@@ -29,6 +39,11 @@ public class ResponseStatusCodeExtractor implements StatusCodeExtractor {
 
   @Override
   public String extractStatusCode(Object response) {
+    String statusHeaderKey = GovernanceHeaderStatusUtils.getStatusHeaderKey(environment);
+    if (!CollectionUtils.isEmpty(((Response) response).headers().get(statusHeaderKey))
+        && ((Response) response).headers().get(statusHeaderKey).stream().findFirst().isPresent()) {
+      return ((Response) response).headers().get(statusHeaderKey).stream().findFirst().get();
+    }
     return String.valueOf(((Response) response).status());
   }
 }
