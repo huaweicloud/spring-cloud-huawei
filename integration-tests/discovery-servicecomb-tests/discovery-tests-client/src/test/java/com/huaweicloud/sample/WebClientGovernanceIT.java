@@ -26,10 +26,14 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 public class WebClientGovernanceIT {
+  private static final Logger LOGGER = LoggerFactory.getLogger(WebClientGovernanceIT.class);
+
   final String url = "http://127.0.0.1:10088";
 
   final RestTemplate template = new RestTemplate();
@@ -137,11 +141,13 @@ public class WebClientGovernanceIT {
         if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getStatusCode().value() == 500) {
           rejectedCount.getAndIncrement();
         } else {
+          LOGGER.warn("testWebClientInstanceIsolationHeader notExpectedFailed---------------------" + e.getMessage());
           notExpectedFailed.set(true);
         }
       }
     }
-
+    LOGGER.warn("testWebClientInstanceIsolationHeader rejectedCount--------------" + rejectedCount.get()
+        + "-----successCount---" + successCount.get());
     Assertions.assertFalse(notExpectedFailed.get());
     Assertions.assertEquals(100, rejectedCount.get() + successCount.get());
     Assertions.assertTrue(rejectedCount.get() >= 80);
