@@ -119,7 +119,7 @@ public class GovernanceControllerIT {
           successCount.getAndIncrement();
         }
       } catch (Exception e) {
-        if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getStatusCode().value() == 500) {
+        if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getStatusCode().value() == 503) {
           rejectedCount.getAndIncrement();
         } else {
           LOGGER.warn("testIsolationResponseHeader notExpectedFailed---------------------" + e.getMessage());
@@ -131,7 +131,7 @@ public class GovernanceControllerIT {
         + "-----successCount---" + successCount.get());
     Assertions.assertFalse(notExpectedFailed.get());
     Assertions.assertEquals(100, rejectedCount.get() + successCount.get());
-    Assertions.assertTrue(rejectedCount.get() >= 70);
+    Assertions.assertTrue(rejectedCount.get() >= 80);
     Assertions.assertTrue(successCount.get() >= 6);
   }
 
@@ -158,7 +158,7 @@ public class GovernanceControllerIT {
           successCount.getAndIncrement();
         }
       } catch (Exception e) {
-        if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getStatusCode().value() == 500) {
+        if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getStatusCode().value() == 503) {
           rejectedCount.getAndIncrement();
         } else {
           LOGGER.warn("testIsolationResponseHeader notExpectedFailed---------------------" + e.getMessage());
@@ -170,7 +170,7 @@ public class GovernanceControllerIT {
         + "-----successCount---" + successCount.get());
     Assertions.assertFalse(notExpectedFailed.get());
     Assertions.assertEquals(100, rejectedCount.get() + successCount.get());
-    Assertions.assertTrue(rejectedCount.get() >= 70);
+    Assertions.assertTrue(rejectedCount.get() >= 80);
     Assertions.assertTrue(successCount.get() >= 6);
   }
 

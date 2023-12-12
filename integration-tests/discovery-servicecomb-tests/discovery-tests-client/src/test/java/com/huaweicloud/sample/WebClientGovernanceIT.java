@@ -138,6 +138,7 @@ public class WebClientGovernanceIT {
         template.getForObject(url + "/testWebClientInstanceIsolationHeader", String.class, invocationID);
         successCount.getAndIncrement();
       } catch (Exception e) {
+        LOGGER.warn("testWebClientInstanceIsolationHeader---------------------" + e.getMessage());
         if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getStatusCode().value() == 500) {
           rejectedCount.getAndIncrement();
         } else {
