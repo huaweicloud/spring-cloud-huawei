@@ -27,8 +27,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -37,8 +35,6 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 public class GovernanceControllerIT {
-  private static final Logger LOGGER = LoggerFactory.getLogger(GovernanceControllerIT.class);
-
   final String orderServiceUrl = "http://127.0.0.1:9098";
 
   final String priceServiceUrl = "http://127.0.0.1:9090";
@@ -113,7 +109,6 @@ public class GovernanceControllerIT {
       try {
         String result = template.getForObject(orderServiceUrl + "/govern/testIsolationResponseHeader", String.class);
         if (!"success".equals(result)) {
-          LOGGER.warn("testIsolationResponseHeader notExpectedFailed---------------------" + result);
           notExpectedFailed.set(true);
         } else {
           successCount.getAndIncrement();
@@ -122,13 +117,11 @@ public class GovernanceControllerIT {
         if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getStatusCode().value() == 503) {
           rejectedCount.getAndIncrement();
         } else {
-          LOGGER.warn("testIsolationResponseHeader notExpectedFailed---------------------" + e.getMessage());
           notExpectedFailed.set(true);
         }
       }
     }
-    LOGGER.warn("testIsolationResponseHeader rejectedCount--------------" + rejectedCount.get()
-        + "-----successCount---" + successCount.get());
+
     Assertions.assertFalse(notExpectedFailed.get());
     Assertions.assertEquals(100, rejectedCount.get() + successCount.get());
     Assertions.assertTrue(rejectedCount.get() >= 80);
@@ -152,7 +145,6 @@ public class GovernanceControllerIT {
       try {
         String result = template.getForObject(orderServiceUrl + "/govern/testIsolationResponseHeaderFeign", String.class);
         if (!"success".equals(result)) {
-          LOGGER.warn("testIsolationResponseHeader notExpectedFailed---------------------" + result);
           notExpectedFailed.set(true);
         } else {
           successCount.getAndIncrement();
@@ -161,13 +153,11 @@ public class GovernanceControllerIT {
         if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getStatusCode().value() == 503) {
           rejectedCount.getAndIncrement();
         } else {
-          LOGGER.warn("testIsolationResponseHeader notExpectedFailed---------------------" + e.getMessage());
           notExpectedFailed.set(true);
         }
       }
     }
-    LOGGER.warn("testIsolationResponseHeaderFeign rejectedCount--------------" + rejectedCount.get()
-        + "-----successCount---" + successCount.get());
+
     Assertions.assertFalse(notExpectedFailed.get());
     Assertions.assertEquals(100, rejectedCount.get() + successCount.get());
     Assertions.assertTrue(rejectedCount.get() >= 80);
