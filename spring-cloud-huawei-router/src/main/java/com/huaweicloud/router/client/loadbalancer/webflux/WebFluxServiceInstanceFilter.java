@@ -15,40 +15,32 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.router.client.loadbalancer;
+package com.huaweicloud.router.client.loadbalancer.webflux;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.servicecomb.router.RouterFilter;
 import org.apache.servicecomb.router.distribute.AbstractRouterDistributor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.DefaultRequestContext;
 import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.client.loadbalancer.RequestData;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
-import org.springframework.http.HttpHeaders;
-import org.springframework.util.CollectionUtils;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.governance.adapters.loadbalancer.DecorateLoadBalancerRequest;
 import com.huaweicloud.governance.adapters.loadbalancer.ServiceInstanceFilter;
+import com.huaweicloud.router.client.loadbalancer.RouterServiceInstanceFilter;
 
-public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
-  private static final Logger LOGGER = LoggerFactory.getLogger(CanaryServiceInstanceFilter.class);
-
+public class WebFluxServiceInstanceFilter implements ServiceInstanceFilter {
   private final AbstractRouterDistributor<ServiceInstance> routerDistributor;
 
   private final RouterFilter routerFilter;
 
   @Autowired
-  public CanaryServiceInstanceFilter(AbstractRouterDistributor<ServiceInstance> routerDistributor,
-      RouterFilter routerFilter) {
+  public WebFluxServiceInstanceFilter(
+      AbstractRouterDistributor<ServiceInstance> routerDistributor, RouterFilter routerFilter) {
     this.routerDistributor = routerDistributor;
     this.routerFilter = routerFilter;
   }
@@ -56,40 +48,19 @@ public class CanaryServiceInstanceFilter implements ServiceInstanceFilter {
   @Override
   public List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances,
       Request<?> request) {
-    if (CollectionUtils.isEmpty(instances)) {
-      return instances;
-    }
-
-    Map<String, String> canaryHeaders = new HashMap<>();
-
-    // headers from invocation context
-    InvocationContext invocationContext = InvocationContextHolder.getOrCreateInvocationContext();
-    canaryHeaders.putAll(invocationContext.getContext());
-
-    // headers from current request
-    String targetServiceName = instances.get(0).getServiceId();
     Object context = request.getContext();
+    InvocationContext invocationContext = null;
     if (context instanceof DefaultRequestContext) {
       Object clientRequest = ((DefaultRequestContext) context).getClientRequest();
-      HttpHeaders httpHeaders;
-      if (clientRequest instanceof DecorateLoadBalancerRequest) {
-        // rest template
-        httpHeaders = ((DecorateLoadBalancerRequest) clientRequest).getRequest().getHeaders();
-      } else if (clientRequest instanceof RequestData) {
-        // feign
-        httpHeaders = ((RequestData) clientRequest).getHeaders();
-      } else {
-        LOGGER.warn("not implemented client request {}.", clientRequest == null ? null : clientRequest.getClass());
-        httpHeaders = HttpHeaders.EMPTY;
+      if (clientRequest instanceof RequestData) {
+        if (((RequestData) clientRequest).getAttributes().get(InvocationContextHolder.ATTRIBUTE_KEY) != null) {
+          invocationContext = (InvocationContext)((RequestData) clientRequest).getAttributes()
+              .get(InvocationContextHolder.ATTRIBUTE_KEY);
+        }
       }
-      canaryHeaders.putAll(httpHeaders.toSingleValueMap());
-    } else {
-      LOGGER.warn("not implemented context {}.", context == null ? null : context.getClass());
     }
-
-    return routerFilter
-        .getFilteredListOfServers(instances, targetServiceName, canaryHeaders,
-            routerDistributor);
+    return RouterServiceInstanceFilter
+        .filterInstance(invocationContext, instances, request, routerFilter, routerDistributor);
   }
 
   @Override
