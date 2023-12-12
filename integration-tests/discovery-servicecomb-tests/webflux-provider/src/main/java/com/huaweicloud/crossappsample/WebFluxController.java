@@ -129,9 +129,9 @@ public class WebFluxController {
   }
 
   @GetMapping(
-      path = "/testWebClientInstanceIsolationHeader",
+      path = "/testHeaderWebClientInstanceIsolation",
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public Mono<ResponseEntity<String>> testWebClientInstanceIsolationHeader() {
+  public Mono<ResponseEntity<String>> testHeaderWebClientInstanceIsolation() {
     if (isolationCounter.getAndIncrement() % 3 == 0) {
       return Mono.just(ResponseEntity.status(200)
           .header("X-HTTP-STATUS-CODE", "503")

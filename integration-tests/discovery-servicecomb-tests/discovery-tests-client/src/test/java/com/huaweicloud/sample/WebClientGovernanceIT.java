@@ -26,14 +26,10 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 public class WebClientGovernanceIT {
-  private static final Logger LOGGER = LoggerFactory.getLogger(WebClientGovernanceIT.class);
-
   final String url = "http://127.0.0.1:10088";
 
   final RestTemplate template = new RestTemplate();
@@ -127,7 +123,7 @@ public class WebClientGovernanceIT {
   }
 
   @Test
-  public void testWebClientInstanceIsolationHeader() throws Exception {
+  public void testHeaderWebClientInstanceIsolation() throws Exception {
     AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
     AtomicLong successCount = new AtomicLong(0);
     AtomicLong rejectedCount = new AtomicLong(0);
@@ -135,20 +131,17 @@ public class WebClientGovernanceIT {
     for (int i = 0; i < 100; i++) {
       try {
         String invocationID = UUID.randomUUID().toString();
-        template.getForObject(url + "/testWebClientInstanceIsolationHeader", String.class, invocationID);
+        template.getForObject(url + "/testHeaderWebClientInstanceIsolation", String.class, invocationID);
         successCount.getAndIncrement();
       } catch (Exception e) {
-        LOGGER.warn("testWebClientInstanceIsolationHeader---------------------" + e.getMessage());
         if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getStatusCode().value() == 500) {
           rejectedCount.getAndIncrement();
         } else {
-          LOGGER.warn("testWebClientInstanceIsolationHeader notExpectedFailed---------------------" + e.getMessage());
           notExpectedFailed.set(true);
         }
       }
     }
-    LOGGER.warn("testWebClientInstanceIsolationHeader rejectedCount--------------" + rejectedCount.get()
-        + "-----successCount---" + successCount.get());
+
     Assertions.assertFalse(notExpectedFailed.get());
     Assertions.assertEquals(100, rejectedCount.get() + successCount.get());
     Assertions.assertTrue(rejectedCount.get() >= 80);

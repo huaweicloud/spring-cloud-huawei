@@ -147,11 +147,11 @@ public class GatewayController {
   }
 
   @GetMapping(
-      path = "/testWebClientInstanceIsolationHeader",
+      path = "/testHeaderWebClientInstanceIsolation",
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public Mono<String> testWebClientInstanceIsolationHeader(ServerWebExchange exchange) {
+  public Mono<String> testHeaderWebClientInstanceIsolation(ServerWebExchange exchange) {
     return webClientBuilder.build().get()
-        .uri("http://webflux/testWebClientInstanceIsolationHeader")
+        .uri("http://webflux/testHeaderWebClientInstanceIsolation")
         .attribute(InvocationContextHolder.ATTRIBUTE_KEY, exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY))
         .retrieve()
         .bodyToMono(String.class);
