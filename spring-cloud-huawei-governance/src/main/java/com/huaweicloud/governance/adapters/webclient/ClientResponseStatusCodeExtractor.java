@@ -16,11 +16,20 @@
  */
 package com.huaweicloud.governance.adapters.webclient;
 
+import org.springframework.core.env.Environment;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.reactive.function.client.ClientResponse;
 
 import com.huaweicloud.governance.StatusCodeExtractor;
+import com.huaweicloud.governance.adapters.GovernanceHeaderStatusUtils;
 
 public class ClientResponseStatusCodeExtractor implements StatusCodeExtractor {
+  private final Environment environment;
+
+  public ClientResponseStatusCodeExtractor(Environment environment) {
+    this.environment = environment;
+  }
+
   @Override
   public boolean canProcess(Object response) {
     return response instanceof ClientResponse;
@@ -28,6 +37,10 @@ public class ClientResponseStatusCodeExtractor implements StatusCodeExtractor {
 
   @Override
   public String extractStatusCode(Object response) {
+    String statusHeaderKey = GovernanceHeaderStatusUtils.getStatusHeaderKey(environment);
+    if (!CollectionUtils.isEmpty(((ClientResponse) response).headers().header(statusHeaderKey))) {
+      return ((ClientResponse) response).headers().header(statusHeaderKey).get(0);
+    }
     return String.valueOf(((ClientResponse) response).statusCode().value());
   }
 }

@@ -100,10 +100,68 @@ public class GovernanceControllerIT {
   }
 
   @Test
+  public void testIsolationResponseHeader() {
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+    AtomicLong successCount = new AtomicLong(0);
+    AtomicLong rejectedCount = new AtomicLong(0);
+
+    for (int i = 0; i < 100; i++) {
+      try {
+        String result = template.getForObject(orderServiceUrl + "/govern/testIsolationResponseHeader", String.class);
+        if (!"success".equals(result)) {
+          notExpectedFailed.set(true);
+        } else {
+          successCount.getAndIncrement();
+        }
+      } catch (Exception e) {
+        if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getStatusCode().value() == 503) {
+          rejectedCount.getAndIncrement();
+        } else {
+          notExpectedFailed.set(true);
+        }
+      }
+    }
+
+    Assertions.assertFalse(notExpectedFailed.get());
+    Assertions.assertEquals(100, rejectedCount.get() + successCount.get());
+    Assertions.assertTrue(rejectedCount.get() >= 80);
+    Assertions.assertTrue(successCount.get() >= 6);
+  }
+
+  @Test
   public void testIsolationForceOpenFeign() {
     // exceptions thrown by feign is catch by spring mvc and will throw of error 500
     Assertions.assertThrows(HttpServerErrorException.class,
         () -> template.getForObject(orderServiceUrl + "/govern/isolationForceOpenFeign", String.class));
+  }
+
+  @Test
+  public void testIsolationResponseHeaderFeign() {
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+    AtomicLong successCount = new AtomicLong(0);
+    AtomicLong rejectedCount = new AtomicLong(0);
+
+    for (int i = 0; i < 100; i++) {
+      try {
+        String result = template.getForObject(orderServiceUrl + "/govern/testIsolationResponseHeaderFeign", String.class);
+        if (!"success".equals(result)) {
+          notExpectedFailed.set(true);
+        } else {
+          successCount.getAndIncrement();
+        }
+      } catch (Exception e) {
+        if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getStatusCode().value() == 503) {
+          rejectedCount.getAndIncrement();
+        } else {
+          notExpectedFailed.set(true);
+        }
+      }
+    }
+
+    Assertions.assertFalse(notExpectedFailed.get());
+    Assertions.assertEquals(100, rejectedCount.get() + successCount.get());
+    Assertions.assertTrue(rejectedCount.get() >= 80);
+    Assertions.assertTrue(successCount.get() >= 6);
   }
 
   @Test

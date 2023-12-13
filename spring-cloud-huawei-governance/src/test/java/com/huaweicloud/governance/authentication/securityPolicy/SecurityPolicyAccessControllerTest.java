@@ -34,7 +34,6 @@ import org.mockito.Mockito;
 import com.huaweicloud.governance.authentication.AuthRequestExtractor;
 import com.huaweicloud.governance.authentication.AuthRequestExtractorUtils;
 import com.huaweicloud.governance.authentication.AuthenticationAdapter;
-import com.huaweicloud.governance.authentication.Const;
 import com.huaweicloud.governance.authentication.securityPolicy.SecurityPolicyProperties.Action;
 import com.huaweicloud.governance.authentication.securityPolicy.SecurityPolicyProperties.ConfigurationItem;
 

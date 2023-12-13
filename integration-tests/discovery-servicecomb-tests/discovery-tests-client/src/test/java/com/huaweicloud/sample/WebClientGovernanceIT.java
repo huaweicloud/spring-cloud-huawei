@@ -121,4 +121,30 @@ public class WebClientGovernanceIT {
     Assertions.assertThrows(HttpServerErrorException.class,
         () -> template.getForObject(url + "/testWebClientFaultInjectionThrowException", String.class));
   }
+
+  @Test
+  public void testHeaderWebClientInstanceIsolation() throws Exception {
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+    AtomicLong successCount = new AtomicLong(0);
+    AtomicLong rejectedCount = new AtomicLong(0);
+
+    for (int i = 0; i < 100; i++) {
+      try {
+        String invocationID = UUID.randomUUID().toString();
+        template.getForObject(url + "/testHeaderWebClientInstanceIsolation", String.class, invocationID);
+        successCount.getAndIncrement();
+      } catch (Exception e) {
+        if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getStatusCode().value() == 500) {
+          rejectedCount.getAndIncrement();
+        } else {
+          notExpectedFailed.set(true);
+        }
+      }
+    }
+
+    Assertions.assertFalse(notExpectedFailed.get());
+    Assertions.assertEquals(100, rejectedCount.get() + successCount.get());
+    Assertions.assertTrue(rejectedCount.get() >= 80);
+    Assertions.assertTrue(successCount.get() >= 6);
+  }
 }

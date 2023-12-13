@@ -187,9 +187,19 @@ public class GovernanceController {
     return restTemplate.getForObject("http://price/isolationForceOpen", String.class);
   }
 
+  @RequestMapping("/testIsolationResponseHeader")
+  public String testIsolationResponseHeader() {
+    return restTemplate.getForObject("http://price/testIsolationResponseHeader", String.class);
+  }
+
   @RequestMapping("/isolationForceOpenFeign")
   public String isolationForceOpenFeign() {
     return feignService.isolationForceOpen();
+  }
+
+  @RequestMapping("/testIsolationResponseHeaderFeign")
+  public String testIsolationResponseHeaderFeign() {
+    return feignService.testIsolationResponseHeader();
   }
 
   @RequestMapping("/gatewayIsolationForceOpenFeign")
