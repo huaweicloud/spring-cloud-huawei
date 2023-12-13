@@ -77,6 +77,10 @@ servicecomb:
       matches:
         - apiPath:
             exact: "/govern/circuitBreaker"
+    circuitBreaker-header: |
+      matches:
+        - apiPath:
+            exact: "/govern/circuitBreakerHeader"
     demo-bulkhead: |
       matches:
         - apiPath:
@@ -120,6 +124,14 @@ servicecomb:
       maxAttempts: 3
   circuitBreaker:
     demo-circuitBreaker: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      failureRateThreshold: 20
+      recordFailureStatus:
+        - 500
+        - 502
+        - 503
+    circuitBreaker-header: |
       minimumNumberOfCalls: 10
       slidingWindowSize: 10
       failureRateThreshold: 20

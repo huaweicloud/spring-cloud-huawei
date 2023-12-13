@@ -144,6 +144,35 @@ public class GovernanceControllerIT {
   }
 
   @Test
+  public void testCircuitBreakerHeader() {
+    AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
+    AtomicLong successCount = new AtomicLong(0);
+    AtomicLong rejectedCount = new AtomicLong(0);
+
+    for (int i = 0; i < 100; i++) {
+      try {
+        String result = template.getForObject(orderServiceUrl + "/govern/circuitBreakerHeader", String.class);
+        if (!"success".equals(result)) {
+          notExpectedFailed.set(true);
+        } else {
+          successCount.getAndIncrement();
+        }
+      } catch (Exception e) {
+        if ("429 : \"circuitBreaker is open.\"".equals(e.getMessage())) {
+          rejectedCount.getAndIncrement();
+        } else {
+          notExpectedFailed.set(true);
+        }
+      }
+    }
+
+    Assertions.assertFalse(notExpectedFailed.get());
+    Assertions.assertEquals(100, rejectedCount.get() + successCount.get());
+    Assertions.assertTrue(rejectedCount.get() >= 80);
+    Assertions.assertTrue(successCount.get() >= 6);
+  }
+
+  @Test
   public void testBulkhead() throws Exception {
     CountDownLatch latch = new CountDownLatch(100);
     AtomicBoolean expectedFailed = new AtomicBoolean(false);
