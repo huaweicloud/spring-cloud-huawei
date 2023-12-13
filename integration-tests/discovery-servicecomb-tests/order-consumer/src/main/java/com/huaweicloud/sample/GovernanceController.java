@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import jakarta.servlet.http.HttpServletResponse;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -175,6 +176,12 @@ public class GovernanceController {
       return "ok";
     }
     throw new RuntimeException("test error");
+  }
+
+  @RequestMapping("/circuitBreakerHeader")
+  public String circuitBreakerHeader(HttpServletResponse response) {
+    response.addHeader("X-HTTP-STATUS-CODE", "502");
+    return "success";
   }
 
   @RequestMapping("/bulkhead")
