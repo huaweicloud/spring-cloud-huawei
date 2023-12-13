@@ -118,6 +118,10 @@ servicecomb:
       matches:
         - apiPath:
             prefix: "/routeFaultInjectionNull"
+    testHeaderWebClientInstanceIsolation: |
+      matches:
+        - apiPath:
+            prefix: "/testHeaderWebClientInstanceIsolation"
   retry:
     gatewayRetry: |
       maxAttempts: 2
@@ -155,6 +159,14 @@ servicecomb:
       rate: 2
       identifier: user-id
   instanceIsolation:
+    testHeaderWebClientInstanceIsolation: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      slidingWindowType: COUNT_BASED
+      failureRateThreshold: 20
+      waitDurationInOpenState: 1000
+      permittedNumberOfCallsInHalfOpenState: 10
+      order: 3
     testGatewayIsolationErrorCode: |
       minimumNumberOfCalls: 10
       slidingWindowSize: 10

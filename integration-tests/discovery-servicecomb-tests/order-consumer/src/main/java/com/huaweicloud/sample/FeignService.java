@@ -63,6 +63,9 @@ public interface FeignService {
   @RequestMapping("/isolationForceOpen")
   String isolationForceOpen();
 
+  @RequestMapping("/testIsolationResponseHeader")
+  String testIsolationResponseHeader();
+
   @GetMapping("/feignInstanceBulkhead")
   String feignInstanceBulkhead();
 

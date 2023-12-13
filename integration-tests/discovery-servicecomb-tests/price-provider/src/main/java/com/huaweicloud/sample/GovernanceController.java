@@ -122,6 +122,12 @@ public class GovernanceController {
     return "success";
   }
 
+  @RequestMapping("/testIsolationResponseHeader")
+  public String testIsolationResponseHeader(HttpServletResponse response) {
+    response.addHeader("X-HTTP-STATUS-CODE", "502");
+    return "success";
+  }
+
   @GetMapping("/rate/testRateLimitForService")
   public String testRateLimitForService() {
     return "success";

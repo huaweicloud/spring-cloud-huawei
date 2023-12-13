@@ -127,4 +127,16 @@ public class WebFluxController {
     }
     return Mono.just(ResponseEntity.status(503).body("fail"));
   }
+
+  @GetMapping(
+      path = "/testHeaderWebClientInstanceIsolation",
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  public Mono<ResponseEntity<String>> testHeaderWebClientInstanceIsolation() {
+    if (isolationCounter.getAndIncrement() % 3 == 0) {
+      return Mono.just(ResponseEntity.status(200)
+          .header("X-HTTP-STATUS-CODE", "503")
+          .body("ok"));
+    }
+    return Mono.just(ResponseEntity.status(200).body("ok"));
+  }
 }
