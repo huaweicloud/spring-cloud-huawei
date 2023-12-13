@@ -15,13 +15,13 @@
 
 package com.huaweicloud.governance.adapters.webmvc;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 
 import com.huaweicloud.governance.StatusCodeExtractor;
 import com.huaweicloud.governance.adapters.GovernanceHeaderStatusUtils;
-
-import jakarta.servlet.http.HttpServletResponse;
 
 public class HttpServletResponseStatusCodeExtractor implements StatusCodeExtractor {
   private final Environment environment;
