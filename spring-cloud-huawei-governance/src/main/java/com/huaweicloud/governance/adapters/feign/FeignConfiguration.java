@@ -28,6 +28,7 @@ import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
@@ -53,7 +54,7 @@ public class FeignConfiguration {
   }
 
   @Bean
-  public ResponseStatusCodeExtractor responseStatusCodeExtractor() {
-    return new ResponseStatusCodeExtractor();
+  public ResponseStatusCodeExtractor responseStatusCodeExtractor(Environment environment) {
+    return new ResponseStatusCodeExtractor(environment);
   }
 }
