@@ -62,6 +62,7 @@ spring:
                 rule: order*
 
           securityPolicyEnabled: true
+          apiPathWhitelist: '/checkWhitelist'
           acls:
             app: canary
             mode: permissive

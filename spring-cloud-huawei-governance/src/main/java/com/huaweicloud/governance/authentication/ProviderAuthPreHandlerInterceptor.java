@@ -37,7 +37,9 @@ public class ProviderAuthPreHandlerInterceptor implements PreHandlerInterceptor 
 
   @Override
   public boolean handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-    authenticationTokenManager.valid(request);
+    if (!authenticationTokenManager.checkUriWhitelist(request.getRequestURI())) {
+      authenticationTokenManager.valid(request);
+    }
     return true;
   }
 }

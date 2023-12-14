@@ -74,4 +74,9 @@ public class AuthController {
     }
     return "success";
   }
+
+  @RequestMapping("/checkWhitelist")
+  public String checkWhitelist() {
+    return "success";
+  }
 }

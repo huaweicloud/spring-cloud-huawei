@@ -75,4 +75,17 @@ public class RSAProviderTokenManager {
       throw e;
     }
   }
+
+  public boolean checkUriWhitelist(String uri) {
+    String whitelist = environment.getProperty(Const.AUTH_API_PATH_WHITELIST, String.class, "");
+    if (whitelist.isEmpty()) {
+      return false;
+    }
+    for (String whiteUri : whitelist.split(",")) {
+      if (!whiteUri.isEmpty() && MatcherUtils.isPatternMatch(uri, whiteUri)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
