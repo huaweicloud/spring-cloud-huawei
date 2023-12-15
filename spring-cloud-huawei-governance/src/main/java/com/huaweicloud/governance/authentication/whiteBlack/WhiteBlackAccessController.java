@@ -25,6 +25,7 @@ import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
 import com.huaweicloud.governance.authentication.AccessController;
 import com.huaweicloud.governance.authentication.AuthRequestExtractor;
 import com.huaweicloud.governance.authentication.AuthenticationAdapter;
+import com.huaweicloud.governance.authentication.MatcherUtils;
 import com.huaweicloud.governance.authentication.UnAuthorizedException;
 
 /**
@@ -93,16 +94,6 @@ public class WhiteBlackAccessController implements AccessController {
     if (StringUtils.isEmpty(propertyValue)) {
       return false;
     }
-    return isPatternMatch(propertyValue, item.getRule());
-  }
-
-  private boolean isPatternMatch(String value, String pattern) {
-    if (pattern.startsWith("*")) {
-      return value.endsWith(pattern.substring(1));
-    }
-    if (pattern.endsWith("*")) {
-      return value.startsWith(pattern.substring(0, pattern.length() - 1));
-    }
-    return value.equals(pattern);
+    return MatcherUtils.isPatternMatch(propertyValue, item.getRule());
   }
 }

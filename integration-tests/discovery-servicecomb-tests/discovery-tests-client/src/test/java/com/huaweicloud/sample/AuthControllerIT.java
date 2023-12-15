@@ -77,4 +77,10 @@ public class AuthControllerIT {
     }
     assertThat(exception).isEqualTo(true);
   }
+
+  @Test
+  public void testApiPathWhitelistSucesssFromConsumer() {
+    String result = template.getForObject(accountServiceUrl + "/checkWhitelist", String.class);
+    assertThat(result).isEqualTo("success");
+  }
 }
