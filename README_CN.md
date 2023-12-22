@@ -31,8 +31,7 @@ Spring Cloud Huawei提供了大量开箱即用的服务治理能力，让开发�
   详细情况可以查询 [Spring Cloud Releases][Spring Cloud Releases]。
 * Hoxton(包括)之前的版本支持Netfix OSS的组件，比如Ribbon, Hystrix. 2020.0.x(包括)之后的版本支持
   Spring Cloud Loadbalancer.
-* 2020.0.x(包括)之前的版本使用springfox生成swagger. 2021.0.x(包括)之后的版本使用
-    springdoc生成swagger.
+* 2020.0.x(包括)之前的版本使用springfox生成swagger. 2021.0.x(包括)之后的版本使用springdoc生成swagger.
 
 ## 如何使用
 
