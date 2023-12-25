@@ -25,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
-import org.springframework.core.Ordered;
 
 import com.google.common.eventbus.Subscribe;
 import com.huaweicloud.common.disovery.InstanceIDAdapter;
@@ -88,6 +87,6 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
 
   @Override
   public int getOrder() {
-    return Ordered.LOWEST_PRECEDENCE;
+    return INSTANCE_ISOLATION_ORDER;
   }
 }
