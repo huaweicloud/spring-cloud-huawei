@@ -32,12 +32,6 @@ public interface ServiceInstanceFilter extends Ordered {
     int AFFINITY_TAG_ORDER = 0;
 
     /**
-     * isolation order master before zoneAware
-     * ensure that other az instances can be called after same az instances isolation.
-     */
-    int INSTANCE_ISOLATION_ORDER = -3;
-
-    /**
      * filter service instance
      *
      * @param supplier invoker of the filter
