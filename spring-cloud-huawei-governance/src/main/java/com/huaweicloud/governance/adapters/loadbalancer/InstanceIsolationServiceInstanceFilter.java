@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
-import org.springframework.core.Ordered;
+import org.springframework.core.env.Environment;
 
 import com.google.common.eventbus.Subscribe;
 import com.huaweicloud.common.disovery.InstanceIDAdapter;
@@ -37,7 +37,11 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
 
   private final Map<String, Long> isolatedInstances = new ConcurrentHashMap<>();
 
-  public InstanceIsolationServiceInstanceFilter() {
+  private final int instanceIsolationFilterOrder;
+
+  public InstanceIsolationServiceInstanceFilter(Environment environment) {
+    instanceIsolationFilterOrder =  environment
+        .getProperty("spring.cloud.servicecomb.instance.isolation.filter.order", Integer.class, -3);
     EventManager.register(this);
   }
 
@@ -88,6 +92,6 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
 
   @Override
   public int getOrder() {
-    return Ordered.LOWEST_PRECEDENCE;
+    return instanceIsolationFilterOrder;
   }
 }
