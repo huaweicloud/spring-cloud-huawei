@@ -27,8 +27,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -37,7 +35,6 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 public class GovernanceControllerIT {
-  private static final Logger LOGGER = LoggerFactory.getLogger(GovernanceControllerIT.class);
   final String orderServiceUrl = "http://127.0.0.1:9098";
 
   final String priceServiceUrl = "http://127.0.0.1:9090";
@@ -117,7 +114,6 @@ public class GovernanceControllerIT {
           successCount.getAndIncrement();
         }
       } catch (Exception e) {
-        LOGGER.warn("testIsolationResponseHeader exception:", e);
         if (e instanceof HttpServerErrorException && ((HttpServerErrorException) e).getStatusCode().value() == 503) {
           rejectedCount.getAndIncrement();
         } else {
@@ -125,8 +121,7 @@ public class GovernanceControllerIT {
         }
       }
     }
-    LOGGER.warn("notExpectedFailed------" + notExpectedFailed.get() + "----rejectedCount------" + rejectedCount.get() +
-        "----successCount------" + successCount.get());
+
     Assertions.assertFalse(notExpectedFailed.get());
     Assertions.assertEquals(100, rejectedCount.get() + successCount.get());
     Assertions.assertTrue(rejectedCount.get() >= 80);
