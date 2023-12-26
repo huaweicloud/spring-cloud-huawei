@@ -25,6 +25,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 @Configuration
 @ConditionalOnWebApplication(type = Type.SERVLET)
@@ -32,7 +33,7 @@ public class WebMvcConfiguration {
   @Bean
   @ConditionalOnMissingBean(WebMvcServiceInstanceFilter.class)
   public WebMvcServiceInstanceFilter canaryServiceInstanceFilter(
-      AbstractRouterDistributor<ServiceInstance> routerDistributor, RouterFilter routerFilter) {
-    return new WebMvcServiceInstanceFilter(routerDistributor, routerFilter);
+      AbstractRouterDistributor<ServiceInstance> routerDistributor, RouterFilter routerFilter, Environment env) {
+    return new WebMvcServiceInstanceFilter(routerDistributor, routerFilter, env);
   }
 }
