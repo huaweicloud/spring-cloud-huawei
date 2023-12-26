@@ -24,6 +24,7 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
+import org.springframework.core.env.Environment;
 import org.springframework.util.CollectionUtils;
 
 import com.huaweicloud.governance.adapters.loadbalancer.ServiceInstanceFilter;
@@ -38,9 +39,13 @@ public class AffinityTagServiceInstanceFilter implements ServiceInstanceFilter {
 
   private final AffinityTagFilterAdapter adapter;
 
-  public AffinityTagServiceInstanceFilter(Registration registration, AffinityTagFilterAdapter adapter) {
+  private final Environment env;
+
+  public AffinityTagServiceInstanceFilter(Registration registration, AffinityTagFilterAdapter adapter,
+      Environment environment) {
     this.registration = registration;
     this.adapter = adapter;
+    this.env = environment;
   }
 
   @Override
@@ -54,6 +59,6 @@ public class AffinityTagServiceInstanceFilter implements ServiceInstanceFilter {
 
   @Override
   public int getOrder() {
-    return AFFINITY_TAG_ORDER;
+    return env.getProperty("spring.cloud.loadbalance.filter.affinity-tag.order", int.class, 100);
   }
 }

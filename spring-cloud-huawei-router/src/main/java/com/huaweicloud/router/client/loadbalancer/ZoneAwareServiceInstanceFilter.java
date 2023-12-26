@@ -26,6 +26,7 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
+import org.springframework.core.env.Environment;
 
 import com.huaweicloud.governance.adapters.loadbalancer.ServiceInstanceFilter;
 
@@ -38,9 +39,13 @@ public class ZoneAwareServiceInstanceFilter implements ServiceInstanceFilter {
   @Value("${spring.cloud.servicecomb.discovery.denyCrossZoneLoadBalancing:false}")
   private boolean denyCrossZoneLoadBalancing;
 
-  public ZoneAwareServiceInstanceFilter(Registration registration, ZoneAwareFilterAdapter adapter) {
+  private final Environment env;
+
+  public ZoneAwareServiceInstanceFilter(Registration registration, ZoneAwareFilterAdapter adapter,
+      Environment environment) {
     this.registration = registration;
     this.adapter = adapter;
+    this.env = environment;
   }
 
   @Override
@@ -51,7 +56,7 @@ public class ZoneAwareServiceInstanceFilter implements ServiceInstanceFilter {
 
   @Override
   public int getOrder() {
-    return ZONE_AWARE_ORDER;
+    return env.getProperty("spring.cloud.loadbalance.filter.zone-aware.order", int.class, -200);
   }
 
   private List<ServiceInstance> zoneAwareDiscoveryFilter(List<ServiceInstance> instances) {

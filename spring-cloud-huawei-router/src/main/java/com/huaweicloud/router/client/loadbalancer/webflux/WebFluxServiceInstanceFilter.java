@@ -27,6 +27,7 @@ import org.springframework.cloud.client.loadbalancer.DefaultRequestContext;
 import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.client.loadbalancer.RequestData;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
+import org.springframework.core.env.Environment;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
@@ -38,11 +39,14 @@ public class WebFluxServiceInstanceFilter implements ServiceInstanceFilter {
 
   private final RouterFilter routerFilter;
 
+  private final Environment env;
+
   @Autowired
   public WebFluxServiceInstanceFilter(
-      AbstractRouterDistributor<ServiceInstance> routerDistributor, RouterFilter routerFilter) {
+      AbstractRouterDistributor<ServiceInstance> routerDistributor, RouterFilter routerFilter, Environment env) {
     this.routerDistributor = routerDistributor;
     this.routerFilter = routerFilter;
+    this.env = env;
   }
 
   @Override
@@ -65,6 +69,6 @@ public class WebFluxServiceInstanceFilter implements ServiceInstanceFilter {
 
   @Override
   public int getOrder() {
-    return CANARY_ORDER;
+    return env.getProperty("spring.cloud.loadbalance.filter.router.order", int.class, -100);
   }
 }
