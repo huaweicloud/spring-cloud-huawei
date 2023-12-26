@@ -20,6 +20,7 @@ package com.huaweicloud.common.adapters.webflux;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.boot.web.reactive.filter.OrderedWebFilter;
 import org.springframework.core.Ordered;
+import org.springframework.core.env.Environment;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
@@ -33,10 +34,15 @@ import com.huaweicloud.common.context.InvocationStage;
 import reactor.core.publisher.Mono;
 
 public class InvocationContextWebFilter implements OrderedWebFilter {
+  private final static String INVOCATION_CONTEXT_ENABLED = "spring.cloud.servicecomb.invocation.header.context.enabled";
+
   private final ContextProperties contextProperties;
 
-  public InvocationContextWebFilter(ContextProperties contextProperties) {
+  private final Environment env;
+
+  public InvocationContextWebFilter(ContextProperties contextProperties, Environment env) {
     this.contextProperties = contextProperties;
+    this.env = env;
   }
 
   @Override
@@ -46,8 +52,13 @@ public class InvocationContextWebFilter implements OrderedWebFilter {
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-    InvocationContext context = InvocationContextHolder.deserialize(
-        exchange.getRequest().getHeaders().getFirst(InvocationContextHolder.SERIALIZE_KEY));
+    InvocationContext context;
+    if (env.getProperty(INVOCATION_CONTEXT_ENABLED, boolean.class, true)) {
+      context = InvocationContextHolder.deserialize(
+          exchange.getRequest().getHeaders().getFirst(InvocationContextHolder.SERIALIZE_KEY));
+    } else {
+      context = new InvocationContext();
+    }
 
     // copy external headers to context
     contextProperties.getHeaderContextMapper()
