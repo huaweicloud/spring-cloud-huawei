@@ -91,6 +91,6 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
 
   @Override
   public int getOrder() {
-    return env.getProperty("spring.cloud.servicecomb.instance.isolation.filter.order", Integer.class, -3);
+    return env.getProperty("spring.cloud.loadbalance.filter.instance-isolation.order", int.class, -3);
   }
 }
