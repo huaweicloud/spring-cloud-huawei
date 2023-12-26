@@ -25,12 +25,6 @@ import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.core.Ordered;
 
 public interface ServiceInstanceFilter extends Ordered {
-    int ZONE_AWARE_ORDER = -2;
-
-    int CANARY_ORDER = -1;
-
-    int AFFINITY_TAG_ORDER = 0;
-
     /**
      * filter service instance
      *

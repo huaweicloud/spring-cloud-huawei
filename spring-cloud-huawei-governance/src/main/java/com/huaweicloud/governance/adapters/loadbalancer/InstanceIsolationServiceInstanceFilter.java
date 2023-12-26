@@ -37,11 +37,10 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
 
   private final Map<String, Long> isolatedInstances = new ConcurrentHashMap<>();
 
-  private final int instanceIsolationFilterOrder;
+  private final Environment env;
 
   public InstanceIsolationServiceInstanceFilter(Environment environment) {
-    instanceIsolationFilterOrder =  environment
-        .getProperty("spring.cloud.servicecomb.instance.isolation.filter.order", Integer.class, -3);
+    this.env = environment;
     EventManager.register(this);
   }
 
@@ -92,6 +91,6 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
 
   @Override
   public int getOrder() {
-    return instanceIsolationFilterOrder;
+    return env.getProperty("spring.cloud.servicecomb.instance.isolation.filter.order", Integer.class, -3);
   }
 }
