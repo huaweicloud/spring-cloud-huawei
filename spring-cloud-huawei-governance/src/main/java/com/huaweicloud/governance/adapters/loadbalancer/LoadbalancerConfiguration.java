@@ -29,6 +29,7 @@ import org.springframework.cloud.client.loadbalancer.LoadBalancerRequestTransfor
 import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 @Configuration
 @ConditionalOnProperty(value = "spring.cloud.servicecomb.loadbalancer.enabled",
@@ -49,7 +50,7 @@ public class LoadbalancerConfiguration {
   }
 
   @Bean
-  public InstanceIsolationServiceInstanceFilter instanceIsolationServiceInstanceFilter() {
-    return new InstanceIsolationServiceInstanceFilter();
+  public InstanceIsolationServiceInstanceFilter instanceIsolationServiceInstanceFilter(Environment environment) {
+    return new InstanceIsolationServiceInstanceFilter(environment);
   }
 }

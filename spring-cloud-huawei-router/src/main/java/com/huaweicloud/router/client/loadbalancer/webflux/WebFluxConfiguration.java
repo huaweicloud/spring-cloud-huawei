@@ -25,6 +25,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 @Configuration
 @ConditionalOnWebApplication(type = Type.REACTIVE)
@@ -32,7 +33,7 @@ public class WebFluxConfiguration {
   @Bean
   @ConditionalOnMissingBean(WebFluxServiceInstanceFilter.class)
   public WebFluxServiceInstanceFilter webFluxServiceInstanceFilter(
-      AbstractRouterDistributor<ServiceInstance> routerDistributor, RouterFilter routerFilter) {
-    return new WebFluxServiceInstanceFilter(routerDistributor, routerFilter);
+      AbstractRouterDistributor<ServiceInstance> routerDistributor, RouterFilter routerFilter, Environment env) {
+    return new WebFluxServiceInstanceFilter(routerDistributor, routerFilter, env);
   }
 }
