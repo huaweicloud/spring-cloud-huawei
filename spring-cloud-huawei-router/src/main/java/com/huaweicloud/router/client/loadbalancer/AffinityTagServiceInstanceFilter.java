@@ -59,6 +59,6 @@ public class AffinityTagServiceInstanceFilter implements ServiceInstanceFilter {
 
   @Override
   public int getOrder() {
-    return env.getProperty("spring.cloud.loadbalance.filter.affinity-tag.order", int.class, 0);
+    return env.getProperty("spring.cloud.loadbalance.filter.affinity-tag.order", int.class, 100);
   }
 }
