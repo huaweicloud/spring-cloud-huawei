@@ -34,7 +34,7 @@ import com.huaweicloud.common.context.InvocationStage;
 import reactor.core.publisher.Mono;
 
 public class InvocationContextWebFilter implements OrderedWebFilter {
-  private final static String INVOCATION_CONTEXT_ENABLED = "spring.cloud.servicecomb.invocation.header.context.enabled";
+  private final static String INVOCATION_CONTEXT_ENABLED = "spring.cloud.servicecomb.context.web-flux.enabled";
 
   private final ContextProperties contextProperties;
 
