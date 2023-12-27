@@ -69,6 +69,6 @@ public class WebFluxServiceInstanceFilter implements ServiceInstanceFilter {
 
   @Override
   public int getOrder() {
-    return env.getProperty("spring.cloud.loadbalance.filter.router.order", int.class, -100);
+    return env.getProperty("spring.cloud.loadbalance.filter.router.order", int.class, -200);
   }
 }
