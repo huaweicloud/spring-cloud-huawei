@@ -56,7 +56,7 @@ public class ZoneAwareServiceInstanceFilter implements ServiceInstanceFilter {
 
   @Override
   public int getOrder() {
-    return env.getProperty("spring.cloud.loadbalance.filter.zone-aware.order", int.class, -200);
+    return env.getProperty("spring.cloud.loadbalance.filter.zone-aware.order", int.class, -100);
   }
 
   private List<ServiceInstance> zoneAwareDiscoveryFilter(List<ServiceInstance> instances) {
