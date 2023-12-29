@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>mesh-tests</artifactId>
-    <version>1.11.0-2021.0.x-SNAPSHOT</version>
+    <version>1.12.0-2021.0.x-SNAPSHOT</version>
   </parent>
 
 
