@@ -60,7 +60,6 @@ public class ConfigWatch implements ApplicationEventPublisherAware {
     updatedKey.addAll(event.getUpdated().keySet());
     updatedKey.addAll(event.getDeleted().keySet());
     ConfigRefreshEvent configRefreshEvent = new ConfigRefreshEvent(this, updatedKey);
-    applicationEventPublisher.publishEvent(new ConfigRefreshEvent(this, updatedKey));
     applicationEventPublisher.publishEvent(new RefreshEvent(this, configRefreshEvent, "Config refreshed"));
   }
 }
