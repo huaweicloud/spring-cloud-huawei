@@ -48,11 +48,13 @@ public class ConfigWatch implements ApplicationEventPublisherAware {
 
   @Subscribe
   public void onConfigurationChangedEvent(ConfigurationChangedEvent event) {
-    LOGGER.info("receive new configurations, added=[{}], updated=[{}], deleted=[{}]",
-        event.getAdded().keySet(),
-        event.getUpdated().keySet(),
-        event.getDeleted().keySet());
-
+    Set<String> addKeys = event.getAdded().keySet();
+    Set<String> updateKeys = event.getUpdated().keySet();
+    Set<String> deleteKeys = event.getDeleted().keySet();
+    if (addKeys.isEmpty() && updateKeys.isEmpty() && deleteKeys.isEmpty()) {
+      return;
+    }
+    LOGGER.info("receive new configurations, added=[{}], updated=[{}], deleted=[{}]", addKeys, updateKeys, deleteKeys);
     Set<String> updatedKey = new HashSet<>();
     updatedKey.addAll(event.getAdded().keySet());
     updatedKey.addAll(event.getUpdated().keySet());
@@ -60,7 +62,5 @@ public class ConfigWatch implements ApplicationEventPublisherAware {
     ConfigRefreshEvent configRefreshEvent = new ConfigRefreshEvent(this, updatedKey);
     // publish RefreshEvent first to make sure spring bean refreshed
     applicationEventPublisher.publishEvent(new RefreshEvent(this, configRefreshEvent, "Config refreshed"));
-    // then invoke service listeners
-    applicationEventPublisher.publishEvent(configRefreshEvent);
   }
 }
