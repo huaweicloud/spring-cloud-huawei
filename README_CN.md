@@ -18,13 +18,15 @@ Spring Cloud Huawei提供了大量开箱即用的服务治理能力，让开发�
 
 ## 支持的版本列表
 
-| 分支        | 最新版本            | 编译使用 Spring Cloud版本 | 编译使用 Spring Boot版本 |
-|-----------|-----------------|---------------------|--------------------|
-| master    | 1.11.4-2022.0.x | 2022.0.4            | 3.1.5              | 
-| 2021.0.x  | 1.11.4-2021.0.x | 2021.0.8            | 2.7.17             | 
-| 2020.0.x  | 1.10.8-2020.0.x | 2020.0.6            | 2.5.14             |
-| Hoxton    | 1.9.3-Hoxton    | Hoxton.SR9          | 2.3.5.RELEASE      |
-| Greenwich | 1.6.3-Greenwich | Greenwich.SR6       | 2.1.6-RELEASE      |
+| 分支        | 最新版本            | 编译使用 Spring Cloud版本 | 编译使用 Spring Boot版本 | JDK 支持版本 | 分支活跃状态 |
+|-----------|-----------------|---------------------|--------------------|----------|--------|
+| master    | 1.11.5-2022.0.x | 2022.0.4            | 3.1.5              | JDK 17   | 活跃     | 
+| 2021.0.x  | 1.11.5-2021.0.x | 2021.0.8            | 2.7.17             | JDK 1.8  | 活跃     | 
+| 2020.0.x  | 1.10.8-2020.0.x | 2020.0.6            | 2.5.14             | JDK 1.8  | 不再维护   |
+| Hoxton    | 1.9.3-Hoxton    | Hoxton.SR9          | 2.3.5.RELEASE      | JDK 1.8  | 不再维护   |
+| Greenwich | 1.6.3-Greenwich | Greenwich.SR6       | 2.1.6-RELEASE      | JDK 1.8  | 不再维护   |
+| Finchley  | 1.6.1-Finchley  | 2.0.4.RELEASE       | 2.0.9.RELEASE      | JDK 1.8  | 不再维护   |
+| Edgware   | 1.2.0-Edgware   | 1.3.6.RELEASE       | 1.5.22.RELEASE     | JDK 1.8  | 不再维护   |
 
 ***注意：***
 * 使用`Spring Cloud Huawei`时可以使用兼容的`Spring Cloud`版本。详细信息可参考 https://spring.io/projects/spring-cloud。
