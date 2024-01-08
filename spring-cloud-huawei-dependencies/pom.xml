@@ -37,7 +37,7 @@
     <httpclient.version>5.2.1</httpclient.version>
     <jackson.version>2.16.1</jackson.version>
     <commons-io.version>2.7</commons-io.version>
-    <guava.version>31.1-jre</guava.version>
+    <guava.version>32.0.0-jre</guava.version>
     <snakeyaml.version>2.2</snakeyaml.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <websocket.version>1.5.0</websocket.version>
