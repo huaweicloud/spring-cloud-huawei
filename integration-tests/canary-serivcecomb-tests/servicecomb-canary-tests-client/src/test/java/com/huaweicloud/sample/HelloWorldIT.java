@@ -106,4 +106,56 @@ public class HelloWorldIT {
     double ratio = oldCount / (float) (oldCount + newCount);
     assertThat(ratio).isBetween(0.1, 0.3);
   }
+
+  @Test
+  public void testRetryOnSameZeroCanary() {
+    int failedCount = 0;
+    int successCount = 0;
+    for (int i = 0; i < 10; i++) {
+      try {
+        String result = template
+            .getForObject(Config.GATEWAY_URL + "/canary-provider/retryOnSameZeroCanary", String.class);
+        if ("ok".equals(result)) {
+          successCount++;
+        }
+      } catch (Exception e) {
+        failedCount++;
+      }
+    }
+    Assertions.assertTrue(failedCount == 0 && successCount == 10);
+  }
+
+  @Test
+  public void testRetryOnSameOneCanary() {
+    int providerCount = 0;
+    int betaCount = 0;
+    for (int i = 0; i < 10; i++) {
+      String result = template
+          .getForObject(Config.GATEWAY_URL + "/canary-provider/retryOnSameOneCanary", String.class);
+      if ("ok".equals(result)) {
+        providerCount++;
+      } else if (result.startsWith("beta")) {
+        betaCount++;
+      }
+    }
+    Assertions.assertTrue(providerCount == betaCount);
+  }
+
+  @Test
+  public void testRetryOnSameAllCanary() {
+    int failedCount = 0;
+    int successCount = 0;
+    for (int i = 0; i < 10; i++) {
+      try {
+        String result = template
+            .getForObject(Config.GATEWAY_URL + "/canary-provider/testRetryOnSameAllCanary", String.class);
+        if ("ok".equals(result)) {
+          successCount++;
+        }
+      } catch (Exception e) {
+        failedCount++;
+      }
+    }
+    Assertions.assertTrue(failedCount == successCount);
+  }
 }
