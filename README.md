@@ -24,8 +24,8 @@ Spring Cloud Huawei provides a large number of out-of-the-box service governance
 | master    | 1.11.5-2022.0.x                    | 2022.0.4                      | 3.1.5                        | OpenJDK 17         |                 |
 | 2021.0.x  | 1.11.5-2021.0.x                    | 2021.0.8                      | 2.7.17                       | OpenJDK 8          |                 |
 | 2020.0.x  | 1.10.8-2020.0.x                    | 2020.0.6                      | 2.5.14                       | OpenJDK 8          | End of Support  |
-| Hoxton    | 1.9.3-Hoxton                       | Hoxton.SR9                    | 2.3.5.RELEASE                | OpenJDK 8          | End of Support  |
-| Greenwich | 1.6.3-Greenwich                    | Greenwich.SR6                 | 2.1.6-RELEASE                | OpenJDK 8          | End of Support  |
+| Hoxton    | 1.9.4-Hoxton                       | Hoxton.SR9                    | 2.3.5.RELEASE                | OpenJDK 8          | End of Support  |
+| Greenwich | 1.6.4-Greenwich                    | Greenwich.SR6                 | 2.1.6-RELEASE                | OpenJDK 8          | End of Support  |
 | Finchley  | 1.6.1-Finchley                     | 2.0.4.RELEASE                 | 2.0.9.RELEASE                | OpenJDK 8          | End of Support  |
 | Edgware   | 1.2.0-Edgware                      | 1.3.6.RELEASE                 | 1.5.22.RELEASE               | OpenJDK 8          | End of Support  |
 
