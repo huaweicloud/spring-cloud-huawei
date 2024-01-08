@@ -40,3 +40,27 @@ servicecomb:
           - weight: 100
             tags:
               version: 0.0.1
+
+  matchGroup:
+    retryOnSameZero: |
+      matches:
+        - apiPath:
+            prefix: "/retryOnSameZeroCanary"
+    retryOnSameOne: |
+      matches:
+        - apiPath:
+            prefix: "/retryOnSameOneCanary"
+    retryOnSameAll: |
+      matches:
+        - apiPath:
+            prefix: "/testRetryOnSameAllCanary"
+  retry:
+    retryOnSameZero: |
+      maxAttempts: 3
+      retryOnSame: 0
+    retryOnSameOne: |
+      maxAttempts: 3
+      retryOnSame: 1
+    retryOnSameAll: |
+      maxAttempts: 3
+      retryOnSame: 3

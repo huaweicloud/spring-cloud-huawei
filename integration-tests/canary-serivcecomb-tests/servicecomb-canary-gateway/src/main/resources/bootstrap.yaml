@@ -27,7 +27,7 @@ spring:
       discovery:
         locator:
           enabled: true
-          lowerCaseServiceId: false
+          lowerCaseServiceId: true
     servicecomb:
       context:
         queryContextMapper:
