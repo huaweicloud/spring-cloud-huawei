@@ -17,8 +17,13 @@
 
 package com.huaweicloud.governance.adapters.gateway;
 
+import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
+
+import java.net.URI;
+
 import org.apache.servicecomb.governance.handler.RetryHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
+import org.apache.servicecomb.governance.policy.RetryPolicy;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
@@ -26,6 +31,8 @@ import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.core.Ordered;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.huaweicloud.common.context.InvocationContext;
+import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 
 import io.github.resilience4j.reactor.retry.RetryOperator;
@@ -34,7 +41,7 @@ import reactor.core.publisher.Mono;
 
 public class RetryGlobalFilter implements GlobalFilter, Ordered {
 
-  public static final int RETRY_ORDER = ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER + 20;
+  public static final int RETRY_ORDER = ReactiveLoadBalancerClientFilter.LOAD_BALANCER_CLIENT_FILTER_ORDER - 10;
 
   private final RetryHandler retryHandler;
 
@@ -57,13 +64,17 @@ public class RetryGlobalFilter implements GlobalFilter, Ordered {
     if (retry == null) {
       return toRun;
     }
-
-    // TODO: spring cloud gateway can not pass RetryContext to Load balancer,
-    // so retry on same not support now and using RETRY_ITERATION
-    //  see https://github.com/spring-cloud/spring-cloud-gateway/issues/2720
+    InvocationContext invocationContext = exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY);
+    if (invocationContext != null) {
+      RetryPolicy retryPolicy = retryHandler.matchPolicy(governanceRequest);
+      RetryContext retryContext = new RetryContext(retryPolicy.getRetryOnSame());
+      invocationContext.putLocalContext(RetryContext.RETRY_CONTEXT, retryContext);
+    }
+    URI originUrl = exchange.getAttribute(GATEWAY_REQUEST_URL_ATTR);
     return Mono.defer(() -> Mono.fromRunnable(() -> {
           int iteration = exchange.getAttributeOrDefault(RetryContext.RETRY_ITERATION, 0);
           if (iteration > 0) {
+            exchange.getAttributes().put(GATEWAY_REQUEST_URL_ATTR, originUrl);
             reset(exchange);
           }
           exchange.getAttributes().put(RetryContext.RETRY_ITERATION, iteration + 1);
