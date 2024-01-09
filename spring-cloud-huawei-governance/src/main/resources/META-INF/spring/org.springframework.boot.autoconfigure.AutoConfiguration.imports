@@ -29,4 +29,5 @@ com.huaweicloud.governance.AuthenticationAutoConfiguration
 com.huaweicloud.governance.authentication.adapters.feign.FeignConfiguration
 com.huaweicloud.governance.authentication.adapters.gateway.GatewayConfiguration
 com.huaweicloud.governance.authentication.adapters.web.WebConfiguration
+com.huaweicloud.governance.adapters.gateway.ReactiveLoadBalancerClientConfiguration
 
