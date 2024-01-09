@@ -27,7 +27,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
+import com.huaweicloud.router.client.ConditionalOnRouterEnabled;
+
 @Configuration
+@ConditionalOnRouterEnabled
 @ConditionalOnWebApplication(type = Type.SERVLET)
 public class WebMvcConfiguration {
   @Bean
