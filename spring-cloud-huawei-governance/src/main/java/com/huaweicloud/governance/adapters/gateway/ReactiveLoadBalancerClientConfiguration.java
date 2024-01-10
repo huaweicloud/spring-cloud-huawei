@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.router.client.loadbalancer.webflux;
+package com.huaweicloud.governance.adapters.gateway;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
