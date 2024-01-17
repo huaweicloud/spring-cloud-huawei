@@ -37,6 +37,9 @@ spring:
         serverType: kie
         serverAddr: http://127.0.0.1:30110
         firstPullRequired: false
+      instance:
+        properties:
+          weight: 1
 
 test:
   value:

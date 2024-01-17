@@ -58,4 +58,14 @@ public class ProviderController {
     response.setStatus(502);
     return "failed";
   }
+
+  @GetMapping("/testWieghtLoadBalancer")
+  public String testWieghtLoadBalancer() {
+    return "beta hello testWieghtLoadBalancer";
+  }
+
+  @GetMapping("/testWieghtLoadBalancerWithFilter")
+  public String testWieghtLoadBalancerWithFilter() {
+    return "beta hello testWieghtLoadBalancerWithFilter";
+  }
 }

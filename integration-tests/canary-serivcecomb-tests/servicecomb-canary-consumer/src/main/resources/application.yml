@@ -40,3 +40,12 @@ servicecomb:
           - weight: 100
             tags:
               version: 0.0.2
+
+  matchGroup:
+    WieghtLoadBalancerOperation: |
+      matches:
+        - apiPath:
+            prefix: "/testWieghtLoadBalancer"
+  loadbalance:
+    WieghtLoadBalancerOperation: |
+      rule: Weight

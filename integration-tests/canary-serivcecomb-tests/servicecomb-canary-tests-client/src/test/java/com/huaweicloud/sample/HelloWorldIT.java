@@ -158,4 +158,61 @@ public class HelloWorldIT {
     }
     Assertions.assertTrue(failedCount == successCount);
   }
+
+  @Test
+  public void testWieghtLoadBalancer() {
+    int providerCount = 0;
+    int betaCount = 0;
+
+    for (int i = 0; i < 20; i++) {
+      String result = template.getForObject(Config.CONSUMER_URL + "/testWieghtLoadBalancer", String.class);
+      if (result.startsWith("hello")) {
+        providerCount++;
+      } else if (result.startsWith("beta")) {
+        betaCount++;
+      } else {
+        Assertions.fail("not expected result testWieghtLoadBalancer");
+        return;
+      }
+    }
+    Assertions.assertTrue(betaCount / providerCount == 3);
+  }
+
+  @Test
+  public void testWieghtLoadBalancerWithHeaderNew() {
+    int providerCount = 0;
+    int betaCount = 0;
+
+    for (int i = 0; i < 20; i++) {
+      String result = template.getForObject(Config.CONSUMER_URL + "/testWieghtLoadBalancerWithHeaderNew", String.class);
+      if (result.startsWith("hello")) {
+        providerCount++;
+      } else if (result.startsWith("beta")) {
+        betaCount++;
+      } else {
+        Assertions.fail("not expected result testWieghtLoadBalancerWithHeaderNew");
+        return;
+      }
+    }
+    Assertions.assertTrue(betaCount / providerCount == 4);
+  }
+
+  @Test
+  public void testWieghtLoadBalancerWithHeaderOld() {
+    int providerCount = 0;
+    int betaCount = 0;
+
+    for (int i = 0; i < 20; i++) {
+      String result = template.getForObject(Config.CONSUMER_URL + "/testWieghtLoadBalancerWithHeaderOld", String.class);
+      if (result.startsWith("hello")) {
+        providerCount++;
+      } else if (result.startsWith("beta")) {
+        betaCount++;
+      } else {
+        Assertions.fail("not expected result testWieghtLoadBalancerWithHeaderOld");
+        return;
+      }
+    }
+    Assertions.assertTrue(betaCount == 20 && providerCount == 0);
+  }
 }

@@ -30,10 +30,14 @@ import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.client.loadbalancer.RequestData;
 import org.springframework.cloud.client.loadbalancer.RequestDataContext;
 import org.springframework.cloud.client.loadbalancer.Response;
+import org.springframework.cloud.loadbalancer.core.NoopServiceInstanceListSupplier;
 import org.springframework.cloud.loadbalancer.core.RandomLoadBalancer;
 import org.springframework.cloud.loadbalancer.core.ReactorServiceInstanceLoadBalancer;
 import org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
+import org.springframework.cloud.loadbalancer.core.WeightedServiceInstanceListSupplier;
+import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
+import org.springframework.core.env.Environment;
 
 import com.huaweicloud.common.configration.dynamic.LoadBalancerProperties;
 import com.huaweicloud.common.context.InvocationContext;
@@ -55,12 +59,19 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
 
   private final Map<String, ReactorServiceInstanceLoadBalancer> loadBalancers = new ConcurrentHashMap<>();
 
-  public RetryAwareLoadBalancer(ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider,
-      String serviceId, LoadBalancerProperties loadBalancerProperties, LoadBalanceHandler loadBalanceHandler) {
-    this.serviceInstanceListSupplierProvider = serviceInstanceListSupplierProvider;
-    this.serviceId = serviceId;
+  private final LoadBalancerClientFactory loadBalancerClientFactory;
+
+  private final Environment environment;
+
+  public RetryAwareLoadBalancer(LoadBalancerProperties loadBalancerProperties, LoadBalanceHandler loadBalanceHandler,
+      LoadBalancerClientFactory loadBalancerClientFactory, Environment environment) {
+    this.serviceId = environment.getProperty(LoadBalancerClientFactory.PROPERTY_NAME);
+    this.serviceInstanceListSupplierProvider =
+        loadBalancerClientFactory.getLazyProvider(serviceId, ServiceInstanceListSupplier.class);
     this.loadBalancerProperties = loadBalancerProperties;
     this.loadBalanceHandler = loadBalanceHandler;
+    this.loadBalancerClientFactory = loadBalancerClientFactory;
+    this.environment = environment;
   }
 
   @Override
@@ -75,6 +86,9 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
           key -> {
             if (LoadBalancerProperties.RULE_RANDOM.equals(key)) {
               return new RandomLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
+            } else if (LoadBalancerProperties.RULE_WEIGHT.equals(key)){
+              return new InstanceWeightedLoadBalancer(buildWeightedServiceInstanceSupplier(serviceInstanceListSupplierProvider,
+                  loadBalancerClientFactory), this.serviceId);
             } else {
               return new RoundRobinLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
             }
@@ -92,11 +106,23 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
         key -> {
           if (LoadBalancerProperties.RULE_RANDOM.equals(key)) {
             return new RandomLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
+          } else if (LoadBalancerProperties.RULE_WEIGHT.equals(key)){
+            return new InstanceWeightedLoadBalancer(buildWeightedServiceInstanceSupplier(serviceInstanceListSupplierProvider,
+                loadBalancerClientFactory), this.serviceId);
           } else {
             return new RoundRobinLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
           }
         });
     return loadBalancer.choose(request).doOnSuccess(r -> retryContext.setLastServer(r.getServer()));
+  }
+
+  private WeightedServiceInstanceListSupplier buildWeightedServiceInstanceSupplier(
+      ObjectProvider<ServiceInstanceListSupplier> supplierProvider, LoadBalancerClientFactory factory) {
+    if (environment.getProperty("spring.cloud.loadbalancer.weight-filter.enabled", boolean.class, true)) {
+      factory.getProperties(serviceId).setCallGetWithRequestOnDelegates(true);
+    }
+    return new WeightedServiceInstanceListSupplier(
+        supplierProvider.getIfAvailable(NoopServiceInstanceListSupplier::new), factory);
   }
 
   @SuppressWarnings("rawtypes")

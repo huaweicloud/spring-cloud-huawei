@@ -46,4 +46,14 @@ public class ProviderController {
   public String testRetryOnSameAllCanary() {
     return "ok";
   }
+
+  @GetMapping("/testWieghtLoadBalancer")
+  public String testWieghtLoadBalancer() {
+    return "hello testWieghtLoadBalancer";
+  }
+
+  @GetMapping("/testWieghtLoadBalancerWithFilter")
+  public String testWieghtLoadBalancerWithFilter() {
+    return "hello testWieghtLoadBalancerWithFilter";
+  }
 }

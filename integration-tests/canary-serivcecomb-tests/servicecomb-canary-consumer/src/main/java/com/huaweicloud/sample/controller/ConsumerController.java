@@ -46,4 +46,27 @@ public class ConsumerController {
     // 组合请求头与请求体参数
     return result;
   }
+
+  @GetMapping("/testWieghtLoadBalancer")
+  public String testWieghtLoadBalancer() {
+    return restTemplate.getForObject("http://canary-provider/testWieghtLoadBalancer", String.class);
+  }
+
+  @GetMapping("/testWieghtLoadBalancerWithHeaderNew")
+  public String testWieghtLoadBalancerWithHeaderNew() {
+    MultiValueMap<String, String> headers = new HttpHeaders();
+    headers.add("canary","new");
+    HttpEntity<Object> entity = new HttpEntity<>(headers);
+    return restTemplate.exchange("http://canary-provider/testWieghtLoadBalancerWithFilter", HttpMethod.GET, entity,
+        String.class).getBody();
+  }
+
+  @GetMapping("/testWieghtLoadBalancerWithHeaderOld")
+  public String testWieghtLoadBalancerWithHeaderOld() {
+    MultiValueMap<String, String> headers = new HttpHeaders();
+    headers.add("canary","old");
+    HttpEntity<Object> entity = new HttpEntity<>(headers);
+    return restTemplate.exchange("http://canary-provider/testWieghtLoadBalancerWithFilter", HttpMethod.GET, entity,
+        String.class).getBody();
+  }
 }
