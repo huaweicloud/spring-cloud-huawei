@@ -32,8 +32,6 @@ import org.springframework.cloud.loadbalancer.core.SelectedInstanceCallback;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.cloud.loadbalancer.core.WeightedServiceInstanceListSupplier;
 
-import com.huaweicloud.governance.adapters.GovernanceHeaderStatusUtils;
-
 import reactor.core.publisher.Mono;
 
 /**
@@ -49,10 +47,10 @@ public class InstanceWeightedLoadBalancer implements ReactorServiceInstanceLoadB
 	final WeightedServiceInstanceListSupplier supplier;
 
 	public InstanceWeightedLoadBalancer(WeightedServiceInstanceListSupplier serviceInstanceListSupplierProvider,
-			String serviceId) {
+			String serviceId, int position) {
 		this.serviceId = serviceId;
 		this.supplier = serviceInstanceListSupplierProvider;
-		this.position = new AtomicInteger(GovernanceHeaderStatusUtils.random.nextInt(1000));
+		this.position = new AtomicInteger(position);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -72,10 +70,11 @@ public class InstanceWeightedLoadBalancer implements ReactorServiceInstanceLoadB
 	}
 
 	/**
-	 * instances为权重计算完之后所有实例数
-	 * 比如2个实例instance1、instance2，,权重分别为1、2，那么实例总数则为3，相对于服务发现时的实例，instance2增加一个实例作为负载实例选择
-	 * @param instances 实例总数
-	 * @return 选择的实例
+	 * after weighted count instances
+	 * for example: two instances as instance1、instance2, weight each set 1、2，so after weight calculation instances
+	 * become three, compared to instances at service discovery time，instance2 add one instance for loadbalance choose.
+	 * @param instances after weighted count instances
+	 * @return loadbalance choose instance
 	 */
 	private Response<ServiceInstance> getInstanceResponse(List<ServiceInstance> instances) {
 		if (instances.isEmpty()) {

@@ -17,6 +17,7 @@
 
 package com.huaweicloud.governance.adapters.loadbalancer;
 
+import java.security.SecureRandom;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -63,6 +64,8 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
 
   private final Environment environment;
 
+  private final SecureRandom secureRandom = new SecureRandom();
+
   public RetryAwareLoadBalancer(LoadBalancerProperties loadBalancerProperties, LoadBalanceHandler loadBalanceHandler,
       LoadBalancerClientFactory loadBalancerClientFactory, Environment environment) {
     this.serviceId = environment.getProperty(LoadBalancerClientFactory.PROPERTY_NAME);
@@ -88,7 +91,7 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
               return new RandomLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
             } else if (LoadBalancerProperties.RULE_WEIGHT.equals(key)){
               return new InstanceWeightedLoadBalancer(buildWeightedServiceInstanceSupplier(serviceInstanceListSupplierProvider,
-                  loadBalancerClientFactory), this.serviceId);
+                  loadBalancerClientFactory), this.serviceId, secureRandom.nextInt(1000));
             } else {
               return new RoundRobinLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
             }
@@ -108,7 +111,7 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
             return new RandomLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
           } else if (LoadBalancerProperties.RULE_WEIGHT.equals(key)){
             return new InstanceWeightedLoadBalancer(buildWeightedServiceInstanceSupplier(serviceInstanceListSupplierProvider,
-                loadBalancerClientFactory), this.serviceId);
+                loadBalancerClientFactory), this.serviceId, secureRandom.nextInt(1000));
           } else {
             return new RoundRobinLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
           }
