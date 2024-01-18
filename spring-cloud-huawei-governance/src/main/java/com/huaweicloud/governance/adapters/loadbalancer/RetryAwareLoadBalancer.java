@@ -17,9 +17,9 @@
 
 package com.huaweicloud.governance.adapters.loadbalancer;
 
-import java.security.SecureRandom;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.servicecomb.governance.handler.LoadBalanceHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
@@ -64,7 +64,7 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
 
   private final Environment environment;
 
-  private final SecureRandom secureRandom = new SecureRandom();
+  private final ThreadLocalRandom threadLocalRandom = ThreadLocalRandom.current();
 
   public RetryAwareLoadBalancer(LoadBalancerProperties loadBalancerProperties, LoadBalanceHandler loadBalanceHandler,
       LoadBalancerClientFactory loadBalancerClientFactory, Environment environment) {
@@ -85,17 +85,7 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
     LoadBalance loadBalance = loadBalanceHandler.getActuator(governanceRequest);
     String rule = loadBalance != null ? loadBalance.getRule() : loadBalancerProperties.getRule();
     if (context.getLocalContext(RetryContext.RETRY_CONTEXT) == null) {
-      ReactorServiceInstanceLoadBalancer loadBalancer = loadBalancers.computeIfAbsent(rule,
-          key -> {
-            if (LoadBalancerProperties.RULE_RANDOM.equals(key)) {
-              return new RandomLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
-            } else if (LoadBalancerProperties.RULE_WEIGHT.equals(key)){
-              return new InstanceWeightedLoadBalancer(buildWeightedServiceInstanceSupplier(serviceInstanceListSupplierProvider,
-                  loadBalancerClientFactory), this.serviceId, secureRandom.nextInt(1000));
-            } else {
-              return new RoundRobinLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
-            }
-          });
+      ReactorServiceInstanceLoadBalancer loadBalancer = loadBalancers.computeIfAbsent(rule, this::buildLoadBalancer);
       return loadBalancer.choose(request);
     }
 
@@ -105,18 +95,22 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
       return Mono.just(new DefaultResponse(retryContext.getLastServer()));
     }
 
-    ReactorServiceInstanceLoadBalancer loadBalancer = loadBalancers.computeIfAbsent(rule,
-        key -> {
-          if (LoadBalancerProperties.RULE_RANDOM.equals(key)) {
-            return new RandomLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
-          } else if (LoadBalancerProperties.RULE_WEIGHT.equals(key)){
-            return new InstanceWeightedLoadBalancer(buildWeightedServiceInstanceSupplier(serviceInstanceListSupplierProvider,
-                loadBalancerClientFactory), this.serviceId, secureRandom.nextInt(1000));
-          } else {
-            return new RoundRobinLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
-          }
-        });
+    ReactorServiceInstanceLoadBalancer loadBalancer = loadBalancers.computeIfAbsent(rule, this::buildLoadBalancer);
     return loadBalancer.choose(request).doOnSuccess(r -> retryContext.setLastServer(r.getServer()));
+  }
+
+  private ReactorServiceInstanceLoadBalancer buildLoadBalancer(String key) {
+    if (LoadBalancerProperties.RULE_RANDOM.equals(key)) {
+      return new RandomLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
+    } else if (LoadBalancerProperties.RULE_WEIGHT_ROUND_ROBIN.equals(key)){
+      return new WeightedRoundRobinLoadBalancer(buildWeightedServiceInstanceSupplier(serviceInstanceListSupplierProvider,
+          loadBalancerClientFactory), this.serviceId, threadLocalRandom.nextInt(1000));
+    }  else if (LoadBalancerProperties.RULE_WEIGHT_RANDOM.equals(key)){
+      return new WeightedRandomLoadBalancer(buildWeightedServiceInstanceSupplier(serviceInstanceListSupplierProvider,
+          loadBalancerClientFactory), this.serviceId);
+    } else {
+      return new RoundRobinLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
+    }
   }
 
   private WeightedServiceInstanceListSupplier buildWeightedServiceInstanceSupplier(

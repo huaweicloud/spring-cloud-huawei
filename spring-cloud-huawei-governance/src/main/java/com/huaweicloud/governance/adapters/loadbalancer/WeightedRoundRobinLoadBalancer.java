@@ -35,10 +35,10 @@ import org.springframework.cloud.loadbalancer.core.WeightedServiceInstanceListSu
 import reactor.core.publisher.Mono;
 
 /**
- * Wieghted loadbancer
+ * Wieghted roundRobin loadbancer
  */
-public class InstanceWeightedLoadBalancer implements ReactorServiceInstanceLoadBalancer {
-	private static final Logger LOGGER = LoggerFactory.getLogger(InstanceWeightedLoadBalancer.class);
+public class WeightedRoundRobinLoadBalancer implements ReactorServiceInstanceLoadBalancer {
+	private static final Logger LOGGER = LoggerFactory.getLogger(WeightedRoundRobinLoadBalancer.class);
 
 	final AtomicInteger position;
 
@@ -46,7 +46,7 @@ public class InstanceWeightedLoadBalancer implements ReactorServiceInstanceLoadB
 
 	final WeightedServiceInstanceListSupplier supplier;
 
-	public InstanceWeightedLoadBalancer(WeightedServiceInstanceListSupplier serviceInstanceListSupplierProvider,
+	public WeightedRoundRobinLoadBalancer(WeightedServiceInstanceListSupplier serviceInstanceListSupplierProvider,
 			String serviceId, int position) {
 		this.serviceId = serviceId;
 		this.supplier = serviceInstanceListSupplierProvider;

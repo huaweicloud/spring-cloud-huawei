@@ -48,4 +48,4 @@ servicecomb:
             prefix: "/testWieghtLoadBalancer"
   loadbalance:
     WieghtLoadBalancerOperation: |
-      rule: Weight
+      rule: WeightRoundRobin
