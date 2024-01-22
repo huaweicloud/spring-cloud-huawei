@@ -87,12 +87,6 @@ public class ExtendedSpringDecoder implements Decoder {
     }
 
     @Override
-    @Deprecated(since = "6.0")
-    public int getRawStatusCode() {
-      return response.status();
-    }
-
-    @Override
     public String getStatusText() {
       return response.reason();
     }
