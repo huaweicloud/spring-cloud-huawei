@@ -148,18 +148,22 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
       Response response = decorateWithFault(request, options, originalUri);
       context.getInvocationStage().recordStageEnd(stageName);
       if (response.status() == 200) {
-        ServiceInstanceMetrics.getMetrics(context.getLocalContext("x-current-instance"))
-            .record((System.currentTimeMillis() - time), TimeUnit.MILLISECONDS, Outcome.SUCCESS);
+        metricsRecord(Outcome.SUCCESS, context, time);
       } else {
-        ServiceInstanceMetrics.getMetrics(context.getLocalContext("x-current-instance"))
-            .record((System.currentTimeMillis() - time), TimeUnit.MILLISECONDS, Outcome.ERROR);
+        metricsRecord(Outcome.ERROR, context, time);
       }
       return response;
     } catch (Throwable error) {
       context.getInvocationStage().recordStageEnd(stageName);
-      ServiceInstanceMetrics.getMetrics(context.getLocalContext("x-current-instance"))
-          .record((System.currentTimeMillis() - time), TimeUnit.MILLISECONDS, Outcome.ERROR);
+      metricsRecord(Outcome.ERROR, context, time);
       throw error;
+    }
+  }
+
+  private void metricsRecord(Outcome outcome, InvocationContext context, long time) {
+    if (context.getLocalContext("x-current-instance") != null) {
+      ServiceInstanceMetrics.getMetrics(context.getLocalContext("x-current-instance"))
+          .record((System.currentTimeMillis() - time), TimeUnit.MILLISECONDS, outcome);
     }
   }
 

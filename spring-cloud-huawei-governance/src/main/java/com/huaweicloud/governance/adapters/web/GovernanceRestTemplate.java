@@ -97,11 +97,9 @@ public class GovernanceRestTemplate extends RestTemplate {
       // END: customize execution with retry
 
       if (response.getStatusCode() == HttpStatus.OK) {
-        ServiceInstanceMetrics.getMetrics(context.getLocalContext("x-current-instance"))
-            .record((System.currentTimeMillis() - time), TimeUnit.MILLISECONDS, Outcome.SUCCESS);
+        metricsRecord(Outcome.SUCCESS, context, time);
       } else {
-        ServiceInstanceMetrics.getMetrics(context.getLocalContext("x-current-instance"))
-            .record((System.currentTimeMillis() - time), TimeUnit.MILLISECONDS, Outcome.ERROR);
+        metricsRecord(Outcome.ERROR, context, time);
       }
 
       handleResponse(url, method, response);
@@ -110,14 +108,20 @@ public class GovernanceRestTemplate extends RestTemplate {
       String resource = url.toString();
       String query = url.getRawQuery();
       resource = (query != null ? resource.substring(0, resource.indexOf('?')) : resource);
-      ServiceInstanceMetrics.getMetrics(context.getLocalContext("x-current-instance"))
-          .record((System.currentTimeMillis() - time), TimeUnit.MILLISECONDS, Outcome.ERROR);
+      metricsRecord(Outcome.ERROR, context, time);
       throw new ResourceAccessException("I/O error on " + method.name() +
           " request for \"" + resource + "\": " + ex.getMessage(), ex);
     } finally {
       if (response != null) {
         response.close();
       }
+    }
+  }
+
+  private void metricsRecord(Outcome outcome, InvocationContext context, long time) {
+    if (context.getLocalContext("x-current-instance") != null) {
+      ServiceInstanceMetrics.getMetrics(context.getLocalContext("x-current-instance"))
+          .record((System.currentTimeMillis() - time), TimeUnit.MILLISECONDS, outcome);
     }
   }
 
