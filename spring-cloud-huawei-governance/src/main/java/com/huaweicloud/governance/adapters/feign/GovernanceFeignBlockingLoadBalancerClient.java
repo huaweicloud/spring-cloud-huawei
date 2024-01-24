@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.InstanceBulkheadHandler;
@@ -66,12 +67,14 @@ import com.huaweicloud.common.context.InvocationStage;
 import com.huaweicloud.common.disovery.InstanceIDAdapter;
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
+import com.huaweicloud.governance.adapters.loadbalancer.weightedResponseTime.ServiceInstanceMetrics;
 import com.huaweicloud.governance.event.InstanceIsolatedEvent;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadFullException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.core.metrics.Metrics.Outcome;
 import io.github.resilience4j.decorators.Decorators;
 import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
 import io.github.resilience4j.retry.Retry;
@@ -140,12 +143,22 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
     InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
     String stageName = context.getInvocationStage().recordStageBegin(stageId(originalUri, request));
 
+    long time = System.currentTimeMillis();
     try {
       Response response = decorateWithFault(request, options, originalUri);
       context.getInvocationStage().recordStageEnd(stageName);
+      if (response.status() == 200) {
+        ServiceInstanceMetrics.getMetrics(context.getLocalContext("x-current-instance"))
+            .record((System.currentTimeMillis() - time), TimeUnit.MILLISECONDS, Outcome.SUCCESS);
+      } else {
+        ServiceInstanceMetrics.getMetrics(context.getLocalContext("x-current-instance"))
+            .record((System.currentTimeMillis() - time), TimeUnit.MILLISECONDS, Outcome.ERROR);
+      }
       return response;
     } catch (Throwable error) {
       context.getInvocationStage().recordStageEnd(stageName);
+      ServiceInstanceMetrics.getMetrics(context.getLocalContext("x-current-instance"))
+          .record((System.currentTimeMillis() - time), TimeUnit.MILLISECONDS, Outcome.ERROR);
       throw error;
     }
   }
