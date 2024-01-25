@@ -17,17 +17,21 @@
 
 package com.huaweicloud.governance.adapters.loadbalancer.weightedResponseTime;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.client.ServiceInstance;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
 public class ServiceInstanceMetrics {
-  private final static Map<String, ServerMetrics> INSTANCE_SERVER_METRICS_MAP = new ConcurrentHashMap<>();
+  public static final Cache<String, ServerMetrics> INSTANCE_SERVER_METRICS_MAP = CacheBuilder.newBuilder()
+      .expireAfterAccess(12 * 60 * 60 * 1000, TimeUnit.MILLISECONDS)
+      .build();
 
   public static ServerMetrics getMetrics(ServiceInstance instance) {
-    return INSTANCE_SERVER_METRICS_MAP.computeIfAbsent(buildKey(instance), key -> new ServerMetrics());
+    return INSTANCE_SERVER_METRICS_MAP.asMap().computeIfAbsent(buildKey(instance), key -> new ServerMetrics());
   }
 
   private static String buildKey(ServiceInstance instance) {
