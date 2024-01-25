@@ -50,7 +50,13 @@ public class LoadbalancerConfiguration {
   }
 
   @Bean
-  public InstanceIsolationServiceInstanceFilter instanceIsolationServiceInstanceFilter(Environment environment) {
-    return new InstanceIsolationServiceInstanceFilter(environment);
+  public InstanceIsolationServiceInstanceFilter instanceIsolationServiceInstanceFilter(Environment environment,
+      FallbackDiscoveryProperties fallbackDiscoveryProperties) {
+    return new InstanceIsolationServiceInstanceFilter(environment, fallbackDiscoveryProperties);
+  }
+
+  @Bean
+  public FallbackDiscoveryProperties fallbackDiscoveryProperties() {
+    return new FallbackDiscoveryProperties();
   }
 }

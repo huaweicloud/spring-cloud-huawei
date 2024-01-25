@@ -17,6 +17,7 @@
 package com.huaweicloud.governance.adapters.loadbalancer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -39,12 +40,17 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
 
   private final Environment env;
 
-  public InstanceIsolationServiceInstanceFilter(Environment environment) {
+  private final FallbackDiscoveryProperties fallbackDiscoveryProperties;
+
+  public InstanceIsolationServiceInstanceFilter(Environment environment,
+      FallbackDiscoveryProperties fallbackDiscoveryProperties) {
     this.env = environment;
+    this.fallbackDiscoveryProperties = fallbackDiscoveryProperties;
     EventManager.register(this);
   }
 
   @Subscribe
+  @SuppressWarnings("unused")
   public void onInstanceIsolatedEvent(InstanceIsolatedEvent event) {
     synchronized (lock) {
       for (Iterator<String> iterator = isolatedInstances.keySet().iterator(); iterator.hasNext(); ) {
@@ -62,7 +68,10 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
   @Override
   public List<ServiceInstance> filter(ServiceInstanceListSupplier supplier, List<ServiceInstance> instances,
       Request<?> request) {
-    if (isolatedInstances.isEmpty() || instances.isEmpty()) {
+    if (instances.isEmpty()) {
+      return fallbackServiceInstance(supplier, instances);
+    }
+    if (isolatedInstances.isEmpty()) {
       return instances;
     }
     List<ServiceInstance> result = new ArrayList<>(instances.size());
@@ -84,9 +93,19 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
     }
 
     if (result.isEmpty()) {
-      return instances;
+      return fallbackServiceInstance(supplier, instances);
     }
     return result;
+  }
+
+  private List<ServiceInstance> fallbackServiceInstance(ServiceInstanceListSupplier supplier,
+      List<ServiceInstance> instances) {
+    if (fallbackDiscoveryProperties.isEnabled()
+        && fallbackDiscoveryProperties.readFallbackServiceInstance(supplier.getServiceId()) != null) {
+      return Collections.singletonList(
+          fallbackDiscoveryProperties.readFallbackServiceInstance(supplier.getServiceId()));
+    }
+    return instances;
   }
 
   @Override
