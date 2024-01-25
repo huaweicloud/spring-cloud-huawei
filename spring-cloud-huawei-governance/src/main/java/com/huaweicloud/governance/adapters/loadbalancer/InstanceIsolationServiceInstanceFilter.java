@@ -17,6 +17,7 @@
 package com.huaweicloud.governance.adapters.loadbalancer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -101,7 +102,8 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
       List<ServiceInstance> instances) {
     if (fallbackDiscoveryProperties.isEnabled()
         && fallbackDiscoveryProperties.readFallbackServiceInstance(supplier.getServiceId()) != null) {
-      return List.of(fallbackDiscoveryProperties.readFallbackServiceInstance(supplier.getServiceId()));
+      return Collections.singletonList(
+          fallbackDiscoveryProperties.readFallbackServiceInstance(supplier.getServiceId()));
     }
     return instances;
   }
