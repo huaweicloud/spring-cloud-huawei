@@ -1,0 +1,78 @@
+/*
+
+ * Copyright (C) 2020-2024 Huawei Technologies Co., Ltd. All rights reserved.
+
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.huaweicloud.governance.adapters.loadbalancer;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.client.DefaultServiceInstance;
+import org.springframework.cloud.client.ServiceInstance;
+
+/**
+ * Configures fallback address if discovery client do not find any instance or all
+ * instances are isolated.
+ */
+@ConfigurationProperties(prefix = "spring.cloud.discovery.client.fallback")
+public class FallbackDiscoveryProperties implements InitializingBean {
+  private Map<String, DefaultServiceInstance> instances = new HashMap<>();
+
+  private boolean enabled = false;
+
+  private DefaultServiceInstance global;
+
+  public Map<String, DefaultServiceInstance> getInstances() {
+    return this.instances;
+  }
+
+  public void setInstances(Map<String, DefaultServiceInstance> instances) {
+    this.instances = instances;
+  }
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
+
+  public DefaultServiceInstance getGlobal() {
+    return global;
+  }
+
+  public void setGlobal(DefaultServiceInstance global) {
+    this.global = global;
+  }
+
+  @Override
+  public void afterPropertiesSet() {
+    for (Entry<String, DefaultServiceInstance> entry : instances.entrySet()) {
+      entry.getValue().setServiceId(entry.getKey());
+    }
+  }
+
+  public ServiceInstance readFallbackServiceInstance(String serviceId) {
+    if (this.instances.get(serviceId) != null) {
+      return this.instances.get(serviceId);
+    }
+    return global;
+  }
+}
