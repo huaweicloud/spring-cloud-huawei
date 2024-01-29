@@ -44,7 +44,7 @@
     <resilience4j.version>1.7.0</resilience4j.version>
     <jasypt.version>3.0.4</jasypt.version>
     <annotations.version>3.0.1</annotations.version>
-    <dubbo.hessian.version>2.7.22</dubbo.hessian.version>
+    <dubbo.hessian.version>2.7.23</dubbo.hessian.version>
     <springdoc.version>2.1.0</springdoc.version>
     <spring.cloud.alibaba.version>2022.0.0.0</spring.cloud.alibaba.version>
     <resilience4j.versioin>1.7.0</resilience4j.versioin>
