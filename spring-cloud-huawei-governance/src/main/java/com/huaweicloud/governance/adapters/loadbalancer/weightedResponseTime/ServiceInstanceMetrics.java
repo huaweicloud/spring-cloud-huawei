@@ -17,16 +17,19 @@
 
 package com.huaweicloud.governance.adapters.loadbalancer.weightedResponseTime;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 public class ServiceInstanceMetrics {
+  private static final Logger LOGGER = LoggerFactory.getLogger(ServiceInstanceMetrics.class);
+
   public static final Cache<String, ServerMetrics> INSTANCE_SERVER_METRICS_MAP = CacheBuilder.newBuilder()
       .expireAfterAccess(12 * 60 * 60 * 1000, TimeUnit.MILLISECONDS)
       .build();
@@ -34,8 +37,9 @@ public class ServiceInstanceMetrics {
   public static ServerMetrics getMetrics(ServiceInstance instance) {
     try {
       return INSTANCE_SERVER_METRICS_MAP.get(buildKey(instance), ServerMetrics::new);
-    } catch (ExecutionException e) {
-      throw new IllegalArgumentException("serverMetrics load failed.");
+    } catch (Exception e) {
+      LOGGER.error("serverMetrics load failed.");
+      return new ServerMetrics();
     }
   }
 
