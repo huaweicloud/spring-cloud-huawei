@@ -44,6 +44,7 @@ import org.springframework.web.client.RestTemplate;
 import com.huaweicloud.common.adapters.web.FallbackClientHttpResponse;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.governance.GovernanceConst;
 import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 import com.huaweicloud.governance.adapters.loadbalancer.weightedResponseTime.ServiceInstanceMetrics;
 
@@ -119,8 +120,8 @@ public class GovernanceRestTemplate extends RestTemplate {
   }
 
   private void metricsRecord(Outcome outcome, InvocationContext context, long time) {
-    if (context.getLocalContext("x-current-instance") != null) {
-      ServiceInstanceMetrics.getMetrics(context.getLocalContext("x-current-instance"))
+    if (context.getLocalContext(GovernanceConst.CONTEXT_CURRENT_INSTANCE) != null) {
+      ServiceInstanceMetrics.getMetrics(context.getLocalContext(GovernanceConst.CONTEXT_CURRENT_INSTANCE))
           .record((System.currentTimeMillis() - time), TimeUnit.MILLISECONDS, outcome);
     }
   }

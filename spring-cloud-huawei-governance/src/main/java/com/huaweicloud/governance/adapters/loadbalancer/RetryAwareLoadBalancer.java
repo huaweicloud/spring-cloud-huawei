@@ -39,6 +39,7 @@ import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import com.huaweicloud.common.configration.dynamic.LoadBalancerProperties;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.governance.GovernanceConst;
 import com.huaweicloud.governance.adapters.loadbalancer.weightedResponseTime.WeightedResponseTimeLoadBalancer;
 
 import reactor.core.publisher.Mono;
@@ -77,7 +78,7 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
     if (context.getLocalContext(RetryContext.RETRY_CONTEXT) == null) {
       ReactorServiceInstanceLoadBalancer loadBalancer = loadBalancers.computeIfAbsent(rule, this::builedLoadBalancer);
       return loadBalancer.choose(request).doOnSuccess(r ->
-          context.putLocalContext("x-current-instance", r.getServer()));
+          context.putLocalContext(GovernanceConst.CONTEXT_CURRENT_INSTANCE, r.getServer()));
     }
 
     RetryContext retryContext = context.getLocalContext(RetryContext.RETRY_CONTEXT);
@@ -88,7 +89,7 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
 
     ReactorServiceInstanceLoadBalancer loadBalancer = loadBalancers.computeIfAbsent(rule, this::builedLoadBalancer);
     return loadBalancer.choose(request).doOnSuccess(r -> {
-      context.putLocalContext("x-current-instance", r.getServer());
+      context.putLocalContext(GovernanceConst.CONTEXT_CURRENT_INSTANCE, r.getServer());
       retryContext.setLastServer(r.getServer());
     });
   }

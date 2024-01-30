@@ -17,6 +17,7 @@
 
 package com.huaweicloud.governance.adapters.loadbalancer.weightedResponseTime;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +32,11 @@ public class ServiceInstanceMetrics {
       .build();
 
   public static ServerMetrics getMetrics(ServiceInstance instance) {
-    return INSTANCE_SERVER_METRICS_MAP.asMap().computeIfAbsent(buildKey(instance), key -> new ServerMetrics());
+    try {
+      return INSTANCE_SERVER_METRICS_MAP.get(buildKey(instance), ServerMetrics::new);
+    } catch (ExecutionException e) {
+      throw new IllegalArgumentException("serverMetrics load failed.");
+    }
   }
 
   private static String buildKey(ServiceInstance instance) {

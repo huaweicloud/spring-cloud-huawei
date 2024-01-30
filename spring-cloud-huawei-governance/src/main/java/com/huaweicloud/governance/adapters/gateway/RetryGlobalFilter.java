@@ -34,6 +34,7 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.governance.GovernanceConst;
 import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 import com.huaweicloud.governance.adapters.loadbalancer.weightedResponseTime.ServiceInstanceMetrics;
 
@@ -110,8 +111,8 @@ public class RetryGlobalFilter implements GlobalFilter, Ordered {
   }
 
   private void metricsRecord(Outcome outcome, InvocationContext context, long time) {
-    if (context.getLocalContext("x-current-instance") != null) {
-      ServiceInstanceMetrics.getMetrics(context.getLocalContext("x-current-instance"))
+    if (context.getLocalContext(GovernanceConst.CONTEXT_CURRENT_INSTANCE) != null) {
+      ServiceInstanceMetrics.getMetrics(context.getLocalContext(GovernanceConst.CONTEXT_CURRENT_INSTANCE))
           .record((System.currentTimeMillis() - time), TimeUnit.MILLISECONDS, outcome);
     }
   }

@@ -31,7 +31,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.huaweicloud.governance.authentication.AuthenticationAdapter;
-import com.huaweicloud.governance.authentication.Const;
+import com.huaweicloud.governance.GovernanceConst;
 import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 public class ServiceCombAuthenticationAdapter implements AuthenticationAdapter {
@@ -69,14 +69,14 @@ public class ServiceCombAuthenticationAdapter implements AuthenticationAdapter {
   @Override
   public void setPublicKey(Registration registration, String publicKey) {
     ServiceCombRegistration serviceCombRegistration = (ServiceCombRegistration) registration;
-    serviceCombRegistration.getMicroserviceInstance().getProperties().put(Const.INSTANCE_PUBKEY_PRO, publicKey);
+    serviceCombRegistration.getMicroserviceInstance().getProperties().put(GovernanceConst.INSTANCE_PUBKEY_PRO, publicKey);
   }
 
   @Override
   public String getPublicKeyFromInstance(String instanceId, String serviceId) {
     MicroserviceInstance instances = getOrCreate(serviceId, instanceId);
     if (instances != null) {
-      return instances.getProperties().get(Const.INSTANCE_PUBKEY_PRO);
+      return instances.getProperties().get(GovernanceConst.INSTANCE_PUBKEY_PRO);
     } else {
       LOGGER.error("not instance found {}-{}, maybe attack", instanceId, serviceId);
       return "";

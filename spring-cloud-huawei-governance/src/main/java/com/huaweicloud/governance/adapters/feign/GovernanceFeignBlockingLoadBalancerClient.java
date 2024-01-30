@@ -66,6 +66,7 @@ import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.common.context.InvocationStage;
 import com.huaweicloud.common.disovery.InstanceIDAdapter;
 import com.huaweicloud.common.event.EventManager;
+import com.huaweicloud.governance.GovernanceConst;
 import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
 import com.huaweicloud.governance.adapters.loadbalancer.weightedResponseTime.ServiceInstanceMetrics;
 import com.huaweicloud.governance.event.InstanceIsolatedEvent;
@@ -161,8 +162,8 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
   }
 
   private void metricsRecord(Outcome outcome, InvocationContext context, long time) {
-    if (context.getLocalContext("x-current-instance") != null) {
-      ServiceInstanceMetrics.getMetrics(context.getLocalContext("x-current-instance"))
+    if (context.getLocalContext(GovernanceConst.CONTEXT_CURRENT_INSTANCE) != null) {
+      ServiceInstanceMetrics.getMetrics(context.getLocalContext(GovernanceConst.CONTEXT_CURRENT_INSTANCE))
           .record((System.currentTimeMillis() - time), TimeUnit.MILLISECONDS, outcome);
     }
   }

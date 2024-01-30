@@ -21,6 +21,7 @@ package com.huaweicloud.governance.authentication;
 import org.apache.commons.lang.StringUtils;
 
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.governance.GovernanceConst;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -45,9 +46,9 @@ public class AuthRequestExtractorUtils {
 
       @Override
       public String serviceName() {
-        String serviceName = request.getHeader(Const.AUTH_SERVICE_NAME);
+        String serviceName = request.getHeader(GovernanceConst.AUTH_SERVICE_NAME);
         if (StringUtils.isEmpty(serviceName)) {
-          serviceName = InvocationContextHolder.getOrCreateInvocationContext().getContext(Const.AUTH_SERVICE_NAME);
+          serviceName = InvocationContextHolder.getOrCreateInvocationContext().getContext(GovernanceConst.AUTH_SERVICE_NAME);
         }
         return serviceName;
       }
