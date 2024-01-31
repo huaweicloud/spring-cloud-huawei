@@ -104,6 +104,9 @@ public class WeightedResponseTimeLoadBalancer implements ReactorServiceInstanceL
         weights.add(finalTotal - stats.get(i));
       }
       double ran = ThreadLocalRandom.current().nextDouble() * finalTotal * (instances.size() - 1);
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("current weights: {}, finalTotal random: {}", weights, ran);
+      }
       for (int i = 0; i < weights.size(); i++) {
         ran -= weights.get(i);
         if (ran < 0) {
