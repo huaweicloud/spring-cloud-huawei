@@ -19,6 +19,7 @@ package com.huaweicloud.governance.adapters.web;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.servicecomb.governance.handler.FaultInjectionHandler;
 import org.apache.servicecomb.governance.handler.RetryHandler;
@@ -29,6 +30,7 @@ import org.apache.servicecomb.governance.processor.injection.FaultInjectionDecor
 import org.apache.servicecomb.governance.processor.injection.FaultInjectionDecorators.FaultInjectionDecorateCheckedSupplier;
 import org.apache.servicecomb.http.client.common.HttpUtils;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.lang.Nullable;
@@ -42,8 +44,11 @@ import org.springframework.web.client.RestTemplate;
 import com.huaweicloud.common.adapters.web.FallbackClientHttpResponse;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.governance.GovernanceConst;
 import com.huaweicloud.governance.adapters.loadbalancer.RetryContext;
+import com.huaweicloud.governance.adapters.loadbalancer.weightedResponseTime.ServiceInstanceMetrics;
 
+import io.github.resilience4j.core.metrics.Metrics.Outcome;
 import io.github.resilience4j.decorators.Decorators;
 import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
 import io.github.resilience4j.retry.Retry;
@@ -80,6 +85,8 @@ public class GovernanceRestTemplate extends RestTemplate {
     Assert.notNull(url, "URI is required");
     Assert.notNull(method, "HttpMethod is required");
     ClientHttpResponse response = null;
+    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
+    long time = System.currentTimeMillis();
     try {
       ClientHttpRequest request = createRequest(url, method);
       if (requestCallback != null) {
@@ -90,18 +97,32 @@ public class GovernanceRestTemplate extends RestTemplate {
       response = executeWithFault(url, method, requestCallback, request);
       // END: customize execution with retry
 
+      if (response.getStatusCode() == HttpStatus.OK) {
+        metricsRecord(Outcome.SUCCESS, context, time);
+      } else {
+        metricsRecord(Outcome.ERROR, context, time);
+      }
+
       handleResponse(url, method, response);
       return (responseExtractor != null ? responseExtractor.extractData(response) : null);
     } catch (IOException ex) {
       String resource = url.toString();
       String query = url.getRawQuery();
       resource = (query != null ? resource.substring(0, resource.indexOf('?')) : resource);
+      metricsRecord(Outcome.ERROR, context, time);
       throw new ResourceAccessException("I/O error on " + method.name() +
           " request for \"" + resource + "\": " + ex.getMessage(), ex);
     } finally {
       if (response != null) {
         response.close();
       }
+    }
+  }
+
+  private void metricsRecord(Outcome outcome, InvocationContext context, long time) {
+    if (context.getLocalContext(GovernanceConst.CONTEXT_CURRENT_INSTANCE) != null) {
+      ServiceInstanceMetrics.getMetrics(context.getLocalContext(GovernanceConst.CONTEXT_CURRENT_INSTANCE))
+          .record((System.currentTimeMillis() - time), TimeUnit.MILLISECONDS, outcome);
     }
   }
 
