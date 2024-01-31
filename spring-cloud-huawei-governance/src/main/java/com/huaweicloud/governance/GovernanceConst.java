@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.governance.authentication;
+package com.huaweicloud.governance;
 
-public class Const {
+public class GovernanceConst {
   public static final String AUTH_TOKEN = "x-auth-token";
 
   public static final String INSTANCE_PUBKEY_PRO = "publickey";
@@ -29,4 +29,6 @@ public class Const {
   public static final String AUTH_TOKEN_HEADER_KEY = "spring.cloud.servicecomb.webmvc.publicKey.headerTokenKey";
 
   public static final String AUTH_API_PATH_WHITELIST = "spring.cloud.servicecomb.webmvc.publicKey.apiPathWhitelist";
+
+  public static final String CONTEXT_CURRENT_INSTANCE = "x-current-instance";
 }
