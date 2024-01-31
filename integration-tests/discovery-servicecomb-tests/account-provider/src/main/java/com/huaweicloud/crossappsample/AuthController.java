@@ -17,8 +17,8 @@
 package com.huaweicloud.crossappsample;
 
 import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
+import com.huaweicloud.governance.GovernanceConst;
 import com.huaweicloud.governance.authentication.AuthHandlerBoot;
-import com.huaweicloud.governance.authentication.Const;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -51,7 +51,7 @@ public class AuthController {
     }
 
     InvocationContext invocationContext = InvocationContextHolder.getOrCreateInvocationContext();
-    if (StringUtils.isEmpty(invocationContext.getContext(Const.AUTH_TOKEN))) {
+    if (StringUtils.isEmpty(invocationContext.getContext(GovernanceConst.AUTH_TOKEN))) {
       return null;
     }
     return "success";
@@ -69,7 +69,7 @@ public class AuthController {
     }
 
     InvocationContext invocationContext = InvocationContextHolder.getOrCreateInvocationContext();
-    if (StringUtils.isEmpty(invocationContext.getContext(Const.AUTH_TOKEN))) {
+    if (StringUtils.isEmpty(invocationContext.getContext(GovernanceConst.AUTH_TOKEN))) {
       return null;
     }
     return "success";

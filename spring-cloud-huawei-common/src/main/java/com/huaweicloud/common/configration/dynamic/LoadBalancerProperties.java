@@ -24,6 +24,8 @@ public class LoadBalancerProperties {
 
   public static final String RULE_RANDOM = "Random";
 
+  public static final String RULE_WEIGHTED_RESPONSE = "WeightedResponse";
+
   private String rule = RULE_ROUND_ROBIN;
 
   public String getRule() {
