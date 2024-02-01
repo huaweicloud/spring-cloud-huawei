@@ -111,7 +111,11 @@ servicecomb:
     testIsolationResponseHeader: |
       matches:
         - apiPath:
-            prefix: "/testIsolationResponseHeader"
+            exact: "/testIsolationResponseHeader"
+    testIsolationResponseHeaderFeign: |
+      matches:
+        - apiPath:
+            exact: "/testIsolationResponseHeaderFeign"
   rateLimiting:
     demo-rateLimiting: |
       rate: 10
@@ -154,6 +158,13 @@ servicecomb:
     isolationForceOpen: |
       forceOpen: true
     testIsolationResponseHeader: |
+      minimumNumberOfCalls: 10
+      slidingWindowSize: 10
+      slidingWindowType: COUNT_BASED
+      failureRateThreshold: 20
+      waitDurationInOpenState: 1000
+      permittedNumberOfCallsInHalfOpenState: 10
+    testIsolationResponseHeaderFeign: |
       minimumNumberOfCalls: 10
       slidingWindowSize: 10
       slidingWindowType: COUNT_BASED
