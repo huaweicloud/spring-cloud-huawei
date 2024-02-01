@@ -157,7 +157,6 @@ public class GovernanceControllerIT {
         }
       }
     }
-
     Assertions.assertFalse(notExpectedFailed.get());
     Assertions.assertEquals(100, rejectedCount.get() + successCount.get());
     Assertions.assertTrue(rejectedCount.get() >= 80);
