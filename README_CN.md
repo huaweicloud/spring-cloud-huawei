@@ -49,7 +49,7 @@ Spring Cloud Huawei提供了大量开箱即用的服务治理能力，让开发�
 
 [CSE]: https://support.huaweicloud.com/cse/index.html
 
-[CSE Developer Guide]: https://support.huaweicloud.com/devg-cse/cse_devg_0002.html
+[CSE Developer Guide]: https://support.huaweicloud.com/productdesc-cse/cse_productdesc_0001.html
 
 [SERVICECOMB]: https://servicecomb.apache.org/cn/developers/
 
