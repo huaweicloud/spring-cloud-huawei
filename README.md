@@ -49,7 +49,7 @@ Spring Cloud Huawei provides a large number of out-of-the-box service governance
 
 [ServiceStage]: https://support.huaweicloud.com/intl/en-us/usermanual-servicestage/servicestage_03_0001.html
 [CSE]: https://www.huaweicloud.com/intl/en-us/product/cse.html
-[CSE Developer Guide]: https://support.huaweicloud.com/intl/en-us/devg-cse/cse_devg_0002.html
+[CSE Developer Guide]: https://support.huaweicloud.com/intl/en-us/productdesc-cse/cse_productdesc_0001.html
 [SERVICECOMB]: https://servicecomb.apache.org/developers/
 [NACOS]: https://nacos.io/zh-cn/index.html
 [Service Registry]: https://support.huaweicloud.com/intl/en-us/devg-servicestage/ss-devg-0017.html
