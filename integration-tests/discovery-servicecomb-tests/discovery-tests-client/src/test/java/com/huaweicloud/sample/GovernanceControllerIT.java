@@ -100,7 +100,7 @@ public class GovernanceControllerIT {
   }
 
   @Test
-  public void testIsolationResponseHeader() {
+  public void testIsolationResponseHeader() throws InterruptedException {
     AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
     AtomicLong successCount = new AtomicLong(0);
     AtomicLong rejectedCount = new AtomicLong(0);
@@ -126,6 +126,7 @@ public class GovernanceControllerIT {
     Assertions.assertEquals(100, rejectedCount.get() + successCount.get());
     Assertions.assertTrue(rejectedCount.get() >= 80);
     Assertions.assertTrue(successCount.get() >= 6);
+    Thread.sleep(1000);
   }
 
   @Test
@@ -136,7 +137,7 @@ public class GovernanceControllerIT {
   }
 
   @Test
-  public void testIsolationResponseHeaderFeign() {
+  public void testIsolationResponseHeaderFeign() throws InterruptedException {
     AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
     AtomicLong successCount = new AtomicLong(0);
     AtomicLong rejectedCount = new AtomicLong(0);
@@ -157,11 +158,11 @@ public class GovernanceControllerIT {
         }
       }
     }
-
     Assertions.assertFalse(notExpectedFailed.get());
     Assertions.assertEquals(100, rejectedCount.get() + successCount.get());
     Assertions.assertTrue(rejectedCount.get() >= 80);
     Assertions.assertTrue(successCount.get() >= 6);
+    Thread.sleep(1000);
   }
 
   @Test
