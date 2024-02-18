@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.core.env.Environment;
 
-import com.huaweicloud.governance.authentication.Const;
+import com.huaweicloud.governance.GovernanceConst;
 import com.huaweicloud.governance.authentication.RSAProviderTokenManager;
 
 public class RSAProviderTokenManagerTest {
@@ -33,48 +33,48 @@ public class RSAProviderTokenManagerTest {
 
   @Test
   public void testCheckUriWhitelistPrefixMatch() {
-    Mockito.when(environment.getProperty(Const.AUTH_API_PATH_WHITELIST, String.class, ""))
+    Mockito.when(environment.getProperty(GovernanceConst.AUTH_API_PATH_WHITELIST, String.class, ""))
         .thenReturn("*/whitelist");
     Assertions.assertTrue(manager.checkUriWhitelist("/api/check/whitelist"));
   }
 
   @Test
   public void testCheckUriWhitelistPrefixSlashMatch() {
-    Mockito.when(environment.getProperty(Const.AUTH_API_PATH_WHITELIST, String.class, ""))
+    Mockito.when(environment.getProperty(GovernanceConst.AUTH_API_PATH_WHITELIST, String.class, ""))
         .thenReturn("/*/whitelist");
     Assertions.assertTrue(manager.checkUriWhitelist("/api/check/whitelist"));
   }
   @Test
   public void testCheckUriWhitelistPrefixNotMatch() {
-    Mockito.when(environment.getProperty(Const.AUTH_API_PATH_WHITELIST, String.class, ""))
+    Mockito.when(environment.getProperty(GovernanceConst.AUTH_API_PATH_WHITELIST, String.class, ""))
         .thenReturn("*/whitelist");
     Assertions.assertFalse(manager.checkUriWhitelist("/api/check/query"));
   }
 
   @Test
   public void testCheckUriWhitelistSuffixMatch() {
-    Mockito.when(environment.getProperty(Const.AUTH_API_PATH_WHITELIST, String.class, ""))
+    Mockito.when(environment.getProperty(GovernanceConst.AUTH_API_PATH_WHITELIST, String.class, ""))
         .thenReturn("/api/*");
     Assertions.assertTrue(manager.checkUriWhitelist("/api/check/whitelist"));
   }
 
   @Test
   public void testCheckUriWhitelistSuffixNotMatch() {
-    Mockito.when(environment.getProperty(Const.AUTH_API_PATH_WHITELIST, String.class, ""))
+    Mockito.when(environment.getProperty(GovernanceConst.AUTH_API_PATH_WHITELIST, String.class, ""))
         .thenReturn("/apg/*");
     Assertions.assertFalse(manager.checkUriWhitelist("/api/check/whitelist"));
   }
 
   @Test
   public void testCheckUriWhitelistEqualMatch() {
-    Mockito.when(environment.getProperty(Const.AUTH_API_PATH_WHITELIST, String.class, ""))
+    Mockito.when(environment.getProperty(GovernanceConst.AUTH_API_PATH_WHITELIST, String.class, ""))
         .thenReturn("/api/check/whitelist");
     Assertions.assertTrue(manager.checkUriWhitelist("/api/check/whitelist"));
   }
 
   @Test
   public void testCheckUriWhitelistEqualNotMatch() {
-    Mockito.when(environment.getProperty(Const.AUTH_API_PATH_WHITELIST, String.class, ""))
+    Mockito.when(environment.getProperty(GovernanceConst.AUTH_API_PATH_WHITELIST, String.class, ""))
         .thenReturn("/api/check/white");
     Assertions.assertFalse(manager.checkUriWhitelist("/api/check/whitelist"));
   }

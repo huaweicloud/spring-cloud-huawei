@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
+import com.huaweicloud.governance.GovernanceConst;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 public class RSAProviderTokenManager {
@@ -54,9 +56,9 @@ public class RSAProviderTokenManager {
   public void valid(HttpServletRequest request) throws Exception {
     try {
       AuthRequestExtractor extractor;
-      if (environment.getProperty(Const.AUTH_TOKEN_CHECK_ENABLED, boolean.class, true)
-          || StringUtils.isEmpty(request.getHeader(Const.AUTH_SERVICE_NAME))) {
-        String headerTokenKey = environment.getProperty(Const.AUTH_TOKEN_HEADER_KEY, String.class,
+      if (environment.getProperty(GovernanceConst.AUTH_TOKEN_CHECK_ENABLED, boolean.class, true)
+          || StringUtils.isEmpty(request.getHeader(GovernanceConst.AUTH_SERVICE_NAME))) {
+        String headerTokenKey = environment.getProperty(GovernanceConst.AUTH_TOKEN_HEADER_KEY, String.class,
             "X-SM-Token");
         RsaAuthenticationToken rsaToken = RSATokenCheckUtils.checkTokenInfo(request, authenticationAdapter,
             headerTokenKey);
@@ -77,7 +79,7 @@ public class RSAProviderTokenManager {
   }
 
   public boolean checkUriWhitelist(String uri) {
-    String whitelist = environment.getProperty(Const.AUTH_API_PATH_WHITELIST, String.class, "");
+    String whitelist = environment.getProperty(GovernanceConst.AUTH_API_PATH_WHITELIST, String.class, "");
     if (whitelist.isEmpty()) {
       return false;
     }

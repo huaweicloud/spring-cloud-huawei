@@ -19,6 +19,7 @@ package com.huaweicloud.governance.adapters.loadbalancer;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.servicecomb.governance.handler.LoadBalanceHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
@@ -38,6 +39,8 @@ import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import com.huaweicloud.common.configration.dynamic.LoadBalancerProperties;
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.governance.GovernanceConst;
+import com.huaweicloud.governance.adapters.loadbalancer.weightedResponseTime.WeightedResponseTimeLoadBalancer;
 
 import reactor.core.publisher.Mono;
 
@@ -55,6 +58,8 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
 
   private final Map<String, ReactorServiceInstanceLoadBalancer> loadBalancers = new ConcurrentHashMap<>();
 
+  private final ThreadLocalRandom threadLocalRandom = ThreadLocalRandom.current();
+
   public RetryAwareLoadBalancer(ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider,
       String serviceId, LoadBalancerProperties loadBalancerProperties, LoadBalanceHandler loadBalanceHandler) {
     this.serviceInstanceListSupplierProvider = serviceInstanceListSupplierProvider;
@@ -71,15 +76,9 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
     LoadBalance loadBalance = loadBalanceHandler.getActuator(governanceRequest);
     String rule = loadBalance != null ? loadBalance.getRule() : loadBalancerProperties.getRule();
     if (context.getLocalContext(RetryContext.RETRY_CONTEXT) == null) {
-      ReactorServiceInstanceLoadBalancer loadBalancer = loadBalancers.computeIfAbsent(rule,
-          key -> {
-            if (LoadBalancerProperties.RULE_RANDOM.equals(key)) {
-              return new RandomLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
-            } else {
-              return new RoundRobinLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
-            }
-          });
-      return loadBalancer.choose(request);
+      ReactorServiceInstanceLoadBalancer loadBalancer = loadBalancers.computeIfAbsent(rule, this::builedLoadBalancer);
+      return loadBalancer.choose(request).doOnSuccess(r ->
+          context.putLocalContext(GovernanceConst.CONTEXT_CURRENT_INSTANCE, r.getServer()));
     }
 
     RetryContext retryContext = context.getLocalContext(RetryContext.RETRY_CONTEXT);
@@ -88,16 +87,24 @@ public class RetryAwareLoadBalancer implements ReactorServiceInstanceLoadBalance
       return Mono.just(new DefaultResponse(retryContext.getLastServer()));
     }
 
-    ReactorServiceInstanceLoadBalancer loadBalancer = loadBalancers.computeIfAbsent(rule,
-        key -> {
-          if (LoadBalancerProperties.RULE_RANDOM.equals(key)) {
-            return new RandomLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
-          } else {
-            return new RoundRobinLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
-          }
-        });
-    return loadBalancer.choose(request).doOnSuccess(r -> retryContext.setLastServer(r.getServer()));
+    ReactorServiceInstanceLoadBalancer loadBalancer = loadBalancers.computeIfAbsent(rule, this::builedLoadBalancer);
+    return loadBalancer.choose(request).doOnSuccess(r -> {
+      context.putLocalContext(GovernanceConst.CONTEXT_CURRENT_INSTANCE, r.getServer());
+      retryContext.setLastServer(r.getServer());
+    });
   }
+
+  private ReactorServiceInstanceLoadBalancer builedLoadBalancer(String key) {
+    if (LoadBalancerProperties.RULE_RANDOM.equals(key)) {
+      return new RandomLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
+    } else if (LoadBalancerProperties.RULE_WEIGHTED_RESPONSE.equals(key)) {
+      return new WeightedResponseTimeLoadBalancer(this.serviceId, threadLocalRandom.nextInt(1000),
+          this.serviceInstanceListSupplierProvider);
+    } else {
+      return new RoundRobinLoadBalancer(this.serviceInstanceListSupplierProvider, this.serviceId);
+    }
+  }
+
 
   @SuppressWarnings("rawtypes")
   private InvocationContext getOrCreateInvocationContext(Request request) {
