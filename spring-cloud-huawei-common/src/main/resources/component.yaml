@@ -18,4 +18,11 @@
 
 x-component-order: 100
 
-
+spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 1000
+            readTimeout: 30000
