@@ -18,4 +18,10 @@
 
 x-component-order: 100
 
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 1000
+        readTimeout: 30000
 
