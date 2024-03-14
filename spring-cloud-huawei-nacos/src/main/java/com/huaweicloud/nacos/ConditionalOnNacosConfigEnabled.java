@@ -16,22 +16,16 @@
  */
 package com.huaweicloud.nacos;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-import com.alibaba.cloud.nacos.ConditionalOnNacosDiscoveryEnabled;
-import com.alibaba.cloud.nacos.NacosConfigManager;
-import com.huaweicloud.nacos.config.SystemManagedPropertySourceLocator;
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.TYPE, ElementType.METHOD })
+@ConditionalOnProperty(value = "spring.cloud.nacos.config.enabled", matchIfMissing = true)
+public @interface ConditionalOnNacosConfigEnabled {
 
-@Configuration
-@ConditionalOnNacosConfigEnabled
-@ConditionalOnProperty(value = "spring.cloud.servicecomb.system.property.load.enabled", havingValue = "true",
-    matchIfMissing = true)
-public class NacosAdaptersBootstrapConfiguration {
-  @Bean
-  public SystemManagedPropertySourceLocator servicecombNacosPropertySourceLocator(
-      NacosConfigManager nacosConfigManager) {
-    return new SystemManagedPropertySourceLocator(nacosConfigManager);
-  }
 }
