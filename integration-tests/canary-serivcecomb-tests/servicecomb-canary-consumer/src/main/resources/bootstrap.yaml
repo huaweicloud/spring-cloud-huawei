@@ -27,6 +27,10 @@ spring:
       context:
         headerContextMapper:
           canary: canary
+      isolation:
+        instance:
+          ping:
+            enabled: false
       discovery:
         enabled: true
         address: http://127.0.0.1:30100

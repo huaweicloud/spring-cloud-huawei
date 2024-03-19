@@ -24,6 +24,10 @@ spring:
     name: order
   cloud:
     servicecomb:
+      isolation:
+        instance:
+          ping:
+            enabled: false
       service:
         name: order
         version: 0.0.1

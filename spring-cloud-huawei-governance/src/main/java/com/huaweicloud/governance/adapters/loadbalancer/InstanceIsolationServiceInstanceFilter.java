@@ -39,6 +39,8 @@ import com.huaweicloud.governance.event.InstanceIsolatedEvent;
 public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFilter {
   private static final Logger LOGGER = LoggerFactory.getLogger(InstanceIsolationServiceInstanceFilter.class);
 
+  private static final String INSTAANCE_PING_ENABLED = "spring.cloud.servicecomb.isolation.instance.ping.enabled";
+
   private final Object lock = new Object();
 
   private final Map<String, Long> isolatedInstances = new ConcurrentHashMap<>();
@@ -110,6 +112,9 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
   }
 
   private boolean checkInstanceHealth(ServiceInstance instance) {
+    if (!env.getProperty(INSTAANCE_PING_ENABLED, boolean.class, true)) {
+      return true;
+    }
     try (Socket s = new Socket()) {
       s.connect(new InetSocketAddress(instance.getHost(), instance.getPort()), 3000);
       return true;
