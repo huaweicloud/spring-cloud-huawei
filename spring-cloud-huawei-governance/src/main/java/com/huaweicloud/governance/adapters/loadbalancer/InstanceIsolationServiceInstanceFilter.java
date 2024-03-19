@@ -16,12 +16,16 @@
  */
 package com.huaweicloud.governance.adapters.loadbalancer;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
@@ -33,6 +37,8 @@ import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.governance.event.InstanceIsolatedEvent;
 
 public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFilter {
+  private static final Logger LOGGER = LoggerFactory.getLogger(InstanceIsolationServiceInstanceFilter.class);
+
   private final Object lock = new Object();
 
   private final Map<String, Long> isolatedInstances = new ConcurrentHashMap<>();
@@ -52,13 +58,6 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
   @SuppressWarnings("unused")
   public void onInstanceIsolatedEvent(InstanceIsolatedEvent event) {
     synchronized (lock) {
-      for (Iterator<String> iterator = isolatedInstances.keySet().iterator(); iterator.hasNext(); ) {
-        Long duration = isolatedInstances.get(iterator.next());
-        if (System.currentTimeMillis() - duration > 0) {
-          iterator.remove();
-        }
-      }
-
       isolatedInstances.put(event.getInstanceId(),
           System.currentTimeMillis() + event.getWaitDurationInHalfOpenState().toMillis());
     }
@@ -86,7 +85,11 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
       }
 
       synchronized (lock) {
-        isolatedInstances.remove(InstanceIDAdapter.instanceId(serviceInstance));
+        if (checkInstanceHealth(serviceInstance)) {
+          isolatedInstances.remove(InstanceIDAdapter.instanceId(serviceInstance));
+        } else {
+          continue;
+        }
       }
       result.add(serviceInstance);
     }
@@ -104,6 +107,16 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
       return List.of(fallbackDiscoveryProperties.readFallbackServiceInstance(supplier.getServiceId()));
     }
     return instances;
+  }
+
+  private boolean checkInstanceHealth(ServiceInstance instance) {
+    try (Socket s = new Socket()) {
+      s.connect(new InetSocketAddress(instance.getHost(), instance.getPort()), 3000);
+      return true;
+    } catch (IOException e) {
+      LOGGER.warn("ping instance {} failed, It will be quarantined again.", instance);
+    }
+    return false;
   }
 
   @Override
