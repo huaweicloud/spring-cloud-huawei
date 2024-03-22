@@ -27,10 +27,6 @@ spring:
       context:
         headerContextMapper:
           canary: canary
-      isolation:
-        instance:
-          ping:
-            enabled: false
     nacos:
       discovery:
         enabled: true

@@ -23,11 +23,6 @@ spring:
   application:
     name: order
   cloud:
-    servicecomb:
-      isolation:
-        instance:
-          ping:
-            enabled: false
     nacos:
       discovery:
         enabled: true

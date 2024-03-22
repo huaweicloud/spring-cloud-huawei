@@ -61,14 +61,6 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
   @SuppressWarnings("unused")
   public void onInstanceIsolatedEvent(InstanceIsolatedEvent event) {
     synchronized (lock) {
-      if (!env.getProperty(INSTAANCE_PING_ENABLED, boolean.class, true)) {
-        for (Iterator<String> iterator = isolatedInstances.keySet().iterator(); iterator.hasNext(); ) {
-          Long duration = isolatedInstances.get(iterator.next());
-          if (System.currentTimeMillis() - duration > 0) {
-            iterator.remove();
-          }
-        }
-      }
       isolatedInstances.put(event.getInstanceId(),
           System.currentTimeMillis() + event.getWaitDurationInHalfOpenState().toMillis());
     }
@@ -94,13 +86,12 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
       if (System.currentTimeMillis() - duration < 0) {
         continue;
       }
-
-      synchronized (lock) {
-        if (checkInstanceHealth(serviceInstance)) {
+      if (checkInstanceHealth(serviceInstance)) {
+        synchronized (lock) {
           isolatedInstances.remove(InstanceIDAdapter.instanceId(serviceInstance));
-        } else {
-          continue;
         }
+      } else {
+        continue;
       }
       result.add(serviceInstance);
     }
@@ -121,7 +112,7 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
   }
 
   private boolean checkInstanceHealth(ServiceInstance instance) {
-    if (!env.getProperty(INSTAANCE_PING_ENABLED, boolean.class, true)) {
+    if (!env.getProperty(INSTAANCE_PING_ENABLED, boolean.class, false)) {
       return true;
     }
     try (Socket s = new Socket()) {
