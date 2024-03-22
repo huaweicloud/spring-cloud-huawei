@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -60,6 +61,14 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
   @SuppressWarnings("unused")
   public void onInstanceIsolatedEvent(InstanceIsolatedEvent event) {
     synchronized (lock) {
+      if (!env.getProperty(INSTAANCE_PING_ENABLED, boolean.class, true)) {
+        for (Iterator<String> iterator = isolatedInstances.keySet().iterator(); iterator.hasNext(); ) {
+          Long duration = isolatedInstances.get(iterator.next());
+          if (System.currentTimeMillis() - duration > 0) {
+            iterator.remove();
+          }
+        }
+      }
       isolatedInstances.put(event.getInstanceId(),
           System.currentTimeMillis() + event.getWaitDurationInHalfOpenState().toMillis());
     }
