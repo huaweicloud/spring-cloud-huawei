@@ -48,6 +48,7 @@
     <dubbo.hessian.version>2.7.23</dubbo.hessian.version>
     <springdoc.version>1.6.8</springdoc.version>
     <spring.cloud.alibaba.version>2021.0.5.0</spring.cloud.alibaba.version>
+    <nacos.client.version>2.3.0</nacos.client.version>
   </properties>
 
   <dependencyManagement>
@@ -175,6 +176,11 @@
         <groupId>com.alibaba.cloud</groupId>
         <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         <version>${spring.cloud.alibaba.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.alibaba.nacos</groupId>
+        <artifactId>nacos-client</artifactId>
+        <version>${nacos.client.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
