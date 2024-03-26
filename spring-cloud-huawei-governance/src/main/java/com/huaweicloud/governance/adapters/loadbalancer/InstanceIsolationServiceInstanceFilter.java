@@ -16,12 +16,17 @@
  */
 package com.huaweicloud.governance.adapters.loadbalancer;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
@@ -33,6 +38,10 @@ import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.governance.event.InstanceIsolatedEvent;
 
 public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFilter {
+  private static final Logger LOGGER = LoggerFactory.getLogger(InstanceIsolationServiceInstanceFilter.class);
+
+  private static final String INSTAANCE_PING_ENABLED = "spring.cloud.servicecomb.isolation.instance.ping.enabled";
+
   private final Object lock = new Object();
 
   private final Map<String, Long> isolatedInstances = new ConcurrentHashMap<>();
@@ -84,9 +93,12 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
       if (System.currentTimeMillis() - duration < 0) {
         continue;
       }
-
-      synchronized (lock) {
-        isolatedInstances.remove(InstanceIDAdapter.instanceId(serviceInstance));
+      if (checkInstanceHealth(serviceInstance)) {
+        synchronized (lock) {
+          isolatedInstances.remove(InstanceIDAdapter.instanceId(serviceInstance));
+        }
+      } else {
+        continue;
       }
       result.add(serviceInstance);
     }
@@ -104,6 +116,19 @@ public class InstanceIsolationServiceInstanceFilter implements ServiceInstanceFi
       return List.of(fallbackDiscoveryProperties.readFallbackServiceInstance(supplier.getServiceId()));
     }
     return instances;
+  }
+
+  private boolean checkInstanceHealth(ServiceInstance instance) {
+    if (!env.getProperty(INSTAANCE_PING_ENABLED, boolean.class, false)) {
+      return true;
+    }
+    try (Socket s = new Socket()) {
+      s.connect(new InetSocketAddress(instance.getHost(), instance.getPort()), 3000);
+      return true;
+    } catch (IOException e) {
+      LOGGER.warn("ping instance {} failed, It will be quarantined again.", instance);
+    }
+    return false;
   }
 
   @Override
