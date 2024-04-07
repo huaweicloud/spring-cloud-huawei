@@ -169,7 +169,12 @@
       </dependency>
       <dependency>
         <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-huawei-nacos</artifactId>
+        <artifactId>spring-cloud-huawei-nacos-discovery</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.huaweicloud</groupId>
+        <artifactId>spring-cloud-huawei-nacos-config</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
