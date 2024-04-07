@@ -30,8 +30,6 @@ spring:
           price: DEFAULT_GROUP
     nacos:
       discovery:
-        cross-group:
-          enabled:
         enabled: true
         server-addr: http://127.0.0.1:8848
         service: ${spring.application.name}

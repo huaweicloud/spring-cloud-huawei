@@ -17,7 +17,6 @@
 
 package com.huaweicloud.nacos.registry;
 
-import java.lang.management.ManagementFactory;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -125,7 +124,8 @@ public class NacosRegistration implements Registration {
 		return nacosDiscoveryProperties;
 	}
 
-	private static String buildInstanceId() {
-		return System.currentTimeMillis() + "-" + ManagementFactory.getRuntimeMXBean().getPid();
+	private String buildInstanceId() {
+		String result = nacosDiscoveryProperties.getIp() + ":" + nacosDiscoveryProperties.getPort();
+		return result.replaceAll("[^0-9a-zA-Z]", "-");
 	}
 }
