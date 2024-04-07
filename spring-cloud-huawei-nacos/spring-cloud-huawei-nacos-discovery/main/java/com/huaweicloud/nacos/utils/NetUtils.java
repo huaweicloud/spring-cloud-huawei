@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-
 package com.huaweicloud.nacos.utils;
 
 import java.io.IOException;

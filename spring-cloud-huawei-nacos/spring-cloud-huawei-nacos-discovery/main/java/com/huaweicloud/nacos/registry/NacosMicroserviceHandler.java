@@ -46,7 +46,6 @@ public class NacosMicroserviceHandler {
 
   public static Instance createMicroserviceInstance(NacosDiscoveryProperties properties, Environment environment) {
     Instance instance = new Instance();
-//    instance.setServiceName(properties.getService());
     instance.setWeight(properties.getWeight());
     instance.setEnabled(properties.isInstanceEnabled());
     instance.setClusterName(properties.getClusterName());

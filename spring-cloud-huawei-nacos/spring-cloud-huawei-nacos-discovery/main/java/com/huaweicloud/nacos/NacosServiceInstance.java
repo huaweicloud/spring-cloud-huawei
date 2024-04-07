@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-
 package com.huaweicloud.nacos;
 
 import java.net.URI;
