@@ -48,7 +48,7 @@
     <springdoc.version>2.1.0</springdoc.version>
     <spring.cloud.alibaba.version>2022.0.0.0</spring.cloud.alibaba.version>
     <resilience4j.versioin>1.7.0</resilience4j.versioin>
-    <nacos.client.version>2.1.0</nacos.client.version>
+    <nacos.client.version>2.3.0</nacos.client.version>
   </properties>
 
   <dependencyManagement>
