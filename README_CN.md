@@ -29,7 +29,7 @@ Spring Cloud Huawei提供了大量开箱即用的服务治理能力，让开发�
 | Edgware   | 1.2.0-Edgware   | 1.3.6.RELEASE       | 1.5.22.RELEASE     | OpenJDK 8  | 停止更新 |
 
 ***注意：***
-* 使用`Spring Cloud Huawei`时可以使用兼容的`Spring Cloud`版本。详细信息可参考 https://spring.io/projects/spring-cloud。
+* 使用`Spring Cloud Huawei`时可以使用兼容的`Spring Cloud`版本。详细信息可参考 https://spring.io/projects/spring-cloud 。
 * Spring Cloud Edgeware, Finchley, Greenwich, Hoxton 已经停止维护，不建议在生产环境使用。
   详细情况可以查询 [Spring Cloud Releases][Spring Cloud Releases]。
 * Hoxton(包括)之前的版本支持Netfix OSS的组件，比如Ribbon, Hystrix. 2020.0.x(包括)之后的版本支持
