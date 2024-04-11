@@ -28,7 +28,7 @@ public class GovernanceProperties {
 
   public static final int WEB_FILTER_IDENTIFIER_RATE_LIMITING_ORDER = -55000;
 
-  public static final int WEB_FILTER_INVOCATION_METRICS_ORDER = -60000;
+  public static final int WEB_FILTER_SERVICE_AUTH_ORDER = -60000;
 
   private static final int WEB_CLIENT_LOAD_BALANCE_BASE = 0;
 
