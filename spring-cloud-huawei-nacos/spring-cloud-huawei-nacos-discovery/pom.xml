@@ -21,17 +21,31 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-huawei-parents</artifactId>
+        <artifactId>spring-cloud-huawei-nacos</artifactId>
         <version>1.12.0-2022.0.x-SNAPSHOT</version>
-        <relativePath>../spring-cloud-huawei-parents</relativePath>
     </parent>
 
-    <artifactId>spring-cloud-huawei-nacos</artifactId>
-    <name>Spring Cloud Huawei::Nacos</name>
-    <packaging>pom</packaging>
+    <artifactId>spring-cloud-huawei-nacos-discovery</artifactId>
+    <name>Spring Cloud Huawei::Nacos Discovery</name>
 
-    <modules>
-      <module>spring-cloud-huawei-nacos-discovery</module>
-      <module>spring-cloud-huawei-nacos-config</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>com.huaweicloud</groupId>
+            <artifactId>spring-cloud-huawei-governance</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.huaweicloud</groupId>
+            <artifactId>spring-cloud-huawei-router</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.nacos</groupId>
+            <artifactId>nacos-client</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>
