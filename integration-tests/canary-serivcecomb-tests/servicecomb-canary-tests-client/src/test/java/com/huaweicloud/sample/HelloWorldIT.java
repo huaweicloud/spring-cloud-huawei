@@ -158,4 +158,16 @@ public class HelloWorldIT {
     }
     Assertions.assertTrue(failedCount == successCount);
   }
+
+  @Test
+  public void testSecurityAllowConsumer() {
+    String result = template.getForObject(Config.CONSUMER_URL + "/checkAllowConsumer", String.class);
+    Assertions.assertTrue("OK".equals(result));
+  }
+
+  @Test
+  public void testSecurityDenyConsumer() {
+    String result = template.getForObject(Config.CONSUMER_URL + "/checkDenyConsumer", String.class);
+    Assertions.assertTrue(result.startsWith("403 Forbidden"));
+  }
 }

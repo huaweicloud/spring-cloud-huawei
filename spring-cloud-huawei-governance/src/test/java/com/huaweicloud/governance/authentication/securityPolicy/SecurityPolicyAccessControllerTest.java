@@ -411,7 +411,7 @@ public class SecurityPolicyAccessControllerTest {
         return null;
       }
     };
-    return AuthRequestExtractorUtils.createAuthRequestExtractor(request, "", "");
+    return AuthRequestExtractorUtils.createWebMvcAuthRequestExtractor(request, "", "");
   }
 
   @Test

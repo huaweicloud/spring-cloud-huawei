@@ -52,7 +52,7 @@ public class BulkheadFilter implements Filter {
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
       throws IOException, ServletException {
-    if (!(request instanceof HttpServletRequest && response instanceof HttpServletResponse)) {
+    if (WebMvcUtils.isNotHttpServlet(request, response)) {
       chain.doFilter(request, response);
       return;
     }

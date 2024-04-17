@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.governance;
-
-import java.util.List;
+package com.huaweicloud.governance.authentication;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -28,16 +26,11 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 
 import com.huaweicloud.common.configration.dynamic.BlackWhiteListProperties;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
-import com.huaweicloud.governance.authentication.AccessController;
-import com.huaweicloud.governance.authentication.AuthHandlerBoot;
-import com.huaweicloud.governance.authentication.AuthenticationAdapter;
 import com.huaweicloud.governance.authentication.consumer.RSAConsumerTokenManager;
 import com.huaweicloud.governance.authentication.whiteBlack.WhiteBlackAccessController;
-import com.huaweicloud.governance.authentication.ProviderAuthPreHandlerInterceptor;
 import com.huaweicloud.governance.authentication.securityPolicy.SecurityPolicyAccessController;
 import com.huaweicloud.governance.authentication.securityPolicy.SecurityPolicyProperties;
 
@@ -70,14 +63,6 @@ public class AuthenticationAutoConfiguration {
   public RSAConsumerTokenManager authenticationTokenManager(Registration instanceService,
       AuthenticationAdapter adapter) {
     return new RSAConsumerTokenManager(instanceService, adapter);
-  }
-
-  @Bean
-  @ConditionalOnExpression("${" + GovernanceProperties.WEBMVC_PUBLICKEY_PROVIDER_ENABLED + ":false}"
-      + " or ${" + GovernanceProperties.WEBMVC_PUBLICKEY_SECURITY_POLICY_ENABLED + ":false}")
-  public ProviderAuthPreHandlerInterceptor providerAuthPreHandlerInterceptor(List<AccessController> accessController,
-      Environment environment, AuthenticationAdapter authenticationAdapter) {
-    return new ProviderAuthPreHandlerInterceptor(accessController, environment, authenticationAdapter);
   }
 
   @Bean
