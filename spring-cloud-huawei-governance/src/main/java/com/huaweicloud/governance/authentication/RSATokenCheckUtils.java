@@ -26,10 +26,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.governance.GovernanceConst;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 public class RSATokenCheckUtils {
   private static final Logger LOGGER = LoggerFactory.getLogger(RSATokenCheckUtils.class);
@@ -38,11 +36,11 @@ public class RSATokenCheckUtils {
       .expireAfterAccess(getExpiredTime(), TimeUnit.MILLISECONDS)
       .build();
 
-  public static RsaAuthenticationToken checkTokenInfo(HttpServletRequest request,
-      AuthenticationAdapter authenticationAdapter, String headerTokenKey) throws Exception {
-    String token = request.getHeader(headerTokenKey);
+  public static RsaAuthenticationToken checkTokenInfo(AuthenticationAdapter authenticationAdapter,
+      String requestHeadToken, InvocationContext invocationContext) throws Exception {
+    String token = requestHeadToken;
     if (StringUtils.isEmpty(token)) {
-      token = InvocationContextHolder.getOrCreateInvocationContext().getContext(GovernanceConst.AUTH_TOKEN);
+      token = invocationContext.getContext(GovernanceConst.AUTH_TOKEN);
     }
     if (null == token) {
       LOGGER.error("token is null, perhaps you need to set auth handler at consumer");

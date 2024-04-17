@@ -25,7 +25,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.governance.handler.MapperHandler;
@@ -46,7 +45,7 @@ public class ContextMapperFilter implements Filter {
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
       throws IOException, ServletException {
-    if (!(request instanceof HttpServletRequest && response instanceof HttpServletResponse)) {
+    if (WebMvcUtils.isNotHttpServlet(request, response)) {
       chain.doFilter(request, response);
       return;
     }

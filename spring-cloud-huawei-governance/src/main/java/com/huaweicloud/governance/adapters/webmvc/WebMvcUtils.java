@@ -17,7 +17,10 @@
 
 package com.huaweicloud.governance.adapters.webmvc;
 
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 
@@ -65,5 +68,9 @@ public class WebMvcUtils {
         return request;
       }
     };
+  }
+
+  public static boolean isNotHttpServlet(ServletRequest request, ServletResponse response) {
+    return !(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse);
   }
 }
