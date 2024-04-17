@@ -17,6 +17,10 @@
 
 package com.huaweicloud.governance.authentication;
 
+import org.springframework.core.env.Environment;
+
+import com.huaweicloud.governance.GovernanceConst;
+
 public class MatcherUtils {
   public static boolean isPatternMatch(String value, String pattern) {
     if (pattern.startsWith("*") || pattern.startsWith("/*")) {
@@ -33,5 +37,18 @@ public class MatcherUtils {
       return value.startsWith(pattern.substring(0, pattern.length() - 1));
     }
     return value.equals(pattern);
+  }
+
+  public static boolean isMatchUriWhitelist(String uri, Environment environment) {
+    String whiteList = environment.getProperty(GovernanceConst.AUTH_API_PATH_WHITELIST, String.class, "");
+    if (whiteList.isEmpty()) {
+      return false;
+    }
+    for (String whiteUri : whiteList.split(",")) {
+      if (!whiteUri.isEmpty() && MatcherUtils.isPatternMatch(uri, whiteUri)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

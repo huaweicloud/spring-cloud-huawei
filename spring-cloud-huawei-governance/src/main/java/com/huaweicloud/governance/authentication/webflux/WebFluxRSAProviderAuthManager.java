@@ -15,21 +15,30 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.governance.authentication;
+package com.huaweicloud.governance.authentication.webflux;
 
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
+import org.springframework.web.server.ServerWebExchange;
 
+import com.huaweicloud.common.context.InvocationContext;
+import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.governance.GovernanceConst;
+import com.huaweicloud.governance.authentication.AccessController;
+import com.huaweicloud.governance.authentication.AuthRequestExtractor;
+import com.huaweicloud.governance.authentication.AuthRequestExtractorUtils;
+import com.huaweicloud.governance.authentication.AuthenticationAdapter;
+import com.huaweicloud.governance.authentication.MatcherUtils;
+import com.huaweicloud.governance.authentication.RSATokenCheckUtils;
+import com.huaweicloud.governance.authentication.RsaAuthenticationToken;
+import com.huaweicloud.governance.authentication.UnAuthorizedException;
 
-public class RSAProviderTokenManager {
-  private static final Logger LOGGER = LoggerFactory.getLogger(RSAProviderTokenManager.class);
+public class WebFluxRSAProviderAuthManager {
+  private static final Logger LOGGER = LoggerFactory.getLogger(WebFluxRSAProviderAuthManager.class);
 
   private final List<AccessController> accessControllers;
 
@@ -37,7 +46,7 @@ public class RSAProviderTokenManager {
 
   private final AuthenticationAdapter authenticationAdapter;
 
-  public RSAProviderTokenManager(List<AccessController> accessControllers, Environment environment,
+  public WebFluxRSAProviderAuthManager(List<AccessController> accessControllers, Environment environment,
       AuthenticationAdapter authenticationAdapter) {
     this.accessControllers = accessControllers;
     this.environment = environment;
@@ -50,22 +59,27 @@ public class RSAProviderTokenManager {
    * 2.tokenCheckEnabled is false and request headers has serviceName, use serviceName for authentication in request
    * header.
    *
-   * @param request
+   * @param exchange
    * @throws Exception
    */
-  public void valid(HttpServletRequest request) throws Exception {
+  public void valid(ServerWebExchange exchange) throws Exception {
     try {
       AuthRequestExtractor extractor;
+      // only allow outside request using set serviceName and token to authentication,
+      // between microservice use  InvocationContext.
       if (environment.getProperty(GovernanceConst.AUTH_TOKEN_CHECK_ENABLED, boolean.class, true)
-          || StringUtils.isEmpty(request.getHeader(GovernanceConst.AUTH_SERVICE_NAME))) {
+          || StringUtils.isEmpty(exchange.getRequest().getHeaders().getFirst(GovernanceConst.AUTH_SERVICE_NAME))) {
         String headerTokenKey = environment.getProperty(GovernanceConst.AUTH_TOKEN_HEADER_KEY, String.class,
             "X-SM-Token");
-        RsaAuthenticationToken rsaToken = RSATokenCheckUtils.checkTokenInfo(request, authenticationAdapter,
-            headerTokenKey);
-        extractor = AuthRequestExtractorUtils.createAuthRequestExtractor(request, rsaToken.getServiceId(),
+        String requestHeadToken = exchange.getRequest().getHeaders().getFirst(headerTokenKey);
+        InvocationContext invocationContext =
+            (InvocationContext) exchange.getAttributes().get(InvocationContextHolder.ATTRIBUTE_KEY);
+        RsaAuthenticationToken rsaToken = RSATokenCheckUtils.checkTokenInfo(authenticationAdapter, requestHeadToken,
+            invocationContext);
+        extractor = AuthRequestExtractorUtils.createWebFluxAuthRequestExtractor(exchange, rsaToken.getServiceId(),
             rsaToken.getInstanceId());
       } else {
-        extractor = AuthRequestExtractorUtils.createAuthRequestExtractor(request, "", "");
+        extractor = AuthRequestExtractorUtils.createWebFluxAuthRequestExtractor(exchange, "", "");
       }
       for (AccessController accessController : accessControllers) {
         if (!accessController.isAllowed(extractor)) {
@@ -79,15 +93,6 @@ public class RSAProviderTokenManager {
   }
 
   public boolean checkUriWhitelist(String uri) {
-    String whitelist = environment.getProperty(GovernanceConst.AUTH_API_PATH_WHITELIST, String.class, "");
-    if (whitelist.isEmpty()) {
-      return false;
-    }
-    for (String whiteUri : whitelist.split(",")) {
-      if (!whiteUri.isEmpty() && MatcherUtils.isPatternMatch(uri, whiteUri)) {
-        return true;
-      }
-    }
-    return false;
+    return MatcherUtils.isMatchUriWhitelist(uri, environment);
   }
 }

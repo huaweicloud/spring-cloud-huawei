@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
-import com.huaweicloud.governance.authentication.ProviderAuthPreHandlerInterceptor;
 import com.huaweicloud.governance.authentication.securityPolicy.SecurityPolicyProperties;
 
 @RestController
@@ -42,10 +41,9 @@ public class AuthController {
 
   @RequestMapping("/checkToken")
   public String checkToken() {
-    ProviderAuthPreHandlerInterceptor interceptor = applicationContext.getBean(ProviderAuthPreHandlerInterceptor.class);
     AuthHandlerBoot authHandlerBoot = applicationContext.getBean(AuthHandlerBoot.class);
     BlackWhiteListProperties blackWhiteListProperties = applicationContext.getBean(BlackWhiteListProperties.class);
-    if (interceptor == null || authHandlerBoot == null || blackWhiteListProperties == null
+    if (authHandlerBoot == null || blackWhiteListProperties == null
         || blackWhiteListProperties.getBlack().size() != 2 || blackWhiteListProperties.getWhite().size() != 1) {
       return null;
     }
@@ -60,9 +58,8 @@ public class AuthController {
   @RequestMapping("/checkTokenSecurity")
   public String checkTokenSecurity() {
     SecurityPolicyProperties securityPolicyProperties = applicationContext.getBean(SecurityPolicyProperties.class);
-    ProviderAuthPreHandlerInterceptor interceptor = applicationContext.getBean(ProviderAuthPreHandlerInterceptor.class);
     AuthHandlerBoot authHandlerBoot = applicationContext.getBean(AuthHandlerBoot.class);
-    if (interceptor == null || authHandlerBoot == null || securityPolicyProperties == null
+    if (authHandlerBoot == null || securityPolicyProperties == null
         || securityPolicyProperties.getAction().getAllow().size() != 2
         || securityPolicyProperties.getAction().getDeny().size() != 2) {
       return null;
