@@ -70,7 +70,7 @@ public class WebMvcUtils {
     };
   }
 
-  public static boolean isConvertSuccess(ServletRequest request, ServletResponse response) {
+  public static boolean isNotHttpServlet(ServletRequest request, ServletResponse response) {
     return !(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse);
   }
 }
