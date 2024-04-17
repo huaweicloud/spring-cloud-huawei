@@ -24,6 +24,9 @@ spring:
     name: canary-consumer
   cloud:
     servicecomb:
+      webmvc:
+        publicKey:
+          consumerEnabled: true
       context:
         headerContextMapper:
           canary: canary

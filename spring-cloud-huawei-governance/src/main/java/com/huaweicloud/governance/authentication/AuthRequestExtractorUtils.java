@@ -19,14 +19,16 @@ package com.huaweicloud.governance.authentication;
 
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.web.server.ServerWebExchange;
 
+import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.governance.GovernanceConst;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 public class AuthRequestExtractorUtils {
-  public static AuthRequestExtractor createAuthRequestExtractor(HttpServletRequest request, String serviceId,
+  public static AuthRequestExtractor createWebMvcAuthRequestExtractor(HttpServletRequest request, String serviceId,
       String instanceId) {
     return new AuthRequestExtractor() {
       @Override
@@ -49,6 +51,42 @@ public class AuthRequestExtractorUtils {
         String serviceName = request.getHeader(GovernanceConst.AUTH_SERVICE_NAME);
         if (StringUtils.isEmpty(serviceName)) {
           serviceName = InvocationContextHolder.getOrCreateInvocationContext().getContext(GovernanceConst.AUTH_SERVICE_NAME);
+        }
+        return serviceName;
+      }
+
+      @Override
+      public String serviceId() {
+        return serviceId;
+      }
+    };
+  }
+
+  public static AuthRequestExtractor createWebFluxAuthRequestExtractor(ServerWebExchange exchange, String serviceId,
+      String instanceId) {
+    return new AuthRequestExtractor() {
+      @Override
+      public String uri() {
+        return exchange.getRequest().getURI().getPath();
+      }
+
+      @Override
+      public String method() {
+        return exchange.getRequest().getMethod().name();
+      }
+
+      @Override
+      public String instanceId() {
+        return instanceId;
+      }
+
+      @Override
+      public String serviceName() {
+        String serviceName = exchange.getRequest().getHeaders().getFirst(GovernanceConst.AUTH_SERVICE_NAME);
+        if (StringUtils.isEmpty(serviceName)) {
+          InvocationContext invocationContext =
+              (InvocationContext) exchange.getAttributes().get(InvocationContextHolder.ATTRIBUTE_KEY);
+          serviceName = invocationContext.getContext(GovernanceConst.AUTH_SERVICE_NAME);
         }
         return serviceName;
       }
