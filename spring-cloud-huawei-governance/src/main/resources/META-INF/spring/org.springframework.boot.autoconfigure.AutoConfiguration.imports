@@ -25,8 +25,10 @@ com.huaweicloud.governance.adapters.web.WebConfiguration
 com.huaweicloud.governance.adapters.webclient.WebClientConfiguration
 com.huaweicloud.governance.adapters.webflux.WebFluxConfiguration
 com.huaweicloud.governance.adapters.webmvc.WebMvcConfiguration
-com.huaweicloud.governance.AuthenticationAutoConfiguration
+com.huaweicloud.governance.authentication.AuthenticationAutoConfiguration
 com.huaweicloud.governance.authentication.adapters.feign.FeignConfiguration
 com.huaweicloud.governance.authentication.adapters.gateway.GatewayConfiguration
 com.huaweicloud.governance.authentication.adapters.web.WebConfiguration
 com.huaweicloud.governance.adapters.gateway.ReactiveLoadBalancerClientConfiguration
+com.huaweicloud.governance.authentication.webmvc.WebMvcAuthenticationConfiguration
+com.huaweicloud.governance.authentication.webflux.WebFluxAuthenticationConfiguration

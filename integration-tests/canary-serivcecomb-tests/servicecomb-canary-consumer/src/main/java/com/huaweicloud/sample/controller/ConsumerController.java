@@ -46,4 +46,24 @@ public class ConsumerController {
     // 组合请求头与请求体参数
     return result;
   }
+
+  @GetMapping("/checkAllowConsumer")
+  public String checkAllowConsumer() {
+    HttpHeaders headers = new HttpHeaders();
+    HttpEntity<Void> entity = new HttpEntity<>(headers);
+    return restTemplate.exchange("http://discovery-gateway/checkAllowConsumer", HttpMethod.GET,
+        entity, String.class).getBody();
+  }
+
+  @GetMapping("/checkDenyConsumer")
+  public String checkDenyConsumer() {
+    HttpHeaders headers = new HttpHeaders();
+    HttpEntity<Void> entity = new HttpEntity<>(headers);
+    try {
+      return restTemplate.exchange("http://discovery-gateway/checkDenyConsumer", HttpMethod.GET,
+          entity, String.class).getBody();
+    } catch (Exception e) {
+      return e.getMessage();
+    }
+  }
 }

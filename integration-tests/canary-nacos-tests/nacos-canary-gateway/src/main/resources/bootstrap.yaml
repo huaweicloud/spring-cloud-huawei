@@ -37,5 +37,25 @@ spring:
         enabled: true
         server-addr: http://127.0.0.1:8848
         service: ${spring.application.name}
+    servicecomb:
+      webmvc:
+        publicKey:
+          securityPolicyEnabled: true
+          apiPathWhitelist: '*Canary'
+          acls:
+            app: canary
+            mode: enforcing
+            provider: discovery-gateway
+            action:
+              allow:
+                - id: 1
+                  method: GET
+                  consumer: canary-consumer
+                  uri: /checkAllowConsumer
+              deny:
+                - id: 1
+                  method: GET
+                  consumer: canary-consumer
+                  uri: /checkDenyConsumer
 
 
