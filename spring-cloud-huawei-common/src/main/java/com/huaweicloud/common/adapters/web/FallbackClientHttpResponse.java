@@ -57,6 +57,12 @@ public class FallbackClientHttpResponse implements ClientHttpResponse {
   }
 
   @Override
+  @SuppressWarnings("deprecation")
+  public int getRawStatusCode() {
+    return this.code;
+  }
+
+  @Override
   public String getStatusText() {
     if (message == null) {
       return "";
