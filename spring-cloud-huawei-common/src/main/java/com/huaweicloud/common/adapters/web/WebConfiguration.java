@@ -24,6 +24,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cloud.client.loadbalancer.DeferringLoadBalancerInterceptor;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor;
 import org.springframework.cloud.client.loadbalancer.RestTemplateCustomizer;
 import org.springframework.cloud.client.serviceregistry.Registration;
@@ -81,6 +82,11 @@ public class WebConfiguration {
       LoadBalancerInterceptor loadBalancerInterceptor = null;
 
       for (ClientHttpRequestInterceptor interceptor : interceptors) {
+        // DeferringLoadBalancerInterceptor can not put it inside restTemplate intercepter,
+        // it will duplicate choose service by loadbalance.
+        if (interceptor instanceof DeferringLoadBalancerInterceptor) {
+          continue;
+        }
         if (interceptor instanceof LoadBalancerInterceptor) {
           loadBalancerInterceptor = (LoadBalancerInterceptor) interceptor;
           continue;
