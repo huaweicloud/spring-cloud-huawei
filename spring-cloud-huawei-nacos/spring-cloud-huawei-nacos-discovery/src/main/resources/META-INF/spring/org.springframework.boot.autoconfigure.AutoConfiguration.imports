@@ -23,3 +23,4 @@ com.huaweicloud.nacos.discovery.discovery.reactive.NacosReactiveDiscoveryClientC
 com.huaweicloud.nacos.discovery.NacosServiceAutoConfiguration
 com.huaweicloud.nacos.discovery.registry.NacosServiceRegistryAutoConfiguration
 com.huaweicloud.nacos.discovery.discovery.reactive.NacosReactiveDiscoveryClientConfiguration
+com.huaweicloud.nacos.discovery.check.NacosRegistryHealthIndicatorConfiguration
