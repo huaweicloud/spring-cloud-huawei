@@ -27,7 +27,7 @@ import com.huaweicloud.nacos.discovery.registry.NacosServiceRegistrationEvent;
 public class NacosRegistryHealthIndicator implements HealthIndicator {
   private boolean isSuccess = false;
 
-  private static final String REGISTRATION_NOT_READY = "nacos registration not ready";
+  private static final String REGISTRATION_NOT_READY = "service not registry nacos";
 
   public NacosRegistryHealthIndicator() {
     EventManager.register(this);

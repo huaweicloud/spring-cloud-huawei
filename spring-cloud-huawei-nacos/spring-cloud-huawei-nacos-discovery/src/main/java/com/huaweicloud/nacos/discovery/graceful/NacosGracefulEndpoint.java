@@ -27,10 +27,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 
+import com.alibaba.nacos.api.naming.pojo.Instance;
+import com.google.common.eventbus.EventBus;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
+import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.nacos.discovery.NacosDiscoveryProperties;
 import com.huaweicloud.nacos.discovery.registry.NacosAutoServiceRegistration;
 import com.huaweicloud.nacos.discovery.registry.NacosRegistration;
+import com.huaweicloud.nacos.discovery.registry.NacosServiceRegistrationEvent;
 import com.huaweicloud.nacos.discovery.registry.NacosServiceRegistry;
 
 @Endpoint(id = "nacos-service-registry")
@@ -47,12 +51,17 @@ public class NacosGracefulEndpoint {
 
   private final AtomicBoolean isRegistry = new AtomicBoolean();
 
+  private final AtomicBoolean isDeRegistry = new AtomicBoolean();
+
+  private final EventBus eventBus;
+
   public NacosGracefulEndpoint(NacosServiceRegistry nacosServiceRegistry, NacosRegistration nacosRegistration,
       NacosAutoServiceRegistration nacosAutoServiceRegistration, NacosDiscoveryProperties nacosDiscoveryProperties) {
     this.nacosServiceRegistry = nacosServiceRegistry;
     this.nacosRegistration = nacosRegistration;
     this.nacosAutoServiceRegistration = nacosAutoServiceRegistration;
     this.nacosDiscoveryProperties = nacosDiscoveryProperties;
+    eventBus = EventManager.getEventBus();
   }
 
   @WriteOperation
@@ -63,8 +72,10 @@ public class NacosGracefulEndpoint {
     if (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status) && !isRegistry.getAndSet(true)) {
       nacosDiscoveryProperties.setRegisterEnabled(true);
       nacosAutoServiceRegistration.start();
-    } else if (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status) && isRegistry.get()) {
+    } else if (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status)
+        && !isDeRegistry.getAndSet(true)) {
       nacosServiceRegistry.deregister(nacosRegistration);
+      eventBus.post(new NacosServiceRegistrationEvent(new Instance(), false));
     } else {
       LOGGER.warn("operation is not allowed, status: " + status);
     }
