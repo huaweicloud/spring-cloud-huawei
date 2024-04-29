@@ -55,7 +55,7 @@ public class WebMvcProviderAuthFilter implements Filter {
       return;
     }
     try {
-      if (!webMvcRSAProviderAuthManager.checkUriWhitelist(((HttpServletRequest) request).getRequestURI())) {
+      if (webMvcRSAProviderAuthManager.isRequiredAuth(((HttpServletRequest) request).getRequestURI())) {
         webMvcRSAProviderAuthManager.valid((HttpServletRequest) request);
       }
       chain.doFilter(request, response);
