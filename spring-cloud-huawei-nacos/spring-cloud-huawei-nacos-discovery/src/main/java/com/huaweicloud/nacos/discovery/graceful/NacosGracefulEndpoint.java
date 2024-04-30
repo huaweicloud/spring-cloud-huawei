@@ -17,8 +17,6 @@
 
 package com.huaweicloud.nacos.discovery.graceful;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang.StringUtils;
@@ -49,10 +47,6 @@ public class NacosGracefulEndpoint {
 
   private final NacosDiscoveryProperties nacosDiscoveryProperties;
 
-  private final AtomicBoolean isRegistry = new AtomicBoolean();
-
-  private final AtomicBoolean isDeRegistry = new AtomicBoolean();
-
   private final EventBus eventBus;
 
   public NacosGracefulEndpoint(NacosServiceRegistry nacosServiceRegistry, NacosRegistration nacosRegistration,
@@ -69,11 +63,10 @@ public class NacosGracefulEndpoint {
     if (StringUtils.isEmpty(status)) {
       return;
     }
-    if (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status) && !isRegistry.getAndSet(true)) {
+    if (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status)) {
       nacosDiscoveryProperties.setRegisterEnabled(true);
-      nacosAutoServiceRegistration.start();
-    } else if (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status)
-        && !isDeRegistry.getAndSet(true)) {
+      nacosAutoServiceRegistration.registryExtend();
+    } else if (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status)) {
       nacosServiceRegistry.deregister(nacosRegistration);
       eventBus.post(new NacosServiceRegistrationEvent(new Instance(), false));
     } else {
