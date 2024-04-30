@@ -39,11 +39,14 @@ public class NacosAutoServiceRegistration extends AbstractAutoServiceRegistratio
 
 	private final List<RegistrationManagementLifecycle<Registration>> registrationManagementLifecycles = new ArrayList<>();
 
+	private boolean registryEnabled;
+
 	public NacosAutoServiceRegistration(ServiceRegistry<Registration> serviceRegistry,
 			AutoServiceRegistrationProperties autoServiceRegistrationProperties, NacosRegistration registration) {
 		super(serviceRegistry, autoServiceRegistrationProperties);
 		this.registration = registration;
 		this.serviceRegistry = serviceRegistry;
+		this.registryEnabled = registration.getNacosDiscoveryProperties().isRegisterEnabled();
 	}
 
 	@Override
@@ -61,7 +64,7 @@ public class NacosAutoServiceRegistration extends AbstractAutoServiceRegistratio
 
 	@Override
 	protected void register() {
-		if (!this.registration.getNacosDiscoveryProperties().isRegisterEnabled()) {
+		if (!this.registryEnabled) {
 			return;
 		}
 		if (this.registration.getPort() < 0) {
@@ -72,7 +75,7 @@ public class NacosAutoServiceRegistration extends AbstractAutoServiceRegistratio
 
 	@Override
 	protected void registerManagement() {
-		if (!this.registration.getNacosDiscoveryProperties().isRegisterEnabled()) {
+		if (!this.registryEnabled) {
 			return;
 		}
 		super.registerManagement();
@@ -86,7 +89,11 @@ public class NacosAutoServiceRegistration extends AbstractAutoServiceRegistratio
 
 	@Override
 	protected boolean isEnabled() {
-		return this.registration.getNacosDiscoveryProperties().isRegisterEnabled();
+		return this.registryEnabled;
+	}
+
+	public void setRegistryEnabled(boolean enabled) {
+		registryEnabled = enabled;
 	}
 
 	@Override

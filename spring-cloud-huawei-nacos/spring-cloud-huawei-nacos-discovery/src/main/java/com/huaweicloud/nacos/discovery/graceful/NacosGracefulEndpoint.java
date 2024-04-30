@@ -25,14 +25,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 
-import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.google.common.eventbus.EventBus;
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
-import com.huaweicloud.common.event.EventManager;
-import com.huaweicloud.nacos.discovery.NacosDiscoveryProperties;
 import com.huaweicloud.nacos.discovery.registry.NacosAutoServiceRegistration;
 import com.huaweicloud.nacos.discovery.registry.NacosRegistration;
-import com.huaweicloud.nacos.discovery.registry.NacosServiceRegistrationEvent;
 import com.huaweicloud.nacos.discovery.registry.NacosServiceRegistry;
 
 @Endpoint(id = "nacos-service-registry")
@@ -45,17 +40,11 @@ public class NacosGracefulEndpoint {
 
   private final NacosAutoServiceRegistration nacosAutoServiceRegistration;
 
-  private final NacosDiscoveryProperties nacosDiscoveryProperties;
-
-  private final EventBus eventBus;
-
   public NacosGracefulEndpoint(NacosServiceRegistry nacosServiceRegistry, NacosRegistration nacosRegistration,
-      NacosAutoServiceRegistration nacosAutoServiceRegistration, NacosDiscoveryProperties nacosDiscoveryProperties) {
+      NacosAutoServiceRegistration nacosAutoServiceRegistration) {
     this.nacosServiceRegistry = nacosServiceRegistry;
     this.nacosRegistration = nacosRegistration;
     this.nacosAutoServiceRegistration = nacosAutoServiceRegistration;
-    this.nacosDiscoveryProperties = nacosDiscoveryProperties;
-    eventBus = EventManager.getEventBus();
   }
 
   @WriteOperation
@@ -64,11 +53,10 @@ public class NacosGracefulEndpoint {
       return;
     }
     if (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status)) {
-      nacosDiscoveryProperties.setRegisterEnabled(true);
+      nacosAutoServiceRegistration.setRegistryEnabled(true);
       nacosAutoServiceRegistration.registryExtend();
     } else if (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status)) {
       nacosServiceRegistry.deregister(nacosRegistration);
-      eventBus.post(new NacosServiceRegistrationEvent(new Instance(), false));
     } else {
       LOGGER.warn("operation is not allowed, status: " + status);
     }
