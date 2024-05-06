@@ -17,8 +17,6 @@
 
 package com.huaweicloud.nacos.discovery.graceful;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,7 +26,6 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
-import com.huaweicloud.nacos.discovery.NacosDiscoveryProperties;
 import com.huaweicloud.nacos.discovery.registry.NacosAutoServiceRegistration;
 import com.huaweicloud.nacos.discovery.registry.NacosRegistration;
 import com.huaweicloud.nacos.discovery.registry.NacosServiceRegistry;
@@ -43,16 +40,11 @@ public class NacosGracefulEndpoint {
 
   private final NacosAutoServiceRegistration nacosAutoServiceRegistration;
 
-  private final NacosDiscoveryProperties nacosDiscoveryProperties;
-
-  private final AtomicBoolean isRegistry = new AtomicBoolean();
-
   public NacosGracefulEndpoint(NacosServiceRegistry nacosServiceRegistry, NacosRegistration nacosRegistration,
-      NacosAutoServiceRegistration nacosAutoServiceRegistration, NacosDiscoveryProperties nacosDiscoveryProperties) {
+      NacosAutoServiceRegistration nacosAutoServiceRegistration) {
     this.nacosServiceRegistry = nacosServiceRegistry;
     this.nacosRegistration = nacosRegistration;
     this.nacosAutoServiceRegistration = nacosAutoServiceRegistration;
-    this.nacosDiscoveryProperties = nacosDiscoveryProperties;
   }
 
   @WriteOperation
@@ -60,10 +52,10 @@ public class NacosGracefulEndpoint {
     if (StringUtils.isEmpty(status)) {
       return;
     }
-    if (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status) && !isRegistry.getAndSet(true)) {
-      nacosDiscoveryProperties.setRegisterEnabled(true);
-      nacosAutoServiceRegistration.start();
-    } else if (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status) && isRegistry.get()) {
+    if (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status)) {
+      nacosAutoServiceRegistration.setRegistryEnabled(true);
+      nacosAutoServiceRegistration.registryExtend();
+    } else if (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status)) {
       nacosServiceRegistry.deregister(nacosRegistration);
     } else {
       LOGGER.warn("operation is not allowed, status: " + status);
