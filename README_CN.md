@@ -20,9 +20,9 @@ Spring Cloud Huawei提供了大量开箱即用的服务治理能力，让开发�
 
 | 分支        | 最新版本            | 编译使用 Spring Cloud版本 | 编译使用 Spring Boot版本 | 支持的JDK版本   | 备注   |
 |-----------|-----------------|---------------------|--------------------|------------|------|
-| master    | 1.11.6-2023.0.x | 2023.0.0            | 3.2.2              | OpenJDK 17 |      | 
-| 2022.0.x  | 1.11.6-2022.0.x | 2022.0.4            | 3.1.8              | OpenJDK 17 |      | 
-| 2021.0.x  | 1.11.6-2021.0.x | 2021.0.9            | 2.7.18             | OpenJDK 8  |      | 
+| master    | 1.11.7-2023.0.x | 2023.0.1            | 3.2.4              | OpenJDK 17 |      | 
+| 2022.0.x  | 1.11.7-2022.0.x | 2022.0.5            | 3.1.9              | OpenJDK 17 |      | 
+| 2021.0.x  | 1.11.7-2021.0.x | 2021.0.9            | 2.7.18             | OpenJDK 8  |      | 
 | 2020.0.x  | 1.10.8-2020.0.x | 2020.0.6            | 2.5.14             | OpenJDK 8  | 停止更新 |
 | Hoxton    | 1.9.4-Hoxton    | Hoxton.SR9          | 2.3.5.RELEASE      | OpenJDK 8  | 停止更新 |
 | Greenwich | 1.6.4-Greenwich | Greenwich.SR6       | 2.1.6-RELEASE      | OpenJDK 8  | 停止更新 |
@@ -37,6 +37,7 @@ Spring Cloud Huawei提供了大量开箱即用的服务治理能力，让开发�
   Spring Cloud Loadbalancer.
 * 2020.0.x(包括)之前的版本使用springfox生成swagger. 2021.0.x(包括)之后的版本使用springdoc生成swagger.
 * 2022.0.x(包括)需要JDK 17+版本运行.
+* Spring Cloud Huawei历史版本Spring Boot、Spring Cloud依赖说明参考 [版本说明][Spring Cloud Huawei Releases].
 
 ## 如何使用
 
@@ -66,3 +67,5 @@ Spring Cloud Huawei提供了大量开箱即用的服务治理能力，让开发�
 [Profile encryption scheme]: https://support.huaweicloud.com/bestpractice-cse/cse_bestpractice_0007.html
 
 [Spring Cloud Releases]: https://github.com/spring-cloud/spring-cloud-release/wiki/Supported-Versions
+
+[Spring Cloud Huawei Releases]: https://github.com/huaweicloud/spring-cloud-huawei/wiki/third-version-support-descriptions
