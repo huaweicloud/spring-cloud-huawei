@@ -17,16 +17,11 @@
 
 package com.huaweicloud.nacos.discovery.registry;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.cloud.client.discovery.event.InstancePreRegisteredEvent;
 import org.springframework.cloud.client.discovery.event.InstanceRegisteredEvent;
 import org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationProperties;
 import org.springframework.cloud.client.serviceregistry.Registration;
-import org.springframework.cloud.client.serviceregistry.RegistrationLifecycle;
-import org.springframework.cloud.client.serviceregistry.RegistrationManagementLifecycle;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
 
 public class NacosAutoServiceRegistration extends AbstractAutoServiceRegistration<Registration> {
@@ -34,10 +29,6 @@ public class NacosAutoServiceRegistration extends AbstractAutoServiceRegistratio
 	private final NacosRegistration registration;
 
 	private final ServiceRegistry<Registration> serviceRegistry;
-
-	private final List<RegistrationLifecycle<Registration>> registrationLifecycles = new ArrayList<>();
-
-	private final List<RegistrationManagementLifecycle<Registration>> registrationManagementLifecycles = new ArrayList<>();
 
 	private boolean registryEnabled;
 
@@ -106,8 +97,6 @@ public class NacosAutoServiceRegistration extends AbstractAutoServiceRegistratio
 
 	private void beforeRegistryProcess() {
 		super.getContext().publishEvent(new InstancePreRegisteredEvent(this, getRegistration()));
-		registrationLifecycles.forEach(
-				registrationLifecycle -> registrationLifecycle.postProcessBeforeStartRegister(getRegistration()));
 	}
 
 	public void registryExtend() {
@@ -116,46 +105,18 @@ public class NacosAutoServiceRegistration extends AbstractAutoServiceRegistratio
 	}
 
 	private void afterRegistryProcess() {
-		this.registrationLifecycles.forEach(
-				registrationLifecycle -> registrationLifecycle.postProcessAfterStartRegister(getRegistration()));
 		if (shouldRegisterManagement()) {
-			this.registrationManagementLifecycles
-					.forEach(registrationManagementLifecycle -> registrationManagementLifecycle
-							.postProcessBeforeStartRegisterManagement(getManagementRegistration()));
 			this.registerManagement();
-			registrationManagementLifecycles
-					.forEach(registrationManagementLifecycle -> registrationManagementLifecycle
-							.postProcessAfterStartRegisterManagement(getManagementRegistration()));
 		}
 		super.getContext().publishEvent(new InstanceRegisteredEvent<>(this, getConfiguration()));
 	}
 
 	@Override
-	public void addRegistrationLifecycle(RegistrationLifecycle<Registration> registrationLifecycle) {
-		this.registrationLifecycles.add(registrationLifecycle);
-	}
-
-	@Override
-	public void addRegistrationManagementLifecycle(RegistrationManagementLifecycle<Registration> registrationManagementLifecycle) {
-		this.registrationManagementLifecycles.add(registrationManagementLifecycle);
-	}
-
-	@Override
 	public void stop() {
 		if (isEnabled()) {
-			this.registrationLifecycles.forEach(
-					registrationLifecycle -> registrationLifecycle.postProcessBeforeStopRegister(getRegistration()));
 			deregister();
-			this.registrationLifecycles.forEach(
-					registrationLifecycle -> registrationLifecycle.postProcessAfterStopRegister(getRegistration()));
 			if (shouldRegisterManagement()) {
-				this.registrationManagementLifecycles
-						.forEach(registrationManagementLifecycle -> registrationManagementLifecycle
-								.postProcessBeforeStopRegisterManagement(getManagementRegistration()));
 				deregisterManagement();
-				this.registrationManagementLifecycles
-						.forEach(registrationManagementLifecycle -> registrationManagementLifecycle
-								.postProcessAfterStopRegisterManagement(getManagementRegistration()));
 			}
 			this.serviceRegistry.close();
 		}
