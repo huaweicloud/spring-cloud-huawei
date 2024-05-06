@@ -90,7 +90,7 @@ public class WebMvcRSAProviderAuthManager {
     }
   }
 
-  public boolean checkUriWhitelist(String uri) {
-    return MatcherUtils.isMatchUriWhitelist(uri, environment);
+  public boolean isRequiredAuth(String uri) {
+    return MatcherUtils.isRequiredAuth(uri, environment);
   }
 }
