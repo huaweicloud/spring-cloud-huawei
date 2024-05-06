@@ -24,7 +24,6 @@ import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.nacos.discovery.ConditionalOnNacosDiscoveryEnabled;
-import com.huaweicloud.nacos.discovery.NacosDiscoveryProperties;
 import com.huaweicloud.nacos.discovery.registry.NacosAutoServiceRegistration;
 import com.huaweicloud.nacos.discovery.registry.NacosRegistration;
 import com.huaweicloud.nacos.discovery.registry.NacosServiceRegistry;
@@ -36,9 +35,7 @@ public class NacosGracefulAutoConfiguration {
   @Bean
   @ConditionalOnProperty(value = GovernanceProperties.NACOS_GRASEFUL_UPPER_DOWN, havingValue = "true")
   public NacosGracefulEndpoint nacosGracefulEndpoint(NacosServiceRegistry nacosServiceRegistry,
-      NacosRegistration nacosRegistration, NacosAutoServiceRegistration nacosAutoServiceRegistration,
-      NacosDiscoveryProperties nacosDiscoveryProperties) {
-    return new NacosGracefulEndpoint(nacosServiceRegistry, nacosRegistration, nacosAutoServiceRegistration,
-        nacosDiscoveryProperties);
+      NacosRegistration nacosRegistration, NacosAutoServiceRegistration nacosAutoServiceRegistration) {
+    return new NacosGracefulEndpoint(nacosServiceRegistry, nacosRegistration, nacosAutoServiceRegistration);
   }
 }
