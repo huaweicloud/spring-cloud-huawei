@@ -30,5 +30,9 @@ public class GovernanceConst {
 
   public static final String AUTH_API_PATH_WHITELIST = "spring.cloud.servicecomb.webmvc.publicKey.apiPathWhitelist";
 
+  public static final String AUTH_API_PATH_INCLUDE = "spring.cloud.servicecomb.webmvc.publicKey.includePathPatterns";
+
+  public static final String AUTH_API_PATH_EXCLUDE = "spring.cloud.servicecomb.webmvc.publicKey.excludePathPatterns";
+
   public static final String CONTEXT_CURRENT_INSTANCE = "x-current-instance";
 }
