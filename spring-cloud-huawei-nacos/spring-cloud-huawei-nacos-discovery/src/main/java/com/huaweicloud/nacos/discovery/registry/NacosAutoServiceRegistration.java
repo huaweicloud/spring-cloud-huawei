@@ -17,6 +17,8 @@
 
 package com.huaweicloud.nacos.discovery.registry;
 
+import org.springframework.cloud.client.discovery.event.InstancePreRegisteredEvent;
+import org.springframework.cloud.client.discovery.event.InstanceRegisteredEvent;
 import org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationProperties;
 import org.springframework.cloud.client.serviceregistry.Registration;
@@ -26,10 +28,16 @@ public class NacosAutoServiceRegistration extends AbstractAutoServiceRegistratio
 
 	private final NacosRegistration registration;
 
+	private final ServiceRegistry<Registration> serviceRegistry;
+
+	private boolean registryEnabled;
+
 	public NacosAutoServiceRegistration(ServiceRegistry<Registration> serviceRegistry,
 			AutoServiceRegistrationProperties autoServiceRegistrationProperties, NacosRegistration registration) {
 		super(serviceRegistry, autoServiceRegistrationProperties);
 		this.registration = registration;
+		this.serviceRegistry = serviceRegistry;
+		this.registryEnabled = registration.getNacosDiscoveryProperties().isRegisterEnabled();
 	}
 
 	@Override
@@ -47,7 +55,7 @@ public class NacosAutoServiceRegistration extends AbstractAutoServiceRegistratio
 
 	@Override
 	protected void register() {
-		if (!this.registration.getNacosDiscoveryProperties().isRegisterEnabled()) {
+		if (!this.registryEnabled) {
 			return;
 		}
 		if (this.registration.getPort() < 0) {
@@ -58,11 +66,10 @@ public class NacosAutoServiceRegistration extends AbstractAutoServiceRegistratio
 
 	@Override
 	protected void registerManagement() {
-		if (!this.registration.getNacosDiscoveryProperties().isRegisterEnabled()) {
+		if (!this.registryEnabled) {
 			return;
 		}
 		super.registerManagement();
-
 	}
 
 	@Override
@@ -73,6 +80,45 @@ public class NacosAutoServiceRegistration extends AbstractAutoServiceRegistratio
 
 	@Override
 	protected boolean isEnabled() {
-		return this.registration.getNacosDiscoveryProperties().isRegisterEnabled();
+		return this.registryEnabled;
+	}
+
+	public void setRegistryEnabled(boolean enabled) {
+		registryEnabled = enabled;
+	}
+
+	@Override
+	public void start() {
+		beforeRegistryProcess();
+		if (isEnabled()) {
+			registryExtend();
+		}
+	}
+
+	private void beforeRegistryProcess() {
+		super.getContext().publishEvent(new InstancePreRegisteredEvent(this, getRegistration()));
+	}
+
+	public void registryExtend() {
+		serviceRegistry.register(registration);
+		afterRegistryProcess();
+	}
+
+	private void afterRegistryProcess() {
+		if (shouldRegisterManagement()) {
+			this.registerManagement();
+		}
+		super.getContext().publishEvent(new InstanceRegisteredEvent<>(this, getConfiguration()));
+	}
+
+	@Override
+	public void stop() {
+		if (isEnabled()) {
+			deregister();
+			if (shouldRegisterManagement()) {
+				deregisterManagement();
+			}
+			this.serviceRegistry.close();
+		}
 	}
 }
