@@ -53,7 +53,7 @@ public class WebFluxProviderAuthFilter implements OrderedWebFilter {
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
     try {
-      if (!webFluxRSAProviderAuthManager.checkUriWhitelist(exchange.getRequest().getURI().getPath())) {
+      if (webFluxRSAProviderAuthManager.isRequiredAuth(exchange.getRequest().getURI().getPath())) {
         webFluxRSAProviderAuthManager.valid(exchange);
       }
     } catch (Exception e) {
