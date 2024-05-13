@@ -35,6 +35,7 @@
     <module>docker-run-config</module>
     <module>discovery-servicecomb-tests</module>
     <module>discovery-nacos-tests</module>
+    <module>discovery-zookeeper-tests</module>
     <module>canary-serivcecomb-tests</module>
     <module>canary-nacos-tests</module>
     <module>mesh-tests</module>

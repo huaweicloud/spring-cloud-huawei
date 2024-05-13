@@ -54,6 +54,7 @@
     <module>spring-cloud-huawei-mesh</module>
     <module>spring-cloud-huawei-nacos</module>
     <module>spring-cloud-starter-huawei</module>
+    <module>spring-cloud-huawei-zookeeper</module>
   </modules>
 
   <licenses>

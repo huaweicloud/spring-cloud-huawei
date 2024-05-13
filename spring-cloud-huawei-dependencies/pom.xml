@@ -49,6 +49,7 @@
     <spring.cloud.alibaba.version>2022.0.0.0</spring.cloud.alibaba.version>
     <resilience4j.versioin>1.7.0</resilience4j.versioin>
     <nacos.client.version>2.3.0</nacos.client.version>
+    <curator.version>5.6.0</curator.version>
   </properties>
 
   <dependencyManagement>
@@ -175,6 +176,21 @@
         <groupId>com.alibaba.nacos</groupId>
         <artifactId>nacos-client</artifactId>
         <version>${nacos.client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.curator</groupId>
+        <artifactId>curator-x-discovery</artifactId>
+        <version>${curator.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.curator</groupId>
+        <artifactId>curator-framework</artifactId>
+        <version>${curator.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.curator</groupId>
+        <artifactId>curator-recipes</artifactId>
+        <version>${curator.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

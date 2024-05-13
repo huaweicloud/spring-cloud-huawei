@@ -48,6 +48,8 @@
     <module>spring-cloud-starter-huawei-mesh</module>
     <module>spring-cloud-starter-huawei-mesh-gateway</module>
     <module>spring-cloud-starter-huawei-mesh-webflux</module>
+    <module>spring-cloud-starter-huawei-zookeeper</module>
+    <module>spring-cloud-starter-huawei-zookeeper-gateway</module>
   </modules>
 
 </project>
