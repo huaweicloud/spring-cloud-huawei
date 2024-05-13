@@ -24,9 +24,9 @@ spring:
     name: product
   cloud:
     zookeeper:
-      connect-string: 127.0.0.1:2181
       discovery:
         enabled: true
+        connect-string: 127.0.0.1:2181
         metadata:
           x-test: value
           x-test2: value2

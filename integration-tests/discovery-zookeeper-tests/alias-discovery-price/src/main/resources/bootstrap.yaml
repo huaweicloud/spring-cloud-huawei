@@ -24,14 +24,14 @@ spring:
     name: alias-price
   cloud:
     zookeeper:
-      connect-string: 127.0.0.1:2181
-      maxRetries: 3
       discovery:
         enabled: true
         metadata:
           x-test: value
           x-test2: value2
         root: '/services/alias'
+        connect-string: 127.0.0.1:2181
+        max-retries: 3
 
 
 

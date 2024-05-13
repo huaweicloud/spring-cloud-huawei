@@ -17,12 +17,11 @@
 
 package com.huaweicloud.zookeeper.discovery;
 
-import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.details.InstanceSerializer;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -30,7 +29,6 @@ import org.springframework.cloud.client.ConditionalOnDiscoveryEnabled;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.huaweicloud.zookeeper.common.ZookeeperAutoConfiguration;
 import com.huaweicloud.zookeeper.discovery.discovery.ZookeeperDiscoveryAutoConfiguration;
 import com.huaweicloud.zookeeper.discovery.registry.ZookeeperServiceRegistryAutoConfiguration;
 
@@ -39,7 +37,6 @@ import com.huaweicloud.zookeeper.discovery.registry.ZookeeperServiceRegistryAuto
 @ConditionalOnZookeeperDiscoveryEnabled
 @AutoConfigureBefore({ ZookeeperDiscoveryAutoConfiguration.class,
 		ZookeeperServiceRegistryAutoConfiguration.class })
-@AutoConfigureAfter(ZookeeperAutoConfiguration.class)
 public class CuratorServiceDiscoveryAutoConfiguration {
 	@Bean
 	@ConfigurationProperties("spring.cloud.zookeeper.discovery")
@@ -55,10 +52,11 @@ public class CuratorServiceDiscoveryAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ServiceDiscovery<ZookeeperServiceInstance> curatorServiceDiscovery(CuratorFramework curator,
-			ZookeeperDiscoveryProperties properties, InstanceSerializer<ZookeeperServiceInstance> serializer) {
+	public ServiceDiscovery<ZookeeperServiceInstance> curatorServiceDiscovery(ZookeeperDiscoveryProperties properties,
+			InstanceSerializer<ZookeeperServiceInstance> serializer,
+			ObjectProvider<ServiceCuratorFrameworkCustomizer> optionalCustomizerProvider) {
 		return ServiceDiscoveryBuilder.builder(ZookeeperServiceInstance.class)
-				.client(curator)
+				.client(CuratorUtils.createCuratorFramework(properties, optionalCustomizerProvider::orderedStream))
 				.basePath(properties.getRoot())
 				.serializer(serializer)
 				.build();

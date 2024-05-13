@@ -88,11 +88,6 @@
       </dependency>
       <dependency>
         <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-huawei-zookeeper-common</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.huaweicloud</groupId>
         <artifactId>spring-cloud-huawei-zookeeper-discovery</artifactId>
         <version>${project.version}</version>
       </dependency>

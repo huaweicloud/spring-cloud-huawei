@@ -17,13 +17,19 @@
 
 package com.huaweicloud.zookeeper.discovery;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.convert.DurationUnit;
 
 public class ZookeeperDiscoveryProperties {
   private boolean enabled = true;
+
+  private String connectString = "localhost:2181";
 
   private Map<String, String> metadata = new HashMap<>();
 
@@ -54,6 +60,22 @@ public class ZookeeperDiscoveryProperties {
    * heartBeat delay time. Time unit: millisecond.
    */
   private long heartBeatTaskDelay = 30000;
+
+  private Integer baseSleepTimeMs = 1000;
+
+  private Integer maxRetries = 3;
+
+  private Integer maxSleepMs = 5000;
+
+  private Integer blockUntilConnectedWait = 10;
+
+  private TimeUnit blockUntilConnectedUnit = TimeUnit.SECONDS;
+
+  @DurationUnit(ChronoUnit.MILLIS)
+  private Duration sessionTimeout = Duration.of(60 * 1000, ChronoUnit.MILLIS);
+
+  @DurationUnit(ChronoUnit.MILLIS)
+  private Duration connectionTimeout = Duration.of(5 * 1000, ChronoUnit.MILLIS);
 
   public boolean isEnabled() {
     return enabled;
@@ -149,5 +171,69 @@ public class ZookeeperDiscoveryProperties {
 
   public void setHeartBeatTaskDelay(long heartBeatTaskDelay) {
     this.heartBeatTaskDelay = heartBeatTaskDelay;
+  }
+
+  public String getConnectString() {
+    return connectString;
+  }
+
+  public void setConnectString(String connectString) {
+    this.connectString = connectString;
+  }
+
+  public Integer getBaseSleepTimeMs() {
+    return baseSleepTimeMs;
+  }
+
+  public void setBaseSleepTimeMs(Integer baseSleepTimeMs) {
+    this.baseSleepTimeMs = baseSleepTimeMs;
+  }
+
+  public Integer getMaxRetries() {
+    return maxRetries;
+  }
+
+  public void setMaxRetries(Integer maxRetries) {
+    this.maxRetries = maxRetries;
+  }
+
+  public Integer getMaxSleepMs() {
+    return maxSleepMs;
+  }
+
+  public void setMaxSleepMs(Integer maxSleepMs) {
+    this.maxSleepMs = maxSleepMs;
+  }
+
+  public Integer getBlockUntilConnectedWait() {
+    return blockUntilConnectedWait;
+  }
+
+  public void setBlockUntilConnectedWait(Integer blockUntilConnectedWait) {
+    this.blockUntilConnectedWait = blockUntilConnectedWait;
+  }
+
+  public TimeUnit getBlockUntilConnectedUnit() {
+    return blockUntilConnectedUnit;
+  }
+
+  public void setBlockUntilConnectedUnit(TimeUnit blockUntilConnectedUnit) {
+    this.blockUntilConnectedUnit = blockUntilConnectedUnit;
+  }
+
+  public Duration getSessionTimeout() {
+    return sessionTimeout;
+  }
+
+  public void setSessionTimeout(Duration sessionTimeout) {
+    this.sessionTimeout = sessionTimeout;
+  }
+
+  public Duration getConnectionTimeout() {
+    return connectionTimeout;
+  }
+
+  public void setConnectionTimeout(Duration connectionTimeout) {
+    this.connectionTimeout = connectionTimeout;
   }
 }

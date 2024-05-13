@@ -24,10 +24,10 @@ spring:
     name: discovery-gateway
   cloud:
     zookeeper:
-      connect-string: 127.0.0.1:2181
-      maxRetries: 3
       discovery:
         enabled: true
+        connect-string: 127.0.0.1:2181
+        maxRetries: 3
         metadata:
           x-test: value
           x-test2: value2

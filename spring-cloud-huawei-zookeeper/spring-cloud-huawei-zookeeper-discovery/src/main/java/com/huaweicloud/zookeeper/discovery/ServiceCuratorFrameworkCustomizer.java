@@ -15,17 +15,15 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.zookeeper.common;
+package com.huaweicloud.zookeeper.discovery;
 
 import org.apache.curator.framework.CuratorFrameworkFactory;
 
 /**
  * Beans that implement this interface will be used to extends CuratorFramework
- *
- * @see CuratorFactory
  */
 @FunctionalInterface
-public interface CuratorFrameworkCustomizer {
+public interface ServiceCuratorFrameworkCustomizer {
 
 	/**
 	 * Customize the {@link CuratorFrameworkFactory.Builder}.
