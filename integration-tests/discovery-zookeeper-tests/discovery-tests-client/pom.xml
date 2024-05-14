@@ -77,7 +77,7 @@
                                     <run>
                                         <env>
                                             <JAVA_OPTS>
-                                                -Dspring.cloud.zookeeper.connect-string=zookeeper:2181
+                                                -Dspring.cloud.zookeeper.discovery.connect-string=zookeeper:2181
                                             </JAVA_OPTS>
                                             <JAR_PATH>/maven/zookeeper-price-provider-test-${project.version}.jar</JAR_PATH>
                                         </env>
@@ -108,7 +108,7 @@
                                     <run>
                                         <env>
                                             <JAVA_OPTS>
-                                                -Dspring.cloud.zookeeper.connect-string=zookeeper:2181
+                                                -Dspring.cloud.zookeeper.discovery.connect-string=zookeeper:2181
                                             </JAVA_OPTS>
                                             <JAR_PATH>/maven/zookeeper-alias-discovery-price-test-${project.version}.jar</JAR_PATH>
                                         </env>
@@ -139,7 +139,7 @@
                                     <run>
                                         <env>
                                             <JAVA_OPTS>
-                                                -Dspring.cloud.zookeeper.connect-string=zookeeper:2181
+                                                -Dspring.cloud.zookeeper.discovery.connect-string=zookeeper:2181
                                             </JAVA_OPTS>
                                             <JAR_PATH>/maven/zookeeper-order-consumer-test-${project.version}.jar</JAR_PATH>
                                         </env>
@@ -170,7 +170,7 @@
                                     <run>
                                         <env>
                                             <JAVA_OPTS>
-                                                -Dspring.cloud.zookeeper.connect-string=zookeeper:2181
+                                                -Dspring.cloud.zookeeper.discovery.connect-string=zookeeper:2181
                                             </JAVA_OPTS>
                                             <JAR_PATH>/maven/zookeeper-discovery-gateway-test-${project.version}.jar</JAR_PATH>
                                         </env>
