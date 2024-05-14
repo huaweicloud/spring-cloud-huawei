@@ -27,7 +27,7 @@ public class AliasPathProviderControllerIT {
   final RestTemplate template = new RestTemplate();
 
   @Test
-  public void testCrossGroup() {
+  public void testDiscoveryAliasPath() {
     String result = template.getForObject(Constant.orderServiceUrl + "/orderAlias?id=hello", String.class);
     assertThat(result).isEqualTo("hello");
   }

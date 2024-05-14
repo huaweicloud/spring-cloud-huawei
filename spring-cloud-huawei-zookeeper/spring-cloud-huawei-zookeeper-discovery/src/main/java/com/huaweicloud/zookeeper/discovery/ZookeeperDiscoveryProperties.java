@@ -75,7 +75,7 @@ public class ZookeeperDiscoveryProperties {
   private Duration sessionTimeout = Duration.of(60 * 1000, ChronoUnit.MILLIS);
 
   @DurationUnit(ChronoUnit.MILLIS)
-  private Duration connectionTimeout = Duration.of(5 * 1000, ChronoUnit.MILLIS);
+  private Duration connectionTimeout = Duration.of(15 * 1000, ChronoUnit.MILLIS);
 
   public boolean isEnabled() {
     return enabled;
