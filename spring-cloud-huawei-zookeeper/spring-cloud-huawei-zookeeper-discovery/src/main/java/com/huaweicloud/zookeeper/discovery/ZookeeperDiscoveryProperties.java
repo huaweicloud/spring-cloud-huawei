@@ -61,11 +61,11 @@ public class ZookeeperDiscoveryProperties {
    */
   private long heartBeatTaskDelay = 30000;
 
-  private Integer baseSleepTimeMs = 1000;
+  private Integer baseSleepTimeMs = 50;
 
-  private Integer maxRetries = 3;
+  private Integer maxRetries = 10;
 
-  private Integer maxSleepMs = 5000;
+  private Integer maxSleepMs = 500;
 
   private Integer blockUntilConnectedWait = 10;
 
