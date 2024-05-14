@@ -35,30 +35,30 @@ import com.huaweicloud.zookeeper.discovery.registry.ZookeeperServiceRegistryAuto
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnDiscoveryEnabled
 @ConditionalOnZookeeperDiscoveryEnabled
-@AutoConfigureBefore({ ZookeeperDiscoveryAutoConfiguration.class,
-		ZookeeperServiceRegistryAutoConfiguration.class })
+@AutoConfigureBefore({ZookeeperDiscoveryAutoConfiguration.class,
+    ZookeeperServiceRegistryAutoConfiguration.class})
 public class CuratorServiceDiscoveryAutoConfiguration {
-	@Bean
-	@ConfigurationProperties("spring.cloud.zookeeper.discovery")
-	public ZookeeperDiscoveryProperties zookeeperDiscoveryProperties() {
-		return new ZookeeperDiscoveryProperties();
-	}
+  @Bean
+  @ConfigurationProperties("spring.cloud.zookeeper.discovery")
+  public ZookeeperDiscoveryProperties zookeeperDiscoveryProperties() {
+    return new ZookeeperDiscoveryProperties();
+  }
 
-	@Bean
-	@ConditionalOnMissingBean
-	public InstanceSerializer<ZookeeperServiceInstance> deprecatedInstanceSerializer() {
-		return new JsonInstanceSerializer<>(ZookeeperServiceInstance.class);
-	}
+  @Bean
+  @ConditionalOnMissingBean
+  public InstanceSerializer<ZookeeperServiceInstance> deprecatedInstanceSerializer() {
+    return new JsonInstanceSerializer<>(ZookeeperServiceInstance.class);
+  }
 
-	@Bean
-	@ConditionalOnMissingBean
-	public ServiceDiscovery<ZookeeperServiceInstance> curatorServiceDiscovery(ZookeeperDiscoveryProperties properties,
-			InstanceSerializer<ZookeeperServiceInstance> serializer,
-			ObjectProvider<ServiceCuratorFrameworkCustomizer> optionalCustomizerProvider) {
-		return ServiceDiscoveryBuilder.builder(ZookeeperServiceInstance.class)
-				.client(CuratorUtils.createCuratorFramework(properties, optionalCustomizerProvider::orderedStream))
-				.basePath(properties.getRoot())
-				.serializer(serializer)
-				.build();
-	}
+  @Bean
+  @ConditionalOnMissingBean
+  public ServiceDiscovery<ZookeeperServiceInstance> curatorServiceDiscovery(ZookeeperDiscoveryProperties properties,
+      InstanceSerializer<ZookeeperServiceInstance> serializer,
+      ObjectProvider<ServiceCuratorFrameworkCustomizer> optionalCustomizerProvider) {
+    return ServiceDiscoveryBuilder.builder(ZookeeperServiceInstance.class)
+        .client(CuratorUtils.createCuratorFramework(properties, optionalCustomizerProvider::orderedStream))
+        .basePath(properties.getRoot())
+        .serializer(serializer)
+        .build();
+  }
 }

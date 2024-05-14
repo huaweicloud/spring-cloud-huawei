@@ -38,24 +38,24 @@ import com.huaweicloud.zookeeper.discovery.ZookeeperServiceInstance;
 @EnableConfigurationProperties
 @ConditionalOnZookeeperDiscoveryEnabled
 @AutoConfigureBefore(ServiceRegistryAutoConfiguration.class)
-@AutoConfigureAfter({ AutoServiceRegistrationConfiguration.class, AutoServiceRegistrationAutoConfiguration.class })
+@AutoConfigureAfter({AutoServiceRegistrationConfiguration.class, AutoServiceRegistrationAutoConfiguration.class})
 public class ZookeeperServiceRegistryAutoConfiguration {
-	@Bean
-	@ConditionalOnBean(AutoServiceRegistrationProperties.class)
-	public ZookeeperRegistration zookeeperRegistration(ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
-		return new ZookeeperRegistration(zookeeperDiscoveryProperties);
-	}
+  @Bean
+  @ConditionalOnBean(AutoServiceRegistrationProperties.class)
+  public ZookeeperRegistration zookeeperRegistration(ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
+    return new ZookeeperRegistration(zookeeperDiscoveryProperties);
+  }
 
-	@Bean
-	public ZookeeperServiceRegistry zookeeperServiceRegistry(Environment environment, ZookeeperRegistration registration,
-			ZookeeperDiscoveryProperties discoveryProperties, ServiceDiscovery<ZookeeperServiceInstance> serviceDiscovery) {
-		return new ZookeeperServiceRegistry(discoveryProperties, environment, registration, serviceDiscovery);
-	}
+  @Bean
+  public ZookeeperServiceRegistry zookeeperServiceRegistry(Environment environment, ZookeeperRegistration registration,
+      ZookeeperDiscoveryProperties discoveryProperties, ServiceDiscovery<ZookeeperServiceInstance> serviceDiscovery) {
+    return new ZookeeperServiceRegistry(discoveryProperties, environment, registration, serviceDiscovery);
+  }
 
-	@Bean
-	@ConditionalOnBean(AutoServiceRegistrationProperties.class)
-	public ZookeeperAutoServiceRegistration zookeeperAutoServiceRegistration(ZookeeperServiceRegistry registry,
-			AutoServiceRegistrationProperties autoServiceRegistrationProperties, ZookeeperRegistration registration) {
-		return new ZookeeperAutoServiceRegistration(registry, autoServiceRegistrationProperties, registration);
-	}
+  @Bean
+  @ConditionalOnBean(AutoServiceRegistrationProperties.class)
+  public ZookeeperAutoServiceRegistration zookeeperAutoServiceRegistration(ZookeeperServiceRegistry registry,
+      AutoServiceRegistrationProperties autoServiceRegistrationProperties, ZookeeperRegistration registration) {
+    return new ZookeeperAutoServiceRegistration(registry, autoServiceRegistrationProperties, registration);
+  }
 }

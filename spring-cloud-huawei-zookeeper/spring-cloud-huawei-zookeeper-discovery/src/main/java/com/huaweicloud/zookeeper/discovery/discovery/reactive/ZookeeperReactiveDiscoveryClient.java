@@ -32,45 +32,45 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 public class ZookeeperReactiveDiscoveryClient implements ReactiveDiscoveryClient {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ZookeeperReactiveDiscoveryClient.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ZookeeperReactiveDiscoveryClient.class);
 
-	private final ZookeeperDiscoveryClient discoveryClient;
+  private final ZookeeperDiscoveryClient discoveryClient;
 
-	public ZookeeperReactiveDiscoveryClient(ZookeeperDiscoveryClient discoveryClient) {
-		this.discoveryClient = discoveryClient;
-	}
+  public ZookeeperReactiveDiscoveryClient(ZookeeperDiscoveryClient discoveryClient) {
+    this.discoveryClient = discoveryClient;
+  }
 
-	@Override
-	public String description() {
-		return "Zookeeper Reactive Discovery Client";
-	}
+  @Override
+  public String description() {
+    return "Zookeeper Reactive Discovery Client";
+  }
 
-	@Override
-	public Flux<ServiceInstance> getInstances(String serviceId) {
-		return Mono.justOrEmpty(serviceId).flatMapMany(loadInstancesFromZookeeper())
-				.subscribeOn(Schedulers.boundedElastic());
-	}
+  @Override
+  public Flux<ServiceInstance> getInstances(String serviceId) {
+    return Mono.justOrEmpty(serviceId).flatMapMany(loadInstancesFromZookeeper())
+        .subscribeOn(Schedulers.boundedElastic());
+  }
 
-	private Function<String, Publisher<ServiceInstance>> loadInstancesFromZookeeper() {
-		return serviceId -> {
-			try {
-				return Flux.fromIterable(discoveryClient.getInstances(serviceId));
-			} catch (Exception e) {
-				LOGGER.error("get service {} instance from Zookeeper failed.", serviceId, e);
-				return Flux.empty();
-			}
-		};
-	}
+  private Function<String, Publisher<ServiceInstance>> loadInstancesFromZookeeper() {
+    return serviceId -> {
+      try {
+        return Flux.fromIterable(discoveryClient.getInstances(serviceId));
+      } catch (Exception e) {
+        LOGGER.error("get service {} instance from Zookeeper failed.", serviceId, e);
+        return Flux.empty();
+      }
+    };
+  }
 
-	@Override
-	public Flux<String> getServices() {
-		return Flux.defer(() -> {
-			try {
-				return Flux.fromIterable(discoveryClient.getServices());
-			} catch (Exception e) {
-				LOGGER.error("get services from Zookeeper failed.", e);
-				return Flux.empty();
-			}
-		}).subscribeOn(Schedulers.boundedElastic());
-	}
+  @Override
+  public Flux<String> getServices() {
+    return Flux.defer(() -> {
+      try {
+        return Flux.fromIterable(discoveryClient.getServices());
+      } catch (Exception e) {
+        LOGGER.error("get services from Zookeeper failed.", e);
+        return Flux.empty();
+      }
+    }).subscribeOn(Schedulers.boundedElastic());
+  }
 }

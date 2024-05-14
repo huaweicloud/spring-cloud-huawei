@@ -35,14 +35,14 @@ import com.huaweicloud.zookeeper.discovery.discovery.ZookeeperDiscoveryClient;
 @ConditionalOnDiscoveryEnabled
 @ConditionalOnReactiveDiscoveryEnabled
 @ConditionalOnZookeeperDiscoveryEnabled
-@AutoConfigureAfter({ ZookeeperDiscoveryAutoConfiguration.class,
-		ReactiveCompositeDiscoveryClientAutoConfiguration.class })
-@AutoConfigureBefore({ ReactiveCommonsClientAutoConfiguration.class })
+@AutoConfigureAfter({ZookeeperDiscoveryAutoConfiguration.class,
+    ReactiveCompositeDiscoveryClientAutoConfiguration.class})
+@AutoConfigureBefore({ReactiveCommonsClientAutoConfiguration.class})
 public class ZookeeperReactiveDiscoveryClientConfiguration {
 
-	@Bean
-	@ConditionalOnMissingBean
-	public ZookeeperReactiveDiscoveryClient zookeeperReactiveDiscoveryClient(ZookeeperDiscoveryClient discoveryClient) {
-		return new ZookeeperReactiveDiscoveryClient(discoveryClient);
-	}
+  @Bean
+  @ConditionalOnMissingBean
+  public ZookeeperReactiveDiscoveryClient zookeeperReactiveDiscoveryClient(ZookeeperDiscoveryClient discoveryClient) {
+    return new ZookeeperReactiveDiscoveryClient(discoveryClient);
+  }
 }

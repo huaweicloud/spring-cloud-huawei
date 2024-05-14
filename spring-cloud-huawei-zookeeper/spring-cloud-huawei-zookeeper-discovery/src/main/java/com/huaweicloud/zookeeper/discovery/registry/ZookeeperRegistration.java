@@ -28,79 +28,79 @@ import org.springframework.cloud.client.serviceregistry.Registration;
 import com.huaweicloud.zookeeper.discovery.ZookeeperDiscoveryProperties;
 
 public class ZookeeperRegistration implements Registration {
-	private static final String IPV6 = "IPv6";
+  private static final String IPV6 = "IPv6";
 
-	private static final String REGISTER_SOURCE = "register.source";
+  private static final String REGISTER_SOURCE = "register.source";
 
-	private final ZookeeperDiscoveryProperties zookeeperDiscoveryProperties;
+  private final ZookeeperDiscoveryProperties zookeeperDiscoveryProperties;
 
-	private String instanceId;
+  private String instanceId;
 
-	public ZookeeperRegistration(ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
-		this.zookeeperDiscoveryProperties = zookeeperDiscoveryProperties;
-		init();
-	}
+  public ZookeeperRegistration(ZookeeperDiscoveryProperties zookeeperDiscoveryProperties) {
+    this.zookeeperDiscoveryProperties = zookeeperDiscoveryProperties;
+    init();
+  }
 
-	public void init() {
-		buildPropertiesAttributes();
-		this.instanceId = buildInstanceId();
-	}
+  public void init() {
+    buildPropertiesAttributes();
+    this.instanceId = buildInstanceId();
+  }
 
-	private void buildPropertiesAttributes() {
-		Map<String, String> metadata = zookeeperDiscoveryProperties.getMetadata();
-		metadata.put(REGISTER_SOURCE, "SPRING_CLOUD");
-		if (zookeeperDiscoveryProperties.isSecure()) {
-			metadata.put("secure", "true");
-		}
-		if (StringUtils.isEmpty(zookeeperDiscoveryProperties.getIp())) {
-			String ip = IPV6.equalsIgnoreCase(zookeeperDiscoveryProperties.getIpType())
-					&& !StringUtils.isEmpty(NetUtils.getIpv6HostAddress())
-					? NetUtils.getIpv6HostAddress() : NetUtils.getHostAddress();
-			zookeeperDiscoveryProperties.setIp(ip);
-		}
-	}
+  private void buildPropertiesAttributes() {
+    Map<String, String> metadata = zookeeperDiscoveryProperties.getMetadata();
+    metadata.put(REGISTER_SOURCE, "SPRING_CLOUD");
+    if (zookeeperDiscoveryProperties.isSecure()) {
+      metadata.put("secure", "true");
+    }
+    if (StringUtils.isEmpty(zookeeperDiscoveryProperties.getIp())) {
+      String ip = IPV6.equalsIgnoreCase(zookeeperDiscoveryProperties.getIpType())
+          && !StringUtils.isEmpty(NetUtils.getIpv6HostAddress())
+          ? NetUtils.getIpv6HostAddress() : NetUtils.getHostAddress();
+      zookeeperDiscoveryProperties.setIp(ip);
+    }
+  }
 
-	@Override
-	public String getInstanceId() {
-		return instanceId;
-	}
+  @Override
+  public String getInstanceId() {
+    return instanceId;
+  }
 
-	@Override
-	public String getServiceId() {
-		return zookeeperDiscoveryProperties.getServiceName();
-	}
+  @Override
+  public String getServiceId() {
+    return zookeeperDiscoveryProperties.getServiceName();
+  }
 
-	@Override
-	public String getHost() {
-		return zookeeperDiscoveryProperties.getIp();
-	}
+  @Override
+  public String getHost() {
+    return zookeeperDiscoveryProperties.getIp();
+  }
 
-	@Override
-	public int getPort() {
-		return zookeeperDiscoveryProperties.getPort();
-	}
+  @Override
+  public int getPort() {
+    return zookeeperDiscoveryProperties.getPort();
+  }
 
-	@Override
-	public boolean isSecure() {
-		return zookeeperDiscoveryProperties.isSecure();
-	}
+  @Override
+  public boolean isSecure() {
+    return zookeeperDiscoveryProperties.isSecure();
+  }
 
-	@Override
-	public URI getUri() {
-		return DefaultServiceInstance.getUri(this);
-	}
+  @Override
+  public URI getUri() {
+    return DefaultServiceInstance.getUri(this);
+  }
 
-	@Override
-	public Map<String, String> getMetadata() {
-		return zookeeperDiscoveryProperties.getMetadata();
-	}
+  @Override
+  public Map<String, String> getMetadata() {
+    return zookeeperDiscoveryProperties.getMetadata();
+  }
 
-	public ZookeeperDiscoveryProperties getzookeeperDiscoveryProperties() {
-		return zookeeperDiscoveryProperties;
-	}
+  public ZookeeperDiscoveryProperties getzookeeperDiscoveryProperties() {
+    return zookeeperDiscoveryProperties;
+  }
 
-	private String buildInstanceId() {
-		String result = zookeeperDiscoveryProperties.getIp() + ":" + zookeeperDiscoveryProperties.getPort();
-		return result.replaceAll("[^0-9a-zA-Z]", "-");
-	}
+  private String buildInstanceId() {
+    String result = zookeeperDiscoveryProperties.getIp() + ":" + zookeeperDiscoveryProperties.getPort();
+    return result.replaceAll("[^0-9a-zA-Z]", "-");
+  }
 }

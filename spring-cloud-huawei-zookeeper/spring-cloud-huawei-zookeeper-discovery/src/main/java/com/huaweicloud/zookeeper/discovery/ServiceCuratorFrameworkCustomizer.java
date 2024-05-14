@@ -25,10 +25,9 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 @FunctionalInterface
 public interface ServiceCuratorFrameworkCustomizer {
 
-	/**
-	 * Customize the {@link CuratorFrameworkFactory.Builder}.
-	 * @param builder instance of the builder that you can further customize.
-	 */
-	void customize(CuratorFrameworkFactory.Builder builder);
-
+  /**
+   * Customize the {@link CuratorFrameworkFactory.Builder}.
+   * @param builder instance of the builder that you can further customize.
+   */
+  void customize(CuratorFrameworkFactory.Builder builder);
 }
