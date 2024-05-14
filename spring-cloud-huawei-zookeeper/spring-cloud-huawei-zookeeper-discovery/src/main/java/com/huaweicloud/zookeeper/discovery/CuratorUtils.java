@@ -21,6 +21,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.apache.curator.RetryPolicy;
+import org.apache.curator.ensemble.EnsembleProvider;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
@@ -31,9 +32,15 @@ public class CuratorUtils {
   private static final Logger LOGGER = LoggerFactory.getLogger(CuratorUtils.class);
 
   public static CuratorFramework createCuratorFramework(ZookeeperDiscoveryProperties properties,
-      Supplier<Stream<ServiceCuratorFrameworkCustomizer>> optionalCuratorFrameworkCustomizerProvider) {
+      Supplier<Stream<ServiceCuratorFrameworkCustomizer>> optionalCuratorFrameworkCustomizerProvider,
+      Supplier<EnsembleProvider> optionalEnsembleProvider) {
     CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder();
-    builder.connectString(properties.getConnectString());
+    EnsembleProvider ensembleProvider = optionalEnsembleProvider.get();
+    if (ensembleProvider != null) {
+      builder.ensembleProvider(ensembleProvider);
+    } else {
+      builder.connectString(properties.getConnectString());
+    }
 
     // session config setting
     builder.sessionTimeoutMs((int) properties.getSessionTimeout().toMillis())

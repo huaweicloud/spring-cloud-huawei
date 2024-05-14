@@ -17,6 +17,7 @@
 
 package com.huaweicloud.zookeeper.discovery;
 
+import org.apache.curator.ensemble.EnsembleProvider;
 import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.details.InstanceSerializer;
@@ -53,10 +54,11 @@ public class CuratorServiceDiscoveryAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public ServiceDiscovery<ZookeeperServiceInstance> curatorServiceDiscovery(ZookeeperDiscoveryProperties properties,
-      InstanceSerializer<ZookeeperServiceInstance> serializer,
+      InstanceSerializer<ZookeeperServiceInstance> serializer, ObjectProvider<EnsembleProvider> optionalEnsembleProvider,
       ObjectProvider<ServiceCuratorFrameworkCustomizer> optionalCustomizerProvider) {
     return ServiceDiscoveryBuilder.builder(ZookeeperServiceInstance.class)
-        .client(CuratorUtils.createCuratorFramework(properties, optionalCustomizerProvider::orderedStream))
+        .client(CuratorUtils.createCuratorFramework(properties, optionalCustomizerProvider::orderedStream,
+            optionalEnsembleProvider::getIfAvailable))
         .basePath(properties.getRoot())
         .serializer(serializer)
         .build();
