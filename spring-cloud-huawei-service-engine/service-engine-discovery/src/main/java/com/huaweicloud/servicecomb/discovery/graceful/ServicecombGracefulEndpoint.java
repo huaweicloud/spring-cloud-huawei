@@ -20,6 +20,7 @@ package com.huaweicloud.servicecomb.discovery.graceful;
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -51,6 +52,8 @@ public class ServicecombGracefulEndpoint {
       LOGGER.warn("status input " + status + " is not a valid value.");
       return;
     }
+    serviceCombRegistration.getMicroserviceInstance()
+        .setStatus(MicroserviceInstanceStatus.valueOf(status.toUpperCase()));
     serviceCombServiceRegistry.setStatus(serviceCombRegistration, status.toUpperCase());
   }
 }
