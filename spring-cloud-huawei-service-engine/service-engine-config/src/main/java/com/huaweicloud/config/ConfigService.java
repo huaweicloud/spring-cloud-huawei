@@ -179,7 +179,8 @@ public class ConfigService {
 
   private void firstQueryConfigurations(ConfigCenterClient configCenterClient, QueryConfigurationsRequest queryConfigurationsRequest,
           ConfigCenterAddressManager addressManager) {
-    for (int i = 0; i < 3;) {
+    int index = 0;
+    while (index < 3) {
       String address = addressManager.address();
       try {
         QueryConfigurationsResponse response = configCenterClient.queryConfigurations(queryConfigurationsRequest,
@@ -190,13 +191,13 @@ public class ConfigService {
         queryConfigurationsRequest.setRevision(response.getRevision());
         break;
       } catch (Exception e) {
-        if (i == 2) {
+        if (index == 2) {
           throw e;
         }
         LOGGER.warn("config-center firstQueryConfigurations failed, config address {} and ignore {}", address,
                 e.getMessage());
       }
-      i++;
+      index++;
     }
   }
 
