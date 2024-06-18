@@ -154,18 +154,50 @@ public class ConfigService {
     ConfigCenterClient configCenterClient = new ConfigCenterClient(addressManager, httpTransport);
 
     queryConfigurationsRequest = createQueryConfigurationsRequest(bootstrapProperties);
-    QueryConfigurationsResponse response = configCenterClient
-        .queryConfigurations(queryConfigurationsRequest, addressManager.address());
-    if (response.isChanged()) {
-      configConverter.updateData(response.getConfigurations());
-    }
-    queryConfigurationsRequest.setRevision(response.getRevision());
+    firstPull(bootstrapProperties.getConfigBootstrapProperties(), configCenterClient, queryConfigurationsRequest,
+            addressManager);
     ConfigCenterConfiguration configCenterConfiguration = createConfigCenterConfiguration(
         bootstrapProperties.getConfigBootstrapProperties());
     ConfigCenterManager configCenterManager = new ConfigCenterManager(configCenterClient, EventManager.getEventBus(),
         configConverter, configCenterConfiguration, addressManager);
     configCenterManager.setQueryConfigurationsRequest(queryConfigurationsRequest);
     configCenterManager.startConfigCenterManager();
+  }
+
+  public void firstPull(ConfigBootstrapProperties configProperties, ConfigCenterClient configCenterClient,
+    QueryConfigurationsRequest queryConfigurationsRequest, ConfigCenterAddressManager addressManager) {
+    try {
+      firstQueryConfigurations(configCenterClient, queryConfigurationsRequest, addressManager);
+    } catch (Exception e) {
+      if (configProperties.isFirstPullRequired()) {
+        throw e;
+      } else {
+        LOGGER.warn("first pull failed!");
+      }
+    }
+  }
+
+  private void firstQueryConfigurations(ConfigCenterClient configCenterClient, QueryConfigurationsRequest queryConfigurationsRequest,
+          ConfigCenterAddressManager addressManager) {
+    for (int i = 0; i < 3;) {
+      String address = addressManager.address();
+      try {
+        QueryConfigurationsResponse response = configCenterClient.queryConfigurations(queryConfigurationsRequest,
+                address);
+        if (response.isChanged()) {
+          configConverter.updateData(response.getConfigurations());
+        }
+        queryConfigurationsRequest.setRevision(response.getRevision());
+        break;
+      } catch (Exception e) {
+        if (i == 2) {
+          throw e;
+        }
+        LOGGER.warn("config-center firstQueryConfigurations failed, config address {} and ignore {}", address,
+                e.getMessage());
+      }
+      i++;
+    }
   }
 
   private ConfigCenterConfiguration createConfigCenterConfiguration(ConfigBootstrapProperties configProperties) {
