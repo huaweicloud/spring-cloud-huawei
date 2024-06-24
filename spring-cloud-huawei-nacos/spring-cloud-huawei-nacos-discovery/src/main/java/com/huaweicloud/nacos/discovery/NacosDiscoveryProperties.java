@@ -56,7 +56,7 @@ public class NacosDiscoveryProperties {
   @Value("${spring.cloud.nacos.discovery.service:${spring.application.name:}}")
   private String service;
 
-  private String group = "DEFAULT_GROUP";;
+  private String group = "DEFAULT_GROUP";
 
   private String ip;
 
