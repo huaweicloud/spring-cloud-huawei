@@ -17,16 +17,16 @@
 
 package com.huaweicloud.nacos.config;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public class NacosConfigConst {
+  public static final String SECURITY_CONFIG_DATA_ID_PREFIX = "cse-app-security-";
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+  public static final String SECURITY_CONFIG_FILE_EXTENSION = "yaml";
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD })
-@ConditionalOnProperty(value = "spring.cloud.nacos.config.enabled", matchIfMissing = true)
-public @interface ConditionalOnNacosConfigEnabled {
+  public static final String DOT = ".";
 
+  public static final String COMMAS = ",";
+
+  public static final String STATUS_UP = "UP";
+
+  public static final String RETRY_MASTER_ENABLED = "spring.cloud.nacos.config.retryMasterServerEnabled";
 }

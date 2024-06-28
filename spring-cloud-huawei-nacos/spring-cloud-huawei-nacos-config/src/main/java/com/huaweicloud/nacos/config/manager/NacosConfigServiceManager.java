@@ -15,18 +15,18 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.nacos.config;
+package com.huaweicloud.nacos.config.manager;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.alibaba.nacos.api.config.ConfigService;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.Ordered;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD })
-@ConditionalOnProperty(value = "spring.cloud.nacos.config.enabled", matchIfMissing = true)
-public @interface ConditionalOnNacosConfigEnabled {
+public interface NacosConfigServiceManager extends Ordered {
+  ConfigService getConfigService();
 
+  String getServerAddr();
+
+  boolean checkServerConnect();
+
+  void resetConfigService();
 }

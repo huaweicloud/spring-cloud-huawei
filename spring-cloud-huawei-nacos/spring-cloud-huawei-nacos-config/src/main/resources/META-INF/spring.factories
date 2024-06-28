@@ -17,4 +17,17 @@
 ## ---------------------------------------------------------------------------
 
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
-  com.huaweicloud.nacos.config.NacosAdaptersBootstrapConfiguration
+  com.huaweicloud.nacos.config.NacosConfigBootstrapConfiguration
+org.springframework.boot.env.PropertySourceLoader=\
+com.huaweicloud.nacos.config.parser.NacosPropertySourceJsonLoader,\
+com.huaweicloud.nacos.config.parser.NacosPropertySourceXmlLoader
+
+# configData property source
+org.springframework.boot.env.EnvironmentPostProcessor=\
+com.huaweicloud.nacos.config.configdata.NacosConfigDataMissingEnvironmentPostProcessor
+org.springframework.boot.context.config.ConfigDataLoader=\
+com.huaweicloud.nacos.config.configdata.NacosConfigDataResourceLoader
+org.springframework.boot.context.config.ConfigDataLocationResolver=\
+com.huaweicloud.nacos.config.configdata.NacosConfigDataLocationResolver
+org.springframework.boot.diagnostics.FailureAnalyzer=\
+com.huaweicloud.nacos.config.configdata.NacosConfigImportFailureAnalyzer

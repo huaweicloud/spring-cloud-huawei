@@ -15,18 +15,24 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.nacos.config;
+package com.huaweicloud.nacos.config.parser;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.io.ByteArrayResource;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+public class NacosByteArrayResource extends ByteArrayResource {
+  private String fileName;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD })
-@ConditionalOnProperty(value = "spring.cloud.nacos.config.enabled", matchIfMissing = true)
-public @interface ConditionalOnNacosConfigEnabled {
+  public NacosByteArrayResource(byte[] byteArray, String description) {
+    super(byteArray, description);
+  }
 
+  public void setFileName(String fileName) {
+    this.fileName = fileName;
+  }
+
+  @Override
+  public String getFilename() {
+    return StringUtils.isEmpty(fileName) ? getDescription() : fileName;
+  }
 }
