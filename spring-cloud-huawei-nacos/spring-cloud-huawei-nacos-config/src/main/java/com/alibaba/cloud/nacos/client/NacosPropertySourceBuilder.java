@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.alibaba.cloud.nacos.NacosPropertySourceRepository;
-import com.alibaba.cloud.nacos.manager.NacosConfigManager;
+import com.huawei.cloud.nacos.config.manager.NacosConfigManager;
 import com.alibaba.cloud.nacos.parser.NacosDataParserHandler;
 import com.alibaba.cloud.nacos.refresh.NacosSnapshotConfigManager;
 import com.alibaba.nacos.api.exception.NacosException;

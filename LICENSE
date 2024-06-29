@@ -234,5 +234,5 @@ For spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud
     spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/NacosConfigProperties
     spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/NacosPropertySourceRepository
 ================================================================
-This product bundles files from protostuff which is licensed under the Apache License v2.
+This product bundles files from spring-cloud-alibaba which is licensed under the Apache License v2.
 For details, see https://github.com/alibaba/spring-cloud-alibaba/tree/2023.x/spring-cloud-alibaba-starters/spring-cloud-starter-alibaba-nacos-config

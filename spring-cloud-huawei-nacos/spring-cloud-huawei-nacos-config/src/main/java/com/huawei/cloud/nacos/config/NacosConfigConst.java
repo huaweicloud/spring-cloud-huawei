@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.alibaba.cloud.nacos;
+package com.huawei.cloud.nacos.config;
 
 public class NacosConfigConst {
   public static final String SECURITY_CONFIG_DATA_ID_PREFIX = "cse-app-security-";

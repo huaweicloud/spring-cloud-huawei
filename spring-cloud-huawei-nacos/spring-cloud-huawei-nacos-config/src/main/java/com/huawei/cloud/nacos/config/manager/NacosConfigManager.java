@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.alibaba.cloud.nacos.manager;
+package com.huawei.cloud.nacos.config.manager;
 
 import org.springframework.core.Ordered;
 

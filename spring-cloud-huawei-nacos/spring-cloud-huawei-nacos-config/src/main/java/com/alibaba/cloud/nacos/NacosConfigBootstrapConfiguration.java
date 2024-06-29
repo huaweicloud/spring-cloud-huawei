@@ -19,9 +19,9 @@ package com.alibaba.cloud.nacos;
 import java.util.List;
 
 import com.alibaba.cloud.nacos.client.NacosPropertySourceLocator;
-import com.alibaba.cloud.nacos.manager.NacosConfigManager;
-import com.alibaba.cloud.nacos.manager.NacosConfigServiceMasterManager;
-import com.alibaba.cloud.nacos.manager.NacosConfigServiceStandbyManager;
+import com.huawei.cloud.nacos.config.manager.NacosConfigManager;
+import com.huawei.cloud.nacos.config.manager.NacosConfigServiceMasterManager;
+import com.huawei.cloud.nacos.config.manager.NacosConfigServiceStandbyManager;
 import com.alibaba.cloud.nacos.refresh.SmartConfigurationPropertiesRebinder;
 import com.alibaba.cloud.nacos.refresh.condition.ConditionalOnNonDefaultBehavior;
 
