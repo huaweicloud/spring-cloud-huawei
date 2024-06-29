@@ -1,7 +1,7 @@
 #
 ## ---------------------------------------------------------------------------
 ##
-## Copyright (C) 2020-2024 Huawei Technologies Co., Ltd. All rights reserved.
+## Copyright 2013-2023 the original author or authors.
 ##
 ## Licensed under the Apache License, Version 2.0 (the "License");
 ## you may not use this file except in compliance with the License.
@@ -17,17 +17,22 @@
 ## ---------------------------------------------------------------------------
 
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
-  com.huaweicloud.nacos.config.NacosConfigBootstrapConfiguration
-org.springframework.boot.env.PropertySourceLoader=\
-com.huaweicloud.nacos.config.parser.NacosPropertySourceJsonLoader,\
-com.huaweicloud.nacos.config.parser.NacosPropertySourceXmlLoader
-
-# configData property source
-org.springframework.boot.env.EnvironmentPostProcessor=\
-com.huaweicloud.nacos.config.configdata.NacosConfigDataMissingEnvironmentPostProcessor
-org.springframework.boot.context.config.ConfigDataLoader=\
-com.huaweicloud.nacos.config.configdata.NacosConfigDataResourceLoader
-org.springframework.boot.context.config.ConfigDataLocationResolver=\
-com.huaweicloud.nacos.config.configdata.NacosConfigDataLocationResolver
+com.alibaba.cloud.nacos.NacosConfigBootstrapConfiguration
 org.springframework.boot.diagnostics.FailureAnalyzer=\
-com.huaweicloud.nacos.config.configdata.NacosConfigImportFailureAnalyzer
+com.alibaba.cloud.nacos.diagnostics.analyzer.NacosConnectionFailureAnalyzer,\
+com.alibaba.cloud.nacos.configdata.NacosConfigDataMissingEnvironmentPostProcessor.ImportExceptionFailureAnalyzer
+org.springframework.boot.env.PropertySourceLoader=\
+com.alibaba.cloud.nacos.parser.NacosJsonPropertySourceLoader,\
+com.alibaba.cloud.nacos.parser.NacosXmlPropertySourceLoader
+org.springframework.boot.SpringApplicationRunListener=\
+com.alibaba.cloud.nacos.logging.NacosLoggingAppRunListener
+org.springframework.boot.env.EnvironmentPostProcessor=\
+com.alibaba.cloud.nacos.configdata.NacosConfigDataMissingEnvironmentPostProcessor
+
+# ConfigData Location Resolvers
+org.springframework.boot.context.config.ConfigDataLocationResolver=\
+com.alibaba.cloud.nacos.configdata.NacosConfigDataLocationResolver
+
+# ConfigData Loaders
+org.springframework.boot.context.config.ConfigDataLoader=\
+com.alibaba.cloud.nacos.configdata.NacosConfigDataLoader

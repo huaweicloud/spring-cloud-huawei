@@ -199,3 +199,40 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+================================================================
+For spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/client/NacosPropertySource/java
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/client/NacosPropertySourceBuilder
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/client/NacosPropertySourceLocator
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/configdata/ConfigPreference
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/configdata/NacosConfigDataLoader
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/configdata/NacosConfigDataLocationResolver
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/configdata/NacosConfigDataMissingEnvironmentPostProcessor
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/configdata/NacosConfigDataResource
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/diagnostics/analyzer/NacosConnectionFailureAnalyzer
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/diagnostics/analyzer/NacosConnectionFailureException
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/endpoint/NacosConfigEndpoint
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/endpoint/NacosConfigEndpointAutoConfiguration
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/endpoint/NacosConfigHealthIndicator
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/logging/NacosLoggingAppRunListener
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/logging/NacosLoggingListener
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/parser/AbstractPropertySourceLoader
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/parser/NacosByteArrayResource
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/parser/NacosDataParserHandler
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/parser/NacosJsonPropertySourceLoader
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/parser/NacosXmlPropertySourceLoader
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/refresh/condition/ConditionalOnNonDefaultBehavior
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/refresh/condition/NonDefaultBehaviorCondition
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/refresh/NacosContextRefresher
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/refresh/NacosRefreshHistory
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/refresh/NacosSnapshotConfigManager
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/refresh/RefreshBehavior
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/refresh/SmartConfigurationPropertiesRebinder
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/utils/NacosConfigUtils
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/NacosConfigAutoConfiguration
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/NacosConfigBootstrapConfiguration
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/NacosConfigProperties
+    spring-cloud-huawei-nacos/spring-cloud-huawei-nacos-config/com/alibaba/cloud/nacos/NacosPropertySourceRepository
+================================================================
+This product bundles files from protostuff which is licensed under the Apache License v2.
+For details, see https://github.com/alibaba/spring-cloud-alibaba/tree/2023.x/spring-cloud-alibaba-starters/spring-cloud-starter-alibaba-nacos-config
