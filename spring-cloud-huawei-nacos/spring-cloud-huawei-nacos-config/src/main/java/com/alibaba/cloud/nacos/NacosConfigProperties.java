@@ -239,7 +239,7 @@ public class NacosConfigProperties {
 
   private int order = 100;
 
-  private long masterStandbyServerTaskDelay = 5000;
+  private long masterStandbyServerTaskDelay = 15000;
 
   private boolean retryMasterServerEnabled = true;
 
