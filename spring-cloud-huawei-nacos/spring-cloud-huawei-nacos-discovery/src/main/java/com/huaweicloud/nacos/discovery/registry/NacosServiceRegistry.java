@@ -70,8 +70,11 @@ public class NacosServiceRegistry implements ServiceRegistry<Registration> {
 		String serviceId = registration.getServiceId();
 		String group = nacosDiscoveryProperties.getGroup();
 		instance.setInstanceId(registration.getInstanceId());
+		NamingMaintainService namingMaintainService = namingMaintainService();
 		try {
 			namingService.registerInstance(serviceId, group, instance);
+			namingMaintainService.updateService(serviceId, group, 0,
+					NacosMicroserviceHandler.createMicroserviceMetadata());
 			eventBus.post(new NacosServiceRegistrationEvent(instance, true));
 			LOGGER.info("nacos registry, {} {}:{} register finished", serviceId, instance.getIp(), instance.getPort());
 		} catch (Exception e) {
