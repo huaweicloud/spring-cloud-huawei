@@ -17,14 +17,16 @@
 
 package com.huaweicloud.nacos.discovery.watch;
 
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
 
-import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.listener.EventListener;
 import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import com.alibaba.nacos.api.naming.pojo.Instance;
@@ -33,7 +35,7 @@ import com.huaweicloud.common.event.ClosedEventListener;
 import com.huaweicloud.common.event.ClosedEventProcessor;
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.nacos.discovery.NacosDiscoveryProperties;
-import com.huaweicloud.nacos.discovery.NamingServiceManager;
+import com.huaweicloud.nacos.discovery.manager.NamingServiceManager;
 import com.huaweicloud.nacos.discovery.registry.NacosServiceRegistrationEvent;
 
 public class NacosServiceWatch {
@@ -41,13 +43,14 @@ public class NacosServiceWatch {
 
   private final NacosDiscoveryProperties properties;
 
-  private final NamingServiceManager serviceManager;
+  private final List<NamingServiceManager> namingServiceManagers;
 
   private EventListener eventListener;
 
   public NacosServiceWatch(NacosDiscoveryProperties discoveryProperties,
-      NamingServiceManager namingServiceManager, ClosedEventListener closedEventListener) {
-    this.serviceManager = namingServiceManager;
+      List<NamingServiceManager> namingServiceManagers, ClosedEventListener closedEventListener) {
+    this.namingServiceManagers = namingServiceManagers.stream().sorted(Comparator.comparingInt(Ordered::getOrder))
+        .collect(Collectors.toList());
     this.properties = discoveryProperties;
     EventManager.register(this);
     closedEventListener.addClosedEventProcessor(new ClosedEventProcessor() {
@@ -73,13 +76,14 @@ public class NacosServiceWatch {
           instanceOptional.ifPresent(this::resetMetadataIfChanged);
         }
       };
-      try {
-        NamingService namingService = serviceManager.buildNamingService();
-        namingService.subscribe(properties.getService(), properties.getGroup(),
-            Arrays.asList(properties.getClusterName()), eventListener);
-      } catch (Exception e) {
-        LOGGER.error("subscribe service={}, group={} metadata failed!", properties.getService(),
-            properties.getGroup(), e);
+      for (NamingServiceManager serviceManager : namingServiceManagers) {
+        try {
+          serviceManager.getNamingService().subscribe(properties.getService(), properties.getGroup(),
+              Collections.singletonList(properties.getClusterName()), eventListener);
+        } catch (Exception e) {
+          LOGGER.error("subscribe nacos server [{}] service={}, group={} metadata failed!",
+              serviceManager.getServerAddr(), properties.getService(), properties.getGroup(), e);
+        }
       }
     }
   }
@@ -97,15 +101,16 @@ public class NacosServiceWatch {
   }
 
   private void stopSubscribe() {
-    try {
-      NamingService namingService = serviceManager.buildNamingService();
-      namingService.unsubscribe(properties.getService(), properties.getGroup(),
-          Arrays.asList(properties.getClusterName()), eventListener);
-      LOGGER.error("stopSubscribe service={}, group={} metadata finished!", properties.getService(),
-          properties.getGroup());
-    } catch (Exception e) {
-      LOGGER.error("stopSubscribe service={}, group={} metadata failed!", properties.getService(),
-          properties.getGroup(), e);
+    for (NamingServiceManager serviceManager : namingServiceManagers) {
+      try {
+        serviceManager.getNamingService().unsubscribe(properties.getService(), properties.getGroup(),
+            Collections.singletonList(properties.getClusterName()), eventListener);
+        LOGGER.error("stopSubscribe service={}, group={} metadata finished!", properties.getService(),
+            properties.getGroup());
+      } catch (Exception e) {
+        LOGGER.error("stopSubscribe service={}, group={} metadata failed!", properties.getService(),
+            properties.getGroup(), e);
+      }
     }
   }
 }

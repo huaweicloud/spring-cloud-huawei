@@ -18,34 +18,38 @@
 package com.huaweicloud.nacos.discovery.discovery;
 
 import com.alibaba.nacos.api.exception.NacosException;
-import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.alibaba.nacos.api.naming.pojo.ListView;
 import com.huaweicloud.nacos.discovery.NacosDiscoveryProperties;
 import com.huaweicloud.nacos.discovery.NacosServiceInstance;
-import com.huaweicloud.nacos.discovery.NamingServiceManager;
+import com.huaweicloud.nacos.discovery.manager.NamingServiceManager;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.core.Ordered;
+
 public class NacosDiscovery {
 	private static final Logger LOGGER = LoggerFactory.getLogger(NacosDiscovery.class);
 
 	private final NacosDiscoveryProperties discoveryProperties;
 
-	private final NamingServiceManager namingServiceManager;
+	private final List<NamingServiceManager> namingServiceManagers;
 
 	private final NacosCrossGroupProperties crossGroupProperties;
 
-	public NacosDiscovery(NacosDiscoveryProperties discoveryProperties, NamingServiceManager namingServiceManager,
+	public NacosDiscovery(NacosDiscoveryProperties discoveryProperties, List<NamingServiceManager> namingServiceManagers,
 			NacosCrossGroupProperties crossGroupProperties) {
 		this.discoveryProperties = discoveryProperties;
-		this.namingServiceManager = namingServiceManager;
+		this.namingServiceManagers = namingServiceManagers.stream().sorted(Comparator.comparingInt(Ordered::getOrder))
+				.collect(Collectors.toList());
 		this.crossGroupProperties = crossGroupProperties;
 	}
 
@@ -58,14 +62,39 @@ public class NacosDiscovery {
 				LOGGER.warn("cross group query nacos instances by setting group {}", group);
 			}
 		}
-		List<Instance> instances = namingService().selectInstances(serviceId, group, true);
-		return hostToServiceInstanceList(instances, serviceId);
+		for (int i = 0; i < namingServiceManagers.size(); i++) {
+			try {
+				List<Instance> instances = namingServiceManagers.get(i).getNamingService()
+						.selectInstances(serviceId, group, true);
+				return hostToServiceInstanceList(instances, serviceId);
+			} catch (NacosException e) {
+				if (namingServiceManagers.size() == 1 || i == namingServiceManagers.size() - 1) {
+					LOGGER.error("get service [{}] instances from nacos failed.", serviceId, e);
+					throw e;
+				}
+				LOGGER.warn("get service [{}] instances from nacos server [{}] failed!", serviceId,
+						namingServiceManagers.get(i).getServerAddr());
+			}
+		}
+		return null;
 	}
 
 	public List<String> getServices() throws NacosException {
 		String group = discoveryProperties.getGroup();
-		ListView<String> services = namingService().getServicesOfServer(1, Integer.MAX_VALUE, group);
-		return services.getData();
+		for (int i = 0; i < namingServiceManagers.size(); i++) {
+			try {
+				ListView<String> services = namingServiceManagers.get(i).getNamingService()
+						.getServicesOfServer(1, Integer.MAX_VALUE, group);
+				return services.getData();
+			} catch (NacosException e) {
+				if (namingServiceManagers.size() == 1 || i == namingServiceManagers.size() - 1) {
+					LOGGER.error("get service names from nacos failed!", e);
+					throw e;
+				}
+				LOGGER.warn("get service names from nacos server [{}] failed!", namingServiceManagers.get(i).getServerAddr());
+			}
+		}
+		return null;
 	}
 
 	private List<ServiceInstance> hostToServiceInstanceList(List<Instance> instances, String serviceId) {
@@ -92,7 +121,7 @@ public class NacosDiscovery {
 
 		Map<String, String> metadata = new HashMap<>();
 		metadata.put("nacos.weight", instance.getWeight() + "");
-		metadata.put("nacos.cluster", instance.getClusterName() + "");
+		metadata.put("nacos.cluster", instance.getClusterName());
 		if (instance.getMetadata() != null) {
 			metadata.putAll(instance.getMetadata());
 		}
@@ -105,9 +134,4 @@ public class NacosDiscovery {
 		}
 		return nacosServiceInstance;
 	}
-
-	private NamingService namingService() {
-		return namingServiceManager.buildNamingService();
-	}
-
 }
