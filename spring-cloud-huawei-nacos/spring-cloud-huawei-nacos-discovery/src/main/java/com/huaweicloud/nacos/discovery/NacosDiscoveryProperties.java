@@ -86,6 +86,12 @@ public class NacosDiscoveryProperties {
 
   private long heartBeatTaskDelay = 30000;
 
+  private boolean masterStandbyEnabled = false;
+
+  private String standbyServerAddr;
+
+  private int order = 100;
+
   public String getServerAddr() {
     return serverAddr;
   }
@@ -292,5 +298,29 @@ public class NacosDiscoveryProperties {
 
   public void setHeartBeatTaskDelay(long heartBeatTaskDelay) {
     this.heartBeatTaskDelay = heartBeatTaskDelay;
+  }
+
+  public boolean isMasterStandbyEnabled() {
+    return masterStandbyEnabled;
+  }
+
+  public void setMasterStandbyEnabled(boolean masterStandbyEnabled) {
+    this.masterStandbyEnabled = masterStandbyEnabled;
+  }
+
+  public String getStandbyServerAddr() {
+    return standbyServerAddr;
+  }
+
+  public void setStandbyServerAddr(String standbyServerAddr) {
+    this.standbyServerAddr = standbyServerAddr;
+  }
+
+  public int getOrder() {
+    return order;
+  }
+
+  public void setOrder(int order) {
+    this.order = order;
   }
 }

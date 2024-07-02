@@ -35,7 +35,7 @@ import org.springframework.core.env.Environment;
 import com.huaweicloud.nacos.discovery.ConditionalOnNacosDiscoveryEnabled;
 import com.huaweicloud.nacos.discovery.NacosServiceAutoConfiguration;
 import com.huaweicloud.nacos.discovery.NacosDiscoveryProperties;
-import com.huaweicloud.nacos.discovery.NamingServiceManager;
+import com.huaweicloud.nacos.discovery.manager.NamingServiceManager;
 
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties
@@ -46,9 +46,9 @@ import com.huaweicloud.nacos.discovery.NamingServiceManager;
 public class NacosServiceRegistryAutoConfiguration {
 
 	@Bean
-	public NacosServiceRegistry nacosServiceRegistry(NamingServiceManager namingServiceManager,
+	public NacosServiceRegistry nacosServiceRegistry(List<NamingServiceManager> namingServiceManagers,
 			NacosDiscoveryProperties nacosDiscoveryProperties, Environment environment) {
-		return new NacosServiceRegistry(namingServiceManager, nacosDiscoveryProperties, environment);
+		return new NacosServiceRegistry(namingServiceManagers, nacosDiscoveryProperties, environment);
 	}
 
 	@Bean
@@ -65,5 +65,4 @@ public class NacosServiceRegistryAutoConfiguration {
 			AutoServiceRegistrationProperties autoServiceRegistrationProperties, NacosRegistration registration) {
 		return new NacosAutoServiceRegistration(registry, autoServiceRegistrationProperties, registration);
 	}
-
 }

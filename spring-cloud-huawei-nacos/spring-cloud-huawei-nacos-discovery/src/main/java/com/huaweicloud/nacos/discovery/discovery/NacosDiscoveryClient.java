@@ -41,7 +41,7 @@ public class NacosDiscoveryClient implements DiscoveryClient {
 		try {
 			return serviceDiscovery.getInstances(serviceId);
 		} catch (Exception e) {
-			throw new RuntimeException("Can not get hosts from nacos server. serviceId: " + serviceId, e);
+			throw new RuntimeException("find services from nacos server failed, serviceId: " + serviceId, e);
 		}
 	}
 
@@ -50,7 +50,7 @@ public class NacosDiscoveryClient implements DiscoveryClient {
 		try {
 			return serviceDiscovery.getServices();
 		} catch (Exception e) {
-			throw new RuntimeException("get service name from nacos server failed.", e);
+			throw new RuntimeException("get service names from nacos server failed!", e);
 		}
 	}
 }

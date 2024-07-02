@@ -18,11 +18,14 @@
 package com.huaweicloud.nacos.discovery;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.nacos.discovery.discovery.NacosCrossGroupProperties;
+import com.huaweicloud.nacos.discovery.manager.NamingServiceMasterManager;
+import com.huaweicloud.nacos.discovery.manager.NamingServiceStandbyManager;
 
 @Configuration
 @ConditionalOnNacosDiscoveryEnabled
@@ -41,7 +44,14 @@ public class NacosServiceAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public NamingServiceManager namingServiceManager(NacosDiscoveryProperties properties) {
-      return new NamingServiceManager(properties);
+  public NamingServiceMasterManager namingServiceMasterManager(NacosDiscoveryProperties properties) {
+      return new NamingServiceMasterManager(properties);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  @ConditionalOnProperty(value = "spring.cloud.nacos.discovery.master-standby-enabled", havingValue = "true")
+  public NamingServiceStandbyManager namingServiceStandbyManager(NacosDiscoveryProperties properties) {
+    return new NamingServiceStandbyManager(properties);
   }
 }
