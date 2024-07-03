@@ -68,7 +68,7 @@ public class NacosDiscovery {
 						.selectInstances(serviceId, group, true);
 				return hostToServiceInstanceList(instances, serviceId);
 			} catch (NacosException e) {
-				if (namingServiceManagers.size() == 1 || i == namingServiceManagers.size() - 1) {
+				if (i == namingServiceManagers.size() - 1) {
 					LOGGER.error("get service [{}] instances from nacos failed.", serviceId, e);
 					throw e;
 				}
@@ -87,7 +87,7 @@ public class NacosDiscovery {
 						.getServicesOfServer(1, Integer.MAX_VALUE, group);
 				return services.getData();
 			} catch (NacosException e) {
-				if (namingServiceManagers.size() == 1 || i == namingServiceManagers.size() - 1) {
+				if (i == namingServiceManagers.size() - 1) {
 					LOGGER.error("get service names from nacos failed!", e);
 					throw e;
 				}
