@@ -18,9 +18,13 @@ package com.huaweicloud.swagger;
 
 import static org.springdoc.core.utils.Constants.DEFAULT_GROUP_NAME;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springdoc.core.customizers.SpringDocCustomizers;
 import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springdoc.core.providers.SpringDocProviders;
@@ -30,12 +34,18 @@ import org.springdoc.core.service.OpenAPIService;
 import org.springdoc.core.service.OperationService;
 import org.springdoc.webmvc.api.OpenApiResource;
 import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.support.ScopeNotActiveException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.HandlerMethod;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import jakarta.servlet.http.HttpServletRequest;
 
 public class SpringMvcOpenApiResource extends OpenApiResource {
+  private static final Logger LOGGER = LoggerFactory.getLogger(SpringMvcOpenApiResource.class);
 
   public SpringMvcOpenApiResource(String groupName, ObjectFactory<OpenAPIService> openAPIBuilderObjectFactory,
       AbstractRequestService requestBuilder, GenericResponseService responseBuilder,
@@ -66,9 +76,27 @@ public class SpringMvcOpenApiResource extends OpenApiResource {
     openAPIService.setCachedOpenAPI(null, Locale.getDefault());
   }
 
-  public Set<String> getControllers() {
-    openAPIService.build(Locale.getDefault());
-    return openAPIService.getMappingsMap().keySet();
+  public Set<String> getControllers(ApplicationContext applicationContext) {
+    Map<String, Object> mappingsMap = new HashMap<>(applicationContext.getBeansWithAnnotation(RequestMapping.class));
+    final String[] restControllerNames = applicationContext.getBeanNamesForAnnotation(RestController.class);
+    for (String beanName : restControllerNames) {
+      try {
+        Object beanInstance = applicationContext.getBean(beanName);
+        mappingsMap.put(beanName, beanInstance);
+      } catch (ScopeNotActiveException e) {
+        LOGGER.warn("bean [{}] is not active in current scope, ignore it.", beanName);
+      }
+    }
+    final String[] controllerNames = applicationContext.getBeanNamesForAnnotation(Controller.class);
+    for (String beanName : controllerNames) {
+      try {
+        Object beanInstance = applicationContext.getBean(beanName);
+        mappingsMap.put(beanName, beanInstance);
+      } catch (ScopeNotActiveException e) {
+        LOGGER.warn("bean [{}] is not active in current scope, ignore it.", beanName);
+      }
+    }
+    return mappingsMap.keySet();
   }
 
   /**

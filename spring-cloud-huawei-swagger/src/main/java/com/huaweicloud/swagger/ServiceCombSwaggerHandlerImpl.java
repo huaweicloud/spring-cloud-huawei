@@ -63,7 +63,7 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
 
   private void runSpringDocScanner() {
     SpringMvcOpenApiResource mvcOpenApiResource = openApiResource.createOpenApiResource(Constants.DEFAULT_GROUP_NAME);
-    Set<String> set = mvcOpenApiResource.getControllers();
+    Set<String> set = mvcOpenApiResource.getControllers(openApiResource.getApplicationContext());
     set.forEach(key -> {
       SpringMvcOpenApiResource beanOpenApiResource = openApiResource.createOpenApiResource(key);
       beanOpenApiResource.clearCache();

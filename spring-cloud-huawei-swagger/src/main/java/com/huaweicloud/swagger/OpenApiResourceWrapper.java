@@ -23,13 +23,16 @@ import org.springdoc.core.service.AbstractRequestService;
 import org.springdoc.core.service.GenericResponseService;
 import org.springdoc.core.service.OpenAPIService;
 import org.springdoc.core.service.OperationService;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  * This class is to create a SpringMvcOpenApiResource object,
  * if make SpringMvcOpenApiResource as a spring bean,it will effect springdoc
  */
-public class OpenApiResourceWrapper {
+public class OpenApiResourceWrapper implements ApplicationContextAware {
 
   ObjectFactory<OpenAPIService> openAPIBuilderObjectFactory;
 
@@ -44,6 +47,8 @@ public class OpenApiResourceWrapper {
   SpringDocProviders springDocProviders;
 
   SpringDocCustomizers springDocCustomizers;
+
+  private ApplicationContext applicationContext;
 
   public OpenApiResourceWrapper(
       ObjectFactory<OpenAPIService> openAPIBuilderObjectFactory, AbstractRequestService requestBuilder,
@@ -63,5 +68,14 @@ public class OpenApiResourceWrapper {
   public SpringMvcOpenApiResource createOpenApiResource(String groupName) {
     return new SpringMvcOpenApiResource(groupName, openAPIBuilderObjectFactory, requestBuilder,
         responseBuilder, operationParser, springDocConfigProperties, springDocProviders, springDocCustomizers);
+  }
+
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
+  }
+
+  public ApplicationContext getApplicationContext() {
+    return applicationContext;
   }
 }
