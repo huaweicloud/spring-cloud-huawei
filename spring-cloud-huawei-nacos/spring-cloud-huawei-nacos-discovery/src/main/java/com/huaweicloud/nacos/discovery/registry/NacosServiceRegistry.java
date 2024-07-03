@@ -19,6 +19,7 @@ package com.huaweicloud.nacos.discovery.registry;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +29,7 @@ import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
+import org.springframework.util.CollectionUtils;
 
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.pojo.Instance;
@@ -74,8 +76,10 @@ public class NacosServiceRegistry implements ServiceRegistry<Registration> {
 		for (NamingServiceManager serviceManager : namingServiceManagers) {
 			try {
 				serviceManager.getNamingService().registerInstance(serviceId, group, instance);
-				serviceManager.getNamingMaintainService()
-						.updateService(serviceId, group, 0, NacosMicroserviceHandler.createMicroserviceMetadata());
+				Map<String, String> serviceMetadata = NacosMicroserviceHandler.createMicroserviceMetadata();
+				if (!CollectionUtils.isEmpty(serviceMetadata)) {
+					serviceManager.getNamingMaintainService().updateService(serviceId, group, 0, serviceMetadata);
+				}
 				eventBus.post(new NacosServiceRegistrationEvent(instance, true));
 				LOGGER.info("nacos registry, {} {}:{} register finished", serviceId, instance.getIp(), instance.getPort());
 			} catch (Exception e) {
