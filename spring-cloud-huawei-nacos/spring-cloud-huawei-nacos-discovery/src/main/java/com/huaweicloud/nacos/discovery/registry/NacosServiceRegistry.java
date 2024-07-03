@@ -73,6 +73,7 @@ public class NacosServiceRegistry implements ServiceRegistry<Registration> {
 		String serviceId = registration.getServiceId();
 		String group = nacosDiscoveryProperties.getGroup();
 		instance.setInstanceId(registration.getInstanceId());
+		int successCount = 0;
 		for (NamingServiceManager serviceManager : namingServiceManagers) {
 			try {
 				serviceManager.getNamingService().registerInstance(serviceId, group, instance);
@@ -80,12 +81,18 @@ public class NacosServiceRegistry implements ServiceRegistry<Registration> {
 				if (!CollectionUtils.isEmpty(serviceMetadata)) {
 					serviceManager.getNamingMaintainService().updateService(serviceId, group, 0, serviceMetadata);
 				}
-				eventBus.post(new NacosServiceRegistrationEvent(instance, true));
+				successCount++;
 				LOGGER.info("nacos registry, {} {}:{} register finished", serviceId, instance.getIp(), instance.getPort());
 			} catch (Exception e) {
-				eventBus.post(new NacosServiceRegistrationEvent(instance, false));
 				LOGGER.error("service [{}] nacos server [{}] registry failed", serviceId, serviceManager.getServerAddr(), e);
 			}
+		}
+
+		// just need one nacos server registry success
+		if (successCount > 0) {
+			eventBus.post(new NacosServiceRegistrationEvent(instance, true));
+		} else {
+			eventBus.post(new NacosServiceRegistrationEvent(instance, false));
 		}
 	}
 
@@ -95,17 +102,23 @@ public class NacosServiceRegistry implements ServiceRegistry<Registration> {
 			LOGGER.warn("No service to de-register for nacos.");
 			return;
 		}
+		int successCount = 0;
 		for (NamingServiceManager serviceManager : namingServiceManagers) {
 			String serviceId = registration.getServiceId();
 			String group = nacosDiscoveryProperties.getGroup();
 			try {
 				serviceManager.getNamingService().deregisterInstance(serviceId, group, registration.getHost(),
 						registration.getPort(), nacosDiscoveryProperties.getClusterName());
-				eventBus.post(new NacosServiceRegistrationEvent(instance, false));
+				successCount++;
 			} catch (Exception e) {
 				LOGGER.error("de-register service [{}] from Nacos Server [{}] failed.", registration.getServiceId(),
 						serviceManager.getServerAddr(), e);
 			}
+		}
+
+		// need all nacos server deregister success
+		if (successCount == namingServiceManagers.size()) {
+			eventBus.post(new NacosServiceRegistrationEvent(instance, false));
 		}
 	}
 
