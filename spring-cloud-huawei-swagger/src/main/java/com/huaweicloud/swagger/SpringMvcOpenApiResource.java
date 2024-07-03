@@ -18,6 +18,7 @@ package com.huaweicloud.swagger;
 
 import static org.springdoc.core.utils.Constants.DEFAULT_GROUP_NAME;
 
+import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -77,8 +78,16 @@ public class SpringMvcOpenApiResource extends OpenApiResource {
   }
 
   public Set<String> getControllers(ApplicationContext applicationContext) {
-    Map<String, Object> mappingsMap = new HashMap<>(applicationContext.getBeansWithAnnotation(RequestMapping.class));
-    final String[] restControllerNames = applicationContext.getBeanNamesForAnnotation(RestController.class);
+    Map<String, Object> mappingsMap = new HashMap<>();
+    buildControllerMapping(mappingsMap, applicationContext, RequestMapping.class);
+    buildControllerMapping(mappingsMap, applicationContext, RestController.class);
+    buildControllerMapping(mappingsMap, applicationContext, Controller.class);
+    return mappingsMap.keySet();
+  }
+
+  private void buildControllerMapping(Map<String, Object> mappingsMap, ApplicationContext applicationContext,
+      Class<? extends Annotation> clazz) {
+    final String[] restControllerNames = applicationContext.getBeanNamesForAnnotation(clazz);
     for (String beanName : restControllerNames) {
       try {
         Object beanInstance = applicationContext.getBean(beanName);
@@ -87,16 +96,6 @@ public class SpringMvcOpenApiResource extends OpenApiResource {
         LOGGER.warn("bean [{}] is not active in current scope, ignore it.", beanName);
       }
     }
-    final String[] controllerNames = applicationContext.getBeanNamesForAnnotation(Controller.class);
-    for (String beanName : controllerNames) {
-      try {
-        Object beanInstance = applicationContext.getBean(beanName);
-        mappingsMap.put(beanName, beanInstance);
-      } catch (ScopeNotActiveException e) {
-        LOGGER.warn("bean [{}] is not active in current scope, ignore it.", beanName);
-      }
-    }
-    return mappingsMap.keySet();
   }
 
   /**
