@@ -50,7 +50,7 @@ public class NacosServiceAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  @ConditionalOnProperty(value = "spring.cloud.nacos.discovery.master-standby-enabled", havingValue = "true")
+  @ConditionalOnProperty(value = NacosConst.MASTER_STANDBY_ENABLED, havingValue = "true")
   public NamingServiceStandbyManager namingServiceStandbyManager(NacosDiscoveryProperties properties) {
     return new NamingServiceStandbyManager(properties);
   }

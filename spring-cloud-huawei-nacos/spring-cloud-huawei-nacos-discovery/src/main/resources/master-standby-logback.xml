@@ -18,8 +18,6 @@
 
 <configuration debug="false" scan="false"  packagingData="true">
     <root level="info">
-        <appender-ref ref="ASYNC-REMOTE"/>
-        <appender-ref ref="ASYNC-NAMING"/>
         <appender-ref ref="CONSOLE"/>
     </root>
 
@@ -67,17 +65,14 @@
         <appender-ref ref="NAMING_LOG_FILE"/>
     </appender>
 
-    <Logger name="com.alibaba.nacos.common.remote.client" level="info"
-        additivity="false">
+    <Logger name="com.alibaba.nacos.common.remote.client" level="info" additivity="false">
         <appender-ref ref="ASYNC-REMOTE"/>
     </Logger>
     
-    <Logger name="com.alibaba.nacos.shaded.io.grpc" level="info"
-        additivity="false">
+    <Logger name="com.alibaba.nacos.shaded.io.grpc" level="info" additivity="false">
         <appender-ref ref="ASYNC-REMOTE"/>
     </Logger>
-    <logger name="com.alibaba.nacos.client.naming" level="info"
-      additivity="false">
+    <logger name="com.alibaba.nacos.client.naming" level="info" additivity="false">
         <appender-ref ref="ASYNC-NAMING"/>
     </logger>
 </configuration>
