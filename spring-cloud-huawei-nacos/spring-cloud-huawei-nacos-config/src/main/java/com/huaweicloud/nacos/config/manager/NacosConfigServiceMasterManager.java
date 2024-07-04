@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.huawei.cloud.nacos.config.manager;
+package com.huaweicloud.nacos.config.manager;
 
 import java.util.Objects;
 
@@ -27,14 +27,14 @@ import com.alibaba.cloud.nacos.diagnostics.analyzer.NacosConnectionFailureExcept
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.config.ConfigService;
 
-public class NacosConfigServiceStandbyManager implements NacosConfigManager {
-  private static final Logger LOGGER = LoggerFactory.getLogger(NacosConfigServiceStandbyManager.class);
+public class NacosConfigServiceMasterManager implements NacosConfigManager {
+  private static final Logger LOGGER = LoggerFactory.getLogger(NacosConfigServiceMasterManager.class);
 
   private final NacosConfigProperties properties;
 
   private volatile ConfigService configService;
 
-  public NacosConfigServiceStandbyManager(NacosConfigProperties properties) {
+  public NacosConfigServiceMasterManager(NacosConfigProperties properties) {
     this.properties = properties;
   }
 
@@ -44,10 +44,10 @@ public class NacosConfigServiceStandbyManager implements NacosConfigManager {
       synchronized (NacosConfigServiceMasterManager.class) {
         if (Objects.isNull(configService)) {
           try {
-            configService = NacosFactory.createConfigService(properties.assembleStandbyNacosServerProperties());
+            configService = NacosFactory.createConfigService(properties.assembleMasterNacosServerProperties());
           } catch (Exception e) {
-            LOGGER.error("build nacosConfigServiceStandby failed.", e);
-            throw new NacosConnectionFailureException(properties.getStandbyServerAddr(), e.getMessage(), e);
+            LOGGER.error("build nacosConfigServiceMaster failed.", e);
+            throw new NacosConnectionFailureException(properties.getServerAddr(), e.getMessage(), e);
           }
         }
       }
@@ -57,21 +57,21 @@ public class NacosConfigServiceStandbyManager implements NacosConfigManager {
 
   @Override
   public String getServerAddr() {
-    return properties.getStandbyServerAddr();
+    return properties.getServerAddr();
+  }
+
+  @Override
+  public int getOrder() {
+    return properties.getOrder();
   }
 
   @Override
   public boolean checkServerConnect() {
-    return ConfigServiceManagerUtils.checkServerConnect(properties.getStandbyServerAddr());
+    return ConfigServiceManagerUtils.checkServerConnect(properties.getServerAddr());
   }
 
   @Override
   public void resetConfigService() {
     this.configService = null;
-  }
-
-  @Override
-  public int getOrder() {
-    return properties.getOrder() + 10;
   }
 }

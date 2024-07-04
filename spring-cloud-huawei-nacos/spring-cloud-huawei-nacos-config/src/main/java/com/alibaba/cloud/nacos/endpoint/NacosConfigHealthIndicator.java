@@ -20,7 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.huawei.cloud.nacos.config.manager.NacosConfigManager;
+import com.huaweicloud.nacos.config.manager.NacosConfigManager;
 
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;

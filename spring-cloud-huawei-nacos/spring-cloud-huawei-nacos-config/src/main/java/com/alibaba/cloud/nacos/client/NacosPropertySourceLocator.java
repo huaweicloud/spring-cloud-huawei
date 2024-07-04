@@ -18,10 +18,10 @@ package com.alibaba.cloud.nacos.client;
 
 import java.util.List;
 
-import com.huawei.cloud.nacos.config.NacosConfigConst;
+import com.huaweicloud.nacos.config.NacosConfigConst;
 import com.alibaba.cloud.nacos.NacosConfigProperties;
 import com.alibaba.cloud.nacos.NacosPropertySourceRepository;
-import com.huawei.cloud.nacos.config.manager.NacosConfigManager;
+import com.huaweicloud.nacos.config.manager.NacosConfigManager;
 import com.alibaba.cloud.nacos.parser.NacosDataParserHandler;
 import com.alibaba.cloud.nacos.refresh.NacosContextRefresher;
 

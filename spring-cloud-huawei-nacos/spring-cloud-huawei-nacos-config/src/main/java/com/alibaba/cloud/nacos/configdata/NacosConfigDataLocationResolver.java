@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.alibaba.cloud.nacos.NacosConfigProperties;
-import com.huawei.cloud.nacos.config.manager.NacosConfigServiceMasterManager;
-import com.huawei.cloud.nacos.config.manager.NacosConfigServiceStandbyManager;
+import com.huaweicloud.nacos.config.manager.NacosConfigServiceMasterManager;
+import com.huaweicloud.nacos.config.manager.NacosConfigServiceStandbyManager;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;

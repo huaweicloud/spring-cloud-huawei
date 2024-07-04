@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.alibaba.cloud.nacos.NacosPropertySourceRepository;
-import com.huawei.cloud.nacos.config.manager.NacosConfigManager;
+import com.huaweicloud.nacos.config.manager.NacosConfigManager;
 import com.alibaba.cloud.nacos.parser.NacosDataParserHandler;
 import com.alibaba.cloud.nacos.refresh.NacosSnapshotConfigManager;
 import com.alibaba.nacos.api.exception.NacosException;
@@ -119,9 +119,6 @@ public class NacosPropertySourceBuilder {
 
   private String getConfigDataFromNacos(String dataId, String group) {
     for (NacosConfigManager configManager: configServiceManagers) {
-      if (!configManager.checkServerConnect()) {
-        continue;
-      }
       try {
         return configManager.getConfigService().getConfig(dataId, group, timeout);
       } catch (NacosException e) {

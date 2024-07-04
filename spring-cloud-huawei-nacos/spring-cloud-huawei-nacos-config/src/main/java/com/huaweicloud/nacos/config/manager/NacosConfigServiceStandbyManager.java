@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.huawei.cloud.nacos.config.manager;
+package com.huaweicloud.nacos.config.manager;
 
 import java.util.Objects;
 
@@ -27,14 +27,14 @@ import com.alibaba.cloud.nacos.diagnostics.analyzer.NacosConnectionFailureExcept
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.config.ConfigService;
 
-public class NacosConfigServiceMasterManager implements NacosConfigManager {
-  private static final Logger LOGGER = LoggerFactory.getLogger(NacosConfigServiceMasterManager.class);
+public class NacosConfigServiceStandbyManager implements NacosConfigManager {
+  private static final Logger LOGGER = LoggerFactory.getLogger(NacosConfigServiceStandbyManager.class);
 
   private final NacosConfigProperties properties;
 
   private volatile ConfigService configService;
 
-  public NacosConfigServiceMasterManager(NacosConfigProperties properties) {
+  public NacosConfigServiceStandbyManager(NacosConfigProperties properties) {
     this.properties = properties;
   }
 
@@ -44,10 +44,10 @@ public class NacosConfigServiceMasterManager implements NacosConfigManager {
       synchronized (NacosConfigServiceMasterManager.class) {
         if (Objects.isNull(configService)) {
           try {
-            configService = NacosFactory.createConfigService(properties.assembleMasterNacosServerProperties());
+            configService = NacosFactory.createConfigService(properties.assembleStandbyNacosServerProperties());
           } catch (Exception e) {
-            LOGGER.error("build nacosConfigServiceMaster failed.", e);
-            throw new NacosConnectionFailureException(properties.getServerAddr(), e.getMessage(), e);
+            LOGGER.error("build nacosConfigServiceStandby failed.", e);
+            throw new NacosConnectionFailureException(properties.getStandbyServerAddr(), e.getMessage(), e);
           }
         }
       }
@@ -57,21 +57,21 @@ public class NacosConfigServiceMasterManager implements NacosConfigManager {
 
   @Override
   public String getServerAddr() {
-    return properties.getServerAddr();
-  }
-
-  @Override
-  public int getOrder() {
-    return properties.getOrder();
+    return properties.getStandbyServerAddr();
   }
 
   @Override
   public boolean checkServerConnect() {
-    return ConfigServiceManagerUtils.checkServerConnect(properties.getServerAddr());
+    return ConfigServiceManagerUtils.checkServerConnect(properties.getStandbyServerAddr());
   }
 
   @Override
   public void resetConfigService() {
     this.configService = null;
+  }
+
+  @Override
+  public int getOrder() {
+    return properties.getOrder() + 10;
   }
 }

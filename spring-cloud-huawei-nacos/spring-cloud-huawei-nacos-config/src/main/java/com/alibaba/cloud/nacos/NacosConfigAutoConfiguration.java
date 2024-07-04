@@ -18,9 +18,9 @@ package com.alibaba.cloud.nacos;
 
 import java.util.List;
 
-import com.huawei.cloud.nacos.config.manager.NacosConfigManager;
-import com.huawei.cloud.nacos.config.manager.NacosConfigServiceMasterManager;
-import com.huawei.cloud.nacos.config.manager.NacosConfigServiceStandbyManager;
+import com.huaweicloud.nacos.config.manager.NacosConfigManager;
+import com.huaweicloud.nacos.config.manager.NacosConfigServiceMasterManager;
+import com.huaweicloud.nacos.config.manager.NacosConfigServiceStandbyManager;
 import com.alibaba.cloud.nacos.refresh.NacosContextRefresher;
 import com.alibaba.cloud.nacos.refresh.NacosRefreshHistory;
 import com.alibaba.cloud.nacos.refresh.SmartConfigurationPropertiesRebinder;

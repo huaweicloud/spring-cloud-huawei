@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.huawei.cloud.nacos.config.manager.NacosConfigManager;
+import com.huaweicloud.nacos.config.manager.NacosConfigManager;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.spring.util.PropertySourcesUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;

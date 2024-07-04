@@ -19,7 +19,7 @@ package com.alibaba.cloud.nacos.endpoint;
 import java.util.List;
 
 import com.alibaba.cloud.nacos.NacosConfigProperties;
-import com.huawei.cloud.nacos.config.manager.NacosConfigManager;
+import com.huaweicloud.nacos.config.manager.NacosConfigManager;
 import com.alibaba.cloud.nacos.refresh.NacosRefreshHistory;
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -15,16 +15,18 @@
  * limitations under the License.
  */
 
-package com.huawei.cloud.nacos.config;
+package com.huaweicloud.nacos.config.manager;
 
-public class NacosConfigConst {
-  public static final String SECURITY_CONFIG_DATA_ID_PREFIX = "cse-app-security-";
+import org.springframework.core.Ordered;
 
-  public static final String SECURITY_CONFIG_FILE_EXTENSION = "yaml";
+import com.alibaba.nacos.api.config.ConfigService;
 
-  public static final String COMMAS = ",";
+public interface NacosConfigManager extends Ordered {
+  ConfigService getConfigService();
 
-  public static final String STATUS_UP = "UP";
+  String getServerAddr();
 
-  public static final String RETRY_MASTER_ENABLED = "spring.cloud.nacos.config.retryMasterServerEnabled";
+  boolean checkServerConnect();
+
+  void resetConfigService();
 }

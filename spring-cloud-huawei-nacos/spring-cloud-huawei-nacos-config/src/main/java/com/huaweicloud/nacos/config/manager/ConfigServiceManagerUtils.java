@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.huawei.cloud.nacos.config.manager;
+package com.huaweicloud.nacos.config.manager;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
