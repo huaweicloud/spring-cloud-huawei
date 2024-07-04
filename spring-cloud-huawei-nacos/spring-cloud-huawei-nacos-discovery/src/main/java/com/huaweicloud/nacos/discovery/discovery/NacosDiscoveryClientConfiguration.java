@@ -17,11 +17,13 @@
 
 package com.huaweicloud.nacos.discovery.discovery;
 
+import java.util.List;
+
 import com.huaweicloud.common.event.ClosedEventListener;
 import com.huaweicloud.nacos.discovery.ConditionalOnNacosDiscoveryEnabled;
 import com.huaweicloud.nacos.discovery.NacosDiscoveryProperties;
 import com.huaweicloud.nacos.discovery.NacosServiceAutoConfiguration;
-import com.huaweicloud.nacos.discovery.NamingServiceManager;
+import com.huaweicloud.nacos.discovery.manager.NamingServiceManager;
 import com.huaweicloud.nacos.discovery.watch.NacosServiceWatch;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -40,8 +42,8 @@ public class NacosDiscoveryClientConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public NacosDiscovery nacosDiscovery(NacosDiscoveryProperties discoveryProperties,
-      NamingServiceManager namingServiceManager, NacosCrossGroupProperties crossGroupProperties) {
-    return new NacosDiscovery(discoveryProperties, namingServiceManager, crossGroupProperties);
+      List<NamingServiceManager> namingServiceManagers, NacosCrossGroupProperties crossGroupProperties) {
+    return new NacosDiscovery(discoveryProperties, namingServiceManagers, crossGroupProperties);
   }
 
   @Bean
@@ -54,8 +56,8 @@ public class NacosDiscoveryClientConfiguration {
   @ConditionalOnMissingBean
   @ConditionalOnProperty(value = "spring.cloud.nacos.discovery.watch.enabled")
   public NacosServiceWatch nacosServiceWatch(NacosDiscoveryProperties discoveryProperties,
-      NamingServiceManager namingServiceManager, ClosedEventListener closedEventListener) {
-    return new NacosServiceWatch(discoveryProperties, namingServiceManager, closedEventListener);
+      List<NamingServiceManager> namingServiceManagers, ClosedEventListener closedEventListener) {
+    return new NacosServiceWatch(discoveryProperties, namingServiceManagers, closedEventListener);
   }
 
   @Bean

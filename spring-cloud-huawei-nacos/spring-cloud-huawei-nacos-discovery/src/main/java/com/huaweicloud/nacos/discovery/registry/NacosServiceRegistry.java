@@ -17,23 +17,26 @@
 
 package com.huaweicloud.nacos.discovery.registry;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
+import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
+import org.springframework.util.CollectionUtils;
 
 import com.alibaba.nacos.api.exception.NacosException;
-import com.alibaba.nacos.api.naming.NamingMaintainService;
-import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.google.common.eventbus.EventBus;
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.nacos.discovery.NacosDiscoveryProperties;
-import com.huaweicloud.nacos.discovery.NamingServiceManager;
+import com.huaweicloud.nacos.discovery.manager.NamingServiceManager;
 
 public class NacosServiceRegistry implements ServiceRegistry<Registration> {
 
@@ -45,16 +48,17 @@ public class NacosServiceRegistry implements ServiceRegistry<Registration> {
 
 	private final NacosDiscoveryProperties nacosDiscoveryProperties;
 
-	private final NamingServiceManager namingServiceManager;
+	private final List<NamingServiceManager> namingServiceManagers;
 
 	private final Instance instance;
 
 	private final EventBus eventBus;
 
-	public NacosServiceRegistry(NamingServiceManager namingServiceManager,
+	public NacosServiceRegistry(List<NamingServiceManager> namingServiceManagers,
 			NacosDiscoveryProperties nacosDiscoveryProperties, Environment environment) {
 		this.nacosDiscoveryProperties = nacosDiscoveryProperties;
-		this.namingServiceManager = namingServiceManager;
+		this.namingServiceManagers = namingServiceManagers.stream().sorted(Comparator.comparingInt(Ordered::getOrder))
+				.collect(Collectors.toList());
 		this.instance  =
 				NacosMicroserviceHandler.createMicroserviceInstance(nacosDiscoveryProperties, environment);
 		eventBus = EventManager.getEventBus();
@@ -66,47 +70,66 @@ public class NacosServiceRegistry implements ServiceRegistry<Registration> {
 			LOGGER.warn("Have no service name to register for nacos.");
 			return;
 		}
-		NamingService namingService = namingService();
 		String serviceId = registration.getServiceId();
 		String group = nacosDiscoveryProperties.getGroup();
 		instance.setInstanceId(registration.getInstanceId());
-		try {
-			namingService.registerInstance(serviceId, group, instance);
+		int successCount = 0;
+		for (NamingServiceManager serviceManager : namingServiceManagers) {
+			try {
+				serviceManager.getNamingService().registerInstance(serviceId, group, instance);
+				Map<String, String> serviceMetadata = NacosMicroserviceHandler.createMicroserviceMetadata();
+				if (!CollectionUtils.isEmpty(serviceMetadata)) {
+					serviceManager.getNamingMaintainService().updateService(serviceId, group, 0, serviceMetadata);
+				}
+				successCount++;
+				LOGGER.info("nacos registry, {} {}:{} register finished", serviceId, instance.getIp(), instance.getPort());
+			} catch (Exception e) {
+				LOGGER.error("service [{}] nacos server [{}] registry failed", serviceId, serviceManager.getServerAddr(), e);
+			}
+		}
+
+		// just need one nacos server registry success
+		if (successCount > 0) {
 			eventBus.post(new NacosServiceRegistrationEvent(instance, true));
-			LOGGER.info("nacos registry, {} {}:{} register finished", serviceId, instance.getIp(), instance.getPort());
-		} catch (Exception e) {
+		} else {
 			eventBus.post(new NacosServiceRegistrationEvent(instance, false));
-			LOGGER.error("service {} nacos registry failed", serviceId, e);
 		}
 	}
 
 	@Override
 	public void deregister(Registration registration) {
-		LOGGER.warn("De-registery service {} from Nacos Server started.", registration.getServiceId());
 		if (StringUtils.isEmpty(registration.getServiceId())) {
 			LOGGER.warn("No service to de-register for nacos.");
 			return;
 		}
-		NamingService namingService = namingService();
-		String serviceId = registration.getServiceId();
-		String group = nacosDiscoveryProperties.getGroup();
-		try {
-			namingService.deregisterInstance(serviceId, group, registration.getHost(),
-					registration.getPort(), nacosDiscoveryProperties.getClusterName());
-			eventBus.post(new NacosServiceRegistrationEvent(instance, false));
-		} catch (Exception e) {
-			LOGGER.error("de-register service {} from Nacos Server failed.", registration.getServiceId(), e);
+		int successCount = 0;
+		for (NamingServiceManager serviceManager : namingServiceManagers) {
+			String serviceId = registration.getServiceId();
+			String group = nacosDiscoveryProperties.getGroup();
+			try {
+				serviceManager.getNamingService().deregisterInstance(serviceId, group, registration.getHost(),
+						registration.getPort(), nacosDiscoveryProperties.getClusterName());
+				successCount++;
+			} catch (Exception e) {
+				LOGGER.error("de-register service [{}] from Nacos Server [{}] failed.", registration.getServiceId(),
+						serviceManager.getServerAddr(), e);
+			}
 		}
 
-		LOGGER.info("De-registery service {} from Nacos Server finished.", registration.getServiceId());
+		// need all nacos server deregister success
+		if (successCount == namingServiceManagers.size()) {
+			eventBus.post(new NacosServiceRegistrationEvent(instance, false));
+		}
 	}
 
 	@Override
 	public void close() {
-		try {
-			namingServiceManager.nacosServiceShutDown();
-		} catch (NacosException e) {
-			LOGGER.error("Nacos namingService shutDown failed.", e);
+		for (NamingServiceManager serviceManager : namingServiceManagers) {
+			try {
+				serviceManager.shutDown();
+			} catch (NacosException e) {
+				LOGGER.error("Nacos server [{}] namingService shutDown failed.", serviceManager.getServerAddr(), e);
+			}
 		}
 	}
 
@@ -118,10 +141,17 @@ public class NacosServiceRegistry implements ServiceRegistry<Registration> {
 		}
 		String serviceId = registration.getServiceId();
     instance.setEnabled(!STATUS_DOWN.equalsIgnoreCase(status));
-		try {
-			namingMaintainService().updateInstance(serviceId, nacosDiscoveryProperties.getGroup(), instance);
-		} catch (Exception e) {
-			throw new RuntimeException("update nacos instance status fail", e);
+		for (int i = 0; i < namingServiceManagers.size(); i++) {
+			try {
+				namingServiceManagers.get(i).getNamingMaintainService()
+						.updateInstance(serviceId, nacosDiscoveryProperties.getGroup(), instance);
+			} catch (Exception e) {
+				LOGGER.error("Nacos server [{}] service [{}] set status [{}] failed.",
+						namingServiceManagers.get(i).getServerAddr(), serviceId, status, e);
+				if (i == namingServiceManagers.size() - 1) {
+					throw new RuntimeException("update nacos instance status fail", e);
+				}
+			}
 		}
 	}
 
@@ -130,26 +160,22 @@ public class NacosServiceRegistry implements ServiceRegistry<Registration> {
 	public <T> T getStatus(Registration registration) {
 		String serviceName = registration.getServiceId();
 		String group = nacosDiscoveryProperties.getGroup();
-		try {
-			List<Instance> instances = namingService().getAllInstances(serviceName, group);
-			for (Instance instance : instances) {
-				if (instance.getIp().equalsIgnoreCase(nacosDiscoveryProperties.getIp())
-						&& instance.getPort() == nacosDiscoveryProperties.getPort()) {
-					return (T) (instance.isEnabled() ? STATUS_UP : STATUS_DOWN);
+		for (NamingServiceManager serviceManager : namingServiceManagers) {
+			try {
+				List<Instance> instances = serviceManager.getNamingService().getAllInstances(serviceName, group);
+				List<Instance> currentInstances = instances.stream().filter(this::checkIpAndPort).toList();
+				if (!currentInstances.isEmpty()) {
+					return (T) (currentInstances.get(0).isEnabled() ? STATUS_UP : STATUS_DOWN);
 				}
+			} catch (Exception e) {
+				LOGGER.error("getStatus failed", e);
 			}
-		} catch (Exception e) {
-			LOGGER.error("getStatus failed", e);
 		}
 		return null;
 	}
 
-	private NamingService namingService() {
-		return namingServiceManager.buildNamingService();
+	private boolean checkIpAndPort(Instance instance) {
+		return instance.getIp().equalsIgnoreCase(nacosDiscoveryProperties.getIp())
+				&& instance.getPort() == nacosDiscoveryProperties.getPort();
 	}
-
-	private NamingMaintainService namingMaintainService() {
-		return namingServiceManager.buildNamingMaintainService();
-	}
-
 }
