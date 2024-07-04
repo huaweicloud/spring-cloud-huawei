@@ -17,47 +17,12 @@
 
 package com.huaweicloud.nacos.discovery.manager;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Properties;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.huaweicloud.nacos.discovery.NacosConst;
 import com.huaweicloud.nacos.discovery.NacosDiscoveryProperties;
 
 public class NamingServiceManagerUtils {
-  private static final Logger LOGGER = LoggerFactory.getLogger(NamingServiceManagerUtils.class);
-
-  public static boolean checkServerConnect(String serverAddress) {
-    if (StringUtils.isEmpty(serverAddress)) {
-      return false;
-    }
-    URI ipPort = parseIpPortFromURI(serverAddress);
-    if (ipPort != null && ipPort.getHost() != null) {
-      try (Socket s = new Socket()) {
-        s.connect(new InetSocketAddress(ipPort.getHost(), ipPort.getPort()), 3000);
-        return true;
-      } catch (IOException e) {
-        LOGGER.warn("ping endpoint {} failed, It will be quarantined again.", serverAddress);
-      }
-    }
-    return false;
-  }
-
-  private static URI parseIpPortFromURI(String uri) {
-    try {
-      return new URI(uri);
-    } catch (URISyntaxException e) {
-      return null;
-    }
-  }
-
   public static Properties buildMasterServerProperties(NacosDiscoveryProperties properties) {
     return buildProperties(properties, properties.getServerAddr());
   }
