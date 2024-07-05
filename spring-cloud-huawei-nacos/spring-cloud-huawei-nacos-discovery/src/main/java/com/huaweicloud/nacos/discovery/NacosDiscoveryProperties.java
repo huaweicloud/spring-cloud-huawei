@@ -20,9 +20,13 @@ package com.huaweicloud.nacos.discovery;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.servicecomb.foundation.common.net.NetUtils;
 import org.springframework.beans.factory.annotation.Value;
 
 public class NacosDiscoveryProperties {
+  private static final String IPV6 = "IPv6";
+
   private boolean enabled = true;
 
   private String serverAddr = "http://127.0.0.1:8848";
@@ -223,6 +227,11 @@ public class NacosDiscoveryProperties {
   }
 
   public String getIp() {
+    if (StringUtils.isEmpty(ip)) {
+      String ip = IPV6.equalsIgnoreCase(ipType) ? NetUtils.getIpv6HostAddress() : NetUtils.getHostAddress();
+      setIp(ip);
+      return ip;
+    }
     return ip;
   }
 
