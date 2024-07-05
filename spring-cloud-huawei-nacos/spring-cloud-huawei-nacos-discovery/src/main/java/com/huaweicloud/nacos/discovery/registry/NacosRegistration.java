@@ -21,17 +21,13 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.serviceregistry.Registration;
 
 import com.alibaba.nacos.api.naming.PreservedMetadataKeys;
 import com.huaweicloud.nacos.discovery.NacosDiscoveryProperties;
-import com.huaweicloud.nacos.discovery.utils.NetUtils;
 
 public class NacosRegistration implements Registration {
-	private static final String IPV6 = "IPv6";
-
 	private final List<NacosRegistrationMetadataCustomizer> registrationCustomizers;
 
 	private final NacosDiscoveryProperties nacosDiscoveryProperties;
@@ -69,11 +65,6 @@ public class NacosRegistration implements Registration {
 					nacosDiscoveryProperties.getIpDeleteTimeout().toString());
 		}
 		customize(registrationCustomizers);
-		if (StringUtils.isEmpty(nacosDiscoveryProperties.getIp())) {
-			String ip = IPV6.equalsIgnoreCase(nacosDiscoveryProperties.getIpType())
-					? NetUtils.getIpv6HostAddress() : NetUtils.getHostAddress();
-			nacosDiscoveryProperties.setIp(ip);
-		}
 	}
 
 	protected void customize(
