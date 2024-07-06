@@ -37,101 +37,101 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.core.Ordered;
 
 public class NacosDiscovery {
-	private static final Logger LOGGER = LoggerFactory.getLogger(NacosDiscovery.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(NacosDiscovery.class);
 
-	private final NacosDiscoveryProperties discoveryProperties;
+  private final NacosDiscoveryProperties discoveryProperties;
 
-	private final List<NamingServiceManager> namingServiceManagers;
+  private final List<NamingServiceManager> namingServiceManagers;
 
-	private final NacosCrossGroupProperties crossGroupProperties;
+  private final NacosCrossGroupProperties crossGroupProperties;
 
-	public NacosDiscovery(NacosDiscoveryProperties discoveryProperties, List<NamingServiceManager> namingServiceManagers,
-			NacosCrossGroupProperties crossGroupProperties) {
-		this.discoveryProperties = discoveryProperties;
-		this.namingServiceManagers = namingServiceManagers.stream().sorted(Comparator.comparingInt(Ordered::getOrder))
-				.collect(Collectors.toList());
-		this.crossGroupProperties = crossGroupProperties;
-	}
+  public NacosDiscovery(NacosDiscoveryProperties discoveryProperties, List<NamingServiceManager> namingServiceManagers,
+      NacosCrossGroupProperties crossGroupProperties) {
+    this.discoveryProperties = discoveryProperties;
+    this.namingServiceManagers = namingServiceManagers.stream().sorted(Comparator.comparingInt(Ordered::getOrder))
+        .collect(Collectors.toList());
+    this.crossGroupProperties = crossGroupProperties;
+  }
 
-	public List<ServiceInstance> getInstances(String serviceId) throws NacosException {
-		String group = discoveryProperties.getGroup();
-		if (crossGroupProperties.isEnabled() && crossGroupProperties.getServiceGroupMappings().containsKey(serviceId)) {
-			// if cross group is enable and serviceId has set, using set GROUP to query instances.
-			group = crossGroupProperties.getServiceGroupMappings().get(serviceId);
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.warn("cross group query nacos instances by setting group {}", group);
-			}
-		}
-		for (int i = 0; i < namingServiceManagers.size(); i++) {
-			try {
-				List<Instance> instances = namingServiceManagers.get(i).getNamingService()
-						.selectInstances(serviceId, group, true);
-				return hostToServiceInstanceList(instances, serviceId);
-			} catch (NacosException e) {
-				if (i == namingServiceManagers.size() - 1) {
-					LOGGER.error("get service [{}] instances from nacos failed.", serviceId, e);
-					throw e;
-				}
-				LOGGER.warn("get service [{}] instances from nacos server [{}] failed!", serviceId,
-						namingServiceManagers.get(i).getServerAddr());
-			}
-		}
-		return null;
-	}
+  public List<ServiceInstance> getInstances(String serviceId) throws NacosException {
+    String group = discoveryProperties.getGroup();
+    if (crossGroupProperties.isEnabled() && crossGroupProperties.getServiceGroupMappings().containsKey(serviceId)) {
+      // if cross group is enable and serviceId has set, using set GROUP to query instances.
+      group = crossGroupProperties.getServiceGroupMappings().get(serviceId);
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.warn("cross group query nacos instances by setting group {}", group);
+      }
+    }
+    for (int i = 0; i < namingServiceManagers.size(); i++) {
+      try {
+        List<Instance> instances = namingServiceManagers.get(i).getNamingService()
+            .selectInstances(serviceId, group, true);
+        return hostToServiceInstanceList(instances, serviceId);
+      } catch (NacosException e) {
+        if (i == namingServiceManagers.size() - 1) {
+          LOGGER.error("get service [{}] instances from nacos failed.", serviceId, e);
+          throw e;
+        }
+        LOGGER.warn("get service [{}] instances from nacos server [{}] failed!", serviceId,
+            namingServiceManagers.get(i).getServerAddr());
+      }
+    }
+    return null;
+  }
 
-	public List<String> getServices() throws NacosException {
-		String group = discoveryProperties.getGroup();
-		for (int i = 0; i < namingServiceManagers.size(); i++) {
-			try {
-				ListView<String> services = namingServiceManagers.get(i).getNamingService()
-						.getServicesOfServer(1, Integer.MAX_VALUE, group);
-				return services.getData();
-			} catch (NacosException e) {
-				if (i == namingServiceManagers.size() - 1) {
-					LOGGER.error("get service names from nacos failed!", e);
-					throw e;
-				}
-				LOGGER.warn("get service names from nacos server [{}] failed!", namingServiceManagers.get(i).getServerAddr());
-			}
-		}
-		return null;
-	}
+  public List<String> getServices() throws NacosException {
+    String group = discoveryProperties.getGroup();
+    for (int i = 0; i < namingServiceManagers.size(); i++) {
+      try {
+        ListView<String> services = namingServiceManagers.get(i).getNamingService()
+            .getServicesOfServer(1, Integer.MAX_VALUE, group);
+        return services.getData();
+      } catch (NacosException e) {
+        if (i == namingServiceManagers.size() - 1) {
+          LOGGER.error("get service names from nacos failed!", e);
+          throw e;
+        }
+        LOGGER.warn("get service names from nacos server [{}] failed!", namingServiceManagers.get(i).getServerAddr());
+      }
+    }
+    return null;
+  }
 
-	private List<ServiceInstance> hostToServiceInstanceList(List<Instance> instances, String serviceId) {
-		List<ServiceInstance> result = new ArrayList<>(instances.size());
-		for (Instance instance : instances) {
-			ServiceInstance serviceInstance = hostToServiceInstance(instance, serviceId);
-			if (serviceInstance != null) {
-				result.add(serviceInstance);
-			}
-		}
-		return result;
-	}
+  private List<ServiceInstance> hostToServiceInstanceList(List<Instance> instances, String serviceId) {
+    List<ServiceInstance> result = new ArrayList<>(instances.size());
+    for (Instance instance : instances) {
+      ServiceInstance serviceInstance = hostToServiceInstance(instance, serviceId);
+      if (serviceInstance != null) {
+        result.add(serviceInstance);
+      }
+    }
+    return result;
+  }
 
-	public ServiceInstance hostToServiceInstance(Instance instance,
-			String serviceId) {
-		if (instance == null || !instance.isEnabled() || !instance.isHealthy()) {
-			return null;
-		}
-		NacosServiceInstance nacosServiceInstance = new NacosServiceInstance();
-		nacosServiceInstance.setHost(instance.getIp());
-		nacosServiceInstance.setPort(instance.getPort());
-		nacosServiceInstance.setServiceId(serviceId);
-		nacosServiceInstance.setInstanceId(instance.getInstanceId());
+  public ServiceInstance hostToServiceInstance(Instance instance,
+      String serviceId) {
+    if (instance == null || !instance.isEnabled() || !instance.isHealthy()) {
+      return null;
+    }
+    NacosServiceInstance nacosServiceInstance = new NacosServiceInstance();
+    nacosServiceInstance.setHost(instance.getIp());
+    nacosServiceInstance.setPort(instance.getPort());
+    nacosServiceInstance.setServiceId(serviceId);
+    nacosServiceInstance.setInstanceId(instance.getInstanceId());
 
-		Map<String, String> metadata = new HashMap<>();
-		metadata.put("nacos.weight", instance.getWeight() + "");
-		metadata.put("nacos.cluster", instance.getClusterName());
-		if (instance.getMetadata() != null) {
-			metadata.putAll(instance.getMetadata());
-		}
-		metadata.put("nacos.ephemeral", String.valueOf(instance.isEphemeral()));
-		nacosServiceInstance.setMetadata(metadata);
+    Map<String, String> metadata = new HashMap<>();
+    metadata.put("nacos.weight", instance.getWeight() + "");
+    metadata.put("nacos.cluster", instance.getClusterName());
+    if (instance.getMetadata() != null) {
+      metadata.putAll(instance.getMetadata());
+    }
+    metadata.put("nacos.ephemeral", String.valueOf(instance.isEphemeral()));
+    nacosServiceInstance.setMetadata(metadata);
 
-		if (metadata.containsKey("secure")) {
-			boolean secure = Boolean.parseBoolean(metadata.get("secure"));
-			nacosServiceInstance.setSecure(secure);
-		}
-		return nacosServiceInstance;
-	}
+    if (metadata.containsKey("secure")) {
+      boolean secure = Boolean.parseBoolean(metadata.get("secure"));
+      nacosServiceInstance.setSecure(secure);
+    }
+    return nacosServiceInstance;
+  }
 }

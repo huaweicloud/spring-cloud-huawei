@@ -18,6 +18,7 @@
 package com.huaweicloud.nacos.discovery.registry;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,6 +45,8 @@ public class NacosMicroserviceHandler {
 
   private static final String INSTANCE_PROPS = "SERVICECOMB_INSTANCE_PROPS";
 
+  private static final String SERVICE_PROPS = "SERVICECOMB_SERVICE_PROPS";
+
   public static Instance createMicroserviceInstance(NacosDiscoveryProperties properties, Environment environment) {
     Instance instance = new Instance();
     instance.setWeight(properties.getWeight());
@@ -56,6 +59,15 @@ public class NacosMicroserviceHandler {
     metadata.putAll(genCasProperties(environment));
     instance.setMetadata(metadata);
     return instance;
+  }
+
+  public static Map<String, String> createMicroserviceMetadata() {
+    EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
+    String[] instancePropArray = envConfig.getStringArray(SERVICE_PROPS);
+    if (instancePropArray.length != 0) {
+      return parseProps(instancePropArray);
+    }
+    return Collections.emptyMap();
   }
 
   private static Map<String, String> genCasProperties(Environment environment) {
