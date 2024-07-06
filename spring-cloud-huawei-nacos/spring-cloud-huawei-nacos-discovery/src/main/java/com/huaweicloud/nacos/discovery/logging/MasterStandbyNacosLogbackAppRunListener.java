@@ -17,6 +17,7 @@
 
 package com.huaweicloud.nacos.discovery.logging;
 
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringApplicationRunListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
@@ -25,6 +26,10 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import com.huaweicloud.nacos.discovery.NacosConst;
 
 public class MasterStandbyNacosLogbackAppRunListener implements SpringApplicationRunListener, Ordered {
+  public MasterStandbyNacosLogbackAppRunListener(SpringApplication application, String[] args) {
+
+  }
+  
   @Override
   public int getOrder() {
     return 1;
