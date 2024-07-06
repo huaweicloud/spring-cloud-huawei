@@ -92,12 +92,12 @@ public class NacosPropertySource extends MapPropertySource {
       if (propertySource == null) {
         continue;
       }
-      if (propertySource instanceof MapPropertySource mapPropertySource) {
+      if (propertySource instanceof MapPropertySource) {
         // If the Nacos configuration file uses "---" to separate property name,
         // propertySources will be multiple documents, and every document is a
         // map.
         // see org.springframework.boot.env.YamlPropertySourceLoader#load
-        Map<String, Object> source = mapPropertySource.getSource();
+        Map<String, Object> source = ((MapPropertySource) propertySource).getSource();
         sourceMap.putAll(source);
       } else {
         otherTypePropertySources.add(propertySource);

@@ -97,9 +97,8 @@ public final class NacosDataParserHandler {
       }
       return propertySourceList.stream().filter(Objects::nonNull)
           .map(propertySource -> {
-            if (propertySource instanceof EnumerablePropertySource<?> enumerablePropertySource) {
-              String[] propertyNames = enumerablePropertySource
-                  .getPropertyNames();
+            if (propertySource instanceof EnumerablePropertySource<?>) {
+              String[] propertyNames = ((EnumerablePropertySource<?>) propertySource).getPropertyNames();
               if (propertyNames.length > 0) {
                 Map<String, Object> map = new LinkedHashMap<>();
                 Arrays.stream(propertyNames).forEach(name -> {
@@ -160,11 +159,8 @@ public final class NacosDataParserHandler {
   }
 
   public static NacosDataParserHandler getInstance() {
-    return ParserHandler.HANDLER;
+    return HANDLER;
   }
 
-  private static class ParserHandler {
-
-    private static final NacosDataParserHandler HANDLER = new NacosDataParserHandler();
-  }
+  private static final NacosDataParserHandler HANDLER = new NacosDataParserHandler();
 }

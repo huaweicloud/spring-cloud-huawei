@@ -16,8 +16,6 @@
 
 package com.alibaba.cloud.nacos.diagnostics.analyzer;
 
-import java.io.Serial;
-
 /**
  * Forked from com.alibaba.cloud.nacos.diagnostics.analyzer.NacosConnectionFailureException.java
  *
@@ -27,7 +25,6 @@ import java.io.Serial;
  * @author juven.xuxb
  */
 public class NacosConnectionFailureException extends RuntimeException {
-  @Serial
   private static final long serialVersionUID = 1L;
 
   private final String serverAddr;
