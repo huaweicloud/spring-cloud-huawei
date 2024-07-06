@@ -1372,32 +1372,33 @@ class Foo{
         </example>
     </rule>
 
-    <rule name="UnusedFormalParameter"
-          language="java"
-          since="0.8"
-          message="Avoid unused {0} parameters such as ''{1}''."
-          class="net.sourceforge.pmd.lang.java.rule.bestpractices.UnusedFormalParameterRule"
-          externalInfoUrl="${pmd.website.baseurl}/pmd_rules_java_bestpractices.html#unusedformalparameter">
-        <description>
-            Reports parameters of methods and constructors that are not referenced them in the method body.
-            Parameters whose name starts with `ignored` or `unused` are filtered out.
+<!--    delete this pmd to init SpringApplicationRunListener-->
+<!--    <rule name="UnusedFormalParameter"-->
+<!--          language="java"-->
+<!--          since="0.8"-->
+<!--          message="Avoid unused {0} parameters such as ''{1}''."-->
+<!--          class="net.sourceforge.pmd.lang.java.rule.bestpractices.UnusedFormalParameterRule"-->
+<!--          externalInfoUrl="${pmd.website.baseurl}/pmd_rules_java_bestpractices.html#unusedformalparameter">-->
+<!--        <description>-->
+<!--            Reports parameters of methods and constructors that are not referenced them in the method body.-->
+<!--            Parameters whose name starts with `ignored` or `unused` are filtered out.-->
 
-            Removing unused formal parameters from public methods could cause a ripple effect through the code base.
-            Hence, by default, this rule only considers private methods. To include non-private methods, set the
-            `checkAll` property to `true`.
+<!--            Removing unused formal parameters from public methods could cause a ripple effect through the code base.-->
+<!--            Hence, by default, this rule only considers private methods. To include non-private methods, set the-->
+<!--            `checkAll` property to `true`.-->
 
-        </description>
-        <priority>3</priority>
-        <example>
-            <![CDATA[
-public class Foo {
-    private void bar(String howdy) {
-        // howdy is not used
-    }
-}
-]]>
-        </example>
-    </rule>
+<!--        </description>-->
+<!--        <priority>3</priority>-->
+<!--        <example>-->
+<!--            <![CDATA[-->
+<!--public class Foo {-->
+<!--    private void bar(String howdy) {-->
+<!--        // howdy is not used-->
+<!--    }-->
+<!--}-->
+<!--]]>-->
+<!--        </example>-->
+<!--    </rule>-->
 
     <rule name="UnusedLocalVariable"
           language="java"
@@ -1781,64 +1782,65 @@ public class TryWithResources {
         </example>
     </rule>
 
-    <rule name="UseVarargs"
-          language="java"
-          minimumLanguageVersion="1.5"
-          since="5.0"
-          message="Consider using varargs for methods or constructors which take an array the last parameter."
-          class="net.sourceforge.pmd.lang.rule.XPathRule"
-          typeResolution="true"
-          externalInfoUrl="${pmd.website.baseurl}/pmd_rules_java_bestpractices.html#usevarargs">
-        <description>
-            Java 5 introduced the varargs parameter declaration for methods and constructors. This syntactic
-            sugar provides flexibility for users of these methods and constructors, allowing them to avoid
-            having to deal with the creation of an array.
+<!--    delete this pmd to init SpringApplicationRunListener-->
+<!--    <rule name="UseVarargs"-->
+<!--          language="java"-->
+<!--          minimumLanguageVersion="1.5"-->
+<!--          since="5.0"-->
+<!--          message="Consider using varargs for methods or constructors which take an array the last parameter."-->
+<!--          class="net.sourceforge.pmd.lang.rule.XPathRule"-->
+<!--          typeResolution="true"-->
+<!--          externalInfoUrl="${pmd.website.baseurl}/pmd_rules_java_bestpractices.html#usevarargs">-->
+<!--        <description>-->
+<!--            Java 5 introduced the varargs parameter declaration for methods and constructors. This syntactic-->
+<!--            sugar provides flexibility for users of these methods and constructors, allowing them to avoid-->
+<!--            having to deal with the creation of an array.-->
 
-            Byte arrays in any method and String arrays in `public static void main(String[])` methods are ignored.
-        </description>
-        <priority>4</priority>
-        <properties>
-            <property name="version" value="2.0" />
-            <property name="xpath">
-                <value>
-                    <![CDATA[
-//FormalParameters/FormalParameter
-    [position()=last()]
-    [VariableDeclaratorId/@ArrayType=true()]
-    [@Varargs=false()]
-    [not (./Type[@ArrayType=true()]/ReferenceType[PrimitiveType[@Image='byte']])]
-    [not (./Type/ReferenceType[ClassOrInterfaceType[@Image='Byte']])]
-    [not (./Type/PrimitiveType[@Image='byte'])]
-    [not (ancestor::MethodDeclaration/preceding-sibling::Annotation/*/Name[@Image='Override'])]
-    [not(
-         ancestor::MethodDeclaration
-            [    @Public=true()
-             and @Static=true()
-             and child::ResultType[@Void=true()]
-             and @Name = 'main'
-             and @Arity = 1
-            ]
-         (: Type of the formal parameter here. :)
-         and pmd-java:typeIs('java.lang.String[]')
-    )]
-]]>
-                </value>
-            </property>
-        </properties>
-        <example>
-            <![CDATA[
-public class Foo {
-    public void foo(String s, Object[] args) {
-        // Do something here...
-    }
+<!--            Byte arrays in any method and String arrays in `public static void main(String[])` methods are ignored.-->
+<!--        </description>-->
+<!--        <priority>4</priority>-->
+<!--        <properties>-->
+<!--            <property name="version" value="2.0" />-->
+<!--            <property name="xpath">-->
+<!--                <value>-->
+<!--                    <![CDATA[-->
+<!--//FormalParameters/FormalParameter-->
+<!--    [position()=last()]-->
+<!--    [VariableDeclaratorId/@ArrayType=true()]-->
+<!--    [@Varargs=false()]-->
+<!--    [not (./Type[@ArrayType=true()]/ReferenceType[PrimitiveType[@Image='byte']])]-->
+<!--    [not (./Type/ReferenceType[ClassOrInterfaceType[@Image='Byte']])]-->
+<!--    [not (./Type/PrimitiveType[@Image='byte'])]-->
+<!--    [not (ancestor::MethodDeclaration/preceding-sibling::Annotation/*/Name[@Image='Override'])]-->
+<!--    [not(-->
+<!--         ancestor::MethodDeclaration-->
+<!--            [    @Public=true()-->
+<!--             and @Static=true()-->
+<!--             and child::ResultType[@Void=true()]-->
+<!--             and @Name = 'main'-->
+<!--             and @Arity = 1-->
+<!--            ]-->
+<!--         (: Type of the formal parameter here. :)-->
+<!--         and pmd-java:typeIs('java.lang.String[]')-->
+<!--    )]-->
+<!--]]>-->
+<!--                </value>-->
+<!--            </property>-->
+<!--        </properties>-->
+<!--        <example>-->
+<!--            <![CDATA[-->
+<!--public class Foo {-->
+<!--    public void foo(String s, Object[] args) {-->
+<!--        // Do something here...-->
+<!--    }-->
 
-    public void bar(String s, Object... args) {
-        // Ahh, varargs tastes much better...
-    }
-}
-]]>
-        </example>
-    </rule>
+<!--    public void bar(String s, Object... args) {-->
+<!--        // Ahh, varargs tastes much better...-->
+<!--    }-->
+<!--}-->
+<!--]]>-->
+<!--        </example>-->
+<!--    </rule>-->
 
     <rule name="WhileLoopWithLiteralBoolean"
           class="net.sourceforge.pmd.lang.rule.XPathRule"
