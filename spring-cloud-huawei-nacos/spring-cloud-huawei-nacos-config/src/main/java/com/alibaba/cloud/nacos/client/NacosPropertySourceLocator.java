@@ -99,19 +99,26 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
 
     // load security configs
     loadSecurityConfigs(composite, env);
+
+    loadLabelRouterConfigs(composite, env);
     return composite;
+  }
+
+  private void loadLabelRouterConfigs(CompositePropertySource composite, Environment env) {
+    String group = nacosConfigProperties.getGroup();
+    String dataId = buildSecurityDataId(env, NacosConfigConst.LABEL_ROUTER_DATA_ID_PREFIX);
+    loadNacosDataIfPresent(composite, dataId, group, NacosConfigConst.DEFAULT_CONFIG_FILE_EXTENSION, true);
   }
 
   private void loadSecurityConfigs(CompositePropertySource composite, Environment env) {
     String group = "cse-app-security-group";
-    String dataId = buildSecurityDataId(env);
-    loadNacosDataIfPresent(composite, dataId, group, NacosConfigConst.SECURITY_CONFIG_FILE_EXTENSION, true);
+    String dataId = buildSecurityDataId(env, NacosConfigConst.SECURITY_CONFIG_DATA_ID_PREFIX);
+    loadNacosDataIfPresent(composite, dataId, group, NacosConfigConst.DEFAULT_CONFIG_FILE_EXTENSION, true);
   }
 
-  private String buildSecurityDataId(Environment environment) {
+  private String buildSecurityDataId(Environment environment, String dataIdPrefix) {
     String serviceName = environment.getProperty("spring.application.name", String.class, "");
-    return NacosConfigConst.SECURITY_CONFIG_DATA_ID_PREFIX + serviceName + DOT
-        + NacosConfigConst.SECURITY_CONFIG_FILE_EXTENSION;
+    return dataIdPrefix + serviceName + DOT + NacosConfigConst.DEFAULT_CONFIG_FILE_EXTENSION;
   }
 
   /**
