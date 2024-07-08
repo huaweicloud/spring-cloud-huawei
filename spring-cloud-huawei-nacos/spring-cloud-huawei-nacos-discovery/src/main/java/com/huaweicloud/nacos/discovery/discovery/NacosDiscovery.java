@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.core.Ordered;
+import org.springframework.util.CollectionUtils;
 
 public class NacosDiscovery {
   private static final Logger LOGGER = LoggerFactory.getLogger(NacosDiscovery.class);
@@ -62,21 +63,31 @@ public class NacosDiscovery {
         LOGGER.warn("cross group query nacos instances by setting group {}", group);
       }
     }
-    for (int i = 0; i < namingServiceManagers.size(); i++) {
+    List<NamingServiceManager> namingServices = getAvailableNamingServices();
+    for (int i = 0; i < namingServices.size(); i++) {
       try {
-        List<Instance> instances = namingServiceManagers.get(i).getNamingService()
+        List<Instance> instances = namingServices.get(i).getNamingService()
             .selectInstances(serviceId, group, true);
         return hostToServiceInstanceList(instances, serviceId);
       } catch (NacosException e) {
-        if (i == namingServiceManagers.size() - 1) {
+        if (i == namingServices.size() - 1) {
           LOGGER.error("get service [{}] instances from nacos failed.", serviceId, e);
           throw e;
         }
         LOGGER.warn("get service [{}] instances from nacos server [{}] failed!", serviceId,
-            namingServiceManagers.get(i).getServerAddr());
+            namingServices.get(i).getServerAddr());
       }
     }
     return null;
+  }
+
+  private List<NamingServiceManager> getAvailableNamingServices() {
+    List<NamingServiceManager> namingServices = namingServiceManagers.stream()
+        .filter(NamingServiceManager::isNacosServerHealth).collect(Collectors.toList());
+    if (CollectionUtils.isEmpty(namingServices)) {
+      namingServices = namingServiceManagers;
+    }
+    return namingServices;
   }
 
   public List<String> getServices() throws NacosException {

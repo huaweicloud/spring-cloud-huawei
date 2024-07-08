@@ -31,4 +31,6 @@ public interface NamingServiceManager extends Ordered {
   String getServerAddr();
 
   void shutDown() throws NacosException;
+
+  boolean isNacosServerHealth();
 }
