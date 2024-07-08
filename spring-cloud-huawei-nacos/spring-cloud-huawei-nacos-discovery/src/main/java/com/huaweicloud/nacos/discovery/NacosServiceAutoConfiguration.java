@@ -33,19 +33,19 @@ public class NacosServiceAutoConfiguration {
   @Bean
   @ConfigurationProperties("spring.cloud.nacos.discovery")
   public NacosDiscoveryProperties nacosDiscoveryProperties() {
-      return new NacosDiscoveryProperties();
+    return new NacosDiscoveryProperties();
   }
 
   @Bean
   @ConfigurationProperties("spring.cloud.servicecomb.cross-group")
   public NacosCrossGroupProperties nacosCrossGroupServiceConfig() {
-      return new NacosCrossGroupProperties();
+    return new NacosCrossGroupProperties();
   }
 
   @Bean
   @ConditionalOnMissingBean
   public NamingServiceMasterManager namingServiceMasterManager(NacosDiscoveryProperties properties) {
-      return new NamingServiceMasterManager(properties);
+    return new NamingServiceMasterManager(properties);
   }
 
   @Bean

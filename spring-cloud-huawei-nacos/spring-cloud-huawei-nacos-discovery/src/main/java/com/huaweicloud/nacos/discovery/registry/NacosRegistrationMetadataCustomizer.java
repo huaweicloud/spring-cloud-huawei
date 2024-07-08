@@ -19,10 +19,9 @@ package com.huaweicloud.nacos.discovery.registry;
 
 public interface NacosRegistrationMetadataCustomizer {
 
-	/**
-	 * customize NacosRegistration metadata.
-	 * @param registration NacosRegistration
-	 */
-	void customize(NacosRegistration registration);
-
+  /**
+   * customize NacosRegistration metadata.
+   * @param registration NacosRegistration
+   */
+  void customize(NacosRegistration registration);
 }

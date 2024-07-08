@@ -33,46 +33,45 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 public class NacosReactiveDiscoveryClient implements ReactiveDiscoveryClient {
-	private static final Logger LOGGER = LoggerFactory.getLogger(NacosReactiveDiscoveryClient.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(NacosReactiveDiscoveryClient.class);
 
-	private final NacosDiscovery nacosDiscovery;
+  private final NacosDiscovery nacosDiscovery;
 
-	public NacosReactiveDiscoveryClient(NacosDiscovery nacosDiscovery) {
-		this.nacosDiscovery = nacosDiscovery;
-	}
+  public NacosReactiveDiscoveryClient(NacosDiscovery nacosDiscovery) {
+    this.nacosDiscovery = nacosDiscovery;
+  }
 
-	@Override
-	public String description() {
-		return "Nacos Reactive Discovery Client";
-	}
+  @Override
+  public String description() {
+    return "Nacos Reactive Discovery Client";
+  }
 
-	@Override
-	public Flux<ServiceInstance> getInstances(String serviceId) {
-		return Mono.justOrEmpty(serviceId).flatMapMany(loadInstancesFromNacos())
-				.subscribeOn(Schedulers.boundedElastic());
-	}
+  @Override
+  public Flux<ServiceInstance> getInstances(String serviceId) {
+    return Mono.justOrEmpty(serviceId).flatMapMany(loadInstancesFromNacos())
+        .subscribeOn(Schedulers.boundedElastic());
+  }
 
-	private Function<String, Publisher<ServiceInstance>> loadInstancesFromNacos() {
-		return serviceId -> {
-			try {
-				return Flux.fromIterable(nacosDiscovery.getInstances(serviceId));
-			} catch (NacosException e) {
-				LOGGER.error("get service {} instance from nacos failed.", serviceId, e);
-				return Flux.empty();
-			}
-		};
-	}
+  private Function<String, Publisher<ServiceInstance>> loadInstancesFromNacos() {
+    return serviceId -> {
+      try {
+        return Flux.fromIterable(nacosDiscovery.getInstances(serviceId));
+      } catch (NacosException e) {
+        LOGGER.error("get service {} instance from nacos failed.", serviceId, e);
+        return Flux.empty();
+      }
+    };
+  }
 
-	@Override
-	public Flux<String> getServices() {
-		return Flux.defer(() -> {
-			try {
-				return Flux.fromIterable(nacosDiscovery.getServices());
-			} catch (Exception e) {
-				LOGGER.error("get services from nacos failed.", e);
-				return Flux.empty();
-			}
-		}).subscribeOn(Schedulers.boundedElastic());
-	}
-
+  @Override
+  public Flux<String> getServices() {
+    return Flux.defer(() -> {
+      try {
+        return Flux.fromIterable(nacosDiscovery.getServices());
+      } catch (Exception e) {
+        LOGGER.error("get services from nacos failed.", e);
+        return Flux.empty();
+      }
+    }).subscribeOn(Schedulers.boundedElastic());
+  }
 }
