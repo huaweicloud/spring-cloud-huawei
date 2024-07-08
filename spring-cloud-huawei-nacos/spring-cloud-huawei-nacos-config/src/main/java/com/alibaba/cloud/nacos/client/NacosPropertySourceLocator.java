@@ -38,7 +38,7 @@ import org.springframework.util.CollectionUtils;
  * Forked and modify from com.alibaba.cloud.nacos.client.NacosPropertySourceLocator.java
  *
  * <p>
- *   add security configs load and change to using master standby config service to query config data
+ *   add security/default-router configs load and change to using master standby config service to query config data
  * </p>
  *
  * @author xiaojing
@@ -99,19 +99,26 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
 
     // load security configs
     loadSecurityConfigs(composite, env);
+
+    loadLabelRouterConfigs(composite, env);
     return composite;
+  }
+
+  private void loadLabelRouterConfigs(CompositePropertySource composite, Environment env) {
+    String group = nacosConfigProperties.getGroup();
+    String dataId = buildIncludeServiceNameDataId(env, NacosConfigConst.LABEL_ROUTER_DATA_ID_PREFIX);
+    loadNacosDataIfPresent(composite, dataId, group, NacosConfigConst.DEFAULT_CONFIG_FILE_EXTENSION, true);
   }
 
   private void loadSecurityConfigs(CompositePropertySource composite, Environment env) {
     String group = "cse-app-security-group";
-    String dataId = buildSecurityDataId(env);
-    loadNacosDataIfPresent(composite, dataId, group, NacosConfigConst.SECURITY_CONFIG_FILE_EXTENSION, true);
+    String dataId = buildIncludeServiceNameDataId(env, NacosConfigConst.SECURITY_CONFIG_DATA_ID_PREFIX);
+    loadNacosDataIfPresent(composite, dataId, group, NacosConfigConst.DEFAULT_CONFIG_FILE_EXTENSION, true);
   }
 
-  private String buildSecurityDataId(Environment environment) {
+  private String buildIncludeServiceNameDataId(Environment environment, String dataIdPrefix) {
     String serviceName = environment.getProperty("spring.application.name", String.class, "");
-    return NacosConfigConst.SECURITY_CONFIG_DATA_ID_PREFIX + serviceName + DOT
-        + NacosConfigConst.SECURITY_CONFIG_FILE_EXTENSION;
+    return dataIdPrefix + serviceName + DOT + NacosConfigConst.DEFAULT_CONFIG_FILE_EXTENSION;
   }
 
   /**

@@ -20,11 +20,13 @@ package com.huaweicloud.nacos.config;
 public class NacosConfigConst {
   public static final String SECURITY_CONFIG_DATA_ID_PREFIX = "cse-app-security-";
 
-  public static final String SECURITY_CONFIG_FILE_EXTENSION = "yaml";
+  public static final String DEFAULT_CONFIG_FILE_EXTENSION = "yaml";
 
   public static final String COMMAS = ",";
 
   public static final String STATUS_UP = "UP";
 
   public static final String RETRY_MASTER_ENABLED = "spring.cloud.nacos.config.retryMasterServerEnabled";
+
+  public static final String LABEL_ROUTER_DATA_ID_PREFIX = "cse-label-route-";
 }
