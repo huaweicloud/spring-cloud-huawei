@@ -36,4 +36,8 @@ public class NacosConst {
   public static final String NAMING_LOAD_CACHE_AT_START = "namingLoadCacheAtStart";
 
   public static final String MASTER_STANDBY_ENABLED = "spring.cloud.nacos.discovery.master-standby-enabled";
+
+  public static final String STATUS_UP = "UP";
+
+  public static final String STATUS_DOWN = "DOWN";
 }

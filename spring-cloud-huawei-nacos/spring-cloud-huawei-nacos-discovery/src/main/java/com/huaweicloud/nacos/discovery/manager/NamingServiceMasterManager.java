@@ -17,16 +17,19 @@
 
 package com.huaweicloud.nacos.discovery.manager;
 
+import java.time.Duration;
 import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingMaintainService;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.client.naming.NacosNamingMaintainService;
 import com.alibaba.nacos.client.naming.NacosNamingService;
+import com.huaweicloud.nacos.discovery.NacosConst;
 import com.huaweicloud.nacos.discovery.NacosDiscoveryProperties;
 
 public class NamingServiceMasterManager implements NamingServiceManager {
@@ -38,8 +41,27 @@ public class NamingServiceMasterManager implements NamingServiceManager {
 
   private volatile NamingMaintainService namingMaintainService;
 
+  private boolean isServerHealth = false;
+
+  private final ThreadPoolTaskScheduler taskScheduler;
+
   public NamingServiceMasterManager(NacosDiscoveryProperties properties) {
     this.properties = properties;
+    this.taskScheduler = NamingServiceManagerUtils.buildTaskScheduler("Master-Naming-Service-Check-Scheduler");
+    if (properties.isMasterStandbyEnabled()) {
+      startSchedulerTask();
+    }
+  }
+
+  private void startSchedulerTask() {
+    taskScheduler.scheduleWithFixedDelay(this::namingServiceHealthCheck,
+        Duration.ofMillis(properties.getNamingServiceCheckTaskDelay()));
+  }
+
+  private void namingServiceHealthCheck() {
+    if (namingService != null) {
+      isServerHealth = NacosConst.STATUS_UP.equals(namingService.getServerStatus());
+    }
   }
 
   @Override
@@ -49,6 +71,7 @@ public class NamingServiceMasterManager implements NamingServiceManager {
         if (Objects.isNull(namingService)) {
           try {
             namingService = new NacosNamingService(NamingServiceManagerUtils.buildMasterServerProperties(properties));
+            isServerHealth = NacosConst.STATUS_UP.equals(namingService.getServerStatus());
           } catch (Exception e) {
             LOGGER.error("build namingService failed.", e);
             throw new IllegalStateException("build namingService failed.", e);
@@ -97,5 +120,10 @@ public class NamingServiceMasterManager implements NamingServiceManager {
       this.namingMaintainService.shutDown();
       this.namingMaintainService = null;
     }
+  }
+
+  @Override
+  public boolean isNacosServerHealth() {
+    return isServerHealth;
   }
 }
