@@ -35,15 +35,11 @@ import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.google.common.eventbus.EventBus;
 import com.huaweicloud.common.event.EventManager;
+import com.huaweicloud.nacos.discovery.NacosConst;
 import com.huaweicloud.nacos.discovery.NacosDiscoveryProperties;
 import com.huaweicloud.nacos.discovery.manager.NamingServiceManager;
 
 public class NacosServiceRegistry implements ServiceRegistry<Registration> {
-
-  private static final String STATUS_UP = "UP";
-
-  private static final String STATUS_DOWN = "DOWN";
-
   private static final Logger LOGGER = LoggerFactory.getLogger(NacosServiceRegistry.class);
 
   private final NacosDiscoveryProperties nacosDiscoveryProperties;
@@ -135,12 +131,12 @@ public class NacosServiceRegistry implements ServiceRegistry<Registration> {
 
   @Override
   public void setStatus(Registration registration, String status) {
-    if (!STATUS_UP.equalsIgnoreCase(status) && !STATUS_DOWN.equalsIgnoreCase(status)) {
+    if (!NacosConst.STATUS_UP.equalsIgnoreCase(status) && !NacosConst.STATUS_DOWN.equalsIgnoreCase(status)) {
       LOGGER.warn("can't support status {} to update.", status);
       return;
     }
     String serviceId = registration.getServiceId();
-    instance.setEnabled(!STATUS_DOWN.equalsIgnoreCase(status));
+    instance.setEnabled(!NacosConst.STATUS_DOWN.equalsIgnoreCase(status));
     for (int i = 0; i < namingServiceManagers.size(); i++) {
       try {
         namingServiceManagers.get(i).getNamingMaintainService()
@@ -165,7 +161,7 @@ public class NacosServiceRegistry implements ServiceRegistry<Registration> {
         List<Instance> instances = serviceManager.getNamingService().getAllInstances(serviceName, group);
         List<Instance> currentInstances = instances.stream().filter(this::checkIpAndPort).toList();
         if (!currentInstances.isEmpty()) {
-          return (T) (currentInstances.get(0).isEnabled() ? STATUS_UP : STATUS_DOWN);
+          return (T) (currentInstances.get(0).isEnabled() ? NacosConst.STATUS_UP : NacosConst.STATUS_DOWN);
         }
       } catch (Exception e) {
         LOGGER.error("getStatus failed", e);
