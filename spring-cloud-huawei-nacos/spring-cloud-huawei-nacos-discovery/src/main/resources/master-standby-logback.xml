@@ -28,7 +28,7 @@
   </appender>
 
   <appender name="REMOTE_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${user.home}/nacos/nacos-remote.log</file>
+    <file>${user.home}/logs/nacos/nacos-remote.log</file>
 
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <fileNamePattern>nacos-remote.%d{yyyy-MM-dd}.log</fileNamePattern>
@@ -47,7 +47,7 @@
   </appender>
 
   <appender name="NAMING_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${user.home}/nacos/nacos-naming.log</file>
+    <file>${user.home}/logs/nacos/nacos-naming.log</file>
 
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <fileNamePattern>nacos-naming.%d{yyyy-MM-dd}.log</fileNamePattern>

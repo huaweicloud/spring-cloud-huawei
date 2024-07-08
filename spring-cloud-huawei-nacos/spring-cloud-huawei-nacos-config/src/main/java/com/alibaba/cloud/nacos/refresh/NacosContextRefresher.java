@@ -115,7 +115,7 @@ public class NacosContextRefresher
     // many Spring context
     if (this.ready.compareAndSet(false, true) && isRefreshEnabled()) {
       this.registerNacosListenersForApplications();
-      if (nacosConfigManagers.size() > 1) {
+      if (nacosConfigProperties.isMasterStandbyEnabled()) {
         startSchedulerTask();
       }
     }
