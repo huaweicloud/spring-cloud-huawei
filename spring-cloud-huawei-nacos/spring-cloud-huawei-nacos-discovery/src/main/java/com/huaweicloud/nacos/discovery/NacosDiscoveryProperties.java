@@ -60,7 +60,7 @@ public class NacosDiscoveryProperties {
   @Value("${spring.cloud.nacos.discovery.service:${spring.application.name:}}")
   private String service;
 
-  private String group = "DEFAULT_GROUP";;
+  private String group = "DEFAULT_GROUP";
 
   private String ip;
 
@@ -95,6 +95,8 @@ public class NacosDiscoveryProperties {
   private String standbyServerAddr;
 
   private int order = 100;
+
+  private long namingServiceCheckTaskDelay = 5000;
 
   public String getServerAddr() {
     return serverAddr;
@@ -331,5 +333,13 @@ public class NacosDiscoveryProperties {
 
   public void setOrder(int order) {
     this.order = order;
+  }
+
+  public long getNamingServiceCheckTaskDelay() {
+    return namingServiceCheckTaskDelay;
+  }
+
+  public void setNamingServiceCheckTaskDelay(long namingServiceCheckTaskDelay) {
+    this.namingServiceCheckTaskDelay = namingServiceCheckTaskDelay;
   }
 }

@@ -19,6 +19,8 @@ package com.huaweicloud.nacos.discovery.manager;
 
 import java.util.Properties;
 
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+
 import com.huaweicloud.nacos.discovery.NacosConst;
 import com.huaweicloud.nacos.discovery.NacosDiscoveryProperties;
 
@@ -54,5 +56,12 @@ public class NamingServiceManagerUtils {
     properties.put(NacosConst.CLUSTER_NAME, nacosDiscoveryProperties.getClusterName());
     properties.put(NacosConst.NAMING_LOAD_CACHE_AT_START, nacosDiscoveryProperties.getNamingLoadCacheAtStart());
     return properties;
+  }
+
+  public static ThreadPoolTaskScheduler buildTaskScheduler(String taskName) {
+    ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
+    taskScheduler.setBeanName(taskName);
+    taskScheduler.initialize();
+    return taskScheduler;
   }
 }
