@@ -26,6 +26,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import com.huaweicloud.nacos.discovery.NacosConst;
 
 public class MasterStandbyNacosLogbackAppRunListener implements SpringApplicationRunListener, Ordered {
+  @SuppressWarnings("PMD")
   public MasterStandbyNacosLogbackAppRunListener(SpringApplication application, String[] args) {
 
   }

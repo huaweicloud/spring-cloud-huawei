@@ -33,6 +33,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
  * @author RuanSheng
  */
 public class NacosLoggingAppRunListener implements SpringApplicationRunListener, Ordered {
+  @SuppressWarnings("PMD")
   public NacosLoggingAppRunListener(SpringApplication application, String[] args) {
 
   }
