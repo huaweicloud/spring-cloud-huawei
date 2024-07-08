@@ -32,5 +32,5 @@ public interface NamingServiceManager extends Ordered {
 
   void shutDown() throws NacosException;
 
-  boolean checkNacosServerHealth();
+  boolean isNacosServerHealth();
 }

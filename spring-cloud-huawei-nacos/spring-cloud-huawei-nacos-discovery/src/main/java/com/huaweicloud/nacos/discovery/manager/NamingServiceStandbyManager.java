@@ -48,9 +48,7 @@ public class NamingServiceStandbyManager implements NamingServiceManager {
   public NamingServiceStandbyManager(NacosDiscoveryProperties properties) {
     this.properties = properties;
     this.taskScheduler = NamingServiceManagerUtils.buildTaskScheduler("Standby-Naming-Service-Check-Scheduler");
-    if (properties.isMasterStandbyEnabled()) {
-      startSchedulerTask();
-    }
+    startSchedulerTask();
   }
 
   private void startSchedulerTask() {
@@ -123,7 +121,7 @@ public class NamingServiceStandbyManager implements NamingServiceManager {
   }
 
   @Override
-  public boolean checkNacosServerHealth() {
+  public boolean isNacosServerHealth() {
     return isServerHealth;
   }
 }

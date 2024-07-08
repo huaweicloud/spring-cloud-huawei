@@ -83,7 +83,7 @@ public class NacosDiscovery {
 
 	private List<NamingServiceManager> getAvailableNamingServices() {
 		List<NamingServiceManager> namingServices = namingServiceManagers.stream()
-				.filter(NamingServiceManager::checkNacosServerHealth).collect(Collectors.toList());
+				.filter(NamingServiceManager::isNacosServerHealth).collect(Collectors.toList());
 		if (CollectionUtils.isEmpty(namingServices)) {
 			namingServices = namingServiceManagers;
 		}

@@ -123,7 +123,7 @@ public class NamingServiceMasterManager implements NamingServiceManager {
   }
 
   @Override
-  public boolean checkNacosServerHealth() {
+  public boolean isNacosServerHealth() {
     return isServerHealth;
   }
 }
