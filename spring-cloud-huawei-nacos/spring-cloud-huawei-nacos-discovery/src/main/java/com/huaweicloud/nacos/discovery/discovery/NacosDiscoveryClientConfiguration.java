@@ -37,7 +37,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnNacosDiscoveryEnabled
-@AutoConfigureAfter({ NacosServiceAutoConfiguration.class })
+@AutoConfigureAfter({NacosServiceAutoConfiguration.class})
 public class NacosDiscoveryClientConfiguration {
   @Bean
   @ConditionalOnMissingBean
@@ -63,7 +63,8 @@ public class NacosDiscoveryClientConfiguration {
   @Bean
   @ConditionalOnMissingBean
   @Conditional(NacosDiscoveryHeartBeatCondition.class)
-  public NacosDiscoveryHeartBeatTask nacosDiscoveryHeartBeatPublisher(NacosDiscoveryProperties nacosDiscoveryProperties) {
+  public NacosDiscoveryHeartBeatTask nacosDiscoveryHeartBeatPublisher(
+      NacosDiscoveryProperties nacosDiscoveryProperties) {
     return new NacosDiscoveryHeartBeatTask(nacosDiscoveryProperties);
   }
 
@@ -76,18 +77,21 @@ public class NacosDiscoveryClientConfiguration {
      * Spring Cloud Gateway HeartBeat .
      */
     @ConditionalOnProperty(value = "spring.cloud.gateway.discovery.locator.enabled")
-    static class GatewayLocatorHeartBeatEnabled { }
+    static class GatewayLocatorHeartBeatEnabled {
+    }
 
     /**
      * Spring Boot Admin HeartBeat .
      */
     @ConditionalOnBean(type = "de.codecentric.boot.admin.server.cloud.discovery.InstanceDiscoveryListener")
-    static class SpringBootAdminHeartBeatEnabled { }
+    static class SpringBootAdminHeartBeatEnabled {
+    }
 
     /**
      * Nacos HeartBeat .
      */
     @ConditionalOnProperty(value = "spring.cloud.nacos.discovery.heart-beat.enabled")
-    static class NacosDiscoveryHeartBeatEnabled { }
+    static class NacosDiscoveryHeartBeatEnabled {
+    }
   }
 }
