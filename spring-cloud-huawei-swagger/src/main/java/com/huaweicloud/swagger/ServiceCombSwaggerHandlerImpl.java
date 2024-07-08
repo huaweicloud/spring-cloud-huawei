@@ -16,6 +16,7 @@
   */
 package com.huaweicloud.swagger;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,8 +34,11 @@ import org.springdoc.core.Constants;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.support.ScopeNotActiveException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -59,7 +63,7 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler,
 
   private ApplicationContext applicationContext;
 
-  @Value("${spring.cloud.servicecomb.swagger.enableJavaChassisAdapter:true}")
+  @Value("${spring.cloud.servicecomb.swagger.enableJavaChassisAdapter:false}")
   protected boolean withJavaChassis;
 
   private OpenApiResourceWrapper openApiResource;
@@ -96,7 +100,7 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler,
   }
 
   private void runJavaChassisScanner() {
-    Map<String, Object> controllers = applicationContext.getBeansWithAnnotation(RestController.class);
+    Map<String, Object> controllers = getControllers();
     controllers.forEach((k, v) -> {
       try {
         SpringmvcSwaggerGenerator generator = new SpringmvcSwaggerGenerator(v.getClass());
@@ -109,6 +113,26 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler,
       }
     });
     swaggerSummary = calcSchemaSummary();
+  }
+
+  private Map<String, Object> getControllers() {
+    Map<String, Object> mappingsMap = new HashMap<>();
+    buildControllerMapping(mappingsMap, RequestMapping.class);
+    buildControllerMapping(mappingsMap, RestController.class);
+    buildControllerMapping(mappingsMap, Controller.class);
+    return mappingsMap;
+  }
+
+  private void buildControllerMapping(Map<String, Object> mappingsMap, Class<? extends Annotation> clazz) {
+    final String[] restControllerNames = applicationContext.getBeanNamesForAnnotation(clazz);
+    for (String beanName : restControllerNames) {
+      try {
+        Object beanInstance = applicationContext.getBean(beanName);
+        mappingsMap.put(beanName, beanInstance);
+      } catch (ScopeNotActiveException e) {
+        LOGGER.warn("bean [{}] is not active in current scope, ignore it.", beanName);
+      }
+    }
   }
 
   private Map<String, String> calcSchemaContent() {
