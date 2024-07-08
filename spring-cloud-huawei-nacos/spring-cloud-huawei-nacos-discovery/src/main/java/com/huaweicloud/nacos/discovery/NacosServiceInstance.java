@@ -25,74 +25,74 @@ import org.springframework.cloud.client.ServiceInstance;
 
 public class NacosServiceInstance implements ServiceInstance {
 
-	private String serviceId;
+  private String serviceId;
 
-	private String instanceId;
+  private String instanceId;
 
-	private String host;
+  private String host;
 
-	private int port;
+  private int port;
 
-	private boolean secure;
+  private boolean secure;
 
-	private Map<String, String> metadata;
+  private Map<String, String> metadata;
 
-	@Override
-	public String getServiceId() {
-		return serviceId;
-	}
+  @Override
+  public String getServiceId() {
+    return serviceId;
+  }
 
-	@Override
-	public String getInstanceId() {
-		return instanceId;
-	}
+  @Override
+  public String getInstanceId() {
+    return instanceId;
+  }
 
-	@Override
-	public String getHost() {
-		return host;
-	}
+  @Override
+  public String getHost() {
+    return host;
+  }
 
-	@Override
-	public int getPort() {
-		return port;
-	}
+  @Override
+  public int getPort() {
+    return port;
+  }
 
-	@Override
-	public boolean isSecure() {
-		return secure;
-	}
+  @Override
+  public boolean isSecure() {
+    return secure;
+  }
 
-	@Override
-	public URI getUri() {
-		return DefaultServiceInstance.getUri(this);
-	}
+  @Override
+  public URI getUri() {
+    return DefaultServiceInstance.getUri(this);
+  }
 
-	@Override
-	public Map<String, String> getMetadata() {
-		return metadata;
-	}
+  @Override
+  public Map<String, String> getMetadata() {
+    return metadata;
+  }
 
-	public void setServiceId(String serviceId) {
-		this.serviceId = serviceId;
-	}
+  public void setServiceId(String serviceId) {
+    this.serviceId = serviceId;
+  }
 
-	public void setInstanceId(String instanceId) {
-		this.instanceId = instanceId;
-	}
+  public void setInstanceId(String instanceId) {
+    this.instanceId = instanceId;
+  }
 
-	public void setHost(String host) {
-		this.host = host;
-	}
+  public void setHost(String host) {
+    this.host = host;
+  }
 
-	public void setPort(int port) {
-		this.port = port;
-	}
+  public void setPort(int port) {
+    this.port = port;
+  }
 
-	public void setSecure(boolean secure) {
-		this.secure = secure;
-	}
+  public void setSecure(boolean secure) {
+    this.secure = secure;
+  }
 
-	public void setMetadata(Map<String, String> metadata) {
-		this.metadata = metadata;
-	}
+  public void setMetadata(Map<String, String> metadata) {
+    this.metadata = metadata;
+  }
 }

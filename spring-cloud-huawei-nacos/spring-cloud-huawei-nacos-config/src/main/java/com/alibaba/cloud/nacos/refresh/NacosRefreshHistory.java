@@ -47,18 +47,18 @@ public class NacosRefreshHistory {
    */
   @Deprecated
   public void add(String dataId, String md5) {
-    ((LinkedList<Record>)records).addFirst(
+    ((LinkedList<Record>) records).addFirst(
         new Record(DATE_FORMAT.get().format(new Date()), dataId, "", md5));
     if (records.size() > MAX_SIZE) {
-      ((LinkedList<Record>)records).removeLast();
+      ((LinkedList<Record>) records).removeLast();
     }
   }
 
   public void addRefreshRecord(String dataId, String group, String data) {
-    ((LinkedList<Record>)records).addFirst(new Record(DATE_FORMAT.get().format(new Date()), dataId, group,
+    ((LinkedList<Record>) records).addFirst(new Record(DATE_FORMAT.get().format(new Date()), dataId, group,
         md5(data)));
     if (records.size() > MAX_SIZE) {
-      ((LinkedList<Record>)records).removeLast();
+      ((LinkedList<Record>) records).removeLast();
     }
   }
 

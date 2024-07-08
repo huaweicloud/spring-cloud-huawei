@@ -57,7 +57,7 @@ public class NacosConfigHealthIndicator extends AbstractHealthIndicator {
   protected void doHealthCheck(Health.Builder builder) throws Exception {
     // Just return "UP" or "DOWN"
     String status = STATUS_DOWN;
-    for (NacosConfigManager configManager: nacosConfigManagers) {
+    for (NacosConfigManager configManager : nacosConfigManagers) {
       if (configManager.checkServerConnect()) {
         status = configManager.getConfigService().getServerStatus();
       }

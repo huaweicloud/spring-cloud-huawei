@@ -35,15 +35,14 @@ import com.huaweicloud.nacos.discovery.discovery.NacosDiscoveryClientConfigurati
 @ConditionalOnDiscoveryEnabled
 @ConditionalOnReactiveDiscoveryEnabled
 @ConditionalOnNacosDiscoveryEnabled
-@AutoConfigureAfter({ NacosDiscoveryClientConfiguration.class,
-		ReactiveCompositeDiscoveryClientAutoConfiguration.class })
-@AutoConfigureBefore({ ReactiveCommonsClientAutoConfiguration.class })
+@AutoConfigureAfter({NacosDiscoveryClientConfiguration.class,
+    ReactiveCompositeDiscoveryClientAutoConfiguration.class})
+@AutoConfigureBefore({ReactiveCommonsClientAutoConfiguration.class})
 public class NacosReactiveDiscoveryClientConfiguration {
 
-	@Bean
-	@ConditionalOnMissingBean
-	public NacosReactiveDiscoveryClient nacosReactiveDiscoveryClient(NacosDiscovery nacosDiscovery) {
-		return new NacosReactiveDiscoveryClient(nacosDiscovery);
-	}
-
+  @Bean
+  @ConditionalOnMissingBean
+  public NacosReactiveDiscoveryClient nacosReactiveDiscoveryClient(NacosDiscovery nacosDiscovery) {
+    return new NacosReactiveDiscoveryClient(nacosDiscovery);
+  }
 }
