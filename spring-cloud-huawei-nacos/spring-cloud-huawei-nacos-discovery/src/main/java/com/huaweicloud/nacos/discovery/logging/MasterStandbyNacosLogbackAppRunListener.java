@@ -30,7 +30,7 @@ public class MasterStandbyNacosLogbackAppRunListener implements SpringApplicatio
   public MasterStandbyNacosLogbackAppRunListener(SpringApplication application, String[] args) {
 
   }
-  
+
   @Override
   public int getOrder() {
     return 1;
