@@ -34,4 +34,6 @@ public class NacosConst {
   public static final String CLUSTER_NAME = "clusterName";
 
   public static final String NAMING_LOAD_CACHE_AT_START = "namingLoadCacheAtStart";
+
+  public static final String MASTER_STANDBY_ENABLED = "spring.cloud.nacos.discovery.master-standby-enabled";
 }

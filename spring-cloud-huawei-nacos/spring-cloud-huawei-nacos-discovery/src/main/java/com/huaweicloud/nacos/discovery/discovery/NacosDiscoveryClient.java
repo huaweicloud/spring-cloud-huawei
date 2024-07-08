@@ -23,34 +23,34 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 
 public class NacosDiscoveryClient implements DiscoveryClient {
-	public static final String DESCRIPTION = "Nacos Discovery Client";
+  public static final String DESCRIPTION = "Nacos Discovery Client";
 
-	private final NacosDiscovery serviceDiscovery;
+  private final NacosDiscovery serviceDiscovery;
 
-	public NacosDiscoveryClient(NacosDiscovery nacosDiscovery) {
-		this.serviceDiscovery = nacosDiscovery;
-	}
+  public NacosDiscoveryClient(NacosDiscovery nacosDiscovery) {
+    this.serviceDiscovery = nacosDiscovery;
+  }
 
-	@Override
-	public String description() {
-		return DESCRIPTION;
-	}
+  @Override
+  public String description() {
+    return DESCRIPTION;
+  }
 
-	@Override
-	public List<ServiceInstance> getInstances(String serviceId) {
-		try {
-			return serviceDiscovery.getInstances(serviceId);
-		} catch (Exception e) {
-			throw new RuntimeException("Can not get hosts from nacos server. serviceId: " + serviceId, e);
-		}
-	}
+  @Override
+  public List<ServiceInstance> getInstances(String serviceId) {
+    try {
+      return serviceDiscovery.getInstances(serviceId);
+    } catch (Exception e) {
+      throw new RuntimeException("find services from nacos server failed, serviceId: " + serviceId, e);
+    }
+  }
 
-	@Override
-	public List<String> getServices() {
-		try {
-			return serviceDiscovery.getServices();
-		} catch (Exception e) {
-			throw new RuntimeException("get service name from nacos server failed.", e);
-		}
-	}
+  @Override
+  public List<String> getServices() {
+    try {
+      return serviceDiscovery.getServices();
+    } catch (Exception e) {
+      throw new RuntimeException("get service names from nacos server failed!", e);
+    }
+  }
 }

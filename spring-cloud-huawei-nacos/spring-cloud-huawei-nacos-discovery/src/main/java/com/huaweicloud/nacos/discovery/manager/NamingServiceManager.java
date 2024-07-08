@@ -15,20 +15,20 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.nacos.discovery;
+package com.huaweicloud.nacos.discovery.manager;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.nacos.api.naming.NamingMaintainService;
+import com.alibaba.nacos.api.naming.NamingService;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cloud.client.ConditionalOnDiscoveryEnabled;
+import org.springframework.core.Ordered;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
-@ConditionalOnDiscoveryEnabled
-@ConditionalOnProperty(value = "spring.cloud.nacos.discovery.enabled", matchIfMissing = true)
-public @interface ConditionalOnNacosDiscoveryEnabled {
+public interface NamingServiceManager extends Ordered {
+  NamingService getNamingService();
 
+  NamingMaintainService getNamingMaintainService();
+
+  String getServerAddr();
+
+  void shutDown() throws NacosException;
 }

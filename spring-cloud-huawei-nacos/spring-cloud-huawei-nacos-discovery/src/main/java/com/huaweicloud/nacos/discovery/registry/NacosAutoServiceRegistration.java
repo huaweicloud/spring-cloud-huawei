@@ -26,99 +26,99 @@ import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
 
 public class NacosAutoServiceRegistration extends AbstractAutoServiceRegistration<Registration> {
 
-	private final NacosRegistration registration;
+  private final NacosRegistration registration;
 
-	private final ServiceRegistry<Registration> serviceRegistry;
+  private final ServiceRegistry<Registration> serviceRegistry;
 
-	private boolean registryEnabled;
+  private boolean registryEnabled;
 
-	public NacosAutoServiceRegistration(ServiceRegistry<Registration> serviceRegistry,
-			AutoServiceRegistrationProperties autoServiceRegistrationProperties, NacosRegistration registration) {
-		super(serviceRegistry, autoServiceRegistrationProperties);
-		this.registration = registration;
-		this.serviceRegistry = serviceRegistry;
-		this.registryEnabled = registration.getNacosDiscoveryProperties().isRegisterEnabled();
-	}
+  public NacosAutoServiceRegistration(ServiceRegistry<Registration> serviceRegistry,
+      AutoServiceRegistrationProperties autoServiceRegistrationProperties, NacosRegistration registration) {
+    super(serviceRegistry, autoServiceRegistrationProperties);
+    this.registration = registration;
+    this.serviceRegistry = serviceRegistry;
+    this.registryEnabled = registration.getNacosDiscoveryProperties().isRegisterEnabled();
+  }
 
-	@Override
-	protected NacosRegistration getRegistration() {
-		if (registration.getPort() < 0) {
-			throw new RuntimeException("service port not set.");
-		}
-		return this.registration;
-	}
+  @Override
+  protected NacosRegistration getRegistration() {
+    if (registration.getPort() < 0) {
+      throw new RuntimeException("service port not set.");
+    }
+    return this.registration;
+  }
 
-	@Override
-	protected NacosRegistration getManagementRegistration() {
-		return null;
-	}
+  @Override
+  protected NacosRegistration getManagementRegistration() {
+    return null;
+  }
 
-	@Override
-	protected void register() {
-		if (!this.registryEnabled) {
-			return;
-		}
-		if (this.registration.getPort() < 0) {
-			throw new RuntimeException("service port not set.");
-		}
-		super.register();
-	}
+  @Override
+  protected void register() {
+    if (!this.registryEnabled) {
+      return;
+    }
+    if (this.registration.getPort() < 0) {
+      throw new RuntimeException("service port not set.");
+    }
+    super.register();
+  }
 
-	@Override
-	protected void registerManagement() {
-		if (!this.registryEnabled) {
-			return;
-		}
-		super.registerManagement();
-	}
+  @Override
+  protected void registerManagement() {
+    if (!this.registryEnabled) {
+      return;
+    }
+    super.registerManagement();
+  }
 
-	@Override
-	@Deprecated
-	protected Object getConfiguration() {
-		return this.registration.getNacosDiscoveryProperties();
-	}
+  @Override
+  @Deprecated
+  protected Object getConfiguration() {
+    return this.registration.getNacosDiscoveryProperties();
+  }
 
-	@Override
-	protected boolean isEnabled() {
-		return this.registryEnabled;
-	}
+  @Override
+  protected boolean isEnabled() {
+    return this.registryEnabled;
+  }
 
-	public void setRegistryEnabled(boolean enabled) {
-		registryEnabled = enabled;
-	}
+  public void setRegistryEnabled(boolean enabled) {
+    registryEnabled = enabled;
+  }
 
-	@Override
-	public void start() {
-		beforeRegistryProcess();
-		if (isEnabled()) {
-			registryExtend();
-		}
-	}
+  @Override
+  public void start() {
+    beforeRegistryProcess();
+    if (isEnabled()) {
+      registryExtend();
+    }
+  }
 
-	private void beforeRegistryProcess() {
-		super.getContext().publishEvent(new InstancePreRegisteredEvent(this, getRegistration()));
-	}
+  private void beforeRegistryProcess() {
+    super.getContext().publishEvent(new InstancePreRegisteredEvent(this, getRegistration()));
+  }
 
-	public void registryExtend() {
-		serviceRegistry.register(registration);
-		afterRegistryProcess();
-	}
+  public void registryExtend() {
+    serviceRegistry.register(registration);
+    afterRegistryProcess();
+  }
 
-	private void afterRegistryProcess() {
-		if (shouldRegisterManagement()) {
-			this.registerManagement();
-		}
-		super.getContext().publishEvent(new InstanceRegisteredEvent<>(this, getConfiguration()));
-	}
+  private void afterRegistryProcess() {
+    if (shouldRegisterManagement()) {
+      this.registerManagement();
+    }
+    super.getContext().publishEvent(new InstanceRegisteredEvent<>(this, getConfiguration()));
+  }
 
-	@Override
-	public void stop() {
-		if (isEnabled()) {
-			deregister();
-			if (shouldRegisterManagement()) {
-				deregisterManagement();
-			}
-			this.serviceRegistry.close();
-		}
-	}
+  @Override
+  public void stop() {
+    if (isEnabled()) {
+      deregister();
+      if (shouldRegisterManagement()) {
+        deregisterManagement();
+      }
+      this.serviceRegistry.close();
+    }
+  }
 }

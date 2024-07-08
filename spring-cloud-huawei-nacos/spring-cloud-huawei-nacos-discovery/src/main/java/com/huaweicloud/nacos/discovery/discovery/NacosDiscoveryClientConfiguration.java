@@ -17,11 +17,13 @@
 
 package com.huaweicloud.nacos.discovery.discovery;
 
+import java.util.List;
+
 import com.huaweicloud.common.event.ClosedEventListener;
 import com.huaweicloud.nacos.discovery.ConditionalOnNacosDiscoveryEnabled;
 import com.huaweicloud.nacos.discovery.NacosDiscoveryProperties;
 import com.huaweicloud.nacos.discovery.NacosServiceAutoConfiguration;
-import com.huaweicloud.nacos.discovery.NamingServiceManager;
+import com.huaweicloud.nacos.discovery.manager.NamingServiceManager;
 import com.huaweicloud.nacos.discovery.watch.NacosServiceWatch;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -35,13 +37,13 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnNacosDiscoveryEnabled
-@AutoConfigureAfter({ NacosServiceAutoConfiguration.class })
+@AutoConfigureAfter({NacosServiceAutoConfiguration.class})
 public class NacosDiscoveryClientConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public NacosDiscovery nacosDiscovery(NacosDiscoveryProperties discoveryProperties,
-      NamingServiceManager namingServiceManager, NacosCrossGroupProperties crossGroupProperties) {
-    return new NacosDiscovery(discoveryProperties, namingServiceManager, crossGroupProperties);
+      List<NamingServiceManager> namingServiceManagers, NacosCrossGroupProperties crossGroupProperties) {
+    return new NacosDiscovery(discoveryProperties, namingServiceManagers, crossGroupProperties);
   }
 
   @Bean
@@ -54,14 +56,15 @@ public class NacosDiscoveryClientConfiguration {
   @ConditionalOnMissingBean
   @ConditionalOnProperty(value = "spring.cloud.nacos.discovery.watch.enabled")
   public NacosServiceWatch nacosServiceWatch(NacosDiscoveryProperties discoveryProperties,
-      NamingServiceManager namingServiceManager, ClosedEventListener closedEventListener) {
-    return new NacosServiceWatch(discoveryProperties, namingServiceManager, closedEventListener);
+      List<NamingServiceManager> namingServiceManagers, ClosedEventListener closedEventListener) {
+    return new NacosServiceWatch(discoveryProperties, namingServiceManagers, closedEventListener);
   }
 
   @Bean
   @ConditionalOnMissingBean
   @Conditional(NacosDiscoveryHeartBeatCondition.class)
-  public NacosDiscoveryHeartBeatTask nacosDiscoveryHeartBeatPublisher(NacosDiscoveryProperties nacosDiscoveryProperties) {
+  public NacosDiscoveryHeartBeatTask nacosDiscoveryHeartBeatPublisher(
+      NacosDiscoveryProperties nacosDiscoveryProperties) {
     return new NacosDiscoveryHeartBeatTask(nacosDiscoveryProperties);
   }
 
@@ -74,18 +77,21 @@ public class NacosDiscoveryClientConfiguration {
      * Spring Cloud Gateway HeartBeat .
      */
     @ConditionalOnProperty(value = "spring.cloud.gateway.discovery.locator.enabled")
-    static class GatewayLocatorHeartBeatEnabled { }
+    static class GatewayLocatorHeartBeatEnabled {
+    }
 
     /**
      * Spring Boot Admin HeartBeat .
      */
     @ConditionalOnBean(type = "de.codecentric.boot.admin.server.cloud.discovery.InstanceDiscoveryListener")
-    static class SpringBootAdminHeartBeatEnabled { }
+    static class SpringBootAdminHeartBeatEnabled {
+    }
 
     /**
      * Nacos HeartBeat .
      */
     @ConditionalOnProperty(value = "spring.cloud.nacos.discovery.heart-beat.enabled")
-    static class NacosDiscoveryHeartBeatEnabled { }
+    static class NacosDiscoveryHeartBeatEnabled {
+    }
   }
 }

@@ -35,35 +35,34 @@ import org.springframework.core.env.Environment;
 import com.huaweicloud.nacos.discovery.ConditionalOnNacosDiscoveryEnabled;
 import com.huaweicloud.nacos.discovery.NacosServiceAutoConfiguration;
 import com.huaweicloud.nacos.discovery.NacosDiscoveryProperties;
-import com.huaweicloud.nacos.discovery.NamingServiceManager;
+import com.huaweicloud.nacos.discovery.manager.NamingServiceManager;
 
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties
 @ConditionalOnNacosDiscoveryEnabled
 @AutoConfigureBefore(ServiceRegistryAutoConfiguration.class)
-@AutoConfigureAfter({ AutoServiceRegistrationConfiguration.class, AutoServiceRegistrationAutoConfiguration.class,
-		NacosServiceAutoConfiguration.class })
+@AutoConfigureAfter({AutoServiceRegistrationConfiguration.class, AutoServiceRegistrationAutoConfiguration.class,
+    NacosServiceAutoConfiguration.class})
 public class NacosServiceRegistryAutoConfiguration {
 
-	@Bean
-	public NacosServiceRegistry nacosServiceRegistry(NamingServiceManager namingServiceManager,
-			NacosDiscoveryProperties nacosDiscoveryProperties, Environment environment) {
-		return new NacosServiceRegistry(namingServiceManager, nacosDiscoveryProperties, environment);
-	}
+  @Bean
+  public NacosServiceRegistry nacosServiceRegistry(List<NamingServiceManager> namingServiceManagers,
+      NacosDiscoveryProperties nacosDiscoveryProperties, Environment environment) {
+    return new NacosServiceRegistry(namingServiceManagers, nacosDiscoveryProperties, environment);
+  }
 
-	@Bean
-	@ConditionalOnBean(AutoServiceRegistrationProperties.class)
-	public NacosRegistration nacosRegistration(
-			ObjectProvider<List<NacosRegistrationMetadataCustomizer>> registrationCustomizers,
-			NacosDiscoveryProperties nacosDiscoveryProperties) {
-		return new NacosRegistration(registrationCustomizers.getIfAvailable(), nacosDiscoveryProperties);
-	}
+  @Bean
+  @ConditionalOnBean(AutoServiceRegistrationProperties.class)
+  public NacosRegistration nacosRegistration(
+      ObjectProvider<List<NacosRegistrationMetadataCustomizer>> registrationCustomizers,
+      NacosDiscoveryProperties nacosDiscoveryProperties) {
+    return new NacosRegistration(registrationCustomizers.getIfAvailable(), nacosDiscoveryProperties);
+  }
 
-	@Bean
-	@ConditionalOnBean(AutoServiceRegistrationProperties.class)
-	public NacosAutoServiceRegistration nacosAutoServiceRegistration(NacosServiceRegistry registry,
-			AutoServiceRegistrationProperties autoServiceRegistrationProperties, NacosRegistration registration) {
-		return new NacosAutoServiceRegistration(registry, autoServiceRegistrationProperties, registration);
-	}
-
+  @Bean
+  @ConditionalOnBean(AutoServiceRegistrationProperties.class)
+  public NacosAutoServiceRegistration nacosAutoServiceRegistration(NacosServiceRegistry registry,
+      AutoServiceRegistrationProperties autoServiceRegistrationProperties, NacosRegistration registration) {
+    return new NacosAutoServiceRegistration(registry, autoServiceRegistrationProperties, registration);
+  }
 }
