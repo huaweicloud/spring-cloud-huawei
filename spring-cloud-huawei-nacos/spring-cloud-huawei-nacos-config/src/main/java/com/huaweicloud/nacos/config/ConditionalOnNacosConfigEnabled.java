@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ElementType.TYPE, ElementType.METHOD})
 @ConditionalOnProperty(value = "spring.cloud.nacos.config.enabled", matchIfMissing = true)
 public @interface ConditionalOnNacosConfigEnabled {
 
