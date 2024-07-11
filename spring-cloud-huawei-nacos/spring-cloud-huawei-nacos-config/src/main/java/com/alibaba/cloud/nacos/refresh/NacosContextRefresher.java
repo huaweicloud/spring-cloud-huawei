@@ -166,7 +166,7 @@ public class NacosContextRefresher
     if (listenerMap.isEmpty()) {
       return;
     }
-    for (Map.Entry<String, Listener> entry: listenerMap.entrySet()) {
+    for (Map.Entry<String, Listener> entry : listenerMap.entrySet()) {
       String dataId = entry.getKey().split(NacosConfigConst.COMMAS)[0];
       String group = entry.getKey().split(NacosConfigConst.COMMAS)[1];
       configService.removeListener(dataId, group, entry.getValue());
@@ -196,7 +196,7 @@ public class NacosContextRefresher
       }
       this.currentConfigServiceManager = configManager;
       try {
-        for (NacosPropertySource propertySource: NacosPropertySourceRepository.getAll()) {
+        for (NacosPropertySource propertySource : NacosPropertySourceRepository.getAll()) {
           if (propertySource.isRefreshable()) {
             registerNacosListener(propertySource.getGroup(), propertySource.getDataId(), configManager);
           }
@@ -210,7 +210,7 @@ public class NacosContextRefresher
   }
 
   private void registerNacosListener(final String groupKey, final String dataKey, NacosConfigManager configManager)
-      throws NacosException{
+      throws NacosException {
     String key = NacosPropertySourceRepository.getMapKey(dataKey, groupKey);
     Listener listener = listenerMap.computeIfAbsent(key,
         lst -> new AbstractSharedListener() {

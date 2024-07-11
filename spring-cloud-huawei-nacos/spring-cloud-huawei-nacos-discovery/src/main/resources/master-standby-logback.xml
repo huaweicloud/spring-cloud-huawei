@@ -16,63 +16,63 @@
   ~ limitations under the License.
   -->
 
-<configuration debug="false" scan="false"  packagingData="true">
-    <root level="info">
-        <appender-ref ref="CONSOLE"/>
-    </root>
+<configuration debug="false" scan="false" packagingData="true">
+  <root level="info">
+    <appender-ref ref="CONSOLE"/>
+  </root>
 
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %p [%-5t:%c{2}] %m%n</pattern>
-        </encoder>
-    </appender>
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %p [%-5t:%c{2}] %m%n</pattern>
+    </encoder>
+  </appender>
 
-    <appender name="REMOTE_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${user.home}/logs/nacos/nacos-remote.log</file>
+  <appender name="REMOTE_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${user.home}/logs/nacos/nacos-remote.log</file>
 
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>nacos-remote.%d{yyyy-MM-dd}.log</fileNamePattern>
-        </rollingPolicy>
-        
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %p [%-5t:%c{2}] %m%n %ex{short}</pattern>
-        </encoder>
-    </appender>
-    
-    <appender name="ASYNC-REMOTE" class="ch.qos.logback.classic.AsyncAppender">
-        <discardingThreshold>0</discardingThreshold>
-        <queueSize>1024</queueSize>
-        <neverBlock>true</neverBlock>
-        <appender-ref ref="REMOTE_LOG_FILE"/>
-    </appender>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>nacos-remote.%d{yyyy-MM-dd}.log</fileNamePattern>
+    </rollingPolicy>
 
-    <appender name="NAMING_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${user.home}/logs/nacos/nacos-naming.log</file>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %p [%-5t:%c{2}] %m%n %ex{short}</pattern>
+    </encoder>
+  </appender>
 
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>nacos-naming.%d{yyyy-MM-dd}.log</fileNamePattern>
-        </rollingPolicy>
+  <appender name="ASYNC-REMOTE" class="ch.qos.logback.classic.AsyncAppender">
+    <discardingThreshold>0</discardingThreshold>
+    <queueSize>1024</queueSize>
+    <neverBlock>true</neverBlock>
+    <appender-ref ref="REMOTE_LOG_FILE"/>
+  </appender>
 
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %p [%-5t:%c{2}] %m%n %ex{short}</pattern>
-        </encoder>
-    </appender>
+  <appender name="NAMING_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${user.home}/logs/nacos/nacos-naming.log</file>
 
-    <appender name="ASYNC-NAMING" class="ch.qos.logback.classic.AsyncAppender">
-        <discardingThreshold>0</discardingThreshold>
-        <queueSize>1024</queueSize>
-        <neverBlock>true</neverBlock>
-        <appender-ref ref="NAMING_LOG_FILE"/>
-    </appender>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>nacos-naming.%d{yyyy-MM-dd}.log</fileNamePattern>
+    </rollingPolicy>
 
-    <Logger name="com.alibaba.nacos.common.remote.client" level="info" additivity="false">
-        <appender-ref ref="ASYNC-REMOTE"/>
-    </Logger>
-    
-    <Logger name="com.alibaba.nacos.shaded.io.grpc" level="info" additivity="false">
-        <appender-ref ref="ASYNC-REMOTE"/>
-    </Logger>
-    <logger name="com.alibaba.nacos.client.naming" level="info" additivity="false">
-        <appender-ref ref="ASYNC-NAMING"/>
-    </logger>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %p [%-5t:%c{2}] %m%n %ex{short}</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="ASYNC-NAMING" class="ch.qos.logback.classic.AsyncAppender">
+    <discardingThreshold>0</discardingThreshold>
+    <queueSize>1024</queueSize>
+    <neverBlock>true</neverBlock>
+    <appender-ref ref="NAMING_LOG_FILE"/>
+  </appender>
+
+  <Logger name="com.alibaba.nacos.common.remote.client" level="info" additivity="false">
+    <appender-ref ref="ASYNC-REMOTE"/>
+  </Logger>
+
+  <Logger name="com.alibaba.nacos.shaded.io.grpc" level="info" additivity="false">
+    <appender-ref ref="ASYNC-REMOTE"/>
+  </Logger>
+  <logger name="com.alibaba.nacos.client.naming" level="info" additivity="false">
+    <appender-ref ref="ASYNC-NAMING"/>
+  </logger>
 </configuration>
