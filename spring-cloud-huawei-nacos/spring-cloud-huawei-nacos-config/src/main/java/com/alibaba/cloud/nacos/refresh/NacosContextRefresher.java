@@ -187,26 +187,29 @@ public class NacosContextRefresher
    * register Nacos Listeners.
    */
   private void registerNacosListenersForApplications() {
+    this.currentConfigServiceManager = chooseConfigManager();
+    try {
+      for (NacosPropertySource propertySource : NacosPropertySourceRepository.getAll()) {
+        if (propertySource.isRefreshable()) {
+          registerNacosListener(propertySource.getGroup(), propertySource.getDataId(), currentConfigServiceManager);
+        }
+      }
+    } catch (NacosException e) {
+      log.error("add nacos config listener error, serverAddr=[{}]", currentConfigServiceManager.getServerAddr(), e);
+    }
+  }
+
+  private NacosConfigManager chooseConfigManager() {
     int idx = 0;
     while (idx < nacosConfigManagers.size()) {
-      NacosConfigManager configManager = nacosConfigManagers.get(idx);
-      if (!configManager.checkServerConnect()) {
-        idx++;
-        continue;
-      }
-      this.currentConfigServiceManager = configManager;
-      try {
-        for (NacosPropertySource propertySource : NacosPropertySourceRepository.getAll()) {
-          if (propertySource.isRefreshable()) {
-            registerNacosListener(propertySource.getGroup(), propertySource.getDataId(), configManager);
-          }
-        }
-        return;
-      } catch (NacosException e) {
-        log.error("add nacos config listener error, serverAddr=[{}]", configManager.getServerAddr(), e);
+      if (nacosConfigManagers.get(idx).checkServerConnect()) {
+        return nacosConfigManagers.get(idx);
       }
       idx++;
     }
+
+    // if all server unavailable, return master server, ensure listening configuration when service is available again.
+    return nacosConfigManagers.get(0);
   }
 
   private void registerNacosListener(final String groupKey, final String dataKey, NacosConfigManager configManager)
