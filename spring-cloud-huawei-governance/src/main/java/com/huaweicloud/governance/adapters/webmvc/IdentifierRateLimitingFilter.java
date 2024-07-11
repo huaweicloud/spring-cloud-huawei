@@ -26,10 +26,16 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.governance.handler.IdentifierRateLimitingHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.client.ServiceInstance;
+
+import com.huaweicloud.common.context.InvocationContext;
+import com.huaweicloud.common.context.InvocationContextHolder;
+import com.huaweicloud.governance.GovernanceConst;
 
 import io.github.resilience4j.decorators.Decorators;
 import io.github.resilience4j.decorators.Decorators.DecorateConsumer;
@@ -71,9 +77,16 @@ public class IdentifierRateLimitingFilter implements Filter {
       if (e instanceof RequestNotPermitted) {
         ((HttpServletResponse) response).setStatus(429);
         response.getWriter().print("rate limited.");
-        LOGGER.warn("the request is rate limit by policy : {}",
-            e.getMessage());
+        LOGGER.warn("the request is rate limit by policy : {}", e.getMessage());
       } else {
+        InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
+        if (context.getLocalContext(GovernanceConst.CONTEXT_CURRENT_INSTANCE) != null) {
+          if (context.getLocalContext(GovernanceConst.CONTEXT_CURRENT_INSTANCE) instanceof ServiceInstance) {
+            ServiceInstance instance = context.getLocalContext(GovernanceConst.CONTEXT_CURRENT_INSTANCE);
+            LOGGER.error("request >>>>>>>>>>>>>> service {}[{}:{}] failed", instance.getServiceId(), instance.getHost(),
+                instance.getPort(), e);
+          }
+        }
         throw e;
       }
     }
