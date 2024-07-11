@@ -28,95 +28,95 @@ import com.alibaba.nacos.api.naming.PreservedMetadataKeys;
 import com.huaweicloud.nacos.discovery.NacosDiscoveryProperties;
 
 public class NacosRegistration implements Registration {
-	private final List<NacosRegistrationMetadataCustomizer> registrationCustomizers;
+  private final List<NacosRegistrationMetadataCustomizer> registrationCustomizers;
 
-	private final NacosDiscoveryProperties nacosDiscoveryProperties;
+  private final NacosDiscoveryProperties nacosDiscoveryProperties;
 
-	private String instanceId;
+  private String instanceId;
 
-	public NacosRegistration(List<NacosRegistrationMetadataCustomizer> registrationCustomizers,
-			NacosDiscoveryProperties nacosDiscoveryProperties) {
-		this.registrationCustomizers = registrationCustomizers;
-		this.nacosDiscoveryProperties = nacosDiscoveryProperties;
-		init();
-	}
+  public NacosRegistration(List<NacosRegistrationMetadataCustomizer> registrationCustomizers,
+      NacosDiscoveryProperties nacosDiscoveryProperties) {
+    this.registrationCustomizers = registrationCustomizers;
+    this.nacosDiscoveryProperties = nacosDiscoveryProperties;
+    init();
+  }
 
-	public void init() {
-		buildPropertiesAttributes();
-		this.instanceId = buildInstanceId();
-	}
+  public void init() {
+    buildPropertiesAttributes();
+    this.instanceId = buildInstanceId();
+  }
 
-	private void buildPropertiesAttributes() {
-		Map<String, String> metadata = nacosDiscoveryProperties.getMetadata();
-		metadata.put(PreservedMetadataKeys.REGISTER_SOURCE, "SPRING_CLOUD");
-		if (nacosDiscoveryProperties.isSecure()) {
-			metadata.put("secure", "true");
-		}
-		if (null != nacosDiscoveryProperties.getHeartBeatInterval()) {
-			metadata.put(PreservedMetadataKeys.HEART_BEAT_INTERVAL,
-					nacosDiscoveryProperties.getHeartBeatInterval().toString());
-		}
-		if (null != nacosDiscoveryProperties.getHeartBeatTimeout()) {
-			metadata.put(PreservedMetadataKeys.HEART_BEAT_TIMEOUT,
-					nacosDiscoveryProperties.getHeartBeatTimeout().toString());
-		}
-		if (null != nacosDiscoveryProperties.getIpDeleteTimeout()) {
-			metadata.put(PreservedMetadataKeys.IP_DELETE_TIMEOUT,
-					nacosDiscoveryProperties.getIpDeleteTimeout().toString());
-		}
-		customize(registrationCustomizers);
-	}
+  private void buildPropertiesAttributes() {
+    Map<String, String> metadata = nacosDiscoveryProperties.getMetadata();
+    metadata.put(PreservedMetadataKeys.REGISTER_SOURCE, "SPRING_CLOUD");
+    if (nacosDiscoveryProperties.isSecure()) {
+      metadata.put("secure", "true");
+    }
+    if (null != nacosDiscoveryProperties.getHeartBeatInterval()) {
+      metadata.put(PreservedMetadataKeys.HEART_BEAT_INTERVAL,
+          nacosDiscoveryProperties.getHeartBeatInterval().toString());
+    }
+    if (null != nacosDiscoveryProperties.getHeartBeatTimeout()) {
+      metadata.put(PreservedMetadataKeys.HEART_BEAT_TIMEOUT,
+          nacosDiscoveryProperties.getHeartBeatTimeout().toString());
+    }
+    if (null != nacosDiscoveryProperties.getIpDeleteTimeout()) {
+      metadata.put(PreservedMetadataKeys.IP_DELETE_TIMEOUT,
+          nacosDiscoveryProperties.getIpDeleteTimeout().toString());
+    }
+    customize(registrationCustomizers);
+  }
 
-	protected void customize(
-			List<NacosRegistrationMetadataCustomizer> registrationCustomizers) {
-		if (registrationCustomizers != null) {
-			for (NacosRegistrationMetadataCustomizer customizer : registrationCustomizers) {
-				customizer.customize(this);
-			}
-		}
-	}
+  protected void customize(
+      List<NacosRegistrationMetadataCustomizer> registrationCustomizers) {
+    if (registrationCustomizers != null) {
+      for (NacosRegistrationMetadataCustomizer customizer : registrationCustomizers) {
+        customizer.customize(this);
+      }
+    }
+  }
 
-	@Override
-	public String getInstanceId() {
-		return instanceId;
-	}
+  @Override
+  public String getInstanceId() {
+    return instanceId;
+  }
 
-	@Override
-	public String getServiceId() {
-		return nacosDiscoveryProperties.getService();
-	}
+  @Override
+  public String getServiceId() {
+    return nacosDiscoveryProperties.getService();
+  }
 
-	@Override
-	public String getHost() {
-		return nacosDiscoveryProperties.getIp();
-	}
+  @Override
+  public String getHost() {
+    return nacosDiscoveryProperties.getIp();
+  }
 
-	@Override
-	public int getPort() {
-		return nacosDiscoveryProperties.getPort();
-	}
+  @Override
+  public int getPort() {
+    return nacosDiscoveryProperties.getPort();
+  }
 
-	@Override
-	public boolean isSecure() {
-		return nacosDiscoveryProperties.isSecure();
-	}
+  @Override
+  public boolean isSecure() {
+    return nacosDiscoveryProperties.isSecure();
+  }
 
-	@Override
-	public URI getUri() {
-		return DefaultServiceInstance.getUri(this);
-	}
+  @Override
+  public URI getUri() {
+    return DefaultServiceInstance.getUri(this);
+  }
 
-	@Override
-	public Map<String, String> getMetadata() {
-		return nacosDiscoveryProperties.getMetadata();
-	}
+  @Override
+  public Map<String, String> getMetadata() {
+    return nacosDiscoveryProperties.getMetadata();
+  }
 
-	public NacosDiscoveryProperties getNacosDiscoveryProperties() {
-		return nacosDiscoveryProperties;
-	}
+  public NacosDiscoveryProperties getNacosDiscoveryProperties() {
+    return nacosDiscoveryProperties;
+  }
 
-	private String buildInstanceId() {
-		String result = nacosDiscoveryProperties.getIp() + ":" + nacosDiscoveryProperties.getPort();
-		return result.replaceAll("[^0-9a-zA-Z]", "-");
-	}
+  private String buildInstanceId() {
+    String result = nacosDiscoveryProperties.getIp() + ":" + nacosDiscoveryProperties.getPort();
+    return result.replaceAll("[^0-9a-zA-Z]", "-");
+  }
 }

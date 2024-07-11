@@ -16,40 +16,40 @@
   ~ limitations under the License.
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.huaweicloud</groupId>
-        <artifactId>spring-cloud-huawei-nacos</artifactId>
-        <version>1.12.0-2023.0.x-SNAPSHOT</version>
-    </parent>
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.huaweicloud</groupId>
+    <artifactId>spring-cloud-huawei-nacos</artifactId>
+    <version>1.12.0-2023.0.x-SNAPSHOT</version>
+  </parent>
 
-    <artifactId>spring-cloud-huawei-nacos-config</artifactId>
-    <name>Spring Cloud Huawei::Nacos Config</name>
+  <artifactId>spring-cloud-huawei-nacos-config</artifactId>
+  <name>Spring Cloud Huawei::Nacos Config</name>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.huaweicloud</groupId>
-            <artifactId>spring-cloud-huawei-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba.nacos</groupId>
-            <artifactId>nacos-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba.spring</groupId>
-            <artifactId>spring-context-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
-    
+  <dependencies>
+    <dependency>
+      <groupId>com.huaweicloud</groupId>
+      <artifactId>spring-cloud-huawei-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.alibaba.nacos</groupId>
+      <artifactId>nacos-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.alibaba.spring</groupId>
+      <artifactId>spring-context-support</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
 </project>

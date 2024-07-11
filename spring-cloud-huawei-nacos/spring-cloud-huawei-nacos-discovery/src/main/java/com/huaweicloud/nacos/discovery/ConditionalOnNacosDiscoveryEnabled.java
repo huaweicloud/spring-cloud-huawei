@@ -26,7 +26,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.ConditionalOnDiscoveryEnabled;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ElementType.TYPE, ElementType.METHOD})
 @ConditionalOnDiscoveryEnabled
 @ConditionalOnProperty(value = "spring.cloud.nacos.discovery.enabled", matchIfMissing = true)
 public @interface ConditionalOnNacosDiscoveryEnabled {

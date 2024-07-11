@@ -118,7 +118,7 @@ public class NacosPropertySourceBuilder {
   }
 
   private String getConfigDataFromNacos(String dataId, String group) {
-    for (NacosConfigManager configManager: configServiceManagers) {
+    for (NacosConfigManager configManager : configServiceManagers) {
       try {
         return configManager.getConfigService().getConfig(dataId, group, timeout);
       } catch (NacosException e) {
