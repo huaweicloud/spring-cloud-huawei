@@ -48,7 +48,8 @@ public class ConfigServiceManagerUtils {
 
   private static URI parseIpPortFromURI(String uri) {
     try {
-      return new URI(uri);
+      String realUri = uri.startsWith("http") ? uri : "http://" + uri;
+      return new URI(realUri);
     } catch (URISyntaxException e) {
       return null;
     }
