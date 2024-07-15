@@ -55,6 +55,18 @@ public class WebMvcConfiguration {
   }
 
   @Bean
+  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_REQUEST_SERVICE_LOGGER_ENABLED,
+      havingValue = "true", matchIfMissing = true)
+  public FilterRegistrationBean<RequestServiceInfoLoggerFilter> requestServiceInfoLoggerFilter() {
+    FilterRegistrationBean<RequestServiceInfoLoggerFilter> registrationBean = new FilterRegistrationBean<>();
+    registrationBean.setFilter(new RequestServiceInfoLoggerFilter());
+    registrationBean.addUrlPatterns("/*");
+    registrationBean.setOrder(GovernanceProperties.WEB_FILTER_REQUEST_SERVICE_LOGGER_ORDER);
+
+    return registrationBean;
+  }
+
+  @Bean
   @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_IDENTIFIER_RATE_LIMITING_ENABLED,
       havingValue = "true", matchIfMissing = true)
   public FilterRegistrationBean<IdentifierRateLimitingFilter> identifierRateLimitingFilter(

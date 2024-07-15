@@ -406,8 +406,7 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
               Duration.parse(circuitBreakerPolicy.getWaitDurationInOpenState())));
           return Response.builder().status(503).reason("instance isolated.").request(feignRequest).build();
         }
-        LOG.error("feign request >>>>>>>>>>>>> service {}[{}:{}] failed", lbResponse.getServer().getServiceId(),
-            lbResponse.getServer().getHost(), lbResponse.getServer().getPort(), e);
+
         if (e instanceof RuntimeException) {
           throw (RuntimeException) e;
         }
@@ -446,8 +445,7 @@ public class GovernanceFeignBlockingLoadBalancerClient implements Client {
         LOG.error("instance bulkhead is full [{}]", governanceRequest.instanceId());
         return Response.builder().status(503).reason("instance bulkhead is full.").request(feignRequest).build();
       }
-      LOG.error("feign request >>>>>>>>>>>>> service {}[{}:{}] failed", lbResponse.getServer().getServiceId(),
-          lbResponse.getServer().getHost(), lbResponse.getServer().getPort(), e);
+
       throw new RuntimeException(e);
     }
   }
