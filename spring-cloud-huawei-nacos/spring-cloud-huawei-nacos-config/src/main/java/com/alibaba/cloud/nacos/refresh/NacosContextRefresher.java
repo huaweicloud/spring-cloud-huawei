@@ -29,6 +29,7 @@ import com.huaweicloud.nacos.config.NacosConfigConst;
 import com.alibaba.cloud.nacos.NacosConfigProperties;
 import com.alibaba.cloud.nacos.NacosPropertySourceRepository;
 import com.alibaba.cloud.nacos.client.NacosPropertySource;
+import com.huaweicloud.nacos.config.manager.ConfigServiceManagerUtils;
 import com.huaweicloud.nacos.config.manager.NacosConfigManager;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.listener.AbstractSharedListener;
@@ -187,7 +188,7 @@ public class NacosContextRefresher
    * register Nacos Listeners.
    */
   private void registerNacosListenersForApplications() {
-    this.currentConfigServiceManager = chooseConfigManager();
+    this.currentConfigServiceManager = ConfigServiceManagerUtils.chooseConfigManager(nacosConfigManagers);
     try {
       for (NacosPropertySource propertySource : NacosPropertySourceRepository.getAll()) {
         if (propertySource.isRefreshable()) {
@@ -197,19 +198,6 @@ public class NacosContextRefresher
     } catch (NacosException e) {
       log.error("add nacos config listener error, serverAddr=[{}]", currentConfigServiceManager.getServerAddr(), e);
     }
-  }
-
-  private NacosConfigManager chooseConfigManager() {
-    int idx = 0;
-    while (idx < nacosConfigManagers.size()) {
-      if (nacosConfigManagers.get(idx).checkServerConnect()) {
-        return nacosConfigManagers.get(idx);
-      }
-      idx++;
-    }
-
-    // if all server unavailable, return master server, ensure listening configuration when service is available again.
-    return nacosConfigManagers.get(0);
   }
 
   private void registerNacosListener(final String groupKey, final String dataKey, NacosConfigManager configManager)
