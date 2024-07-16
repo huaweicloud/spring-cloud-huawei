@@ -111,6 +111,12 @@ public class NacosConfigDataLoader implements ConfigDataLoader<NacosConfigDataRe
     if (configServiceStandby != null && configServiceStandby.checkServerConnect()) {
       return configServiceStandby.getConfigService();
     }
+    if (configServiceMaster != null) {
+      return configServiceMaster.getConfigService();
+    }
+    if (configServiceStandby != null) {
+      return configServiceStandby.getConfigService();
+    }
     return null;
   }
 
