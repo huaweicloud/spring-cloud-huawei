@@ -20,6 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.huaweicloud.nacos.config.manager.ConfigServiceManagerUtils;
 import com.huaweicloud.nacos.config.manager.NacosConfigManager;
 
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
@@ -56,12 +57,8 @@ public class NacosConfigHealthIndicator extends AbstractHealthIndicator {
   @Override
   protected void doHealthCheck(Health.Builder builder) throws Exception {
     // Just return "UP" or "DOWN"
-    String status = STATUS_DOWN;
-    for (NacosConfigManager configManager : nacosConfigManagers) {
-      if (configManager.checkServerConnect()) {
-        status = configManager.getConfigService().getServerStatus();
-      }
-    }
+    String status = ConfigServiceManagerUtils.chooseConfigManager(nacosConfigManagers)
+        .getConfigService().getServerStatus();
 
     // Set the status to Builder
     builder.status(status);

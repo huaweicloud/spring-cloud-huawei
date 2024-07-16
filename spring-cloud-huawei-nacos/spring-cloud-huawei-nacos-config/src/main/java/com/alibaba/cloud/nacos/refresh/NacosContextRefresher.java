@@ -29,6 +29,7 @@ import com.huaweicloud.nacos.config.NacosConfigConst;
 import com.alibaba.cloud.nacos.NacosConfigProperties;
 import com.alibaba.cloud.nacos.NacosPropertySourceRepository;
 import com.alibaba.cloud.nacos.client.NacosPropertySource;
+import com.huaweicloud.nacos.config.manager.ConfigServiceManagerUtils;
 import com.huaweicloud.nacos.config.manager.NacosConfigManager;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.listener.AbstractSharedListener;
@@ -187,25 +188,15 @@ public class NacosContextRefresher
    * register Nacos Listeners.
    */
   private void registerNacosListenersForApplications() {
-    int idx = 0;
-    while (idx < nacosConfigManagers.size()) {
-      NacosConfigManager configManager = nacosConfigManagers.get(idx);
-      if (!configManager.checkServerConnect()) {
-        idx++;
-        continue;
-      }
-      this.currentConfigServiceManager = configManager;
-      try {
-        for (NacosPropertySource propertySource : NacosPropertySourceRepository.getAll()) {
-          if (propertySource.isRefreshable()) {
-            registerNacosListener(propertySource.getGroup(), propertySource.getDataId(), configManager);
-          }
+    this.currentConfigServiceManager = ConfigServiceManagerUtils.chooseConfigManager(nacosConfigManagers);
+    try {
+      for (NacosPropertySource propertySource : NacosPropertySourceRepository.getAll()) {
+        if (propertySource.isRefreshable()) {
+          registerNacosListener(propertySource.getGroup(), propertySource.getDataId(), currentConfigServiceManager);
         }
-        return;
-      } catch (NacosException e) {
-        log.error("add nacos config listener error, serverAddr=[{}]", configManager.getServerAddr(), e);
       }
-      idx++;
+    } catch (NacosException e) {
+      log.error("add nacos config listener error, serverAddr=[{}]", currentConfigServiceManager.getServerAddr(), e);
     }
   }
 

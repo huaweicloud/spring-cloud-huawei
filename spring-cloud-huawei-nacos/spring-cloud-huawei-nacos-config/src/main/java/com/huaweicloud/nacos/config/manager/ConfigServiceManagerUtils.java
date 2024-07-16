@@ -22,6 +22,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -48,9 +49,25 @@ public class ConfigServiceManagerUtils {
 
   private static URI parseIpPortFromURI(String uri) {
     try {
-      return new URI(uri);
+      String realUri = uri.startsWith("http") ? uri : "http://" + uri;
+      return new URI(realUri);
     } catch (URISyntaxException e) {
       return null;
     }
+  }
+
+  public static NacosConfigManager chooseConfigManager(List<NacosConfigManager> nacosConfigManagers) {
+    int idx = 0;
+    while (idx < nacosConfigManagers.size()) {
+      if (checkServerConnect(nacosConfigManagers.get(idx).getServerAddr())) {
+        return nacosConfigManagers.get(idx);
+      }
+      LOGGER.warn("nacos server [{}] unavailable, choose others.", nacosConfigManagers.get(idx).getServerAddr());
+      idx++;
+    }
+    LOGGER.warn("all nacos server unavailable, use master server.");
+
+    // if all server unavailable, return master server, ensure listening configuration when service is available again.
+    return nacosConfigManagers.get(0);
   }
 }
