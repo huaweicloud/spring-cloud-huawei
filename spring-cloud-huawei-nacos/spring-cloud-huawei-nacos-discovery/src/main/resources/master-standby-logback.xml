@@ -31,7 +31,7 @@
     <file>${user.home}/logs/nacos/nacos-remote.log</file>
 
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>nacos-remote.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <fileNamePattern>${user.home}/logs/nacos/nacos-remote.%d{yyyy-MM-dd}.log</fileNamePattern>
     </rollingPolicy>
 
     <encoder>
@@ -50,7 +50,7 @@
     <file>${user.home}/logs/nacos/nacos-naming.log</file>
 
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>nacos-naming.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <fileNamePattern>${user.home}/logs/nacos/nacos-naming.%d{yyyy-MM-dd}.log</fileNamePattern>
     </rollingPolicy>
 
     <encoder>
