@@ -23,10 +23,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.alibaba.cloud.nacos.NacosPropertySourceRepository;
+import com.huaweicloud.nacos.config.manager.ConfigServiceManagerUtils;
 import com.huaweicloud.nacos.config.manager.NacosConfigManager;
 import com.alibaba.cloud.nacos.parser.NacosDataParserHandler;
 import com.alibaba.cloud.nacos.refresh.NacosSnapshotConfigManager;
-import com.alibaba.nacos.api.exception.NacosException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -54,7 +54,7 @@ public class NacosPropertySourceBuilder {
   private long timeout;
 
   public NacosPropertySourceBuilder(List<NacosConfigManager> nacosConfigManagers, long timeout) {
-    this.configServiceManagers = nacosConfigManagers.stream().filter(NacosConfigManager::checkServerConnect)
+    this.configServiceManagers = nacosConfigManagers.stream()
         .sorted(Comparator.comparingInt(NacosConfigManager::getOrder)).collect(Collectors.toList());
     this.timeout = timeout;
   }
@@ -92,7 +92,8 @@ public class NacosPropertySourceBuilder {
       String configSnapshot = NacosSnapshotConfigManager.getAndRemoveConfigSnapshot(dataId, group);
       if (StringUtils.isEmpty(configSnapshot)) {
         log.debug("get config from nacos, dataId: {}, group: {}", dataId, group);
-        data = getConfigDataFromNacos(dataId, group);
+        data = ConfigServiceManagerUtils.chooseConfigManager(configServiceManagers)
+            .getConfigService().getConfig(dataId, group, timeout);
       } else {
         log.debug("get config from memory snapshot, dataId: {}, group: {}",
             dataId, group);
@@ -115,17 +116,5 @@ public class NacosPropertySourceBuilder {
       log.error("parse data from Nacos error,dataId:{},data:{}", dataId, data, e);
     }
     return Collections.emptyList();
-  }
-
-  private String getConfigDataFromNacos(String dataId, String group) {
-    for (NacosConfigManager configManager : configServiceManagers) {
-      try {
-        return configManager.getConfigService().getConfig(dataId, group, timeout);
-      } catch (NacosException e) {
-        log.error("get config from nacos server error, serverAddr=[{}], dataId=[{}], group=[{}]",
-            configManager.getServerAddr(), dataId, group, e);
-      }
-    }
-    return "";
   }
 }
