@@ -36,7 +36,7 @@
     <feign-core.version>12.3</feign-core.version>
     <httpclient.version>5.3.1</httpclient.version>
     <jackson.version>2.16.1</jackson.version>
-    <commons-io.version>2.7</commons-io.version>
+    <commons-io.version>2.16.1</commons-io.version>
     <guava.version>33.0.0-jre</guava.version>
     <snakeyaml.version>2.2</snakeyaml.version>
     <commons-configuration.version>1.10</commons-configuration.version>
@@ -46,7 +46,6 @@
     <annotations.version>3.0.1</annotations.version>
     <dubbo.hessian.version>2.7.23</dubbo.hessian.version>
     <springdoc.version>2.1.0</springdoc.version>
-    <resilience4j.versioin>1.7.0</resilience4j.versioin>
     <nacos.client.version>2.3.0</nacos.client.version>
     <alibaba.context.support.version>1.0.11</alibaba.context.support.version>
   </properties>
@@ -64,7 +63,7 @@
       <dependency>
         <groupId>io.github.resilience4j</groupId>
         <artifactId>resilience4j-bom</artifactId>
-        <version>${resilience4j.versioin}</version>
+        <version>${resilience4j.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
