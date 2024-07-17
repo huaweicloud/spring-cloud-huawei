@@ -48,7 +48,7 @@ public class SpringMvcOpenApiResource extends OpenApiResource {
 
   public OpenAPI getOpenAPI() {
     super.initOpenAPIBuilder(Locale.getDefault());
-    openAPIService.setServerBaseUrl(getServerBaseUrl());
+    openAPIService.setServerBaseUrl(getServerBaseUrl(), null);
     return this.getOpenApi(Locale.getDefault());
   }
 
