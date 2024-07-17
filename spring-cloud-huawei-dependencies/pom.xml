@@ -34,7 +34,7 @@
 
   <properties>
     <feign-core.version>11.10</feign-core.version>
-    <httpclient.version>4.5.9</httpclient.version>
+    <httpclient.version>4.5.14</httpclient.version>
     <jackson.version>2.16.1</jackson.version>
     <commons-io.version>2.7</commons-io.version>
     <jmockit.version>1.36</jmockit.version>
