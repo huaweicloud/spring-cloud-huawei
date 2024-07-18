@@ -30,7 +30,7 @@ public class GovernanceProperties {
 
   public static final int WEB_FILTER_SERVICE_AUTH_ORDER = -60000;
 
-  public static final int WEB_FILTER_REQUEST_SERVICE_LOGGER_ORDER = -35000;
+  public static final int WEB_FILTER_REQUEST_LOGGER_ORDER = -35000;
 
   private static final int WEB_CLIENT_LOAD_BALANCE_BASE = 0;
 
@@ -58,8 +58,8 @@ public class GovernanceProperties {
   public static final String WEBCLIENT_FAULT_INJECTION_ENABLED =
       PREFIX + "." + "webclient.faultInjection.enabled";
 
-  public static final String WEBCLIENT_REQUEST_SERVICE_LOGGER_ENABLED =
-      PREFIX + "." + "webclient.requestServiceLogger.enabled";
+  public static final String WEBCLIENT_REQUEST_LOGGER_ENABLED =
+      PREFIX + "." + "webclient.requestLogger.enabled";
 
   public static final String GATEWAY_GOVERNANCE_ENABLED = PREFIX + "." + "gateway.governance.enabled";
 
@@ -83,11 +83,11 @@ public class GovernanceProperties {
   public static final String WEBFLUX_CONTEXT_MAPPER_ENABLED =
       PREFIX + "." + "webflux.contextMapper.enabled";
 
-  public static final String WEBFLUX_REQUEST_SERVICE_LOGGER_ENABLED =
-      PREFIX + "." + "webflux.requestServiceLogger.enabled";
+  public static final String WEBFLUX_REQUEST_LOGGER_ENABLED =
+      PREFIX + "." + "webflux.requestLogger.enabled";
 
-  public static final String WEBMVC_REQUEST_SERVICE_LOGGER_ENABLED =
-      PREFIX + "." + "webmvc.requestServiceLogger.enabled";
+  public static final String WEBMVC_REQUEST_LOGGER_ENABLED =
+      PREFIX + "." + "webmvc.requestLogger.enabled";
 
   public static final String WEBMVC_RATE_LIMITING_ENABLED =
       PREFIX + "." + "webmvc.rateLimiting.enabled";

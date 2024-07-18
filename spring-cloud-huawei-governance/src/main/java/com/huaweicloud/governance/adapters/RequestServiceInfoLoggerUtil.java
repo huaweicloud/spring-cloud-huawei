@@ -29,11 +29,9 @@ public class RequestServiceInfoLoggerUtil {
 
   public static void logServiceInfo(InvocationContext context, Throwable e) {
     if (context != null && context.getLocalContext(GovernanceConst.CONTEXT_CURRENT_INSTANCE) != null) {
-      if (context.getLocalContext(GovernanceConst.CONTEXT_CURRENT_INSTANCE) instanceof ServiceInstance) {
-        ServiceInstance instance = context.getLocalContext(GovernanceConst.CONTEXT_CURRENT_INSTANCE);
-        LOGGER.error("request >>>>>>>>>>>>>> service {}[{}:{}] failed", instance.getServiceId(), instance.getHost(),
-            instance.getPort(), e);
-      }
+      ServiceInstance instance = context.getLocalContext(GovernanceConst.CONTEXT_CURRENT_INSTANCE);
+      LOGGER.error("request >>>>>>>>>>>>>> service {}[{}:{}] failed", instance.getServiceId(), instance.getHost(),
+          instance.getPort(), e);
     }
   }
 }

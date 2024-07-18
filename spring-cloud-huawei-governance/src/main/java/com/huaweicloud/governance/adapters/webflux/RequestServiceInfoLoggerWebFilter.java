@@ -40,6 +40,6 @@ public class RequestServiceInfoLoggerWebFilter implements OrderedWebFilter {
 
   @Override
   public int getOrder() {
-    return GovernanceProperties.WEB_FILTER_REQUEST_SERVICE_LOGGER_ORDER;
+    return GovernanceProperties.WEB_FILTER_REQUEST_LOGGER_ORDER;
   }
 }

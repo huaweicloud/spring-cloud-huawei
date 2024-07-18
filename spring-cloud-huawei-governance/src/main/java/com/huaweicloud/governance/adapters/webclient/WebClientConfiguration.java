@@ -72,7 +72,7 @@ public class WebClientConfiguration {
   }
 
   @Bean
-  @ConditionalOnProperty(value = GovernanceProperties.WEBCLIENT_REQUEST_SERVICE_LOGGER_ENABLED,
+  @ConditionalOnProperty(value = GovernanceProperties.WEBCLIENT_REQUEST_LOGGER_ENABLED,
       havingValue = "true", matchIfMissing = true)
   public ServiceInfoLoggerExchangeFilterFunction serviceInfoLoggerExchangeFilterFunction() {
     return new ServiceInfoLoggerExchangeFilterFunction();

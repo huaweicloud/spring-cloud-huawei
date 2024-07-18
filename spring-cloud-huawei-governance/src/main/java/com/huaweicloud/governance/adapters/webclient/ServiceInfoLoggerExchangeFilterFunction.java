@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.core.Ordered;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
@@ -41,7 +40,7 @@ public class ServiceInfoLoggerExchangeFilterFunction implements ExchangeFilterFu
   }
 
   private ClientResponse logServiceInfo(ClientResponse response, ClientRequest request) {
-    if (response.statusCode() != HttpStatusCode.valueOf(200)) {
+    if (response.statusCode().value() != 200) {
       Optional<Object> invocationContext = request.attribute(RetryContext.RETRY_SERVICE_INSTANCE);
       if (invocationContext.isPresent() && invocationContext.get() instanceof ServiceInstance instance) {
         LOGGER.error("request >>>>>>>>>>>>>> service {}[{}:{}] failed", instance.getServiceId(), instance.getHost(),

@@ -55,13 +55,13 @@ public class WebMvcConfiguration {
   }
 
   @Bean
-  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_REQUEST_SERVICE_LOGGER_ENABLED,
+  @ConditionalOnProperty(value = GovernanceProperties.WEBMVC_REQUEST_LOGGER_ENABLED,
       havingValue = "true", matchIfMissing = true)
   public FilterRegistrationBean<RequestServiceInfoLoggerFilter> requestServiceInfoLoggerFilter() {
     FilterRegistrationBean<RequestServiceInfoLoggerFilter> registrationBean = new FilterRegistrationBean<>();
     registrationBean.setFilter(new RequestServiceInfoLoggerFilter());
     registrationBean.addUrlPatterns("/*");
-    registrationBean.setOrder(GovernanceProperties.WEB_FILTER_REQUEST_SERVICE_LOGGER_ORDER);
+    registrationBean.setOrder(GovernanceProperties.WEB_FILTER_REQUEST_LOGGER_ORDER);
 
     return registrationBean;
   }

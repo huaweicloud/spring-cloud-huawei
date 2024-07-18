@@ -75,7 +75,7 @@ public class WebFluxConfiguration {
   }
 
   @Bean
-  @ConditionalOnProperty(value = GovernanceProperties.WEBFLUX_REQUEST_SERVICE_LOGGER_ENABLED,
+  @ConditionalOnProperty(value = GovernanceProperties.WEBFLUX_REQUEST_LOGGER_ENABLED,
       havingValue = "true", matchIfMissing = true)
   public WebFilter requestServiceInfoLoggerWebFilter() {
     return new RequestServiceInfoLoggerWebFilter();
