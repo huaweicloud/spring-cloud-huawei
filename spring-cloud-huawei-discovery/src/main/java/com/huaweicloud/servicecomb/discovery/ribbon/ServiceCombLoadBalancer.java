@@ -19,6 +19,7 @@ package com.huaweicloud.servicecomb.discovery.ribbon;
 
 import java.util.List;
 
+import com.huaweicloud.common.context.InvocationContext;
 import com.netflix.loadbalancer.AbstractServerList;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.IRule;
@@ -43,7 +44,9 @@ public class ServiceCombLoadBalancer implements ILoadBalancer {
 
   @Override
   public Server chooseServer(Object key) {
-    return this.rule.choose(key);
+    Server server = this.rule.choose(key);
+    InvocationContext.setCurrentInstanse(server);
+    return server;
   }
 
   @Override
