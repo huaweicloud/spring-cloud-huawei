@@ -25,6 +25,7 @@ import com.huaweicloud.nacos.discovery.NacosServiceInstance;
 import com.huaweicloud.nacos.discovery.manager.NamingServiceManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -68,7 +69,9 @@ public class NacosDiscovery {
       try {
         List<Instance> instances = namingServices.get(i).getNamingService()
             .selectInstances(serviceId, group, true);
-        return hostToServiceInstanceList(instances, serviceId);
+        if (!instances.isEmpty()) {
+          return hostToServiceInstanceList(instances, serviceId);
+        }
       } catch (NacosException e) {
         if (i == namingServices.size() - 1) {
           LOGGER.error("get service [{}] instances from nacos failed.", serviceId, e);
@@ -78,7 +81,7 @@ public class NacosDiscovery {
             namingServices.get(i).getServerAddr());
       }
     }
-    return null;
+    return Collections.emptyList();
   }
 
   private List<NamingServiceManager> getAvailableNamingServices() {
