@@ -70,4 +70,11 @@ public class WebClientConfiguration {
   public StatusCodeExtractor clientResponseStatusCodeExtractor(Environment environment) {
     return new ClientResponseStatusCodeExtractor(environment);
   }
+
+  @Bean
+  @ConditionalOnProperty(value = GovernanceProperties.WEBCLIENT_REQUEST_SERVICE_LOGGER_ENABLED,
+      havingValue = "true", matchIfMissing = true)
+  public ServiceInfoLoggerExchangeFilterFunction serviceInfoLoggerExchangeFilterFunction() {
+    return new ServiceInfoLoggerExchangeFilterFunction();
+  }
 }

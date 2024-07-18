@@ -58,6 +58,9 @@ public class GovernanceProperties {
   public static final String WEBCLIENT_FAULT_INJECTION_ENABLED =
       PREFIX + "." + "webclient.faultInjection.enabled";
 
+  public static final String WEBCLIENT_REQUEST_SERVICE_LOGGER_ENABLED =
+      PREFIX + "." + "webclient.requestServiceLogger.enabled";
+
   public static final String GATEWAY_GOVERNANCE_ENABLED = PREFIX + "." + "gateway.governance.enabled";
 
   public static final String GATEWAY_RETRY_ENABLED = PREFIX + "." + "gateway.retry.enabled";
