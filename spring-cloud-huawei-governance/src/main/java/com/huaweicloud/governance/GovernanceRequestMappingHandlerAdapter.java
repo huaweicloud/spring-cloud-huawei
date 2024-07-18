@@ -32,9 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.huaweicloud.common.context.InvocationContext;
 import com.huaweicloud.common.util.HeaderUtil;
-import com.netflix.loadbalancer.Server;
 
 import io.github.resilience4j.bulkhead.Bulkhead;
 import io.github.resilience4j.bulkhead.BulkheadFullException;
@@ -104,10 +102,6 @@ public class GovernanceRequestMappingHandlerAdapter {
         LOGGER.warn("bulkhead is full and does not permit further calls by policy : {}",
             th.getMessage());
       } else {
-        Server server = InvocationContext.getCurrentInstanse();
-        if (server != null) {
-          LOGGER.error("request >>>>>>>>>>>>>> service [{}:{}] failed", server.getHost(), server.getPort(), th);
-        }
         if (serverRecoverPolicy != null) {
           return serverRecoverPolicy.apply(th);
         }
