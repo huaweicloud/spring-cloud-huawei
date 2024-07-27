@@ -108,7 +108,7 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
   }
 
   private void loadLabelRouterConfigs(CompositePropertySource composite, Environment env) {
-    if (!env.getProperty(NacosConfigConst.ROUTER_CONFIG_DEFAULT_LOAD_ENABLED, boolean.class, true)) {
+    if (!env.getProperty(NacosConfigConst.ROUTER_CONFIG_DEFAULT_LOAD_ENABLED, boolean.class, false)) {
       return;
     }
     NacosPropertySourceExtendLocator extendLocator = new NacosPropertySourceExtendLocator(nacosConfigProperties);
