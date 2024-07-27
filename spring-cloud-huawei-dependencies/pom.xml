@@ -49,6 +49,7 @@
     <springdoc.version>1.6.8</springdoc.version>
     <nacos.client.version>2.3.0</nacos.client.version>
     <alibaba.context.support.version>1.0.11</alibaba.context.support.version>
+    <json.version>20210307</json.version>
   </properties>
 
   <dependencyManagement>
@@ -176,6 +177,11 @@
         <groupId>com.alibaba.spring</groupId>
         <artifactId>spring-context-support</artifactId>
         <version>${alibaba.context.support.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>${json.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
