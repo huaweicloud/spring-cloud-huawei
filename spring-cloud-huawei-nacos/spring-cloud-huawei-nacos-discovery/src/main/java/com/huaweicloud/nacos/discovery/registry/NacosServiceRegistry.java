@@ -32,6 +32,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.util.CollectionUtils;
 
 import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.nacos.api.naming.NamingMaintainService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.google.common.eventbus.EventBus;
 import com.huaweicloud.common.event.EventManager;
@@ -73,10 +74,7 @@ public class NacosServiceRegistry implements ServiceRegistry<Registration> {
     for (NamingServiceManager serviceManager : namingServiceManagers) {
       try {
         serviceManager.getNamingService().registerInstance(serviceId, group, instance);
-        Map<String, String> serviceMetadata = NacosMicroserviceHandler.createMicroserviceMetadata();
-        if (!CollectionUtils.isEmpty(serviceMetadata)) {
-          serviceManager.getNamingMaintainService().updateService(serviceId, group, 0, serviceMetadata);
-        }
+        updateServiceMetadata(serviceManager.getNamingMaintainService(), serviceId, group);
         successCount++;
         LOGGER.info("nacos registry, {} {}:{} register finished", serviceId, instance.getIp(), instance.getPort());
       } catch (Exception e) {
@@ -89,6 +87,27 @@ public class NacosServiceRegistry implements ServiceRegistry<Registration> {
       eventBus.post(new NacosServiceRegistrationEvent(instance, true));
     } else {
       eventBus.post(new NacosServiceRegistrationEvent(instance, false));
+    }
+  }
+
+  private void updateServiceMetadata(NamingMaintainService maintainService, String serviceId, String group) {
+    Map<String, String> serviceMetadata = NacosMicroserviceHandler.createMicroserviceMetadata();
+    if (!CollectionUtils.isEmpty(serviceMetadata)) {
+      tryUpdateService(maintainService, serviceId, group, serviceMetadata);
+    }
+  }
+
+  private void tryUpdateService(NamingMaintainService maintainService, String serviceId, String group,
+      Map<String, String> serviceMetadata) {
+    for (int i = 1; i < 4; i++) {
+      try {
+        // because of nacos register instance using async type, using delay mode to prevent service info update failed
+        Thread.sleep(i * 1000);
+        maintainService.updateService(serviceId, group, 0, serviceMetadata);
+        break;
+      } catch (Exception e) {
+        LOGGER.warn("update service metadata failed, serviceName: {}, message: {}", serviceId, e.getMessage());
+      }
     }
   }
 
