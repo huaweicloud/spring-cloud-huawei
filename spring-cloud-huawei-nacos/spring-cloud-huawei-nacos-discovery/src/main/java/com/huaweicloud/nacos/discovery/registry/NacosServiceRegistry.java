@@ -102,11 +102,12 @@ public class NacosServiceRegistry implements ServiceRegistry<Registration> {
     for (int i = 1; i < 4; i++) {
       try {
         // because of nacos register instance using async type, using delay mode to prevent service info update failed
-        Thread.sleep(i * 1000);
+        Thread.sleep(i * i * 1000);
         maintainService.updateService(serviceId, group, 0, serviceMetadata);
         break;
       } catch (Exception e) {
-        LOGGER.warn("update service metadata failed, serviceName: {}, message: {}", serviceId, e.getMessage());
+        LOGGER.warn("update service metadata failed, serviceName: {}, try times: {}, message: {}", serviceId,
+            i, e.getMessage());
       }
     }
   }
