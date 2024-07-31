@@ -19,92 +19,116 @@ package com.huaweicloud.nacos.config.client;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.web.client.RestTemplate;
 
 import com.alibaba.cloud.nacos.NacosConfigProperties;
-import com.alibaba.nacos.shaded.com.google.gson.Gson;
-import com.alibaba.nacos.shaded.com.google.gson.reflect.TypeToken;
+import com.alibaba.nacos.client.auth.impl.NacosAuthLoginConstant;
+import com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl;
+import com.alibaba.nacos.client.config.impl.ConfigHttpClientManager;
+import com.alibaba.nacos.common.http.HttpRestResult;
+import com.alibaba.nacos.common.http.client.NacosRestTemplate;
+import com.alibaba.nacos.common.http.param.Header;
+import com.alibaba.nacos.common.http.param.Query;
+import com.alibaba.nacos.plugin.auth.api.RequestResource;
 import com.huaweicloud.nacos.config.NacosConfigConst;
 import com.huaweicloud.nacos.config.manager.ConfigServiceManagerUtils;
 
 public class NacosPropertySourceExtendLocator {
   private static final Logger LOGGER = LoggerFactory.getLogger(NacosPropertySourceExtendLocator.class);
 
-  private static final String NACOS_CONFIG_QUERY_URI
-      = "%s/nacos/v1/cs/configs?dataId=%s*&group=%s&pageNo=1&pageSize=1000&tenant=%s&search=blur";
+  private static final String NACOS_CONFIG_QUERY_URI = "%s/nacos/v1/cs/configs";
 
-  private final TypeToken<List<PropertyConfigItem>> typeToken = new TypeToken<List<PropertyConfigItem>>() {};
+  private final NacosConfigProperties configProperties;
 
-  private final NacosConfigProperties properties;
+  private Properties properties;
+
+  private final Map<String, NacosClientAuthServiceImpl> address_auth_service = new ConcurrentHashMap<>();
 
   public NacosPropertySourceExtendLocator(NacosConfigProperties nacosConfigProperties) {
-    this.properties = nacosConfigProperties;
+    this.configProperties = nacosConfigProperties;
   }
 
   public List<PropertyConfigItem> loadRouterProperties() {
     try {
-      RestTemplate restTemplate = new RestTemplate();
-      String response = restTemplate.exchange(buildUrl(), HttpMethod.GET,
-          new HttpEntity<>(initHeaders()), String.class).getBody();
-      JSONObject jsonObject = new JSONObject(Objects.requireNonNull(response));
-      JSONArray jsonArray = jsonObject.getJSONArray("pageItems");
-      Gson gson = new Gson();
-      return gson.fromJson(jsonArray.toString(), typeToken.getType());
+      String address = chooseAddress();
+      NacosRestTemplate nacosRestTemplate = ConfigHttpClientManager.getInstance().getNacosRestTemplate();
+      HttpRestResult<PropertiePageQueryResult> response = nacosRestTemplate.get(buildUrl(address), initHeader(address),
+          buildQuery(), PropertiePageQueryResult.class);
+      return response.getData().getPageItems();
     } catch (Exception e) {
       LOGGER.error("load router properties failed!", e);
       return Collections.emptyList();
     }
   }
 
-  private String buildUrl() {
+  private Query buildQuery() {
+    Query query = new Query();
+    query.addParam("dataId", NacosConfigConst.LABEL_ROUTER_DATA_ID_PREFIX + "*");
+    query.addParam("group", configProperties.getGroup());
+    query.addParam("tenant", getNamespace());
+
+    // this value is fixes when using blur query configs
+    query.addParam("search", "blur");
+    query.addParam("pageNo", 1);
+    query.addParam("pageSize", 100);
+    return query;
+  }
+
+  private Header initHeader(String address) {
+    Header header = Header.newInstance();
+    header.addParam(NacosAuthLoginConstant.ACCESSTOKEN, getAccessToken(address));
+    return header;
+  }
+
+  private String buildUrl(String address) {
     String prefix = "";
-    if (!properties.getServerAddr().startsWith("http")) {
+    if (!configProperties.getServerAddr().startsWith("http")) {
       prefix = "http://";
     }
-    String namespace = StringUtils.isEmpty(properties.getNamespace()) ? "" : properties.getNamespace();
-    return prefix + String.format(NACOS_CONFIG_QUERY_URI, chooseAddress(), NacosConfigConst.LABEL_ROUTER_DATA_ID_PREFIX,
-        properties.getGroup(), namespace);
+    return prefix + String.format(NACOS_CONFIG_QUERY_URI, address);
+  }
+
+  private String getNamespace() {
+    return StringUtils.isEmpty(configProperties.getNamespace()) ? "" : configProperties.getNamespace();
   }
 
   private String chooseAddress() {
-    if (!properties.isMasterStandbyEnabled()) {
-      return properties.getServerAddr();
+    properties = configProperties.assembleMasterNacosServerProperties();
+    if (!configProperties.isMasterStandbyEnabled()) {
+      return configProperties.getServerAddr();
     }
-    if (ConfigServiceManagerUtils.checkServerConnect(properties.getServerAddr())) {
-      return properties.getServerAddr();
+    if (ConfigServiceManagerUtils.checkServerConnect(configProperties.getServerAddr())) {
+      return configProperties.getServerAddr();
     }
-    if (ConfigServiceManagerUtils.checkServerConnect(properties.getStandbyServerAddr())) {
-      return properties.getStandbyServerAddr();
+    if (ConfigServiceManagerUtils.checkServerConnect(configProperties.getStandbyServerAddr())) {
+      properties = configProperties.assembleStandbyNacosServerProperties();
+      return configProperties.getStandbyServerAddr();
     }
-    return properties.getServerAddr();
+    return configProperties.getServerAddr();
   }
 
-  private HttpHeaders initHeaders() {
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-    if (!StringUtils.isEmpty(properties.getUsername())) {
-      headers.set("username", properties.getUsername());
+  private String getAccessToken(String address) {
+    NacosClientAuthServiceImpl authService = address_auth_service.get(address);
+    if (authService == null) {
+      authService = new NacosClientAuthServiceImpl();
+      authService.setServerList(Collections.singletonList(address));
+      authService.setNacosRestTemplate(ConfigHttpClientManager.getInstance().getNacosRestTemplate());
+      authService.login(properties);
+      address_auth_service.put(address, authService);
     }
-    if (!StringUtils.isEmpty(properties.getUsername())) {
-      headers.set("password", properties.getPassword());
-    }
-    if (!StringUtils.isEmpty(properties.getAccessKey())) {
-      headers.set("accessKey", properties.getAccessKey());
-    }
-    if (!StringUtils.isEmpty(properties.getSecretKey())) {
-      headers.set("secretKey", properties.getSecretKey());
-    }
-    return headers;
+    return authService.getLoginIdentityContext(buildResource()).getParameter(NacosAuthLoginConstant.ACCESSTOKEN);
+  }
+
+  protected RequestResource buildResource() {
+    String namespace = getNamespace();
+    String group = configProperties.getGroup();
+    String dataId = NacosConfigConst.LABEL_ROUTER_DATA_ID_PREFIX + "*";
+    return RequestResource.configBuilder().setNamespace(namespace).setGroup(group).setResource(dataId).build();
   }
 }
