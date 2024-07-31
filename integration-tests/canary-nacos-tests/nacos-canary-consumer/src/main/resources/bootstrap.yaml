@@ -42,3 +42,5 @@ spring:
         enabled: true
         server-addr: http://127.0.0.1:8848
         service: ${spring.application.name}
+#        password: nacos
+#        username: nacos

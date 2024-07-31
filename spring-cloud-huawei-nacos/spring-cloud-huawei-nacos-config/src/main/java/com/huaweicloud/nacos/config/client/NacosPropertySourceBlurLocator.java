@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -29,18 +30,18 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.cloud.nacos.NacosConfigProperties;
 import com.alibaba.nacos.client.auth.impl.NacosAuthLoginConstant;
-import com.alibaba.nacos.client.auth.impl.NacosClientAuthServiceImpl;
+import com.alibaba.nacos.client.auth.impl.process.HttpLoginProcessor;
 import com.alibaba.nacos.client.config.impl.ConfigHttpClientManager;
 import com.alibaba.nacos.common.http.HttpRestResult;
 import com.alibaba.nacos.common.http.client.NacosRestTemplate;
 import com.alibaba.nacos.common.http.param.Header;
 import com.alibaba.nacos.common.http.param.Query;
-import com.alibaba.nacos.plugin.auth.api.RequestResource;
+import com.alibaba.nacos.plugin.auth.api.LoginIdentityContext;
 import com.huaweicloud.nacos.config.NacosConfigConst;
 import com.huaweicloud.nacos.config.manager.ConfigServiceManagerUtils;
 
-public class NacosPropertySourceExtendLocator {
-  private static final Logger LOGGER = LoggerFactory.getLogger(NacosPropertySourceExtendLocator.class);
+public class NacosPropertySourceBlurLocator {
+  private static final Logger LOGGER = LoggerFactory.getLogger(NacosPropertySourceBlurLocator.class);
 
   private static final String NACOS_CONFIG_QUERY_URI = "%s/nacos/v1/cs/configs";
 
@@ -48,10 +49,25 @@ public class NacosPropertySourceExtendLocator {
 
   private Properties properties;
 
-  private final Map<String, NacosClientAuthServiceImpl> address_auth_service = new ConcurrentHashMap<>();
+  private final Map<String, String> address_token = new ConcurrentHashMap<>();
 
-  public NacosPropertySourceExtendLocator(NacosConfigProperties nacosConfigProperties) {
+  private long tokenTtl;
+
+  private long lastRefreshTime;
+
+  private long refreshWindow;
+
+  private static NacosPropertySourceBlurLocator INSTANCE = null;
+
+  private NacosPropertySourceBlurLocator(NacosConfigProperties nacosConfigProperties) {
     this.configProperties = nacosConfigProperties;
+  }
+
+  public static NacosPropertySourceBlurLocator newInstance(NacosConfigProperties nacosConfigProperties) {
+    if (INSTANCE == null) {
+      INSTANCE = new NacosPropertySourceBlurLocator(nacosConfigProperties);
+    }
+    return INSTANCE;
   }
 
   public List<PropertyConfigItem> loadRouterProperties() {
@@ -82,7 +98,9 @@ public class NacosPropertySourceExtendLocator {
 
   private Header initHeader(String address) {
     Header header = Header.newInstance();
-    header.addParam(NacosAuthLoginConstant.ACCESSTOKEN, getAccessToken(address));
+    if (!StringUtils.isEmpty(configProperties.getUsername())) {
+      header.addParam(NacosAuthLoginConstant.ACCESSTOKEN, getAccessToken(address));
+    }
     return header;
   }
 
@@ -114,21 +132,23 @@ public class NacosPropertySourceExtendLocator {
   }
 
   private String getAccessToken(String address) {
-    NacosClientAuthServiceImpl authService = address_auth_service.get(address);
-    if (authService == null) {
-      authService = new NacosClientAuthServiceImpl();
-      authService.setServerList(Collections.singletonList(address));
-      authService.setNacosRestTemplate(ConfigHttpClientManager.getInstance().getNacosRestTemplate());
-      authService.login(properties);
-      address_auth_service.put(address, authService);
+    if (address_token.get(address) != null
+        && (System.currentTimeMillis() - lastRefreshTime) < TimeUnit.SECONDS.toMillis(tokenTtl - refreshWindow)) {
+      return address_token.get(address);
     }
-    return authService.getLoginIdentityContext(buildResource()).getParameter(NacosAuthLoginConstant.ACCESSTOKEN);
-  }
-
-  protected RequestResource buildResource() {
-    String namespace = getNamespace();
-    String group = configProperties.getGroup();
-    String dataId = NacosConfigConst.LABEL_ROUTER_DATA_ID_PREFIX + "*";
-    return RequestResource.configBuilder().setNamespace(namespace).setGroup(group).setResource(dataId).build();
+    HttpLoginProcessor httpLoginProcessor
+        = new HttpLoginProcessor(ConfigHttpClientManager.getInstance().getNacosRestTemplate());
+    properties.setProperty(NacosAuthLoginConstant.SERVER, address);
+    LoginIdentityContext identityContext = httpLoginProcessor.getResponse(properties);
+    if (identityContext != null
+        && !StringUtils.isEmpty(identityContext.getParameter(NacosAuthLoginConstant.ACCESSTOKEN))) {
+      tokenTtl = Long.parseLong(identityContext.getParameter(NacosAuthLoginConstant.TOKENTTL));
+      refreshWindow = tokenTtl / 10;
+      lastRefreshTime = System.currentTimeMillis();
+      address_token.put(address, identityContext.getParameter(NacosAuthLoginConstant.ACCESSTOKEN));
+      return identityContext.getParameter(NacosAuthLoginConstant.ACCESSTOKEN);
+    }
+    lastRefreshTime = System.currentTimeMillis();
+    return "";
   }
 }
