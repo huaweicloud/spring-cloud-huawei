@@ -40,12 +40,12 @@ import com.alibaba.nacos.plugin.auth.api.LoginIdentityContext;
 import com.huaweicloud.nacos.config.NacosConfigConst;
 import com.huaweicloud.nacos.config.manager.ConfigServiceManagerUtils;
 
-public class NacosPropertySourceBlurLocator {
-  private static final Logger LOGGER = LoggerFactory.getLogger(NacosPropertySourceBlurLocator.class);
+public class NacosPropertiesBlurQueryService {
+  private static final Logger LOGGER = LoggerFactory.getLogger(NacosPropertiesBlurQueryService.class);
 
   private static final String NACOS_CONFIG_QUERY_URI = "%s/nacos/v1/cs/configs";
 
-  private final NacosConfigProperties configProperties;
+  private NacosConfigProperties configProperties;
 
   private Properties properties;
 
@@ -57,16 +57,13 @@ public class NacosPropertySourceBlurLocator {
 
   private long refreshWindow;
 
-  private static NacosPropertySourceBlurLocator INSTANCE = null;
+  private static final NacosPropertiesBlurQueryService INSTANCE = new NacosPropertiesBlurQueryService();
 
-  private NacosPropertySourceBlurLocator(NacosConfigProperties nacosConfigProperties) {
-    this.configProperties = nacosConfigProperties;
+  private NacosPropertiesBlurQueryService() {
+
   }
 
-  public static NacosPropertySourceBlurLocator newInstance(NacosConfigProperties nacosConfigProperties) {
-    if (INSTANCE == null) {
-      INSTANCE = new NacosPropertySourceBlurLocator(nacosConfigProperties);
-    }
+  public static NacosPropertiesBlurQueryService getInstance() {
     return INSTANCE;
   }
 
@@ -150,5 +147,11 @@ public class NacosPropertySourceBlurLocator {
     }
     lastRefreshTime = System.currentTimeMillis();
     return "";
+  }
+
+  public void setConfigProperties(NacosConfigProperties nacosConfigProperties) {
+    if (configProperties == null) {
+      this.configProperties = nacosConfigProperties;
+    }
   }
 }

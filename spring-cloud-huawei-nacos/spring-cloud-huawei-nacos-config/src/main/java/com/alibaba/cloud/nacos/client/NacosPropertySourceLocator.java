@@ -21,7 +21,7 @@ import java.util.List;
 import com.huaweicloud.nacos.config.NacosConfigConst;
 import com.alibaba.cloud.nacos.NacosConfigProperties;
 import com.alibaba.cloud.nacos.NacosPropertySourceRepository;
-import com.huaweicloud.nacos.config.client.NacosPropertySourceBlurLocator;
+import com.huaweicloud.nacos.config.client.NacosPropertiesBlurQueryService;
 import com.huaweicloud.nacos.config.client.PropertyConfigItem;
 import com.huaweicloud.nacos.config.manager.NacosConfigManager;
 import com.alibaba.cloud.nacos.parser.NacosDataParserHandler;
@@ -111,8 +111,9 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
     if (!env.getProperty(NacosConfigConst.ROUTER_CONFIG_DEFAULT_LOAD_ENABLED, boolean.class, false)) {
       return;
     }
-    NacosPropertySourceBlurLocator blurLocator = NacosPropertySourceBlurLocator.newInstance(nacosConfigProperties);
-    List<PropertyConfigItem> routerProperties = blurLocator.loadRouterProperties();
+    NacosPropertiesBlurQueryService blurQueryService = NacosPropertiesBlurQueryService.getInstance();
+    blurQueryService.setConfigProperties(nacosConfigProperties);
+    List<PropertyConfigItem> routerProperties = blurQueryService.loadRouterProperties();
     if (CollectionUtils.isEmpty(routerProperties)) {
       return;
     }
