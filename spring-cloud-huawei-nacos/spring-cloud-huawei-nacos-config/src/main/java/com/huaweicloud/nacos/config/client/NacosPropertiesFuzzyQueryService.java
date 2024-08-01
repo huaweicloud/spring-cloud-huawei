@@ -40,8 +40,8 @@ import com.alibaba.nacos.plugin.auth.api.LoginIdentityContext;
 import com.huaweicloud.nacos.config.NacosConfigConst;
 import com.huaweicloud.nacos.config.manager.ConfigServiceManagerUtils;
 
-public class NacosPropertiesBlurQueryService {
-  private static final Logger LOGGER = LoggerFactory.getLogger(NacosPropertiesBlurQueryService.class);
+public class NacosPropertiesFuzzyQueryService {
+  private static final Logger LOGGER = LoggerFactory.getLogger(NacosPropertiesFuzzyQueryService.class);
 
   private static final String NACOS_CONFIG_QUERY_URI = "%s/nacos/v1/cs/configs";
 
@@ -57,13 +57,13 @@ public class NacosPropertiesBlurQueryService {
 
   private long refreshWindow;
 
-  private static final NacosPropertiesBlurQueryService INSTANCE = new NacosPropertiesBlurQueryService();
+  private static final NacosPropertiesFuzzyQueryService INSTANCE = new NacosPropertiesFuzzyQueryService();
 
-  private NacosPropertiesBlurQueryService() {
+  private NacosPropertiesFuzzyQueryService() {
 
   }
 
-  public static NacosPropertiesBlurQueryService getInstance() {
+  public static NacosPropertiesFuzzyQueryService getInstance() {
     return INSTANCE;
   }
 
