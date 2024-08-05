@@ -85,6 +85,20 @@ public class NacosPropertySourceBuilder {
     return nacosPropertySource;
   }
 
+  NacosPropertySource buildWithContext(String dataId, String group, String fileExtension, String context) {
+    List<PropertySource<?>> propertySources;
+    try {
+      propertySources = NacosDataParserHandler.getInstance().parseNacosData(dataId, context, fileExtension);
+    } catch (Exception e) {
+      log.error("build config error, dataId: {}, group: {}, context: {}", dataId, group, context, e);
+      return null;
+    }
+    NacosPropertySource nacosPropertySource = new NacosPropertySource(propertySources,
+        group, dataId, new Date(), true);
+    NacosPropertySourceRepository.collectNacosPropertySource(nacosPropertySource);
+    return nacosPropertySource;
+  }
+
   private List<PropertySource<?>> loadNacosData(String dataId, String group,
       String fileExtension) {
     String data = null;
