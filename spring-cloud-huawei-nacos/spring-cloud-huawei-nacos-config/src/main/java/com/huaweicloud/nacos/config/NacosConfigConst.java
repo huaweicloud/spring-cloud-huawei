@@ -29,4 +29,7 @@ public class NacosConfigConst {
   public static final String RETRY_MASTER_ENABLED = "spring.cloud.nacos.config.retryMasterServerEnabled";
 
   public static final String LABEL_ROUTER_DATA_ID_PREFIX = "cse-label-route-";
+
+  public static final String ROUTER_CONFIG_DEFAULT_LOAD_ENABLED
+      = "spring.cloud.nacos.config.routerConfigDefaultLoadEnabled";
 }
