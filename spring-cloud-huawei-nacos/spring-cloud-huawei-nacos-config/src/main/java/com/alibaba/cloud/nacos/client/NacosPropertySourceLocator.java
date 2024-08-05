@@ -21,6 +21,8 @@ import java.util.List;
 import com.huaweicloud.nacos.config.NacosConfigConst;
 import com.alibaba.cloud.nacos.NacosConfigProperties;
 import com.alibaba.cloud.nacos.NacosPropertySourceRepository;
+import com.huaweicloud.nacos.config.client.NacosPropertiesFuzzyQueryService;
+import com.huaweicloud.nacos.config.client.PropertyConfigItem;
 import com.huaweicloud.nacos.config.manager.NacosConfigManager;
 import com.alibaba.cloud.nacos.parser.NacosDataParserHandler;
 import com.alibaba.cloud.nacos.refresh.NacosContextRefresher;
@@ -100,14 +102,29 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
     // load security configs
     loadSecurityConfigs(composite, env);
 
+    // load router configs
     loadLabelRouterConfigs(composite, env);
     return composite;
   }
 
   private void loadLabelRouterConfigs(CompositePropertySource composite, Environment env) {
-    String group = nacosConfigProperties.getGroup();
-    String dataId = buildIncludeServiceNameDataId(env, NacosConfigConst.LABEL_ROUTER_DATA_ID_PREFIX);
-    loadNacosDataIfPresent(composite, dataId, group, NacosConfigConst.DEFAULT_CONFIG_FILE_EXTENSION, true);
+    if (!env.getProperty(NacosConfigConst.ROUTER_CONFIG_DEFAULT_LOAD_ENABLED, boolean.class, false)) {
+      return;
+    }
+    NacosPropertiesFuzzyQueryService blurQueryService = NacosPropertiesFuzzyQueryService.getInstance();
+    blurQueryService.setConfigProperties(nacosConfigProperties);
+    List<PropertyConfigItem> routerProperties = blurQueryService.loadRouterProperties();
+    if (CollectionUtils.isEmpty(routerProperties)) {
+      return;
+    }
+    for (PropertyConfigItem item: routerProperties) {
+      NacosPropertySource propertySource = nacosPropertySourceBuilder.buildWithContext(item.getDataId(),
+          item.getGroup(), item.getType(), item.getContent());
+      if (propertySource == null) {
+        continue;
+      }
+      this.addFirstPropertySource(composite, propertySource, false);
+    }
   }
 
   private void loadSecurityConfigs(CompositePropertySource composite, Environment env) {
