@@ -32,4 +32,7 @@ public class NacosConfigConst {
 
   public static final String ROUTER_CONFIG_DEFAULT_LOAD_ENABLED
       = "spring.cloud.nacos.config.routerConfigDefaultLoadEnabled";
+
+  public static final String SECURITY_CONFIG_DEFAULT_LOAD_ENABLED
+          = "spring.cloud.nacos.config.securityConfigDefaultLoadEnabled";
 }
