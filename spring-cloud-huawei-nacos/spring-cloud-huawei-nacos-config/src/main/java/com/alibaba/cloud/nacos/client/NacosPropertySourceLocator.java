@@ -128,6 +128,9 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
   }
 
   private void loadSecurityConfigs(CompositePropertySource composite, Environment env) {
+    if (!env.getProperty(NacosConfigConst.SECURITY_CONFIG_DEFAULT_LOAD_ENABLED, boolean.class, false)) {
+      return;
+    }
     String group = "cse-app-security-group";
     String dataId = buildIncludeServiceNameDataId(env, NacosConfigConst.SECURITY_CONFIG_DATA_ID_PREFIX);
     loadNacosDataIfPresent(composite, dataId, group, NacosConfigConst.DEFAULT_CONFIG_FILE_EXTENSION, true);
