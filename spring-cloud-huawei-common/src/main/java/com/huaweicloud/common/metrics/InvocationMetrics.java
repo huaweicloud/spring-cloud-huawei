@@ -72,7 +72,7 @@ public class InvocationMetrics {
     this.meterRegistry = meterRegistry;
     this.metricsProperties = metricsProperties;
     if (StringUtils.isNotEmpty(metricsProperties.getExcludePattern())) {
-      excludePattern = Pattern.compile(metricsProperties.getIncludePattern());
+      excludePattern = Pattern.compile(metricsProperties.getExcludePattern());
     } else {
       excludePattern = null;
     }

@@ -128,4 +128,45 @@ public class InvocationMetricsTest {
 
     Assertions.assertEquals(4, count);
   }
+
+  @Test
+  public void testMetricsExcludePattern() {
+    MeterRegistry meterRegistry = new SimpleMeterRegistry();
+    MetricsProperties metricsProperties = new MetricsProperties();
+    metricsProperties.setExcludePattern("/exclude.*");
+    metricsProperties.setMaxMetricsCount(4);
+
+    InvocationMetrics metrics = new InvocationMetrics(meterRegistry, metricsProperties);
+    metrics.recordInvocationDistribution("/include", InvocationStage.STAGE_ALL, 200, TimeUnit.MILLISECONDS.toNanos(1));
+    metrics.recordInvocationDistribution("/include", InvocationStage.STAGE_ALL, 200, TimeUnit.MILLISECONDS.toNanos(2));
+    metrics.recordInvocationDistribution("/exclude", InvocationStage.STAGE_ALL, 200, TimeUnit.MILLISECONDS.toNanos(3));
+    metrics.recordInvocationDistribution("/exclude", InvocationStage.STAGE_ALL, 200, TimeUnit.MILLISECONDS.toNanos(4));
+    metrics.recordInvocationDistribution("/include", InvocationStage.STAGE_ALL, 500, TimeUnit.MILLISECONDS.toNanos(1));
+
+    List<Meter> meters = meterRegistry.getMeters();
+    int count = 0;
+    for (Meter meter : meters) {
+      if (!InvocationMetrics.METRICS_CALLS.equals(meter.getId().getName())) {
+        continue;
+      }
+      count++;
+
+      DistributionSummary summary = (DistributionSummary) meter;
+
+      if (Integer.parseInt(meter.getId().getTag(InvocationMetrics.TAG_STATUS)) == 200
+              && "/include".equals(meter.getId().getTag(InvocationMetrics.TAG_NAME))) {
+        Assertions.assertEquals(2, summary.count());
+        Assertions.assertEquals(3, TimeUnit.NANOSECONDS.toMillis(Double.valueOf(summary.totalAmount()).longValue()));
+      } else if (Integer.parseInt(meter.getId().getTag(InvocationMetrics.TAG_STATUS)) == 500
+              && "/include".equals(meter.getId().getTag(InvocationMetrics.TAG_NAME))) {
+        Assertions.assertEquals(1, summary.count());
+        Assertions.assertEquals(1, TimeUnit.NANOSECONDS.toMillis(Double.valueOf(summary.totalAmount()).longValue()));
+      } else {
+        Assertions.fail("Unexpected meter: " + meter.getId().toString());
+      }
+    }
+
+    // Ensure that the "/exclude" paths did not get recorded
+    Assertions.assertEquals(2, count);
+  }
 }
