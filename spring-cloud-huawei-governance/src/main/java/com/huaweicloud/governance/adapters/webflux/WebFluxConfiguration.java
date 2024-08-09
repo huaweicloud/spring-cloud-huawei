@@ -73,4 +73,11 @@ public class WebFluxConfiguration {
   public WebFilter contextMapperWebFilter(@Qualifier("contextMapperHandler") MapperHandler mapperHandler) {
     return new ContextMapperWebFilter(mapperHandler);
   }
+
+  @Bean
+  @ConditionalOnProperty(value = GovernanceProperties.WEBFLUX_REQUEST_LOGGER_ENABLED,
+      havingValue = "true", matchIfMissing = true)
+  public WebFilter requestServiceInfoLoggerWebFilter() {
+    return new RequestServiceInfoLoggerWebFilter();
+  }
 }

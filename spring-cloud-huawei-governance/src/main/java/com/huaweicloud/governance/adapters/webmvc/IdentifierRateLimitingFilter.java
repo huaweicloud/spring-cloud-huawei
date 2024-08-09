@@ -71,8 +71,7 @@ public class IdentifierRateLimitingFilter implements Filter {
       if (e instanceof RequestNotPermitted) {
         ((HttpServletResponse) response).setStatus(429);
         response.getWriter().print("rate limited.");
-        LOGGER.warn("the request is rate limit by policy : {}",
-            e.getMessage());
+        LOGGER.warn("the request is rate limit by policy : {}", e.getMessage());
       } else {
         throw e;
       }
