@@ -120,9 +120,6 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
     for (PropertyConfigItem item: routerProperties) {
       NacosPropertySource propertySource = nacosPropertySourceBuilder.buildWithContext(item.getDataId(),
           item.getGroup(), item.getType(), item.getContent());
-      if (propertySource == null) {
-        continue;
-      }
       this.addFirstPropertySource(composite, propertySource, false);
     }
 
