@@ -29,6 +29,7 @@ import com.huaweicloud.nacos.config.NacosConfigConst;
 import com.alibaba.cloud.nacos.NacosConfigProperties;
 import com.alibaba.cloud.nacos.NacosPropertySourceRepository;
 import com.alibaba.cloud.nacos.client.NacosPropertySource;
+import com.huaweicloud.nacos.config.client.LabelRouterConfigListener;
 import com.huaweicloud.nacos.config.manager.ConfigServiceManagerUtils;
 import com.huaweicloud.nacos.config.manager.NacosConfigManager;
 import com.alibaba.nacos.api.config.ConfigService;
@@ -195,6 +196,9 @@ public class NacosContextRefresher
           registerNacosListener(propertySource.getGroup(), propertySource.getDataId(), currentConfigServiceManager);
         }
       }
+      if (env.getProperty(NacosConfigConst.ROUTER_CONFIG_DEFAULT_LOAD_ENABLED, boolean.class, false)) {
+        new LabelRouterConfigListener(this, listenerMap.keySet()).schedulerCheckLabelRouterConfig();
+      }
     } catch (NacosException e) {
       log.error("add nacos config listener error, serverAddr=[{}]", currentConfigServiceManager.getServerAddr(), e);
     }
@@ -262,5 +266,13 @@ public class NacosContextRefresher
     taskScheduler.setBeanName("Nacos-Server-Status-Check-Scheduler");
     taskScheduler.initialize();
     return taskScheduler;
+  }
+
+  public void registerAddRouterConfigListener(String dataId, String group) {
+    try {
+      registerNacosListener(group, dataId, currentConfigServiceManager);
+    } catch (NacosException e) {
+      log.error("add nacos config listener error, serverAddr=[{}]", currentConfigServiceManager.getServerAddr(), e);
+    }
   }
 }
