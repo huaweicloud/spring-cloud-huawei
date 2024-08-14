@@ -127,10 +127,10 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
     }
 
     // load header context configuration
-    loadRouterHeaderContextConfigs(composite, env);
+    loadRouterHeaderContextConfigs(composite);
   }
 
-  private void loadRouterHeaderContextConfigs(CompositePropertySource composite, Environment env) {
+  private void loadRouterHeaderContextConfigs(CompositePropertySource composite) {
     String group = nacosConfigProperties.getGroup();
     String dataId = NacosConfigConst.ROUTER_HEADER_CONTEXT_CONFIG_DATA_ID;
     loadNacosDataIfPresent(composite, dataId, group, NacosConfigConst.DEFAULT_CONFIG_FILE_EXTENSION, true);
