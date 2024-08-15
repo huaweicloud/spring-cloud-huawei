@@ -114,13 +114,12 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
     NacosPropertiesFuzzyQueryService blurQueryService = NacosPropertiesFuzzyQueryService.getInstance();
     blurQueryService.setConfigProperties(nacosConfigProperties);
     List<PropertyConfigItem> routerProperties = blurQueryService.loadRouterProperties();
-    if (CollectionUtils.isEmpty(routerProperties)) {
-      return;
-    }
-    for (PropertyConfigItem item: routerProperties) {
-      NacosPropertySource propertySource = nacosPropertySourceBuilder.buildWithContext(item.getDataId(),
-          item.getGroup(), item.getType(), item.getContent());
-      this.addFirstPropertySource(composite, propertySource, false);
+    if (!CollectionUtils.isEmpty(routerProperties)) {
+      for (PropertyConfigItem item: routerProperties) {
+        NacosPropertySource propertySource = nacosPropertySourceBuilder.buildWithContext(item.getDataId(),
+            item.getGroup(), item.getType(), item.getContent());
+        this.addFirstPropertySource(composite, propertySource, false);
+      }
     }
 
     // load header context configuration
