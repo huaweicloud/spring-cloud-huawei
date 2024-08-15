@@ -35,4 +35,6 @@ public class NacosConfigConst {
 
   public static final String SECURITY_CONFIG_DEFAULT_LOAD_ENABLED
           = "spring.cloud.nacos.config.securityConfigDefaultLoadEnabled";
+
+  public static final String ROUTER_HEADER_CONTEXT_CONFIG_DATA_ID = "cse-router-header-context-mapper.yaml";
 }
