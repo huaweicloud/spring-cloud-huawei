@@ -19,7 +19,7 @@ package com.huaweicloud.servicecomb.discovery.graceful;
 
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -37,20 +37,36 @@ public class ServicecombGracefulEndpoint {
 
   private final ServiceCombRegistration serviceCombRegistration;
 
+  private boolean up_enabled = false;
+
+  private boolean down_enabled = false;
+
   public ServicecombGracefulEndpoint(ServiceCombServiceRegistry serviceCombServiceRegistry,
       ServiceCombRegistration serviceCombRegistration) {
     this.serviceCombServiceRegistry = serviceCombServiceRegistry;
     this.serviceCombRegistration = serviceCombRegistration;
+    if (MicroserviceInstanceStatus.DOWN == serviceCombRegistration.getMicroserviceInstance().getStatus()) {
+      up_enabled = true;
+    } else {
+      down_enabled = true;
+    }
   }
 
   @WriteOperation
   public void gracefulUpperAndDown(@Nullable String status) {
-    if (StringUtils.isEmpty(status)
-        || (!GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status)
-        && !GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status))) {
-      LOGGER.warn("status input " + status + " is not a valid value.");
+    if (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status) && up_enabled) {
+      serviceCombServiceRegistry.setStatus(serviceCombRegistration, status.toUpperCase());
+      up_enabled = false;
+      down_enabled = true;
       return;
     }
-    serviceCombServiceRegistry.setStatus(serviceCombRegistration, status.toUpperCase());
+    if (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status) && down_enabled) {
+      serviceCombServiceRegistry.setStatus(serviceCombRegistration, status.toUpperCase());
+      up_enabled = true;
+      down_enabled = false;
+      return;
+    }
+    LOGGER.warn("operation is not allowed, status: " + status + ", up_enabled: " + up_enabled
+        + ", down_enabled: " + down_enabled);
   }
 }

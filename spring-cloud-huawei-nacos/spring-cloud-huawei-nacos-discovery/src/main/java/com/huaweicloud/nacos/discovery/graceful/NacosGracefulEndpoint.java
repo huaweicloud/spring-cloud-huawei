@@ -19,7 +19,6 @@ package com.huaweicloud.nacos.discovery.graceful;
 
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -40,25 +39,38 @@ public class NacosGracefulEndpoint {
 
   private final NacosAutoServiceRegistration nacosAutoServiceRegistration;
 
+  private boolean register_enabled = false;
+
+  private boolean deregister_enabled = false;
+
   public NacosGracefulEndpoint(NacosServiceRegistry nacosServiceRegistry, NacosRegistration nacosRegistration,
       NacosAutoServiceRegistration nacosAutoServiceRegistration) {
     this.nacosServiceRegistry = nacosServiceRegistry;
     this.nacosRegistration = nacosRegistration;
     this.nacosAutoServiceRegistration = nacosAutoServiceRegistration;
+    if (nacosRegistration.getNacosDiscoveryProperties().isRegisterEnabled()) {
+      deregister_enabled = true;
+    } else {
+      register_enabled = true;
+    }
   }
 
   @WriteOperation
   public void gracefulUpperAndDown(@Nullable String status) {
-    if (StringUtils.isEmpty(status)) {
-      return;
-    }
-    if (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status)) {
+    if (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status) && register_enabled) {
       nacosAutoServiceRegistration.setRegistryEnabled(true);
       nacosAutoServiceRegistration.registryExtend();
-    } else if (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status)) {
-      nacosServiceRegistry.deregister(nacosRegistration);
-    } else {
-      LOGGER.warn("operation is not allowed, status: " + status);
+      register_enabled = false;
+      deregister_enabled = true;
+      return;
     }
+    if (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status) && deregister_enabled) {
+      nacosServiceRegistry.deregister(nacosRegistration);
+      register_enabled = true;
+      deregister_enabled = false;
+      return;
+    }
+    LOGGER.warn("operation is not allowed, status: " + status + ", register_enabled: " + register_enabled
+        + ", deregister_enabled: " + deregister_enabled);
   }
 }
