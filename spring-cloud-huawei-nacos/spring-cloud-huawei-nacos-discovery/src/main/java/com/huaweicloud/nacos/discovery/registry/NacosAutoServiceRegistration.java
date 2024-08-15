@@ -88,7 +88,7 @@ public class NacosAutoServiceRegistration extends AbstractAutoServiceRegistratio
   }
 
   @Override
-  protected boolean isEnabled() {
+  public boolean isEnabled() {
     return this.registryEnabled;
   }
 

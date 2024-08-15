@@ -39,38 +39,28 @@ public class NacosGracefulEndpoint {
 
   private final NacosAutoServiceRegistration nacosAutoServiceRegistration;
 
-  private boolean register_enabled = false;
-
-  private boolean deregister_enabled = false;
-
   public NacosGracefulEndpoint(NacosServiceRegistry nacosServiceRegistry, NacosRegistration nacosRegistration,
       NacosAutoServiceRegistration nacosAutoServiceRegistration) {
     this.nacosServiceRegistry = nacosServiceRegistry;
     this.nacosRegistration = nacosRegistration;
     this.nacosAutoServiceRegistration = nacosAutoServiceRegistration;
-    if (nacosRegistration.getNacosDiscoveryProperties().isRegisterEnabled()) {
-      deregister_enabled = true;
-    } else {
-      register_enabled = true;
-    }
   }
 
   @WriteOperation
   public void gracefulUpperAndDown(@Nullable String status) {
-    if (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status) && register_enabled) {
+    if (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status)
+        && !nacosAutoServiceRegistration.isEnabled()) {
       nacosAutoServiceRegistration.setRegistryEnabled(true);
       nacosAutoServiceRegistration.registryExtend();
-      register_enabled = false;
-      deregister_enabled = true;
       return;
     }
-    if (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status) && deregister_enabled) {
+    if (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status)
+        && nacosAutoServiceRegistration.isEnabled()) {
       nacosServiceRegistry.deregister(nacosRegistration);
-      register_enabled = true;
-      deregister_enabled = false;
+      nacosAutoServiceRegistration.setRegistryEnabled(false);
       return;
     }
-    LOGGER.warn("operation is not allowed, status: " + status + ", register_enabled: " + register_enabled
-        + ", deregister_enabled: " + deregister_enabled);
+    LOGGER.warn("operation is not allowed, status: " + status + ", registration_enabled: "
+        + nacosAutoServiceRegistration.isEnabled());
   }
 }

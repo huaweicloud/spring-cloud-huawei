@@ -19,6 +19,7 @@ package com.huaweicloud.servicecomb.discovery.graceful;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,36 +38,31 @@ public class ServicecombGracefulEndpoint {
 
   private final ServiceCombRegistration serviceCombRegistration;
 
-  private boolean up_enabled = false;
-
-  private boolean down_enabled = false;
-
   public ServicecombGracefulEndpoint(ServiceCombServiceRegistry serviceCombServiceRegistry,
       ServiceCombRegistration serviceCombRegistration) {
     this.serviceCombServiceRegistry = serviceCombServiceRegistry;
     this.serviceCombRegistration = serviceCombRegistration;
-    if (MicroserviceInstanceStatus.DOWN == serviceCombRegistration.getMicroserviceInstance().getStatus()) {
-      up_enabled = true;
-    } else {
-      down_enabled = true;
-    }
   }
 
   @WriteOperation
   public void gracefulUpperAndDown(@Nullable String status) {
-    if (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status) && up_enabled) {
-      serviceCombServiceRegistry.setStatus(serviceCombRegistration, status.toUpperCase());
-      up_enabled = false;
-      down_enabled = true;
+    if (StringUtils.isEmpty(status)
+        || StringUtils.isEmpty(serviceCombRegistration.getMicroserviceInstance().getServiceId())
+        || StringUtils.isEmpty(serviceCombRegistration.getMicroserviceInstance().getInstanceId())) {
       return;
     }
-    if (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status) && down_enabled) {
+    if (isOperationAllow(status)) {
       serviceCombServiceRegistry.setStatus(serviceCombRegistration, status.toUpperCase());
-      up_enabled = true;
-      down_enabled = false;
       return;
     }
-    LOGGER.warn("operation is not allowed, status: " + status + ", up_enabled: " + up_enabled
-        + ", down_enabled: " + down_enabled);
+    LOGGER.warn("operation is not allowed, status: " + status + ", instanceStatus: "
+        + serviceCombRegistration.getMicroserviceInstance().getStatus());
+  }
+
+  private boolean isOperationAllow(String status) {
+    return (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status)
+        && MicroserviceInstanceStatus.DOWN == serviceCombRegistration.getMicroserviceInstance().getStatus())
+        || (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status)
+        && MicroserviceInstanceStatus.UP == serviceCombRegistration.getMicroserviceInstance().getStatus());
   }
 }
