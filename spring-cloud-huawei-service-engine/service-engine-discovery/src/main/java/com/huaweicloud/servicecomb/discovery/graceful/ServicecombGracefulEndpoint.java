@@ -53,6 +53,7 @@ public class ServicecombGracefulEndpoint {
     }
     if (isOperationAllow(status)) {
       serviceCombServiceRegistry.setStatus(serviceCombRegistration, status.toUpperCase());
+      LOGGER.warn("servicecomb graceful update status success, status: " + status);
       return;
     }
     LOGGER.warn("operation is not allowed, status: " + status + ", instanceStatus: "
