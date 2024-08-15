@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.util.CollectionUtils;
 
@@ -35,14 +36,19 @@ public class LabelRouterConfigListener {
 
   private final NacosContextRefresher contextRefresher;
 
-  public LabelRouterConfigListener(NacosContextRefresher contextRefresher, Set<String> listenersKey) {
+  private final Environment env;
+
+  public LabelRouterConfigListener(NacosContextRefresher contextRefresher, Set<String> listenersKey, Environment env) {
     this.listenersKey = new HashSet<>(listenersKey);
     this.contextRefresher = contextRefresher;
+    this.env = env;
     this.taskScheduler = buildTaskScheduler();
   }
 
   public void schedulerCheckLabelRouterConfig() {
-    taskScheduler.scheduleWithFixedDelay(this::checkLabelRouterConfig, Duration.ofMillis(15000));
+    String checkRouterConfigDelayTime = "spring.cloud.nacos.check.router.config.delay.time";
+    taskScheduler.scheduleWithFixedDelay(this::checkLabelRouterConfig, Duration.ofMillis(env.getProperty(
+        checkRouterConfigDelayTime, long.class, 30000L)));
   }
 
   private void checkLabelRouterConfig() {

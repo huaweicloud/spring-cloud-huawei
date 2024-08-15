@@ -197,7 +197,7 @@ public class NacosContextRefresher
         }
       }
       if (env.getProperty(NacosConfigConst.ROUTER_CONFIG_DEFAULT_LOAD_ENABLED, boolean.class, false)) {
-        new LabelRouterConfigListener(this, listenerMap.keySet()).schedulerCheckLabelRouterConfig();
+        new LabelRouterConfigListener(this, listenerMap.keySet(), env).schedulerCheckLabelRouterConfig();
       }
     } catch (NacosException e) {
       log.error("add nacos config listener error, serverAddr=[{}]", currentConfigServiceManager.getServerAddr(), e);
