@@ -42,7 +42,8 @@ public class ServiceInfoLoggerExchangeFilterFunction implements ExchangeFilterFu
   private ClientResponse logServiceInfo(ClientResponse response, ClientRequest request) {
     if (response.statusCode().value() != 200) {
       Optional<Object> invocationContext = request.attribute(RetryContext.RETRY_SERVICE_INSTANCE);
-      if (invocationContext.isPresent() && invocationContext.get() instanceof ServiceInstance instance) {
+      if (invocationContext.isPresent() && invocationContext.get() instanceof ServiceInstance) {
+        ServiceInstance instance = (ServiceInstance) invocationContext.get();
         LOGGER.error("request >>>>>>>>>>>>>> service {}[{}:{}] failed", instance.getServiceId(), instance.getHost(),
             instance.getPort());
       }

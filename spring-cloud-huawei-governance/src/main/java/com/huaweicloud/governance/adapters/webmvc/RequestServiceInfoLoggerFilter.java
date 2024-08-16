@@ -18,14 +18,14 @@ package com.huaweicloud.governance.adapters.webmvc;
 
 import java.io.IOException;
 
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
 import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.governance.adapters.RequestServiceInfoLoggerUtil;
-
-import jakarta.servlet.Filter;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 
 public class RequestServiceInfoLoggerFilter implements Filter {
   @Override
