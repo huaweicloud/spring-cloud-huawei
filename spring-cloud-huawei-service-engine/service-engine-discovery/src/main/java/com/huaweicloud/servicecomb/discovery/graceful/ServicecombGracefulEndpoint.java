@@ -49,21 +49,22 @@ public class ServicecombGracefulEndpoint {
     if (StringUtils.isEmpty(status)
         || StringUtils.isEmpty(serviceCombRegistration.getMicroserviceInstance().getServiceId())
         || StringUtils.isEmpty(serviceCombRegistration.getMicroserviceInstance().getInstanceId())) {
+      LOGGER.info("operation is not allowed, status is null or registration is not ok.");
       return;
     }
-    if (isOperationAllow(status)) {
+    if (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status)
+        && MicroserviceInstanceStatus.DOWN == serviceCombRegistration.getMicroserviceInstance().getStatus()) {
       serviceCombServiceRegistry.setStatus(serviceCombRegistration, status.toUpperCase());
-      LOGGER.warn("servicecomb graceful update status success, status: " + status);
+      LOGGER.info("servicecomb graceful update status success, status: " + status);
       return;
     }
-    LOGGER.warn("operation is not allowed, status: " + status + ", instanceStatus: "
+    if (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status)
+        && MicroserviceInstanceStatus.UP == serviceCombRegistration.getMicroserviceInstance().getStatus()) {
+      serviceCombServiceRegistry.setStatus(serviceCombRegistration, status.toUpperCase());
+      LOGGER.info("servicecomb graceful update status success, status: " + status);
+      return;
+    }
+    LOGGER.info("operation is not allowed, status: " + status + ", instanceStatus: "
         + serviceCombRegistration.getMicroserviceInstance().getStatus());
-  }
-
-  private boolean isOperationAllow(String status) {
-    return (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status)
-        && MicroserviceInstanceStatus.DOWN == serviceCombRegistration.getMicroserviceInstance().getStatus())
-        || (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status)
-        && MicroserviceInstanceStatus.UP == serviceCombRegistration.getMicroserviceInstance().getStatus());
   }
 }

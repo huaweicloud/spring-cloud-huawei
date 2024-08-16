@@ -60,7 +60,7 @@ public class NacosGracefulEndpoint {
       nacosAutoServiceRegistration.setRegistryEnabled(false);
       return;
     }
-    LOGGER.warn("operation is not allowed, status: " + status + ", registration_enabled: "
+    LOGGER.info("operation is not allowed, status: " + status + ", registration_enabled: "
         + nacosAutoServiceRegistration.isEnabled());
   }
 }
