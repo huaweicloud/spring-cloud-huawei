@@ -148,6 +148,7 @@ public class ServiceCombServiceRegistry implements
     try {
       serviceCenterClient.updateMicroserviceInstanceStatus(registration.getMicroserviceInstance().getServiceId(),
           registration.getMicroserviceInstance().getInstanceId(), MicroserviceInstanceStatus.valueOf(status));
+      registration.getMicroserviceInstance().setStatus(MicroserviceInstanceStatus.valueOf(status));
     } catch (OperationException e) {
       LOGGER.error("setStatus failed", e);
     }
