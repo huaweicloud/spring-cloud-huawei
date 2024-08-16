@@ -19,7 +19,8 @@ package com.huaweicloud.servicecomb.discovery.graceful;
 
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -46,11 +47,24 @@ public class ServicecombGracefulEndpoint {
   @WriteOperation
   public void gracefulUpperAndDown(@Nullable String status) {
     if (StringUtils.isEmpty(status)
-        || (!GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status)
-        && !GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status))) {
-      LOGGER.warn("status input " + status + " is not a valid value.");
+        || StringUtils.isEmpty(serviceCombRegistration.getMicroserviceInstance().getServiceId())
+        || StringUtils.isEmpty(serviceCombRegistration.getMicroserviceInstance().getInstanceId())) {
+      LOGGER.info("operation is not allowed, status is null or registration is not ok.");
       return;
     }
-    serviceCombServiceRegistry.setStatus(serviceCombRegistration, status.toUpperCase());
+    if (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status)
+        && MicroserviceInstanceStatus.DOWN == serviceCombRegistration.getMicroserviceInstance().getStatus()) {
+      serviceCombServiceRegistry.setStatus(serviceCombRegistration, status.toUpperCase());
+      LOGGER.info("servicecomb graceful update status success, status: " + status);
+      return;
+    }
+    if (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status)
+        && MicroserviceInstanceStatus.UP == serviceCombRegistration.getMicroserviceInstance().getStatus()) {
+      serviceCombServiceRegistry.setStatus(serviceCombRegistration, status.toUpperCase());
+      LOGGER.info("servicecomb graceful update status success, status: " + status);
+      return;
+    }
+    LOGGER.info("operation is not allowed, status: " + status + ", instanceStatus: "
+        + serviceCombRegistration.getMicroserviceInstance().getStatus());
   }
 }

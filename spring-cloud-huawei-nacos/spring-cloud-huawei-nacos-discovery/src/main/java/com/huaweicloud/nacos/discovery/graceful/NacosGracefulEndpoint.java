@@ -19,7 +19,6 @@ package com.huaweicloud.nacos.discovery.graceful;
 
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -49,16 +48,19 @@ public class NacosGracefulEndpoint {
 
   @WriteOperation
   public void gracefulUpperAndDown(@Nullable String status) {
-    if (StringUtils.isEmpty(status)) {
-      return;
-    }
-    if (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status)) {
+    if (GovernanceProperties.GRASEFUL_STATUS_UPPER.equalsIgnoreCase(status)
+        && !nacosAutoServiceRegistration.isEnabled()) {
       nacosAutoServiceRegistration.setRegistryEnabled(true);
       nacosAutoServiceRegistration.registryExtend();
-    } else if (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status)) {
-      nacosServiceRegistry.deregister(nacosRegistration);
-    } else {
-      LOGGER.warn("operation is not allowed, status: " + status);
+      return;
     }
+    if (GovernanceProperties.GRASEFUL_STATUS_DOWN.equalsIgnoreCase(status)
+        && nacosAutoServiceRegistration.isEnabled()) {
+      nacosServiceRegistry.deregister(nacosRegistration);
+      nacosAutoServiceRegistration.setRegistryEnabled(false);
+      return;
+    }
+    LOGGER.info("operation is not allowed, status: " + status + ", registration_enabled: "
+        + nacosAutoServiceRegistration.isEnabled());
   }
 }
