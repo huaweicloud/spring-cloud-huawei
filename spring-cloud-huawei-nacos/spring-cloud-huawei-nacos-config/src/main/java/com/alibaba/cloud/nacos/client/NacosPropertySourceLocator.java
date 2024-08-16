@@ -114,17 +114,22 @@ public class NacosPropertySourceLocator implements PropertySourceLocator {
     NacosPropertiesFuzzyQueryService blurQueryService = NacosPropertiesFuzzyQueryService.getInstance();
     blurQueryService.setConfigProperties(nacosConfigProperties);
     List<PropertyConfigItem> routerProperties = blurQueryService.loadRouterProperties();
-    if (CollectionUtils.isEmpty(routerProperties)) {
-      return;
-    }
-    for (PropertyConfigItem item: routerProperties) {
-      NacosPropertySource propertySource = nacosPropertySourceBuilder.buildWithContext(item.getDataId(),
-          item.getGroup(), item.getType(), item.getContent());
-      if (propertySource == null) {
-        continue;
+    if (!CollectionUtils.isEmpty(routerProperties)) {
+      for (PropertyConfigItem item: routerProperties) {
+        NacosPropertySource propertySource = nacosPropertySourceBuilder.buildWithContext(item.getDataId(),
+            item.getGroup(), item.getType(), item.getContent());
+        this.addFirstPropertySource(composite, propertySource, false);
       }
-      this.addFirstPropertySource(composite, propertySource, false);
     }
+
+    // load header context configuration
+    loadRouterHeaderContextConfigs(composite);
+  }
+
+  private void loadRouterHeaderContextConfigs(CompositePropertySource composite) {
+    String group = nacosConfigProperties.getGroup();
+    String dataId = NacosConfigConst.ROUTER_HEADER_CONTEXT_CONFIG_DATA_ID;
+    loadNacosDataIfPresent(composite, dataId, group, NacosConfigConst.DEFAULT_CONFIG_FILE_EXTENSION, true);
   }
 
   private void loadSecurityConfigs(CompositePropertySource composite, Environment env) {
