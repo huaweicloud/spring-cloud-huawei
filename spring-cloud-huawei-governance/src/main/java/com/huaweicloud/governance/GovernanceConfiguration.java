@@ -29,6 +29,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor;
 import org.springframework.cloud.client.loadbalancer.RestTemplateCustomizer;
@@ -101,5 +103,17 @@ public class GovernanceConfiguration {
   @Bean
   public RetryExtension governanceRetryExtension() {
     return new SpringCloudRetryExtension();
+  }
+
+  @Bean
+  @ConditionalOnProperty(value = "spring.cloud.servicecomb.webmvc.requestLogger.enabled",
+      havingValue = "true", matchIfMissing = true)
+  public FilterRegistrationBean<RequestLoggerFilter> requestServiceInfoLoggerFilter() {
+    FilterRegistrationBean<RequestLoggerFilter> registrationBean = new FilterRegistrationBean<>();
+    registrationBean.setFilter(new RequestLoggerFilter());
+    registrationBean.addUrlPatterns("/*");
+    registrationBean.setOrder(Integer.MAX_VALUE);
+
+    return registrationBean;
   }
 }
