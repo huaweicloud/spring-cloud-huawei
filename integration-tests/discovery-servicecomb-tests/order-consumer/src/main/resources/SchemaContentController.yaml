@@ -21,7 +21,6 @@ swagger: "2.0"
 info:
   version: "1.0.0"
   title: "swagger definition for com.huaweicloud.sample.SchemaContentController"
-  x-java-interface: "gen.swagger.SchemaContentControllerIntf"
 basePath: "/"
 consumes:
   - "application/json"
