@@ -86,6 +86,7 @@ public class ServiceAddressManager {
       initialized = true;
     }
     Map<String, List<String>> zoneAndRegion = generateZoneAndRegionAddress(instances);
+    LOGGER.info("auto discovery service [{}] addresses: [{}]", key, zoneAndRegion);
     if (zoneAndRegion == null) {
       return;
     }
