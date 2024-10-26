@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
+import org.apache.servicecomb.http.client.event.EngineConnectChangedEvent;
 import org.apache.servicecomb.service.center.client.OperationEvents;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.model.RbacTokenRequest;
@@ -81,6 +82,8 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
 
   private int lastStatusCode = 401;
 
+  private ServiceCenterClient serviceCenterClient;
+
   public RBACRequestAuthHeaderProvider(BootstrapProperties bootstrapProperties) {
     this.discoveryProperties = bootstrapProperties.getDiscoveryBootstrapProperties();
     this.serviceCombSSLProperties = bootstrapProperties.getServiceCombSSLProperties();
@@ -88,6 +91,8 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
     this.microserviceProperties = bootstrapProperties.getMicroserviceProperties();
 
     if (enabled()) {
+      serviceCenterClient = ServiceCenterUtils.serviceCenterClient(discoveryProperties,
+          serviceCombSSLProperties, Collections.emptyList());
       EventManager.getEventBus().register(this);
 
       executorService = Executors.newFixedThreadPool(1, t -> new Thread(t, "rbac-executor"));
@@ -113,6 +118,11 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
     this.executorService.submit(this::retryRefresh);
   }
 
+  @Subscribe
+  public void onEngineConnectChangedEvent(EngineConnectChangedEvent event) {
+    cache.refresh(CACHE_KEY);
+  }
+
   protected String createHeaders() {
     LOGGER.info("start to create RBAC headers");
 
@@ -136,9 +146,6 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
   }
 
   protected RbacTokenResponse callCreateHeaders() {
-    ServiceCenterClient serviceCenterClient = ServiceCenterUtils
-        .serviceCenterClient(discoveryProperties, serviceCombSSLProperties,
-            Collections.emptyList());
     RbacTokenRequest request = new RbacTokenRequest();
     request.setName(serviceCombRBACProperties.getName());
     request.setPassword(serviceCombRBACProperties.getPassword());
