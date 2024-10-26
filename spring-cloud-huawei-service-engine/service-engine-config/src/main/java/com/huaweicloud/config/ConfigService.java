@@ -152,6 +152,7 @@ public class ConfigService {
         bootstrapProperties.getServiceCombSSLProperties(),
         authHeaderProviders, HttpTransportFactory.defaultRequestConfig().build());
     ConfigCenterClient configCenterClient = new ConfigCenterClient(addressManager, httpTransport);
+    configCenterClient.setEventBus(EventManager.getEventBus());
 
     queryConfigurationsRequest = createQueryConfigurationsRequest(bootstrapProperties);
     firstPull(bootstrapProperties.getConfigBootstrapProperties(), configCenterClient, queryConfigurationsRequest,
@@ -254,6 +255,7 @@ public class ConfigService {
         authHeaderProviders, requestBuilder.build());
     KieConfiguration kieConfiguration = createKieConfiguration(bootstrapProperties);
     KieClient kieClient = new KieClient(kieAddressManager, httpTransport, kieConfiguration);
+    kieClient.setEventBus(EventManager.getEventBus());
     KieConfigManager kieConfigManager = new KieConfigManager(kieClient, EventManager.getEventBus(), kieConfiguration,
         configConverter, kieAddressManager);
     kieConfigManager.firstPull();
