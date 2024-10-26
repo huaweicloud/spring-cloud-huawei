@@ -34,7 +34,7 @@ import com.huaweicloud.service.engine.common.configration.bootstrap.ServiceCombS
 public class RBACRequestAuthHeaderProviderTest {
   private final BootstrapProperties bootstrapProperties = Mockito.mock(BootstrapProperties.class);
 
-  private final DiscoveryBootstrapProperties discoveryProperties = Mockito.mock(DiscoveryBootstrapProperties.class);
+  private final DiscoveryBootstrapProperties discoveryProperties = new DiscoveryBootstrapProperties();
 
   private final ServiceCombSSLProperties serviceCombSSLProperties = Mockito.mock(ServiceCombSSLProperties.class);
 
@@ -42,6 +42,7 @@ public class RBACRequestAuthHeaderProviderTest {
 
   @BeforeEach
   public void setUp() {
+    discoveryProperties.setAddress("http://127.0.0.1:30100");
     Mockito.when(bootstrapProperties.getDiscoveryBootstrapProperties()).thenReturn(discoveryProperties);
     Mockito.when(bootstrapProperties.getServiceCombSSLProperties()).thenReturn(serviceCombSSLProperties);
     Mockito.when(bootstrapProperties.getServiceCombRBACProperties()).thenReturn(serviceCombRBACProperties);
