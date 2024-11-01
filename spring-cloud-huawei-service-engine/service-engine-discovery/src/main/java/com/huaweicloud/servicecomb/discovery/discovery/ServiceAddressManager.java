@@ -91,8 +91,8 @@ public class ServiceAddressManager {
     }
   }
 
-  private boolean isEngineEndpointsChanged(HashSet<String> lastEngineEndpoints,
-          HashSet<String> currentEngineEndpoints) {
+  private boolean isEngineEndpointsChanged(Set<String> lastEngineEndpoints,
+          Set<String> currentEngineEndpoints) {
     if (lastEngineEndpoints == null || lastEngineEndpoints.isEmpty()) {
       return true;
     }
