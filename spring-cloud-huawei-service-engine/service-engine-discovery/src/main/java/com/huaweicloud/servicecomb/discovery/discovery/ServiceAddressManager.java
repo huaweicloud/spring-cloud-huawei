@@ -45,8 +45,6 @@ public class ServiceAddressManager {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceAddressManager.class);
 
-  private boolean initialized = false;
-
   private final ServiceCenterClient serviceCenterClient;
 
   private final MicroserviceInstance myselfInstance;
@@ -56,6 +54,8 @@ public class ServiceAddressManager {
   private DataCenterInfo dataCenterInfo;
 
   private final String myselfServiceId;
+
+  private final Map<String, HashSet<String>> lastEngineEndpointsCache = new HashMap<>();
 
   public ServiceAddressManager(DiscoveryBootstrapProperties discoveryProperties,
       ServiceCenterClient serviceCenterClient,
@@ -69,9 +69,6 @@ public class ServiceAddressManager {
 
   @Subscribe
   public void onHeartBeatEvent(HeartBeatEvent event) {
-    if (initialized) {
-      return;
-    }
     if (event.isSuccess() && discoveryProperties.isAutoDiscovery()) {
       for (Type type : Type.values()) {
         initEndPort(type.name());
@@ -82,18 +79,30 @@ public class ServiceAddressManager {
   private void initEndPort(String key) {
     List<MicroserviceInstance> instances = findServiceInstance(DiscoveryConstants.DEFAULT_APPID,
         key, DiscoveryConstants.VERSION_RULE_LATEST);
-    if (DiscoveryConstants.SERVICE_CENTER.equals(key) && !instances.isEmpty()) {
-      initialized = true;
-    }
-    Map<String, List<String>> zoneAndRegion = generateZoneAndRegionAddress(instances);
+    HashSet<String> currentEngineEndpoints = new HashSet<>();
+    Map<String, List<String>> zoneAndRegion = generateZoneAndRegionAddress(instances, currentEngineEndpoints);
     LOGGER.info("auto discovery service [{}] addresses: [{}]", key, zoneAndRegion);
     if (zoneAndRegion == null) {
       return;
     }
-    EventManager.post(new RefreshEndpointEvent(zoneAndRegion, key));
+    if (isEngineEndpointsChanged(lastEngineEndpointsCache.get(key), currentEngineEndpoints)) {
+      lastEngineEndpointsCache.put(key, currentEngineEndpoints);
+      EventManager.post(new RefreshEndpointEvent(zoneAndRegion, key));
+    }
   }
 
-  private Map<String, List<String>> generateZoneAndRegionAddress(List<MicroserviceInstance> instances) {
+  private boolean isEngineEndpointsChanged(Set<String> lastEngineEndpoints,
+          Set<String> currentEngineEndpoints) {
+    if (lastEngineEndpoints == null || lastEngineEndpoints.isEmpty()) {
+      return true;
+    }
+    HashSet<String> compareTemp = new HashSet<>(lastEngineEndpoints);
+    compareTemp.removeAll(currentEngineEndpoints);
+    return !compareTemp.isEmpty() || lastEngineEndpoints.size() != currentEngineEndpoints.size();
+  }
+
+  private Map<String, List<String>> generateZoneAndRegionAddress(List<MicroserviceInstance> instances,
+          Set<String> currentEngineEndpoints) {
     if (instances.isEmpty()) {
       return null;
     }
@@ -109,6 +118,7 @@ public class ServiceAddressManager {
       } else {
         sameRegion.addAll(microserviceInstance.getEndpoints());
       }
+      currentEngineEndpoints.addAll(microserviceInstance.getEndpoints());
     }
     zoneAndRegion.put("sameZone", new ArrayList<>(sameZone));
     zoneAndRegion.put("sameRegion", new ArrayList<>(sameRegion));
