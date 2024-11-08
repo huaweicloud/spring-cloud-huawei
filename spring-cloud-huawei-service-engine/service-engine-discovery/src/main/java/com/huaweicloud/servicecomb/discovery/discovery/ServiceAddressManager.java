@@ -81,11 +81,11 @@ public class ServiceAddressManager {
         key, DiscoveryConstants.VERSION_RULE_LATEST);
     HashSet<String> currentEngineEndpoints = new HashSet<>();
     Map<String, List<String>> zoneAndRegion = generateZoneAndRegionAddress(instances, currentEngineEndpoints);
-    LOGGER.info("auto discovery service [{}] addresses: [{}]", key, zoneAndRegion);
     if (zoneAndRegion == null) {
       return;
     }
     if (isEngineEndpointsChanged(lastEngineEndpointsCache.get(key), currentEngineEndpoints)) {
+      LOGGER.info("auto discovery service [{}] addresses: [{}]", key, zoneAndRegion);
       lastEngineEndpointsCache.put(key, currentEngineEndpoints);
       EventManager.post(new RefreshEndpointEvent(zoneAndRegion, key));
     }
