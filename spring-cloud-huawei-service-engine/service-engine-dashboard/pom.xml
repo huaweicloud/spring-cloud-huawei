@@ -22,7 +22,7 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-huawei-service-engine</artifactId>
-    <version>1.12.0-2023.0.x-SNAPSHOT</version>
+    <version>1.12.0-2024.0.x-SNAPSHOT</version>
   </parent>
 
   <artifactId>spring-cloud-huawei-service-engine-dashboard</artifactId>
