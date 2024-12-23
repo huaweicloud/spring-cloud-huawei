@@ -53,7 +53,7 @@
               <images>
 
                 <image>
-                  <name>servicecomb/service-center</name>
+                  <name>servicecomb/service-center:2.0.0</name>
                   <alias>service-center</alias>
                   <run>
                     <wait>
@@ -66,7 +66,7 @@
                       <time>60000</time>
                     </wait>
                     <ports>
-                      <port>30100:30100</port>
+                      <port>service.center.port:30100</port>
                     </ports>
                   </run>
                 </image>
