@@ -29,9 +29,9 @@ import reactor.core.publisher.Mono;
 public class SerializeContextGlobalFilter implements GlobalFilter, Ordered {
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-    exchange.mutate().request(r -> r.header(InvocationContextHolder.SERIALIZE_KEY,
-        InvocationContextHolder.serialize(exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY))));
-    return chain.filter(exchange);
+    ServerWebExchange rebuildExchange = exchange.mutate().request(r -> r.header(InvocationContextHolder.SERIALIZE_KEY,
+        InvocationContextHolder.serialize(exchange.getAttribute(InvocationContextHolder.ATTRIBUTE_KEY)))).build();
+    return chain.filter(rebuildExchange);
   }
 
   @Override

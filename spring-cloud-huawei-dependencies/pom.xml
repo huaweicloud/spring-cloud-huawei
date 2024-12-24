@@ -22,19 +22,19 @@
   <parent>
     <groupId>com.huaweicloud</groupId>
     <artifactId>spring-cloud-huawei</artifactId>
-    <version>1.12.0-2023.0.x-SNAPSHOT</version>
+    <version>1.12.0-2024.0.x-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>spring-cloud-huawei-dependencies</artifactId>
   <packaging>pom</packaging>
-  <version>1.12.0-2023.0.x-SNAPSHOT</version>
+  <version>1.12.0-2024.0.x-SNAPSHOT</version>
   <name>Spring Cloud Huawei::Dependencies</name>
 
   <properties>
     <feign-core.version>12.3</feign-core.version>
-    <httpclient.version>5.3.1</httpclient.version>
+    <httpclient.version>5.4.1</httpclient.version>
     <jackson.version>2.17.2</jackson.version>
     <commons-io.version>2.16.1</commons-io.version>
     <guava.version>33.2.1-jre</guava.version>
@@ -45,7 +45,7 @@
     <jasypt.version>3.0.5</jasypt.version>
     <annotations.version>3.0.1</annotations.version>
     <dubbo.hessian.version>2.7.23</dubbo.hessian.version>
-    <springdoc.version>2.6.0</springdoc.version>
+    <springdoc.version>2.7.0</springdoc.version>
     <nacos.client.version>2.3.0</nacos.client.version>
     <alibaba.context.support.version>1.0.11</alibaba.context.support.version>
   </properties>

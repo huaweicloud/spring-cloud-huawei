@@ -60,24 +60,6 @@ paths:
             '*/*':
               schema:
                 type: string
-  /danglingPattern/**:
-    post:
-      tags:
-        - schema-content-controller
-      operationId: /danglingPattern/**
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: string
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
   /sayHelloGet:
     get:
       tags:
