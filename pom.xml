@@ -36,8 +36,8 @@
   <properties>
     <!-- spring-cloud-dependencies do not import spring-boot-dependencies, spring-boot-dependencies
      import spring-framework-bom. No need configure spring version. -->
-    <spring-cloud.version>2023.0.3</spring-cloud.version>
-    <spring-boot.version>3.3.5</spring-boot.version>
+    <spring-cloud.version>2023.0.4</spring-cloud.version>
+    <spring-boot.version>3.3.7</spring-boot.version>
     <servicecomb.version>2.8.21</servicecomb.version>
   </properties>
 
