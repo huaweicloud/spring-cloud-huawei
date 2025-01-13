@@ -63,6 +63,8 @@ public class MicroserviceHandler {
 
   private static final String INSTANCE_PROPS = "SERVICECOMB_INSTANCE_PROPS";
 
+  private static final String IPV6 = "IPv6";
+
   public static Microservice createMicroservice(BootstrapProperties bootstrapProperties) {
     DiscoveryBootstrapProperties discoveryBootstrapProperties = bootstrapProperties.getDiscoveryBootstrapProperties();
     MicroserviceProperties microserviceProperties = bootstrapProperties.getMicroserviceProperties();
@@ -133,7 +135,8 @@ public class MicroserviceHandler {
     List<String> endPoints = new ArrayList<>();
     String address;
     if (StringUtils.isEmpty(discoveryBootstrapProperties.getPublishAddress())) {
-      address = NetUtils.getHostAddress();
+      address = IPV6.equalsIgnoreCase(discoveryBootstrapProperties.getIpType()) ? NetUtils.getIpv6HostAddress() :
+              NetUtils.getHostAddress();
     } else {
       address = discoveryBootstrapProperties.getPublishAddress();
     }
