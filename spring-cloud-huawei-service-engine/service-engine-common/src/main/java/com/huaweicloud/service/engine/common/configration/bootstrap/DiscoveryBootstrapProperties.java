@@ -74,6 +74,8 @@ public class DiscoveryBootstrapProperties {
   //          enabled: true
   private boolean enableServicePolling = false;
 
+  private boolean preferIpv6Address = false;
+
   public String getPublishAddress() {
     return publishAddress;
   }
@@ -228,19 +230,37 @@ public class DiscoveryBootstrapProperties {
     this.order = order;
   }
 
+  public boolean isPreferIpv6Address() {
+    return preferIpv6Address;
+  }
+
+  public void setPreferIpv6Address(boolean preferIpv6Address) {
+    this.preferIpv6Address = preferIpv6Address;
+  }
+
   @Override
   public String toString() {
-    return "ServiceCombDiscoveryProperties{" +
-        "enabled=" + enabled +
-        ", watch=" + watch +
-        ", address='" + address + '\'' +
-        ", hostname='" + hostname + '\'' +
-        ", preferIpAddress=" + preferIpAddress +
-        ", healthCheck=" + healthCheck +
-        ", healthCheckInterval=" + healthCheckInterval +
-        ", autoDiscovery=" + autoDiscovery +
-        ", allowCrossApp=" + allowCrossApp +
-        ", dataCenter=" + datacenter +
-        '}';
+    return "DiscoveryBootstrapProperties{" +
+            "enabled=" + enabled +
+            ", order=" + order +
+            ", watch=" + watch +
+            ", enableZoneAware=" + enableZoneAware +
+            ", address='" + address + '\'' +
+            ", hostname='" + hostname + '\'' +
+            ", preferIpAddress=" + preferIpAddress +
+            ", healthCheck=" + healthCheck +
+            ", healthCheckInterval=" + healthCheckInterval +
+            ", healthCheckRequestTimeout=" + healthCheckRequestTimeout +
+            ", pollInterval=" + pollInterval +
+            ", autoDiscovery=" + autoDiscovery +
+            ", waitTimeForShutDownInMillis=" + waitTimeForShutDownInMillis +
+            ", allowCrossApp=" + allowCrossApp +
+            ", publishAddress='" + publishAddress + '\'' +
+            ", ignoreSwaggerDifferent=" + ignoreSwaggerDifferent +
+            ", canOverwriteSwagger=" + canOverwriteSwagger +
+            ", datacenter=" + datacenter +
+            ", enableServicePolling=" + enableServicePolling +
+            ", preferIpv6Address='" + preferIpv6Address + '\'' +
+            '}';
   }
 }

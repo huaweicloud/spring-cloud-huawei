@@ -133,7 +133,8 @@ public class MicroserviceHandler {
     List<String> endPoints = new ArrayList<>();
     String address;
     if (StringUtils.isEmpty(discoveryBootstrapProperties.getPublishAddress())) {
-      address = NetUtils.getHostAddress();
+      address = discoveryBootstrapProperties.isPreferIpv6Address() ?
+              NetUtils.getIpv6HostAddress() : NetUtils.getHostAddress();
     } else {
       address = discoveryBootstrapProperties.getPublishAddress();
     }
