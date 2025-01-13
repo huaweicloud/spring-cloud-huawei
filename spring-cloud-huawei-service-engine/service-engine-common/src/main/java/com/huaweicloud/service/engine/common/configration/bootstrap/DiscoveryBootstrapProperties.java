@@ -74,6 +74,8 @@ public class DiscoveryBootstrapProperties {
   //          enabled: true
   private boolean enableServicePolling = false;
 
+  private String ipType = "IPv4";
+
   public String getPublishAddress() {
     return publishAddress;
   }
@@ -228,19 +230,37 @@ public class DiscoveryBootstrapProperties {
     this.order = order;
   }
 
+  public String getIpType() {
+    return ipType;
+  }
+
+  public void setIpType(String ipType) {
+    this.ipType = ipType;
+  }
+
   @Override
   public String toString() {
-    return "ServiceCombDiscoveryProperties{" +
-        "enabled=" + enabled +
-        ", watch=" + watch +
-        ", address='" + address + '\'' +
-        ", hostname='" + hostname + '\'' +
-        ", preferIpAddress=" + preferIpAddress +
-        ", healthCheck=" + healthCheck +
-        ", healthCheckInterval=" + healthCheckInterval +
-        ", autoDiscovery=" + autoDiscovery +
-        ", allowCrossApp=" + allowCrossApp +
-        ", dataCenter=" + datacenter +
-        '}';
+    return "DiscoveryBootstrapProperties{" +
+            "enabled=" + enabled +
+            ", order=" + order +
+            ", watch=" + watch +
+            ", enableZoneAware=" + enableZoneAware +
+            ", address='" + address + '\'' +
+            ", hostname='" + hostname + '\'' +
+            ", preferIpAddress=" + preferIpAddress +
+            ", healthCheck=" + healthCheck +
+            ", healthCheckInterval=" + healthCheckInterval +
+            ", healthCheckRequestTimeout=" + healthCheckRequestTimeout +
+            ", pollInterval=" + pollInterval +
+            ", autoDiscovery=" + autoDiscovery +
+            ", waitTimeForShutDownInMillis=" + waitTimeForShutDownInMillis +
+            ", allowCrossApp=" + allowCrossApp +
+            ", publishAddress='" + publishAddress + '\'' +
+            ", ignoreSwaggerDifferent=" + ignoreSwaggerDifferent +
+            ", canOverwriteSwagger=" + canOverwriteSwagger +
+            ", datacenter=" + datacenter +
+            ", enableServicePolling=" + enableServicePolling +
+            ", ipType='" + ipType + '\'' +
+            '}';
   }
 }
