@@ -74,7 +74,7 @@ public class DiscoveryBootstrapProperties {
   //          enabled: true
   private boolean enableServicePolling = false;
 
-  private String ipType = "IPv4";
+  private boolean preferIpv6Address = false;
 
   public String getPublishAddress() {
     return publishAddress;
@@ -230,12 +230,12 @@ public class DiscoveryBootstrapProperties {
     this.order = order;
   }
 
-  public String getIpType() {
-    return ipType;
+  public boolean isPreferIpv6Address() {
+    return preferIpv6Address;
   }
 
-  public void setIpType(String ipType) {
-    this.ipType = ipType;
+  public void setPreferIpv6Address(boolean preferIpv6Address) {
+    this.preferIpv6Address = preferIpv6Address;
   }
 
   @Override
@@ -260,7 +260,7 @@ public class DiscoveryBootstrapProperties {
             ", canOverwriteSwagger=" + canOverwriteSwagger +
             ", datacenter=" + datacenter +
             ", enableServicePolling=" + enableServicePolling +
-            ", ipType='" + ipType + '\'' +
+            ", preferIpv6Address='" + preferIpv6Address + '\'' +
             '}';
   }
 }
