@@ -32,7 +32,7 @@ public class DiscoveryBootstrapProperties {
 
   private boolean watch = false;
 
-  private boolean enableZoneAware = false;
+  private boolean enabledZoneAware = false;
 
   private String address;
 
@@ -74,7 +74,7 @@ public class DiscoveryBootstrapProperties {
   //          enabled: true
   private boolean enableServicePolling = false;
 
-  private String ipType = "IPv4";
+  private boolean preferIpv6Address = false;
 
   public String getPublishAddress() {
     return publishAddress;
@@ -108,12 +108,12 @@ public class DiscoveryBootstrapProperties {
     this.enabled = enabled;
   }
 
-  public boolean isEnableZoneAware() {
-    return enableZoneAware;
+  public boolean isEnabledZoneAware() {
+    return enabledZoneAware;
   }
 
-  public void setEnableZoneAware(boolean enableZoneAware) {
-    this.enableZoneAware = enableZoneAware;
+  public void setEnabledZoneAware(boolean enabledZoneAware) {
+    this.enabledZoneAware = enabledZoneAware;
   }
 
   public String getHostname() {
@@ -230,12 +230,12 @@ public class DiscoveryBootstrapProperties {
     this.order = order;
   }
 
-  public String getIpType() {
-    return ipType;
+  public boolean isPreferIpv6Address() {
+    return preferIpv6Address;
   }
 
-  public void setIpType(String ipType) {
-    this.ipType = ipType;
+  public void setPreferIpv6Address(boolean preferIpv6Address) {
+    this.preferIpv6Address = preferIpv6Address;
   }
 
   @Override
@@ -244,7 +244,7 @@ public class DiscoveryBootstrapProperties {
             "enabled=" + enabled +
             ", order=" + order +
             ", watch=" + watch +
-            ", enableZoneAware=" + enableZoneAware +
+            ", enabledZoneAware=" + enabledZoneAware +
             ", address='" + address + '\'' +
             ", hostname='" + hostname + '\'' +
             ", preferIpAddress=" + preferIpAddress +
@@ -260,7 +260,7 @@ public class DiscoveryBootstrapProperties {
             ", canOverwriteSwagger=" + canOverwriteSwagger +
             ", datacenter=" + datacenter +
             ", enableServicePolling=" + enableServicePolling +
-            ", ipType='" + ipType + '\'' +
+            ", preferIpv6Address='" + preferIpv6Address + '\'' +
             '}';
   }
 }
