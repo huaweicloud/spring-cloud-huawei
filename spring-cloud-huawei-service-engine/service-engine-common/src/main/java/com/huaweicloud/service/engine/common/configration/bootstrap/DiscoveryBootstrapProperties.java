@@ -32,7 +32,7 @@ public class DiscoveryBootstrapProperties {
 
   private boolean watch = false;
 
-  private boolean enabledZoneAware = false;
+  private boolean enableZoneAware = false;
 
   private String address;
 
@@ -108,12 +108,12 @@ public class DiscoveryBootstrapProperties {
     this.enabled = enabled;
   }
 
-  public boolean isEnabledZoneAware() {
-    return enabledZoneAware;
+  public boolean isEnableZoneAware() {
+    return enableZoneAware;
   }
 
-  public void setEnabledZoneAware(boolean enabledZoneAware) {
-    this.enabledZoneAware = enabledZoneAware;
+  public void setEnableZoneAware(boolean enableZoneAware) {
+    this.enableZoneAware = enableZoneAware;
   }
 
   public String getHostname() {
@@ -244,7 +244,7 @@ public class DiscoveryBootstrapProperties {
             "enabled=" + enabled +
             ", order=" + order +
             ", watch=" + watch +
-            ", enabledZoneAware=" + enabledZoneAware +
+            ", enableZoneAware=" + enableZoneAware +
             ", address='" + address + '\'' +
             ", hostname='" + hostname + '\'' +
             ", preferIpAddress=" + preferIpAddress +
