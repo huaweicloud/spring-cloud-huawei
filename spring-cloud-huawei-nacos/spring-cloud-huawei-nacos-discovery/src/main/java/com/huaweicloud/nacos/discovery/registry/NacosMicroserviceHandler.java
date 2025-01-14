@@ -27,6 +27,7 @@ import org.apache.commons.configuration.EnvironmentConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 
+import com.alibaba.nacos.api.naming.PreservedMetadataKeys;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.huaweicloud.nacos.discovery.NacosDiscoveryProperties;
 
@@ -47,6 +48,8 @@ public class NacosMicroserviceHandler {
 
   private static final String SERVICE_PROPS = "SERVICECOMB_SERVICE_PROPS";
 
+  private static final String FRAMEWORK_TYPE = "springCloudHuawei";
+
   public static Instance createMicroserviceInstance(NacosDiscoveryProperties properties, Environment environment) {
     Instance instance = new Instance();
     instance.setWeight(properties.getWeight());
@@ -56,6 +59,13 @@ public class NacosMicroserviceHandler {
     instance.setPort(properties.getPort());
     instance.setIp(properties.getIp());
     Map<String, String> metadata = properties.getMetadata();
+
+    // set framework
+    metadata.put(FRAMEWORK_TYPE, NacosMicroserviceHandler.class.getPackage().getImplementationVersion());
+    if (properties.isSecure()) {
+      metadata.put("secure", "true");
+    }
+    metadata.putAll(buildHeartBeatConfiguration(properties));
     metadata.putAll(genCasProperties(environment));
     instance.setMetadata(metadata);
     return instance;
@@ -104,5 +114,23 @@ public class NacosMicroserviceHandler {
     return Arrays.stream(value).map(v -> v.split(":"))
         .filter(v -> v.length == 2)
         .collect(Collectors.toMap(v -> v[0], v -> v[1]));
+  }
+
+
+  private static Map<String, String> buildHeartBeatConfiguration(NacosDiscoveryProperties properties) {
+    Map<String, String> heartBeatConfiguration = new HashMap<>();
+    if (null != properties.getHeartBeatInterval()) {
+      heartBeatConfiguration.put(PreservedMetadataKeys.HEART_BEAT_INTERVAL,
+              properties.getHeartBeatInterval().toString());
+    }
+    if (null != properties.getHeartBeatTimeout()) {
+      heartBeatConfiguration.put(PreservedMetadataKeys.HEART_BEAT_TIMEOUT,
+              properties.getHeartBeatTimeout().toString());
+    }
+    if (null != properties.getIpDeleteTimeout()) {
+      heartBeatConfiguration.put(PreservedMetadataKeys.IP_DELETE_TIMEOUT,
+              properties.getIpDeleteTimeout().toString());
+    }
+    return heartBeatConfiguration;
   }
 }
