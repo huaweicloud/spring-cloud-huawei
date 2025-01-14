@@ -32,13 +32,9 @@ public class DiscoveryBootstrapProperties {
 
   private boolean watch = false;
 
-  private boolean enableZoneAware = false;
-
   private String address;
 
   private String hostname;
-
-  private boolean preferIpAddress;
 
   private boolean healthCheck = true;
 
@@ -108,28 +104,12 @@ public class DiscoveryBootstrapProperties {
     this.enabled = enabled;
   }
 
-  public boolean isEnableZoneAware() {
-    return enableZoneAware;
-  }
-
-  public void setEnableZoneAware(boolean enableZoneAware) {
-    this.enableZoneAware = enableZoneAware;
-  }
-
   public String getHostname() {
     return hostname;
   }
 
   public void setHostname(String hostname) {
     this.hostname = hostname;
-  }
-
-  public boolean isPreferIpAddress() {
-    return preferIpAddress;
-  }
-
-  public void setPreferIpAddress(boolean preferIpAddress) {
-    this.preferIpAddress = preferIpAddress;
   }
 
   public boolean isHealthCheck() {
@@ -244,10 +224,8 @@ public class DiscoveryBootstrapProperties {
             "enabled=" + enabled +
             ", order=" + order +
             ", watch=" + watch +
-            ", enableZoneAware=" + enableZoneAware +
             ", address='" + address + '\'' +
             ", hostname='" + hostname + '\'' +
-            ", preferIpAddress=" + preferIpAddress +
             ", healthCheck=" + healthCheck +
             ", healthCheckInterval=" + healthCheckInterval +
             ", healthCheckRequestTimeout=" + healthCheckRequestTimeout +
