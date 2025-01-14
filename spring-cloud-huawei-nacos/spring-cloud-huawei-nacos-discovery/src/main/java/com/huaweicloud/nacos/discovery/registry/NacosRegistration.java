@@ -24,7 +24,6 @@ import java.util.Map;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.serviceregistry.Registration;
 
-import com.alibaba.nacos.api.naming.PreservedMetadataKeys;
 import com.huaweicloud.nacos.discovery.NacosDiscoveryProperties;
 
 public class NacosRegistration implements Registration {
@@ -42,33 +41,11 @@ public class NacosRegistration implements Registration {
   }
 
   public void init() {
-    buildPropertiesAttributes();
+    customize();
     this.instanceId = buildInstanceId();
   }
 
-  private void buildPropertiesAttributes() {
-    Map<String, String> metadata = nacosDiscoveryProperties.getMetadata();
-    metadata.put(PreservedMetadataKeys.REGISTER_SOURCE, "SPRING_CLOUD");
-    if (nacosDiscoveryProperties.isSecure()) {
-      metadata.put("secure", "true");
-    }
-    if (null != nacosDiscoveryProperties.getHeartBeatInterval()) {
-      metadata.put(PreservedMetadataKeys.HEART_BEAT_INTERVAL,
-          nacosDiscoveryProperties.getHeartBeatInterval().toString());
-    }
-    if (null != nacosDiscoveryProperties.getHeartBeatTimeout()) {
-      metadata.put(PreservedMetadataKeys.HEART_BEAT_TIMEOUT,
-          nacosDiscoveryProperties.getHeartBeatTimeout().toString());
-    }
-    if (null != nacosDiscoveryProperties.getIpDeleteTimeout()) {
-      metadata.put(PreservedMetadataKeys.IP_DELETE_TIMEOUT,
-          nacosDiscoveryProperties.getIpDeleteTimeout().toString());
-    }
-    customize(registrationCustomizers);
-  }
-
-  protected void customize(
-      List<NacosRegistrationMetadataCustomizer> registrationCustomizers) {
+  protected void customize() {
     if (registrationCustomizers != null) {
       for (NacosRegistrationMetadataCustomizer customizer : registrationCustomizers) {
         customizer.customize(this);
