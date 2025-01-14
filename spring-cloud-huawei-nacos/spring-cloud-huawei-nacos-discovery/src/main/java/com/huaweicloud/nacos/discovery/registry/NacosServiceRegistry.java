@@ -56,8 +56,7 @@ public class NacosServiceRegistry implements ServiceRegistry<Registration> {
     this.nacosDiscoveryProperties = nacosDiscoveryProperties;
     this.namingServiceManagers = namingServiceManagers.stream().sorted(Comparator.comparingInt(Ordered::getOrder))
         .collect(Collectors.toList());
-    this.instance =
-        NacosMicroserviceHandler.createMicroserviceInstance(nacosDiscoveryProperties, environment);
+    this.instance = NacosMicroserviceHandler.createMicroserviceInstance(nacosDiscoveryProperties, environment);
     eventBus = EventManager.getEventBus();
   }
 
