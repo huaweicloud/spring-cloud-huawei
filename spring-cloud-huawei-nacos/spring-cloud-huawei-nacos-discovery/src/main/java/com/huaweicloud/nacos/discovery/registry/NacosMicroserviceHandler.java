@@ -48,7 +48,7 @@ public class NacosMicroserviceHandler {
 
   private static final String INSTANCE_PROPS = "SERVICECOMB_INSTANCE_PROPS";
 
-  private static final String FRAMEWORK_TYPE = "SpringCloudHuawei";
+  private static final String FRAMEWORK_TYPE = "springCloudHuawei";
 
   public static Instance createMicroserviceInstance(NacosDiscoveryProperties properties, Environment environment) {
     Instance instance = new Instance();
