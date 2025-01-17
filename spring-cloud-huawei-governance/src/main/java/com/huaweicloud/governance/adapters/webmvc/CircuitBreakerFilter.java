@@ -38,7 +38,7 @@ import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
 import io.vavr.CheckedFunction0;
 
 public class CircuitBreakerFilter implements Filter {
-  private static final Logger LOGGER = LoggerFactory.getLogger(BulkheadFilter.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(CircuitBreakerFilter.class);
 
   private final CircuitBreakerHandler circuitBreakerHandler;
 
