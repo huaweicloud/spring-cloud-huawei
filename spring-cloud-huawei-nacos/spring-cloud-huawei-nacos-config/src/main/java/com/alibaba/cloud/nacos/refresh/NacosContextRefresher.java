@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -117,9 +118,16 @@ public class NacosContextRefresher
     // many Spring context
     if (this.ready.compareAndSet(false, true) && isRefreshEnabled()) {
       this.registerNacosListenersForApplications();
+      this.registerLabelRouterConfigListener();
       if (nacosConfigProperties.isMasterStandbyEnabled()) {
         startSchedulerTask();
       }
+    }
+  }
+
+  private void registerLabelRouterConfigListener() {
+    if (env.getProperty(NacosConfigConst.ROUTER_CONFIG_DEFAULT_LOAD_ENABLED, boolean.class, false)) {
+      new LabelRouterConfigListener(this, env).schedulerCheckLabelRouterConfig();
     }
   }
 
@@ -196,9 +204,6 @@ public class NacosContextRefresher
           registerNacosListener(propertySource.getGroup(), propertySource.getDataId(), currentConfigServiceManager);
         }
       }
-      if (env.getProperty(NacosConfigConst.ROUTER_CONFIG_DEFAULT_LOAD_ENABLED, boolean.class, false)) {
-        new LabelRouterConfigListener(this, listenerMap.keySet(), env).schedulerCheckLabelRouterConfig();
-      }
     } catch (NacosException e) {
       log.error("add nacos config listener error, serverAddr=[{}]", currentConfigServiceManager.getServerAddr(), e);
     }
@@ -274,5 +279,9 @@ public class NacosContextRefresher
     } catch (NacosException e) {
       log.error("add nacos config listener error, serverAddr=[{}]", currentConfigServiceManager.getServerAddr(), e);
     }
+  }
+
+  public Set<String> getListenerKeys() {
+    return listenerMap.keySet();
   }
 }
