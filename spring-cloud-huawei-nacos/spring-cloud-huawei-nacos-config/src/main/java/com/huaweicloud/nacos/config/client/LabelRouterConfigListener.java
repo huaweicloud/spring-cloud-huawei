@@ -18,9 +18,7 @@
 package com.huaweicloud.nacos.config.client;
 
 import java.time.Duration;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -32,14 +30,11 @@ import com.alibaba.cloud.nacos.refresh.NacosContextRefresher;
 public class LabelRouterConfigListener {
   private final ThreadPoolTaskScheduler taskScheduler;
 
-  private final Set<String> listenersKey;
-
   private final NacosContextRefresher contextRefresher;
 
   private final Environment env;
 
-  public LabelRouterConfigListener(NacosContextRefresher contextRefresher, Set<String> listenersKey, Environment env) {
-    this.listenersKey = new HashSet<>(listenersKey);
+  public LabelRouterConfigListener(NacosContextRefresher contextRefresher, Environment env) {
     this.contextRefresher = contextRefresher;
     this.env = env;
     this.taskScheduler = buildTaskScheduler();
@@ -59,16 +54,15 @@ public class LabelRouterConfigListener {
     }
     for (PropertyConfigItem configItem : routerProperties) {
       String key = NacosPropertySourceRepository.getMapKey(configItem.getDataId(), configItem.getGroup());
-      if (!listenersKey.contains(key)) {
+      if (!contextRefresher.getListenerKeys().contains(key)) {
         contextRefresher.registerAddRouterConfigListener(configItem.getDataId(), configItem.getGroup());
-        listenersKey.add(key);
       }
     }
   }
 
   private ThreadPoolTaskScheduler buildTaskScheduler() {
     ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
-    taskScheduler.setBeanName("Nacos-Router-Config-Listener-Scheduler");
+    taskScheduler.setBeanName("Router-Config-Listener-Task");
     taskScheduler.initialize();
     return taskScheduler;
   }
