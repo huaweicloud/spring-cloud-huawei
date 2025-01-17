@@ -38,7 +38,7 @@ import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.vavr.CheckedConsumer;
 
 public class RateLimitingFilter implements Filter {
-  private static final Logger LOGGER = LoggerFactory.getLogger(IdentifierRateLimitingFilter.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(RateLimitingFilter.class);
 
   private static final Object EMPTY_HOLDER = new Object();
 

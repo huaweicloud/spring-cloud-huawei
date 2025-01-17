@@ -36,7 +36,7 @@ import io.github.resilience4j.decorators.Decorators.DecorateCheckedSupplier;
 import io.vavr.CheckedFunction0;
 
 public class BulkheadClientHttpRequestInterceptor implements ClientHttpRequestInterceptor, Ordered {
-  private static final Logger LOG = LoggerFactory.getLogger(IsolationClientHttpRequestInterceptor.class);
+  private static final Logger LOG = LoggerFactory.getLogger(BulkheadClientHttpRequestInterceptor.class);
 
   private static final int ORDER = 200;
 
