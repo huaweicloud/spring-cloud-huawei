@@ -25,6 +25,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-@ConditionalOnProperty(value = "spring.cloud.servicecomb.router.enabled", matchIfMissing = true)
+@ConditionalOnProperty(value = {"spring.cloud.servicecomb.router.enabled", "spring.cloud.servicecomb.discovery.enabled"},
+    havingValue = "true", matchIfMissing = true)
 public @interface ConditionalOnRouterEnabled {
 }
