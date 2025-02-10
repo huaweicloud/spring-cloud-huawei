@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
@@ -58,7 +57,7 @@ public class ConfigServiceManagerUtils {
 
   private static long refreshWindow;
 
-  private static NacosRestTemplate nacosRestTemplate;
+  private static volatile NacosRestTemplate nacosRestTemplate;
 
   public static boolean checkServerConnect(String serverAddress) {
     if (StringUtils.isEmpty(serverAddress)) {

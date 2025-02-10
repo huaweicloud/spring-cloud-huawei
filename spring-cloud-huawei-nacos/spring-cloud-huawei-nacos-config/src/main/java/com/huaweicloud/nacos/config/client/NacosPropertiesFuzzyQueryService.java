@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import com.alibaba.cloud.nacos.NacosConfigProperties;
-import com.alibaba.nacos.client.config.impl.ConfigHttpClientManager;
 import com.alibaba.nacos.common.http.HttpRestResult;
 import com.alibaba.nacos.common.http.client.NacosRestTemplate;
 import com.alibaba.nacos.common.http.param.Header;
