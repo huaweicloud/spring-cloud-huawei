@@ -18,6 +18,9 @@
 package com.huaweicloud.nacos.config.manager;
 
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +29,7 @@ import com.alibaba.cloud.nacos.NacosConfigProperties;
 import com.alibaba.cloud.nacos.diagnostics.analyzer.NacosConnectionFailureException;
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.config.ConfigService;
+import com.huaweicloud.nacos.config.NacosConfigConst;
 
 public class NacosConfigServiceMasterManager implements NacosConfigManager {
   private static final Logger LOGGER = LoggerFactory.getLogger(NacosConfigServiceMasterManager.class);
@@ -34,8 +38,15 @@ public class NacosConfigServiceMasterManager implements NacosConfigManager {
 
   private volatile ConfigService configService;
 
+  private final ScheduledExecutorService taskScheduler;
+
+  private volatile boolean isServerHealth = false;
+
   public NacosConfigServiceMasterManager(NacosConfigProperties properties) {
     this.properties = properties;
+    checkConfigServiceHealth();
+    this.taskScheduler = Executors.newScheduledThreadPool(1, (t) -> new Thread(t, "Master-Config-check"));
+    startSchedulerTask();
   }
 
   @Override
@@ -55,6 +66,16 @@ public class NacosConfigServiceMasterManager implements NacosConfigManager {
     return configService;
   }
 
+  private void startSchedulerTask() {
+    long delay = properties.getMasterStandbyServerTaskDelay();
+    taskScheduler.scheduleWithFixedDelay(this::checkConfigServiceHealth, delay, delay, TimeUnit.MILLISECONDS);
+  }
+
+  private void checkConfigServiceHealth() {
+    isServerHealth = ConfigServiceManagerUtils.checkConfigServerHealth(properties.getServerAddr(),
+        properties.assembleMasterNacosServerProperties());
+  }
+
   @Override
   public String getServerAddr() {
     return properties.getServerAddr();
@@ -66,12 +87,26 @@ public class NacosConfigServiceMasterManager implements NacosConfigManager {
   }
 
   @Override
-  public boolean checkServerConnect() {
-    return ConfigServiceManagerUtils.checkServerConnect(properties.getServerAddr());
+  public boolean isNacosServerHealth() {
+    return isServerHealth;
   }
 
   @Override
   public void resetConfigService() {
     this.configService = null;
+    this.isServerHealth = false;
+  }
+
+  @Override
+  public boolean isMasterConfigService() {
+    return true;
+  }
+
+  @Override
+  public boolean isRpcConnectHealth() {
+    if (configService == null) {
+      return false;
+    }
+    return NacosConfigConst.STATUS_UP.equals(configService.getServerStatus());
   }
 }
