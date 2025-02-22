@@ -18,6 +18,9 @@
 package com.huaweicloud.nacos.config.manager;
 
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +29,7 @@ import com.alibaba.cloud.nacos.NacosConfigProperties;
 import com.alibaba.cloud.nacos.diagnostics.analyzer.NacosConnectionFailureException;
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.config.ConfigService;
+import com.huaweicloud.nacos.config.NacosConfigConst;
 
 public class NacosConfigServiceStandbyManager implements NacosConfigManager {
   private static final Logger LOGGER = LoggerFactory.getLogger(NacosConfigServiceStandbyManager.class);
@@ -34,8 +38,15 @@ public class NacosConfigServiceStandbyManager implements NacosConfigManager {
 
   private volatile ConfigService configService;
 
+  private final ScheduledExecutorService taskScheduler;
+
+  private volatile boolean isServerHealth = false;
+
   public NacosConfigServiceStandbyManager(NacosConfigProperties properties) {
     this.properties = properties;
+    checkConfigServerHealth();
+    this.taskScheduler = Executors.newScheduledThreadPool(1, (t) -> new Thread(t, "Standby-Config-Check"));
+    startSchedulerTask();
   }
 
   @Override
@@ -55,19 +66,43 @@ public class NacosConfigServiceStandbyManager implements NacosConfigManager {
     return configService;
   }
 
+  private void startSchedulerTask() {
+    long delay = properties.getMasterStandbyServerTaskDelay();
+    taskScheduler.scheduleWithFixedDelay(this::checkConfigServerHealth, delay, delay, TimeUnit.MILLISECONDS);
+  }
+
+  private void checkConfigServerHealth() {
+    isServerHealth = ConfigServiceManagerUtils.checkConfigServerHealth(properties.getStandbyServerAddr(),
+        properties.assembleStandbyNacosServerProperties());
+  }
+
   @Override
   public String getServerAddr() {
     return properties.getStandbyServerAddr();
   }
 
   @Override
-  public boolean checkServerConnect() {
-    return ConfigServiceManagerUtils.checkServerConnect(properties.getStandbyServerAddr());
+  public boolean isNacosServerHealth() {
+    return isServerHealth;
   }
 
   @Override
   public void resetConfigService() {
     this.configService = null;
+    this.isServerHealth = false;
+  }
+
+  @Override
+  public boolean isMasterConfigService() {
+    return false;
+  }
+
+  @Override
+  public boolean isRpcConnectHealth() {
+    if (configService == null) {
+      return false;
+    }
+    return NacosConfigConst.STATUS_UP.equals(configService.getServerStatus());
   }
 
   @Override
