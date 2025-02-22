@@ -104,11 +104,11 @@ public class NacosConfigDataLoader implements ConfigDataLoader<NacosConfigDataRe
 
   private ConfigService getConfigService(ConfigDataLoaderContext context) {
     NacosConfigServiceMasterManager configServiceMaster = getBean(context, NacosConfigServiceMasterManager.class);
-    if (configServiceMaster != null && configServiceMaster.checkServerConnect()) {
+    if (configServiceMaster != null && configServiceMaster.isNacosServerHealth()) {
       return configServiceMaster.getConfigService();
     }
     NacosConfigServiceStandbyManager configServiceStandby = getBean(context, NacosConfigServiceStandbyManager.class);
-    if (configServiceStandby != null && configServiceStandby.checkServerConnect()) {
+    if (configServiceStandby != null && configServiceStandby.isNacosServerHealth()) {
       return configServiceStandby.getConfigService();
     }
     if (configServiceMaster != null) {

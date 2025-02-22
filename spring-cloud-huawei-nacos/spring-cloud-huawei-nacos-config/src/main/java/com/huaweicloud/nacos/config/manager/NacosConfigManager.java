@@ -26,7 +26,11 @@ public interface NacosConfigManager extends Ordered {
 
   String getServerAddr();
 
-  boolean checkServerConnect();
+  boolean isNacosServerHealth();
 
   void resetConfigService();
+
+  boolean isMasterConfigService();
+
+  boolean isRpcConnectHealth();
 }
