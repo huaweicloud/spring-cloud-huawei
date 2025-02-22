@@ -143,7 +143,8 @@ public class NacosContextRefresher
 
   private void masterStandbyServerCheck() {
     synchronized (NacosContextRefresher.class) {
-      if (!NacosConfigConst.STATUS_UP.equals(currentConfigServiceManager.getConfigService().getServerStatus())) {
+      // both check interface invoking and GRPC connect for fail count.
+      if (!currentConfigServiceManager.isNacosServerHealth() || !currentConfigServiceManager.isRpcConnectHealth()) {
         if (failCount == 2) {
           reRegisterNacosListeners();
           failCount = 0;
@@ -157,11 +158,20 @@ public class NacosContextRefresher
 
       // if current server is not master, check whether the master status is healthy, if status UP, use master server.
       if (isRetryMasterServer
-          && !currentConfigServiceManager.getServerAddr().equals(nacosConfigManagers.get(0).getServerAddr())
-          && nacosConfigManagers.get(0).checkServerConnect()) {
+          && !currentConfigServiceManager.isMasterConfigService()
+          && getMasterConfigService().isNacosServerHealth()) {
         reRegisterNacosListeners();
       }
     }
+  }
+
+  private NacosConfigManager getMasterConfigService() {
+    for (NacosConfigManager configManager : nacosConfigManagers) {
+      if (configManager.isMasterConfigService()) {
+        return configManager;
+      }
+    }
+    return nacosConfigManagers.get(0);
   }
 
   private void reRegisterNacosListeners() {
