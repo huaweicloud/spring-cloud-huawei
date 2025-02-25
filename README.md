@@ -62,3 +62,8 @@ Spring Cloud Huawei provides a large number of out-of-the-box service governance
 [Spring Cloud Releases]: https://github.com/spring-cloud/spring-cloud-release/wiki/Supported-Versions
 [Spring Cloud Huawei Releases]: https://github.com/huaweicloud/spring-cloud-huawei/wiki/third-version-support-descriptions
 
+## Star this project
+
+If you like this project, do not forget star it.
+
+[![Star History Chart](https://api.star-history.com/svg?repos=huaweicloud/spring-cloud-huawei&type=Date)](https://star-history.com/#huaweicloud/spring-cloud-huawei&Date)
