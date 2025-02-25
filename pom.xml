@@ -38,7 +38,7 @@
      import spring-framework-bom. No need configure spring version. -->
     <spring-cloud.version>2023.0.4</spring-cloud.version>
     <spring-boot.version>3.3.7</spring-boot.version>
-    <servicecomb.version>2.8.22</servicecomb.version>
+    <servicecomb.version>2.8.23</servicecomb.version>
   </properties>
 
   <modules>
