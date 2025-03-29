@@ -1,5 +1,6 @@
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.huaweicloud/spring-cloud-huawei/badge.svg)](https://search.maven.org/search?q=g:com.huaweicloud%20AND%20a:spring-cloud-huawei-dependencies) 
+[![libs.tech recommends](https://libs.tech/project/198181246/badge.svg)](https://libs.tech/project/198181246/spring-cloud-huawei)
 
 # Spring Cloud Huawei [查看中文文档](README_CN.md)
 
