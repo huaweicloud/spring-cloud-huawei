@@ -43,29 +43,29 @@ public class FeignMethodRequestOptionsHandler implements InvocationHandler {
     return dispatch.get(method).invoke(refactorArgs);
   }
 
-  private Object[] restructureRequestArgs(Method method, Object[] args) {
+  private Object[] restructureRequestArgs(Method method, Object... parameters) {
     FeignRequestOptions requestOptions = method.getAnnotation(FeignRequestOptions.class);
 
-    // if method have no FeignRequestOptions annotation, or args have options, return origin args
-    if (requestOptions == null || findArgsOptions(args) != null) {
-      return args;
+    // if method have no FeignRequestOptions annotation, or parameters have options, return origin parameters
+    if (requestOptions == null || findArgsOptions(parameters) != null) {
+      return parameters;
     }
     Request.Options options = new Options(requestOptions.connectTimeout(), requestOptions.connectTimeoutUnit(),
         requestOptions.readTimeout(), requestOptions.readTimeoutUnit(), requestOptions.followRedirects());
-    if (args == null || args.length == 0) {
+    if (parameters == null || parameters.length == 0) {
       return new Object[]{options};
     }
-    Object[] argsWithOptions = new Object[args.length + 1];
-    System.arraycopy(args, 0, argsWithOptions, 0, args.length);
-    argsWithOptions[args.length] = options;
+    Object[] argsWithOptions = new Object[parameters.length + 1];
+    System.arraycopy(parameters, 0, argsWithOptions, 0, parameters.length);
+    argsWithOptions[parameters.length] = options;
     return argsWithOptions;
   }
 
-  Request.Options findArgsOptions(Object[] argv) {
-    if (argv == null || argv.length == 0) {
+  Request.Options findArgsOptions(Object... parameters) {
+    if (parameters == null || parameters.length == 0) {
       return null;
     }
-    return Stream.of(argv)
+    return Stream.of(parameters)
         .filter(Options.class::isInstance)
         .map(Options.class::cast)
         .findFirst()
