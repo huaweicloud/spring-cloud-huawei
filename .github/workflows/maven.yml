@@ -21,7 +21,7 @@ jobs:
       with:
         java-version: 17
     - name: Set up Maven
-      uses: stCarolas/setup-maven@v4.5
+      uses: stCarolas/setup-maven@v4
       with:
         maven-version: 3.8.4
     - uses: actions/cache@v4
