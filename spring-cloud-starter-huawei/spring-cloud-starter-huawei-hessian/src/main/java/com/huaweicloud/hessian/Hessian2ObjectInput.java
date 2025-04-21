@@ -39,6 +39,7 @@ import java.lang.reflect.Type;
 import org.apache.dubbo.common.serialize.Cleanable;
 import org.apache.dubbo.common.serialize.ObjectInput;
 import org.apache.dubbo.common.serialize.hessian2.Hessian2SerializerFactory;
+import org.apache.dubbo.common.utils.DefaultSerializeClassChecker;
 
 import com.alibaba.com.caucho.hessian.io.Hessian2Input;
 
@@ -50,7 +51,9 @@ public class Hessian2ObjectInput implements ObjectInput, Cleanable {
 
   private static ThreadLocal<Hessian2Input> INPUT_TL = ThreadLocal.withInitial(() -> {
     Hessian2Input h2i = new Hessian2Input(null);
-    Hessian2SerializerFactory factory = new Hessian2SerializerFactory();
+    ClassLoader loader = Thread.currentThread().getContextClassLoader();
+    DefaultSerializeClassChecker classChecker = DefaultSerializeClassChecker.getInstance();
+    Hessian2SerializerFactory factory = new Hessian2SerializerFactory(loader, classChecker);
     factory.setAllowNonSerializable(true);
     h2i.setSerializerFactory(factory);
     h2i.setCloseStreamOnClose(true);
