@@ -16,7 +16,11 @@
  */
 package com.huaweicloud.sample.hessian;
 
-public class NonSerializableModel {
+import java.io.Serializable;
+
+public class NonSerializableModel implements Serializable {
+  private static final long serialVersionUID = -1L;
+
   private String age;
 
   public String getAge() {
