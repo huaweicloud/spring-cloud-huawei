@@ -66,7 +66,8 @@ public class FeignConfiguration {
   }
 
   @Bean
-  @ConditionalOnProperty(value = GovernanceConst.FEIGN_METHOD_OPTIONS_ENABLED, havingValue = "true")
+  @ConditionalOnProperty(value = GovernanceConst.FEIGN_METHOD_OPTIONS_ENABLED, havingValue = "true",
+      matchIfMissing = true)
   public FeignMethodRequestOptionsFactoryBuilder feignMethodOptionsFactoryBuilder() {
     return new FeignMethodRequestOptionsFactoryBuilder();
   }
