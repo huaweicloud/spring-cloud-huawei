@@ -232,4 +232,22 @@ public class GovernanceController {
   public String loadbalance() {
     return feignService.loadbalabce();
   }
+
+  @GetMapping("/testFeignRequestTimeoutWithAnnotation")
+  public String testFeignRequestTimeoutWithAnnotation() {
+    try {
+      return feignService.testFeignRequestTimeoutWithAnnotation();
+    }catch (Exception e) {
+      return e.getMessage();
+    }
+  }
+
+  @GetMapping("/testFeignRequestTimeout")
+  public String testFeignRequestTimeout() {
+    try {
+      return feignService.testFeignRequestTimeout();
+    }catch (Exception e) {
+      return e.getMessage();
+    }
+  }
 }
