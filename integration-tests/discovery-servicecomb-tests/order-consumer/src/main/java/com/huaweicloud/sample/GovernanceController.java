@@ -266,4 +266,22 @@ public class GovernanceController {
     restTemplate.getForObject("http://webflux/sayHello?name=tom", String.class);
     return restTemplate.getForObject("http://price/faultInjection", String.class);
   }
+
+  @GetMapping("/testFeignRequestTimeoutWithAnnotation")
+  public String testFeignRequestTimeoutWithAnnotation() {
+    try {
+      return feignService.testFeignRequestTimeoutWithAnnotation();
+    }catch (Exception e) {
+      return e.getMessage();
+    }
+  }
+
+  @GetMapping("/testFeignRequestTimeout")
+  public String testFeignRequestTimeout() {
+    try {
+      return feignService.testFeignRequestTimeout();
+    }catch (Exception e) {
+      return e.getMessage();
+    }
+  }
 }

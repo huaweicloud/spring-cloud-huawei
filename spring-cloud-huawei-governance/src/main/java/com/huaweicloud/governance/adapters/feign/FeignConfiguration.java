@@ -30,6 +30,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
+import com.huaweicloud.governance.GovernanceConst;
+import com.huaweicloud.governance.adapters.feign.options.FeignMethodRequestOptionsFactoryBuilder;
+
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
 
@@ -56,5 +59,12 @@ public class FeignConfiguration {
   @Bean
   public ResponseStatusCodeExtractor responseStatusCodeExtractor(Environment environment) {
     return new ResponseStatusCodeExtractor(environment);
+  }
+
+  @Bean
+  @ConditionalOnProperty(value = GovernanceConst.FEIGN_METHOD_OPTIONS_ENABLED, havingValue = "true",
+      matchIfMissing = true)
+  public FeignMethodRequestOptionsFactoryBuilder feignMethodOptionsFactoryBuilder() {
+    return new FeignMethodRequestOptionsFactoryBuilder();
   }
 }
