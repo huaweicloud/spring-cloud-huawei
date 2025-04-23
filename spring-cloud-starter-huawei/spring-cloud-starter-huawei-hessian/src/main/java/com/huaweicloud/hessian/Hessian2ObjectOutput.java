@@ -38,6 +38,8 @@ import java.io.OutputStream;
 import org.apache.dubbo.common.serialize.Cleanable;
 import org.apache.dubbo.common.serialize.ObjectOutput;
 import org.apache.dubbo.common.serialize.hessian2.Hessian2SerializerFactory;
+import org.apache.dubbo.common.utils.DefaultSerializeClassChecker;
+import org.apache.dubbo.common.utils.SerializeCheckStatus;
 
 import com.alibaba.com.caucho.hessian.io.Hessian2Output;
 
@@ -49,7 +51,10 @@ public class Hessian2ObjectOutput implements ObjectOutput, Cleanable {
 
   private static ThreadLocal<Hessian2Output> OUTPUT_TL = ThreadLocal.withInitial(() -> {
     Hessian2Output h2o = new Hessian2Output(null);
-    Hessian2SerializerFactory factory = new Hessian2SerializerFactory();
+    ClassLoader loader = Hessian2ObjectOutput.class.getClassLoader();
+    DefaultSerializeClassChecker classChecker = DefaultSerializeClassChecker.getInstance();
+    classChecker.notifyCheckStatus(SerializeCheckStatus.WARN);
+    Hessian2SerializerFactory factory = new Hessian2SerializerFactory(loader, classChecker);
     factory.setAllowNonSerializable(true);
     h2o.setSerializerFactory(factory);
     h2o.setCloseStreamOnClose(true);
