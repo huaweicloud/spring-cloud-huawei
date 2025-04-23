@@ -479,4 +479,18 @@ public class GovernanceControllerIT {
     Assertions.assertEquals(null,
         template.getForObject(orderServiceUrl + "/govern/testTemplateFaultInjection?name=tom", String.class));
   }
+
+  @Test
+  public void testFeignRequestTimeoutWithAnnotation() {
+    String result
+        = template.getForObject(orderServiceUrl + "/govern/testFeignRequestTimeoutWithAnnotation", String.class);
+    Assertions.assertTrue(result.contains("Read timed out"));
+  }
+
+  @Test
+  public void testFeignRequestTimeout() {
+    String result
+        = template.getForObject(orderServiceUrl + "/govern/testFeignRequestTimeout", String.class);
+    Assertions.assertEquals("success", result);
+  }
 }

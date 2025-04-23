@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.huaweicloud.governance.adapters.feign.options.FeignRequestOptions;
+
 import feign.Headers;
 import feign.Param;
 
@@ -89,4 +91,11 @@ public interface FeignService {
   @GetMapping("/testDateRequestParam")
   public String testDateRequestParam(@RequestParam(required = false, value = "currentDate")
      Date currentDate);
+
+  @GetMapping("/testFeignRequestTimeoutWithAnnotation")
+  @FeignRequestOptions(connectTimeout = 5L, readTimeout = 5L)
+  String testFeignRequestTimeoutWithAnnotation();
+
+  @GetMapping("/testFeignRequestTimeout")
+  String testFeignRequestTimeout();
 }
