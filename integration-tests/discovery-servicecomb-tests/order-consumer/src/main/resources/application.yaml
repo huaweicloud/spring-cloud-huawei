@@ -30,10 +30,6 @@ spring:
 
 feign:
   client:
-    method:
-      request:
-        options:
-          enabled: true
     config:
       default:
         connectTimeout: 1000
