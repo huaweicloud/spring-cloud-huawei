@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.huaweicloud.governance.adapters.feign.options.FeignRequestOptions;
+
 import feign.Headers;
 import feign.Param;
 
@@ -75,4 +77,11 @@ public interface FeignService {
   @PostMapping("/testHeaderWithJson")
   @Headers("model: {model}")
   public String testHeaderWithJsonCorrect(@Param("model") String model);
+
+  @GetMapping("/testFeignRequestTimeoutWithAnnotation")
+  @FeignRequestOptions(connectTimeout = 5L, readTimeout = 5L)
+  String testFeignRequestTimeoutWithAnnotation();
+
+  @GetMapping("/testFeignRequestTimeout")
+  String testFeignRequestTimeout();
 }

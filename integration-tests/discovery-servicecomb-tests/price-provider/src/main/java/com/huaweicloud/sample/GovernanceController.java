@@ -154,4 +154,16 @@ public class GovernanceController {
   public String loadbalance() {
     return "I am price";
   }
+
+  @RequestMapping("/testFeignRequestTimeoutWithAnnotation")
+  public String testFeignRequestTimeoutWithAnnotation() throws InterruptedException {
+    Thread.sleep(6000);
+    return "success";
+  }
+
+  @RequestMapping("/testFeignRequestTimeout")
+  public String testFeignRequestTimeout() throws InterruptedException {
+    Thread.sleep(6000);
+    return "success";
+  }
 }
