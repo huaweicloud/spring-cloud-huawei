@@ -35,4 +35,6 @@ public class GovernanceConst {
   public static final String AUTH_API_PATH_EXCLUDE = "spring.cloud.servicecomb.webmvc.publicKey.excludePathPatterns";
 
   public static final String CONTEXT_CURRENT_INSTANCE = "x-current-instance";
+
+  public static final String FEIGN_METHOD_OPTIONS_ENABLED = "feign.client.method.request.options.enabled";
 }
