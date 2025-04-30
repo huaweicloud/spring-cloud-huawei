@@ -21,10 +21,10 @@ Spring Cloud Huawei provides a large number of out-of-the-box service governance
 
 | Branch    | Spring Cloud Huawei Latest Version | Compiled Spring Cloud Version | Compiled Spring Boot Version | Tested JDK Version | Notes          |
 |-----------|------------------------------------|-------------------------------|------------------------------|--------------------|----------------|
-| master    | 1.11.10-2024.0.x(推荐)               | 2024.0.0                      | 3.4.1                        | OpenJDK 17         |                |
-| 2023.0.x  | 1.11.10-2023.0.x(推荐)               | 2023.0.3                      | 3.3.5                        | OpenJDK 17         |                |
+| master    | 1.11.11-2024.0.x(推荐)               | 2024.0.1                      | 3.4.4                        | OpenJDK 17         |                |
+| 2023.0.x  | 1.11.11-2023.0.x(推荐)               | 2023.0.5                      | 3.3.10                       | OpenJDK 17         |                |
 | 2022.0.x  | 1.11.10-2022.0.x                   | 2022.0.5                      | 3.1.12                       | OpenJDK 17         | End of Support |
-| 2021.0.x  | 1.11.10-2021.0.x(推荐)               | 2021.0.9                      | 2.7.18                       | OpenJDK 8          | Vulnerability  |
+| 2021.0.x  | 1.11.11-2021.0.x(推荐)               | 2021.0.9                      | 2.7.18                       | OpenJDK 8          | Vulnerability  |
 | 2020.0.x  | 1.10.8-2020.0.x                    | 2020.0.6                      | 2.5.14                       | OpenJDK 8          | End of Support |
 | Hoxton    | 1.9.4-Hoxton                       | Hoxton.SR9                    | 2.3.5.RELEASE                | OpenJDK 8          | End of Support |
 | Greenwich | 1.6.4-Greenwich                    | Greenwich.SR6                 | 2.1.6-RELEASE                | OpenJDK 8          | End of Support |
@@ -32,7 +32,7 @@ Spring Cloud Huawei provides a large number of out-of-the-box service governance
 | Edgware   | 1.2.0-Edgware                      | 1.3.6.RELEASE                 | 1.5.22.RELEASE               | OpenJDK 8          | End of Support |
 
 ***Notice：***
-* Upgrade to the OOS version 2023.0.x/2024.0.X of the Spring community as soon as possible, because of Spring 5.3.x has certain vulnerabilities.
+* Upgrade to the OOS version 2023.0.x/2024.0.X of the Spring community as soon as possible, because of 2021.0.x branch dependence Spring 5.3.x has certain vulnerabilities.
 * You can use `Spring Cloud` compatible version to use `Spring Cloud Huawei`. See https://spring.io/projects/spring-cloud for more details.
 * Spring Cloud Edgeware, Finchley, Greenwich, Hoxton, 2020.0.x have all reached end of life status and
   suggest not for production use. Check [Spring Cloud Releases][Spring Cloud Releases] for details.
