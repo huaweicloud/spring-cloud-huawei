@@ -70,7 +70,7 @@ public class RocketMqMessageGrayConfiguration {
 
   @Bean
   @ConditionalOnClass(name = "org.apache.rocketmq.spring.core.RocketMQListener")
-  public RocketMqMessageListenerAspect RocketMqListenerAspect() {
+  public RocketMqMessageListenerAspect rocketMqListenerAspect() {
     return new RocketMqMessageListenerAspect();
   }
 

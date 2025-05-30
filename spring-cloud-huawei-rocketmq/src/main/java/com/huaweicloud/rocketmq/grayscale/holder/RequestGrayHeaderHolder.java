@@ -18,10 +18,6 @@
 package com.huaweicloud.rocketmq.grayscale.holder;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 
 public final class RequestGrayHeaderHolder {
   private static final ThreadLocal<Map<String, String>> INVOCATION_GRAY_HEADERS = new ThreadLocal<>();

@@ -20,9 +20,6 @@ package com.huaweicloud.rocketmq.grayscale.servicemeta;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.huaweicloud.rocketmq.grayscale.RocketMqMessageGrayUtils;
 
 public class ServiceMetaManager {

@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import com.huaweicloud.rocketmq.grayscale.holder.RequestGrayHeaderHolder;
@@ -41,9 +42,10 @@ public class WebMvcGrayHeaderFilter implements Filter {
     HttpServletRequest servletRequest = (HttpServletRequest) request;
     Map<String, HashSet<String>> trafficTags = RocketMqMessageGrayUtils.getAllTrafficTagMap();
     Map<String, String> matchHeaders = new HashMap<>();
-    for (String key : trafficTags.keySet()) {
-      if (servletRequest.getHeader(key) != null && trafficTags.get(key).contains(servletRequest.getHeader(key))) {
-        matchHeaders.put(key, servletRequest.getHeader(key));
+    for (Map.Entry<String, HashSet<String>> entry : trafficTags.entrySet()) {
+      String headerValue = servletRequest.getHeader(entry.getKey());
+      if (!StringUtils.isEmpty(headerValue) && entry.getValue().contains(headerValue)) {
+        matchHeaders.put(entry.getKey(), headerValue);
       }
     }
     if (!CollectionUtils.isEmpty(matchHeaders)) {

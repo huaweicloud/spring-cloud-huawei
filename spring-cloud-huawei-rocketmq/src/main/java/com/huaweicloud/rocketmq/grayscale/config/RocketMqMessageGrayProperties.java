@@ -22,11 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-
-import com.huaweicloud.rocketmq.grayscale.config.BaseProperties;
-import com.huaweicloud.rocketmq.grayscale.config.GrayscaleProperties;
-
 public class RocketMqMessageGrayProperties {
   private List<GrayscaleProperties> grayscale = new ArrayList<>();
 

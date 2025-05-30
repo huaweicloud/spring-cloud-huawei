@@ -48,10 +48,10 @@ public class WebFluxGrayHeaderFilter implements OrderedWebFilter {
     }
     Map<String, String> matchHeaders = new HashMap<>();
     HttpHeaders requestHeaders = exchange.getRequest().getHeaders();
-    for (String key : trafficTags.keySet()) {
-      String headerValue = requestHeaders.getFirst(key);
-      if (!StringUtils.isEmpty(headerValue) && trafficTags.get(key).contains(headerValue)) {
-        matchHeaders.put(key, headerValue);
+    for (Map.Entry<String, HashSet<String>> entry : trafficTags.entrySet()) {
+      String headerValue = requestHeaders.getFirst(entry.getKey());
+      if (!StringUtils.isEmpty(headerValue) && entry.getValue().contains(headerValue)) {
+        matchHeaders.put(entry.getKey(), headerValue);
       }
     }
     if (!CollectionUtils.isEmpty(matchHeaders)) {

@@ -209,8 +209,8 @@ public class RocketMqSubscriptionDataManager {
     if (CollectionUtils.isEmpty(trafficTag)) {
       return;
     }
-    for (String key : trafficTag.keySet()) {
-      trafficTagMap.computeIfAbsent(key, k -> new ArrayList<>()).add(trafficTag.get(key));
+    for (Map.Entry<String, String> entry : trafficTag.entrySet()) {
+      trafficTagMap.computeIfAbsent(entry.getKey(), k -> new ArrayList<>()).add(entry.getValue());
     }
   }
 

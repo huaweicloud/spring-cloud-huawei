@@ -122,10 +122,10 @@ public class RocketMqMessageGrayUtils {
       return;
     }
     InvocationContext invocationContext = InvocationContextHolder.getOrCreateInvocationContext();
-    for (String key : properties.keySet()) {
-      if (trafficTagMap.get(key) != null && properties.get(key) != null
-          && trafficTagMap.get(key).contains(properties.get(key))) {
-        invocationContext.putContext(key, properties.get(key));
+    for (Map.Entry<String, String> entry : properties.entrySet()) {
+      if (trafficTagMap.get(entry.getKey()) != null && entry.getValue() != null
+          && trafficTagMap.get(entry.getKey()).contains(entry.getValue())) {
+        invocationContext.putContext(entry.getKey(), entry.getValue());
       }
     }
   }

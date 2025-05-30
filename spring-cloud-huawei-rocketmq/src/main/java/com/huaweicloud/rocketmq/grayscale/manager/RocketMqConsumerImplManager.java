@@ -23,15 +23,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.rocketmq.client.impl.consumer.DefaultMQPushConsumerImpl;
-import org.apache.rocketmq.client.impl.consumer.RebalanceImpl;
 import org.apache.rocketmq.remoting.protocol.heartbeat.SubscriptionData;
 
 public class RocketMqConsumerImplManager {
   private final static RocketMqConsumerImplManager instance = new RocketMqConsumerImplManager();
 
   private final static Map<String, DefaultMQPushConsumerImpl> pushConsumerImpls = new ConcurrentHashMap<>();
-
-  private final static Map<String, RebalanceImpl> litePullRebalanceImpls = new ConcurrentHashMap<>();
 
   private RocketMqConsumerImplManager() {
   }
@@ -44,33 +41,18 @@ public class RocketMqConsumerImplManager {
     pushConsumerImpls.putIfAbsent(consumeScope, pushConsumer);
   }
 
-  public void addLitePullRebalanceImpl(String consumeScope, RebalanceImpl rebalanceImpl) {
-    litePullRebalanceImpls.putIfAbsent(consumeScope, rebalanceImpl);
-  }
-
   public Map<String, SubscriptionData> getSubscriptionInner(String consumeScope) {
     if (pushConsumerImpls.get(consumeScope) != null) {
       return pushConsumerImpls.get(consumeScope).getSubscriptionInner();
-    }
-    if (litePullRebalanceImpls.get(consumeScope) != null) {
-      return litePullRebalanceImpls.get(consumeScope).getSubscriptionInner();
     }
     return new HashMap<>();
   }
 
   public static void updateConsumerSubscriptionData() {
     if (!pushConsumerImpls.isEmpty()) {
-      for (String consumeScope : pushConsumerImpls.keySet()) {
-        ConcurrentMap<String, SubscriptionData> subscriptionInner = pushConsumerImpls.get(consumeScope)
-            .getSubscriptionInner();
-        RocketMqSubscriptionDataManager.updateSubscriptionData(subscriptionInner,
-            getTopicFromConsumeScope(consumeScope), consumeScope);
-      }
-    }
-    if (!litePullRebalanceImpls.isEmpty()) {
-      for (String consumeScope : litePullRebalanceImpls.keySet()) {
-        ConcurrentMap<String, SubscriptionData> subscriptionInner = litePullRebalanceImpls.get(consumeScope)
-            .getSubscriptionInner();
+      for (Map.Entry<String, DefaultMQPushConsumerImpl> consumerImplEntry : pushConsumerImpls.entrySet()) {
+        String consumeScope = consumerImplEntry.getKey();
+        ConcurrentMap<String, SubscriptionData> subscriptionInner = consumerImplEntry.getValue().getSubscriptionInner();
         RocketMqSubscriptionDataManager.updateSubscriptionData(subscriptionInner,
             getTopicFromConsumeScope(consumeScope), consumeScope);
       }

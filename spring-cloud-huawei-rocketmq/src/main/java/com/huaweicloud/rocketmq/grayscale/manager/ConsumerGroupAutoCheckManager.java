@@ -89,7 +89,7 @@ public class ConsumerGroupAutoCheckManager {
     }
   }
 
-  private static void shutdownExecutor() {
+  private static synchronized void shutdownExecutor() {
     if (EXECUTOR_SERVICE != null && !EXECUTOR_SERVICE.isShutdown()) {
       try {
         EXECUTOR_SERVICE.shutdown();
@@ -101,7 +101,7 @@ public class ConsumerGroupAutoCheckManager {
     }
   }
 
-  public static void startSchedulerCheckGroupTask() {
+  public static synchronized void startSchedulerCheckGroupTask() {
     if (EXECUTOR_SERVICE == null || EXECUTOR_SERVICE.isShutdown()) {
       EXECUTOR_SERVICE = Executors.newScheduledThreadPool(1);
       future = EXECUTOR_SERVICE.scheduleWithFixedDelay(
@@ -118,7 +118,7 @@ public class ConsumerGroupAutoCheckManager {
       if (clientConfig.getMqClientInstance() == null) {
         continue;
       }
-      HashSet<String> grayTags = findGrayConsumerGroupAndGetTags(clientConfig);
+      Set<String> grayTags = findGrayConsumerGroupAndGetTags(clientConfig);
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("[auto-check] current find gray tags: {}.", grayTags);
       }
@@ -126,7 +126,7 @@ public class ConsumerGroupAutoCheckManager {
     }
   }
 
-  private static HashSet<String> findGrayConsumerGroupAndGetTags(ConsumerClientConfig clientConfig) {
+  private static Set<String> findGrayConsumerGroupAndGetTags(ConsumerClientConfig clientConfig) {
     try {
       MQClientAPIImpl mqClientApi = clientConfig.getMqClientInstance().getMQClientAPIImpl();
       String brokerAddress = getBrokerAddress(clientConfig.getTopic(), mqClientApi);
@@ -154,7 +154,7 @@ public class ConsumerGroupAutoCheckManager {
     return CollectionUtils.isEmpty(brokerList) ? "" : brokerList.get(0);
   }
 
-  private static HashSet<String> getGrayTagsByConsumerGroup(GroupList groupList, String brokerAddress,
+  private static Set<String> getGrayTagsByConsumerGroup(GroupList groupList, String brokerAddress,
       MQClientAPIImpl mqClientApi, String consumerGroup) {
     HashSet<String> grayTags = new HashSet<>();
     for (String group : groupList.getGroupList()) {
@@ -179,14 +179,14 @@ public class ConsumerGroupAutoCheckManager {
     return grayTags;
   }
 
-  private static void resetAutoFindConsumerGrayTags(HashSet<String> grayTags, ConsumerClientConfig clientConfig) {
+  private static void resetAutoFindConsumerGrayTags(Set<String> grayTags, ConsumerClientConfig clientConfig) {
     String consumeScope = RocketMqMessageGrayUtils.buildCacheKey(clientConfig.getAddress(),
         clientConfig.getTopic(), clientConfig.getConsumerGroup());
     HashSet<String> lastGrayTags = CONSUMER_GROUP_GRAY_TAG_MAP.get(consumeScope);
     if (isConsumerGrayTagsChanged(grayTags, lastGrayTags)) {
       LOGGER.info("consumeScope [{}] grayTags changed, current grayTags [{}], origin grayTags [{}].", consumeScope,
           grayTags, lastGrayTags);
-      CONSUMER_GROUP_GRAY_TAG_MAP.put(consumeScope, grayTags);
+      CONSUMER_GROUP_GRAY_TAG_MAP.put(consumeScope, new HashSet<>(grayTags));
       Map<String, SubscriptionData> subscriptionInner
           = RocketMqConsumerImplManager.getInstance().getSubscriptionInner(consumeScope);
       RocketMqSubscriptionDataManager
@@ -194,7 +194,7 @@ public class ConsumerGroupAutoCheckManager {
     }
   }
 
-  private static boolean isConsumerGrayTagsChanged(Set<String> grayTags, HashSet<String> lastGrayTags) {
+  private static boolean isConsumerGrayTagsChanged(Set<String> grayTags, Set<String> lastGrayTags) {
     if (lastGrayTags == null) {
       return !grayTags.isEmpty();
     }
