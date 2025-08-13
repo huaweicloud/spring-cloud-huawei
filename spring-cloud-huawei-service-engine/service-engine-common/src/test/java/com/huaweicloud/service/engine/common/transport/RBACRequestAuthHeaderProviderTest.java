@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.core.env.Environment;
 
 import com.huaweicloud.service.engine.common.configration.bootstrap.BootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
@@ -40,6 +41,8 @@ public class RBACRequestAuthHeaderProviderTest {
 
   private final ServiceCombRBACProperties serviceCombRBACProperties = Mockito.mock(ServiceCombRBACProperties.class);
 
+  private final static Environment env = Mockito.mock(Environment.class);
+
   @BeforeEach
   public void setUp() {
     discoveryProperties.setAddress("http://127.0.0.1:30100");
@@ -49,11 +52,13 @@ public class RBACRequestAuthHeaderProviderTest {
 
     Mockito.when(serviceCombRBACProperties.getName()).thenReturn("test_name");
     Mockito.when(serviceCombRBACProperties.getPassword()).thenReturn("test_password");
+    Mockito.when(env.getProperty("servicecomb.server.connect.port", String.class, "30100"))
+        .thenReturn("30100");
   }
 
   static class FirstTimeSuccessRBACRequestAuthHeaderProvider extends RBACRequestAuthHeaderProvider {
     public FirstTimeSuccessRBACRequestAuthHeaderProvider(BootstrapProperties bootstrapProperties) {
-      super(bootstrapProperties);
+      super(bootstrapProperties, env);
     }
 
     @Override
@@ -69,7 +74,7 @@ public class RBACRequestAuthHeaderProviderTest {
     private boolean first = true;
 
     public SecondTimeSuccessRBACRequestAuthHeaderProvider(BootstrapProperties bootstrapProperties) {
-      super(bootstrapProperties);
+      super(bootstrapProperties, env);
     }
 
     @Override
@@ -89,7 +94,7 @@ public class RBACRequestAuthHeaderProviderTest {
     private int count = 0;
 
     public SecondTimeFirstNullSuccessRBACRequestAuthHeaderProvider(BootstrapProperties bootstrapProperties) {
-      super(bootstrapProperties);
+      super(bootstrapProperties, env);
     }
 
     @Override
