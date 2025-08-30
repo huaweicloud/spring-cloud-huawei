@@ -35,6 +35,7 @@ import org.apache.servicecomb.service.center.client.model.RbacTokenRequest;
 import org.apache.servicecomb.service.center.client.model.RbacTokenResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -84,7 +85,7 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
 
   private ServiceCenterClient serviceCenterClient;
 
-  public RBACRequestAuthHeaderProvider(BootstrapProperties bootstrapProperties) {
+  public RBACRequestAuthHeaderProvider(BootstrapProperties bootstrapProperties, Environment env) {
     this.discoveryProperties = bootstrapProperties.getDiscoveryBootstrapProperties();
     this.serviceCombSSLProperties = bootstrapProperties.getServiceCombSSLProperties();
     this.serviceCombRBACProperties = bootstrapProperties.getServiceCombRBACProperties();
@@ -92,7 +93,7 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
 
     if (enabled()) {
       serviceCenterClient = ServiceCenterUtils.serviceCenterClient(discoveryProperties,
-          serviceCombSSLProperties, Collections.emptyList());
+          serviceCombSSLProperties, Collections.emptyList(), env);
       EventManager.getEventBus().register(this);
 
       executorService = Executors.newFixedThreadPool(1, t -> new Thread(t, "rbac-executor"));
