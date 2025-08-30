@@ -34,6 +34,10 @@ feign:
       default:
         connectTimeout: 1000
         readTimeout: 30000
+    method:
+      request:
+        options:
+          enabled: true
 
 servicecomb:
   matchGroup:
