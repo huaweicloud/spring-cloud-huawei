@@ -132,7 +132,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
     if (instances == null) {
       return Collections.emptyList();
     }
-    return instances.stream().filter(instance -> !MicroserviceInstanceStatus.DOWN.equals(instance.getStatus()))
+    return instances.stream().filter(instance -> MicroserviceInstanceStatus.UP.equals(instance.getStatus()))
         .map(ServiceCombServiceInstance::new).collect(Collectors.toList());
   }
 
