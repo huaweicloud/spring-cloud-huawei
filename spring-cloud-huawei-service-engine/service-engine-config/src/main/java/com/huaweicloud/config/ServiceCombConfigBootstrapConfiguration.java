@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import com.huaweicloud.service.engine.common.configration.bootstrap.BootstrapProperties;
 
@@ -34,9 +35,9 @@ import com.huaweicloud.service.engine.common.configration.bootstrap.BootstrapPro
 public class ServiceCombConfigBootstrapConfiguration {
   @Bean
   public ServiceCombPropertySourceLocator serviceCombPropertySourceLocator(BootstrapProperties bootstrapProperties,
-      List<AuthHeaderProvider> authHeaderProviders) {
+      List<AuthHeaderProvider> authHeaderProviders, Environment env) {
     ConfigService.getInstance()
-        .init(bootstrapProperties, authHeaderProviders);
+        .init(bootstrapProperties, authHeaderProviders, env);
     return new ServiceCombPropertySourceLocator(ConfigService.getInstance().getConfigConverter().getCurrentData());
   }
 }

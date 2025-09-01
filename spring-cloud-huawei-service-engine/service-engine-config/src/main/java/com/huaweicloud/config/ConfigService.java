@@ -17,6 +17,10 @@
 
 package com.huaweicloud.config;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +45,7 @@ import org.apache.servicecomb.http.client.common.HttpTransport;
 import org.apache.servicecomb.http.client.common.HttpTransportFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 
 import com.huaweicloud.service.engine.common.configration.bootstrap.BootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.ConfigBootstrapProperties;
@@ -71,8 +76,8 @@ public class ConfigService {
     return this.configConverter;
   }
 
-  public void init(BootstrapProperties bootstrapProperties,
-      List<AuthHeaderProvider> authHeaderProviders) {
+  public void init(BootstrapProperties bootstrapProperties, List<AuthHeaderProvider> authHeaderProviders,
+      Environment env) {
 
     if (StringUtils.isEmpty(bootstrapProperties.getConfigBootstrapProperties().getServerAddr())) {
       throw new IllegalArgumentException(
@@ -86,6 +91,8 @@ public class ConfigService {
 
     initialized = true;
 
+    checkConfigAddressAvailable(bootstrapProperties.getConfigBootstrapProperties(), env);
+
     initConfigConverter(bootstrapProperties.getConfigBootstrapProperties());
 
     if ("kie".equalsIgnoreCase(bootstrapProperties.getConfigBootstrapProperties().getServerType())) {
@@ -94,6 +101,22 @@ public class ConfigService {
     } else {
       initServiceCenterConfig(bootstrapProperties,
           authHeaderProviders);
+    }
+  }
+
+  private void checkConfigAddressAvailable(ConfigBootstrapProperties configProperties, Environment env) {
+    String configPorts = env.getProperty("servicecomb.config.connect.port", String.class, "30103,30110");
+    List<String> addresses = URLUtil.dealMultiUrl(configProperties.getServerAddr());
+    for (String address : addresses) {
+      URI uri =  URI.create(address);
+      if (!configPorts.contains(String.valueOf(uri.getPort()))) {
+        LOGGER.warn("Configure center port [{}] is unavailable!", uri.getPort());
+      }
+      try (Socket s = new Socket()) {
+        s.connect(new InetSocketAddress(uri.getHost(), uri.getPort()), 5000);
+      } catch (IOException e) {
+        LOGGER.warn("Configure center address [{}] is unavailable. Please check the port and IP are correct.", address);
+      }
     }
   }
 
