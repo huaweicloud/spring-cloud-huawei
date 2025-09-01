@@ -27,6 +27,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
@@ -45,9 +46,10 @@ public class DiscoveryAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   public ServiceCenterClient serviceCenterClient(DiscoveryBootstrapProperties discoveryProperties,
-      ServiceCombSSLProperties serviceCombSSLProperties,
-      List<AuthHeaderProvider> authHeaderProviders) {
-    return ServiceCenterUtils.serviceCenterClient(discoveryProperties, serviceCombSSLProperties, authHeaderProviders);
+      ServiceCombSSLProperties serviceCombSSLProperties, List<AuthHeaderProvider> authHeaderProviders,
+      Environment env) {
+    return ServiceCenterUtils.serviceCenterClient(discoveryProperties, serviceCombSSLProperties, authHeaderProviders,
+        env);
   }
 
   @Bean
