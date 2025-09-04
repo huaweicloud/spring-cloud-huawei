@@ -20,6 +20,7 @@ package com.huaweicloud.service.engine.common;
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import com.huaweicloud.service.engine.common.configration.bootstrap.BootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.ServiceCombAkSkProperties;
@@ -34,7 +35,7 @@ public class EngineCommonConfiguration {
   }
 
   @Bean
-  public AuthHeaderProvider rbacRequestAuthHeaderProvider(BootstrapProperties bootstrapProperties) {
-    return new RBACRequestAuthHeaderProvider(bootstrapProperties);
+  public AuthHeaderProvider rbacRequestAuthHeaderProvider(BootstrapProperties bootstrapProperties, Environment env) {
+    return new RBACRequestAuthHeaderProvider(bootstrapProperties, env);
   }
 }

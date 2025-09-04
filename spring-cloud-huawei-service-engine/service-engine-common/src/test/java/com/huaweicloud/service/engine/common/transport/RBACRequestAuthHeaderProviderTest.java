@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.core.env.Environment;
 
 import com.huaweicloud.service.engine.common.configration.bootstrap.BootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
@@ -42,6 +43,7 @@ public class RBACRequestAuthHeaderProviderTest {
 
   @BeforeEach
   public void setUp() {
+    Mockito.when(discoveryProperties.getAddress()).thenReturn("http://127.0.0.1:30100");
     Mockito.when(bootstrapProperties.getDiscoveryBootstrapProperties()).thenReturn(discoveryProperties);
     Mockito.when(bootstrapProperties.getServiceCombSSLProperties()).thenReturn(serviceCombSSLProperties);
     Mockito.when(bootstrapProperties.getServiceCombRBACProperties()).thenReturn(serviceCombRBACProperties);
@@ -52,7 +54,7 @@ public class RBACRequestAuthHeaderProviderTest {
 
   static class FirstTimeSuccessRBACRequestAuthHeaderProvider extends RBACRequestAuthHeaderProvider {
     public FirstTimeSuccessRBACRequestAuthHeaderProvider(BootstrapProperties bootstrapProperties) {
-      super(bootstrapProperties);
+      super(bootstrapProperties, null);
     }
 
     @Override
@@ -68,7 +70,7 @@ public class RBACRequestAuthHeaderProviderTest {
     private boolean first = true;
 
     public SecondTimeSuccessRBACRequestAuthHeaderProvider(BootstrapProperties bootstrapProperties) {
-      super(bootstrapProperties);
+      super(bootstrapProperties, null);
     }
 
     @Override
@@ -88,7 +90,7 @@ public class RBACRequestAuthHeaderProviderTest {
     private int count = 0;
 
     public SecondTimeFirstNullSuccessRBACRequestAuthHeaderProvider(BootstrapProperties bootstrapProperties) {
-      super(bootstrapProperties);
+      super(bootstrapProperties, null);
     }
 
     @Override
