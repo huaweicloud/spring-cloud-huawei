@@ -53,7 +53,7 @@ public class RBACRequestAuthHeaderProviderTest {
 
   static class FirstTimeSuccessRBACRequestAuthHeaderProvider extends RBACRequestAuthHeaderProvider {
     public FirstTimeSuccessRBACRequestAuthHeaderProvider(BootstrapProperties bootstrapProperties) {
-      super(bootstrapProperties);
+      super(bootstrapProperties, null);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class RBACRequestAuthHeaderProviderTest {
     private boolean first = true;
 
     public SecondTimeSuccessRBACRequestAuthHeaderProvider(BootstrapProperties bootstrapProperties) {
-      super(bootstrapProperties);
+      super(bootstrapProperties, null);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class RBACRequestAuthHeaderProviderTest {
     private int count = 0;
 
     public SecondTimeFirstNullSuccessRBACRequestAuthHeaderProvider(BootstrapProperties bootstrapProperties) {
-      super(bootstrapProperties);
+      super(bootstrapProperties, null);
     }
 
     @Override
