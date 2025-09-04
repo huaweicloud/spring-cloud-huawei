@@ -29,6 +29,7 @@ import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.ServiceCenterWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
@@ -47,14 +48,14 @@ public class ServiceCenterUtils {
 
   // add other headers needed for registration by new ServiceCenterClient(...)
   public static ServiceCenterClient serviceCenterClient(DiscoveryBootstrapProperties discoveryProperties,
-      ServiceCombSSLProperties serviceCombSSLProperties,
-      List<AuthHeaderProvider> authHeaderProviders) {
+      ServiceCombSSLProperties serviceCombSSLProperties, List<AuthHeaderProvider> authHeaderProviders,
+      Environment env) {
     ServiceCenterAddressManager addressManager = createAddressManager(discoveryProperties);
     SSLProperties sslProperties = TransportUtils
         .createSSLProperties(addressManager.sslEnabled(), serviceCombSSLProperties);
     return new ServiceCenterClient(addressManager, sslProperties,
         getRequestAuthHeaderProvider(authHeaderProviders),
-        "default", new HashMap<>()).setEventBus(EventManager.getEventBus());
+        "default", new HashMap<>(), env).setEventBus(EventManager.getEventBus());
   }
 
   public static ServiceCenterWatch serviceCenterWatch(DiscoveryBootstrapProperties discoveryProperties,
