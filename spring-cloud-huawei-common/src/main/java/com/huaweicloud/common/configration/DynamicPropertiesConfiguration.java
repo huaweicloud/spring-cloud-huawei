@@ -27,6 +27,7 @@ import com.huaweicloud.common.configration.dynamic.GovernanceProperties;
 import com.huaweicloud.common.configration.dynamic.HttpClientProperties;
 import com.huaweicloud.common.configration.dynamic.LoadBalancerProperties;
 import com.huaweicloud.common.configration.dynamic.MetricsProperties;
+import com.huaweicloud.common.configration.dynamic.RestTemplateInterceptorProperties;
 
 @Configuration
 public class DynamicPropertiesConfiguration {
@@ -64,5 +65,11 @@ public class DynamicPropertiesConfiguration {
   @ConfigurationProperties(GovernanceProperties.PREFIX)
   public GovernanceProperties governanceProperties() {
     return new GovernanceProperties();
+  }
+
+  @Bean
+  @ConfigurationProperties("spring.cloud.rest-template.request.interceptor")
+  public RestTemplateInterceptorProperties restTemplateInterceptorProperties() {
+    return new RestTemplateInterceptorProperties();
   }
 }
