@@ -68,7 +68,7 @@ public class DynamicPropertiesConfiguration {
   }
 
   @Bean
-  @ConfigurationProperties("spring.cloud.rest-template.request.interceptor")
+  @ConfigurationProperties("spring.cloud.rest.request.interceptor")
   public RestTemplateInterceptorProperties restTemplateInterceptorProperties() {
     return new RestTemplateInterceptorProperties();
   }
