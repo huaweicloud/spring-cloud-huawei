@@ -42,7 +42,7 @@
                 <name>${project.artifactId}:${project.version}</name>
                 <alias>${project.artifactId}</alias>
                 <build>
-                  <from>openjdk:17-oracle</from>
+                  <from>openjdk:17.0.2</from>
                   <ports>
                     <port>${server.port}</port>
                   </ports>
