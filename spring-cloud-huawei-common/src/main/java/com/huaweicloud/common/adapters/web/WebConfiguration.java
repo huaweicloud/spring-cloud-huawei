@@ -33,6 +33,7 @@ import org.springframework.core.Ordered;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
+import com.huaweicloud.common.configration.dynamic.RestTemplateInterceptorProperties;
 
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.http.client.ClientHttpRequestInterceptor",
@@ -74,13 +75,18 @@ public class WebConfiguration {
   // sort ClientHttpRequestInterceptors.
   // If ClientHttpRequestInterceptor does not implement Ordered, executed first, and then ordered .
   // And make LoadBalancerInterceptor the first ordered ClientHttpRequestInterceptor.
-  public RestTemplateCustomizer restTemplateCustomizer(List<ClientHttpRequestInterceptor> interceptors) {
+  // RestTemplateInterceptorProperties setting restTemplate does not need load interceptor name.
+  public RestTemplateCustomizer restTemplateCustomizer(List<ClientHttpRequestInterceptor> interceptors,
+      RestTemplateInterceptorProperties interceptorProperties) {
     return restTemplate -> {
       List<ClientHttpRequestInterceptor> nonOrderedList = new ArrayList<>();
       List<ClientHttpRequestInterceptor> orderedList = new ArrayList<>();
       LoadBalancerInterceptor loadBalancerInterceptor = null;
 
       for (ClientHttpRequestInterceptor interceptor : interceptors) {
+        if (interceptorProperties.getExcludeNames().contains(interceptor.getClass().getName())) {
+          continue;
+        }
         if (interceptor instanceof LoadBalancerInterceptor) {
           loadBalancerInterceptor = (LoadBalancerInterceptor) interceptor;
           continue;
