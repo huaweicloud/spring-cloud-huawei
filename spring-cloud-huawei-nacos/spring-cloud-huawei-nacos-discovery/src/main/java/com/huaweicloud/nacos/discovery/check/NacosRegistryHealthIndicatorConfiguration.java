@@ -22,8 +22,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
+import com.huaweicloud.nacos.discovery.ConditionalOnNacosDiscoveryEnabled;
+
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.boot.actuate.health.HealthIndicator"})
+@ConditionalOnNacosDiscoveryEnabled
 public class NacosRegistryHealthIndicatorConfiguration {
   @Bean
   @Order(100)
