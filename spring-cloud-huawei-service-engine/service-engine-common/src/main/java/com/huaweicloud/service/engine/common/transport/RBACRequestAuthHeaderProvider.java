@@ -64,6 +64,8 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
 
   private static final long TOKEN_REFRESH_TIME_IN_SECONDS = 20 * 60 * 1000;
 
+  private static final Object LOCK = new Object();
+
   private final ServiceCombRBACProperties serviceCombRBACProperties;
 
   private ExecutorService executorService;
@@ -174,17 +176,19 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
     if (StringUtils.isEmpty(address)) {
       address = CACHE_KEY;
     }
-    try {
-      String header = cache.get(address);
-      if (!StringUtils.isEmpty(header)) {
-        Map<String, String> tokens = new HashMap<>(1);
-        tokens.put(AUTH_HEADER, "Bearer " + header);
-        return tokens;
+    synchronized (LOCK) {
+      try {
+        String header = cache.get(address);
+        if (!StringUtils.isEmpty(header)) {
+          Map<String, String> tokens = new HashMap<>(1);
+          tokens.put(AUTH_HEADER, "Bearer " + header);
+          return tokens;
+        }
+      } catch (Exception e) {
+        LOGGER.error("Get auth headers failed", e);
       }
-    } catch (Exception e) {
-      LOGGER.error("Get auth headers failed", e);
+      return Collections.emptyMap();
     }
-    return Collections.emptyMap();
   }
 
   private boolean enabled() {
