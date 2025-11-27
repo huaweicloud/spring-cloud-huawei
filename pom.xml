@@ -162,6 +162,8 @@
             <exclude>**/**.log</exclude>
             <!-- Skip the target files -->
             <exclude>**/target/**</exclude>
+            <!-- Skip the spring-configuration-metadata files -->
+            <exculde>**/resources/META-INF/*.json</exculde>
           </excludes>
         </configuration>
       </plugin>
