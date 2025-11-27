@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.servicecomb.dashboard.client.DashboardAddressManager;
 import org.apache.servicecomb.dashboard.client.DashboardClient;
@@ -30,10 +31,11 @@ import org.apache.servicecomb.http.client.auth.RequestAuthHeaderProvider;
 import org.apache.servicecomb.http.client.common.HttpTransport;
 import org.apache.servicecomb.http.client.common.HttpTransportFactory;
 
+import com.huaweicloud.common.util.URLUtil;
+import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.ServiceCombSSLProperties;
 import com.huaweicloud.service.engine.common.configration.dynamic.DashboardProperties;
 import com.huaweicloud.service.engine.common.transport.TransportUtils;
-import com.huaweicloud.common.util.URLUtil;
 import com.huaweicloud.servicecomb.dashboard.model.MonitorDataProvider;
 import com.huaweicloud.servicecomb.dashboard.model.MonitorDataPublisher;
 
@@ -54,8 +56,8 @@ public class DefaultMonitorDataPublisher implements MonitorDataPublisher {
   }
 
   @Override
-  public void init() {
-    DashboardAddressManager addressManager = createDashboardAddressManager();
+  public void init(DiscoveryBootstrapProperties bootstrapProperties) {
+    DashboardAddressManager addressManager = createDashboardAddressManager(bootstrapProperties);
 
     RequestConfig.Builder requestBuilder = HttpTransportFactory.defaultRequestConfig();
     requestBuilder.setConnectionRequestTimeout(1000);
@@ -66,14 +68,31 @@ public class DefaultMonitorDataPublisher implements MonitorDataPublisher {
     dashboardClient = new DashboardClient(addressManager, httpTransport);
   }
 
-  private DashboardAddressManager createDashboardAddressManager() {
+  private DashboardAddressManager createDashboardAddressManager(DiscoveryBootstrapProperties bootstrapProperties) {
     List<String> addresses = URLUtil.dealMultiUrl(dashboardProperties.getAddress());
 
     if (addresses.isEmpty()) {
       throw new IllegalStateException("dashboard address is not configured.");
     }
 
-    return new DashboardAddressManager(addresses, EventManager.getEventBus());
+    return new DashboardAddressManager(addresses, getRegion(bootstrapProperties), getAvailableZone(bootstrapProperties),
+        EventManager.getEventBus());
+  }
+
+  private String getRegion(DiscoveryBootstrapProperties bootstrapProperties) {
+    if (bootstrapProperties == null || bootstrapProperties.getDatacenter() == null) {
+      return "";
+    }
+    String region = bootstrapProperties.getDatacenter().getRegion();
+    return  StringUtils.isEmpty(region) ? "" : region;
+  }
+
+  private String getAvailableZone(DiscoveryBootstrapProperties bootstrapProperties) {
+    if (bootstrapProperties == null || bootstrapProperties.getDatacenter() == null) {
+      return "";
+    }
+    String availableZone = bootstrapProperties.getDatacenter().getAvailableZone();
+    return  StringUtils.isEmpty(availableZone) ? "" : availableZone;
   }
 
   private HttpTransport createHttpTransport(DashboardAddressManager addressManager, RequestConfig requestConfig) {
@@ -86,8 +105,9 @@ public class DefaultMonitorDataPublisher implements MonitorDataPublisher {
 
   private static RequestAuthHeaderProvider getRequestAuthHeaderProvider(List<AuthHeaderProvider> authHeaderProviders) {
     return signRequest -> {
+      String host = signRequest != null && signRequest.getEndpoint() != null ? signRequest.getEndpoint().getHost() : "";
       Map<String, String> headers = new HashMap<>();
-      authHeaderProviders.forEach(provider -> headers.putAll(provider.authHeaders()));
+      authHeaderProviders.forEach(provider -> headers.putAll(provider.authHeaders(host)));
       return headers;
     };
   }

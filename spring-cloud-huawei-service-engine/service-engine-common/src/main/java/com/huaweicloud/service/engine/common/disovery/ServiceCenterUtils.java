@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.apache.servicecomb.http.client.auth.RequestAuthHeaderProvider;
 import org.apache.servicecomb.http.client.common.HttpConfiguration.SSLProperties;
@@ -32,30 +33,56 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
 import com.huaweicloud.common.event.EventManager;
+import com.huaweicloud.common.util.URLUtil;
 import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.ServiceCombSSLProperties;
 import com.huaweicloud.service.engine.common.transport.TransportUtils;
-import com.huaweicloud.common.util.URLUtil;
 
 public class ServiceCenterUtils {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServiceCenterUtils.class);
 
+  private static volatile ServiceCenterAddressManager serviceAddressManager;
+
   public static ServiceCenterAddressManager createAddressManager(DiscoveryBootstrapProperties discoveryProperties) {
-    List<String> addresses = URLUtil.dealMultiUrl(discoveryProperties.getAddress());
-    LOGGER.info("initialize discovery server={}", addresses);
-    return new ServiceCenterAddressManager("default", addresses, EventManager.getEventBus());
+    if (serviceAddressManager == null) {
+      synchronized (ServiceCenterUtils.class) {
+        if (serviceAddressManager == null) {
+          List<String> addresses = URLUtil.dealMultiUrl(discoveryProperties.getAddress());
+          LOGGER.info("initialize discovery server={}", addresses);
+          serviceAddressManager = new ServiceCenterAddressManager("default", addresses,
+              getDataCenterRegion(discoveryProperties), getDataCenterZone(discoveryProperties),
+              EventManager.getEventBus());
+        }
+      }
+    }
+    return serviceAddressManager;
+  }
+
+  private static String getDataCenterRegion(DiscoveryBootstrapProperties discoveryProperties) {
+    if (discoveryProperties.getDatacenter() == null) {
+      return "";
+    }
+    String region = discoveryProperties.getDatacenter().getRegion();
+    return StringUtils.isEmpty(region) ? "" : region;
+  }
+
+  private static String getDataCenterZone(DiscoveryBootstrapProperties discoveryProperties) {
+    if (discoveryProperties.getDatacenter() == null) {
+      return "";
+    }
+    String zone = discoveryProperties.getDatacenter().getAvailableZone();
+    return StringUtils.isEmpty(zone) ? "" : zone;
   }
 
   // add other headers needed for registration by new ServiceCenterClient(...)
   public static ServiceCenterClient serviceCenterClient(DiscoveryBootstrapProperties discoveryProperties,
-      ServiceCombSSLProperties serviceCombSSLProperties, List<AuthHeaderProvider> authHeaderProviders,
-      Environment env) {
+      ServiceCombSSLProperties serviceCombSSLProperties, List<AuthHeaderProvider> authHeaderProviders, Environment env) {
     ServiceCenterAddressManager addressManager = createAddressManager(discoveryProperties);
     SSLProperties sslProperties = TransportUtils
         .createSSLProperties(addressManager.sslEnabled(), serviceCombSSLProperties);
     return new ServiceCenterClient(addressManager, sslProperties,
-        getRequestAuthHeaderProvider(authHeaderProviders),
-        "default", new HashMap<>(), env).setEventBus(EventManager.getEventBus());
+        getRequestAuthHeaderProvider(authHeaderProviders), "default", new HashMap<>(), env)
+        .setEventBus(EventManager.getEventBus());
   }
 
   public static ServiceCenterWatch serviceCenterWatch(DiscoveryBootstrapProperties discoveryProperties,
@@ -71,8 +98,9 @@ public class ServiceCenterUtils {
 
   private static RequestAuthHeaderProvider getRequestAuthHeaderProvider(List<AuthHeaderProvider> authHeaderProviders) {
     return signRequest -> {
+      String host = signRequest != null && signRequest.getEndpoint() != null ? signRequest.getEndpoint().getHost() : "";
       Map<String, String> headers = new HashMap<>();
-      authHeaderProviders.forEach(provider -> headers.putAll(provider.authHeaders()));
+      authHeaderProviders.forEach(provider -> headers.putAll(provider.authHeaders(host)));
       return headers;
     };
   }

@@ -17,6 +17,7 @@
 
 package com.huaweicloud.service.engine.common.transport;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
-import org.apache.servicecomb.http.client.event.EngineConnectChangedEvent;
-import org.apache.servicecomb.service.center.client.OperationEvents;
+import org.apache.servicecomb.http.client.event.OperationEvents;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
 import org.apache.servicecomb.service.center.client.model.RbacTokenRequest;
 import org.apache.servicecomb.service.center.client.model.RbacTokenResponse;
@@ -41,13 +41,12 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.eventbus.Subscribe;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.service.engine.common.configration.bootstrap.BootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
-import com.huaweicloud.service.engine.common.configration.bootstrap.MicroserviceProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.ServiceCombRBACProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.ServiceCombSSLProperties;
 import com.huaweicloud.service.engine.common.disovery.ServiceCenterUtils;
-import com.huaweicloud.common.event.EventManager;
 
 import jakarta.ws.rs.core.Response.Status;
 
@@ -59,37 +58,24 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
   // e.g. not found:  will query token after token expired period
   public static final String INVALID_TOKEN = "invalid";
 
-  private static final String UN_AUTHORIZED_CODE_HALF_OPEN = "401302";
-
   public static final String CACHE_KEY = "token";
 
   public static final String AUTH_HEADER = "Authorization";
 
   private static final long TOKEN_REFRESH_TIME_IN_SECONDS = 20 * 60 * 1000;
 
-  private final DiscoveryBootstrapProperties discoveryProperties;
-
-  private final ServiceCombSSLProperties serviceCombSSLProperties;
-
   private final ServiceCombRBACProperties serviceCombRBACProperties;
-
-  private final MicroserviceProperties microserviceProperties;
 
   private ExecutorService executorService;
 
   private LoadingCache<String, String> cache;
 
-  private String lastErrorCode = "401302";
-
-  private int lastStatusCode = 401;
-
   private ServiceCenterClient serviceCenterClient;
 
   public RBACRequestAuthHeaderProvider(BootstrapProperties bootstrapProperties, Environment env) {
-    this.discoveryProperties = bootstrapProperties.getDiscoveryBootstrapProperties();
-    this.serviceCombSSLProperties = bootstrapProperties.getServiceCombSSLProperties();
+    DiscoveryBootstrapProperties discoveryProperties = bootstrapProperties.getDiscoveryBootstrapProperties();
+    ServiceCombSSLProperties serviceCombSSLProperties = bootstrapProperties.getServiceCombSSLProperties();
     this.serviceCombRBACProperties = bootstrapProperties.getServiceCombRBACProperties();
-    this.microserviceProperties = bootstrapProperties.getMicroserviceProperties();
 
     if (enabled()) {
       serviceCenterClient = ServiceCenterUtils.serviceCenterClient(discoveryProperties,
@@ -98,38 +84,41 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
 
       executorService = Executors.newFixedThreadPool(1, t -> new Thread(t, "rbac-executor"));
       cache = CacheBuilder.newBuilder()
-          .maximumSize(1)
+          .maximumSize(10)
           .refreshAfterWrite(refreshTime(), TimeUnit.MILLISECONDS)
           .build(new CacheLoader<String, String>() {
             @Override
             public String load(String key) {
-              return createHeaders();
+              return createHeaders(key);
             }
 
             @Override
             public ListenableFuture<String> reload(String key, String oldValue) {
-              return Futures.submit(() -> createHeaders(), executorService);
+              return Futures.submit(() -> createHeaders(key), executorService);
             }
           });
     }
   }
 
   @Subscribe
-  public void onNotPermittedEvent(OperationEvents.UnAuthorizedOperationEvent event) {
-    this.executorService.submit(this::retryRefresh);
+  public void onUnAuthorizedOperationEvent(OperationEvents.UnAuthorizedOperationEvent event) {
+    LOGGER.warn("address {} unAuthorized, refresh cache token!", event.getAddress());
+    cache.refresh(getHostByAddress(event.getAddress()));
   }
 
-  @Subscribe
-  public void onEngineConnectChangedEvent(EngineConnectChangedEvent event) {
-    cache.refresh(CACHE_KEY);
+  private static String getHostByAddress(String address) {
+    try {
+      URI uri = URI.create(address);
+      return uri.getHost();
+    } catch (Exception e) {
+      LOGGER.error("get host by address [{}] error!", address, e);
+      return CACHE_KEY;
+    }
   }
 
-  protected String createHeaders() {
-    LOGGER.info("start to create RBAC headers");
-
-    RbacTokenResponse rbacTokenResponse = callCreateHeaders();
-    lastErrorCode = rbacTokenResponse.getErrorCode();
-    lastStatusCode = rbacTokenResponse.getStatusCode();
+  protected String createHeaders(String key) {
+    LOGGER.info("start to create server [{}] RBAC headers", key);
+    RbacTokenResponse rbacTokenResponse = callCreateHeaders(key);
 
     if (Status.UNAUTHORIZED.getStatusCode() == rbacTokenResponse.getStatusCode()
         || Status.FORBIDDEN.getStatusCode() == rbacTokenResponse.getStatusCode()) {
@@ -140,32 +129,53 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
       // service center not support, do not try
       LOGGER.warn("service center do not support RBAC token, you should not config account info");
       return INVALID_TOKEN;
+    } else if (Status.INTERNAL_SERVER_ERROR.getStatusCode() == rbacTokenResponse.getStatusCode()) {
+      // return null for server_error, so the token information can be re-fetched on the next call.
+      // It will prompt 'CacheLoader returned null for key xxx'
+      LOGGER.warn("service center query RBAC token error!");
+      return null;
     }
 
-    LOGGER.info("refresh token successfully {}", rbacTokenResponse.getStatusCode());
+    LOGGER.info("refresh server [{}] token successfully {}", key, rbacTokenResponse.getStatusCode());
     return rbacTokenResponse.getToken();
   }
 
-  protected RbacTokenResponse callCreateHeaders() {
+  protected RbacTokenResponse callCreateHeaders(String host) {
     RbacTokenRequest request = new RbacTokenRequest();
     request.setName(serviceCombRBACProperties.getName());
     request.setPassword(serviceCombRBACProperties.getPassword());
-
-    return serviceCenterClient.queryToken(request);
+    try {
+      return serviceCenterClient.queryToken(request, host);
+    } catch (Exception e) {
+      LOGGER.error("query token from server [{}] error!", host, e);
+    }
+    RbacTokenResponse response = new RbacTokenResponse();
+    response.setStatusCode(Status.INTERNAL_SERVER_ERROR.getStatusCode());
+    return response;
   }
 
   protected long refreshTime() {
     return TOKEN_REFRESH_TIME_IN_SECONDS;
   }
 
+  /**
+   * Retrieve the corresponding engine token cache information based on the host in the request
+   * to resolve cross-engine authentication issues in dual-engine disaster recovery scenarios.
+   *
+   * @param host host
+   * @return token info
+   */
   @Override
-  public Map<String, String> authHeaders() {
+  public Map<String, String> authHeaders(String host) {
     if (!enabled()) {
       return Collections.emptyMap();
     }
-
+    String address = host;
+    if (StringUtils.isEmpty(address)) {
+      address = CACHE_KEY;
+    }
     try {
-      String header = cache.get(CACHE_KEY);
+      String header = cache.get(address);
       if (!StringUtils.isEmpty(header)) {
         Map<String, String> tokens = new HashMap<>(1);
         tokens.put(AUTH_HEADER, "Bearer " + header);
@@ -180,11 +190,5 @@ public class RBACRequestAuthHeaderProvider implements AuthHeaderProvider {
   private boolean enabled() {
     return !StringUtils.isEmpty(serviceCombRBACProperties.getName()) && !StringUtils
         .isEmpty(serviceCombRBACProperties.getPassword());
-  }
-
-  private void retryRefresh() {
-    if (Status.UNAUTHORIZED.getStatusCode() == lastStatusCode && UN_AUTHORIZED_CODE_HALF_OPEN.equals(lastErrorCode)) {
-      cache.refresh(microserviceProperties.getName());
-    }
   }
 }
