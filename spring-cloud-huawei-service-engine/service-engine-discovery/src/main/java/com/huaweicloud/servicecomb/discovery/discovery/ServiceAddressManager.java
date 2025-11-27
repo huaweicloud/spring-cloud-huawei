@@ -140,6 +140,8 @@ public class ServiceAddressManager {
 
   private List<MicroserviceInstance> findServiceInstance(String appId, String serviceName, String versionRule) {
     int attempt = 0;
+
+    // Retrying three times ensures that even if one engine is abnormal, the other engine can still be obtained data.
     while (attempt < 3) {
       attempt++;
       try {
