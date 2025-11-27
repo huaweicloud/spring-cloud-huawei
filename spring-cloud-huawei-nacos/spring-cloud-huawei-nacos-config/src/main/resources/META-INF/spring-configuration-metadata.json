@@ -1,0 +1,143 @@
+{
+  "properties": [
+    {
+      "name": "spring.cloud.nacos.config.server-addr",
+      "type": "java.lang.String",
+      "defaultValue": "127.0.0.1:8848",
+      "description": "nacos config server address."
+    },
+    {
+      "name": "spring.cloud.nacos.config.encode",
+      "type": "java.lang.String",
+      "defaultValue": "UTF-8",
+      "description": "default encode for nacos config content."
+    },
+    {
+      "name": "spring.cloud.nacos.config.prefix",
+      "type": "java.lang.String",
+      "defaultValue": "${spring.application.name}",
+      "description": "the prefix of dataId, nacos config data meta info. dataId = prefix + '-' + ${spring.active.profile} + `.` + ${spring.cloud.nacos.config.file-extension}."
+    },
+    {
+      "name": "spring.cloud.nacos.config.file-extension",
+      "type": "java.lang.String",
+      "defaultValue": "properties",
+      "description": "the suffix of nacos config dataId, also the file extension of config content, only support properties now."
+    },
+    {
+      "name": "spring.cloud.nacos.config.shared-dataids",
+      "type": "java.lang.String",
+      "description": "the dataids for configurable multiple shared configurations , multiple separated by commas ."
+    },
+    {
+      "name": "spring.cloud.nacos.config.shared-configs",
+      "type": "java.util.List",
+      "description": "a set of shared configurations .e.g: spring.cloud.nacos.config.shared-configs[0]=xxx ."
+    },
+    {
+      "name": "spring.cloud.nacos.config.extension-configs",
+      "type": "java.util.List",
+      "description": "a set of extensional configurations .e.g: spring.cloud.nacos.config.extension-configs[0]=xxx ."
+    },
+    {
+      "name": "spring.cloud.nacos.config.refresh-enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "the master switch for refresh configuration, it default opened(true)."
+    },
+    {
+      "name": "spring.cloud.nacos.config.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "enable nacos config or not."
+    },
+    {
+      "name": "spring.cloud.nacos.config.username",
+      "type": "java.lang.String",
+      "defaultValue": "${spring.nacos.username}",
+      "description": "nacos config service's userName to authenticate."
+    },
+    {
+      "name": "spring.cloud.nacos.config.import-check.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "Whether to enable import-check."
+    },
+    {
+      "name": "spring.cloud.nacos.config.password",
+      "type": "java.lang.String",
+      "defaultValue": "${spring.nacos.password}",
+      "description": "nacos config service's password to authenticate."
+    },
+    {
+      "name": "spring.cloud.nacos.config.username",
+      "type": "java.lang.String",
+      "description": "nacos userName to authenticate."
+    },
+    {
+      "name": "spring.cloud.nacos.config.password",
+      "type": "java.lang.String",
+      "description": "nacos password to authenticate."
+    },
+    {
+      "name": "spring.cloud.nacos.config.timeout",
+      "type": "java.lang.Integer",
+      "defaultValue": 3000,
+      "description": "timeout for get config from nacos."
+    },
+    {
+      "name": "spring.cloud.nacos.config.maxRetry",
+      "type": "java.lang.String",
+      "description": "nacos maximum number of tolerable server reconnection errors."
+    },
+    {
+      "name": "spring.cloud.nacos.config.namespace",
+      "type": "java.lang.String",
+      "description": "separation configuration of different environments."
+    },
+    {
+      "name": "spring.cloud.nacos.config.accessKey",
+      "type": "java.lang.String",
+      "description": "access key for namespace."
+    },
+    {
+      "name": "spring.cloud.nacos.config.secretKey",
+      "type": "java.lang.String",
+      "description": "secret key for namespace."
+    },
+    {
+      "name": "spring.cloud.nacos.config.group",
+      "type": "java.lang.String",
+      "defaultValue": "DEFAULT_GROUP",
+      "description": "nacos config group, group is config data meta info."
+    },
+    {
+      "name": "spring.cloud.nacos.config.name",
+      "type": "java.lang.String",
+      "description": "nacos config dataId name."
+    },
+    {
+      "name": "spring.cloud.nacos.config.masterStandbyEnabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": false,
+      "description": "whether open master standby."
+    },
+    {
+      "name": "spring.cloud.nacos.config.standbyServerAddr",
+      "type": "java.lang.String",
+      "description": "nacos standby node Address."
+    },
+    {
+      "name": "spring.cloud.nacos.config.masterStandbyServerTaskDelay",
+      "type": "java.lang.Lang",
+      "defaultValue": 15000,
+      "description": "nacos config center master standby node health check interval time."
+    },
+    {
+      "name": "spring.cloud.nacos.config.retryMasterServerEnabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "whether retry master node when the master node is isolated."
+    }
+  ]
+}
