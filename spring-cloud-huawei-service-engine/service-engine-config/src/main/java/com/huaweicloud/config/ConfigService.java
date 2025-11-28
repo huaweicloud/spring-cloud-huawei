@@ -39,16 +39,17 @@ import org.apache.servicecomb.foundation.auth.AuthHeaderProvider;
 import org.apache.servicecomb.http.client.auth.RequestAuthHeaderProvider;
 import org.apache.servicecomb.http.client.common.HttpTransport;
 import org.apache.servicecomb.http.client.common.HttpTransportFactory;
+import org.apache.servicecomb.service.center.client.model.DataCenterInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.huaweicloud.common.event.EventManager;
+import com.huaweicloud.common.util.URLUtil;
 import com.huaweicloud.service.engine.common.configration.bootstrap.BootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.ConfigBootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.ServiceCombAkSkProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.ServiceCombSSLProperties;
-import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.service.engine.common.transport.TransportUtils;
-import com.huaweicloud.common.util.URLUtil;
 
 public class ConfigService {
   private static final Logger LOGGER = LoggerFactory.getLogger(ConfigService.class);
@@ -89,11 +90,9 @@ public class ConfigService {
     initConfigConverter(bootstrapProperties.getConfigBootstrapProperties());
 
     if ("kie".equalsIgnoreCase(bootstrapProperties.getConfigBootstrapProperties().getServerType())) {
-      initKieConfig(bootstrapProperties,
-          authHeaderProviders);
+      initKieConfig(bootstrapProperties, authHeaderProviders);
     } else {
-      initServiceCenterConfig(bootstrapProperties,
-          authHeaderProviders);
+      initServiceCenterConfig(bootstrapProperties, authHeaderProviders);
     }
   }
 
@@ -106,12 +105,14 @@ public class ConfigService {
   }
 
   private ConfigCenterAddressManager configCenterAddressManager(ConfigBootstrapProperties configProperties,
-      ServiceCombAkSkProperties serviceCombAkSkProperties) {
-
+      ServiceCombAkSkProperties serviceCombAkSkProperties, DataCenterInfo dataCenterInfo) {
     List<String> addresses = URLUtil.dealMultiUrl(configProperties.getServerAddr());
+    String serverType =
+        StringUtils.isEmpty(configProperties.getServerType()) ? "config-center" : configProperties.getServerType();
 
-    LOGGER.info("initialize config server type={}, address={}.", configProperties.getServerType(), addresses);
-    return new ConfigCenterAddressManager(serviceCombAkSkProperties.getProject(), addresses, EventManager.getEventBus());
+    LOGGER.info("initialize config server type={}, address={}.", serverType, addresses);
+    return new ConfigCenterAddressManager(serviceCombAkSkProperties.getProject(), addresses, getRegion(dataCenterInfo),
+        getAvailableZone(dataCenterInfo), EventManager.getEventBus());
   }
 
   private HttpTransport createHttpTransport(boolean sslEnabled,
@@ -125,8 +126,9 @@ public class ConfigService {
 
   private static RequestAuthHeaderProvider getRequestAuthHeaderProvider(List<AuthHeaderProvider> authHeaderProviders) {
     return signRequest -> {
+      String host = signRequest != null && signRequest.getEndpoint() != null ? signRequest.getEndpoint().getHost() : "";
       Map<String, String> headers = new HashMap<>();
-      authHeaderProviders.forEach(provider -> headers.putAll(provider.authHeaders()));
+      authHeaderProviders.forEach(provider -> headers.putAll(provider.authHeaders(host)));
       return headers;
     };
   }
@@ -146,8 +148,10 @@ public class ConfigService {
       List<AuthHeaderProvider> authHeaderProviders) {
     QueryConfigurationsRequest queryConfigurationsRequest;
 
-    ConfigCenterAddressManager addressManager = configCenterAddressManager(bootstrapProperties.getConfigBootstrapProperties(),
-        bootstrapProperties.getServiceCombAkSkProperties());
+    DataCenterInfo dataCenterInfo = bootstrapProperties.getDiscoveryBootstrapProperties().getDatacenter();
+    ConfigCenterAddressManager addressManager = configCenterAddressManager(
+        bootstrapProperties.getConfigBootstrapProperties(), bootstrapProperties.getServiceCombAkSkProperties(),
+        dataCenterInfo);
     HttpTransport httpTransport = createHttpTransport(addressManager.sslEnabled(),
         bootstrapProperties.getServiceCombSSLProperties(),
         authHeaderProviders, HttpTransportFactory.defaultRequestConfig().build());
@@ -208,14 +212,22 @@ public class ConfigService {
     return configCenterConfiguration;
   }
 
-  private KieAddressManager createKieAddressManager(List<String> addresses) {
-    return new KieAddressManager(addresses, EventManager.getEventBus());
-  }
-
-  private KieAddressManager configKieAddressManager(ConfigBootstrapProperties configProperties) {
+  private KieAddressManager configKieAddressManager(ConfigBootstrapProperties configProperties,
+      DataCenterInfo dataCenterInfo) {
     List<String> addresses = URLUtil.dealMultiUrl(configProperties.getServerAddr());
     LOGGER.info("initialize config server type={}, address={}.", configProperties.getServerType(), addresses);
-    return createKieAddressManager(addresses);
+    return new KieAddressManager(addresses, getRegion(dataCenterInfo), getAvailableZone(dataCenterInfo),
+        EventManager.getEventBus());
+  }
+
+  private String getRegion(DataCenterInfo dataCenterInfo) {
+    return dataCenterInfo == null || StringUtils.isEmpty(dataCenterInfo.getRegion())
+        ? "" : dataCenterInfo.getRegion();
+  }
+
+  private String getAvailableZone(DataCenterInfo dataCenterInfo) {
+    return dataCenterInfo == null || StringUtils.isEmpty(dataCenterInfo.getAvailableZone())
+        ? "" : dataCenterInfo.getAvailableZone();
   }
 
   private KieConfiguration createKieConfiguration(BootstrapProperties bootstrapProperties) {
@@ -238,9 +250,10 @@ public class ConfigService {
         .setVersion(bootstrapProperties.getMicroserviceProperties().getVersion());
   }
 
-  private void initKieConfig(BootstrapProperties bootstrapProperties,
-      List<AuthHeaderProvider> authHeaderProviders) {
-    KieAddressManager kieAddressManager = configKieAddressManager(bootstrapProperties.getConfigBootstrapProperties());
+  private void initKieConfig(BootstrapProperties bootstrapProperties, List<AuthHeaderProvider> authHeaderProviders) {
+    DataCenterInfo dataCenterInfo = bootstrapProperties.getDiscoveryBootstrapProperties().getDatacenter();
+    KieAddressManager kieAddressManager = configKieAddressManager(bootstrapProperties.getConfigBootstrapProperties(),
+        dataCenterInfo);
 
     RequestConfig.Builder requestBuilder = HttpTransportFactory.defaultRequestConfig();
     if (bootstrapProperties.getConfigBootstrapProperties().getKie().isEnableLongPolling()
