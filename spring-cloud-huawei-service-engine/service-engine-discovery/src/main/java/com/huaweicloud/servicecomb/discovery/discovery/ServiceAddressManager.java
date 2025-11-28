@@ -91,8 +91,7 @@ public class ServiceAddressManager {
     }
   }
 
-  private boolean isEngineEndpointsChanged(Set<String> lastEngineEndpoints,
-          Set<String> currentEngineEndpoints) {
+  private boolean isEngineEndpointsChanged(Set<String> lastEngineEndpoints, Set<String> currentEngineEndpoints) {
     if (lastEngineEndpoints == null || lastEngineEndpoints.isEmpty()) {
       return true;
     }
@@ -140,14 +139,20 @@ public class ServiceAddressManager {
   }
 
   private List<MicroserviceInstance> findServiceInstance(String appId, String serviceName, String versionRule) {
-    try {
-      FindMicroserviceInstancesResponse instancesResponse = serviceCenterClient
-          .findMicroserviceInstance(this.myselfServiceId, appId, serviceName, versionRule, null);
-      return instancesResponse.getMicroserviceInstancesResponse().getInstances();
-    } catch (OperationException operationException) {
-      LOGGER.warn("not find the Microservice instance of {}", serviceName);
-      return new ArrayList<>();
+    int attempt = 0;
+
+    // Retrying three times ensures that even if one engine is abnormal, the other engine can still be obtained data.
+    while (attempt < 3) {
+      attempt++;
+      try {
+        FindMicroserviceInstancesResponse instancesResponse = serviceCenterClient
+            .findMicroserviceInstance(this.myselfServiceId, appId, serviceName, versionRule, null);
+        return instancesResponse.getMicroserviceInstancesResponse().getInstances();
+      } catch (OperationException operationException) {
+        LOGGER.warn("not find the Microservice instance of {}", serviceName);
+      }
     }
+    return new ArrayList<>();
   }
 
   private boolean regionAndAZMatch(DataCenterInfo myself, MicroserviceInstance target) {

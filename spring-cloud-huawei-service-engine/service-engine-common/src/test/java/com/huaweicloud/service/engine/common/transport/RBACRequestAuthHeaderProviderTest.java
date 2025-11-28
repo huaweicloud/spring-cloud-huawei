@@ -19,6 +19,7 @@ package com.huaweicloud.service.engine.common.transport;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.service.center.client.exception.OperationException;
 import org.apache.servicecomb.service.center.client.model.RbacTokenResponse;
 import org.junit.jupiter.api.Assertions;
@@ -57,10 +58,14 @@ public class RBACRequestAuthHeaderProviderTest {
     }
 
     @Override
-    protected RbacTokenResponse callCreateHeaders() {
+    protected RbacTokenResponse callCreateHeaders(String host) {
       RbacTokenResponse response = new RbacTokenResponse();
       response.setStatusCode(200);
-      response.setToken("test_token");
+      if (host.split("\\.").length != 4) {
+        response.setToken("test_token");
+      } else {
+        response.setToken("test_token_" + host);
+      }
       return response;
     }
   }
@@ -73,7 +78,7 @@ public class RBACRequestAuthHeaderProviderTest {
     }
 
     @Override
-    protected RbacTokenResponse callCreateHeaders() {
+    protected RbacTokenResponse callCreateHeaders(String host) {
       if (first) {
         first = false;
         throw new OperationException("query token failed");
@@ -98,7 +103,7 @@ public class RBACRequestAuthHeaderProviderTest {
     }
 
     @Override
-    protected RbacTokenResponse callCreateHeaders() {
+    protected RbacTokenResponse callCreateHeaders(String host) {
       RbacTokenResponse response = new RbacTokenResponse();
       count++;
       if (count == 1) {
@@ -116,23 +121,64 @@ public class RBACRequestAuthHeaderProviderTest {
     }
   }
 
+  static class HostCacheRBACRequestAuthHeaderProvider extends RBACRequestAuthHeaderProvider {
+    public HostCacheRBACRequestAuthHeaderProvider(BootstrapProperties bootstrapProperties) {
+      super(bootstrapProperties, null);
+    }
+
+    @Override
+    protected long refreshTime() {
+      return 15000;
+    }
+
+    @Override
+    protected RbacTokenResponse callCreateHeaders(String host) {
+      RbacTokenResponse response = new RbacTokenResponse();
+      if (StringUtils.isEmpty(host)) {
+        response.setStatusCode(200);
+        response.setToken("test_token");
+        return response;
+      }
+      response.setStatusCode(200);
+      response.setToken("test_token_" + host);
+      return response;
+    }
+  }
+
   @Test
   public void testFirstTimeSuccess() {
     RBACRequestAuthHeaderProvider provider = new FirstTimeSuccessRBACRequestAuthHeaderProvider(bootstrapProperties);
-    Map<String, String> result = provider.authHeaders();
+    Map<String, String> result = provider.authHeaders("");
     Assertions.assertEquals("Bearer test_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
-    result = provider.authHeaders();
+    result = provider.authHeaders("");
     Assertions.assertEquals("Bearer test_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
+  }
+
+  @Test
+  public void testFirstTimeSuccessWithAddr() {
+    RBACRequestAuthHeaderProvider provider = new FirstTimeSuccessRBACRequestAuthHeaderProvider(bootstrapProperties);
+    Map<String, String> result = provider.authHeaders("127.0.0.1");
+    Assertions.assertEquals("Bearer test_token_127.0.0.1",
+        result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
+    result = provider.authHeaders("127.0.0.2");
+    Assertions.assertEquals("Bearer test_token_127.0.0.2",
+        result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
+    result = provider.authHeaders("127.0.0.1");
+    Assertions.assertEquals("Bearer test_token_127.0.0.1",
+        result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
+    result = provider.authHeaders("127.0.0.2");
+    Assertions.assertEquals("Bearer test_token_127.0.0.2",
+        result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
   }
 
   @Test
   public void testSecondTimeSuccess() {
     RBACRequestAuthHeaderProvider provider = new SecondTimeSuccessRBACRequestAuthHeaderProvider(bootstrapProperties);
-    Map<String, String> result = provider.authHeaders();
+    Map<String, String> result = provider.authHeaders("");
     Assertions.assertTrue(result.isEmpty());
-    result = provider.authHeaders();
+    result = provider.authHeaders("");
     Assertions.assertEquals("Bearer test_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
-    result = provider.authHeaders();
+    result = provider.authHeaders("");
     Assertions.assertEquals("Bearer test_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
   }
 
@@ -140,20 +186,35 @@ public class RBACRequestAuthHeaderProviderTest {
   public void testSecondTimeSuccessFirstNull() throws Exception {
     RBACRequestAuthHeaderProvider provider = new SecondTimeFirstNullSuccessRBACRequestAuthHeaderProvider(
         bootstrapProperties);
-    Map<String, String> result = provider.authHeaders();
+    Map<String, String> result = provider.authHeaders("");
     Assertions.assertTrue(result.isEmpty());
-    result = provider.authHeaders();
+    result = provider.authHeaders("");
     Assertions.assertEquals("Bearer test_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
-    result = provider.authHeaders();
+    result = provider.authHeaders("");
     Assertions.assertEquals("Bearer test_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
     for (int i = 0; i < 20; i++) {
       Thread.sleep(100);
-      result = provider.authHeaders();// wait a while
+      result = provider.authHeaders("");// wait a while
       if ("Bearer test_token_2".equals(result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER))) {
         break;
       }
     }
-    result = provider.authHeaders();
+    result = provider.authHeaders("");
     Assertions.assertEquals("Bearer test_token_2", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
+  }
+
+  @Test
+  public void testHostCache() throws Exception {
+    RBACRequestAuthHeaderProvider provider = new HostCacheRBACRequestAuthHeaderProvider(bootstrapProperties);
+    for (int i = 0; i < 10; i++) {
+      Thread.sleep(100);
+      Map<String, String> result = provider.authHeaders("");
+      Assertions.assertEquals("Bearer test_token_token", result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
+    }
+    for (int i = 0; i < 10; i++) {
+      Thread.sleep(100);
+      Map<String, String> result = provider.authHeaders(String.valueOf(i));
+      Assertions.assertEquals("Bearer test_token_" + i, result.get(RBACRequestAuthHeaderProvider.AUTH_HEADER));
+    }
   }
 }

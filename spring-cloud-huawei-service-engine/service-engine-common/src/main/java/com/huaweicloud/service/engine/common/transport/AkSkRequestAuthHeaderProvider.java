@@ -41,7 +41,7 @@ public class AkSkRequestAuthHeaderProvider implements AuthHeaderProvider {
   }
 
   @Override
-  public Map<String, String> authHeaders() {
+  public Map<String, String> authHeaders(String host) {
     if (isAKSKNotEnabled(serviceCombAkSkProperties)) {
       return Collections.emptyMap();
     }
