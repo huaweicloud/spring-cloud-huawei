@@ -18,10 +18,12 @@
 
 package com.huaweicloud.servicecomb.dashboard.model;
 
+import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
+
 public interface MonitorDataPublisher {
   void publish(MonitorDataProvider provider);
 
-  default void init() {
+  default void init(DiscoveryBootstrapProperties bootstrapProperties) {
 
   }
 }

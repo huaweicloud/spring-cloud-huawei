@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.eventbus.Subscribe;
+import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.dynamic.DashboardProperties;
 import com.huaweicloud.common.event.EventManager;
 import com.huaweicloud.servicecomb.dashboard.model.MonitorDataProvider;
@@ -53,13 +54,16 @@ public class DataFactory {
 
   private final DashboardProperties dashboardProperties;
 
+  private final DiscoveryBootstrapProperties bootstrapProperties;
+
   public DataFactory(List<MonitorDataProvider> dataProviders, MonitorDataPublisher monitorDataPublisher,
-      DashboardProperties dashboardProperties) {
+      DashboardProperties dashboardProperties, DiscoveryBootstrapProperties bootstrapProperties) {
     ThreadFactory threadFactory = new DefaultThreadFactory("dashboard", true);
     executorService = Executors.newScheduledThreadPool(CORE_SIZE, threadFactory);
     this.dataProviders = dataProviders;
     this.monitorDataPublisher = monitorDataPublisher;
     this.dashboardProperties = dashboardProperties;
+    this.bootstrapProperties = bootstrapProperties;
     EventManager.register(this);
   }
 
@@ -74,7 +78,7 @@ public class DataFactory {
     if (!hasStart) {
       hasStart = true;
 
-      monitorDataPublisher.init();
+      monitorDataPublisher.init(bootstrapProperties);
 
       StringBuilder sb = new StringBuilder();
       sb.append("Monitor data sender started. Configured data providers is {");

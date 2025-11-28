@@ -25,6 +25,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.ServiceCombSSLProperties;
 import com.huaweicloud.service.engine.common.configration.dynamic.DashboardProperties;
 import com.huaweicloud.servicecomb.dashboard.model.MonitorDataProvider;
@@ -40,8 +41,8 @@ import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 public class DashboardConfiguration {
   @Bean
   public DataFactory dataFactory(List<MonitorDataProvider> dataProviders, MonitorDataPublisher monitorDataPublisher,
-      DashboardProperties dashboardProperties) {
-    return new DataFactory(dataProviders, monitorDataPublisher, dashboardProperties);
+      DashboardProperties dashboardProperties, DiscoveryBootstrapProperties bootstrapProperties) {
+    return new DataFactory(dataProviders, monitorDataPublisher, dashboardProperties, bootstrapProperties);
   }
 
   @Bean
