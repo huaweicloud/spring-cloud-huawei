@@ -20,9 +20,10 @@ Spring Cloud Huawei提供了大量开箱即用的服务治理能力，让开发�
 
 | 分支        | 最新版本                 | 编译使用 Spring Cloud版本 | 编译使用 Spring Boot版本 | 支持的JDK版本   | 备注   |
 |-----------|----------------------|---------------------|--------------------|------------|------|
-| master    | 1.11.10-2023.0.x(推荐) | 2023.0.3            | 3.3.5              | OpenJDK 17 |      | 
-| 2022.0.x  | 1.11.10-2022.0.x(推荐) | 2022.0.5            | 3.1.12             | OpenJDK 17 |      | 
-| 2021.0.x  | 1.11.10-2021.0.x(推荐) | 2021.0.9            | 2.7.18             | OpenJDK 8  |      | 
+| master    | 1.11.13-2024.0.x(推荐) | 2024.0.2            | 3.4.12             | OpenJDK 17 |      | 
+| 2023.0.x  | 1.11.13-2023.0.x(推荐) | 2023.0.6            | 3.3.13             | OpenJDK 17 |      | 
+| 2022.0.x  | 1.11.11-2022.0.x(推荐) | 2022.0.5            | 3.1.12             | OpenJDK 17 | 停止更新 | 
+| 2021.0.x  | 1.11.13-2021.0.x(推荐) | 2021.0.9            | 2.7.18             | OpenJDK 8  | 存在漏洞 | 
 | 2020.0.x  | 1.10.8-2020.0.x      | 2020.0.6            | 2.5.14             | OpenJDK 8  | 停止更新 |
 | Hoxton    | 1.9.4-Hoxton         | Hoxton.SR9          | 2.3.5.RELEASE      | OpenJDK 8  | 停止更新 |
 | Greenwich | 1.6.4-Greenwich      | Greenwich.SR6       | 2.1.6-RELEASE      | OpenJDK 8  | 停止更新 |
@@ -30,6 +31,7 @@ Spring Cloud Huawei提供了大量开箱即用的服务治理能力，让开发�
 | Edgware   | 1.2.0-Edgware        | 1.3.6.RELEASE       | 1.5.22.RELEASE     | OpenJDK 8  | 停止更新 |
 
 ***注意：***
+* 尽快更新到Spring社区维护的OOS版本2023.0.x/2024.0.x分支，因为2021.0.x分支依赖的Spring 5.3.x存在一定的漏洞，暂时未提供开源版本修复。
 * 使用`Spring Cloud Huawei`时可以使用兼容的`Spring Cloud`版本。详细信息可参考 https://spring.io/projects/spring-cloud 。
 * Spring Cloud Edgeware, Finchley, Greenwich, Hoxton, 2020.0.x 已经停止维护，不建议在生产环境使用。
   详细情况可以查询 [Spring Cloud Releases][Spring Cloud Releases]。
