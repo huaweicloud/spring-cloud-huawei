@@ -18,20 +18,28 @@ Spring Cloud Huawei提供了大量开箱即用的服务治理能力，让开发�
 
 ## 支持的版本列表
 
-| 分支        | 最新版本            | 编译使用 Spring Cloud版本 | 编译使用 Spring Boot版本 |
-|-----------|-----------------|---------------------|--------------------|
-| master    | 1.11.4-2021.0.x | 2021.0.8            | 2.7.17             | 
-| 2020.0.x  | 1.10.8-2020.0.x | 2020.0.6            | 2.5.14             |
-| Hoxton    | 1.9.3-Hoxton    | Hoxton.SR9          | 2.3.5.RELEASE      |
-| Greenwich | 1.6.3-Greenwich | Greenwich.SR6       | 2.1.6-RELEASE      |
+| 分支        | 最新版本                 | 编译使用 Spring Cloud版本 | 编译使用 Spring Boot版本 | 支持的JDK版本   | 备注   |
+|-----------|----------------------|---------------------|--------------------|------------|------|
+| master    | 1.11.13-2024.0.x(推荐) | 2024.0.2            | 3.4.12             | OpenJDK 17 |      | 
+| 2023.0.x  | 1.11.13-2023.0.x(推荐) | 2023.0.6            | 3.3.13             | OpenJDK 17 |      | 
+| 2022.0.x  | 1.11.11-2022.0.x(推荐) | 2022.0.5            | 3.1.12             | OpenJDK 17 | 停止更新 | 
+| 2021.0.x  | 1.11.13-2021.0.x(推荐) | 2021.0.9            | 2.7.18             | OpenJDK 8  | 存在漏洞 | 
+| 2020.0.x  | 1.10.8-2020.0.x      | 2020.0.6            | 2.5.14             | OpenJDK 8  | 停止更新 |
+| Hoxton    | 1.9.4-Hoxton         | Hoxton.SR9          | 2.3.5.RELEASE      | OpenJDK 8  | 停止更新 |
+| Greenwich | 1.6.4-Greenwich      | Greenwich.SR6       | 2.1.6-RELEASE      | OpenJDK 8  | 停止更新 |
+| Finchley  | 1.6.1-Finchley       | 2.0.4.RELEASE       | 2.0.9.RELEASE      | OpenJDK 8  | 停止更新 |
+| Edgware   | 1.2.0-Edgware        | 1.3.6.RELEASE       | 1.5.22.RELEASE     | OpenJDK 8  | 停止更新 |
 
 ***注意：***
+* 尽快更新到Spring社区维护的OOS版本2023.0.x/2024.0.x分支，因为2021.0.x分支依赖的Spring 5.3.x存在一定的漏洞，暂时未提供开源版本修复。
 * 使用`Spring Cloud Huawei`时可以使用兼容的`Spring Cloud`版本。详细信息可参考 https://spring.io/projects/spring-cloud 。
-* Spring Cloud Edgeware, Finchley, Greenwich, Hoxton 已经停止维护，不建议在生产环境使用。
+* Spring Cloud Edgeware, Finchley, Greenwich, Hoxton, 2020.0.x 已经停止维护，不建议在生产环境使用。
   详细情况可以查询 [Spring Cloud Releases][Spring Cloud Releases]。
 * Hoxton(包括)之前的版本支持Netfix OSS的组件，比如Ribbon, Hystrix. 2020.0.x(包括)之后的版本支持
   Spring Cloud Loadbalancer.
 * 2020.0.x(包括)之前的版本使用springfox生成swagger. 2021.0.x(包括)之后的版本使用springdoc生成swagger.
+* 2022.0.x(包括)需要JDK 17+版本运行.
+* Spring Cloud Huawei历史版本Spring Boot、Spring Cloud依赖说明参考 [版本说明][Spring Cloud Huawei Releases].
 
 ## 如何使用
 
@@ -44,7 +52,7 @@ Spring Cloud Huawei提供了大量开箱即用的服务治理能力，让开发�
 
 [CSE]: https://support.huaweicloud.com/cse/index.html
 
-[CSE Developer Guide]: https://support.huaweicloud.com/devg-cse/cse_devg_0002.html
+[CSE Developer Guide]: https://support.huaweicloud.com/productdesc-cse/cse_productdesc_0001.html
 
 [SERVICECOMB]: https://servicecomb.apache.org/cn/developers/
 
@@ -61,3 +69,5 @@ Spring Cloud Huawei提供了大量开箱即用的服务治理能力，让开发�
 [Profile encryption scheme]: https://support.huaweicloud.com/bestpractice-cse/cse_bestpractice_0007.html
 
 [Spring Cloud Releases]: https://github.com/spring-cloud/spring-cloud-release/wiki/Supported-Versions
+
+[Spring Cloud Huawei Releases]: https://github.com/huaweicloud/spring-cloud-huawei/wiki/third-version-support-descriptions
