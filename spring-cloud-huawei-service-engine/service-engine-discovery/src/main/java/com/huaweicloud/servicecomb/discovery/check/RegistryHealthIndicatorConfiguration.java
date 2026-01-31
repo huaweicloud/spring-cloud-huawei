@@ -22,12 +22,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
+import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
+
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.boot.actuate.health.HealthIndicator"})
 public class RegistryHealthIndicatorConfiguration {
     @Bean
     @Order(100)
-    public RegistryHealthIndicator registryHealthIndicator() {
-         return new RegistryHealthIndicator();
+    public RegistryHealthIndicator registryHealthIndicator(ServiceCombRegistration registration) {
+         return new RegistryHealthIndicator(registration);
     }
 }
