@@ -27,9 +27,9 @@ import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.boot.actuate.health.HealthIndicator"})
 public class RegistryHealthIndicatorConfiguration {
-    @Bean
-    @Order(100)
-    public RegistryHealthIndicator registryHealthIndicator(ServiceCombRegistration registration) {
-         return new RegistryHealthIndicator(registration);
-    }
+  @Bean
+  @Order(100)
+  public RegistryHealthIndicator registryHealthIndicator() {
+    return new RegistryHealthIndicator();
+  }
 }

@@ -19,13 +19,11 @@ package com.huaweicloud.servicecomb.discovery.check;
 
 import org.apache.servicecomb.service.center.client.RegistrationEvents.MicroserviceInstanceRegistrationEvent;
 import org.apache.servicecomb.service.center.client.RegistrationEvents.MicroserviceRegistrationEvent;
-import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 
 import com.google.common.eventbus.Subscribe;
 import com.huaweicloud.common.event.EventManager;
-import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 
 public class RegistryHealthIndicator implements HealthIndicator {
 
@@ -33,40 +31,16 @@ public class RegistryHealthIndicator implements HealthIndicator {
 
   private static final String REGISTRATION_NOT_READY = "registration not ready";
 
-  private static final String INSTANCE_STATUS_UP = "UP";
-
-  private final ServiceCombRegistration registration;
-
-  public RegistryHealthIndicator(ServiceCombRegistration registration) {
-    this.registration = registration;
+  public RegistryHealthIndicator() {
     EventManager.register(this);
   }
 
-  /**
-   * Monitor the instance status set by the client, not monitor the status modified in the registry center.
-   * all status must after instance Register.
-   *
-   * @return Health
-   */
   @Override
   public Health health() {
-    if (isSuccess && isInstanceUp()) {
+    if (isSuccess) {
       return Health.up().build();
     }
     return Health.down().withDetail("Error Message", REGISTRATION_NOT_READY).build();
-  }
-
-  private boolean isInstanceUp() {
-    try {
-      MicroserviceInstanceStatus instanceStatus = registration.getMicroserviceInstance().getStatus();
-      if (instanceStatus == null) {
-        // instance status default value is null.
-        return true;
-      }
-      return INSTANCE_STATUS_UP.equals(instanceStatus.name());
-    } catch (Exception e) {
-      return false;
-    }
   }
 
   @Subscribe
