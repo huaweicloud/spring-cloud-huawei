@@ -63,6 +63,8 @@ public class MicroserviceHandler {
 
   private static final String INSTANCE_PROPS = "SERVICECOMB_INSTANCE_PROPS";
 
+  private static String instanceAddress;
+
   public static Microservice createMicroservice(BootstrapProperties bootstrapProperties) {
     DiscoveryBootstrapProperties discoveryBootstrapProperties = bootstrapProperties.getDiscoveryBootstrapProperties();
     MicroserviceProperties microserviceProperties = bootstrapProperties.getMicroserviceProperties();
@@ -138,6 +140,7 @@ public class MicroserviceHandler {
     } else {
       address = discoveryBootstrapProperties.getPublishAddress();
     }
+    instanceAddress = address;
     if (discoveryProperties.isSslEnabled()) {
       endPoints.add("rest://" + address + ":" + discoveryProperties.getPort() + "?sslEnabled="
           + discoveryProperties.isSslEnabled());
@@ -205,5 +208,9 @@ public class MicroserviceHandler {
     return Arrays.stream(value).map(v -> v.split(":"))
         .filter(v -> v.length == 2)
         .collect(Collectors.toMap(v -> v[0], v -> v[1]));
+  }
+
+  public static String getInstanceAddress() {
+    return instanceAddress;
   }
 }
