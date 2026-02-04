@@ -48,6 +48,8 @@
     <springdoc.version>2.7.0</springdoc.version>
     <nacos.client.version>2.3.0</nacos.client.version>
     <alibaba.context.support.version>1.0.11</alibaba.context.support.version>
+    <rocketmq.version>5.3.1</rocketmq.version>
+    <rocketmq.boot.version>2.3.3</rocketmq.boot.version>
   </properties>
 
   <dependencyManagement>
@@ -174,6 +176,21 @@
         <groupId>com.alibaba.spring</groupId>
         <artifactId>spring-context-support</artifactId>
         <version>${alibaba.context.support.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.rocketmq</groupId>
+        <artifactId>rocketmq-common</artifactId>
+        <version>${rocketmq.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.rocketmq</groupId>
+        <artifactId>rocketmq-client</artifactId>
+        <version>${rocketmq.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.rocketmq</groupId>
+        <artifactId>rocketmq-spring-boot</artifactId>
+        <version>${rocketmq.boot.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
