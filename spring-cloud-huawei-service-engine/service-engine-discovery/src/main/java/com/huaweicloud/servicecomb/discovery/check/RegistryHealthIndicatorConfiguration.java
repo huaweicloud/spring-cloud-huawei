@@ -25,9 +25,9 @@ import org.springframework.core.annotation.Order;
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.boot.actuate.health.HealthIndicator"})
 public class RegistryHealthIndicatorConfiguration {
-    @Bean
-    @Order(100)
-    public RegistryHealthIndicator registryHealthIndicator() {
-         return new RegistryHealthIndicator();
-    }
+  @Bean
+  @Order(100)
+  public RegistryHealthIndicator registryHealthIndicator() {
+    return new RegistryHealthIndicator();
+  }
 }
