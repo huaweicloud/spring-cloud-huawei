@@ -16,10 +16,14 @@
  */
 package com.huaweicloud.sample;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,6 +34,9 @@ import com.huaweicloud.servicecomb.discovery.registry.ServiceCombRegistration;
 @ConditionalOnServiceCombDiscoveryEnabled
 public class ServiceCombRegistrationController {
   private final ServiceCombRegistration serviceCombRegistration;
+
+  @Value("${server.port:8080}")
+  private String port;
 
   @Autowired
   public ServiceCombRegistrationController(
@@ -50,6 +57,15 @@ public class ServiceCombRegistrationController {
     assertTrue(microserviceInstance.getProperties().get("x-test").equals("value"));
     assertTrue(microserviceInstance.getProperties().get("x-test2").equals("value2"));
     assertTrue(microserviceInstance.getStatus() == MicroserviceInstanceStatus.UP);
+
+    Map<String, String> metaData = serviceCombRegistration.getMetadata();
+    assertTrue(metaData.size() == 3);
+    assertTrue(!serviceCombRegistration.isSecure());
+    assertTrue(Integer.parseInt(port) == serviceCombRegistration.getPort());
+    List<String> endpoints = serviceCombRegistration.getMicroserviceInstance().getEndpoints();
+    assertTrue(endpoints.get(0).contains(serviceCombRegistration.getHost()));
+    String host = serviceCombRegistration.getHost();
+    assertTrue(host.equals(serviceCombRegistration.getUri().getHost()));
     return true;
   }
 
