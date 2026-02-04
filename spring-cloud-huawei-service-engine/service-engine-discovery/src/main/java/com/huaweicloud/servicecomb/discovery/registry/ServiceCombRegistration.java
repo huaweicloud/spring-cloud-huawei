@@ -20,8 +20,10 @@ package com.huaweicloud.servicecomb.discovery.registry;
 import java.net.URI;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
+import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.serviceregistry.Registration;
 
 import com.huaweicloud.service.engine.common.configration.bootstrap.BootstrapProperties;
@@ -43,9 +45,12 @@ public class ServiceCombRegistration implements Registration {
 
   private final DiscoveryBootstrapProperties discoveryBootstrapProperties;
 
+  private final DiscoveryProperties discoveryProperties;
+
   public ServiceCombRegistration(BootstrapProperties bootstrapProperties,
       DiscoveryProperties discoveryProperties) {
     this.discoveryBootstrapProperties = bootstrapProperties.getDiscoveryBootstrapProperties();
+    this.discoveryProperties = discoveryProperties;
     this.microservice = MicroserviceHandler.createMicroservice(bootstrapProperties);
     this.microserviceInstance = MicroserviceHandler
         .createMicroserviceInstance(bootstrapProperties, discoveryProperties);
@@ -76,26 +81,26 @@ public class ServiceCombRegistration implements Registration {
 
   @Override
   public String getHost() {
-    throw new IllegalStateException("not supported");
+    return MicroserviceHandler.getInstanceAddress();
   }
 
   @Override
   public int getPort() {
-    throw new IllegalStateException("not supported");
+    return StringUtils.isEmpty(discoveryProperties.getPort()) ? 8080 : Integer.parseInt(discoveryProperties.getPort());
   }
 
   @Override
   public boolean isSecure() {
-    throw new IllegalStateException("not supported");
+    return discoveryProperties.isSslEnabled();
   }
 
   @Override
   public URI getUri() {
-    throw new IllegalStateException("not supported");
+    return DefaultServiceInstance.getUri(this);
   }
 
   @Override
   public Map<String, String> getMetadata() {
-    throw new IllegalStateException("not supported");
+    return microserviceInstance.getProperties();
   }
 }
