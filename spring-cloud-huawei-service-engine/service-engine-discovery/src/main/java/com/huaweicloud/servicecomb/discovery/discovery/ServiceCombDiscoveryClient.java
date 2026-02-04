@@ -41,8 +41,11 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.event.HeartbeatEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.util.CollectionUtils;
 
 import com.google.common.eventbus.Subscribe;
+import com.huaweicloud.common.context.InvocationContext;
+import com.huaweicloud.common.context.InvocationContextHolder;
 import com.huaweicloud.service.engine.common.configration.bootstrap.BootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.MicroserviceProperties;
@@ -132,8 +135,30 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
     if (instances == null) {
       return Collections.emptyList();
     }
-    return instances.stream().filter(instance -> MicroserviceInstanceStatus.UP.equals(instance.getStatus()))
+    List<ServiceInstance> availableInstances = instances.stream()
+        .filter(instance -> MicroserviceInstanceStatus.UP.equals(instance.getStatus()))
         .map(ServiceCombServiceInstance::new).collect(Collectors.toList());
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("|{}| service [{}] current available instances [{}]", getTraceId(), serviceId,
+          buildInstancesInfo(availableInstances));
+    }
+    return availableInstances;
+  }
+
+  private String getTraceId() {
+    return InvocationContextHolder.getOrCreateInvocationContext().getContext(InvocationContext.CONTEXT_TRACE_ID);
+  }
+
+  private String buildInstancesInfo(List<ServiceInstance> availableInstances) {
+    if (CollectionUtils.isEmpty(availableInstances)) {
+      return "";
+    }
+    StringBuilder sb = new StringBuilder();
+    for (ServiceInstance instance : availableInstances) {
+      sb.append(instance.getHost());
+      sb.append("|");
+    }
+    return sb.toString();
   }
 
   @Override
