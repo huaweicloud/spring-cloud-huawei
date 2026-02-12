@@ -68,12 +68,14 @@
       <artifactId>annotations</artifactId>
     </dependency>
     <dependency>
-      <groupId>commons-configuration</groupId>
-      <artifactId>commons-configuration</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.servicecomb</groupId>
       <artifactId>foundation-common</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.netflix.archaius</groupId>
+          <artifactId>archaius-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.servicecomb</groupId>
@@ -82,6 +84,12 @@
     <dependency>
       <groupId>org.apache.servicecomb</groupId>
       <artifactId>http-client-common</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-configuration</groupId>
+          <artifactId>commons-configuration</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.servicecomb</groupId>

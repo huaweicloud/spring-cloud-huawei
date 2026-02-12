@@ -19,7 +19,7 @@ package com.huaweicloud.common.adapters.webmvc;
 
 import java.io.IOException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 
 import com.huaweicloud.common.configration.dynamic.ContextProperties;

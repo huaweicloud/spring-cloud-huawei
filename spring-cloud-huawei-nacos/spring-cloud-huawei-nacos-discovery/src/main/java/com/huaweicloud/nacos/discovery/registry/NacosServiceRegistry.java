@@ -51,12 +51,15 @@ public class NacosServiceRegistry implements ServiceRegistry<Registration> {
 
   private final EventBus eventBus;
 
+  private final Environment environment;
+
   public NacosServiceRegistry(List<NamingServiceManager> namingServiceManagers,
       NacosDiscoveryProperties nacosDiscoveryProperties, Environment environment) {
     this.nacosDiscoveryProperties = nacosDiscoveryProperties;
     this.namingServiceManagers = namingServiceManagers.stream().sorted(Comparator.comparingInt(Ordered::getOrder))
         .collect(Collectors.toList());
     this.instance = NacosMicroserviceHandler.createMicroserviceInstance(nacosDiscoveryProperties, environment);
+    this.environment = environment;
     eventBus = EventManager.getEventBus();
   }
 
@@ -90,7 +93,7 @@ public class NacosServiceRegistry implements ServiceRegistry<Registration> {
   }
 
   private void updateServiceMetadata(NamingMaintainService maintainService, String serviceId, String group) {
-    Map<String, String> serviceMetadata = NacosMicroserviceHandler.createMicroserviceMetadata();
+    Map<String, String> serviceMetadata = NacosMicroserviceHandler.createMicroserviceMetadata(environment);
     if (!CollectionUtils.isEmpty(serviceMetadata)) {
       tryUpdateService(maintainService, serviceId, group, serviceMetadata);
     }
