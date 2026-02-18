@@ -182,6 +182,11 @@
         <artifactId>spring-cloud-huawei-mesh</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.huaweicloud</groupId>
+        <artifactId>spring-cloud-huawei-rocketmq</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 </project>
