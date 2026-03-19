@@ -89,6 +89,10 @@
           <groupId>commons-configuration</groupId>
           <artifactId>commons-configuration</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>com.netflix.archaius</groupId>
+          <artifactId>archaius-core</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>

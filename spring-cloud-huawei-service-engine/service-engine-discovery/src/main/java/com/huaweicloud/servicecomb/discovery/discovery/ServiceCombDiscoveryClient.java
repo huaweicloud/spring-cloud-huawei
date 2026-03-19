@@ -128,11 +128,17 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
 
   @Override
   public List<ServiceInstance> getInstances(String serviceId) {
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("start find [{}] instances.", serviceId);
+    }
     SubscriptionKey subscriptionKey = parseMicroserviceName(serviceId);
     serviceCenterDiscovery.registerIfNotPresent(subscriptionKey);
     List<MicroserviceInstance> instances = serviceCenterDiscovery.getInstanceCache(subscriptionKey);
 
     if (instances == null) {
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("service [{}] instances is null.", serviceId);
+      }
       return Collections.emptyList();
     }
     List<ServiceInstance> availableInstances = instances.stream()

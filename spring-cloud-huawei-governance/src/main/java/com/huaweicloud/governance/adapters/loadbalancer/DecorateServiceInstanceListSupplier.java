@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.Request;
@@ -32,6 +34,7 @@ import reactor.core.publisher.Flux;
 
 @SuppressWarnings({"rawtype", "unchecked"})
 public class DecorateServiceInstanceListSupplier implements ServiceInstanceListSupplier {
+  private static final Logger LOGGER = LoggerFactory.getLogger(DecorateServiceInstanceListSupplier.class);
 
   private List<ServiceInstanceFilter> filters;
 
@@ -79,6 +82,9 @@ public class DecorateServiceInstanceListSupplier implements ServiceInstanceListS
     List<ServiceInstance> filteredInstances = instances;
     for (ServiceInstanceFilter instanceFilter : filters) {
       filteredInstances = instanceFilter.filter(this, filteredInstances, request);
+    }
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("number of final instances after filtering is: {}.", filteredInstances.size());
     }
     return filteredInstances;
   }
