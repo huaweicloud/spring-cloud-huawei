@@ -25,6 +25,7 @@ import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.serviceregistry.Registration;
+import org.springframework.core.env.Environment;
 
 import com.huaweicloud.service.engine.common.configration.bootstrap.BootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
@@ -48,12 +49,12 @@ public class ServiceCombRegistration implements Registration {
   private final DiscoveryProperties discoveryProperties;
 
   public ServiceCombRegistration(BootstrapProperties bootstrapProperties,
-      DiscoveryProperties discoveryProperties) {
+      DiscoveryProperties discoveryProperties, Environment environment) {
     this.discoveryBootstrapProperties = bootstrapProperties.getDiscoveryBootstrapProperties();
     this.discoveryProperties = discoveryProperties;
-    this.microservice = MicroserviceHandler.createMicroservice(bootstrapProperties);
+    this.microservice = MicroserviceHandler.createMicroservice(bootstrapProperties, environment);
     this.microserviceInstance = MicroserviceHandler
-        .createMicroserviceInstance(bootstrapProperties, discoveryProperties);
+        .createMicroserviceInstance(bootstrapProperties, discoveryProperties, environment);
   }
 
   public DiscoveryBootstrapProperties getDiscoveryBootstrapProperties() {

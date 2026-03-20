@@ -48,6 +48,7 @@
     <springdoc.version>2.7.0</springdoc.version>
     <nacos.client.version>2.3.0</nacos.client.version>
     <alibaba.context.support.version>1.0.11</alibaba.context.support.version>
+    <netty.version>4.1.131.Final</netty.version>
   </properties>
 
   <dependencyManagement>
@@ -71,6 +72,13 @@
         <groupId>org.apache.httpcomponents.client5</groupId>
         <artifactId>httpclient5</artifactId>
         <version>${httpclient.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-bom</artifactId>
+        <scope>import</scope>
+        <version>${netty.version}</version>
+        <type>pom</type>
       </dependency>
 
       <!-- core dependencies of spring cloud huawei, put it in the begging -->

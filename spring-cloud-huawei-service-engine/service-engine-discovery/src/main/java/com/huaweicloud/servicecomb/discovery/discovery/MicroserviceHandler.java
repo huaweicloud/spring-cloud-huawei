@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.configuration.EnvironmentConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.foundation.common.net.NetUtils;
 import org.apache.servicecomb.service.center.client.model.Framework;
@@ -34,6 +33,7 @@ import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstanceStatus;
 import org.apache.servicecomb.service.center.client.model.MicroserviceStatus;
+import org.springframework.core.env.Environment;
 
 import com.huaweicloud.common.util.NetUtil;
 import com.huaweicloud.service.engine.common.configration.bootstrap.BootstrapProperties;
@@ -65,7 +65,7 @@ public class MicroserviceHandler {
 
   private static String instanceAddress;
 
-  public static Microservice createMicroservice(BootstrapProperties bootstrapProperties) {
+  public static Microservice createMicroservice(BootstrapProperties bootstrapProperties, Environment environment) {
     DiscoveryBootstrapProperties discoveryBootstrapProperties = bootstrapProperties.getDiscoveryBootstrapProperties();
     MicroserviceProperties microserviceProperties = bootstrapProperties.getMicroserviceProperties();
     Microservice microservice = new Microservice();
@@ -75,22 +75,21 @@ public class MicroserviceHandler {
       microservice.setAlias(microserviceProperties.getApplication() +
           DiscoveryConstants.APP_SERVICE_SEPRATOR + microserviceProperties.getName());
     }
-    EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
-    if (!StringUtils.isEmpty(envConfig.getString(APP_MAPPING)) &&
-        !StringUtils.isEmpty(envConfig.getString(envConfig.getString(APP_MAPPING)))) {
-      microservice.setAppId(envConfig.getString(envConfig.getString(APP_MAPPING)));
+    if (!StringUtils.isEmpty(environment.getProperty(APP_MAPPING)) &&
+        !StringUtils.isEmpty(environment.getProperty(environment.getProperty(APP_MAPPING)))) {
+      microservice.setAppId(environment.getProperty(environment.getProperty(APP_MAPPING)));
     } else {
       microservice.setAppId(microserviceProperties.getApplication());
     }
-    if (!StringUtils.isEmpty(envConfig.getString(SERVICE_MAPPING)) &&
-        !StringUtils.isEmpty(envConfig.getString(envConfig.getString(SERVICE_MAPPING)))) {
-      microservice.setServiceName(envConfig.getString(envConfig.getString(SERVICE_MAPPING)));
+    if (!StringUtils.isEmpty(environment.getProperty(SERVICE_MAPPING)) &&
+        !StringUtils.isEmpty(environment.getProperty(environment.getProperty(SERVICE_MAPPING)))) {
+      microservice.setServiceName(environment.getProperty(environment.getProperty(SERVICE_MAPPING)));
     } else {
       microservice.setServiceName(microserviceProperties.getName());
     }
-    if (!StringUtils.isEmpty(envConfig.getString(VERSION_MAPPING)) &&
-        !StringUtils.isEmpty(envConfig.getString(envConfig.getString(VERSION_MAPPING)))) {
-      microservice.setVersion(envConfig.getString(envConfig.getString(VERSION_MAPPING)));
+    if (!StringUtils.isEmpty(environment.getProperty(VERSION_MAPPING)) &&
+        !StringUtils.isEmpty(environment.getProperty(environment.getProperty(VERSION_MAPPING)))) {
+      microservice.setVersion(environment.getProperty(environment.getProperty(VERSION_MAPPING)));
     } else {
       microservice.setVersion(microserviceProperties.getVersion());
     }
@@ -102,13 +101,25 @@ public class MicroserviceHandler {
       microservice.getProperties().put(DiscoveryConstants.CONFIG_ALLOW_CROSS_APP_KEY, "true");
     }
 
-    String[] servicePropArray = envConfig.getStringArray(SERVICE_PROPS);
+    String[] servicePropArray = parseArrayValue(environment.getProperty(SERVICE_PROPS)).toArray(new String[0]);
     if (servicePropArray.length != 0) {
       microservice.getProperties().putAll(parseProps(servicePropArray));
     }
 
     microservice.setStatus(MicroserviceStatus.UP);
     return microservice;
+  }
+
+  public static List<String> parseArrayValue(String value) {
+    if (value == null) {
+      return new ArrayList<>(0);
+    }
+    String[] tokens = value.split(",");
+    List<String> result = new ArrayList<>(tokens.length);
+    for (String t : tokens) {
+      result.add(t.trim());
+    }
+    return result;
   }
 
   private static Framework createFramework() {
@@ -118,9 +129,8 @@ public class MicroserviceHandler {
     return framework;
   }
 
-  public static MicroserviceInstance createMicroserviceInstance(
-      BootstrapProperties bootstrapProperties,
-      DiscoveryProperties discoveryProperties) {
+  public static MicroserviceInstance createMicroserviceInstance(BootstrapProperties bootstrapProperties,
+      DiscoveryProperties discoveryProperties, Environment environment) {
     DiscoveryBootstrapProperties discoveryBootstrapProperties = bootstrapProperties.getDiscoveryBootstrapProperties();
     MicroserviceProperties microserviceProperties = bootstrapProperties.getMicroserviceProperties();
     InstanceProperties instanceProperties = bootstrapProperties.getInstanceProperties();
@@ -158,17 +168,16 @@ public class MicroserviceHandler {
     microserviceInstance.setModTimestamp(currTime);
 
     // what's MicroserviceInstance doing? same sa Microservice?
-    EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
-    if (!StringUtils.isEmpty(envConfig.getString(VERSION_MAPPING)) &&
-        !StringUtils.isEmpty(envConfig.getString(envConfig.getString(VERSION_MAPPING)))) {
-      microserviceInstance.setVersion(envConfig.getString(VERSION_MAPPING));
+    if (!StringUtils.isEmpty(environment.getProperty(VERSION_MAPPING)) &&
+        !StringUtils.isEmpty(environment.getProperty(environment.getProperty(VERSION_MAPPING)))) {
+      microserviceInstance.setVersion(environment.getProperty(VERSION_MAPPING));
     } else {
       microserviceInstance.setVersion(microserviceProperties.getVersion());
     }
 
     Map<String, String> properties = new HashMap<>();
     properties.putAll(instanceProperties.getProperties());
-    properties.putAll(genCasProperties());
+    properties.putAll(genCasProperties(environment));
     microserviceInstance.setProperties(properties);
 
     if (StringUtils.isNotEmpty(instanceProperties.getInitialStatus())) {
@@ -177,26 +186,25 @@ public class MicroserviceHandler {
     return microserviceInstance;
   }
 
-  private static Map<String, String> genCasProperties() {
+  private static Map<String, String> genCasProperties(Environment environment) {
     Map<String, String> properties = new HashMap<>();
-    EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
-    if (!StringUtils.isEmpty(envConfig.getString(CAS_APPLICATION_ID))) {
-      properties.put(CAS_APPLICATION_ID, envConfig.getString(CAS_APPLICATION_ID));
+    if (!StringUtils.isEmpty(environment.getProperty(CAS_APPLICATION_ID))) {
+      properties.put(CAS_APPLICATION_ID, environment.getProperty(CAS_APPLICATION_ID));
     }
-    if (!StringUtils.isEmpty(envConfig.getString(CAS_COMPONENT_NAME))) {
-      properties.put(CAS_COMPONENT_NAME, envConfig.getString(CAS_COMPONENT_NAME));
+    if (!StringUtils.isEmpty(environment.getProperty(CAS_COMPONENT_NAME))) {
+      properties.put(CAS_COMPONENT_NAME, environment.getProperty(CAS_COMPONENT_NAME));
     }
-    if (!StringUtils.isEmpty(envConfig.getString(CAS_INSTANCE_VERSION))) {
-      properties.put(CAS_INSTANCE_VERSION, envConfig.getString(CAS_INSTANCE_VERSION));
+    if (!StringUtils.isEmpty(environment.getProperty(CAS_INSTANCE_VERSION))) {
+      properties.put(CAS_INSTANCE_VERSION, environment.getProperty(CAS_INSTANCE_VERSION));
     }
-    if (!StringUtils.isEmpty(envConfig.getString(CAS_INSTANCE_ID))) {
-      properties.put(CAS_INSTANCE_ID, envConfig.getString(CAS_INSTANCE_ID));
+    if (!StringUtils.isEmpty(environment.getProperty(CAS_INSTANCE_ID))) {
+      properties.put(CAS_INSTANCE_ID, environment.getProperty(CAS_INSTANCE_ID));
     }
-    if (!StringUtils.isEmpty(envConfig.getString(CAS_ENVIRONMENT_ID))) {
-      properties.put(CAS_ENVIRONMENT_ID, envConfig.getString(CAS_ENVIRONMENT_ID));
+    if (!StringUtils.isEmpty(environment.getProperty(CAS_ENVIRONMENT_ID))) {
+      properties.put(CAS_ENVIRONMENT_ID, environment.getProperty(CAS_ENVIRONMENT_ID));
     }
 
-    String[] instancePropArray = envConfig.getStringArray(INSTANCE_PROPS);
+    String[] instancePropArray = parseArrayValue(environment.getProperty(INSTANCE_PROPS)).toArray(new String[0]);
     if (instancePropArray.length != 0) {
       properties.putAll(parseProps(instancePropArray));
     }
