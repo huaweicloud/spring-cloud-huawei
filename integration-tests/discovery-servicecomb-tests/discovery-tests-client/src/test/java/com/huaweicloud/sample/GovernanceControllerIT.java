@@ -203,7 +203,8 @@ public class GovernanceControllerIT {
   }
 
   @Test
-  public void testCircuitBreakerHeader() {
+  public void testCircuitBreakerHeader() throws InterruptedException {
+    Thread.sleep(50000);
     AtomicBoolean notExpectedFailed = new AtomicBoolean(false);
     AtomicLong successCount = new AtomicLong(0);
     AtomicLong rejectedCount = new AtomicLong(0);
