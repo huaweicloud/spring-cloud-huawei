@@ -19,7 +19,7 @@ package com.huaweicloud.governance.authentication;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.foundation.common.utils.KeyPairUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

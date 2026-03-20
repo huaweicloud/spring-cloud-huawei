@@ -17,13 +17,14 @@
 
 package com.huaweicloud.nacos.discovery.registry;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.configuration.EnvironmentConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 
@@ -71,9 +72,8 @@ public class NacosMicroserviceHandler {
     return instance;
   }
 
-  public static Map<String, String> createMicroserviceMetadata() {
-    EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
-    String[] instancePropArray = envConfig.getStringArray(SERVICE_PROPS);
+  public static Map<String, String> createMicroserviceMetadata(Environment environment) {
+    String[] instancePropArray = parseArrayValue(environment.getProperty(SERVICE_PROPS)).toArray(new String[0]);
     if (instancePropArray.length != 0) {
       return parseProps(instancePropArray);
     }
@@ -101,13 +101,24 @@ public class NacosMicroserviceHandler {
         !StringUtils.isEmpty(environment.getProperty(environment.getProperty(VERSION_MAPPING)))) {
       properties.put("version", environment.getProperty(environment.getProperty(VERSION_MAPPING)));
     }
-    EnvironmentConfiguration envConfig = new EnvironmentConfiguration();
-    String[] instancePropArray = envConfig.getStringArray(INSTANCE_PROPS);
+    String[] instancePropArray = parseArrayValue(environment.getProperty(INSTANCE_PROPS)).toArray(new String[0]);
     if (instancePropArray.length != 0) {
       properties.putAll(parseProps(instancePropArray));
     }
 
     return properties;
+  }
+
+  public static List<String> parseArrayValue(String value) {
+    if (value == null) {
+      return new ArrayList<>(0);
+    }
+    String[] tokens = value.split(",");
+    List<String> result = new ArrayList<>(tokens.length);
+    for (String t : tokens) {
+      result.add(t.trim());
+    }
+    return result;
   }
 
   private static Map<String, String> parseProps(String... value) {

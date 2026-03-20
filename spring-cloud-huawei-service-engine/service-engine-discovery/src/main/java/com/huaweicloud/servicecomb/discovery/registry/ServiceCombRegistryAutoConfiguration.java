@@ -29,6 +29,7 @@ import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationP
 import org.springframework.cloud.client.serviceregistry.ServiceRegistryAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import com.huaweicloud.service.engine.common.configration.bootstrap.BootstrapProperties;
 import com.huaweicloud.service.engine.common.configration.bootstrap.DiscoveryBootstrapProperties;
@@ -57,8 +58,8 @@ public class ServiceCombRegistryAutoConfiguration {
   @Bean
   @ConditionalOnBean(AutoServiceRegistrationProperties.class)
   public ServiceCombRegistration serviceCombRegistration(DiscoveryProperties discoveryProperties,
-      BootstrapProperties bootstrapProperties) {
-    return new ServiceCombRegistration(bootstrapProperties, discoveryProperties);
+      BootstrapProperties bootstrapProperties, Environment environment) {
+    return new ServiceCombRegistration(bootstrapProperties, discoveryProperties, environment);
   }
 
   @Bean
