@@ -50,6 +50,7 @@
     <nacos.client.version>2.3.0</nacos.client.version>
     <alibaba.context.support.version>1.0.11</alibaba.context.support.version>
     <spring-framework.version>5.3.39</spring-framework.version>
+    <netty.version>4.1.131.Final</netty.version>
   </properties>
 
   <dependencyManagement>
@@ -71,6 +72,15 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-bom</artifactId>
+        <scope>import</scope>
+        <version>${netty.version}</version>
+        <type>pom</type>
+      </dependency>
+
+      <!-- core dependencies of spring cloud huawei, put it in the begging -->
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>

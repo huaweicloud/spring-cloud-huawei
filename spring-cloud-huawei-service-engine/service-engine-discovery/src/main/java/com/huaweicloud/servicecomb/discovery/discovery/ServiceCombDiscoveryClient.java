@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.InstanceChangedEvent;
 import org.apache.servicecomb.service.center.client.RegistrationEvents.HeartBeatEvent;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
@@ -128,11 +128,17 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
 
   @Override
   public List<ServiceInstance> getInstances(String serviceId) {
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("start find [{}] instances.", serviceId);
+    }
     SubscriptionKey subscriptionKey = parseMicroserviceName(serviceId);
     serviceCenterDiscovery.registerIfNotPresent(subscriptionKey);
     List<MicroserviceInstance> instances = serviceCenterDiscovery.getInstanceCache(subscriptionKey);
 
     if (instances == null) {
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("service [{}] instances is null.", serviceId);
+      }
       return Collections.emptyList();
     }
     List<ServiceInstance> availableInstances = instances.stream()
@@ -201,8 +207,8 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
 
   private boolean environmentEqual(Microservice microservice) {
     // empty is equal.
-    if (StringUtils.isEmpty(microservice.getEnvironment()) && StringUtils
-        .isEmpty(microserviceProperties.getEnvironment())) {
+    if (StringUtils.isEmpty(microservice.getEnvironment())
+        && StringUtils.isEmpty(microserviceProperties.getEnvironment())) {
       return true;
     }
     return StringUtils.equals(microservice.getEnvironment(), microserviceProperties.getEnvironment());

@@ -18,7 +18,7 @@
 package com.huaweicloud.governance.authentication;
 
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.huaweicloud.common.context.InvocationContext;
