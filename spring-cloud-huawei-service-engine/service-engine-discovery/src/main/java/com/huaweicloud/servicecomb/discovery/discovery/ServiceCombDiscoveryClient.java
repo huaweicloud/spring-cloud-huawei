@@ -205,6 +205,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
     return null;
   }
 
+  @SuppressWarnings("deprecation")
   private boolean environmentEqual(Microservice microservice) {
     // empty is equal.
     if (StringUtils.isEmpty(microservice.getEnvironment())

@@ -17,7 +17,7 @@
 
 package com.huaweicloud.governance.adapters.webflux;
 
-import org.springframework.boot.web.reactive.filter.OrderedWebFilter;
+import org.springframework.boot.webflux.filter.OrderedWebFilter;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
 

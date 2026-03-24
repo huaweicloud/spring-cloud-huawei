@@ -22,7 +22,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.boot.http.converter.autoconfigure.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -32,7 +32,7 @@ import feign.optionals.OptionalDecoder;
 
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.cloud.openfeign.support.SpringDecoder"})
-@SuppressWarnings({"all", "PMD"})
+@SuppressWarnings({"all", "PMD", "deprecation"})
 @SuppressFBWarnings
 public class SpringDecoderConfiguration {
   @Autowired

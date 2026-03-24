@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.boot.http.converter.autoconfigure.HttpMessageConverters;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
@@ -40,7 +40,7 @@ import feign.codec.Decoder;
 /**
  * This class is copied from SpringDecoder, and support relection GenericArrayType.
  */
-@SuppressWarnings({"all", "PMD"})
+@SuppressWarnings({"all", "PMD", "deprecation"})
 @SuppressFBWarnings
 public class ExtendedSpringDecoder implements Decoder {
 

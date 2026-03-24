@@ -19,8 +19,9 @@ package com.huaweicloud.servicecomb.discovery.check;
 
 import org.apache.servicecomb.service.center.client.RegistrationEvents.MicroserviceInstanceRegistrationEvent;
 import org.apache.servicecomb.service.center.client.RegistrationEvents.MicroserviceRegistrationEvent;
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
+import org.jspecify.annotations.Nullable;
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.contributor.HealthIndicator;
 
 import com.google.common.eventbus.Subscribe;
 import com.huaweicloud.common.event.EventManager;
@@ -36,7 +37,7 @@ public class RegistryHealthIndicator implements HealthIndicator {
   }
 
   @Override
-  public Health health() {
+  public @Nullable Health health() {
     if (isSuccess) {
       return Health.up().build();
     }

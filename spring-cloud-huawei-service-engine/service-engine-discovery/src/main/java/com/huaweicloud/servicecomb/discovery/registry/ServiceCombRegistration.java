@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.service.center.client.model.Microservice;
 import org.apache.servicecomb.service.center.client.model.MicroserviceInstance;
-import org.springframework.cloud.client.DefaultServiceInstance;
+import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.core.env.Environment;
 
@@ -97,7 +97,7 @@ public class ServiceCombRegistration implements Registration {
 
   @Override
   public URI getUri() {
-    return DefaultServiceInstance.getUri(this);
+    return ServiceInstance.createUri(this);
   }
 
   @Override

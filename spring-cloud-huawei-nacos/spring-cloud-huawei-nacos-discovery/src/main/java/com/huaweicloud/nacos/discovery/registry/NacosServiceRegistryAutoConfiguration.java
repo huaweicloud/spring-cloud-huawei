@@ -28,6 +28,7 @@ import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationA
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationConfiguration;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationProperties;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistryAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -61,8 +62,9 @@ public class NacosServiceRegistryAutoConfiguration {
 
   @Bean
   @ConditionalOnBean(AutoServiceRegistrationProperties.class)
-  public NacosAutoServiceRegistration nacosAutoServiceRegistration(NacosServiceRegistry registry,
-      AutoServiceRegistrationProperties autoServiceRegistrationProperties, NacosRegistration registration) {
-    return new NacosAutoServiceRegistration(registry, autoServiceRegistrationProperties, registration);
+  public NacosAutoServiceRegistration nacosAutoServiceRegistration(ApplicationContext context,
+      NacosServiceRegistry registry, AutoServiceRegistrationProperties autoServiceRegistrationProperties,
+      NacosRegistration registration) {
+    return new NacosAutoServiceRegistration(context, registry, autoServiceRegistrationProperties, registration);
   }
 }

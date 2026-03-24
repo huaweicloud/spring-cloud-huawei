@@ -49,6 +49,7 @@
     <nacos.client.version>2.3.0</nacos.client.version>
     <alibaba.context.support.version>1.0.11</alibaba.context.support.version>
     <netty.version>4.1.131.Final</netty.version>
+    <spring-boot-aop.version>3.5.12</spring-boot-aop.version>
   </properties>
 
   <dependencyManagement>
@@ -182,6 +183,11 @@
         <groupId>com.alibaba.spring</groupId>
         <artifactId>spring-context-support</artifactId>
         <version>${alibaba.context.support.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-aop</artifactId>
+        <version>${spring-boot-aop.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

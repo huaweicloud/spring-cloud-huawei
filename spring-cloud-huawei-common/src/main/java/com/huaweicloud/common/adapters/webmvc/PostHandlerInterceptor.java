@@ -25,6 +25,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.ModelAndView;
 
 public interface PostHandlerInterceptor extends Ordered {
+  @SuppressWarnings("deprecation")
   void handle(HttpServletRequest request, HttpServletResponse response, Object handler,
       @Nullable ModelAndView modelAndView) throws Exception;
 

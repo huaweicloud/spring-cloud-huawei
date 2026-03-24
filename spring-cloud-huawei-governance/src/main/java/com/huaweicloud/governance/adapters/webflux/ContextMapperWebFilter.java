@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.servicecomb.governance.handler.MapperHandler;
 import org.apache.servicecomb.governance.marker.GovernanceRequestExtractor;
 import org.apache.servicecomb.governance.processor.mapping.Mapper;
-import org.springframework.boot.web.reactive.filter.OrderedWebFilter;
+import org.springframework.boot.webflux.filter.OrderedWebFilter;
 import org.springframework.core.Ordered;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;

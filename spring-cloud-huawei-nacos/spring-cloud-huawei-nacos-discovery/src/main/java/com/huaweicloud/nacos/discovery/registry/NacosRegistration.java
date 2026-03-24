@@ -21,7 +21,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.cloud.client.DefaultServiceInstance;
+import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.serviceregistry.Registration;
 
 import com.huaweicloud.nacos.discovery.NacosDiscoveryProperties;
@@ -80,7 +80,7 @@ public class NacosRegistration implements Registration {
 
   @Override
   public URI getUri() {
-    return DefaultServiceInstance.getUri(this);
+    return ServiceInstance.createUri(this);
   }
 
   @Override
