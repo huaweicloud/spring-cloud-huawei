@@ -29,6 +29,9 @@ import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.core.Ordered;
 
+import com.huaweicloud.common.context.InvocationContext;
+import com.huaweicloud.common.context.InvocationContextHolder;
+
 import jakarta.annotation.PostConstruct;
 import reactor.core.publisher.Flux;
 
@@ -65,7 +68,12 @@ public class DecorateServiceInstanceListSupplier implements ServiceInstanceListS
   @SuppressWarnings({"rawtypes", "unchecked"})
   public Flux<List<ServiceInstance>> get(Request request) {
     Flux<List<ServiceInstance>> result = delegate.get(request);
-    return result.map(instances -> filter(instances, request));
+    InvocationContext context = InvocationContextHolder.getOrCreateInvocationContext();
+    // The delegate.get(request).map() method starts a new thread to execute the internal function.
+    // As a result, the thread running in the filter method is not the HTTP invoking thread,
+    // and the context information cannot be obtained during dark launch routing.
+    // Therefore, the context is added to ensure that the dark launch routing function works properly.
+    return result.map(instances -> filter(instances, request, context));
   }
 
   @Override
@@ -74,11 +82,12 @@ public class DecorateServiceInstanceListSupplier implements ServiceInstanceListS
   }
 
   @SuppressWarnings({"all"})
-  private List<ServiceInstance> filter(List<ServiceInstance> instances, @SuppressWarnings({"all"}) Request<?> request) {
+  private List<ServiceInstance> filter(List<ServiceInstance> instances, @SuppressWarnings({"all"}) Request<?> request,
+      InvocationContext context) {
     if (filters == null) {
       return instances;
     }
-
+    InvocationContextHolder.setInvocationContext(context);
     List<ServiceInstance> filteredInstances = instances;
     for (ServiceInstanceFilter instanceFilter : filters) {
       filteredInstances = instanceFilter.filter(this, filteredInstances, request);

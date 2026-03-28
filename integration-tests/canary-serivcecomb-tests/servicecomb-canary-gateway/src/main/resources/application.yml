@@ -15,6 +15,18 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
+spring:
+  main:
+    web-application-type: reactive
+  # local discovery config con not set in bootstrap.xml
+  cloud:
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lowerCaseServiceId: true
 
 servicecomb:
   routeRule:

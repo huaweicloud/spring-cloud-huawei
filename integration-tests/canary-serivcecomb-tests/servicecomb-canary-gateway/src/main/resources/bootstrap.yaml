@@ -23,11 +23,6 @@ spring:
   application:
     name: discovery-gateway
   cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-          lowerCaseServiceId: true
     servicecomb:
       context:
         queryContextMapper:

@@ -20,24 +20,6 @@ server:
   port: 8082
 
 servicecomb:
-# used to testing isolation and dashboard
-#  matchGroup:
-#    allOperation: |
-#      matches:
-#        - apiPath:
-#            prefix: "/"
-#  circuitBreaker:
-#    allOperation: |
-#      minimumNumberOfCalls: 10
-#      slidingWindowSize: 10
-#      slidingWindowType: COUNT_BASED
-#      failureRateThreshold: 20
-#  instanceIsolation:
-#    default: |
-#      minimumNumberOfCalls: 10
-#      slidingWindowSize: 10
-#      slidingWindowType: COUNT_BASED
-#      failureRateThreshold: 20
   routeRule:
     basic-provider: |
       - precedence: 1
@@ -61,3 +43,18 @@ servicecomb:
           - weight: 100
             tags:
               version: 0.0.1
+
+
+cse:
+  v1:
+    test:
+      foo: foo
+      bar: bar
+      configModels:
+        - name: s1
+          index: 2
+        - name: s2
+          index: 3
+      sequences:
+        - s0
+        - s1

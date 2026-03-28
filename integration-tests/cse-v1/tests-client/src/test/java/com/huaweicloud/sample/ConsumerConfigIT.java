@@ -55,6 +55,6 @@ public class ConsumerConfigIT {
   @SuppressWarnings({"rawtypes", "unchecked"})
   public void testModels() {
     List<Map<?, ?>> result = template.getForObject(Config.GATEWAY_URL + "/models", List.class);
-    assertThat(result.toString()).isEqualTo("[{name=s1, index=2}, {name=s2, index=3}]");
+    assertThat(result.toString()).isEqualTo("[{index=2, name=s1}, {index=3, name=s2}]");
   }
 }
