@@ -29,8 +29,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
 
-import com.huaweicloud.hessian.HessianHttpMessageConverter;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import feign.codec.Encoder;
 import feign.form.MultipartFormContentProcessor;
@@ -49,9 +47,6 @@ public class SpringEncoderConfiguration {
 
   @Autowired(required = false)
   private DataWebProperties springDataWebProperties;
-
-  @Autowired
-  private HessianHttpMessageConverter httpMessageConverters;
 
   @Bean
   @ConditionalOnMissingBean
