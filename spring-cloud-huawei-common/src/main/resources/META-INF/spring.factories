@@ -18,7 +18,5 @@
 
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
   com.huaweicloud.common.configration.BootstrapPropertiesConfiguration,\
-  com.huaweicloud.common.CommonConfiguration
-
-org.springframework.boot.env.EnvironmentPostProcessor=\
+  com.huaweicloud.common.CommonConfiguration,\
   com.huaweicloud.common.ConfigEnvironmentPostProcessor

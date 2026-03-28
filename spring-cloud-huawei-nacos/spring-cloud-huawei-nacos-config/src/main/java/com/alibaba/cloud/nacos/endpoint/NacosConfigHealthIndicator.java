@@ -20,12 +20,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.boot.health.contributor.AbstractHealthIndicator;
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.contributor.HealthIndicator;
+
 import com.huaweicloud.nacos.config.manager.ConfigServiceManagerUtils;
 import com.huaweicloud.nacos.config.manager.NacosConfigManager;
-
-import org.springframework.boot.actuate.health.AbstractHealthIndicator;
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
 
 /**
  * Forked from com.alibaba.cloud.nacos.endpoint.NacosConfigHealthIndicator.java

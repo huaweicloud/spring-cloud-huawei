@@ -18,13 +18,12 @@
 package com.huaweicloud.common;
 
 import org.apache.servicecomb.foundation.common.LegacyPropertyFactory;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.env.EnvironmentPostProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;
 
-public class ConfigEnvironmentPostProcessor implements EnvironmentPostProcessor {
-  @Override
-  public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+public class ConfigEnvironmentPostProcessor {
+  @Autowired
+  public ConfigEnvironmentPostProcessor(ConfigurableEnvironment environment) {
     LegacyPropertyFactory.setEnvironment(environment);
   }
 }

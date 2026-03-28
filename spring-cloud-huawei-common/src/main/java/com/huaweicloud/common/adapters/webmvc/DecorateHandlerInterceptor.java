@@ -54,6 +54,7 @@ public class DecorateHandlerInterceptor implements HandlerInterceptor, Ordered {
     return true;
   }
 
+  @SuppressWarnings("deprecation")
   @Override
   public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
       @Nullable ModelAndView modelAndView) throws Exception {

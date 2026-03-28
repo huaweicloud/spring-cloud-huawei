@@ -18,3 +18,12 @@
 
 server:
   port: 8082
+
+cse:
+  v2:
+    test:
+      foo: foo
+      bar: bar
+      common: common
+      priority: v3
+      priority1: v3

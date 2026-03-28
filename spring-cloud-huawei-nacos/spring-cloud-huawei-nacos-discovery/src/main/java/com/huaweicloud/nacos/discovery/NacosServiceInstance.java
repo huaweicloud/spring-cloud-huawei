@@ -20,7 +20,6 @@ package com.huaweicloud.nacos.discovery;
 import java.net.URI;
 import java.util.Map;
 
-import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
 
 public class NacosServiceInstance implements ServiceInstance {
@@ -64,7 +63,7 @@ public class NacosServiceInstance implements ServiceInstance {
 
   @Override
   public URI getUri() {
-    return DefaultServiceInstance.getUri(this);
+    return ServiceInstance.createUri(this);
   }
 
   @Override

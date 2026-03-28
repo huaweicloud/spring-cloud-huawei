@@ -45,6 +45,10 @@
       <optional>true</optional>
     </dependency>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-webflux</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-commons</artifactId>
     </dependency>
@@ -55,10 +59,6 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-loadbalancer</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -131,7 +131,7 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-gateway-server</artifactId>
+      <artifactId>spring-cloud-gateway-server-webflux</artifactId>
       <scope>provided</scope>
     </dependency>
     <!-- end extensions module -->

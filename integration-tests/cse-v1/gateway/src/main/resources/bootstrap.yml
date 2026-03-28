@@ -23,6 +23,9 @@ spring:
     name: basic-gateway
   cloud:
     servicecomb:
+      context:
+        headerContextMapper:
+          canary: canary
       discovery:
         appName: cse-v1-test-application
         serviceName: ${spring.application.name}
@@ -45,7 +48,3 @@ spring:
         secretKey: ${CREDENTIALS_SK}
         cipher: default
         project: cn-south-1
-
-      context:
-        headerContextMapper:
-          canary: canary

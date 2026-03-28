@@ -19,8 +19,10 @@
 spring:
   cloud:
     gateway:
-      routes:
-        - id: mesh-consumer
-          uri: lb://mesh-consumer
-          predicates:
-            - Path=/mesh/consumer/**
+      server:
+        webflux:
+          routes:
+            - id: mesh-consumer
+              uri: lb://mesh-consumer
+              predicates:
+                - Path=/mesh/consumer/**

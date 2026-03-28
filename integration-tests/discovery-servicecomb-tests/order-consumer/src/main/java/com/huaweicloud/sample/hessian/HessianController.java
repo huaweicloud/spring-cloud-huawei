@@ -20,7 +20,7 @@ package com.huaweicloud.sample.hessian;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -147,7 +147,7 @@ public class HessianController {
   }
 
   private void check(String expected, String actual, String error) {
-    if (!StringUtils.equals(expected, actual)) {
+    if (!Strings.CS.equals(expected, actual)) {
       throw new RuntimeException(error);
     }
   }
