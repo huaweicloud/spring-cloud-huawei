@@ -76,7 +76,7 @@ public class GovernanceRestTemplate extends RestTemplate {
     this.faultInjectionHandler = faultInjectionHandler;
   }
 
-  @SuppressWarnings("PMD.UseTryWithResources")
+  @SuppressWarnings({"PMD.UseTryWithResources", "deprecation"})
   @Nullable
   @Override
   protected <T> T doExecute(URI url, @Nullable String uriTemplate, @Nullable HttpMethod method, @Nullable RequestCallback requestCallback,
@@ -126,6 +126,7 @@ public class GovernanceRestTemplate extends RestTemplate {
     }
   }
 
+  @SuppressWarnings("deprecation")
   private ClientHttpResponse executeWithFault(URI url, @Nullable HttpMethod method,
       @Nullable RequestCallback requestCallback,
       ClientHttpRequest request) {

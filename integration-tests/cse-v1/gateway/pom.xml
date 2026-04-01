@@ -31,6 +31,10 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-starter-huawei-service-engine-gateway</artifactId>
     </dependency>

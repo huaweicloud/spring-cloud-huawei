@@ -16,13 +16,10 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 ---
-openapi: 3.0.1
+openapi: 3.1.0
 info:
   title: OpenAPI definition
   version: v0
-servers:
-  - url: /
-    description: Generated server url
 paths:
   /stringRequestBody:
     post:
@@ -32,16 +29,14 @@ paths:
       requestBody:
         content:
           application/json:
-            schema:
-              type: string
+            schema: {}
         required: true
       responses:
         "200":
           description: OK
           content:
-            '*/*':
-              schema:
-                type: string
+            application/vnd.hal+json:
+              schema: {}
   /sayHelloPost:
     post:
       tags:
@@ -51,15 +46,29 @@ paths:
         - name: id
           in: query
           required: true
-          schema:
-            type: string
+          schema: {}
       responses:
         "200":
           description: OK
           content:
-            '*/*':
-              schema:
-                type: string
+            application/vnd.hal+json:
+              schema: {}
+  /danglingPattern/**:
+    post:
+      tags:
+        - schema-content-controller
+      operationId: /danglingPattern/**
+      requestBody:
+        content:
+          application/json:
+            schema: {}
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.hal+json:
+              schema: {}
   /sayHelloGet:
     get:
       tags:
@@ -69,15 +78,13 @@ paths:
         - name: id
           in: query
           required: true
-          schema:
-            type: string
+          schema: {}
       responses:
         "200":
           description: OK
           content:
-            '*/*':
-              schema:
-                type: string
+            application/vnd.hal+json:
+              schema: {}
     put:
       tags:
         - schema-content-controller
@@ -86,15 +93,13 @@ paths:
         - name: id
           in: query
           required: true
-          schema:
-            type: string
+          schema: {}
       responses:
         "200":
           description: OK
           content:
-            '*/*':
-              schema:
-                type: string
+            application/vnd.hal+json:
+              schema: {}
     post:
       tags:
         - schema-content-controller
@@ -103,15 +108,13 @@ paths:
         - name: id
           in: query
           required: true
-          schema:
-            type: string
+          schema: {}
       responses:
         "200":
           description: OK
           content:
-            '*/*':
-              schema:
-                type: string
+            application/vnd.hal+json:
+              schema: {}
     delete:
       tags:
         - schema-content-controller
@@ -120,15 +123,13 @@ paths:
         - name: id
           in: query
           required: true
-          schema:
-            type: string
+          schema: {}
       responses:
         "200":
           description: OK
           content:
-            '*/*':
-              schema:
-                type: string
+            application/vnd.hal+json:
+              schema: {}
     options:
       tags:
         - schema-content-controller
@@ -137,15 +138,13 @@ paths:
         - name: id
           in: query
           required: true
-          schema:
-            type: string
+          schema: {}
       responses:
         "200":
           description: OK
           content:
-            '*/*':
-              schema:
-                type: string
+            application/vnd.hal+json:
+              schema: {}
     head:
       tags:
         - schema-content-controller
@@ -154,15 +153,13 @@ paths:
         - name: id
           in: query
           required: true
-          schema:
-            type: string
+          schema: {}
       responses:
         "200":
           description: OK
           content:
-            '*/*':
-              schema:
-                type: string
+            application/vnd.hal+json:
+              schema: {}
     patch:
       tags:
         - schema-content-controller
@@ -171,13 +168,12 @@ paths:
         - name: id
           in: query
           required: true
-          schema:
-            type: string
+          schema: {}
       responses:
         "200":
           description: OK
           content:
-            '*/*':
-              schema:
-                type: string
-components: {}
+            application/vnd.hal+json:
+              schema: {}
+components:
+  schemas: {}

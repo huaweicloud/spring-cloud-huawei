@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
@@ -40,11 +39,11 @@ import feign.codec.Decoder;
 /**
  * This class is copied from SpringDecoder, and support relection GenericArrayType.
  */
-@SuppressWarnings({"all", "PMD"})
+@SuppressWarnings({"all", "PMD", "deprecation"})
 @SuppressFBWarnings
 public class ExtendedSpringDecoder implements Decoder {
 
-  private final ObjectFactory<HttpMessageConverters> messageConverters;
+  private final List<HttpMessageConverter<?>> converters;
 
   private final ObjectProvider<HttpMessageConverterCustomizer> customizers;
 
@@ -53,19 +52,18 @@ public class ExtendedSpringDecoder implements Decoder {
    * {@link SpringDecoder#SpringDecoder(ObjectFactory, ObjectProvider)}
    */
   @Deprecated
-  public ExtendedSpringDecoder(ObjectFactory<HttpMessageConverters> messageConverters) {
-    this(messageConverters, new EmptyObjectProvider<>());
+  public ExtendedSpringDecoder(List<HttpMessageConverter<?>> converters) {
+    this(converters, new EmptyObjectProvider<>());
   }
 
-  public ExtendedSpringDecoder(ObjectFactory<HttpMessageConverters> messageConverters,
+  public ExtendedSpringDecoder(List<HttpMessageConverter<?>> converters,
       ObjectProvider<HttpMessageConverterCustomizer> customizers) {
-    this.messageConverters = messageConverters;
+    this.converters = converters;
     this.customizers = customizers;
   }
 
   @Override
   public Object decode(final Response response, Type type) throws IOException, FeignException {
-    List<HttpMessageConverter<?>> converters = messageConverters.getObject().getConverters();
     customizers.forEach(customizer -> customizer.accept(converters));
     @SuppressWarnings({"unchecked", "rawtypes"})
     HttpMessageConverterExtractor<?> extractor = new HttpMessageConverterExtractor(type, converters);

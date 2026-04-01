@@ -28,6 +28,7 @@ import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.cloud.client.serviceregistry.RegistrationLifecycle;
 import org.springframework.cloud.client.serviceregistry.RegistrationManagementLifecycle;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
+import org.springframework.context.ApplicationContext;
 
 public class NacosAutoServiceRegistration extends AbstractAutoServiceRegistration<Registration> {
 
@@ -41,9 +42,9 @@ public class NacosAutoServiceRegistration extends AbstractAutoServiceRegistratio
 
   private boolean registryEnabled;
 
-  public NacosAutoServiceRegistration(ServiceRegistry<Registration> serviceRegistry,
+  public NacosAutoServiceRegistration(ApplicationContext context, ServiceRegistry<Registration> serviceRegistry,
       AutoServiceRegistrationProperties autoServiceRegistrationProperties, NacosRegistration registration) {
-    super(serviceRegistry, autoServiceRegistrationProperties);
+    super(context, serviceRegistry, autoServiceRegistrationProperties);
     this.registration = registration;
     this.serviceRegistry = serviceRegistry;
     this.registryEnabled = registration.getNacosDiscoveryProperties().isRegisterEnabled();

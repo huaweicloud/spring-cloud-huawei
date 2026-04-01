@@ -18,9 +18,7 @@ package org.springframework.cloud.openfeign.support;
 
 import java.util.stream.Stream;
 
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.http.MediaType;
 
 import com.huaweicloud.hessian.HessianHttpMessageConverter;
@@ -29,9 +27,8 @@ import feign.form.spring.SpringFormEncoder;
 
 public class ExtendedSpringEncoder extends SpringEncoder {
   public ExtendedSpringEncoder(SpringFormEncoder springFormEncoder,
-      ObjectFactory<HttpMessageConverters> messageConverters,
-      FeignEncoderProperties encoderProperties, ObjectProvider<HttpMessageConverterCustomizer> customizers) {
-    super(springFormEncoder, messageConverters, encoderProperties, customizers);
+      ObjectProvider<FeignHttpMessageConverters> messageConverters, FeignEncoderProperties encoderProperties) {
+    super(springFormEncoder, encoderProperties, messageConverters);
   }
 
   @Override

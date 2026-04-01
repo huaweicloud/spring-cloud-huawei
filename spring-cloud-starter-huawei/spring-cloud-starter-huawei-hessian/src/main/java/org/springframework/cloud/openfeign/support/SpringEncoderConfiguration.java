@@ -19,17 +19,15 @@ package org.springframework.cloud.openfeign.support;
 
 import static feign.form.ContentType.MULTIPART;
 
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.openfeign.FeignClientProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.data.autoconfigure.web.DataWebProperties;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import feign.codec.Encoder;
@@ -38,7 +36,7 @@ import feign.form.spring.SpringFormEncoder;
 
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.cloud.openfeign.support.SpringEncoder"})
-@SuppressWarnings({"all", "PMD"})
+@SuppressWarnings({"all", "PMD", "deprecation"})
 @SuppressFBWarnings
 public class SpringEncoderConfiguration {
   @Autowired(required = false)
@@ -48,26 +46,23 @@ public class SpringEncoderConfiguration {
   private FeignEncoderProperties encoderProperties;
 
   @Autowired(required = false)
-  private SpringDataWebProperties springDataWebProperties;
-
-  @Autowired
-  private ObjectFactory<HttpMessageConverters> messageConverters;
+  private DataWebProperties springDataWebProperties;
 
   @Bean
   @ConditionalOnMissingBean
   @ConditionalOnMissingClass("org.springframework.data.domain.Pageable")
   public Encoder feignEncoder(ObjectProvider<AbstractFormWriter> formWriterProvider,
-      ObjectProvider<HttpMessageConverterCustomizer> customizers) {
-    return springEncoder(formWriterProvider, encoderProperties, customizers);
+      ObjectProvider<FeignHttpMessageConverters> messageConverters) {
+    return springEncoder(formWriterProvider, encoderProperties, messageConverters);
   }
 
   @Bean
   @ConditionalOnClass(name = "org.springframework.data.domain.Pageable")
   @ConditionalOnMissingBean
   public Encoder feignEncoderPageable(ObjectProvider<AbstractFormWriter> formWriterProvider,
-      ObjectProvider<HttpMessageConverterCustomizer> customizers) {
+      ObjectProvider<FeignHttpMessageConverters> messageConverters) {
     PageableSpringEncoder encoder = new PageableSpringEncoder(
-        springEncoder(formWriterProvider, encoderProperties, customizers));
+        springEncoder(formWriterProvider, encoderProperties, messageConverters));
 
     if (springDataWebProperties != null) {
       encoder.setPageParameter(springDataWebProperties.getPageable().getPageParameter());
@@ -78,14 +73,12 @@ public class SpringEncoderConfiguration {
   }
 
   private Encoder springEncoder(ObjectProvider<AbstractFormWriter> formWriterProvider,
-      FeignEncoderProperties encoderProperties, ObjectProvider<HttpMessageConverterCustomizer> customizers) {
+      FeignEncoderProperties encoderProperties, ObjectProvider<FeignHttpMessageConverters> messageConverters) {
     AbstractFormWriter formWriter = formWriterProvider.getIfAvailable();
-
     if (formWriter != null) {
-      return new ExtendedSpringEncoder(new SpringPojoFormEncoder(formWriter), messageConverters, encoderProperties,
-          customizers);
+      return new ExtendedSpringEncoder(new SpringPojoFormEncoder(formWriter), messageConverters, encoderProperties);
     } else {
-      return new ExtendedSpringEncoder(new SpringFormEncoder(), messageConverters, encoderProperties, customizers);
+      return new ExtendedSpringEncoder(new SpringFormEncoder(), messageConverters, encoderProperties);
     }
   }
 

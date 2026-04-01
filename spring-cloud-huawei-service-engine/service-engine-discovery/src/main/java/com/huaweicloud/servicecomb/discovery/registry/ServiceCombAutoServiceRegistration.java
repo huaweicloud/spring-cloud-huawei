@@ -19,13 +19,14 @@ package com.huaweicloud.servicecomb.discovery.registry;
 
 import org.springframework.cloud.client.serviceregistry.AbstractAutoServiceRegistration;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationProperties;
+import org.springframework.context.ApplicationContext;
 
 public class ServiceCombAutoServiceRegistration extends AbstractAutoServiceRegistration<ServiceCombRegistration> {
   private final ServiceCombRegistration serviceCombRegistration;
 
-  public ServiceCombAutoServiceRegistration(ServiceCombServiceRegistry registry,
+  public ServiceCombAutoServiceRegistration(ApplicationContext context, ServiceCombServiceRegistry registry,
       AutoServiceRegistrationProperties autoServiceRegistrationProperties, ServiceCombRegistration registration) {
-    super(registry, autoServiceRegistrationProperties);
+    super(context, registry, autoServiceRegistrationProperties);
     this.serviceCombRegistration = registration;
   }
 

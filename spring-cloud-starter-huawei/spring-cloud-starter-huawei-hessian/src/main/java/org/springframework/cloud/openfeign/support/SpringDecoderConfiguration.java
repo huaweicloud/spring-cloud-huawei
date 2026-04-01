@@ -17,14 +17,15 @@
 
 package org.springframework.cloud.openfeign.support;
 
-import org.springframework.beans.factory.ObjectFactory;
+import java.util.List;
+
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.util.CollectionUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import feign.codec.Decoder;
@@ -32,16 +33,20 @@ import feign.optionals.OptionalDecoder;
 
 @Configuration
 @ConditionalOnClass(name = {"org.springframework.cloud.openfeign.support.SpringDecoder"})
-@SuppressWarnings({"all", "PMD"})
+@SuppressWarnings({"all", "PMD", "deprecation"})
 @SuppressFBWarnings
 public class SpringDecoderConfiguration {
-  @Autowired
-  private ObjectFactory<HttpMessageConverters> messageConverters;
-
   @Bean
   @ConditionalOnMissingBean
-  public Decoder feignDecoder(ObjectProvider<HttpMessageConverterCustomizer> customizers) {
-    return new OptionalDecoder(new ResponseEntityDecoder(new ExtendedSpringDecoder(messageConverters, customizers)));
+  public Decoder feignDecoder(ObjectProvider<List<HttpMessageConverter<?>>> convertersProvider,
+      ObjectProvider<HttpMessageConverterCustomizer> customizers,
+      ObjectProvider<FeignHttpMessageConverters> messageConverters) {
+    List<HttpMessageConverter<?>> converters = convertersProvider.getIfAvailable();
+    if (messageConverters.getIfAvailable() != null
+        && !CollectionUtils.isEmpty(messageConverters.getIfAvailable().getConverters())) {
+      converters = messageConverters.getIfAvailable().getConverters();
+    }
+    return new OptionalDecoder(new ResponseEntityDecoder(
+        new ExtendedSpringDecoder(converters, customizers)));
   }
-
 }

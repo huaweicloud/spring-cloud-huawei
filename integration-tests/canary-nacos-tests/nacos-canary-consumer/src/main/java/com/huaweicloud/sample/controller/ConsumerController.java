@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,7 +37,7 @@ public class ConsumerController {
 
   @GetMapping("/sayHelloCanary")
   public String sayHelloCanary(@RequestParam("name") String name) {
-    MultiValueMap<String, String> headers = new HttpHeaders();
+    HttpHeaders headers = new HttpHeaders();
     headers.add("canary","old");
     HttpEntity<Object> entity = new HttpEntity<>(headers);
     String result = restTemplate

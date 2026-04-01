@@ -24,26 +24,28 @@ spring:
     web-application-type: reactive
   cloud:
     gateway:
-      routes:
-        - id: provider
-          uri: lb://basic-provider
-          predicates:
-            - Path=/gateway/**
-        - id: consumer-governance-test
-          uri: lb://basic-consumer
-          predicates:
-            - Path=/**
-          order: 1
-        - id: consumer-retry-test
-          uri: lb://basic-consumer
-          filters:
-            - name: Retry
-              args:
-                retries: 3
-                series: SERVER_ERROR
-          predicates:
-            - Path=/govern/retry/**
-          order: 0
+      server:
+        webflux:
+          routes:
+            - id: provider
+              uri: lb://basic-provider
+              predicates:
+                - Path=/gateway/**
+            - id: consumer-governance-test
+              uri: lb://basic-consumer
+              predicates:
+                - Path=/**
+              order: 1
+            - id: consumer-retry-test
+              uri: lb://basic-consumer
+              filters:
+                - name: Retry
+                  args:
+                    retries: 3
+                    series: SERVER_ERROR
+              predicates:
+                - Path=/govern/retry/**
+              order: 0
 servicecomb:
   matchGroup:
     demo-rateLimiting: |

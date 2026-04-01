@@ -20,16 +20,20 @@ server:
   port: 9090
 
 spring:
+  main:
+    web-application-type: reactive
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lowerCaseServiceId: true
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lowerCaseServiceId: true
 management:
   endpoint:
     gateway:
-      enabled: true
+      access: read_only
   endpoints:
     web:
       exposure:

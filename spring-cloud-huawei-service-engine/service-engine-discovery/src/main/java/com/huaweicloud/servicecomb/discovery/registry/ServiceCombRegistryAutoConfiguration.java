@@ -27,6 +27,7 @@ import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationA
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationConfiguration;
 import org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationProperties;
 import org.springframework.cloud.client.serviceregistry.ServiceRegistryAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -64,11 +65,11 @@ public class ServiceCombRegistryAutoConfiguration {
 
   @Bean
   @ConditionalOnBean(AutoServiceRegistrationProperties.class)
-  public ServiceCombAutoServiceRegistration serviceCombAutoServiceRegistration(
+  public ServiceCombAutoServiceRegistration serviceCombAutoServiceRegistration(ApplicationContext context,
       ServiceCombServiceRegistry registry,
       AutoServiceRegistrationProperties autoServiceRegistrationProperties,
       ServiceCombRegistration registration) {
-    return new ServiceCombAutoServiceRegistration(registry,
+    return new ServiceCombAutoServiceRegistration(context, registry,
         autoServiceRegistrationProperties, registration);
   }
 }

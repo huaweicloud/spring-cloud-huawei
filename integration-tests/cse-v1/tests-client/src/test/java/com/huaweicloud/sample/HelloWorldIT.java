@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 public class HelloWorldIT {
@@ -33,7 +32,7 @@ public class HelloWorldIT {
   @Test
   public void testHelloWorld() {
     for (int i = 0; i < 10; i++) {
-      MultiValueMap<String, String> headers = new HttpHeaders();
+      HttpHeaders headers = new HttpHeaders();
       headers.add("canary", "old");
       HttpEntity<Object> entity = new HttpEntity<>(headers);
       String result = template
@@ -48,7 +47,7 @@ public class HelloWorldIT {
     int newCount = 0;
 
     for (int i = 0; i < 20; i++) {
-      MultiValueMap<String, String> headers = new HttpHeaders();
+      HttpHeaders headers = new HttpHeaders();
       headers.add("canary", "new");
       HttpEntity<Object> entity = new HttpEntity<>(headers);
       String result = template
@@ -74,7 +73,7 @@ public class HelloWorldIT {
     int newCount = 0;
 
     for (int i = 0; i < 20; i++) {
-      MultiValueMap<String, String> headers = new HttpHeaders();
+      HttpHeaders headers = new HttpHeaders();
       headers.add("canary", "new");
       HttpEntity<Object> entity = new HttpEntity<>(headers);
       String result = template

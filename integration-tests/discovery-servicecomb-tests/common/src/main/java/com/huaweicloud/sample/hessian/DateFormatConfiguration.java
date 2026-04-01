@@ -25,6 +25,7 @@ import java.util.TimeZone;
 import jakarta.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.openfeign.FeignFormatterRegistrar;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,6 +39,7 @@ public class DateFormatConfiguration {
   private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ssZ";
 
   @Autowired
+  @Qualifier("requestMappingHandlerAdapter")
   RequestMappingHandlerAdapter handlerAdapter;
 
   @PostConstruct
