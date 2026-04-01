@@ -49,6 +49,7 @@
     <nacos.client.version>2.3.0</nacos.client.version>
     <alibaba.context.support.version>1.0.11</alibaba.context.support.version>
     <netty.version>4.1.131.Final</netty.version>
+    <commons-lang3.version>3.20.0</commons-lang3.version>
   </properties>
 
   <dependencyManagement>
@@ -79,6 +80,11 @@
         <scope>import</scope>
         <version>${netty.version}</version>
         <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commons-lang3.version}</version>
       </dependency>
 
       <!-- core dependencies of spring cloud huawei, put it in the begging -->
