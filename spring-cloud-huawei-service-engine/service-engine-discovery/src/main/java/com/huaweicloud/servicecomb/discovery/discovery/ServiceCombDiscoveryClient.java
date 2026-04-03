@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.servicecomb.service.center.client.DiscoveryEvents.InstanceChangedEvent;
 import org.apache.servicecomb.service.center.client.RegistrationEvents.HeartBeatEvent;
 import org.apache.servicecomb.service.center.client.ServiceCenterClient;
@@ -211,7 +212,7 @@ public class ServiceCombDiscoveryClient implements DiscoveryClient, ApplicationE
         && StringUtils.isEmpty(microserviceProperties.getEnvironment())) {
       return true;
     }
-    return StringUtils.equals(microservice.getEnvironment(), microserviceProperties.getEnvironment());
+    return Strings.CS.equals(microservice.getEnvironment(), microserviceProperties.getEnvironment());
   }
 
   @Override
