@@ -18,15 +18,19 @@
 package com.huaweicloud.common.adapters.feign;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.hc.core5.util.TimeValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.client.serviceregistry.Registration;
+import org.springframework.cloud.openfeign.clientconfig.HttpClient5FeignConfiguration.HttpClientBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.huaweicloud.common.configration.dynamic.ContextProperties;
+import com.huaweicloud.common.configration.dynamic.HttpClientProperties;
 
 import feign.RequestInterceptor;
 
@@ -54,5 +58,21 @@ public class FeignConfiguration {
   @Bean
   public FeignAddServiceNameContext feignAddServiceNameContext(@Autowired(required = false) Registration registration) {
     return new FeignAddServiceNameContext(registration);
+  }
+
+  /**
+   * httpclient5 5.6 dependency, HttpClient5FeignConfiguration build CloseableHttpClient parameter have no maxIdleTime.
+   * As a result, a null pointer exception occurs during startup.
+   * If HttpClientBuilder in the later version is compatible with the null value of maxIdleTime
+   * or the maxIdleTime value is set when CloseableHttpClient is constructed in HttpClient5FeignConfiguration,
+   * this method can be deleted.
+   *
+   * @param httpClientProperties httpClientProperties
+   * @return HttpClientBuilderCustomizer
+   */
+  @Bean
+  public HttpClientBuilderCustomizer feignExtendHttpClientBuilderCustomizer(HttpClientProperties httpClientProperties) {
+    return builder -> builder.evictIdleConnections(
+        TimeValue.of(httpClientProperties.getConnectionIdleTimeoutInMilliSeconds(), TimeUnit.MILLISECONDS));
   }
 }

@@ -54,5 +54,9 @@
       <groupId>com.huaweicloud</groupId>
       <artifactId>spring-cloud-huawei-nacos-config</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.github.openfeign</groupId>
+      <artifactId>feign-hc5</artifactId>
+    </dependency>
   </dependencies>
 </project>
