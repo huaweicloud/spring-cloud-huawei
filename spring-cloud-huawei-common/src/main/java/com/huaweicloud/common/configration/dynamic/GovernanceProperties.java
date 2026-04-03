@@ -393,7 +393,7 @@ public class GovernanceProperties {
 
   private Webmvc webmvc = new Webmvc();
 
-  public Webclient webclient = new Webclient();
+  private Webclient webclient = new Webclient();
 
   public Gateway getGateway() {
     return gateway;
