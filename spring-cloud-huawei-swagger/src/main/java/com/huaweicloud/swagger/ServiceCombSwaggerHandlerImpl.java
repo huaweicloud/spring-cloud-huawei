@@ -16,6 +16,7 @@
  */
 package com.huaweicloud.swagger;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +32,6 @@ import org.springdoc.core.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import com.huaweicloud.common.schema.ServiceCombSwaggerHandler;
 
@@ -137,6 +137,6 @@ public class ServiceCombSwaggerHandlerImpl implements ServiceCombSwaggerHandler 
   }
 
   private static String calcSchemaSummary(String schemaContent) {
-    return Hashing.sha256().newHasher().putString(schemaContent, Charsets.UTF_8).hash().toString();
+    return Hashing.sha256().newHasher().putString(schemaContent, StandardCharsets.UTF_8).hash().toString();
   }
 }
