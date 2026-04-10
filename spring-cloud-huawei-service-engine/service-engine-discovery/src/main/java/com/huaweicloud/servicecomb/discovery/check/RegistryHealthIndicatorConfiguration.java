@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
 @Configuration
-@ConditionalOnClass(name = {"org.springframework.boot.actuate.health.HealthIndicator"})
+@ConditionalOnClass(name = {"org.springframework.boot.health.contributor.HealthIndicator"})
 public class RegistryHealthIndicatorConfiguration {
   @Bean
   @Order(100)
