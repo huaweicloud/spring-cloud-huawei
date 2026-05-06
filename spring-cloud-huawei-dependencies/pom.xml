@@ -41,7 +41,7 @@
     <snakeyaml.version>2.6</snakeyaml.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <websocket.version>1.6.0</websocket.version>
-    <resilience4j.version>1.7.0</resilience4j.version>
+    <resilience4j.version>2.4.0</resilience4j.version>
     <jasypt.version>4.0.4</jasypt.version>
     <annotations.version>3.0.1</annotations.version>
     <dubbo.hessian.version>3.3.6</dubbo.hessian.version>
