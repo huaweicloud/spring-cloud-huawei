@@ -33,7 +33,7 @@
   <name>Spring Cloud Huawei::Dependencies</name>
 
   <properties>
-    <feign-core.version>13.6</feign-core.version>
+    <feign-core.version>13.12</feign-core.version>
     <httpclient.version>5.6.1</httpclient.version>
     <jackson.version>3.1.1</jackson.version>
     <commons-io.version>2.21.0</commons-io.version>
