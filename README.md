@@ -69,4 +69,4 @@ Spring Cloud Huawei provides a large number of out-of-the-box service governance
 
 If you like this project, do not forget star it.
 
-[![Star History Chart](https://api.star-history.com/svg?repos=huaweicloud/spring-cloud-huawei&type=Date)](https://star-history.com/#huaweicloud/spring-cloud-huawei&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=huaweicloud/spring-cloud-huawei&type=Date)](https://star-history.dera.page/#huaweicloud/spring-cloud-huawei&Date)
