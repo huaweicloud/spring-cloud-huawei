@@ -24,7 +24,10 @@ spring:
     name: product
   cloud:
     servicecomb:
+      service:
+        application: default
+        name: ${spring.application.name}
+        version: 0.0.1
       discovery:
         enabled: true
         address: http://127.0.0.1:30100
-        version: 0.0.1

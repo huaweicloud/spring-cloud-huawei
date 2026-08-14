@@ -24,6 +24,10 @@ spring:
     name: discovery-gateway
   cloud:
     servicecomb:
+      service:
+        application: default
+        name: ${spring.application.name}
+        version: 0.0.1
       discovery:
         enabled: true
         serviceName: ${spring.application.name}

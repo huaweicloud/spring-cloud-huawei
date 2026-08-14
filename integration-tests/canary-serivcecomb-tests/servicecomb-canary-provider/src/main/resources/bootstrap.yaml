@@ -24,14 +24,14 @@ spring:
     name: canary-provider
   cloud:
     servicecomb:
+      service:
+        application: canary-application
+        name: ${spring.application.name}
+        version: 0.0.1
       discovery:
         enabled: true
         address: http://127.0.0.1:30100
-        serviceName: ${spring.application.name}
-        appName: default
-        version: 0.0.1
         healthCheckInterval: 30
-        allowCrossApp: true
       config:
         enabled: true
         serverType: kie

@@ -23,12 +23,13 @@ spring:
     name: account
   cloud:
     servicecomb:
+      service:
+        application: account-app
+        name: ${spring.application.name}
+        version: 0.0.1
       discovery:
         enabled: true
         address: http://127.0.0.1:30100
-        serviceName: account
-        appName: account-app
-        version: 0.0.1
         healthCheckInterval: 30
         allowCrossApp: true
       config:

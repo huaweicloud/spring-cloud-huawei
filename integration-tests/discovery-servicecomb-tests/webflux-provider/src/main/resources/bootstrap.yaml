@@ -24,6 +24,7 @@ spring:
   cloud:
     servicecomb:
       service:
+        application: default
         name: webflux
         version: 0.0.1
         properties:
@@ -37,6 +38,7 @@ spring:
       discovery:
         enabled: true
         address: http://127.0.0.1:30100
+        appName: default
       config:
         enabled: true
         serverType: kie

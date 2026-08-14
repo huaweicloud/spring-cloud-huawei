@@ -30,6 +30,7 @@ spring:
         properties:
           x-test: value
           x-test2: value2
+        application: default
       instance:
         initialStatus: UP
         properties:

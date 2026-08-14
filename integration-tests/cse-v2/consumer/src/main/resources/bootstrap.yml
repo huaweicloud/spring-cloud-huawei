@@ -23,13 +23,14 @@ spring:
     name: basic-consumer
   cloud:
     servicecomb:
+      service:
+        application: cse-v2-test-application
+        name: ${spring.application.name}
+        version: 0.0.1
       discovery:
         enabled: true
         watch: false
         address: ${PAAS_CSE_SC_ENDPOINT:http://127.0.0.1:30100}
-        appName: cse-v2-test-application
-        serviceName: ${spring.application.name}
-        version: 0.0.1
         healthCheckInterval: 30
       config:
         serverAddr: ${PAAS_CSE_CC_ENDPOINT:http://127.0.0.1:30110}

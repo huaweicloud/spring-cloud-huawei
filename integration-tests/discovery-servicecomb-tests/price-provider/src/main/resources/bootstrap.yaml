@@ -24,6 +24,9 @@ spring:
   cloud:
     servicecomb:
       service:
+        application: default
+        name: ${spring.application.name}
+        version: 0.0.1
         properties:
           x-test: value
           x-test2: value2

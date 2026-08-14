@@ -26,12 +26,13 @@ spring:
       context:
         headerContextMapper:
           canary: canary
+      service:
+        application: cse-v1-test-application
+        name: ${spring.application.name}
+        version: 0.0.1
       discovery:
-        appName: cse-v1-test-application
-        serviceName: ${spring.application.name}
         watch: false
         address: https://cse.cn-south-1.myhuaweicloud.com
-        version: 0.0.1
         healthCheckInterval: 30
       config:
         serverAddr: https://cse.cn-south-1.myhuaweicloud.com
