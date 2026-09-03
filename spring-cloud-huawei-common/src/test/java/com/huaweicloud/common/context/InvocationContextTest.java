@@ -18,11 +18,17 @@
 package com.huaweicloud.common.context;
 
 import org.apache.commons.codec.net.URLCodec;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class InvocationContextTest {
   URLCodec coded = new URLCodec("UTF-8");
+
+  @AfterEach
+  public void clearInvocationContext() {
+    InvocationContextHolder.clearInvocationContext();
+  }
 
   @Test
   public void test_context_lifecycle() throws Exception {
@@ -73,5 +79,32 @@ public class InvocationContextTest {
 
     String context = InvocationContextHolder.serialize(null);
     Assertions.assertEquals("", context);
+  }
+
+  @Test
+  public void test_set_and_clear_context() {
+    InvocationContext expected = new InvocationContext();
+    expected.putContext("key", "value");
+
+    InvocationContextHolder.setInvocationContext(expected);
+    Assertions.assertSame(expected, InvocationContextHolder.getOrCreateInvocationContext());
+
+    InvocationContextHolder.clearInvocationContext();
+    InvocationContext actual = InvocationContextHolder.getOrCreateInvocationContext();
+    Assertions.assertNotSame(expected, actual);
+    Assertions.assertNull(actual.getContext("key"));
+  }
+
+  @Test
+  public void test_deserialize_without_replacing_current_context() throws Exception {
+    InvocationContext current = InvocationContextHolder.getOrCreateInvocationContext();
+    current.putContext("current", "value");
+
+    InvocationContext deserialized = InvocationContextHolder.deserialize(
+        coded.encode("{\"remote\":\"value\"}"));
+
+    Assertions.assertEquals("value", deserialized.getContext("remote"));
+    Assertions.assertSame(current, InvocationContextHolder.getOrCreateInvocationContext());
+    Assertions.assertEquals("value", current.getContext("current"));
   }
 }

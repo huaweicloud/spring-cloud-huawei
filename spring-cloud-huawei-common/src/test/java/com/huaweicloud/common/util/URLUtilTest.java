@@ -17,6 +17,8 @@
 
 package com.huaweicloud.common.util;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -41,6 +43,16 @@ public class URLUtilTest {
   }
 
   @Test
+  public void splitIpPortWithoutPath() {
+    Assertions.assertArrayEquals(
+        new String[] {"127.0.0.1", "8080"},
+        URLUtil.splitIpPort("rest://127.0.0.1:8080"));
+    Assertions.assertArrayEquals(
+        new String[] {"127.0.0.1", "8080"},
+        URLUtil.splitIpPort("rest://127.0.0.1:8080?sslEnabled=true"));
+  }
+
+  @Test
   public void isEquals() {
     String url1 = "http://127.0.0.1:3030";
     String url2 = "http://127.0.0.1:3030";
@@ -53,5 +65,25 @@ public class URLUtilTest {
     Assertions.assertTrue(URLUtil.isEquals(url5, url6));
     Assertions.assertFalse(URLUtil.isEquals(null, url6));
     Assertions.assertFalse(URLUtil.isEquals(null, null));
+  }
+
+  @Test
+  public void transformWithMultipleParameters() {
+    Assertions.assertEquals(
+        "https://example.com:8080/path",
+        URLUtil.transform("rest://example.com:8080/path?region=cn&sslEnabled=true"));
+    Assertions.assertEquals(
+        "http://example.com/path",
+        URLUtil.transform("rest://example.com/path?sslEnabled=false"));
+  }
+
+  @Test
+  public void dealMultiUrl() {
+    Assertions.assertEquals(List.of(), URLUtil.dealMultiUrl(null));
+    Assertions.assertEquals(List.of(), URLUtil.dealMultiUrl(""));
+    Assertions.assertEquals(List.of("rest://one:8080"), URLUtil.dealMultiUrl("rest://one:8080"));
+    Assertions.assertEquals(
+        List.of("rest://one:8080", "rest://two:8081"),
+        URLUtil.dealMultiUrl("rest://one:8080,,rest://two:8081,"));
   }
 }

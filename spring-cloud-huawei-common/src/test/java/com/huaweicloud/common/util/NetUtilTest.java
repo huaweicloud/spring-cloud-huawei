@@ -43,4 +43,12 @@ public class NetUtilTest {
     String host = NetUtil.getHost("http://127.0.0.1:30103/#!/sc/f1532d0479261777281fe3d94b15c463f8b6fcf7/instance");
     Assertions.assertEquals(host, "127.0.0.1");
   }
+
+  @Test
+  public void invalidUrlReturnsNull() {
+    String invalidUrl = "http://[invalid";
+
+    Assertions.assertNull(NetUtil.getHost(invalidUrl));
+    Assertions.assertNull(NetUtil.getPort(invalidUrl));
+  }
 }
