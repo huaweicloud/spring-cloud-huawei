@@ -35,4 +35,18 @@ public class VersionCompareUtilTest {
     Assertions.assertTrue(VersionCompareUtil.compareVersion("0.0.1", "0.0.0.0") > 0);
     Assertions.assertTrue(VersionCompareUtil.compareVersion("0.0.1", "0.0.0.0") > 0);
   }
+
+  @Test
+  public void testNumericSegmentsWithDifferentLengths() {
+    Assertions.assertTrue(VersionCompareUtil.compareVersion("1.10.0", "1.9.9") > 0);
+    Assertions.assertTrue(VersionCompareUtil.compareVersion("2.0.0", "10.0.0") < 0);
+  }
+
+  @Test
+  public void testNullVersion() {
+    RuntimeException exception = Assertions.assertThrows(
+        RuntimeException.class,
+        () -> VersionCompareUtil.compareVersion(null, "1.0.0"));
+    Assertions.assertEquals("version can not be null", exception.getMessage());
+  }
 }
