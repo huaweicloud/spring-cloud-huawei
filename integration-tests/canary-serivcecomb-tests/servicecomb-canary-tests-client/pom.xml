@@ -48,10 +48,11 @@
               <images>
 
                 <image>
-                  <name>servicecomb/service-center:2.0.0</name>
+                  <name>servicecomb/service-center:latest</name>
                   <alias>service-center</alias>
                   <run>
                     <wait>
+                      <log>Local listen address</log>
                       <tcp>
                         <ports>
                           <port>30100</port>
