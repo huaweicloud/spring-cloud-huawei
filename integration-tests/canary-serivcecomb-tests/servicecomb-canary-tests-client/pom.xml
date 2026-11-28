@@ -58,7 +58,7 @@
                           <port>30100</port>
                         </ports>
                       </tcp>
-                      <time>60000</time>
+                      <time>120000</time>
                     </wait>
                     <ports>
                       <port>service.center.port:30100</port>
