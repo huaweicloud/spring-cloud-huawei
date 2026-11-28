@@ -53,8 +53,9 @@
               <images>
 
                 <image>
-                  <name>servicecomb/service-center:latest</name>
+                  <name>servicecomb-service-center-fixed:latest</name>
                   <alias>service-center</alias>
+                  <imagePullPolicy>IfNotPresent</imagePullPolicy>
                   <run>
                     <entryPoint>
                       <exec>
