@@ -15,23 +15,89 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v7
-    - name: Set up JDK 17
-      uses: actions/setup-java@v5
-      with:
-        java-version: "17"
-        distribution: 'temurin'
-    - name: Set up Maven
-      uses: stCarolas/setup-maven@v5
-      with:
-        maven-version: 3.8.4
-    - uses: actions/cache@v6
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven
-    - name: Compilation and Installation
-      run: bash scripts/build.sh install
-    - name: publish coverage report
-      run: bash <(curl -s https://codecov.io/bash)
+      - uses: actions/checkout@v7
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: "17"
+          distribution: 'temurin'
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v5
+        with:
+          maven-version: 3.8.4
+      - uses: actions/cache@v6
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven
+      - name: Diagnose upstream service-center image
+        run: |
+          UP=servicecomb/service-center:latest
+          docker pull --quiet "$UP"
+          echo "=== UPSTREAM: raw entrypoint (no override) ==="
+          UID=$(docker run -d -p 30100:30100 "$UP")
+          sleep 12
+          UPSTATE=$(docker inspect --format='Running={{.State.Running}} ExitCode={{.State.ExitCode}} Error={{.State.Error}}' "$UID" 2>/dev/null || echo "GONE")
+          echo "upstream state: $UPSTATE"
+          echo "=== UPSTREAM: logs (tail 40) ==="
+          docker logs --tail 40 "$UID" 2>&1 || true
+          docker rm -f "$UID" >/dev/null 2>&1 || true
+          echo "=== UPSTREAM: file permissions in /opt/service-center ==="
+          docker run --rm --entrypoint /bin/sh "$UP" -c 'ls -la /opt/service-center/ 2>&1; echo "--- head of start.sh (od) ---"; head -1 /opt/service-center/start.sh 2>/dev/null | od -c 2>/dev/null | head -4; echo "--- CRLF check ---"; grep -lU $'\r' /opt/service-center/start.sh 2>/dev/null && echo "start.sh HAS CRLF" || echo "start.sh is LF (or missing)"'
+      - name: Build derived service-center-fixed image
+        run: |
+          mkdir service-center-fixed
+          cat > service-center-fixed/start.sh <<'STARTEOF'
+          #!/bin/sh
+          set -e
+          cd /opt/service-center
+          case "$1" in
+          -n) export SVC_START_OPTIONS="$SVC_START_OPTIONS -n" ; shift ;;
+          esac
+          export ETCD_CLIENT_ENDPOINTS=127.0.0.1:7946
+          export etcd_client_endpoints=127.0.0.1:7946
+          export PATH=$PATH:/bin
+          /opt/service-center/service-center "$@"
+          STARTEOF
+          cat > service-center-fixed/Dockerfile <<'DOCKEOF'
+          FROM servicecomb/service-center:latest
+          RUN set -e; \
+              chmod +x /opt/service-center/start.sh /opt/service-center/service-center 2>/dev/null || true; \
+              sed -i 's/\r$//' /opt/service-center/start.sh 2>/dev/null || true
+          COPY --chown=service-center:service-center /start.sh /opt/service-center/start.sh
+          RUN chmod 0755 /opt/service-center/start.sh
+          ENTRYPOINT ["/bin/sh", "-c", "sh /opt/service-center/start.sh $0", ""]
+          DOCKEOF
+          docker build -t servicecomb-service-center-fixed:latest service-center-fixed
+      - name: Verify derived service-center-fixed image boots
+        run: |
+          IMAGE=servicecomb-service-center-fixed:latest
+          ID=$(docker run -d -p 30100:30100 "$IMAGE")
+          for i in $(seq 1 25); do
+            OUT=$(docker inspect --format='{{.State.Running}} {{.State.ExitCode}}' "$ID" 2>/dev/null || echo "GONE 0")
+            if echo "$OUT" | grep -q "False"; then break; fi
+            if ! docker container exists "$ID" 2>/dev/null; then OUT="GONE 0"; break; fi
+            sleep 4
+          done
+          echo "=== derived state after up to 100s: [$OUT] ==="
+          echo "=== derived logs (tail 60) ==="
+          docker logs --tail 60 "$ID" 2>&1 || true
+          if ! echo "$OUT" | grep -q "True"; then
+            echo "DIAGNOSTIC FAILED: derived service-center-fixed image did not stay running" >&2
+            docker logs "$ID" 2>&1 || true
+            docker rm -f "$ID" >/dev/null 2>&1 || true
+            exit 1
+          fi
+          if timeout 2 bash -c 'true < /dev/tcp/127.0.0.1/30100'; then
+            echo "PORT-CHECK-OK: 127.0.0.1:30100 is open"
+          else
+            echo "DIAGNOSTIC FAILED: 127.0.0.1:30100 not open (service-center not listening)" >&2
+            exit 1
+          fi
+          docker rm -f "$ID" >/dev/null 2>&1 || true
+          echo "DIAGNOSTIC OK: derived image stayed running and port 30100 open"
+      - name: Compilation and Installation
+        run: bash scripts/build.sh install
+      - name: publish coverage report
+        run: bash <(curl -s https://codecov.io/bash)

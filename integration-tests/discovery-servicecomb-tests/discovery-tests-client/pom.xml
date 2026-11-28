@@ -53,20 +53,32 @@
               <images>
 
                 <image>
-                  <name>servicecomb/service-center:2.0.0</name>
+                  <name>servicecomb-service-center-fixed:latest</name>
                   <alias>service-center</alias>
+                  <imagePullPolicy>IfNotPresent</imagePullPolicy>
                   <run>
+                    <entryPoint>
+                      <exec>
+                        <arg>sh</arg>
+                        <arg>-c</arg>
+                      </exec>
+                    </entryPoint>
+                    <cmd>
+                      <exec>
+                        <arg>cd /opt/service-center &amp;&amp; chmod +x service-center 2&gt;/dev/null; sh ./start.sh</arg>
+                      </exec>
+                    </cmd>
                     <wait>
-                      <log>server is ready</log>
+                      <log>Local listen address</log>
                       <tcp>
                         <ports>
                           <port>30100</port>
                         </ports>
                       </tcp>
-                      <time>60000</time>
+                      <time>120000</time>
                     </wait>
                     <ports>
-                      <port>service.center.port:30100</port>
+                      <port>30100:30100</port>
                     </ports>
                   </run>
                 </image>
