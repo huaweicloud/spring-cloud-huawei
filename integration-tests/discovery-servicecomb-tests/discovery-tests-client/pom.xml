@@ -56,6 +56,17 @@
                   <name>servicecomb/service-center:latest</name>
                   <alias>service-center</alias>
                   <run>
+                    <entryPoint>
+                      <exec>
+                        <arg>sh</arg>
+                        <arg>-c</arg>
+                      </exec>
+                    </entryPoint>
+                    <cmd>
+                      <exec>
+                        <arg>cd /opt/service-center &amp;&amp; chmod +x service-center 2&gt;/dev/null; sh ./start.sh</arg>
+                      </exec>
+                    </cmd>
                     <wait>
                       <log>Local listen address</log>
                       <tcp>
@@ -66,7 +77,7 @@
                       <time>120000</time>
                     </wait>
                     <ports>
-                      <port>service.center.port:30100</port>
+                      <port>30100:30100</port>
                     </ports>
                   </run>
                 </image>
