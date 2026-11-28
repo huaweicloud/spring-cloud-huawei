@@ -48,11 +48,10 @@
               <images>
 
                 <image>
-                  <name>servicecomb/service-center:2.1.3</name>
+                  <name>servicecomb/service-center:2.0.0</name>
                   <alias>service-center</alias>
                   <run>
                     <wait>
-                      <log>server is ready</log>
                       <tcp>
                         <ports>
                           <port>30100</port>
